@@ -53,60 +53,27 @@
 
 
 function autoexec()
-  local a;
-
-  -- There needs to be a check to see if there are any recruits.  If so, we
-  -- need to set P_MANOR=3 so the code below can function correctly.
-
-  -- Remove all unused party members from map
-
-  -- See if others have joined your party yet
-  for a = 0, 7, 1 do
-    if (LOC_manor_or_party == "manor") then
-      set_ent_active(a, 1);
-    end
-  end
-
   if (get_progress(P_PLAYERS) > 0) then
-    set_progress(P_MANOR, 2);
+    set_progress(P_MANOR, 2)
   end
 
-  -- New game; Nostik has not explained the quest yet
+
   if (get_progress(P_MANOR) == 0) then
-    -- Init all 8 heroes
-    for a = 0, 7, 1 do
-      -- Set up entities 0-7 in manor.map as your team members
-      set_ent_id(a, a);
-      -- They should all be obstacles :)
-      set_ent_obsmode(a, 1);
-      -- What this sprite looks like
-      set_ent_chrx(a, 255);
-    end
-
-    -- Remove the NPC that looks like you, from the map
-    set_ent_active(get_pidx(0), 0);
-    -- Set the REAL hero in the old NPCs place
-    place_ent(HERO1, get_ent_tilex(get_pidx(0)),
-              get_ent_tiley(get_pidx(0)));
-    -- Set your facing direction
-    set_ent_facing(HERO1, get_ent_facing(get_pidx(0)));
-    -- Center map on your character coords
-    calc_viewport(1);
-
-  -- P_MANOR == 1 when you already talked to Hunert, but you have no recruits
+    -- New game; Nostik has not explained the quest yet
+    LOC_setup_newgame()
   elseif (get_progress(P_MANOR) == 1) then
-    -- Remove all party members from the map
+    -- You already talked to Hunert, but you have no recruits
     for a = 0, 7, 1 do
-      set_ent_active(a, 0);
+      set_ent_active(a, 0)
     end
-
-  -- You have recruited at least 1 other party member
   elseif (get_progress(P_MANOR) == 2) then
-    LOC_at_table();
+    -- You have recruited at least 1 other party member
+    LOC_at_table()
 
     -- Put Nostik to bed (he is old and feeble)
-    place_ent(8, 9, 37);
+    place_ent(8, 9, 37)
   end
+
 end
 
 
@@ -158,15 +125,15 @@ function postexec()
     bubble(8, "Good luck all of you.");
 
     -- TT: make everyone else walk out the door
-    set_ent_script(SENSAR, "D1R3D1L1D6R3");      
-    set_ent_script(SARINA, "D1R2D1L1D6R4");      
-    set_ent_script(CORIN, "D1R1D1L1D6R4D1");     
-    set_ent_script(AJATHAR, "D2L1D6R4D2");       
+    set_ent_script(SENSAR, "D1R3D1L1D6R3");
+    set_ent_script(SARINA, "D1R2D1L1D6R4");
+    set_ent_script(CORIN, "D1R1D1L1D6R4D1");
+    set_ent_script(AJATHAR, "D2L1D6R4D2");
     set_ent_script(CASANDRA, "U1R1D3L1D1L1D6R2");
-    set_ent_script(TEMMIN, "U1R2D3L1D1L1D6R1");  
-    set_ent_script(AYLA, "U1R3D3L1D1L1D6");      
-    set_ent_script(NOSLOM, "U1R4D3L1D1L1D5");    
-    for a = 0, 7, 1 do                           
+    set_ent_script(TEMMIN, "U1R2D3L1D1L1D6R1");
+    set_ent_script(AYLA, "U1R3D3L1D1L1D6");
+    set_ent_script(NOSLOM, "U1R4D3L1D1L1D5");
+    for a = 0, 7, 1 do
       set_ent_speed(a, 4);
     end
 
@@ -277,6 +244,33 @@ function entity_handler(en)
       LOC_at_table();
     end
   end
+
+end
+
+
+function LOC_setup_newgame()
+  local a
+
+  -- Set up entities 0-7 in manor.map as your team members
+  for a = 0, 7, 1 do
+    set_ent_active(a, 1)
+    set_ent_id(a, a)
+    set_ent_obsmode(a, 1)
+    set_ent_chrx(a, 255)
+  end
+
+  -- Remove the NPC that looks like you, from the map
+  set_ent_active(get_pidx(0), 0)
+
+  -- Set the REAL hero in the old NPCs place
+  place_ent(HERO1, get_ent_tilex(get_pidx(0)),
+                   get_ent_tiley(get_pidx(0)))
+
+  -- Set your facing direction
+  set_ent_facing(HERO1, get_ent_facing(get_pidx(0)))
+
+  -- Center map on your character coords
+  calc_viewport(1)
 
 end
 
