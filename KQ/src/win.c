@@ -73,9 +73,9 @@ const char *kqres (int dir, const char *file)
         /* Do not get fooled by a corrupted $HOME */
         if (home != NULL && strlen (home) < PATH_MAX)
           {
-             sprintf (user_dir, "%s/KQ", home);
+             sprintf (user_dir, "%s\\KQ", home);
              /* Always try to make the directory, just to be sure. */
-             mkdir (savedir);
+             mkdir (user_dir);
           }
         else
           {
@@ -83,6 +83,7 @@ const char *kqres (int dir, const char *file)
           }
         /* Now the data directory */
         strcpy (game_dir, ".");
+        TRACE("Saving data in %s, getting data from %s\n", user_dir, game_dir);
         init_path = 1;
      }
    switch (dir)
@@ -106,5 +107,5 @@ const char *kqres (int dir, const char *file)
      default:
         return NULL;
      }
-   return ans;
+   return fix_filename_slashes(ans);
 }
