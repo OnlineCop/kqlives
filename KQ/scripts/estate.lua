@@ -178,6 +178,9 @@ function zone_handler(zn)
   elseif (zn == 13) then
     bubble(HERO1,"Goodbye Dungar. I'm sorry.","","","");
 
+  elseif (zn == 14) then
+    touch_fire(get_pidx(0));
+
   end
 end
 

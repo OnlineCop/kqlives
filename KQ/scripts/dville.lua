@@ -51,6 +51,9 @@ function zone_handler(zn)
   elseif (zn == 14) then
     door_out(30,40);
 
+  elseif (zn == 15) then
+    touch_fire(get_pidx(0));
+
   end
 end
 

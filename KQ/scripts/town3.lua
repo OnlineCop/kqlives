@@ -92,7 +92,7 @@ function zone_handler(zn)
     chest(13,I_CAP2,1);
 
   elseif (zn == 26) then
-  bubble(HERO1,"Various books about magic.","","","");
+    bubble(HERO1,"Various books about magic.","","","");
 
   elseif (zn == 27) then
     bubble(HERO1,"The art of battle-magic.","","","");
@@ -108,7 +108,7 @@ function zone_handler(zn)
     touch_fire(get_pidx(0));
 
   elseif (zn == 31) then
-    bubble(HERO1,"Locked.","","","");
+    bubble(HERO1,"Inns always have boring books.","","","");
 
   end
 end

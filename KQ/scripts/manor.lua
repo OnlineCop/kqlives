@@ -138,6 +138,9 @@ function zone_handler(zn)
       LOC_talk_butler();
     end
 
+  elseif (zn == 7) then
+    touch_fire(get_pidx(0));
+
   end
 end
 

@@ -69,6 +69,9 @@ function zone_handler(zn)
   elseif (zn == 12) then
     set_save(1);
 
+  elseif (zn == 13) then
+    touch_fire(get_pidx(0));
+
   end
 end
 

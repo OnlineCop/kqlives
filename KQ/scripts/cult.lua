@@ -342,6 +342,9 @@ function zone_handler(zn)
   elseif (zn == 32) then
     bubble(HERO1,"Hey! The door is sealed!","","","");
 
+  elseif (zn == 33) then
+    touch_fire(get_pidx(0));
+
   end
 end
 

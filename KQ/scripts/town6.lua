@@ -182,6 +182,12 @@ function zone_handler(zn)
     end
     change_map("town2",35,15,35,15);
 
+  elseif (zn == 32) then
+    touch_fire(get_pidx(0));
+
+  elseif (zn == 33) then  -- door in item shop
+    bubble(HERO1,"Locked.","","","");
+
   end
 end
 

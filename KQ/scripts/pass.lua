@@ -103,16 +103,24 @@ function zone_handler(zn)
       end
     end
     change_map("cave5",84,147,0,0);
-  elseif (zn==8) then -- door into cabin
+
+  elseif (zn == 8) then -- door into cabin
     door_in(150,14,148,8,154,15);
-  elseif (zn==9) then -- door out of cabin
+
+  elseif (zn == 9) then -- door out of cabin
     door_out(83,50);
-  elseif (zn==10) then --treasure
+
+  elseif (zn == 10) then --treasure
    chest(82,0,500);
    refresh();
-  elseif (zn==11) then --treasure
+
+  elseif (zn == 11) then --treasure
    chest(83,I_SALVE,1);
    refresh();
+
+  elseif (zn == 12) then
+    touch_fire(get_pidx(0));
+
   end
 end
 

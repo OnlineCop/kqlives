@@ -89,6 +89,9 @@ function zone_handler(zn)
   elseif (zn == 23) then
     book_talk(get_pidx(0));
 
+  elseif (zn == 24) then
+    touch_fire(get_pidx(0));
+
   end
 end
 

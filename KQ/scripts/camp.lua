@@ -174,6 +174,9 @@ function zone_handler(zn)
     chest(61,I_ARMOR2,1);
     refresh();
 
+  elseif (zn == 15) then
+    touch_fire(get_pidx(0));
+
   end
 end
 

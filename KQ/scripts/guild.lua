@@ -145,6 +145,9 @@ function zone_handler(zn)
   elseif (zn == 13) then
     warp(10,27,8);
 
+  elseif (zn == 14) then
+    touch_fire(get_pidx(0));
+
   end
 end
 

@@ -168,12 +168,13 @@ function zone_handler(zn)
     inn("Seaside Inn",60,1);
 
   elseif (zn == 30) then
--- TT edit:
---    bubble(HERO1,"Locked.","","","");
-    bubble(HERO1,"Locked.");
+    bubble(HERO1,"Locked.","","","");
 
   elseif (zn == 31) then
     book_talk(get_pidx(0));
+
+  elseif (zn == 32) then
+    touch_fire(get_pidx(0));
 
   elseif (zn == 33) then
     chest(51,I_FRUNE,1);
@@ -220,6 +221,12 @@ function zone_handler(zn)
   elseif (zn == 44) then
     view_range(1,93,44,102,60);
     warp(95,48,8);
+
+  elseif (zn == 45) then  -- item shop door
+    bubble(HERO1,"Locked.","","","");
+
+  elseif (zn == 46) then  -- armor shop door
+    bubble(HERO1,"Locked.","","","");
 
   end
 end

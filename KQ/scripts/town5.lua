@@ -89,6 +89,9 @@ function zone_handler(zn)
       change_map("guild",0,0,0,0);
     end
 
+  elseif (zn == 19) then
+    touch_fire(get_pidx(0));
+
   end
 end
 

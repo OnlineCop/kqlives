@@ -56,6 +56,9 @@ function zone_handler(zn)
   elseif (zn == 4) then
     door_out(17,31);
 
+  elseif (zn == 5) then
+    touch_fire(get_pidx(0));
+
   end
 end
 

@@ -153,6 +153,7 @@ end
 function zone_handler(zn)
   if (zn == 0) then
     combat(54);
+
   elseif (zn == 1) then
     if (get_progress(P_ORACLE) > 0) then
       set_progress(P_TOWEROPEN,0);
@@ -406,6 +407,9 @@ function zone_handler(zn)
     chest(44,I_GAUNTLET2,1);
     refresh();
 
+  elseif (zn == 39) then
+    touch_fire(get_pidx(0));
+
   elseif (zn == 40) then
     if (get_progress(P_WALL1) == 1 and get_progress(P_WALL2) == 2 and get_progress(P_WALL3) == 2 and get_progress(P_WALL4) == 1) then
       set_progress(P_TREASUREROOM,1);
@@ -415,6 +419,8 @@ function zone_handler(zn)
       set_zone(78,9,0);
       sfx(26);
     end
+
+-- zn 41 == no enemies attack (Oracle's room, treasure room)
 
   elseif (zn == 42) then
     if (get_progress(P_DRAGONDOWN) == 0) then
