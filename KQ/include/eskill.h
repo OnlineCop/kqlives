@@ -19,12 +19,18 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+/*! \file
+ * \brief Enemy Skills header file
+ *
+ * This file contains only one function
+ */
+
 #ifndef __ESKILL_H
 #define __ESKILL_H
 
 
 
-void combat_skill (int);	/*  enemyc.c  */
+void combat_skill (int);        /*  enemyc.c  */
 
 
 

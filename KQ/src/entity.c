@@ -66,7 +66,7 @@ void process_entities (void)
 
    for (i = 0; i < MAX_ENT; i++)
       if (g_ent[i].active == 1)
-	 speed_adjust (i);
+         speed_adjust (i);
 }
 
 /*
@@ -76,50 +76,50 @@ static void speed_adjust (int i)
 {
    if (g_ent[i].speed < 4)
      {
-	switch (g_ent[i].speed)
-	  {
-	  case 1:
-	     if (g_ent[i].scount < 3)
-	       {
-		  g_ent[i].scount++;
-		  return;
-	       }
-	     break;
-	  case 2:
-	     if (g_ent[i].scount < 2)
-	       {
-		  g_ent[i].scount++;
-		  return;
-	       }
-	     break;
-	  case 3:
-	     if (g_ent[i].scount < 1)
-	       {
-		  g_ent[i].scount++;
-		  return;
-	       }
-	     break;
-	  }
+        switch (g_ent[i].speed)
+          {
+          case 1:
+             if (g_ent[i].scount < 3)
+               {
+                  g_ent[i].scount++;
+                  return;
+               }
+             break;
+          case 2:
+             if (g_ent[i].scount < 2)
+               {
+                  g_ent[i].scount++;
+                  return;
+               }
+             break;
+          case 3:
+             if (g_ent[i].scount < 1)
+               {
+                  g_ent[i].scount++;
+                  return;
+               }
+             break;
+          }
      }
    if (g_ent[i].speed < 5)
       process_entity (i);
    switch (g_ent[i].speed)
      {
      case 5:
-	process_entity (i);
-	process_entity (i);
-	break;
+        process_entity (i);
+        process_entity (i);
+        break;
      case 6:
-	process_entity (i);
-	process_entity (i);
-	process_entity (i);
-	break;
+        process_entity (i);
+        process_entity (i);
+        process_entity (i);
+        break;
      case 7:
-	process_entity (i);
-	process_entity (i);
-	process_entity (i);
-	process_entity (i);
-	break;
+        process_entity (i);
+        process_entity (i);
+        process_entity (i);
+        process_entity (i);
+        break;
      }
    if (key[kctrl] && i < PSIZE)
       process_entity (i);
@@ -135,134 +135,128 @@ static void process_entity (int i)
    g_ent[i].scount = 0;
    if (g_ent[i].active)
      {
-	if (g_ent[i].moving == 0)
-	  {
-	     if (i == 0 && !autoparty)
-	       {
-		  player_move ();
-		  if (g_ent[i].moving > 0 && display_desc == 1)
-		     display_desc = 0;
-		  return;
-	       }
-	     if (g_ent[i].movemode == 0)
-		return;
-	     if (g_ent[i].movemode == 1)
-		wander (i);
-	     if (g_ent[i].movemode == 2)
-		entscript (i);
-	     if (g_ent[i].movemode == 3)
-	       {
-		  if (g_ent[i].chasing == 0)
-		    {
-		       if (entity_near (i, 0, 3) == 1
-			   && rand () % 100 <= g_ent[i].extra)
-			 {
-			    g_ent[i].chasing = 1;
-			    if (g_ent[i].speed < 7)
-			       g_ent[i].speed++;
-			    g_ent[i].delay = 0;
-			    if (g_ent[0].tilex > g_ent[i].tilex)
-			       moveright (i);
-			    if (g_ent[0].tilex < g_ent[i].tilex
-				&& emoved == 0)
-			       moveleft (i);
-			    if (g_ent[0].tiley > g_ent[i].tiley
-				&& emoved == 0)
-			       movedown (i);
-			    if (g_ent[0].tiley < g_ent[i].tiley
-				&& emoved == 0)
-			       moveup (i);
-			    if (emoved == 0)
-			       wander (i);
-			 }
-		       else
-			  wander (i);
-		    }
-		  else
-		    {
-		       if (entity_near (i, 0, 4) == 1)
-			 {
-			    if (g_ent[0].tilex > g_ent[i].tilex)
-			       moveright (i);
-			    if (g_ent[0].tilex < g_ent[i].tilex
-				&& emoved == 0)
-			       moveleft (i);
-			    if (g_ent[0].tiley > g_ent[i].tiley
-				&& emoved == 0)
-			       movedown (i);
-			    if (g_ent[0].tiley < g_ent[i].tiley
-				&& emoved == 0)
-			       moveup (i);
-			    if (emoved == 0)
-			       wander (i);
-			 }
-		       else
-			 {
-			    g_ent[i].chasing = 0;
-			    if (g_ent[i].speed > 1)
-			       g_ent[i].speed--;
-			    g_ent[i].delay = 25 + rand () % 25;
-			    wander (i);
-			 }
-		    }
-	       }
-	  }
-	else
-	  {
-	     if (g_ent[i].moving == MOVE_DOWN)
-	       {
-		  g_ent[i].y++;
-		  g_ent[i].movcnt--;
-		  g_ent[i].framectr++;
-	       }
-	     if (g_ent[i].moving == MOVE_UP)
-	       {
-		  g_ent[i].y--;
-		  g_ent[i].movcnt--;
-		  g_ent[i].framectr++;
-	       }
-	     if (g_ent[i].moving == MOVE_LEFT)
-	       {
-		  g_ent[i].x--;
-		  g_ent[i].movcnt--;
-		  g_ent[i].framectr++;
-	       }
-	     if (g_ent[i].moving == MOVE_RIGHT)
-	       {
-		  g_ent[i].x++;
-		  g_ent[i].movcnt--;
-		  g_ent[i].framectr++;
-	       }
-	     if (g_ent[i].framectr > 20)
-		g_ent[i].framectr = 0;
-	     if (g_ent[i].movcnt == 0 && g_ent[i].moving > 0)
-	       {
-		  g_ent[i].moving = 0;
-		  if (i < PSIZE)
-		    {
-		       steps++;
-		       if (steps >= STEPS_NEEDED)
-			  steps = STEPS_NEEDED;
-		       if (party[pidx[i]].sts[S_POISON] > 0)
-			 {
-			    party[pidx[i]].hp--;
-			    if (party[pidx[i]].hp < 1)
-			       party[pidx[i]].hp = 1;
-			    play_effect (21, 128);
-			 }
-		       if (party[pidx[i]].eqp[5] == I_REGENERATOR)
-			 {
-			    party[pidx[i]].hp++;
-			    if (party[pidx[i]].hp > party[pidx[i]].mhp)
-			       party[pidx[i]].hp = party[pidx[i]].mhp;
-			 }
-		    }
-		  if (i == 0)
-		     zone_check ();
-	       }
-	     if (i == 0 && vfollow == 1)
-		calc_viewport (0);
-	  }
+        if (g_ent[i].moving == 0)
+          {
+             if (i == 0 && !autoparty)
+               {
+                  player_move ();
+                  if (g_ent[i].moving > 0 && display_desc == 1)
+                     display_desc = 0;
+                  return;
+               }
+             if (g_ent[i].movemode == 0)
+                return;
+             if (g_ent[i].movemode == 1)
+                wander (i);
+             if (g_ent[i].movemode == 2)
+                entscript (i);
+             if (g_ent[i].movemode == 3)
+               {
+                  if (g_ent[i].chasing == 0)
+                    {
+                       if (entity_near (i, 0, 3) == 1
+                           && rand () % 100 <= g_ent[i].extra)
+                         {
+                            g_ent[i].chasing = 1;
+                            if (g_ent[i].speed < 7)
+                               g_ent[i].speed++;
+                            g_ent[i].delay = 0;
+                            if (g_ent[0].tilex > g_ent[i].tilex)
+                               moveright (i);
+                            if (g_ent[0].tilex < g_ent[i].tilex && emoved == 0)
+                               moveleft (i);
+                            if (g_ent[0].tiley > g_ent[i].tiley && emoved == 0)
+                               movedown (i);
+                            if (g_ent[0].tiley < g_ent[i].tiley && emoved == 0)
+                               moveup (i);
+                            if (emoved == 0)
+                               wander (i);
+                         }
+                       else
+                          wander (i);
+                    }
+                  else
+                    {
+                       if (entity_near (i, 0, 4) == 1)
+                         {
+                            if (g_ent[0].tilex > g_ent[i].tilex)
+                               moveright (i);
+                            if (g_ent[0].tilex < g_ent[i].tilex && emoved == 0)
+                               moveleft (i);
+                            if (g_ent[0].tiley > g_ent[i].tiley && emoved == 0)
+                               movedown (i);
+                            if (g_ent[0].tiley < g_ent[i].tiley && emoved == 0)
+                               moveup (i);
+                            if (emoved == 0)
+                               wander (i);
+                         }
+                       else
+                         {
+                            g_ent[i].chasing = 0;
+                            if (g_ent[i].speed > 1)
+                               g_ent[i].speed--;
+                            g_ent[i].delay = 25 + rand () % 25;
+                            wander (i);
+                         }
+                    }
+               }
+          }
+        else
+          {
+             if (g_ent[i].moving == MOVE_DOWN)
+               {
+                  g_ent[i].y++;
+                  g_ent[i].movcnt--;
+                  g_ent[i].framectr++;
+               }
+             if (g_ent[i].moving == MOVE_UP)
+               {
+                  g_ent[i].y--;
+                  g_ent[i].movcnt--;
+                  g_ent[i].framectr++;
+               }
+             if (g_ent[i].moving == MOVE_LEFT)
+               {
+                  g_ent[i].x--;
+                  g_ent[i].movcnt--;
+                  g_ent[i].framectr++;
+               }
+             if (g_ent[i].moving == MOVE_RIGHT)
+               {
+                  g_ent[i].x++;
+                  g_ent[i].movcnt--;
+                  g_ent[i].framectr++;
+               }
+             if (g_ent[i].framectr > 20)
+                g_ent[i].framectr = 0;
+             if (g_ent[i].movcnt == 0 && g_ent[i].moving > 0)
+               {
+                  g_ent[i].moving = 0;
+                  if (i < PSIZE)
+                    {
+                       steps++;
+                       if (steps >= STEPS_NEEDED)
+                          steps = STEPS_NEEDED;
+                       if (party[pidx[i]].sts[S_POISON] > 0)
+                         {
+                            party[pidx[i]].hp--;
+                            if (party[pidx[i]].hp < 1)
+                               party[pidx[i]].hp = 1;
+                            play_effect (21, 128);
+                         }
+                       if (party[pidx[i]].eqp[5] == I_REGENERATOR)
+                         {
+                            party[pidx[i]].hp++;
+                            if (party[pidx[i]].hp > party[pidx[i]].mhp)
+                               party[pidx[i]].hp = party[pidx[i]].mhp;
+                         }
+                    }
+                  if (i == 0)
+                     zone_check ();
+               }
+             if (i == 0 && vfollow == 1)
+                calc_viewport (0);
+          }
      }
 }
 
@@ -278,10 +272,10 @@ static int entity_near (int eno, int tgt, int rad)
    ey = g_ent[eno].tiley;
    for (ay = b; ay <= rad; ay++)
       for (ax = b; ax <= rad; ax++)
-	 if (ex + ax >= view_x1 && ax + ax <= view_x2 && ey + ay >= view_y1
-	     && ey + ay <= view_y2)
-	    if (ex + ax == g_ent[tgt].tilex && ey + ay == g_ent[tgt].tiley)
-	       return 1;
+         if (ex + ax >= view_x1 && ax + ax <= view_x2 && ey + ay >= view_y1
+             && ey + ay <= view_y2)
+            if (ex + ax == g_ent[tgt].tilex && ey + ay == g_ent[tgt].tiley)
+               return 1;
    return 0;
 }
 
@@ -310,38 +304,38 @@ static void follow (void)
       return;
    for (i = 1; i < numchrs; i++)
      {
-	if (lastm[i] == 0)
-	   return;
-	g_ent[i].facing = lastm[i] - 1;
-	g_ent[i].moving = lastm[i];
-	g_ent[i].movcnt = 15;
-	switch (lastm[i])
-	  {
-	  case MOVE_RIGHT:
-	     {
-		g_ent[i].x++;
-		g_ent[i].tilex++;
-		break;
-	     }
-	  case MOVE_DOWN:
-	     {
-		g_ent[i].y++;
-		g_ent[i].tiley++;
-		break;
-	     }
-	  case MOVE_LEFT:
-	     {
-		g_ent[i].x--;
-		g_ent[i].tilex--;
-		break;
-	     }
-	  case MOVE_UP:
-	     {
-		g_ent[i].y--;
-		g_ent[i].tiley--;
-		break;
-	     }
-	  }
+        if (lastm[i] == 0)
+           return;
+        g_ent[i].facing = lastm[i] - 1;
+        g_ent[i].moving = lastm[i];
+        g_ent[i].movcnt = 15;
+        switch (lastm[i])
+          {
+          case MOVE_RIGHT:
+             {
+                g_ent[i].x++;
+                g_ent[i].tilex++;
+                break;
+             }
+          case MOVE_DOWN:
+             {
+                g_ent[i].y++;
+                g_ent[i].tiley++;
+                break;
+             }
+          case MOVE_LEFT:
+             {
+                g_ent[i].x--;
+                g_ent[i].tilex--;
+                break;
+             }
+          case MOVE_UP:
+             {
+                g_ent[i].y--;
+                g_ent[i].tiley--;
+                break;
+             }
+          }
      }
 }
 
@@ -353,24 +347,24 @@ static void wander (int i)
 {
    if (g_ent[i].delayctr < g_ent[i].delay)
      {
-	g_ent[i].delayctr++;
-	return;
+        g_ent[i].delayctr++;
+        return;
      }
    g_ent[i].delayctr = 0;
    switch (rand () % 8)
      {
      case 0:
-	moveup (i);
-	break;
+        moveup (i);
+        break;
      case 1:
-	movedown (i);
-	break;
+        movedown (i);
+        break;
      case 2:
-	moveleft (i);
-	break;
+        moveleft (i);
+        break;
      case 3:
-	moveright (i);
-	break;
+        moveright (i);
+        break;
      }
 }
 
@@ -390,48 +384,48 @@ static void player_move (void)
       menu ();
    if (key[KEY_F10])
      {
-	unpress ();
-	do_luacheat ();
+        unpress ();
+        do_luacheat ();
      }
    if (right)
      {
-	moveright (0);
-	if (g_ent[0].moving > 0)
-	  {
-	     lastm_check (MOVE_RIGHT);
-	     follow ();
-	  }
-	return;
+        moveright (0);
+        if (g_ent[0].moving > 0)
+          {
+             lastm_check (MOVE_RIGHT);
+             follow ();
+          }
+        return;
      }
    if (down)
      {
-	movedown (0);
-	if (g_ent[0].moving > 0)
-	  {
-	     lastm_check (MOVE_DOWN);
-	     follow ();
-	  }
-	return;
+        movedown (0);
+        if (g_ent[0].moving > 0)
+          {
+             lastm_check (MOVE_DOWN);
+             follow ();
+          }
+        return;
      }
    if (left)
      {
-	moveleft (0);
-	if (g_ent[0].moving > 0)
-	  {
-	     lastm_check (MOVE_LEFT);
-	     follow ();
-	  }
-	return;
+        moveleft (0);
+        if (g_ent[0].moving > 0)
+          {
+             lastm_check (MOVE_LEFT);
+             follow ();
+          }
+        return;
      }
    if (up)
      {
-	moveup (0);
-	if (g_ent[0].moving > 0)
-	  {
-	     lastm_check (MOVE_UP);
-	     follow ();
-	  }
-	return;
+        moveup (0);
+        if (g_ent[0].moving > 0)
+          {
+             lastm_check (MOVE_UP);
+             follow ();
+          }
+        return;
      }
 }
 
@@ -546,29 +540,29 @@ static int obstruction (int ox, int oy, int mx, int my)
       return 1;
    if (mx == 0)
      {
-	if (my == -1)
-	  {
-	     if (son == 2 || sto == 4)
-		return 1;
-	  }
-	if (my == 1)
-	  {
-	     if (son == 4 || sto == 2)
-		return 1;
-	  }
+        if (my == -1)
+          {
+             if (son == 2 || sto == 4)
+                return 1;
+          }
+        if (my == 1)
+          {
+             if (son == 4 || sto == 2)
+                return 1;
+          }
      }
    if (my == 0)
      {
-	if (mx == -1)
-	  {
-	     if (son == 5 || sto == 3)
-		return 1;
-	  }
-	if (mx == 1)
-	  {
-	     if (son == 3 || sto == 5)
-		return 1;
-	  }
+        if (mx == -1)
+          {
+             if (son == 5 || sto == 3)
+                return 1;
+          }
+        if (mx == 1)
+          {
+             if (son == 3 || sto == 5)
+                return 1;
+          }
      }
    return 0;
 }
@@ -582,33 +576,33 @@ int entityat (int ox, int oy, int who)
 
    for (i = 0; i < MAX_ENT; i++)
      {
-	if (g_ent[i].active)
-	  {
-	     if (ox == g_ent[i].tilex && oy == g_ent[i].tiley)
-	       {
-		  if (who >= PSIZE)
-		    {
-		       if (g_ent[who].eid == ID_ENEMY && i < PSIZE)
-			 {
-			    if (combat_check (ox, oy) == 1)
-			       g_ent[who].active = 0;
-			    return 0;
-			 }
-		       return i + 1;
-		    }
-		  else
-		    {
-		       if (g_ent[i].eid == ID_ENEMY)
-			 {
-			    if (combat_check (ox, oy) == 1)
-			       g_ent[i].active = 0;
-			    return 0;
-			 }
-		       if (i >= PSIZE)
-			  return i + 1;
-		    }
-	       }
-	  }
+        if (g_ent[i].active)
+          {
+             if (ox == g_ent[i].tilex && oy == g_ent[i].tiley)
+               {
+                  if (who >= PSIZE)
+                    {
+                       if (g_ent[who].eid == ID_ENEMY && i < PSIZE)
+                         {
+                            if (combat_check (ox, oy) == 1)
+                               g_ent[who].active = 0;
+                            return 0;
+                         }
+                       return i + 1;
+                    }
+                  else
+                    {
+                       if (g_ent[i].eid == ID_ENEMY)
+                         {
+                            if (combat_check (ox, oy) == 1)
+                               g_ent[i].active = 0;
+                            return 0;
+                         }
+                       if (i >= PSIZE)
+                          return i + 1;
+                    }
+               }
+          }
      }
    return 0;
 }
@@ -626,10 +620,10 @@ static void parsems (int n)
    s = g_ent[n].script[g_ent[n].sidx];
    while (s >= 48 && s <= 57)
      {
-	tok[p] = s;
-	g_ent[n].sidx++;
-	s = g_ent[n].script[g_ent[n].sidx];
-	p++;
+        tok[p] = s;
+        g_ent[n].sidx++;
+        s = g_ent[n].script[g_ent[n].sidx];
+        p++;
      }
    tok[p] = 0;
    g_ent[n].cmdnum = atoi (tok);
@@ -647,48 +641,48 @@ static void getcommand (int n)
    switch (s)
      {
      case 'U':
-	g_ent[n].cmd = 1;
-	parsems (n);
-	break;
+        g_ent[n].cmd = 1;
+        parsems (n);
+        break;
      case 'D':
-	g_ent[n].cmd = 2;
-	parsems (n);
-	break;
+        g_ent[n].cmd = 2;
+        parsems (n);
+        break;
      case 'L':
-	g_ent[n].cmd = 3;
-	parsems (n);
-	break;
+        g_ent[n].cmd = 3;
+        parsems (n);
+        break;
      case 'R':
-	g_ent[n].cmd = 4;
-	parsems (n);
-	break;
+        g_ent[n].cmd = 4;
+        parsems (n);
+        break;
      case 'W':
-	g_ent[n].cmd = 5;
-	parsems (n);
-	break;
+        g_ent[n].cmd = 5;
+        parsems (n);
+        break;
      case 0:
-	g_ent[n].cmd = 6;
-	g_ent[n].movemode = 0;
-	g_ent[n].cmdnum = 0;
-	g_ent[n].sidx = 0;
-	break;
+        g_ent[n].cmd = 6;
+        g_ent[n].movemode = 0;
+        g_ent[n].cmdnum = 0;
+        g_ent[n].sidx = 0;
+        break;
      case 'B':
-	g_ent[n].cmd = 7;
-	break;
+        g_ent[n].cmd = 7;
+        break;
      case 'X':
-	g_ent[n].cmd = 8;
-	parsems (n);
-	break;
+        g_ent[n].cmd = 8;
+        parsems (n);
+        break;
      case 'Y':
-	g_ent[n].cmd = 9;
-	parsems (n);
-	break;
+        g_ent[n].cmd = 9;
+        parsems (n);
+        break;
      case 'F':
-	g_ent[n].cmd = 10;
-	parsems (n);
-	break;
+        g_ent[n].cmd = 10;
+        parsems (n);
+        break;
      default:
-	program_death ("Invalid entity command!");
+        program_death ("Invalid entity command!");
      }
 }
 
@@ -702,54 +696,54 @@ static void entscript (int n)
    switch (g_ent[n].cmd)
      {
      case 1:
-	moveup (n);
-	if (emoved)
-	   g_ent[n].cmdnum--;
-	break;
+        moveup (n);
+        if (emoved)
+           g_ent[n].cmdnum--;
+        break;
      case 2:
-	movedown (n);
-	if (emoved)
-	   g_ent[n].cmdnum--;
-	break;
+        movedown (n);
+        if (emoved)
+           g_ent[n].cmdnum--;
+        break;
      case 3:
-	moveleft (n);
-	if (emoved)
-	   g_ent[n].cmdnum--;
-	break;
+        moveleft (n);
+        if (emoved)
+           g_ent[n].cmdnum--;
+        break;
      case 4:
-	moveright (n);
-	if (emoved)
-	   g_ent[n].cmdnum--;
-	break;
+        moveright (n);
+        if (emoved)
+           g_ent[n].cmdnum--;
+        break;
      case 5:
-	g_ent[n].cmdnum--;
-	break;
+        g_ent[n].cmdnum--;
+        break;
      case 6:
-	return;
+        return;
      case 7:
-	g_ent[n].sidx = 0;
-	g_ent[n].cmdnum = 0;
-	break;
+        g_ent[n].sidx = 0;
+        g_ent[n].cmdnum = 0;
+        break;
      case 8:
-	if (g_ent[n].tilex < g_ent[n].cmdnum)
-	   moveright (n);
-	if (g_ent[n].tilex > g_ent[n].cmdnum)
-	   moveleft (n);
-	if (g_ent[n].tilex == g_ent[n].cmdnum)
-	   g_ent[n].cmdnum = 0;
-	break;
+        if (g_ent[n].tilex < g_ent[n].cmdnum)
+           moveright (n);
+        if (g_ent[n].tilex > g_ent[n].cmdnum)
+           moveleft (n);
+        if (g_ent[n].tilex == g_ent[n].cmdnum)
+           g_ent[n].cmdnum = 0;
+        break;
      case 9:
-	if (g_ent[n].tiley < g_ent[n].cmdnum)
-	   movedown (n);
-	if (g_ent[n].tiley > g_ent[n].cmdnum)
-	   moveup (n);
-	if (g_ent[n].tiley == g_ent[n].cmdnum)
-	   g_ent[n].cmdnum = 0;
-	break;
+        if (g_ent[n].tiley < g_ent[n].cmdnum)
+           movedown (n);
+        if (g_ent[n].tiley > g_ent[n].cmdnum)
+           moveup (n);
+        if (g_ent[n].tiley == g_ent[n].cmdnum)
+           g_ent[n].cmdnum = 0;
+        break;
      case 10:
-	g_ent[n].facing = g_ent[n].cmdnum;
-	g_ent[n].cmdnum = 0;
-	break;
+        g_ent[n].facing = g_ent[n].cmdnum;
+        g_ent[n].cmdnum = 0;
+        break;
      }
    if (g_ent[n].cmdnum == 0)
       g_ent[n].cmd = 0;
@@ -792,5 +786,5 @@ void count_entities (void)
    noe = 0;
    for (p = 0; p < MAX_ENT; p++)
       if (g_ent[p].active == 1)
-	 noe = p + 1;
+         noe = p + 1;
 }

@@ -61,30 +61,30 @@ s_entity;
 
 
 
-void process_entities (void);	/*  kq.c  */
-int entityat (int, int, int);	/*  kq.c  */
-void set_script (int, char *);	/*  intrface.c  */
-void place_ent (int, int, int);	/*  intrface.c, kq.c  */
-void count_entities (void);	/*  kq.c  */
+void process_entities (void);   /*  kq.c  */
+int entityat (int, int, int);   /*  kq.c  */
+void set_script (int, char *);  /*  intrface.c  */
+void place_ent (int, int, int); /*  intrface.c, kq.c  */
+void count_entities (void);     /*  kq.c  */
 
 
 
 #if 0
-int entity_near (int, int, int);	/*  staticed  */
-void speed_adjust (int);	/*  staticed  */
-void process_entity (int);	/*  staticed  */
-void lastm_check (int);		/*  staticed  */
-void follow (void);		/*  staticed  */
-void wander (int);		/*  staticed  */
-void player_move (void);	/*  staticed  */
-void moveup (int);		/*  staticed  */
-void movedown (int);		/*  staticed  */
-void moveright (int);		/*  staticed  */
-void moveleft (int);		/*  staticed  */
-int obstruction (int, int, int, int);	/*  staticed  */
-void parsems (int);		/*  staticed  */
-void getcommand (int);		/*  staticed  */
-void entscript (int);		/*  staticed  */
+int entity_near (int, int, int);        /*  staticed  */
+void speed_adjust (int);        /*  staticed  */
+void process_entity (int);      /*  staticed  */
+void lastm_check (int);         /*  staticed  */
+void follow (void);             /*  staticed  */
+void wander (int);              /*  staticed  */
+void player_move (void);        /*  staticed  */
+void moveup (int);              /*  staticed  */
+void movedown (int);            /*  staticed  */
+void moveright (int);           /*  staticed  */
+void moveleft (int);            /*  staticed  */
+int obstruction (int, int, int, int);   /*  staticed  */
+void parsems (int);             /*  staticed  */
+void getcommand (int);          /*  staticed  */
+void entscript (int);           /*  staticed  */
 #endif /*  0  */
 
 

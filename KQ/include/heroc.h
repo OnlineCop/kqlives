@@ -19,33 +19,40 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+/*! \file
+ * \brief Hero combat header file
+ *
+ * Some functions declared here are not used outside heroc.c 
+ *  and therefore have been #ifdef'd out.
+ */
+
 #ifndef __HEROC_H
 #define __HEROC_H
 
 
 
-void hero_init (void);		/*  combat.c  */
-void hero_choose_action (int);	/*  combat.c  */
-void auto_herochooseact (int);	/*  combat.c  */
-int available_spells (int);	/*  hskill.c  */
-int combat_spell_menu (int);	/*  hskill.c  */
+void hero_init (void);          /*  combat.c  */
+void hero_choose_action (int);  /*  combat.c  */
+void auto_herochooseact (int);  /*  combat.c  */
+int available_spells (int);     /*  hskill.c  */
+int combat_spell_menu (int);    /*  hskill.c  */
 
 
 
 #if 0
-int hero_attack (int);		/*  staticed  */
-void combat_draw_items (int);	/*  staticed  */
-int combat_item_menu (int);	/*  staticed  */
-int combat_item_usable (int);	/*  staticed  */
-int combat_item (int, int, int);	/*  staticed  */
-void draw_invokable (int);	/*  staticed  */
-int can_invoke_item (int);	/*  staticed  */
-int hero_invoke (int);		/*  staticed  */
-int hero_invokeitem (int, int);	/*  staticed  */
-void hero_run (int);		/*  staticed  */
-void combat_draw_spell_menu (int, int, int);	/*  staticed  */
-int combat_spell_targeting (int);	/*  staticed  */
-int combat_castable (int, int);	/*  staticed  */
+int hero_attack (int);          /*  staticed  */
+void combat_draw_items (int);   /*  staticed  */
+int combat_item_menu (int);     /*  staticed  */
+int combat_item_usable (int);   /*  staticed  */
+int combat_item (int, int, int);        /*  staticed  */
+void draw_invokable (int);      /*  staticed  */
+int can_invoke_item (int);      /*  staticed  */
+int hero_invoke (int);          /*  staticed  */
+int hero_invokeitem (int, int); /*  staticed  */
+void hero_run (int);            /*  staticed  */
+void combat_draw_spell_menu (int, int, int);    /*  staticed  */
+int combat_spell_targeting (int);       /*  staticed  */
+int combat_castable (int, int); /*  staticed  */
 #endif /*  0  */
 
 

@@ -917,9 +917,9 @@ static int KQ_set_all_equip (lua_State * L)
       return 0;
    for (b = 0; b < 6; b++)
      {
-	c = lua_tonumber (L, b + 2);
-	if (c >= 0)
-	   party[a].eqp[b] = c;
+        c = lua_tonumber (L, b + 2);
+        if (c >= 0)
+           party[a].eqp[b] = c;
      }
    return 0;
 }
@@ -927,42 +927,42 @@ static int KQ_set_all_equip (lua_State * L)
 static int KQ_set_btile (lua_State * L)
 {
    set_btile ((int) lua_tonumber (L, 1), (int) lua_tonumber (L, 2),
-	      (int) lua_tonumber (L, 3));
+              (int) lua_tonumber (L, 3));
    return 0;
 }
 
 static int KQ_set_mtile (lua_State * L)
 {
    set_mtile ((int) lua_tonumber (L, 1), (int) lua_tonumber (L, 2),
-	      (int) lua_tonumber (L, 3));
+              (int) lua_tonumber (L, 3));
    return 0;
 }
 
 static int KQ_set_ftile (lua_State * L)
 {
    set_ftile ((int) lua_tonumber (L, 1), (int) lua_tonumber (L, 2),
-	      (int) lua_tonumber (L, 3));
+              (int) lua_tonumber (L, 3));
    return 0;
 }
 
 static int KQ_set_obs (lua_State * L)
 {
    set_obs ((int) lua_tonumber (L, 1), (int) lua_tonumber (L, 2),
-	    (int) lua_tonumber (L, 3));
+            (int) lua_tonumber (L, 3));
    return 0;
 }
 
 static int KQ_set_zone (lua_State * L)
 {
    set_zone ((int) lua_tonumber (L, 1), (int) lua_tonumber (L, 2),
-	     (int) lua_tonumber (L, 3));
+             (int) lua_tonumber (L, 3));
    return 0;
 }
 
 static int KQ_set_shadow (lua_State * L)
 {
    set_shadow ((int) lua_tonumber (L, 1), (int) lua_tonumber (L, 2),
-	       (int) lua_tonumber (L, 3));
+               (int) lua_tonumber (L, 3));
    return 0;
 }
 
@@ -1097,7 +1097,7 @@ static int KQ_create_bmp (lua_State * L)
 
    if (a >= 0 && a <= 4)
       g_bmp[a] =
-	 create_bitmap ((int) lua_tonumber (L, 2), (int) lua_tonumber (L, 3));
+         create_bitmap ((int) lua_tonumber (L, 2), (int) lua_tonumber (L, 3));
    return 0;
 }
 
@@ -1116,8 +1116,8 @@ static int KQ_df2bmp (lua_State * L)
 
    if (a >= 0 && a <= 4)
       blit ((BITMAP *) g_df->dat, g_bmp[a], lua_tonumber (L, 2),
-	    lua_tonumber (L, 3), lua_tonumber (L, 4), lua_tonumber (L, 5),
-	    lua_tonumber (L, 6), lua_tonumber (L, 7));
+            lua_tonumber (L, 3), lua_tonumber (L, 4), lua_tonumber (L, 5),
+            lua_tonumber (L, 6), lua_tonumber (L, 7));
    return 0;
 }
 
@@ -1127,8 +1127,8 @@ static int KQ_blit (lua_State * L)
 
    if (a >= 0 && a <= 4)
       blit (g_bmp[a], double_buffer, lua_tonumber (L, 2), lua_tonumber (L, 3),
-	    lua_tonumber (L, 4) + xofs, lua_tonumber (L, 5) + yofs,
-	    lua_tonumber (L, 6), lua_tonumber (L, 7));
+            lua_tonumber (L, 4) + xofs, lua_tonumber (L, 5) + yofs,
+            lua_tonumber (L, 6), lua_tonumber (L, 7));
    return 0;
 }
 
@@ -1138,9 +1138,9 @@ static int KQ_maskblit (lua_State * L)
 
    if (a >= 0 && a <= 4)
       masked_blit (g_bmp[a], double_buffer, lua_tonumber (L, 2),
-		   lua_tonumber (L, 3), lua_tonumber (L, 4) + xofs,
-		   lua_tonumber (L, 5) + yofs, lua_tonumber (L, 6),
-		   lua_tonumber (L, 7));
+                   lua_tonumber (L, 3), lua_tonumber (L, 4) + xofs,
+                   lua_tonumber (L, 5) + yofs, lua_tonumber (L, 6),
+                   lua_tonumber (L, 7));
    return 0;
 }
 
@@ -1150,7 +1150,7 @@ static int KQ_drawsprite (lua_State * L)
 
    if (a >= 0 && a <= 4)
       draw_sprite (double_buffer, g_bmp[a], lua_tonumber (L, 2) + xofs,
-		   lua_tonumber (L, 3) + yofs);
+                   lua_tonumber (L, 3) + yofs);
    return 0;
 }
 
@@ -1180,8 +1180,8 @@ static int KQ_prompt (lua_State * L)
    for (a = 0; a < 4; a++)
       txt[a] = (char *) lua_tostring (L, a + 4);
    lua_pushnumber (L,
-		   prompt (b, lua_tonumber (L, 2), lua_tonumber (L, 3),
-			   txt[0], txt[1], txt[2], txt[3]));
+                   prompt (b, lua_tonumber (L, 2), lua_tonumber (L, 3),
+                           txt[0], txt[1], txt[2], txt[3]));
    return 1;
 }
 
@@ -1231,32 +1231,32 @@ static int KQ_face_each_other (lua_State * L)
 
    if (numchrs == 2)
      {
-	if (g_ent[a].tilex == g_ent[b].tilex)
-	  {
-	     if (g_ent[a].tiley > g_ent[b].tiley)
-	       {
-		  g_ent[a].facing = FACE_UP;
-		  g_ent[b].facing = FACE_DOWN;
-	       }
-	     else
-	       {
-		  g_ent[a].facing = FACE_DOWN;
-		  g_ent[b].facing = FACE_UP;
-	       }
-	  }
-	else
-	  {
-	     if (g_ent[a].tilex > g_ent[b].tilex)
-	       {
-		  g_ent[a].facing = FACE_LEFT;
-		  g_ent[b].facing = FACE_RIGHT;
-	       }
-	     else
-	       {
-		  g_ent[a].facing = FACE_RIGHT;
-		  g_ent[b].facing = FACE_LEFT;
-	       }
-	  }
+        if (g_ent[a].tilex == g_ent[b].tilex)
+          {
+             if (g_ent[a].tiley > g_ent[b].tiley)
+               {
+                  g_ent[a].facing = FACE_UP;
+                  g_ent[b].facing = FACE_DOWN;
+               }
+             else
+               {
+                  g_ent[a].facing = FACE_DOWN;
+                  g_ent[b].facing = FACE_UP;
+               }
+          }
+        else
+          {
+             if (g_ent[a].tilex > g_ent[b].tilex)
+               {
+                  g_ent[a].facing = FACE_LEFT;
+                  g_ent[b].facing = FACE_RIGHT;
+               }
+             else
+               {
+                  g_ent[a].facing = FACE_RIGHT;
+                  g_ent[b].facing = FACE_LEFT;
+               }
+          }
      }
    return 0;
 }
@@ -1276,11 +1276,11 @@ static int KQ_add_chr (lua_State * L)
 
    if (numchrs < PSIZE)
      {
-	pidx[numchrs] = a;
-	g_ent[numchrs].active = 1;
-	g_ent[numchrs].eid = a;
-	g_ent[numchrs].chrx = 255;
-	numchrs++;
+        pidx[numchrs] = a;
+        g_ent[numchrs].active = 1;
+        g_ent[numchrs].eid = a;
+        g_ent[numchrs].chrx = 255;
+        numchrs++;
      }
    return 0;
 }
@@ -1291,24 +1291,24 @@ static int KQ_remove_chr (lua_State * L)
 
    if (numchrs > 0)
      {
-	a = in_party (lua_tonumber (L, 1));
-	if (a > 0)
-	  {
-	     a--;
-	     pidx[a] = -1;
-	     numchrs--;
-	     if (a != PSIZE - 1)
-	       {
-		  for (b = 0; b < PSIZE - 1; b++)
-		    {
-		       if (pidx[b] == -1)
-			 {
-			    pidx[b] = pidx[b + 1];
-			    pidx[b + 1] = -1;
-			 }
-		    }
-	       }
-	  }
+        a = in_party (lua_tonumber (L, 1));
+        if (a > 0)
+          {
+             a--;
+             pidx[a] = -1;
+             numchrs--;
+             if (a != PSIZE - 1)
+               {
+                  for (b = 0; b < PSIZE - 1; b++)
+                    {
+                       if (pidx[b] == -1)
+                         {
+                            pidx[b] = pidx[b + 1];
+                            pidx[b + 1] = -1;
+                         }
+                    }
+               }
+          }
      }
    return 0;
 }
@@ -1329,120 +1329,120 @@ static int KQ_book_talk (lua_State * L)
    switch ((int) lua_tonumber (L, 1))
      {
      case 0:
-	switch (rand () % 3)
-	  {
-	  case 0:
-	     bubble_text (0, "Reading makes me sleepy...", "", "", "");
-	     break;
-	  case 1:
-	     bubble_text (0, "So many books...", "", "", "");
-	     break;
-	  case 2:
-	     bubble_text (0, "Reading is for wimps.", "", "", "");
-	     break;
-	  }
-	break;
+        switch (rand () % 3)
+          {
+          case 0:
+             bubble_text (0, "Reading makes me sleepy...", "", "", "");
+             break;
+          case 1:
+             bubble_text (0, "So many books...", "", "", "");
+             break;
+          case 2:
+             bubble_text (0, "Reading is for wimps.", "", "", "");
+             break;
+          }
+        break;
      case 1:
-	switch (rand () % 3)
-	  {
-	  case 0:
-	     bubble_text (0, "Ugh... this would take me",
-			  "forever to read.", "", "");
-	     break;
-	  case 1:
-	     bubble_text (0, "I never liked reading.", "", "", "");
-	     break;
-	  case 2:
-	     bubble_text (0, "Who wrote this trash?", "", "", "");
-	     break;
-	  }
-	break;
+        switch (rand () % 3)
+          {
+          case 0:
+             bubble_text (0, "Ugh... this would take me",
+                          "forever to read.", "", "");
+             break;
+          case 1:
+             bubble_text (0, "I never liked reading.", "", "", "");
+             break;
+          case 2:
+             bubble_text (0, "Who wrote this trash?", "", "", "");
+             break;
+          }
+        break;
      case 2:
-	switch (rand () % 3)
-	  {
-	  case 0:
-	     bubble_text (0, "Doesn't anybody leave spellbooks",
-			  "lying around?", "", "");
-	     break;
-	  case 1:
-	     bubble_text (0, "Why would I read this?", "", "", "");
-	     break;
-	  case 2:
-	     bubble_text (0, "Can't talk... reading.", "", "", "");
-	     break;
-	  }
-	break;
+        switch (rand () % 3)
+          {
+          case 0:
+             bubble_text (0, "Doesn't anybody leave spellbooks",
+                          "lying around?", "", "");
+             break;
+          case 1:
+             bubble_text (0, "Why would I read this?", "", "", "");
+             break;
+          case 2:
+             bubble_text (0, "Can't talk... reading.", "", "", "");
+             break;
+          }
+        break;
      case 3:
-	switch (rand () % 3)
-	  {
-	  case 0:
-	     bubble_text (0, "Hmmm... I don't approve of that.", "", "", "");
-	     break;
-	  case 1:
-	     bubble_text (0, "I'm too busy to read now.", "", "", "");
-	     break;
-	  case 2:
-	     bubble_text (0, "How many books can you write",
-			  "that start with 'The Joy of...'?", "", "");
-	     break;
-	  }
-	break;
+        switch (rand () % 3)
+          {
+          case 0:
+             bubble_text (0, "Hmmm... I don't approve of that.", "", "", "");
+             break;
+          case 1:
+             bubble_text (0, "I'm too busy to read now.", "", "", "");
+             break;
+          case 2:
+             bubble_text (0, "How many books can you write",
+                          "that start with 'The Joy of...'?", "", "");
+             break;
+          }
+        break;
      case 4:
-	switch (rand () % 3)
-	  {
-	  case 0:
-	     bubble_text (0, "Boring.", "", "", "");
-	     break;
-	  case 1:
-	     bubble_text (0, "Somebody should burn these.", "", "", "");
-	     break;
-	  case 2:
-	     bubble_text (0, "Terrible... just terrible.", "", "", "");
-	     break;
-	  }
-	break;
+        switch (rand () % 3)
+          {
+          case 0:
+             bubble_text (0, "Boring.", "", "", "");
+             break;
+          case 1:
+             bubble_text (0, "Somebody should burn these.", "", "", "");
+             break;
+          case 2:
+             bubble_text (0, "Terrible... just terrible.", "", "", "");
+             break;
+          }
+        break;
      case 5:
-	switch (rand () % 3)
-	  {
-	  case 0:
-	     bubble_text (0, "If only I had more time...", "", "", "");
-	     break;
-	  case 1:
-	     bubble_text (0, "So many books...", "", "", "");
-	     break;
-	  case 2:
-	     bubble_text (0, "Some of these are pretty old.", "", "", "");
-	     break;
-	  }
-	break;
+        switch (rand () % 3)
+          {
+          case 0:
+             bubble_text (0, "If only I had more time...", "", "", "");
+             break;
+          case 1:
+             bubble_text (0, "So many books...", "", "", "");
+             break;
+          case 2:
+             bubble_text (0, "Some of these are pretty old.", "", "", "");
+             break;
+          }
+        break;
      case 6:
-	switch (rand () % 3)
-	  {
-	  case 0:
-	     bubble_text (0, "I don't have time for this.", "", "", "");
-	     break;
-	  case 1:
-	     bubble_text (0, "What language is this", "written in?", "", "");
-	     break;
-	  case 2:
-	     bubble_text (0, "The pages are stuck together!?", "", "", "");
-	     break;
-	  }
-	break;
+        switch (rand () % 3)
+          {
+          case 0:
+             bubble_text (0, "I don't have time for this.", "", "", "");
+             break;
+          case 1:
+             bubble_text (0, "What language is this", "written in?", "", "");
+             break;
+          case 2:
+             bubble_text (0, "The pages are stuck together!?", "", "", "");
+             break;
+          }
+        break;
      case 7:
-	switch (rand () % 3)
-	  {
-	  case 0:
-	     bubble_text (0, "Fascinating.", "", "", "");
-	     break;
-	  case 1:
-	     bubble_text (0, "I have this one.", "", "", "");
-	     break;
-	  case 2:
-	     bubble_text (0, "Romance novels... gack!", "", "", "");
-	     break;
-	  }
-	break;
+        switch (rand () % 3)
+          {
+          case 0:
+             bubble_text (0, "Fascinating.", "", "", "");
+             break;
+          case 1:
+             bubble_text (0, "I have this one.", "", "", "");
+             break;
+          case 2:
+             bubble_text (0, "Romance novels... gack!", "", "", "");
+             break;
+          }
+        break;
      }
    return 0;
 }
@@ -1467,8 +1467,7 @@ static int KQ_shop (lua_State * L)
 
 static int KQ_inn (lua_State * L)
 {
-   inn ((char *) lua_tostring (L, 1), lua_tonumber (L, 2),
-	lua_tonumber (L, 3));
+   inn ((char *) lua_tostring (L, 1), lua_tonumber (L, 2), lua_tonumber (L, 3));
    return 0;
 }
 
@@ -1485,22 +1484,22 @@ static int KQ_door_in (lua_State * L)
    dt = map_seg[hy2 * g_map.xsize + hx];
    if (g_map.tileset == 1)
      {
-	set_btile (hx, hy, db + 433);
-	if (dt == 149)
-	   set_btile (hx, hy2, 571);
-	else
-	   set_btile (hx, hy2, dt + 433);
+        set_btile (hx, hy, db + 433);
+        if (dt == 149)
+           set_btile (hx, hy2, 571);
+        else
+           set_btile (hx, hy2, dt + 433);
      }
    else
      {
-	set_btile (hx, hy, db + 3);
+        set_btile (hx, hy, db + 3);
      }
    play_effect (25, 128);
    drawmap ();
    blit2screen (xofs, yofs);
    rest (50);
    set_view (1, lua_tonumber (L, 3), lua_tonumber (L, 4), lua_tonumber (L, 5),
-	     lua_tonumber (L, 6));
+             lua_tonumber (L, 6));
    warp (lua_tonumber (L, 1), lua_tonumber (L, 2), 8);
    set_btile (hx, hy, db);
    if (g_map.tileset == 1)
@@ -1560,45 +1559,45 @@ static int KQ_chest (lua_State * L)
 
    if (tno > -1)
       if (treasure[tno] != 0)
-	 return 0;
+         return 0;
    if (ino == 0)
      {
-	gp += amt;
-	sprintf (strbuf, "Found %d gp!", amt);
-	play_effect (SND_MONEY, 128);
-	message (strbuf, 255, 0, xofs, yofs);
-	if (tno > -1)
-	   treasure[tno] = 1;
-	return 0;
+        gp += amt;
+        sprintf (strbuf, "Found %d gp!", amt);
+        play_effect (SND_MONEY, 128);
+        message (strbuf, 255, 0, xofs, yofs);
+        if (tno > -1)
+           treasure[tno] = 1;
+        return 0;
      }
    if (numchrs == 1)
      {
-	if (check_inventory (ino, amt) > 0)
-	   gd = 1;
+        if (check_inventory (ino, amt) > 0)
+           gd = 1;
      }
    else
      {
-	while (a < numchrs)
-	  {
-	     if (check_inventory (ino, amt) > 0)
-	       {
-		  gd = 1;
-		  a = numchrs;
-	       }
-	     a++;
-	  }
+        while (a < numchrs)
+          {
+             if (check_inventory (ino, amt) > 0)
+               {
+                  gd = 1;
+                  a = numchrs;
+               }
+             a++;
+          }
      }
    if (gd == 1)
      {
-	if (amt == 1)
-	   sprintf (strbuf, "%s procured!", items[ino].name);
-	else
-	   sprintf (strbuf, "%s ^%d procured", items[ino].name, amt);
-	play_effect (SND_UNEQUIP, 128);
-	message (strbuf, items[ino].icon, 0, xofs, yofs);
-	if (tno > -1)
-	   treasure[tno] = 1;
-	return 0;
+        if (amt == 1)
+           sprintf (strbuf, "%s procured!", items[ino].name);
+        else
+           sprintf (strbuf, "%s ^%d procured", items[ino].name, amt);
+        play_effect (SND_UNEQUIP, 128);
+        message (strbuf, items[ino].icon, 0, xofs, yofs);
+        if (tno > -1)
+           treasure[tno] = 1;
+        return 0;
      }
    if (amt == 1)
       sprintf (strbuf, "%s not taken!", items[ino].name);
@@ -1629,7 +1628,7 @@ static int KQ_rest (lua_State * L)
 static int KQ_msg (lua_State * L)
 {
    message ((char *) lua_tostring (L, 1), lua_tonumber (L, 2),
-	    lua_tonumber (L, 3), xofs, yofs);
+            lua_tonumber (L, 3), xofs, yofs);
    return 0;
 }
 
@@ -1642,50 +1641,50 @@ static int KQ_move_camera (lua_State * L)
 
    if (mcx > vx)
      {
-	xinc = 1;
-	xtot = mcx - vx;
+        xinc = 1;
+        xtot = mcx - vx;
      }
    if (mcx < vx)
      {
-	xinc = -1;
-	xtot = vx - mcx;
+        xinc = -1;
+        xtot = vx - mcx;
      }
    if (mcy > vy)
      {
-	yinc = 1;
-	ytot = mcy - vy;
+        yinc = 1;
+        ytot = mcy - vy;
      }
    if (mcy < vy)
      {
-	yinc = -1;
-	ytot = vy - mcy;
+        yinc = -1;
+        ytot = vy - mcy;
      }
    autoparty = 1;
    timer_count = 0;
    while (ytot > 0 || xtot > 0)
      {
-	while (timer_count > 0)
-	  {
-	     timer_count--;
-	     ct2++;
-	     if (ct2 > dtime)
-	       {
-		  if (xtot > 0)
-		    {
-		       vx += xinc;
-		       xtot--;
-		    }
-		  if (ytot > 0)
-		    {
-		       vy += yinc;
-		       ytot--;
-		    }
-		  ct2 = 0;
-	       }
-	     check_animation ();
-	  }
-	drawmap ();
-	blit2screen (xofs, yofs);
+        while (timer_count > 0)
+          {
+             timer_count--;
+             ct2++;
+             if (ct2 > dtime)
+               {
+                  if (xtot > 0)
+                    {
+                       vx += xinc;
+                       xtot--;
+                    }
+                  if (ytot > 0)
+                    {
+                       vy += yinc;
+                       ytot--;
+                    }
+                  ct2 = 0;
+               }
+             check_animation ();
+          }
+        drawmap ();
+        blit2screen (xofs, yofs);
      }
    timer_count = 0;
    autoparty = 0;
@@ -1710,29 +1709,29 @@ static int KQ_orient_heroes (lua_State * L)
       L = L;
    if (numchrs == 2)
      {
-	lastm[1] = MOVE_NOT;
-	if (g_ent[0].tilex == g_ent[1].tilex
-	    && g_ent[0].tiley == g_ent[1].tiley)
-	  {
-	     lastm[0] = MOVE_NOT;
-	     return 0;
-	  }
-	if (g_ent[0].tilex == g_ent[1].tilex)
-	  {
-	     if (g_ent[0].tiley < g_ent[1].tiley)
-		lastm[0] = MOVE_UP;
-	     else
-		lastm[0] = MOVE_DOWN;
-	     return 0;
-	  }
-	if (g_ent[0].tiley == g_ent[1].tiley)
-	  {
-	     if (g_ent[0].tilex < g_ent[1].tilex)
-		lastm[0] = MOVE_LEFT;
-	     else
-		lastm[0] = MOVE_RIGHT;
-	     return 0;
-	  }
+        lastm[1] = MOVE_NOT;
+        if (g_ent[0].tilex == g_ent[1].tilex
+            && g_ent[0].tiley == g_ent[1].tiley)
+          {
+             lastm[0] = MOVE_NOT;
+             return 0;
+          }
+        if (g_ent[0].tilex == g_ent[1].tilex)
+          {
+             if (g_ent[0].tiley < g_ent[1].tiley)
+                lastm[0] = MOVE_UP;
+             else
+                lastm[0] = MOVE_DOWN;
+             return 0;
+          }
+        if (g_ent[0].tiley == g_ent[1].tiley)
+          {
+             if (g_ent[0].tilex < g_ent[1].tilex)
+                lastm[0] = MOVE_LEFT;
+             else
+                lastm[0] = MOVE_RIGHT;
+             return 0;
+          }
      }
    return 0;
 }
@@ -1810,27 +1809,27 @@ static int KQ_clear_buffer (lua_State * L)
 static int KQ_mbox (lua_State * L)
 {
    menubox (double_buffer, lua_tonumber (L, 1) + xofs,
-	    lua_tonumber (L, 2) + yofs, lua_tonumber (L, 3), lua_tonumber (L,
-									   4),
-	    BLUE);
+            lua_tonumber (L, 2) + yofs, lua_tonumber (L, 3), lua_tonumber (L,
+                                                                           4),
+            BLUE);
    return 0;
 }
 
 static int KQ_dark_mbox (lua_State * L)
 {
    menubox (double_buffer, lua_tonumber (L, 1) + xofs,
-	    lua_tonumber (L, 2) + yofs, lua_tonumber (L, 3), lua_tonumber (L,
-									   4),
-	    DARKBLUE);
+            lua_tonumber (L, 2) + yofs, lua_tonumber (L, 3), lua_tonumber (L,
+                                                                           4),
+            DARKBLUE);
    return 0;
 }
 
 static int KQ_light_mbox (lua_State * L)
 {
    menubox (double_buffer, lua_tonumber (L, 1) + xofs,
-	    lua_tonumber (L, 2) + yofs, lua_tonumber (L, 3), lua_tonumber (L,
-									   4),
-	    DARKRED);
+            lua_tonumber (L, 2) + yofs, lua_tonumber (L, 3), lua_tonumber (L,
+                                                                           4),
+            DARKRED);
    return 0;
 }
 
@@ -1840,7 +1839,7 @@ static int KQ_drawframe (lua_State * L)
    int b = lua_tonumber (L, 2);
 
    draw_sprite (double_buffer, frames[a][b], lua_tonumber (L, 3) + xofs,
-		lua_tonumber (L, 4) + yofs);
+                lua_tonumber (L, 4) + yofs);
    return 0;
 }
 
@@ -1850,15 +1849,15 @@ static int KQ_draw_pstat (lua_State * L)
 
    if (a >= 0 && a <= 7)
       draw_playerstat (double_buffer, a, lua_tonumber (L, 2) + xofs,
-		       lua_tonumber (L, 3) + yofs);
+                       lua_tonumber (L, 3) + yofs);
    return 0;
 }
 
 static int KQ_ptext (lua_State * L)
 {
    print_font (double_buffer, lua_tonumber (L, 1) + xofs,
-	       lua_tonumber (L, 2) + yofs, (char *) lua_tostring (L, 3),
-	       lua_tonumber (L, 4));
+               lua_tonumber (L, 2) + yofs, (char *) lua_tostring (L, 3),
+               lua_tonumber (L, 4));
    return 0;
 }
 
@@ -1868,7 +1867,7 @@ static int KQ_pnum (lua_State * L)
 
    sprintf (strbuf, "%d", a);
    print_font (double_buffer, lua_tonumber (L, 1) + xofs,
-	       lua_tonumber (L, 2) + yofs, strbuf, lua_tonumber (L, 4));
+               lua_tonumber (L, 2) + yofs, strbuf, lua_tonumber (L, 4));
    return 0;
 }
 
@@ -1889,43 +1888,43 @@ static int KQ_read_controls (lua_State * L)
    readcontrols ();
    if (up && a == 1)
      {
-	unpress ();
-	g_keys[0] = 1;
+        unpress ();
+        g_keys[0] = 1;
      }
    if (down && b == 1)
      {
-	unpress ();
-	g_keys[1] = 1;
+        unpress ();
+        g_keys[1] = 1;
      }
    if (left && c == 1)
      {
-	unpress ();
-	g_keys[2] = 1;
+        unpress ();
+        g_keys[2] = 1;
      }
    if (right && d == 1)
      {
-	unpress ();
-	g_keys[3] = 1;
+        unpress ();
+        g_keys[3] = 1;
      }
    if (balt && e == 1)
      {
-	unpress ();
-	g_keys[4] = 1;
+        unpress ();
+        g_keys[4] = 1;
      }
    if (bctrl && f == 1)
      {
-	unpress ();
-	g_keys[5] = 1;
+        unpress ();
+        g_keys[5] = 1;
      }
    if (benter && g == 1)
      {
-	unpress ();
-	g_keys[6] = 1;
+        unpress ();
+        g_keys[6] = 1;
      }
    if (besc && h == 1)
      {
-	unpress ();
-	g_keys[7] = 1;
+        unpress ();
+        g_keys[7] = 1;
      }
    return 0;
 }
@@ -1978,9 +1977,9 @@ void do_luacheat (void)
    oldtop = lua_gettop (theL);
    if (cheat_loaded == 0)
      {
-	sprintf (strbuf, "%scheat.lob", SCRIPT_DIR);
-	lua_dofile (theL, strbuf);
-	/* PH FIXME cheat_loaded=1; here surely?? */
+        sprintf (strbuf, "%scheat.lob", SCRIPT_DIR);
+        lua_dofile (theL, strbuf);
+        /* PH FIXME cheat_loaded=1; here surely?? */
      }
    lua_getglobal (theL, "cheat");
    lua_call (theL, 0, 0);

@@ -59,40 +59,39 @@ int select_encounter (int en, int etid)
 
    while (!stop)
      {
-	if (erows[where].tnum == en)
-	   stop = 1;
-	else
-	   where++;
-	if (where >= NUM_ETROWS)
-	  {
-	     sprintf (strbuf, "There are no rows for encounter table #%d!",
-		      en);
-	     program_death (strbuf);
-	  }
+        if (erows[where].tnum == en)
+           stop = 1;
+        else
+           where++;
+        if (where >= NUM_ETROWS)
+          {
+             sprintf (strbuf, "There are no rows for encounter table #%d!", en);
+             program_death (strbuf);
+          }
      }
    if (etid == 99)
      {
-	i = rand () % 100 + 1;
-	while (entry < 0)
-	  {
-	     if (i <= erows[where].per)
-		entry = where;
-	     else
-		where++;
-	     if (erows[where].tnum > en || where >= NUM_ETROWS)
-		program_death ("Couldn't select random encounter table row!");
-	  }
+        i = rand () % 100 + 1;
+        while (entry < 0)
+          {
+             if (i <= erows[where].per)
+                entry = where;
+             else
+                where++;
+             if (erows[where].tnum > en || where >= NUM_ETROWS)
+                program_death ("Couldn't select random encounter table row!");
+          }
      }
    else
       entry = where + etid;
    p = 0;
    for (j = 0; j < 5; j++)
      {
-	if (erows[entry].idx[j] > 0)
-	  {
-	     cf[p] = erows[entry].idx[j] - 1;
-	     p++;
-	  }
+        if (erows[entry].idx[j] > 0)
+          {
+             cf[p] = erows[entry].idx[j] - 1;
+             p++;
+          }
      }
    numens = p;
    if (numens > 2 && numchrs == 1 && erows[entry].lvl + 2 > party[pidx[0]].lvl
@@ -117,73 +116,73 @@ void enemy_init (void)
       program_death ("Could not load 1st enemy datafile!");
    for (i = 0; i < numens; i++)
      {
-	j = i + PSIZE;
-	fseek (edat, 0, SEEK_SET);
-	for (a = 0; a < cf[i]; a++)
-	   fgets (strbuf, 254, edat);
-	fscanf (edat, "%s", fighter[j].name);
-	fscanf (edat, "%d", &tmp);
-	fscanf (edat, "%d", &tmp);
-	lx = tmp;
-	fscanf (edat, "%d", &tmp);
-	ly = tmp;
-	fscanf (edat, "%d", &tmp);
-	fighter[j].cw = tmp;
-	fscanf (edat, "%d", &tmp);
-	fighter[j].cl = tmp;
-	fscanf (edat, "%d", &tmp);
-	fighter[j].xp = tmp;
-	fscanf (edat, "%d", &tmp);
-	fighter[j].gp = tmp;
-	fscanf (edat, "%d", &tmp);
-	fighter[j].lvl = tmp;
-	fscanf (edat, "%d", &tmp);
-	fighter[j].mhp = tmp;
-	fscanf (edat, "%d", &tmp);
-	fighter[j].mmp = tmp;
-	fscanf (edat, "%d", &tmp);
-	fighter[j].dip = tmp;
-	fscanf (edat, "%d", &tmp);
-	fighter[j].ditmc = tmp;
-	fscanf (edat, "%d", &tmp);
-	fighter[j].ditmr = tmp;
-	fscanf (edat, "%d", &tmp);
-	fighter[j].sitmc = tmp;
-	fscanf (edat, "%d", &tmp);
-	fighter[j].sitmr = tmp;
-	fscanf (edat, "%d", &tmp);
-	fighter[j].stats[A_STR] = tmp;
-	fighter[j].stats[A_AGI] = 0;
-	fighter[j].stats[A_VIT] = 0;
-	fscanf (edat, "%d", &tmp);
-	fighter[j].stats[A_INT] = tmp;
-	fighter[j].stats[A_SAG] = tmp;
-	for (p = 5; p < 13; p++)
-	  {
-	     fscanf (edat, "%d", &tmp);
-	     fighter[j].stats[p] = tmp;
-	  }
-	fscanf (edat, "%d", &tmp);
-	fighter[j].bonus = tmp;
-	fighter[j].bstat = 0;
-	fscanf (edat, "%d", &tmp);
-	fighter[j].cwt = tmp;
-	fscanf (edat, "%d", &tmp);
-	fighter[j].welem = tmp;
-	fscanf (edat, "%d", &tmp);
-	fighter[j].unl = tmp;
-	fscanf (edat, "%d", &tmp);
-	fighter[j].crit = tmp;
-	fscanf (edat, "%d", &tmp);
-	fighter[j].imb_s = tmp;
-	fscanf (edat, "%d", &tmp);
-	fighter[j].imb_a = tmp;
-	load_enemyframes (j, lx, ly);
-	for (p = 0; p < 2; p++)
-	  {
-	     fscanf (edat, "%d", &tmp);
-	     fighter[j].imb[p] = tmp;
-	  }
+        j = i + PSIZE;
+        fseek (edat, 0, SEEK_SET);
+        for (a = 0; a < cf[i]; a++)
+           fgets (strbuf, 254, edat);
+        fscanf (edat, "%s", fighter[j].name);
+        fscanf (edat, "%d", &tmp);
+        fscanf (edat, "%d", &tmp);
+        lx = tmp;
+        fscanf (edat, "%d", &tmp);
+        ly = tmp;
+        fscanf (edat, "%d", &tmp);
+        fighter[j].cw = tmp;
+        fscanf (edat, "%d", &tmp);
+        fighter[j].cl = tmp;
+        fscanf (edat, "%d", &tmp);
+        fighter[j].xp = tmp;
+        fscanf (edat, "%d", &tmp);
+        fighter[j].gp = tmp;
+        fscanf (edat, "%d", &tmp);
+        fighter[j].lvl = tmp;
+        fscanf (edat, "%d", &tmp);
+        fighter[j].mhp = tmp;
+        fscanf (edat, "%d", &tmp);
+        fighter[j].mmp = tmp;
+        fscanf (edat, "%d", &tmp);
+        fighter[j].dip = tmp;
+        fscanf (edat, "%d", &tmp);
+        fighter[j].ditmc = tmp;
+        fscanf (edat, "%d", &tmp);
+        fighter[j].ditmr = tmp;
+        fscanf (edat, "%d", &tmp);
+        fighter[j].sitmc = tmp;
+        fscanf (edat, "%d", &tmp);
+        fighter[j].sitmr = tmp;
+        fscanf (edat, "%d", &tmp);
+        fighter[j].stats[A_STR] = tmp;
+        fighter[j].stats[A_AGI] = 0;
+        fighter[j].stats[A_VIT] = 0;
+        fscanf (edat, "%d", &tmp);
+        fighter[j].stats[A_INT] = tmp;
+        fighter[j].stats[A_SAG] = tmp;
+        for (p = 5; p < 13; p++)
+          {
+             fscanf (edat, "%d", &tmp);
+             fighter[j].stats[p] = tmp;
+          }
+        fscanf (edat, "%d", &tmp);
+        fighter[j].bonus = tmp;
+        fighter[j].bstat = 0;
+        fscanf (edat, "%d", &tmp);
+        fighter[j].cwt = tmp;
+        fscanf (edat, "%d", &tmp);
+        fighter[j].welem = tmp;
+        fscanf (edat, "%d", &tmp);
+        fighter[j].unl = tmp;
+        fscanf (edat, "%d", &tmp);
+        fighter[j].crit = tmp;
+        fscanf (edat, "%d", &tmp);
+        fighter[j].imb_s = tmp;
+        fscanf (edat, "%d", &tmp);
+        fighter[j].imb_a = tmp;
+        load_enemyframes (j, lx, ly);
+        for (p = 0; p < 2; p++)
+          {
+             fscanf (edat, "%d", &tmp);
+             fighter[j].imb[p] = tmp;
+          }
      }
    sprintf (strbuf, "%s/resabil.mon", DATA_DIR);
    edat = fopen (strbuf, "r");
@@ -191,34 +190,34 @@ void enemy_init (void)
       program_death ("Could not load 2nd enemy datafile!");
    for (i = 0; i < numens; i++)
      {
-	j = i + PSIZE;
-	fseek (edat, 0, SEEK_SET);
-	for (a = 0; a < cf[i]; a++)
-	   fgets (strbuf, 254, edat);
-	fscanf (edat, "%s", fighter[j].name);
-	fscanf (edat, "%d", &tmp);
-	for (p = 0; p < 16; p++)
-	  {
-	     fscanf (edat, "%d", &tmp);
-	     fighter[j].res[p] = tmp;
-	  }
-	for (p = 0; p < 8; p++)
-	  {
-	     fscanf (edat, "%d", &tmp);
-	     fighter[j].ai[p] = tmp;
-	  }
-	for (p = 0; p < 8; p++)
-	  {
-	     fscanf (edat, "%d", &tmp);
-	     fighter[j].aip[p] = tmp;
-	     fighter[j].atrack[p] = 0;
-	  }
-	fighter[j].hp = fighter[j].mhp;
-	fighter[j].mp = fighter[j].mmp;
-	for (p = 0; p < 24; p++)
-	   fighter[j].sts[p] = 0;
-	fighter[j].aux = 0;
-	fighter[j].mrp = 100;
+        j = i + PSIZE;
+        fseek (edat, 0, SEEK_SET);
+        for (a = 0; a < cf[i]; a++)
+           fgets (strbuf, 254, edat);
+        fscanf (edat, "%s", fighter[j].name);
+        fscanf (edat, "%d", &tmp);
+        for (p = 0; p < 16; p++)
+          {
+             fscanf (edat, "%d", &tmp);
+             fighter[j].res[p] = tmp;
+          }
+        for (p = 0; p < 8; p++)
+          {
+             fscanf (edat, "%d", &tmp);
+             fighter[j].ai[p] = tmp;
+          }
+        for (p = 0; p < 8; p++)
+          {
+             fscanf (edat, "%d", &tmp);
+             fighter[j].aip[p] = tmp;
+             fighter[j].atrack[p] = 0;
+          }
+        fighter[j].hp = fighter[j].mhp;
+        fighter[j].mp = fighter[j].mmp;
+        for (p = 0; p < 24; p++)
+           fighter[j].sts[p] = 0;
+        fighter[j].aux = 0;
+        fighter[j].mrp = 100;
      }
    fclose (edat);
 }
@@ -234,14 +233,14 @@ static void load_enemyframes (int who, int locx, int locy)
    pcx = load_datafile_object (PCX_DATAFILE, "ENEMY2_PCX");
    for (p = 0; p < MAXCFRAMES; p++)
      {
-	destroy_bitmap (cframes[who][p]);
-	destroy_bitmap (tcframes[who][p]);
-	cframes[who][p] = create_bitmap (fighter[who].cw, fighter[who].cl);
-	tcframes[who][p] = create_bitmap (fighter[who].cw, fighter[who].cl);
-	blit ((BITMAP *) pcx->dat, cframes[who][p], locx, locy, 0, 0,
-	      fighter[who].cw, fighter[who].cl);
-	blit ((BITMAP *) pcx->dat, tcframes[who][p], locx, locy, 0, 0,
-	      fighter[who].cw, fighter[who].cl);
+        destroy_bitmap (cframes[who][p]);
+        destroy_bitmap (tcframes[who][p]);
+        cframes[who][p] = create_bitmap (fighter[who].cw, fighter[who].cl);
+        tcframes[who][p] = create_bitmap (fighter[who].cw, fighter[who].cl);
+        blit ((BITMAP *) pcx->dat, cframes[who][p], locx, locy, 0, 0,
+              fighter[who].cw, fighter[who].cl);
+        blit ((BITMAP *) pcx->dat, tcframes[who][p], locx, locy, 0, 0,
+              fighter[who].cw, fighter[who].cl);
      }
    unload_datafile_object (pcx);
 }
@@ -258,44 +257,44 @@ void enemy_chooseaction (int who)
       return;
    if (fighter[who].sts[S_DEAD] == 1 || fighter[who].hp <= 0)
      {
-	cact[who] = 0;
-	return;
+        cact[who] = 0;
+        return;
      }
    for (a = 0; a < 8; a++)
       if (fighter[who].atrack[a] > 0)
-	 fighter[who].atrack[a]--;
+         fighter[who].atrack[a]--;
    fighter[who].defend = 0;
    fighter[who].facing = 1;
    if (fighter[who].hp < fighter[who].mhp * 2 / 3 && rand () % 100 < 50
        && fighter[who].sts[S_MUTE] == 0)
      {
-	enemy_curecheck (who, 0);
-	if (cact[who] == 0)
-	   return;
+        enemy_curecheck (who, 0);
+        if (cact[who] == 0)
+           return;
      }
    ap = rand () % 100;
    for (a = 0; a < 8; a++)
      {
-	if (ap < fighter[who].aip[a])
-	  {
-	     if (fighter[who].ai[a] >= 100 && fighter[who].ai[a] <= 253)
-	       {
-		  enemy_skillcheck (who, a);
-		  if (cact[who] == 0)
-		     return;
-		  else
-		     ap = fighter[who].aip[a] + 1;
-	       }
-	     if (fighter[who].ai[a] >= 1 && fighter[who].ai[a] <= 99
-		 && fighter[who].sts[S_MUTE] == 0)
-	       {
-		  enemy_spellcheck (who, a);
-		  if (cact[who] == 0)
-		     return;
-		  else
-		     ap = fighter[who].aip[a] + 1;
-	       }
-	  }
+        if (ap < fighter[who].aip[a])
+          {
+             if (fighter[who].ai[a] >= 100 && fighter[who].ai[a] <= 253)
+               {
+                  enemy_skillcheck (who, a);
+                  if (cact[who] == 0)
+                     return;
+                  else
+                     ap = fighter[who].aip[a] + 1;
+               }
+             if (fighter[who].ai[a] >= 1 && fighter[who].ai[a] <= 99
+                 && fighter[who].sts[S_MUTE] == 0)
+               {
+                  enemy_spellcheck (who, a);
+                  if (cact[who] == 0)
+                     return;
+                  else
+                     ap = fighter[who].aip[a] + 1;
+               }
+          }
      }
    enemy_attack (who);
    cact[who] = 0;
@@ -314,7 +313,7 @@ static int enemy_cancast (int wh, int sp)
       return 0;
    for (a = 0; a < 8; a++)
       if (fighter[wh].ai[a] == sp)
-	 z++;
+         z++;
    if (z == 0)
       return 0;
    if (fighter[wh].mp < mp_needed (wh, sp))
@@ -344,10 +343,10 @@ static void enemy_curecheck (int w, int t)
       a = M_CURE4;
    if (a != -1)
      {
-	fighter[w].csmem = a;
-	fighter[w].ctmem = w;
-	combat_spell (w, 0);
-	cact[w] = 0;
+        fighter[w].csmem = a;
+        fighter[w].ctmem = w;
+        combat_spell (w, 0);
+        cact[w] = 0;
      }
 }
 
@@ -361,126 +360,126 @@ static void enemy_spellcheck (int w, int ws)
 
    if (fighter[w].ai[ws] >= 1 && fighter[w].ai[ws] <= 99)
      {
-	cs = fighter[w].ai[ws];
-	if (cs > 0 && enemy_cancast (w, cs) == 1)
-	  {
-	     switch (cs)
-	       {
-	       case M_SHIELD:
-	       case M_SHIELDALL:
-		  yes = enemy_stscheck (w, S_SHIELD, PSIZE);
-		  break;
-	       case M_HOLYMIGHT:
-		  aux = 0;
-		  for (z = PSIZE; z < PSIZE + numens; z++)
-		     if (fighter[z].sts[S_DEAD] == 0
-			 && fighter[z].sts[S_STRENGTH] < 2)
-			aux++;
-		  if (aux > 0)
-		     yes = 1;
-		  break;
-	       case M_BLESS:
-		  aux = 0;
-		  for (z = PSIZE; z < PSIZE + numens; z++)
-		     if (fighter[z].sts[S_DEAD] == 0
-			 && fighter[z].sts[S_BLESS] < 3)
-			aux++;
-		  if (aux > 0)
-		     yes = 1;
-		  break;
-	       case M_TRUEAIM:
-		  yes = enemy_stscheck (w, S_TRUESHOT, PSIZE);
-		  break;
-	       case M_REGENERATE:
-		  yes = enemy_stscheck (w, S_REGEN, PSIZE);
-		  break;
-	       case M_THROUGH:
-		  yes = enemy_stscheck (w, S_ETHER, PSIZE);
-		  break;
-	       case M_HASTEN:
-	       case M_QUICKEN:
-		  aux = 0;
-		  for (z = PSIZE; z < PSIZE + numens; z++)
-		     if (fighter[z].sts[S_DEAD] == 0
-			 && fighter[z].sts[S_TIME] != 2)
-			aux++;
-		  if (aux > 0)
-		     yes = 1;
-		  break;
-	       case M_SHELL:
-	       case M_WALL:
-		  yes = enemy_stscheck (w, S_RESIST, PSIZE);
-		  break;
-	       case M_ABSORB:
-		  if (fighter[w].hp < fighter[w].mhp / 2)
-		     yes = 1;
-		  break;
-	       case M_VENOM:
-	       case M_BLIND:
-	       case M_CONFUSE:
-	       case M_HOLD:
-	       case M_STONE:
-	       case M_SILENCE:
-	       case M_SLEEP:
-		  yes = enemy_stscheck (w, magic[cs].elem - 8, 0);
-		  break;
-	       case M_NAUSEA:
-	       case M_MALISON:
-		  yes = enemy_stscheck (w, S_MALISON, 0);
-		  break;
-	       case M_SLOW:
-		  aux = 0;
-		  for (z = 0; z < numchrs; z++)
-		     if (fighter[z].sts[S_DEAD] == 0
-			 && fighter[z].sts[S_TIME] != 1)
-			aux++;
-		  if (aux > 0)
-		     yes = 1;
-		  break;
-	       case M_SLEEPALL:
-		  aux = 0;
-		  for (z = 0; z < numchrs; z++)
-		     if (fighter[z].sts[S_DEAD] == 0
-			 && fighter[z].sts[S_SLEEP] == 0)
-			aux++;
-		  if (aux > 0)
-		     yes = 1;
-		  break;
-	       case M_DIVINEGUARD:
-		  aux = 0;
-		  for (z = PSIZE; z < PSIZE + numens; z++)
-		     if (fighter[z].sts[S_DEAD] == 0
-			 && fighter[z].sts[S_SHIELD] == 0
-			 && fighter[z].sts[S_RESIST] == 0)
-			aux++;
-		  if (aux > 0)
-		     yes = 1;
-		  break;
-	       case M_DOOM:
-		  aux = 0;
-		  for (z = 0; z < numchrs; z++)
-		     if (fighter[z].sts[S_DEAD] == 0
-			 && fighter[z].hp >= fighter[z].mhp / 3)
-			aux++;
-		  if (aux > 0)
-		     yes = 1;
-		  break;
-	       case M_DRAIN:
-		  if (fighter[w].hp < fighter[w].mhp)
-		     yes = 1;
-		  break;
-	       default:
-		  yes = 1;
-		  break;
-	       }
-	  }
+        cs = fighter[w].ai[ws];
+        if (cs > 0 && enemy_cancast (w, cs) == 1)
+          {
+             switch (cs)
+               {
+               case M_SHIELD:
+               case M_SHIELDALL:
+                  yes = enemy_stscheck (w, S_SHIELD, PSIZE);
+                  break;
+               case M_HOLYMIGHT:
+                  aux = 0;
+                  for (z = PSIZE; z < PSIZE + numens; z++)
+                     if (fighter[z].sts[S_DEAD] == 0
+                         && fighter[z].sts[S_STRENGTH] < 2)
+                        aux++;
+                  if (aux > 0)
+                     yes = 1;
+                  break;
+               case M_BLESS:
+                  aux = 0;
+                  for (z = PSIZE; z < PSIZE + numens; z++)
+                     if (fighter[z].sts[S_DEAD] == 0
+                         && fighter[z].sts[S_BLESS] < 3)
+                        aux++;
+                  if (aux > 0)
+                     yes = 1;
+                  break;
+               case M_TRUEAIM:
+                  yes = enemy_stscheck (w, S_TRUESHOT, PSIZE);
+                  break;
+               case M_REGENERATE:
+                  yes = enemy_stscheck (w, S_REGEN, PSIZE);
+                  break;
+               case M_THROUGH:
+                  yes = enemy_stscheck (w, S_ETHER, PSIZE);
+                  break;
+               case M_HASTEN:
+               case M_QUICKEN:
+                  aux = 0;
+                  for (z = PSIZE; z < PSIZE + numens; z++)
+                     if (fighter[z].sts[S_DEAD] == 0
+                         && fighter[z].sts[S_TIME] != 2)
+                        aux++;
+                  if (aux > 0)
+                     yes = 1;
+                  break;
+               case M_SHELL:
+               case M_WALL:
+                  yes = enemy_stscheck (w, S_RESIST, PSIZE);
+                  break;
+               case M_ABSORB:
+                  if (fighter[w].hp < fighter[w].mhp / 2)
+                     yes = 1;
+                  break;
+               case M_VENOM:
+               case M_BLIND:
+               case M_CONFUSE:
+               case M_HOLD:
+               case M_STONE:
+               case M_SILENCE:
+               case M_SLEEP:
+                  yes = enemy_stscheck (w, magic[cs].elem - 8, 0);
+                  break;
+               case M_NAUSEA:
+               case M_MALISON:
+                  yes = enemy_stscheck (w, S_MALISON, 0);
+                  break;
+               case M_SLOW:
+                  aux = 0;
+                  for (z = 0; z < numchrs; z++)
+                     if (fighter[z].sts[S_DEAD] == 0
+                         && fighter[z].sts[S_TIME] != 1)
+                        aux++;
+                  if (aux > 0)
+                     yes = 1;
+                  break;
+               case M_SLEEPALL:
+                  aux = 0;
+                  for (z = 0; z < numchrs; z++)
+                     if (fighter[z].sts[S_DEAD] == 0
+                         && fighter[z].sts[S_SLEEP] == 0)
+                        aux++;
+                  if (aux > 0)
+                     yes = 1;
+                  break;
+               case M_DIVINEGUARD:
+                  aux = 0;
+                  for (z = PSIZE; z < PSIZE + numens; z++)
+                     if (fighter[z].sts[S_DEAD] == 0
+                         && fighter[z].sts[S_SHIELD] == 0
+                         && fighter[z].sts[S_RESIST] == 0)
+                        aux++;
+                  if (aux > 0)
+                     yes = 1;
+                  break;
+               case M_DOOM:
+                  aux = 0;
+                  for (z = 0; z < numchrs; z++)
+                     if (fighter[z].sts[S_DEAD] == 0
+                         && fighter[z].hp >= fighter[z].mhp / 3)
+                        aux++;
+                  if (aux > 0)
+                     yes = 1;
+                  break;
+               case M_DRAIN:
+                  if (fighter[w].hp < fighter[w].mhp)
+                     yes = 1;
+                  break;
+               default:
+                  yes = 1;
+                  break;
+               }
+          }
      }
    if (yes == 0)
       return;
    if (spell_setup (w, cs) == 1)
      {
-	combat_spell (w, 0);
-	cact[w] = 0;
+        combat_spell (w, 0);
+        cact[w] = 0;
      }
 }
 
@@ -496,19 +495,19 @@ static int enemy_stscheck (int who, int ws, int s)
    who = who;
    if (s == PSIZE)
      {
-	for (z = PSIZE; z < PSIZE + numens; z++)
-	   if (fighter[z].sts[S_DEAD] == 0 && fighter[z].sts[ws] == 0)
-	      a++;
-	if (a > 0)
-	   return 1;
+        for (z = PSIZE; z < PSIZE + numens; z++)
+           if (fighter[z].sts[S_DEAD] == 0 && fighter[z].sts[ws] == 0)
+              a++;
+        if (a > 0)
+           return 1;
      }
    else
      {
-	for (z = 0; z < numchrs; z++)
-	   if (fighter[z].sts[S_DEAD] == 0 && fighter[z].sts[ws] == 0)
-	      a++;
-	if (a > 0)
-	   return 1;
+        for (z = 0; z < numchrs; z++)
+           if (fighter[z].sts[S_DEAD] == 0 && fighter[z].sts[ws] == 0)
+              a++;
+        if (a > 0)
+           return 1;
      }
    return 0;
 }
@@ -523,22 +522,21 @@ static void enemy_skillcheck (int w, int ws)
    sk = fighter[w].ai[ws] - 100;
    if (sk >= 1 && sk <= 153)
      {
-	if (sk == 5)
-	  {
-	     if (numchrs == 1)
-		fighter[w].atrack[ws] = 1;
-	     if (numchrs == 2
-		 && (fighter[0].sts[S_DEAD] > 0
-		     || fighter[1].sts[S_DEAD] > 0))
-		fighter[w].atrack[ws] = 1;
-	  }
-	if (fighter[w].atrack[ws] > 0)
-	   return;
-	if (skill_setup (w, ws) == 1)
-	  {
-	     combat_skill (w);
-	     cact[w] = 0;
-	  }
+        if (sk == 5)
+          {
+             if (numchrs == 1)
+                fighter[w].atrack[ws] = 1;
+             if (numchrs == 2
+                 && (fighter[0].sts[S_DEAD] > 0 || fighter[1].sts[S_DEAD] > 0))
+                fighter[w].atrack[ws] = 1;
+          }
+        if (fighter[w].atrack[ws] > 0)
+           return;
+        if (skill_setup (w, ws) == 1)
+          {
+             combat_skill (w);
+             cact[w] = 0;
+          }
      }
 }
 
@@ -555,23 +553,23 @@ void enemy_charmaction (int who)
       return;
    if (fighter[who].sts[S_DEAD] == 1 || fighter[who].hp <= 0)
      {
-	cact[who] = 0;
-	return;
+        cact[who] = 0;
+        return;
      }
    for (a = 0; a < 5; a++)
       if (fighter[who].atrack[a] > 0)
-	 fighter[who].atrack[a]--;
+         fighter[who].atrack[a]--;
    a = rand () % 4;
    if (a == 0)
      {
-	cact[who] = 0;
-	return;
+        cact[who] = 0;
+        return;
      }
    if (a == 1)
      {
-	fighter[who].ctmem = 0;
-	enemy_attack (who);
-	return;
+        fighter[who].ctmem = 0;
+        enemy_attack (who);
+        return;
      }
    fighter[who].ctmem = 1;
    enemy_attack (who);
@@ -588,15 +586,15 @@ static int spell_setup (int whom, int z)
    switch (z)
      {
      case M_SHIELD:
-	zst = S_SHIELD;
-	break;
+        zst = S_SHIELD;
+        break;
      case M_HOLYMIGHT:
-	zst = S_STRENGTH;
-	break;
+        zst = S_STRENGTH;
+        break;
      case M_SHELL:
      case M_WALL:
-	zst = S_RESIST;
-	break;
+        zst = S_RESIST;
+        break;
      case M_VENOM:
      case M_HOLD:
      case M_BLIND:
@@ -604,55 +602,55 @@ static int spell_setup (int whom, int z)
      case M_SLEEP:
      case M_CONFUSE:
      case M_STONE:
-	zst = magic[z].elem - 8;
-	break;
+        zst = magic[z].elem - 8;
+        break;
      case M_NAUSEA:
-	zst = S_MALISON;
-	break;
+        zst = S_MALISON;
+        break;
      }
    fighter[whom].csmem = z;
    fighter[whom].ctmem = -1;
    switch (magic[z].tgt)
      {
      case TGT_ALLY_ONE:
-	fighter[whom].ctmem = auto_select_enemy (whom, zst);
-	break;
+        fighter[whom].ctmem = auto_select_enemy (whom, zst);
+        break;
      case TGT_ALLY_ALL:
-	fighter[whom].ctmem = SEL_ALL_ALLIES;
-	break;
+        fighter[whom].ctmem = SEL_ALL_ALLIES;
+        break;
      case TGT_ALLY_ONEALL:
-	if (z == M_CURE1 || z == M_CURE2 || z == M_CURE3 || z == M_CURE4)
-	  {
-	     aux = 0;
-	     for (a = PSIZE; a < PSIZE + numens; a++)
-		if (fighter[a].sts[S_DEAD] == 0
-		    && fighter[a].hp < fighter[a].mhp * 75 / 100)
-		   aux++;
-	     if (aux > 1)
-		fighter[whom].ctmem = SEL_ALL_ALLIES;
-	     else
-		fighter[whom].ctmem = auto_select_enemy (whom, CURE_CHECK);
-	  }
-	else
-	  {
-	     if (rand () % 4 < 2)
-		fighter[whom].ctmem = SEL_ALL_ALLIES;
-	     else
-		fighter[whom].ctmem = auto_select_enemy (whom, CURE_CHECK);
-	  }
-	break;
+        if (z == M_CURE1 || z == M_CURE2 || z == M_CURE3 || z == M_CURE4)
+          {
+             aux = 0;
+             for (a = PSIZE; a < PSIZE + numens; a++)
+                if (fighter[a].sts[S_DEAD] == 0
+                    && fighter[a].hp < fighter[a].mhp * 75 / 100)
+                   aux++;
+             if (aux > 1)
+                fighter[whom].ctmem = SEL_ALL_ALLIES;
+             else
+                fighter[whom].ctmem = auto_select_enemy (whom, CURE_CHECK);
+          }
+        else
+          {
+             if (rand () % 4 < 2)
+                fighter[whom].ctmem = SEL_ALL_ALLIES;
+             else
+                fighter[whom].ctmem = auto_select_enemy (whom, CURE_CHECK);
+          }
+        break;
      case TGT_ENEMY_ONE:
-	fighter[whom].ctmem = auto_select_hero (whom, zst);
-	break;
+        fighter[whom].ctmem = auto_select_hero (whom, zst);
+        break;
      case TGT_ENEMY_ALL:
-	fighter[whom].ctmem = SEL_ALL_ENEMIES;
-	break;
+        fighter[whom].ctmem = SEL_ALL_ENEMIES;
+        break;
      case TGT_ENEMY_ONEALL:
-	if (rand () % 4 < 3)
-	   fighter[whom].ctmem = SEL_ALL_ENEMIES;
-	else
-	   fighter[whom].ctmem = auto_select_hero (whom, NO_STS_CHECK);
-	break;
+        if (rand () % 4 < 3)
+           fighter[whom].ctmem = SEL_ALL_ENEMIES;
+        else
+           fighter[whom].ctmem = auto_select_hero (whom, NO_STS_CHECK);
+        break;
      }
    if (fighter[whom].ctmem == -1)
       return 0;
@@ -671,15 +669,15 @@ static int skill_setup (int whom, int sn)
    if (sk == 1 || sk == 2 || sk == 3 || sk == 6 || sk == 7 || sk == 12
        || sk == 14)
      {
-	fighter[whom].ctmem = auto_select_hero (whom, NO_STS_CHECK);
-	if (fighter[whom].ctmem == -1)
-	   return 0;
-	return 1;
+        fighter[whom].ctmem = auto_select_hero (whom, NO_STS_CHECK);
+        if (fighter[whom].ctmem == -1)
+           return 0;
+        return 1;
      }
    else
      {
-	fighter[whom].ctmem = SEL_ALL_ENEMIES;
-	return 1;
+        fighter[whom].ctmem = SEL_ALL_ENEMIES;
+        return 1;
      }
    return 0;
 }
@@ -698,42 +696,42 @@ static void enemy_attack (int whom)
    if (fighter[whom].hp < (fighter[whom].mhp / 5)
        && fighter[whom].sts[S_CHARM] == 0)
      {
-	if (rand () % 4 == 0)
-	  {
-	     fighter[whom].defend = 1;
-	     cact[whom] = 0;
-	     return;
-	  }
+        if (rand () % 4 == 0)
+          {
+             fighter[whom].defend = 1;
+             cact[whom] = 0;
+             return;
+          }
      }
    if (fighter[whom].sts[S_CHARM] == 0)
       b = auto_select_hero (whom, NO_STS_CHECK);
    else
      {
-	if (fighter[whom].ctmem == 0)
-	   b = auto_select_hero (whom, NO_STS_CHECK);
-	else
-	   b = auto_select_enemy (whom, NO_STS_CHECK);
+        if (fighter[whom].ctmem == 0)
+           b = auto_select_hero (whom, NO_STS_CHECK);
+        else
+           b = auto_select_enemy (whom, NO_STS_CHECK);
      }
    if (b == -1)
      {
-	fighter[whom].defend = 1;
-	cact[whom] = 0;
-	return;
+        fighter[whom].defend = 1;
+        cact[whom] = 0;
+        return;
      }
    if (b < PSIZE && numchrs > 1)
      {
-	c = 0;
-	for (a = 0; a < numchrs; a++)
-	   if (pidx[a] == TEMMIN && fighter[a].aux == 1)
-	      c = a + 1;
-	if (c != 0)
-	  {
-	     if (pidx[b] != TEMMIN)
-	       {
-		  b = c - 1;
-		  fighter[c - 1].aux = 2;
-	       }
-	  }
+        c = 0;
+        for (a = 0; a < numchrs; a++)
+           if (pidx[a] == TEMMIN && fighter[a].aux == 1)
+              c = a + 1;
+        if (c != 0)
+          {
+             if (pidx[b] != TEMMIN)
+               {
+                  b = c - 1;
+                  fighter[c - 1].aux = 2;
+               }
+          }
      }
    fight (whom, b, 0);
    cact[whom] = 0;

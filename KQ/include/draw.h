@@ -110,16 +110,16 @@ extern unsigned char DARKRED;
 
 
 #if 0
-void drawchar (int, int);	/*  staticed  */
-void draw_backlayer (void);	/*  staticed  */
-void draw_midlayer (void);	/*  staticed  */
-void draw_forelayer (void);	/*  staticed  */
-void draw_shadows (void);	/*  staticed  */
-void border (BITMAP *, int, int, int, int);	/*  staticed  */
-void set_textpos (int);		/*  staticed  */
-void draw_textbox (int);	/*  staticed  */
-void generic_text (int, int);	/*  staticed  */
-char *parse_string (char *);	/*  staticed  */
+void drawchar (int, int);       /*  staticed  */
+void draw_backlayer (void);     /*  staticed  */
+void draw_midlayer (void);      /*  staticed  */
+void draw_forelayer (void);     /*  staticed  */
+void draw_shadows (void);       /*  staticed  */
+void border (BITMAP *, int, int, int, int);     /*  staticed  */
+void set_textpos (int);         /*  staticed  */
+void draw_textbox (int);        /*  staticed  */
+void generic_text (int, int);   /*  staticed  */
+char *parse_string (char *);    /*  staticed  */
 #endif /*  0  */
 
 

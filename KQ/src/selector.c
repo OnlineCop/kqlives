@@ -60,41 +60,41 @@ int select_player (void)
    ptr = 0;
    while (!stop)
      {
-	if (rd == 1)
-	  {
-	     draw_mainmenu (ptr);
-	     blit2screen (xofs, yofs);
-	  }
-	rd = 0;
-	readcontrols ();
-	if (up)
-	  {
-	     unpress ();
-	     ptr--;
-	     if (ptr < 0)
-		ptr = numchrs - 1;
-	     play_effect (SND_CLICK, 128);
-	     rd = 1;
-	  }
-	if (down)
-	  {
-	     unpress ();
-	     ptr++;
-	     if (ptr > numchrs - 1)
-		ptr = 0;
-	     play_effect (SND_CLICK, 128);
-	     rd = 1;
-	  }
-	if (balt)
-	  {
-	     unpress ();
-	     stop = 1;
-	  }
-	if (bctrl)
-	  {
-	     unpress ();
-	     return -1;
-	  }
+        if (rd == 1)
+          {
+             draw_mainmenu (ptr);
+             blit2screen (xofs, yofs);
+          }
+        rd = 0;
+        readcontrols ();
+        if (up)
+          {
+             unpress ();
+             ptr--;
+             if (ptr < 0)
+                ptr = numchrs - 1;
+             play_effect (SND_CLICK, 128);
+             rd = 1;
+          }
+        if (down)
+          {
+             unpress ();
+             ptr++;
+             if (ptr > numchrs - 1)
+                ptr = 0;
+             play_effect (SND_CLICK, 128);
+             rd = 1;
+          }
+        if (balt)
+          {
+             unpress ();
+             stop = 1;
+          }
+        if (bctrl)
+          {
+             unpress ();
+             return -1;
+          }
      }
    return ptr;
 }
@@ -127,97 +127,96 @@ int select_any_player (int csa, int icn, char *msg)
    ptr = 0;
    while (!stop)
      {
-	if (rd == 1)
-	  {
-	     drawmap ();
-	     if (csa < 3)
-	       {
-		  menubox (double_buffer,
-			   152 - ((strlen (msg) + 1) * 4) + xofs, 8 + yofs,
-			   strlen (msg) + 1, 1, BLUE);
-		  draw_icon (double_buffer, icn,
-			     160 - ((strlen (msg) + 1) * 4) + xofs,
-			     16 + yofs);
-		  print_font (double_buffer,
-			      168 - ((strlen (msg) + 1) * 4) + xofs,
-			      16 + yofs, msg, FNORMAL);
-	       }
-	     for (k = 0; k < numchrs; k++)
-	       {
-		  menubox (double_buffer, 80 + xofs, k * 56 + shy + yofs, 18,
-			   5, BLUE);
-		  draw_playerstat (double_buffer, pidx[k], 88 + xofs,
-				   k * 56 + shy + 8 + yofs);
-		  if (csa < 3)
-		    {
-		       if (sa == 0)
-			 {
-			    if (k == ptr)
-			       draw_sprite (double_buffer, menuptr, 72 + xofs,
-					    k * 56 + shy + 24 + yofs);
-			 }
-		       else
-			  draw_sprite (double_buffer, menuptr, 72 + xofs,
-				       k * 56 + shy + 24 + yofs);
-		    }
-	       }
-	     blit2screen (xofs, yofs);
-	  }
-	rd = 0;
-	readcontrols ();
-	if (csa < 3)
-	  {
-	     if (left)
-	       {
-		  unpress ();
-		  if (csa == 1)
-		    {
-		       if (sa == 0)
-			  sa = 1;
-		       else
-			  sa = 0;
-		    }
-		  rd = 1;
-	       }
-	     if (right)
-	       {
-		  unpress ();
-		  if (csa == 1)
-		    {
-		       if (sa == 0)
-			  sa = 1;
-		       else
-			  sa = 0;
-		    }
-		  rd = 1;
-	       }
-	     if (up)
-	       {
-		  unpress ();
-		  if (ptr > 0)
-		     ptr--;
-		  play_effect (SND_CLICK, 128);
-		  rd = 1;
-	       }
-	     if (down)
-	       {
-		  unpress ();
-		  if (ptr < numchrs - 1)
-		     ptr++;
-		  play_effect (SND_CLICK, 128);
-		  rd = 1;
-	       }
-	  }
-	if (balt)
-	  {
-	     unpress ();
-	     stop = 1;
-	  }
-	if (bctrl)
-	  {
-	     unpress ();
-	     stop = 2;
-	  }
+        if (rd == 1)
+          {
+             drawmap ();
+             if (csa < 3)
+               {
+                  menubox (double_buffer,
+                           152 - ((strlen (msg) + 1) * 4) + xofs, 8 + yofs,
+                           strlen (msg) + 1, 1, BLUE);
+                  draw_icon (double_buffer, icn,
+                             160 - ((strlen (msg) + 1) * 4) + xofs, 16 + yofs);
+                  print_font (double_buffer,
+                              168 - ((strlen (msg) + 1) * 4) + xofs,
+                              16 + yofs, msg, FNORMAL);
+               }
+             for (k = 0; k < numchrs; k++)
+               {
+                  menubox (double_buffer, 80 + xofs, k * 56 + shy + yofs, 18,
+                           5, BLUE);
+                  draw_playerstat (double_buffer, pidx[k], 88 + xofs,
+                                   k * 56 + shy + 8 + yofs);
+                  if (csa < 3)
+                    {
+                       if (sa == 0)
+                         {
+                            if (k == ptr)
+                               draw_sprite (double_buffer, menuptr, 72 + xofs,
+                                            k * 56 + shy + 24 + yofs);
+                         }
+                       else
+                          draw_sprite (double_buffer, menuptr, 72 + xofs,
+                                       k * 56 + shy + 24 + yofs);
+                    }
+               }
+             blit2screen (xofs, yofs);
+          }
+        rd = 0;
+        readcontrols ();
+        if (csa < 3)
+          {
+             if (left)
+               {
+                  unpress ();
+                  if (csa == 1)
+                    {
+                       if (sa == 0)
+                          sa = 1;
+                       else
+                          sa = 0;
+                    }
+                  rd = 1;
+               }
+             if (right)
+               {
+                  unpress ();
+                  if (csa == 1)
+                    {
+                       if (sa == 0)
+                          sa = 1;
+                       else
+                          sa = 0;
+                    }
+                  rd = 1;
+               }
+             if (up)
+               {
+                  unpress ();
+                  if (ptr > 0)
+                     ptr--;
+                  play_effect (SND_CLICK, 128);
+                  rd = 1;
+               }
+             if (down)
+               {
+                  unpress ();
+                  if (ptr < numchrs - 1)
+                     ptr++;
+                  play_effect (SND_CLICK, 128);
+                  rd = 1;
+               }
+          }
+        if (balt)
+          {
+             unpress ();
+             stop = 1;
+          }
+        if (bctrl)
+          {
+             unpress ();
+             stop = 2;
+          }
      }
    if (csa == 3 || stop == 2)
       return -1;
@@ -253,81 +252,81 @@ int select_hero (int whom, int multi, int csd)
       sa = 0;
    for (a = 0; a < numchrs; a++)
      {
-	if (fighter[a].sts[S_DEAD] == 0)
-	  {
-	     tmpd[a] = a;
-	     cntr++;
-	  }
-	else
-	  {
-	     if (csd == 1)
-	       {
-		  tmpd[a] = a;
-		  cntr++;
-		  ptr = a;
-	       }
-	  }
+        if (fighter[a].sts[S_DEAD] == 0)
+          {
+             tmpd[a] = a;
+             cntr++;
+          }
+        else
+          {
+             if (csd == 1)
+               {
+                  tmpd[a] = a;
+                  cntr++;
+                  ptr = a;
+               }
+          }
      }
    while (!stp)
      {
-	if (rd == 1)
-	  {
-	     if (multi > 0 && sa == 1)
-		battle_render (tmpd[ptr] + 1, whom + 1, 1);
-	     else
-		battle_render (tmpd[ptr] + 1, whom + 1, 0);
-	     blit2screen (0, 0);
-	  }
-	readcontrols ();
-	rd = 0;
-	if (balt)
-	  {
-	     unpress ();
-	     stp = 1;
-	     rd = 1;
-	  }
-	if (bctrl)
-	  {
-	     unpress ();
-	     return -1;
-	  }
-	if (left)
-	  {
-	     unpress ();
-	     ptr--;
-	     if (ptr < 0)
-		ptr = cntr - 1;
-	     rd = 1;
-	  }
-	if (right)
-	  {
-	     unpress ();
-	     ptr++;
-	     if (ptr >= cntr)
-		ptr = 0;
-	     rd = 1;
-	  }
-	if (multi == 1 && cntr > 1)
-	  {
-	     if (up)
-	       {
-		  unpress ();
-		  if (sa == 0)
-		     sa = 1;
-		  else
-		     sa = 0;
-		  rd = 1;
-	       }
-	     if (down)
-	       {
-		  unpress ();
-		  if (sa == 0)
-		     sa = 1;
-		  else
-		     sa = 0;
-		  rd = 1;
-	       }
-	  }
+        if (rd == 1)
+          {
+             if (multi > 0 && sa == 1)
+                battle_render (tmpd[ptr] + 1, whom + 1, 1);
+             else
+                battle_render (tmpd[ptr] + 1, whom + 1, 0);
+             blit2screen (0, 0);
+          }
+        readcontrols ();
+        rd = 0;
+        if (balt)
+          {
+             unpress ();
+             stp = 1;
+             rd = 1;
+          }
+        if (bctrl)
+          {
+             unpress ();
+             return -1;
+          }
+        if (left)
+          {
+             unpress ();
+             ptr--;
+             if (ptr < 0)
+                ptr = cntr - 1;
+             rd = 1;
+          }
+        if (right)
+          {
+             unpress ();
+             ptr++;
+             if (ptr >= cntr)
+                ptr = 0;
+             rd = 1;
+          }
+        if (multi == 1 && cntr > 1)
+          {
+             if (up)
+               {
+                  unpress ();
+                  if (sa == 0)
+                     sa = 1;
+                  else
+                     sa = 0;
+                  rd = 1;
+               }
+             if (down)
+               {
+                  unpress ();
+                  if (sa == 0)
+                     sa = 1;
+                  else
+                     sa = 0;
+                  rd = 1;
+               }
+          }
      }
    if (sa == 0)
       return tmpd[ptr];
@@ -362,7 +361,7 @@ int select_enemy (int whom, int multi)
 
    for (a = PSIZE; a < PSIZE + numens; a++)
       if (can_attack (a) == 1)
-	 tmpd[cntr++] = a;
+         tmpd[cntr++] = a;
    if (multi == 2)
       sa = 1;
    else
@@ -372,67 +371,67 @@ int select_enemy (int whom, int multi)
    rd = 1;
    while (!stp)
      {
-	if (rd == 1)
-	  {
-	     if (multi > 0 && sa == 1)
-		battle_render (tmpd[ptr] + 1, whom + 1, 2);
-	     else
-		battle_render (tmpd[ptr] + 1, whom + 1, 0);
-	  }
-	blit2screen (0, 0);
-	readcontrols ();
-	rd = 0;
-	if (balt)
-	  {
-	     unpress ();
-	     rd = 1;
-	     stp = 1;
-	  }
-	if (bctrl)
-	  {
-	     unpress ();
-	     return -1;
-	  }
-	if (left)
-	  {
-	     unpress ();
-	     ptr--;
-	     if (ptr < 0)
-		ptr = cntr - 1;
-	     rd = 1;
-	  }
-	if (right)
-	  {
-	     unpress ();
-	     ptr++;
-	     if (ptr > cntr - 1)
-		ptr = 0;
-	     rd = 1;
-	  }
-	if (up)
-	  {
-	     unpress ();
-	     if (multi == 1 && cntr > 1)
-	       {
-		  if (sa == 0)
-		     sa = 1;
-		  else
-		     sa = 0;
-		  rd = 1;
-	       }
-	  }
-	if (down)
-	  {
-	     unpress ();
-	     if (multi == 1 && cntr > 1)
-	       {
-		  if (sa == 0)
-		     sa = 1;
-		  else
-		     sa = 0;
-		  rd = 1;
-	       }
-	  }
+        if (rd == 1)
+          {
+             if (multi > 0 && sa == 1)
+                battle_render (tmpd[ptr] + 1, whom + 1, 2);
+             else
+                battle_render (tmpd[ptr] + 1, whom + 1, 0);
+          }
+        blit2screen (0, 0);
+        readcontrols ();
+        rd = 0;
+        if (balt)
+          {
+             unpress ();
+             rd = 1;
+             stp = 1;
+          }
+        if (bctrl)
+          {
+             unpress ();
+             return -1;
+          }
+        if (left)
+          {
+             unpress ();
+             ptr--;
+             if (ptr < 0)
+                ptr = cntr - 1;
+             rd = 1;
+          }
+        if (right)
+          {
+             unpress ();
+             ptr++;
+             if (ptr > cntr - 1)
+                ptr = 0;
+             rd = 1;
+          }
+        if (up)
+          {
+             unpress ();
+             if (multi == 1 && cntr > 1)
+               {
+                  if (sa == 0)
+                     sa = 1;
+                  else
+                     sa = 0;
+                  rd = 1;
+               }
+          }
+        if (down)
+          {
+             unpress ();
+             if (multi == 1 && cntr > 1)
+               {
+                  if (sa == 0)
+                     sa = 1;
+                  else
+                     sa = 0;
+                  rd = 1;
+               }
+          }
      }
    if (sa == 0)
       return tmpd[ptr];
@@ -457,29 +456,29 @@ int auto_select_hero (int whom, int csts)
    whom = whom;
    if (numchrs == 1)
      {
-	if (can_attack (0))
-	   return 0;
-	else
-	   return -1;
+        if (can_attack (0))
+           return 0;
+        else
+           return -1;
      }
    for (a = 0; a < numchrs; a++)
      {
-	if (can_attack (a))
-	  {
-	     if (csts == NO_STS_CHECK)
-	       {
-		  tmpd[cntr] = a;
-		  cntr++;
-	       }
-	     else
-	       {
-		  if (fighter[a].sts[csts] == 0)
-		    {
-		       tmpd[cntr] = a;
-		       cntr++;
-		    }
-	       }
-	  }
+        if (can_attack (a))
+          {
+             if (csts == NO_STS_CHECK)
+               {
+                  tmpd[cntr] = a;
+                  cntr++;
+               }
+             else
+               {
+                  if (fighter[a].sts[csts] == 0)
+                    {
+                       tmpd[cntr] = a;
+                       cntr++;
+                    }
+               }
+          }
      }
    if (cntr <= 1)
       return tmpd[0];
@@ -507,44 +506,44 @@ int auto_select_enemy (int whom, int csts)
 
    for (a = PSIZE; a < PSIZE + numens; a++)
      {
-	if (fighter[a].sts[S_DEAD] == 0)
-	  {
-	     if (csts == NO_STS_CHECK)
-	       {
-		  tmpd[ne] = a;
-		  ne++;
-	       }
-	     else
-	       {
-		  if (csts == CURE_CHECK)
-		    {
-		       if (fighter[a].hp < fighter[a].mhp * 75 / 100)
-			 {
-			    tmpd[ne] = a;
-			    ne++;
-			 }
-		    }
-		  else
-		    {
-		       if ((csts == S_BLESS && fighter[a].sts[csts] < 3)
-			   || (csts == S_STRENGTH && fighter[a].sts[csts] < 2)
-			   || (csts != S_BLESS && csts != S_STRENGTH
-			       && fighter[a].sts[csts] == 0))
-			 {
-			    tmpd[ne] = a;
-			    ne++;
-			 }
-		    }
-	       }
-	  }
+        if (fighter[a].sts[S_DEAD] == 0)
+          {
+             if (csts == NO_STS_CHECK)
+               {
+                  tmpd[ne] = a;
+                  ne++;
+               }
+             else
+               {
+                  if (csts == CURE_CHECK)
+                    {
+                       if (fighter[a].hp < fighter[a].mhp * 75 / 100)
+                         {
+                            tmpd[ne] = a;
+                            ne++;
+                         }
+                    }
+                  else
+                    {
+                       if ((csts == S_BLESS && fighter[a].sts[csts] < 3)
+                           || (csts == S_STRENGTH && fighter[a].sts[csts] < 2)
+                           || (csts != S_BLESS && csts != S_STRENGTH
+                               && fighter[a].sts[csts] == 0))
+                         {
+                            tmpd[ne] = a;
+                            ne++;
+                         }
+                    }
+               }
+          }
      }
    if (ne == 0)
       return -1;
    if (csts != NO_STS_CHECK)
      {
-	for (a = 0; a < ne; a++)
-	   if (tmpd[a] == whom && rand () % 4 != 3)
-	      return whom;
+        for (a = 0; a < ne; a++)
+           if (tmpd[a] == whom && rand () % 4 != 3)
+              return whom;
      }
    if (ne <= 1)
       return tmpd[0];

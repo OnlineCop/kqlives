@@ -87,36 +87,36 @@
 #define M_PLAGUE         59
 #define M_XSURGE         60
 
-int combat_spell (int, int);	/*  enemyc.c, heroc.c  */
-int cast_spell (int, int);	/*  masmenu.c  */
-void cast_imbued_spell (int, int, int, int);	/*  combat.c, heroc.c  */
-void special_damage_oneall_enemies (int, int, int, int, int);	/*  eskill.c heroc.c  */
-int res_adjust (int, int, int);	/*  combat.c, itemmenu.c  */
-int res_throw (int, int);	/*  combat.c, eskill.c  */
-int non_dmg_save (int, int);	/*  combat.c, eskill.c  */
-int mp_needed (int, int);	/*  enemyc.c, hskill.c,  */
-				 /*  masmenu.c, heroc.c   */
-void adjust_hp (int, int);	/*  combat.c, [he]skill.c,     */
-				 /*  (item|mas)menu.c, heroc.c  */
-void adjust_mp (int, int);	/*  eskill.c, itemmenu.c  */
-int do_shell_check (int, int);	/*  hskill.c, itemmenu.c  */
-int do_shield_check (int, int);	/*  only in combat.c  */
-s_fighter status_adjust (int);	/*  combat.c, [he]skill.c  */
+int combat_spell (int, int);    /*  enemyc.c, heroc.c  */
+int cast_spell (int, int);      /*  masmenu.c  */
+void cast_imbued_spell (int, int, int, int);    /*  combat.c, heroc.c  */
+void special_damage_oneall_enemies (int, int, int, int, int);   /*  eskill.c heroc.c  */
+int res_adjust (int, int, int); /*  combat.c, itemmenu.c  */
+int res_throw (int, int);       /*  combat.c, eskill.c  */
+int non_dmg_save (int, int);    /*  combat.c, eskill.c  */
+int mp_needed (int, int);       /*  enemyc.c, hskill.c,  */
+                                 /*  masmenu.c, heroc.c   */
+void adjust_hp (int, int);      /*  combat.c, [he]skill.c,     */
+                                 /*  (item|mas)menu.c, heroc.c  */
+void adjust_mp (int, int);      /*  eskill.c, itemmenu.c  */
+int do_shell_check (int, int);  /*  hskill.c, itemmenu.c  */
+int do_shield_check (int, int); /*  only in combat.c  */
+s_fighter status_adjust (int);  /*  combat.c, [he]skill.c  */
 
 
 
 #if 0
-void spell_damage (int, int, int, int);	/*  staticed  */
-void set_timed_sts_effect (int, int);	/*  staticed  */
-void special_spells (int, int);	/*  staticed  */
-void cure_oneall_allies (int, int, int);	/*  staticed  */
-void heal_one_ally (int, int, int);	/*  staticed  */
-void damage_oneall_enemies (int, int, int);	/*  staticed  */
-void damage_all_enemies (int, int);	/*  staticed  */
-void beffect_one_enemy (int, int, int);	/*  staticed  */
-void beffect_all_enemies (int, int);	/*  staticed  */
-void geffect_one_ally (int, int, int);	/*  staticed  */
-void geffect_all_allies (int, int);	/*  staticed  */
+void spell_damage (int, int, int, int); /*  staticed  */
+void set_timed_sts_effect (int, int);   /*  staticed  */
+void special_spells (int, int); /*  staticed  */
+void cure_oneall_allies (int, int, int);        /*  staticed  */
+void heal_one_ally (int, int, int);     /*  staticed  */
+void damage_oneall_enemies (int, int, int);     /*  staticed  */
+void damage_all_enemies (int, int);     /*  staticed  */
+void beffect_one_enemy (int, int, int); /*  staticed  */
+void beffect_all_enemies (int, int);    /*  staticed  */
+void geffect_one_ally (int, int, int);  /*  staticed  */
+void geffect_all_allies (int, int);     /*  staticed  */
 #endif /*  0  */
 
 

@@ -410,8 +410,7 @@ static void status_screen (int ch)
                          88 + yofs, strbuf, FNORMAL);
              print_font (double_buffer, 8 + xofs, 104 + yofs, "Strength",
                          FGOLD);
-             print_font (double_buffer, 8 + xofs, 112 + yofs, "Agility",
-                         FGOLD);
+             print_font (double_buffer, 8 + xofs, 112 + yofs, "Agility", FGOLD);
              print_font (double_buffer, 8 + xofs, 120 + yofs, "Vitality",
                          FGOLD);
              print_font (double_buffer, 8 + xofs, 128 + yofs, "Intellect",
@@ -420,16 +419,12 @@ static void status_screen (int ch)
                          FGOLD);
              print_font (double_buffer, 8 + xofs, 144 + yofs, "Speed", FGOLD);
              print_font (double_buffer, 8 + xofs, 152 + yofs, "Aura", FGOLD);
-             print_font (double_buffer, 8 + xofs, 160 + yofs, "Spirit",
-                         FGOLD);
-             print_font (double_buffer, 8 + xofs, 176 + yofs, "Attack",
-                         FGOLD);
+             print_font (double_buffer, 8 + xofs, 160 + yofs, "Spirit", FGOLD);
+             print_font (double_buffer, 8 + xofs, 176 + yofs, "Attack", FGOLD);
              print_font (double_buffer, 8 + xofs, 184 + yofs, "Hit", FGOLD);
-             print_font (double_buffer, 8 + xofs, 192 + yofs, "Defense",
-                         FGOLD);
+             print_font (double_buffer, 8 + xofs, 192 + yofs, "Defense", FGOLD);
              print_font (double_buffer, 8 + xofs, 200 + yofs, "Evade", FGOLD);
-             print_font (double_buffer, 8 + xofs, 208 + yofs, "Mag.Def",
-                         FGOLD);
+             print_font (double_buffer, 8 + xofs, 208 + yofs, "Mag.Def", FGOLD);
              for (p = 0; p < 13; p++)
                {
                   i = p * 8 + 104;
@@ -447,18 +442,15 @@ static void status_screen (int ch)
                          FNORMAL);
              print_font (double_buffer, 168 + xofs, 32 + yofs, "Black",
                          FNORMAL);
-             print_font (double_buffer, 168 + xofs, 40 + yofs, "Fire",
-                         FNORMAL);
+             print_font (double_buffer, 168 + xofs, 40 + yofs, "Fire", FNORMAL);
              print_font (double_buffer, 168 + xofs, 48 + yofs, "Thunder",
                          FNORMAL);
-             print_font (double_buffer, 168 + xofs, 56 + yofs, "Air",
-                         FNORMAL);
+             print_font (double_buffer, 168 + xofs, 56 + yofs, "Air", FNORMAL);
              print_font (double_buffer, 168 + xofs, 64 + yofs, "White",
                          FNORMAL);
              print_font (double_buffer, 168 + xofs, 72 + yofs, "Water",
                          FNORMAL);
-             print_font (double_buffer, 168 + xofs, 80 + yofs, "Ice",
-                         FNORMAL);
+             print_font (double_buffer, 168 + xofs, 80 + yofs, "Ice", FNORMAL);
              print_font (double_buffer, 168 + xofs, 88 + yofs, "Poison",
                          FNORMAL);
              print_font (double_buffer, 168 + xofs, 96 + yofs, "Blind",

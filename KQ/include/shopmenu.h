@@ -26,27 +26,27 @@
 
 #define NUMSHOPS      50
 
-int shop (int);			/*  only in intrface.c  */
-void inn (char *, int, int);	/*  only in intrface.c  */
+int shop (int);                 /*  only in intrface.c  */
+void inn (char *, int, int);    /*  only in intrface.c  */
 
 
 
-extern unsigned short shops[NUMSHOPS][12][3];	/*  sgame.c  */
-extern unsigned short shopq[NUMSHOPS][12];	/*  sgame.c  */
+extern unsigned short shops[NUMSHOPS][12][3];   /*  sgame.c  */
+extern unsigned short shopq[NUMSHOPS][12];      /*  sgame.c  */
 
 
 
 #if 0
-extern unsigned char shop_no;	/*  staticed  */
-extern char shopn[NUMSHOPS][40];	/*  staticed  */
+extern unsigned char shop_no;   /*  staticed  */
+extern char shopn[NUMSHOPS][40];        /*  staticed  */
 
-void draw_sideshot (int);	/*  staticed  */
-void buy_menu (void);		/*  staticed  */
-void buy_item (int, int);	/*  staticed  */
-void sell_menu (void);		/*  staticed  */
-void sell_howmany (int, int);	/*  staticed  */
-void sell_item (int, int);	/*  staticed  */
-void do_inn_effects (void);	/*  staticed  */
+void draw_sideshot (int);       /*  staticed  */
+void buy_menu (void);           /*  staticed  */
+void buy_item (int, int);       /*  staticed  */
+void sell_menu (void);          /*  staticed  */
+void sell_howmany (int, int);   /*  staticed  */
+void sell_item (int, int);      /*  staticed  */
+void do_inn_effects (void);     /*  staticed  */
 #endif /*  0  */
 
 

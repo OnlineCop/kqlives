@@ -107,7 +107,7 @@ typedef struct
    unsigned char tnum;
    unsigned char lvl;
    unsigned char per;
-   unsigned char idx[5]; /*!< Index of enemies */
+   unsigned char idx[5];        /*!< Index of enemies */
 }
 s_erow;
 
@@ -127,17 +127,17 @@ s_encounter;
 
 
 
-extern PALETTE pal;		/*  draw.c, hskill.c, intrface.c,    */
-				    /*  kq.c, magic.c, menu.c, sgame.c,  */
-				    /*  shopmenu.c                       */
-extern s_item items[NUM_ITEMS];	/*  combat.c, effects.c, heroc.c,   */
-				    /*  (eqp|item|shop)menu.c, menu.c,  */
-				    /*  hskill.c, intrface.c,           */
-extern s_spell magic[NUM_SPELLS];	/*  enemyc.c, heroc.c, hskill.c,  */
-				    /*  (item|mas)menu.c, magic.c     */
-extern s_effect eff[NUM_EFFECTS];	/*  effects.c, hskill.c, magic.c  */
-extern s_erow erows[NUM_ETROWS];	/*  combat.c, enemyc.c  */
-extern s_encounter battles[NUM_BATTLES];	/*  only in combat.c  */
+extern PALETTE pal;             /*  draw.c, hskill.c, intrface.c,    */
+                                    /*  kq.c, magic.c, menu.c, sgame.c,  */
+                                    /*  shopmenu.c                       */
+extern s_item items[NUM_ITEMS]; /*  combat.c, effects.c, heroc.c,   */
+                                    /*  (eqp|item|shop)menu.c, menu.c,  */
+                                    /*  hskill.c, intrface.c,           */
+extern s_spell magic[NUM_SPELLS];       /*  enemyc.c, heroc.c, hskill.c,  */
+                                    /*  (item|mas)menu.c, magic.c     */
+extern s_effect eff[NUM_EFFECTS];       /*  effects.c, hskill.c, magic.c  */
+extern s_erow erows[NUM_ETROWS];        /*  combat.c, enemyc.c  */
+extern s_encounter battles[NUM_BATTLES];        /*  only in combat.c  */
 
 
 

@@ -18,6 +18,13 @@
    the Free Software Foundation,
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
+/*! \file
+ * \brief Screenshot handling header
+ *
+ * Saves numbered bitmaps to file
+ * \author ML
+ * \date September 2002
+ */
 
 #ifndef __SCRNSHOT_H
 #define __SCRNSHOT_H
@@ -30,7 +37,6 @@
 
 extern const char *ss_exit_msg[5];
 
-int save_screenshot(BITMAP *src_bmp, const char *prefix); /* kq.c */
+int save_screenshot (BITMAP * src_bmp, const char *prefix);     /* kq.c */
 
 #endif //__SCRNSHOT_H
-

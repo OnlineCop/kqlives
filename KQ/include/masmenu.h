@@ -24,18 +24,18 @@
 
 
 
-int learn_new_spells (int);	/*  kq.c, menu.c, combat.c  */
-void camp_spell_menu (int);	/*  menu.c  */
+int learn_new_spells (int);     /*  kq.c, menu.c, combat.c  */
+void camp_spell_menu (int);     /*  menu.c  */
 
-extern int close_menu;		/*  menu.c  */
+extern int close_menu;          /*  menu.c  */
 
 
 
 #if 0
-int need_spell (int, int, int);	/*  staticed  */
-void camp_draw_spell_menu (int, int, int);	/*  staticed  */
-void camp_spell_targeting (int, int);	/*  staticed  */
-int camp_castable (int, int);	/*  staticed  */
+int need_spell (int, int, int); /*  staticed  */
+void camp_draw_spell_menu (int, int, int);      /*  staticed  */
+void camp_spell_targeting (int, int);   /*  staticed  */
+int camp_castable (int, int);   /*  staticed  */
 #endif /*  0  */
 
 

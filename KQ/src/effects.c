@@ -57,21 +57,21 @@ void display_amount (int tgt, int cl, int aflag)
 
    if (aflag == 1)
      {
-	if (tgt < PSIZE)
-	  {
-	     f = 0;
-	     n = numchrs;
-	  }
-	else
-	  {
-	     f = PSIZE;
-	     n = numens;
-	  }
+        if (tgt < PSIZE)
+          {
+             f = 0;
+             n = numchrs;
+          }
+        else
+          {
+             f = PSIZE;
+             n = numens;
+          }
      }
    else
      {
-	f = tgt;
-	n = 1;
+        f = tgt;
+        n = 1;
      }
    curx = -1;
    cury = -1;
@@ -79,45 +79,45 @@ void display_amount (int tgt, int cl, int aflag)
    blit (double_buffer, back, 0, 0, 0, 0, 352, 280);
    for (p = 0; p < 2; p++)
      {
-	for (c = 0; c < 12; c++)
-	  {
-	     blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
-	     for (g = f; g < f + n; g++)
-	       {
-		  if (is_active (g) == 1)
-		    {
-		       dx = fighter[g].cx + (fighter[g].cw / 2);
-		       if (fighter[g].cl <= 64)
-			  dy = fighter[g].cy;
-		       else
-			  dy = fighter[g].cy + fighter[g].cl - 8;
-		       if (ta[g] == NODISPLAY)
-			  sprintf (strbuf, "_");
-		       else
-			  sprintf (strbuf, "%d", abs (ta[g]));
-		       sz = strlen (strbuf) * 3;
-		       k = cl;
-		       if (cl == FDECIDE)
-			 {
-			    if (ta[g] > 0)
-			       k = FYELLOW;
-			    else
-			       k = FNORMAL;
-			 }
-		       draw_fighter (g, 0);
-		       if (p == 0)
-			  z = dy - c;
-		       else
-			  z = dy - 9 + c;
-		       if (ta[g] == MISS)
-			  draw_sprite (double_buffer, missbmp, dx - 10, z);
-		       else
-			  print_num (double_buffer, dx - sz, z, strbuf, k);
-		    }
-	       }
-	     blit2screen (0, 0);
-	     rest (30);
-	  }
+        for (c = 0; c < 12; c++)
+          {
+             blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
+             for (g = f; g < f + n; g++)
+               {
+                  if (is_active (g) == 1)
+                    {
+                       dx = fighter[g].cx + (fighter[g].cw / 2);
+                       if (fighter[g].cl <= 64)
+                          dy = fighter[g].cy;
+                       else
+                          dy = fighter[g].cy + fighter[g].cl - 8;
+                       if (ta[g] == NODISPLAY)
+                          sprintf (strbuf, "_");
+                       else
+                          sprintf (strbuf, "%d", abs (ta[g]));
+                       sz = strlen (strbuf) * 3;
+                       k = cl;
+                       if (cl == FDECIDE)
+                         {
+                            if (ta[g] > 0)
+                               k = FYELLOW;
+                            else
+                               k = FNORMAL;
+                         }
+                       draw_fighter (g, 0);
+                       if (p == 0)
+                          z = dy - c;
+                       else
+                          z = dy - 9 + c;
+                       if (ta[g] == MISS)
+                          draw_sprite (double_buffer, missbmp, dx - 10, z);
+                       else
+                          print_num (double_buffer, dx - sz, z, strbuf, k);
+                    }
+               }
+             blit2screen (0, 0);
+             rest (30);
+          }
      }
    battle_render (0, 0, 0);
    blit2screen (0, 0);
@@ -153,21 +153,21 @@ void draw_spellsprite (int tgt, int aflag, int ef, int shows)
    convert_cframes (tgt, eff[ef].kolor - 3, eff[ef].kolor + 3, aflag);
    if (aflag == 1)
      {
-	if (tgt < PSIZE)
-	  {
-	     f = 0;
-	     n = numchrs;
-	  }
-	else
-	  {
-	     f = PSIZE;
-	     n = numens;
-	  }
+        if (tgt < PSIZE)
+          {
+             f = 0;
+             n = numchrs;
+          }
+        else
+          {
+             f = PSIZE;
+             n = numens;
+          }
      }
    else
      {
-	f = tgt;
-	n = 1;
+        f = tgt;
+        n = 1;
      }
    curx = -1;
    cury = -1;
@@ -178,42 +178,41 @@ void draw_spellsprite (int tgt, int aflag, int ef, int shows)
    play_effect (eff[ef].snd, 128);
    for (a = 0; a < eff[ef].numf; a++)
      {
-	for (g = f; g < f + n; g++)
-	  {
-	     if (is_active (g) == 1)
-	       {
-		  dx =
-		     fighter[g].cx + (fighter[g].cw / 2) -
-		     (eff[ef].xsize / 2);
-		  switch (eff[ef].orient)
-		    {
-		    case 0:
-		       dy = fighter[g].cy + fighter[g].cl - eff[ef].ysize;
-		       break;
-		    case 1:
-		       dy =
-			  fighter[g].cy + (fighter[g].cl / 2) -
-			  (eff[ef].ysize / 2);
-		       break;
-		    case 2:
-		       dy = fighter[g].cy + eff[ef].ysize;
-		       break;
-		    }
-		  draw_fighter (g, 0);
-		  if (shows == 1 && fighter[g].sts[S_RESIST] > 0)
-		     draw_trans_sprite (double_buffer, b_shell,
-					fighter[g].cx + (fighter[g].cw / 2) -
-					24,
-					fighter[g].cy + (fighter[g].cl / 2) -
-					24);
-		  masked_blit ((BITMAP *) pb->dat, double_buffer, 0,
-			       eff[ef].ysize * a, dx, dy, eff[ef].xsize,
-			       eff[ef].ysize);
-	       }
-	  }
-	blit2screen (0, 0);
-	rest (eff[ef].delay);
-	blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
+        for (g = f; g < f + n; g++)
+          {
+             if (is_active (g) == 1)
+               {
+                  dx =
+                     fighter[g].cx + (fighter[g].cw / 2) - (eff[ef].xsize / 2);
+                  switch (eff[ef].orient)
+                    {
+                    case 0:
+                       dy = fighter[g].cy + fighter[g].cl - eff[ef].ysize;
+                       break;
+                    case 1:
+                       dy =
+                          fighter[g].cy + (fighter[g].cl / 2) -
+                          (eff[ef].ysize / 2);
+                       break;
+                    case 2:
+                       dy = fighter[g].cy + eff[ef].ysize;
+                       break;
+                    }
+                  draw_fighter (g, 0);
+                  if (shows == 1 && fighter[g].sts[S_RESIST] > 0)
+                     draw_trans_sprite (double_buffer, b_shell,
+                                        fighter[g].cx + (fighter[g].cw / 2) -
+                                        24,
+                                        fighter[g].cy + (fighter[g].cl / 2) -
+                                        24);
+                  masked_blit ((BITMAP *) pb->dat, double_buffer, 0,
+                               eff[ef].ysize * a, dx, dy, eff[ef].xsize,
+                               eff[ef].ysize);
+               }
+          }
+        blit2screen (0, 0);
+        rest (eff[ef].delay);
+        blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
      }
    revert_cframes (tgt, aflag);
    unload_datafile_object (pb);
@@ -235,13 +234,13 @@ void draw_hugesprite (int tgt, int hx, int hy, int ef, int shows)
    convert_cframes (tgt, eff[ef].kolor - 3, eff[ef].kolor + 3, 1);
    if (tgt < PSIZE)
      {
-	f = 0;
-	n = numchrs;
+        f = 0;
+        n = numchrs;
      }
    else
      {
-	f = PSIZE;
-	n = numens;
+        f = PSIZE;
+        n = numens;
      }
    curx = -1;
    cury = -1;
@@ -252,30 +251,30 @@ void draw_hugesprite (int tgt, int hx, int hy, int ef, int shows)
    play_effect (eff[ef].snd, 128);
    for (a = 0; a < eff[ef].numf; a++)
      {
-	if (eff[ef].orient == 0)
-	   masked_blit ((BITMAP *) pb->dat, double_buffer, 0,
-			eff[ef].ysize * a, hx, hy, eff[ef].xsize,
-			eff[ef].ysize);
-	for (g = f; g < f + n; g++)
-	  {
-	     if (is_active (g) == 1)
-	       {
-		  if (shows == 1 && fighter[g].sts[S_RESIST] > 0)
-		     draw_trans_sprite (double_buffer, b_shell,
-					fighter[g].cx + (fighter[g].cw / 2) -
-					24,
-					fighter[g].cy + (fighter[g].cl / 2) -
-					24);
-		  draw_fighter (g, 0);
-	       }
-	  }
-	if (eff[ef].orient == 1)
-	   masked_blit ((BITMAP *) pb->dat, double_buffer, 0,
-			eff[ef].ysize * a, hx, hy, eff[ef].xsize,
-			eff[ef].ysize);
-	blit2screen (0, 0);
-	rest (eff[ef].delay);
-	blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
+        if (eff[ef].orient == 0)
+           masked_blit ((BITMAP *) pb->dat, double_buffer, 0,
+                        eff[ef].ysize * a, hx, hy, eff[ef].xsize,
+                        eff[ef].ysize);
+        for (g = f; g < f + n; g++)
+          {
+             if (is_active (g) == 1)
+               {
+                  if (shows == 1 && fighter[g].sts[S_RESIST] > 0)
+                     draw_trans_sprite (double_buffer, b_shell,
+                                        fighter[g].cx + (fighter[g].cw / 2) -
+                                        24,
+                                        fighter[g].cy + (fighter[g].cl / 2) -
+                                        24);
+                  draw_fighter (g, 0);
+               }
+          }
+        if (eff[ef].orient == 1)
+           masked_blit ((BITMAP *) pb->dat, double_buffer, 0,
+                        eff[ef].ysize * a, hx, hy, eff[ef].xsize,
+                        eff[ef].ysize);
+        blit2screen (0, 0);
+        rest (eff[ef].delay);
+        blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
      }
    revert_cframes (tgt, 1);
    unload_datafile_object (pb);
@@ -292,26 +291,26 @@ void draw_attacksprite (int tgt, int aflag, int ef, int shows)
    pb = load_datafile_object (SPELL_DATAFILE, eff[ef].ename);
    if (aflag == 1)
      {
-	if (tgt < PSIZE)
-	  {
-	     f = 0;
-	     n = numchrs;
-	  }
-	else
-	  {
-	     f = PSIZE;
-	     n = numens;
-	  }
+        if (tgt < PSIZE)
+          {
+             f = 0;
+             n = numchrs;
+          }
+        else
+          {
+             f = PSIZE;
+             n = numens;
+          }
      }
    else
      {
-	f = tgt;
-	n = 1;
+        f = tgt;
+        n = 1;
      }
    if (tgt < PSIZE)
      {
-	for (a = f; a < f + n; a++)
-	   fighter[a].aframe = 5;
+        for (a = f; a < f + n; a++)
+           fighter[a].aframe = 5;
      }
    curx = -1;
    cury = -1;
@@ -319,45 +318,43 @@ void draw_attacksprite (int tgt, int aflag, int ef, int shows)
    blit (double_buffer, back, 0, 0, 0, 0, 352, 280);
    if (aflag == 0)
      {
-	if (ta[f] == MISS)
-	   play_effect (SND_MENU, 128);
-	else
-	   play_effect (eff[ef].snd, 128);
+        if (ta[f] == MISS)
+           play_effect (SND_MENU, 128);
+        else
+           play_effect (eff[ef].snd, 128);
      }
    else
       play_effect (eff[ef].snd, 128);
    for (a = 0; a < eff[ef].numf; a++)
      {
-	for (g = f; g < f + n; g++)
-	  {
-	     if (is_active (g) == 1)
-	       {
-		  dx =
-		     fighter[g].cx + (fighter[g].cw / 2) -
-		     (eff[ef].xsize / 2);
-		  dy =
-		     fighter[g].cy + (fighter[g].cl / 2) -
-		     (eff[ef].ysize / 2);
-		  draw_fighter (g, 0);
-		  if (shows == 1 && fighter[g].sts[S_SHIELD] > 0)
-		     draw_trans_sprite (double_buffer, b_shield,
-					fighter[g].cx + (fighter[g].cw / 2) -
-					24,
-					fighter[g].cy + (fighter[g].cl / 2) -
-					24);
-		  masked_blit ((BITMAP *) pb->dat, double_buffer, 0,
-			       eff[ef].ysize * a, dx, dy, eff[ef].xsize,
-			       eff[ef].ysize);
-	       }
-	  }
-	blit2screen (0, 0);
-	rest (eff[ef].delay);
-	blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
+        for (g = f; g < f + n; g++)
+          {
+             if (is_active (g) == 1)
+               {
+                  dx =
+                     fighter[g].cx + (fighter[g].cw / 2) - (eff[ef].xsize / 2);
+                  dy =
+                     fighter[g].cy + (fighter[g].cl / 2) - (eff[ef].ysize / 2);
+                  draw_fighter (g, 0);
+                  if (shows == 1 && fighter[g].sts[S_SHIELD] > 0)
+                     draw_trans_sprite (double_buffer, b_shield,
+                                        fighter[g].cx + (fighter[g].cw / 2) -
+                                        24,
+                                        fighter[g].cy + (fighter[g].cl / 2) -
+                                        24);
+                  masked_blit ((BITMAP *) pb->dat, double_buffer, 0,
+                               eff[ef].ysize * a, dx, dy, eff[ef].xsize,
+                               eff[ef].ysize);
+               }
+          }
+        blit2screen (0, 0);
+        rest (eff[ef].delay);
+        blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
      }
    if (tgt < PSIZE)
      {
-	for (a = f; a < f + n; a++)
-	   fighter[a].aframe = 0;
+        for (a = f; a < f + n; a++)
+           fighter[a].aframe = 0;
      }
    unload_datafile_object (pb);
 }
@@ -377,13 +374,13 @@ void draw_castersprite (int cstr, int cc)
    cs = (BITMAP *) cd->dat;
    for (a = 0; a < cs->h; a++)
      {
-	for (b = 0; b < cs->w; b++)
-	  {
-	     if (cs->line[a][b] == 5)
-		cs->line[a][b] = cc;
-	     else if (cs->line[a][b] == 7)
-		cs->line[a][b] = cc + 2;
-	  }
+        for (b = 0; b < cs->w; b++)
+          {
+             if (cs->line[a][b] == 5)
+                cs->line[a][b] = cc;
+             else if (cs->line[a][b] == 7)
+                cs->line[a][b] = cc + 2;
+          }
      }
    curx = -1;
    cury = -1;
@@ -395,17 +392,17 @@ void draw_castersprite (int cstr, int cc)
    play_effect (22, 128);
    for (a = 0; a < 10; a++)
      {
-	if (is_active (cstr) == 1)
-	  {
-	     dx = fighter[cstr].cx + (fighter[cstr].cw / 2);
-	     dy = fighter[cstr].cy + (fighter[cstr].cl / 2);
-	     draw_fighter (cstr, 0);
-	     masked_blit (cs, double_buffer, 0, a * 32, dx - 16, dy - 16, 32,
-			  32);
-	  }
-	blit2screen (0, 0);
-	rest (120);
-	blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
+        if (is_active (cstr) == 1)
+          {
+             dx = fighter[cstr].cx + (fighter[cstr].cw / 2);
+             dy = fighter[cstr].cy + (fighter[cstr].cl / 2);
+             draw_fighter (cstr, 0);
+             masked_blit (cs, double_buffer, 0, a * 32, dx - 16, dy - 16, 32,
+                          32);
+          }
+        blit2screen (0, 0);
+        rest (120);
+        blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
      }
    unload_datafile_object (cd);
    fighter[cstr].aframe = 0;
@@ -422,21 +419,21 @@ void death_animation (int tgt, int aflag)
       return;
    if (aflag == 1)
      {
-	if (tgt < PSIZE)
-	  {
-	     f = 0;
-	     n = numchrs;
-	  }
-	else
-	  {
-	     f = PSIZE;
-	     n = numens;
-	  }
+        if (tgt < PSIZE)
+          {
+             f = 0;
+             n = numchrs;
+          }
+        else
+          {
+             f = PSIZE;
+             n = numens;
+          }
      }
    else
      {
-	f = tgt;
-	n = 1;
+        f = tgt;
+        n = 1;
      }
    curx = -1;
    cury = -1;
@@ -445,32 +442,32 @@ void death_animation (int tgt, int aflag)
    blit (double_buffer, back, 0, 0, 0, 0, 352, 280);
    for (p = 0; p < 2; p++)
      {
-	for (a = 0; a < 16; a++)
-	  {
-	     convert_cframes (tgt, 1, 15 - (a / 2), aflag);
-	     for (g = f; g < f + n; g++)
-	       {
-		  if (deffect[g] == 1)
-		    {
-		       dx = fighter[g].cx + (fighter[g].cw / 2);
-		       dy = fighter[g].cy + (fighter[g].cl / 2);
-		       if (p == 0)
-			 {
-			    circlefill (double_buffer, dx, dy, a, 0);
-			    draw_fighter (g, 0);
-			 }
-		       else
-			  circlefill (double_buffer, dx, dy, 15 - a, 0);
-		    }
-	       }
-	     blit2screen (0, 0);
-	     rest (30);
-	     blit (back, double_buffer, 0, 0, 0, 0, 350, 280);
-	  }
+        for (a = 0; a < 16; a++)
+          {
+             convert_cframes (tgt, 1, 15 - (a / 2), aflag);
+             for (g = f; g < f + n; g++)
+               {
+                  if (deffect[g] == 1)
+                    {
+                       dx = fighter[g].cx + (fighter[g].cw / 2);
+                       dy = fighter[g].cy + (fighter[g].cl / 2);
+                       if (p == 0)
+                         {
+                            circlefill (double_buffer, dx, dy, a, 0);
+                            draw_fighter (g, 0);
+                         }
+                       else
+                          circlefill (double_buffer, dx, dy, 15 - a, 0);
+                    }
+               }
+             blit2screen (0, 0);
+             rest (30);
+             blit (back, double_buffer, 0, 0, 0, 0, 350, 280);
+          }
      }
    for (g = f; g < f + n; g++)
       if (deffect[g] == 1)
-	 deffect[g] = 0;
+         deffect[g] = 0;
    revert_cframes (tgt, aflag);
    battle_render (0, 0, 0);
    blit2screen (0, 0);

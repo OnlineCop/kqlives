@@ -24,13 +24,13 @@
 
 
 
-int hero_skillcheck (int);	/*  heroc.c  */
-int skill_use (int);		/*  heroc.c  */
+int hero_skillcheck (int);      /*  heroc.c  */
+int skill_use (int);            /*  heroc.c  */
 
 
 
 #if 0
-void infusion (int, int);	/*  staticed  */
+void infusion (int, int);       /*  staticed  */
 #endif /*  0  */
 
 

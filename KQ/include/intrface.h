@@ -36,18 +36,18 @@ struct luaL_reg
 
 
 
-void do_luainit (char *);	/*  kq.c  */
-void do_luacheat (void);	/*  entity.c  */
-void do_luakill (void);		/*  kq.c  */
-void do_autoexec (void);	/*  kq.c  */
-void do_postexec (void);	/*  kq.c  */
-void do_zone (int);		/*  kq.c  */
-void do_entity (int);		/*  kq.c  */
+void do_luainit (char *);       /*  kq.c  */
+void do_luacheat (void);        /*  entity.c  */
+void do_luakill (void);         /*  kq.c  */
+void do_autoexec (void);        /*  kq.c  */
+void do_postexec (void);        /*  kq.c  */
+void do_zone (int);             /*  kq.c  */
+void do_entity (int);           /*  kq.c  */
 
 
 
 #if 0
-void check_map_change (void);	/*  staticed  */
+void check_map_change (void);   /*  staticed  */
 #endif /*  0  */
 
 

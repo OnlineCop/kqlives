@@ -24,25 +24,25 @@
 
 
 
-int select_encounter (int, int);	/*  combat.c  */
-void enemy_init (void);		/*  combat.c  */
-void enemy_chooseaction (int);	/*  combat.c  */
-void enemy_charmaction (int);	/*  combat.c, heroc.c  */
+int select_encounter (int, int);        /*  combat.c  */
+void enemy_init (void);         /*  combat.c  */
+void enemy_chooseaction (int);  /*  combat.c  */
+void enemy_charmaction (int);   /*  combat.c, heroc.c  */
 
 
 
 #if 0
-void load_enemyframes (int, int, int);	/*  staticed  */
-int enemy_cancast (int, int);	/*  staticed  */
-void enemy_curecheck (int, int);	/*  staticed  */
-void enemy_spellcheck (int, int);	/*  staticed  */
-int enemy_stscheck (int, int, int);	/*  staticed  */
-void enemy_skillcheck (int, int);	/*  staticed  */
-int spell_setup (int, int);	/*  staticed  */
-int skill_setup (int, int);	/*  staticed  */
-void enemy_attack (int);	/*  staticed  */
-void enemy_run (int);		/*  unused  */
-void enemy_spell (int);		/*  did not exist  */
+void load_enemyframes (int, int, int);  /*  staticed  */
+int enemy_cancast (int, int);   /*  staticed  */
+void enemy_curecheck (int, int);        /*  staticed  */
+void enemy_spellcheck (int, int);       /*  staticed  */
+int enemy_stscheck (int, int, int);     /*  staticed  */
+void enemy_skillcheck (int, int);       /*  staticed  */
+int spell_setup (int, int);     /*  staticed  */
+int skill_setup (int, int);     /*  staticed  */
+void enemy_attack (int);        /*  staticed  */
+void enemy_run (int);           /*  unused  */
+void enemy_spell (int);         /*  did not exist  */
 #endif /*  0  */
 
 

@@ -24,20 +24,20 @@
 
 
 
-void equip_menu (int);		/*  menu.c  */
+void equip_menu (int);          /*  menu.c  */
 
 
 
 #if 0
-void draw_equipmenu (int, int);	/*  staticed  */
-void draw_equippable (int, int, int);	/*  staticed  */
-void calc_possible_equip (int, int);	/*  staticed  */
-void optimize_equip (int);	/*  staticed  */
-void choose_equipment (int, int);	/*  staticed  */
-void calc_equippreview (int, int, int);	/*  staticed  */
-void draw_equippreview (int, int, int);	/*  staticed  */
-int deequip (int, int);		/*  staticed  */
-int equip (int, int, int);	/*  staticed  */
+void draw_equipmenu (int, int); /*  staticed  */
+void draw_equippable (int, int, int);   /*  staticed  */
+void calc_possible_equip (int, int);    /*  staticed  */
+void optimize_equip (int);      /*  staticed  */
+void choose_equipment (int, int);       /*  staticed  */
+void calc_equippreview (int, int, int); /*  staticed  */
+void draw_equippreview (int, int, int); /*  staticed  */
+int deequip (int, int);         /*  staticed  */
+int equip (int, int, int);      /*  staticed  */
 #endif /*  0  */
 
 

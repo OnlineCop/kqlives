@@ -42,30 +42,30 @@
 
 
 
-void parse_setup (void);	/*  kq.c  */
-void config_menu (void);	/*  sgame.c  */
-void set_graphics_mode (void);	/*  kq.c  */
-void sound_init (void);		/*  kq.c  */
-void free_samples (void);	/*  kq.c  */
-void play_song (char *, int);	/*  combat.c, intrface.c, kq.c, setup.c,  */
-				 /*  sgame.c                               */
-void stop_music (void);		/*  intrface.c  */
-void play_effect (int, int);	/*  draw.c, effects.c, entity.c, heroc.c, */
-				 /*  (eqp|item|mas|shop)menu.c, hskill.c,  */
-				 /*  intrface.c, menu.c, selector.c,       */
-				 /*  sgame.c                               */
+void parse_setup (void);        /*  kq.c  */
+void config_menu (void);        /*  sgame.c  */
+void set_graphics_mode (void);  /*  kq.c  */
+void sound_init (void);         /*  kq.c  */
+void free_samples (void);       /*  kq.c  */
+void play_song (char *, int);   /*  combat.c, intrface.c, kq.c, setup.c,  */
+                                 /*  sgame.c                               */
+void stop_music (void);         /*  intrface.c  */
+void play_effect (int, int);    /*  draw.c, effects.c, entity.c, heroc.c, */
+                                 /*  (eqp|item|mas|shop)menu.c, hskill.c,  */
+                                 /*  intrface.c, menu.c, selector.c,       */
+                                 /*  sgame.c                               */
 
-extern struct JGMOD *gsong;	/*  kq.c  */
-extern char debugging;		/*  combat.c, setup.c, sgame.c  */
+extern struct JGMOD *gsong;     /*  kq.c  */
+extern char debugging;          /*  combat.c, setup.c, sgame.c  */
 
 
 
 #if 0
-extern struct DATAFILE *sfx[MAX_SAMPLES];	/*  staticed  */
+extern struct DATAFILE *sfx[MAX_SAMPLES];       /*  staticed  */
 
-int getavalue (char *, int, int, int, int);	/*  staticed  */
-void load_samples (void);	/*  staticed  */
-int getakey (void);		/*  staticed  */
+int getavalue (char *, int, int, int, int);     /*  staticed  */
+void load_samples (void);       /*  staticed  */
+int getakey (void);             /*  staticed  */
 #endif /*  0  */
 
 

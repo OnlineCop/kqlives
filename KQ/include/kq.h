@@ -244,13 +244,13 @@ s_anim;
 /*! \brief Map definition */
 typedef struct
 {
-  unsigned char map_no; /*!<Map identifier*/
-  unsigned char zero_zone; /*!<Non-zero if zone 0 triggers an event */
+   unsigned char map_no;        /*!<Map identifier */
+   unsigned char zero_zone;     /*!<Non-zero if zone 0 triggers an event */
    unsigned char map_mode;
-  unsigned char can_save;/*!< Non-zero if Save is allowed in this map */
+   unsigned char can_save;      /*!< Non-zero if Save is allowed in this map */
    unsigned char tileset;
-   unsigned char use_sstone;/*!< Non-zero if sunstone works on this map */
-   unsigned char can_warp;/*!< Non-zero if Warp is allowed in this map */
+   unsigned char use_sstone;    /*!< Non-zero if sunstone works on this map */
+   unsigned char can_warp;      /*!< Non-zero if Warp is allowed in this map */
    unsigned char extra_byte;
    int xsize;
    int ysize;
@@ -339,80 +339,79 @@ s_fighter;
 
 
 
-void change_map (char *, int, int, int, int);	/*  intrface.c, magic.c  */
-void readcontrols (void);	/*  everywhere ;)  */
-void calc_viewport (int);	/*  entity.c, intrface.c  */
-void zone_check (void);		/*  entity.c  */
-void warp (int, int, int);	/*  only in intrface.c  */
-void check_animation (void);	/*  draw.c, intrface.c  */
-void activate (void);		/*  only in entity.c  */
-void unpress (void);		/*  everywhere ;)  */
-void wait_enter (void);		/*  everywhere ;)  */
-void klog (char *);		/*  draw.c, intrface.c, magic.c, setup.c  */
-void init_players (void);	/*  sgame.c  */
-void kwait (int);		/*  intrface.c  */
-void program_death (char *);	/*  everywhere ;)  */
-int in_party (int);		/*  combat.c, intrface.c  */
-void wait_for_entity (int, int);	/*  intrface.c  */
+void change_map (char *, int, int, int, int);   /*  intrface.c, magic.c  */
+void readcontrols (void);       /*  everywhere ;)  */
+void calc_viewport (int);       /*  entity.c, intrface.c  */
+void zone_check (void);         /*  entity.c  */
+void warp (int, int, int);      /*  only in intrface.c  */
+void check_animation (void);    /*  draw.c, intrface.c  */
+void activate (void);           /*  only in entity.c  */
+void unpress (void);            /*  everywhere ;)  */
+void wait_enter (void);         /*  everywhere ;)  */
+void klog (char *);             /*  draw.c, intrface.c, magic.c, setup.c  */
+void init_players (void);       /*  sgame.c  */
+void kwait (int);               /*  intrface.c  */
+void program_death (char *);    /*  everywhere ;)  */
+int in_party (int);             /*  combat.c, intrface.c  */
+void wait_for_entity (int, int);        /*  intrface.c  */
 
 
 
-extern char curmap[16];		/*  sgame.c  */
+extern char curmap[16];         /*  sgame.c  */
 
-extern int right;		/*  intrface.c, (eqp|item|mas|shop)menu.c,  */
-			/*  entity.c, menu.c, selector.c, setup.c,  */
-			/*  heroc.c                                 */
+extern int right;               /*  intrface.c, (eqp|item|mas|shop)menu.c,  */
+                        /*  entity.c, menu.c, selector.c, setup.c,  */
+                        /*  heroc.c                                 */
 
-extern int left;		/*  intrface.c, (eqp|item|mas|shop)menu.c,  */
-			/*  entity.c, menu.c, selector.c, setup.c,  */
-			/*  heroc.c                                 */
+extern int left;                /*  intrface.c, (eqp|item|mas|shop)menu.c,  */
+                        /*  entity.c, menu.c, selector.c, setup.c,  */
+                        /*  heroc.c                                 */
 
-extern int up;			/*  selector.c, (eqp|item|mas|shop)menu.c,  */
-			/*  heroc.c, intrface.c, menu.c, entity.c,  */
-			/*  setup.c, sgame.c, draw.c                */
+extern int up;                  /*  selector.c, (eqp|item|mas|shop)menu.c,  */
+                        /*  heroc.c, intrface.c, menu.c, entity.c,  */
+                        /*  setup.c, sgame.c, draw.c                */
 
-extern int down;		/*  selector.c, (eqp|item|mas|shop)menu.c,  */
-			/*  heroc.c, intrface.c, menu.c, entity.c,  */
-			/*  setup.c, sgame.c, draw.c                */
+extern int down;                /*  selector.c, (eqp|item|mas|shop)menu.c,  */
+                        /*  heroc.c, intrface.c, menu.c, entity.c,  */
+                        /*  setup.c, sgame.c, draw.c                */
 
-extern int besc;		/*  intrface.c, setup.c, sgame.c            */
+extern int besc;                /*  intrface.c, setup.c, sgame.c            */
 
-extern int benter;		/*  entity.c, intrface.c, setup.c, sgame.c  */
+extern int benter;              /*  entity.c, intrface.c, setup.c, sgame.c  */
 
-extern int balt;		/*  selector.c, (eqp|item|mas|shop)menu.c,  */
-			/*  heroc.c, intrface.c, menu.c, setup.c,   */
-			/*  draw.c, sgame.c                         */
+extern int balt;                /*  selector.c, (eqp|item|mas|shop)menu.c,  */
+                        /*  heroc.c, intrface.c, menu.c, setup.c,   */
+                        /*  draw.c, sgame.c                         */
 
-extern int bctrl;		/*  selector.c, (eqp|item|mas|shop)menu.c,  */
-			/*  sgame.c, heroc.c, intrface.c, setup.c,  */
-			/*  menu.c                                  */
+extern int bctrl;               /*  selector.c, (eqp|item|mas|shop)menu.c,  */
+                        /*  sgame.c, heroc.c, intrface.c, setup.c,  */
+                        /*  menu.c                                  */
 
-extern int kright;		/*  setup.c, sgame.c  */
-extern int kleft;		/*  setup.c, sgame.c  */
-extern int kup;			/*  setup.c, sgame.c  */
-extern int kdown;		/*  setup.c, sgame.c  */
-extern int kesc;		/*  setup.c, sgame.c  */
-extern int kenter;		/*  setup.c, sgame.c  */
-extern int kalt;		/*  setup.c, sgame.c  */
-extern int kctrl;		/*  setup.c, sgame.c, entity.c  */
-extern int jbalt;		/*  setup.c, sgame.c  */
-extern int jbctrl;		/*  setup.c, sgame.c  */
-extern int jbenter;		/*  setup.c, sgame.c  */
-extern int jbesc;		/*  setup.c, sgame.c  */
+extern int kright;              /*  setup.c, sgame.c  */
+extern int kleft;               /*  setup.c, sgame.c  */
+extern int kup;                 /*  setup.c, sgame.c  */
+extern int kdown;               /*  setup.c, sgame.c  */
+extern int kesc;                /*  setup.c, sgame.c  */
+extern int kenter;              /*  setup.c, sgame.c  */
+extern int kalt;                /*  setup.c, sgame.c  */
+extern int kctrl;               /*  setup.c, sgame.c, entity.c  */
+extern int jbalt;               /*  setup.c, sgame.c  */
+extern int jbctrl;              /*  setup.c, sgame.c  */
+extern int jbenter;             /*  setup.c, sgame.c  */
+extern int jbesc;               /*  setup.c, sgame.c  */
 extern int vx, vy, mx, my, steps, lastm[PSIZE];;
 
 extern BITMAP *double_buffer;
 extern BITMAP *map_icons[MAX_TILES];
 
 
-extern BITMAP *back, *tc, *tc2, *bub[8], *b_shield, *b_shell, *b_repulse,
-   *b_mp;
+extern BITMAP *back, *tc, *tc2, *bub[8], *b_shield, *b_shell, *b_repulse, *b_mp;
 extern BITMAP *cframes[NUM_FIGHTERS][MAXCFRAMES],
    *tcframes[NUM_FIGHTERS][MAXCFRAMES], *frames[MAXCHRS][MAXFRAMES];
 extern BITMAP *eframes[MAXE][MAXEFRAMES], *pgb[9], *sfonts[5], *bord[8];
 extern BITMAP *menuptr, *mptr, *sptr, *stspics, *sicons, *bptr, *missbmp,
    *noway, *upptr, *dnptr;
-extern BITMAP *shadow[MAX_SHADOWS];	/*  draw.c  */
+extern BITMAP *shadow[MAX_SHADOWS];     /*  draw.c  */
 extern unsigned short *map_seg;
 extern unsigned short *b_seg, *f_seg;
 extern unsigned char *progress, *z_seg, *s_seg, *o_seg, *treasure;
@@ -437,8 +436,7 @@ extern volatile int timer, ksec, kmin, khr, timer_count;
 extern unsigned short lup[MAXCHRS][20];
 extern COLOR_MAP cmap;
 extern unsigned char can_run, display_desc;
-extern unsigned char draw_background, draw_middle, draw_foreground,
-   draw_shadow;
+extern unsigned char draw_background, draw_middle, draw_foreground, draw_shadow;
 extern unsigned short g_inv[MAX_INV][2];
 extern int view_x1, view_y1, view_x2, view_y2, view_on, in_combat;
 extern int frate, mfrate, show_frate, use_joy, cheat_loaded;
@@ -449,14 +447,14 @@ extern int warx, wary;
 
 
 #if 0
-void my_counter (void);		/*  staticed  */
-void data_dump (void);		/*  staticed  */
-void startup (void);		/*  staticed  */
-void load_data (void);		/*  staticed  */
-void allocate_stuff (void);	/*  staticed  */
-void deallocate_stuff (void);	/*  staticed  */
-BITMAP *alloc_bmp (int, int, char *);	/*  staticed  */
-void load_portraits (void);	/*  did not exist  */
+void my_counter (void);         /*  staticed  */
+void data_dump (void);          /*  staticed  */
+void startup (void);            /*  staticed  */
+void load_data (void);          /*  staticed  */
+void allocate_stuff (void);     /*  staticed  */
+void deallocate_stuff (void);   /*  staticed  */
+BITMAP *alloc_bmp (int, int, char *);   /*  staticed  */
+void load_portraits (void);     /*  did not exist  */
 #endif /*  0  */
 
 

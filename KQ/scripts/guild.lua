@@ -26,9 +26,15 @@ function postexec()
   return
 end
 
+-- updated 20020929 PH
+-- added test for P_OPALHELMET so 
+-- that you can re-enter the guild
+-- if you haven't got the helmet yet
 function zone_handler(zn)  
   if (zn == 1) then
-    set_progress(P_FOUGHTGUILD,2);
+    if (get_progress(P_OPALHELMET)==1) then 
+      set_progress(P_FOUGHTGUILD,2);
+    end	
     change_map("town5",18,37,18,37);
 
   elseif (zn == 2) then
