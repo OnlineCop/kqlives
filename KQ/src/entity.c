@@ -419,11 +419,13 @@ static void player_move (void)
       activate ();
    if (benter)
       menu ();
+#ifdef KQ_CHEATS
    if (key[KEY_F10])
      {
         unpress ();
         do_luacheat ();
      }
+#endif
    if (right)
      {
         moveright (0);

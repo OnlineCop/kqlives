@@ -18,6 +18,12 @@
    the Free Software Foundation,
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
+/*! \file
+ * \brief Handles shops
+ *
+ * \author JB
+ * \date ??????
+ */
 
 #include <stdio.h>
 #include <string.h>
@@ -34,16 +40,19 @@
 #include "music.h"
 #include "timing.h"
 
-// TT add:
-/* vars: [NUMSHOPS] = index of shop
- *       [SHOPITEMS] = number of items a shop can sell
- *       [3] = info about items sold:
- *          [0] = index of item
- *          [1] = quantity of items
- *          [2] = quantity of items (special)
- *                After long gameplay, shops will sell
- *                quantity of #[2] of items instead of #[1]
- *                (see shop() for details)
+/* TT add: */
+/*! \brief Items in shop
+ *
+ * vars: 
+ * - [NUMSHOPS] = index of shop
+ * - [SHOPITEMS] = number of items a shop can sell
+ * - [3] = info about items sold:
+ *  -   [0] = index of item
+ *  -   [1] = quantity of items
+ *  -   [2] = quantity of items (special.)
+ *            After long gameplay, shops will sell
+ *            quantity of #[2] of items instead of #[1]
+ *            (see shop() for details)
 */
 unsigned short shops[NUMSHOPS][SHOPITEMS][3] = {
 #if 0
@@ -361,11 +370,14 @@ unsigned short shops[NUMSHOPS][12][3] = {
     {0, 0, 0}},
 };
 
+/*! \brief Quantities in each shop */
 unsigned short shopq[NUMSHOPS][SHOPITEMS];
 
 
 /*  internal variables  */
+/*! \brief Current shop index */
 static unsigned char shop_no;
+/*! \brief Names of shops */
 static char shopn[NUMSHOPS][40] = {
    "Alner's Armour",
    "Shielt's Weaponry",
@@ -406,11 +418,13 @@ static void do_inn_effects (void);
 
 
 
-/*
-   Well, it used to be on the side, but now it's on the bottom.
-   This displays the characters and whether or not they are
-   able to use/equip what is being looked at, and how it would
-   improve their stats (if applicable).
+/*! \brief Show status info
+ *
+ * Well, it used to be on the side, but now it's on the bottom.
+ * This displays the characters and whether or not they are
+ * able to use/equip what is being looked at, and how it would
+ * improve their stats (if applicable).
+ * \param itm Item being looked at.
 */
 static void draw_sideshot (int itm)
 {
@@ -520,8 +534,9 @@ static void draw_sideshot (int itm)
      }
 }
 
-/*
-   Display the party's funds.
+/*! \brief Display amount of gold
+ *
+ * Display the party's funds.
 */
 void draw_shopgold (void)
 {
@@ -532,9 +547,11 @@ void draw_shopgold (void)
                strbuf, FNORMAL);
 }
 
-/*
-   The initial shop dialog.  This function calculates item quantities
-   and then just asks if we're buying or selling.
+/*! \brief Main entry point to shop functions
+ *
+ * The initial shop dialog.  This function calculates item quantities
+ * and then just asks if we're buying or selling.
+ * \param shop_num Index of this shop
 */
 int shop (int shop_num)
 {
@@ -622,9 +639,10 @@ int shop (int shop_num)
    return 0;
 }
 
-/*
-   Show the player a list of items which can be bought
-   and wait for him/her to choose something or exit.
+/*! \brief Show items to buy
+ *
+ * Show the player a list of items which can be bought
+ * and wait for him/her to choose something or exit.
 */
 static void buy_menu (void)
 {
@@ -736,10 +754,13 @@ static void buy_menu (void)
      }
 }
 
-/*
-   This is used after selecting an item, from the above
-   menu, to determine who to give it to.  Then it gives it
-   to them and deducts the cash.
+/*! \brief Actually purchase the item
+ *
+ * This is used after selecting an item, from the above
+ * menu, to determine who to give it to.  Then it gives it
+ * to them and deducts the cash.
+ * \param how_many Quantity
+ * \param item_no Index of item
 */
 static void buy_item (int how_many, int item_no)
 {
@@ -788,9 +809,10 @@ static void buy_item (int how_many, int item_no)
    return;
 }
 
-/*
-   Display a list of items that are in inventory and ask which
-   one(s) to sell.
+/*! \brief Show items that can be sold
+ *
+ * Display a list of items that are in inventory and ask which
+ * one(s) to sell.
 */
 static void sell_menu (void)
 {
@@ -911,9 +933,12 @@ static void sell_menu (void)
      }
 }
 
-/*
-   Inquire as to what quantity of the current item, the
-   character wishes to sell.
+/*! \brief Ask player the quantity to sell
+ *
+ * Inquire as to what quantity of the current item, the
+ * character wishes to sell.
+ * \param itm_no Index of item in inventory
+ * \param pg Page of the inventory
 */
 static void sell_howmany (int itm_no, int pg)
 {
@@ -984,9 +1009,12 @@ static void sell_howmany (int itm_no, int pg)
      }
 }
 
-/*
-   Confirm the price of the sale with the player, and then
-   complete the transaction.
+/*! \brief Actually sell item
+ *
+ * Confirm the price of the sale with the player, and then
+ * complete the transaction.
+ * \param itno Index of item
+ * \param ni Quantity being sold
 */
 static void sell_item (int itno, int ni)
 {
@@ -1029,10 +1057,14 @@ static void sell_item (int itno, int ni)
      }
 }
 
-/*
-   This is simply used for staying at the inn.  Remember
-   it costs more money to stay if your characters require
-   healing or resurrection.
+/*! \brief Handle Inn functions
+ *
+ * This is simply used for staying at the inn.  Remember
+ * it costs more money to stay if your characters require
+ * healing or resurrection.
+ * \param iname Name of Inn
+ * \param gpc Gold per character (base price)
+ * \param pay If ==0, staying is free.
 */
 void inn (char *iname, int gpc, int pay)
 {
@@ -1133,9 +1165,10 @@ void inn (char *iname, int gpc, int pay)
    timer_count = 0;
 }
 
-/*
-   This is separate so that these effects can be done
-   from anywhere.
+/*! \brief Restore characters according to Inn effects.
+ *
+ * This is separate so that these effects can be done
+ * from anywhere.
 */
 static void do_inn_effects (void)
 {

@@ -1697,6 +1697,8 @@ END_OF_MAIN ();
  * - 75..79: cult
  * - 80: grotto
  * - 81: town4
+ * - 82..83: pass
+ * - 90..96: cave5
  * 
  * The names given are the base names of the maps/lua scripts
  */

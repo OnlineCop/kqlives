@@ -115,11 +115,13 @@ void parse_setup (void)
      {
         if (strbuf[0] == '#')
            fgets (strbuf, 254, s);
+#ifdef KQ_CHEATS
         if (!strcmp (strbuf, "cheat"))
           {
              fscanf (s, "%d", &dab);
              cheat = dab;
           }
+#endif
         if (!strcmp (strbuf, "debug"))
           {
              fscanf (s, "%d", &dab);

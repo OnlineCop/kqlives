@@ -24,7 +24,7 @@
 #include <allegro.h>
 
 #ifndef KQ_USE_JGMOD
-/* DUMB verison of music */
+/* DUMB version of music */
 #include <aldumb.h>
 #include "kq.h"
 #include "music.h"

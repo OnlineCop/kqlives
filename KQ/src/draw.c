@@ -1196,44 +1196,30 @@ static void generic_text (int who, int box_style)
  * \param the_string input string
  * \returns processed string, in a static buffer \p strbuf
  *          or \p the_string, if it had no replacement chars.
+ * PH 20030107 Increased limit on length of the_string. 
+ * NB. Values for $ other than $0 or $1 will cause errors.
 */
 const char *parse_string (const char *the_string)
 {
-   int a, who = -1, flag = 0;
-   char crud[255];
-   int z;
-
-   if (strlen (the_string) > 35)
-      z = 35;
-   else
-      z = strlen (the_string);
-   for (a = 0; a < z; a++)
-     {
-        if (flag != 1)
-          {
-             if (the_string[a] != '$')
-                crud[a] = the_string[a];
-             else
-               {
-                  flag = 1;
-                  crud[a] = '%';
-               }
-          }
-        else
-          {
-             flag = 2;
-             crud[a] = 's';
-             who = the_string[a] - 48;
-          }
+   static char strbuf[1024];
+   char* ap, *bp, *name;
+   name=NULL;
+   memset(strbuf, 0, sizeof(strbuf));
+   bp=strbuf;
+   for (ap=the_string; *ap; ++ap) {
+     if (*ap=='$') {
+       for (name=party[pidx[ap[1]-'0']].name; *name; ++name) {
+	 if (bp<strbuf+sizeof(strbuf))
+	   *bp++=*name;
+       }
+       ++ap;
      }
-   crud[a] = 0;
-   if (flag == 2)
-     {
-        sprintf (strbuf, crud, party[pidx[who]].name);
-        return strbuf;
+     else {
+       if (bp<strbuf+sizeof(strbuf))
+	 *bp++=*ap;
      }
-   else
-      return the_string;
+   }
+   return name==NULL ? the_string : strbuf;
 }
 
 /*! \brief Do user prompt

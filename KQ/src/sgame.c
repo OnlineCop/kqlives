@@ -496,9 +496,11 @@ int start_menu (int c)
    int stop = 0, ptr = 0, rd = 1, a, b;
    DATAFILE *bg;
    BITMAP *staff, *dudes, *tdudes;
+#ifdef KQ_CHEATS
    if (debugging == 0)
 
      {
+#endif
         if (c == 0)
           {
              play_music ("oxford.s3m", 0);
@@ -564,12 +566,14 @@ int start_menu (int c)
           }
         if (c == 0)
            wait (500);
+#ifdef KQ_CHEATS
      }
    else
      {
         set_palette (pal);
         bg = load_datafile_object (PCX_DATAFILE, "TITLE_PCX");
      }
+#endif
    while (!stop)
      {
         if (rd)

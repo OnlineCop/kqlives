@@ -417,6 +417,7 @@ void battle_render (int plyr, int hl, int sall)
 
    clear_bitmap (double_buffer);
    blit ((BITMAP *) backart->dat, double_buffer, 0, 0, 0, 0, 320, 240);
+#ifdef KQ_CHEATS
    if (debugging > 2)
      {
         rectfill (double_buffer, 0, 0, rcount / 2, 9, 15);
@@ -430,7 +431,7 @@ void battle_render (int plyr, int hl, int sall)
                  fighter[1].sts[S_REGEN]);
         print_font (double_buffer, 0, 36, strbuf, FNORMAL);
      }
-
+#endif
    if ((sall == 0) && (curx > -1) && (cury > -1))
      {
         draw_sprite (double_buffer, bptr, curx + (curw / 2) - 8, cury - 8);
@@ -448,7 +449,7 @@ void battle_render (int plyr, int hl, int sall)
              print_font (double_buffer, t, z + 8, fighter[plyr - 1].name,
                          FNORMAL);
           }
-
+#ifdef KQ_CHEATS
         if (debugging > 2)
           {
 /*
@@ -487,6 +488,7 @@ void battle_render (int plyr, int hl, int sall)
          }
 */
           }
+#endif
      }
 
    for (z = 0; z < numchrs; z++)
@@ -621,7 +623,7 @@ void battle_render (int plyr, int hl, int sall)
  *  Author  : Josh Bolduc
  *  Created : ???????? - ??:??
  *  Updated : 20020914 - 16:16 (RB)
- *  Purpose : This function controls the battle guages and calls for action
+ *  Purpose : This function controls the battle gauges and calls for action
  *            when necessary. This is also where things like poison, sleep,
  *            and what-not are checked.
  *  Returns : Nothing

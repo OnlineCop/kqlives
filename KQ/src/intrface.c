@@ -1651,6 +1651,7 @@ static int KQ_chest (lua_State * L)
            treasure[tno] = 1;
         return 0;
      }
+   /* PH todo: this next bit is not needed because the inventory is shared */
    if (numchrs == 1)
      {
         if (check_inventory (ino, amt) > 0)
@@ -2107,7 +2108,7 @@ void do_luainit (char *fname)
      }
    lua_settop (theL, oldtop);
 }
-
+#ifdef KQ_CHEATS
 /*! \brief Load cheat code
  *
  * Load the contents of scripts/cheat.lob, usually
@@ -2136,7 +2137,7 @@ void do_luacheat (void)
    check_map_change ();
    message ("Cheating complete.", 255, 50, xofs, yofs);
 }
-
+#endif
 /*! \brief Kill the Lua VM
  *
  * Close the Lua virtual machine, and note that
@@ -2146,7 +2147,9 @@ void do_luakill (void)
 {
    if (theL)
       lua_close (theL);
+#ifdef KQ_CHEATS
    cheat_loaded = 0;
+#endif
    /* delete working buffer */
    free (mybuf);
    mybuf = NULL;
