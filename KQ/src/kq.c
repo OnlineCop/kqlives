@@ -226,7 +226,7 @@ static void data_dump (void);
 
 static void allocate_stuff (void);
 static void load_heroes (void);
-
+static void reset_timer_events(void);
 
 /*! \note 23: for keeping time. timer_counter is the game timer the main game
  * loop uses for logic (see int main()) and the rest track your playtime in
@@ -280,7 +280,7 @@ void my_counter (void)
 
    if (timer >= KQ_FPS) {
       timer = 0;
-
+       ksec++;
       mfrate = frate;
       frate = 0;
    }
@@ -578,7 +578,7 @@ void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
    DATAFILE *pb;
    BITMAP *pcxb;
    unsigned char cc[4];
-
+   reset_timer_events();
    if (hold_fade == 0)
       do_transition (TRANS_FADE_OUT, 4);
 
@@ -1668,7 +1668,88 @@ int main (void)
 
 END_OF_MAIN ();
 
+/*! \brief Timer Event structure
+ *
+ * Holds the information relating to a forthcoming event
+ */
+static struct timer_event {
+  char name[32]; /*!< name of the event */
+  int when; /*!< time when it will trigger */
+} timer_events[5];
 
+static int next_event_time; /*!< The time the next event will trigger */
+
+/*! \brief Delete any pending events
+*
+* This removes any events from the list
+*/
+static void reset_timer_events(void) {
+  int i;
+  for(i=0; i<5; ++i)
+    *timer_events[i].name='\0';
+  next_event_time=INT_MAX;
+}
+
+/* \brief Add a new timer event to the list 
+ * 
+ * Up to five pending events can be stored
+ * at once. 
+ * \param n the name of the event
+ * \param delta the number of seconds before the 
+ *        event will be called. For example 5 means
+ *        five seconds in the future
+ * \returns <0 if an error occurred (i.e. too many pending events)
+ */ 
+int add_timer_event(const char* n, int delta) {
+    int w=delta+ksec;
+    int i;
+    for (i=0; i<5; ++i) {
+        if (*timer_events[i].name=='\0') {
+            memcpy(timer_events[i].name, n, sizeof(timer_events[i].name));
+            if (w<next_event_time) next_event_time=w;
+            timer_events[i].when=w;
+            return i;
+        }
+    }
+    return -1;
+}
+
+/* \brief Get the next event if any
+ *
+ * Checks the pending events and returns the name
+ * of the next one, or NULL if nothing is ready
+ * to be triggered.
+ * If more than one event is ready, only one will be returned;
+ * the next one will be returned next time.
+ * Each event is removed after it is triggered. If a repeating
+ * event is desired, you should call add_timer_event() again
+ * in the handler function.
+ *
+ * \returns name of the next event or NULL if none is ready
+ */
+char* get_timer_event() {
+    static char buf[32];
+    int now=ksec;
+    int i;
+    int next=INT_MAX;
+    struct timer_event* t;
+    if (now<next_event_time) return NULL;
+    *buf='\0';
+    for (i=0; i<5; ++i) {
+        t=&timer_events[i];
+        if (*t->name) {
+            if (t->when<=now) {
+                memcpy(buf, t->name, sizeof(buf));
+                *t->name='\0';
+            }
+            else {
+                if (t->when<next) next=t->when;
+            }
+        }
+    }
+    next_event_time=next;
+    return *buf ? buf : NULL;
+}
 
 /*! \page treasure A Note on Treasure
  *
