@@ -299,6 +299,10 @@ int main (int argc, char *argv[])
 
    for (i = 1; i < argc; i++) {
       if (argv[i][0] == '-') {
+         if (strcmp(argv[i] + 1, "-help") == 0) {
+            usage (*argv);
+            return 0;
+         }
          /* TT: This means to exclude an effect */
          show_layer1 = strchr (argv[i] + 1, '1') ? 0 : show_layer1;
          show_layer2 = strchr (argv[i] + 1, '2') ? 0 : show_layer2;
