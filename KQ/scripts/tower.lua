@@ -2,7 +2,9 @@
 
 function autoexec()
 
-  set_progress(P_ORACLE, 0);
+-- set_progress(P_ORACLE, 0);
+-- TT: This needs to be changed so they only reset if you enter or exit
+-- the front doors, not just enter the map (like a loaded game)
 
   set_progress(P_FLOOR1, 0);
   set_progress(P_FLOOR2, 0);
@@ -72,7 +74,7 @@ function refresh()
 
   -- Defeated dragon (1: Main entrance)
   if (get_progress(P_DRAGONDOWN) == 1) then
-    for a=12, 16, 1 do
+    for a = 12, 16, 1 do
       set_ftile(a, 16, 0);
       set_ftile(a, 17, 0);
       set_ftile(a, 18, 0);
@@ -215,7 +217,7 @@ end
 
 
 function postexec()
-  return
+  return;
 end
 
 
@@ -285,7 +287,7 @@ function zone_handler(zn)
     if (get_progress(P_FLOOR1) == 0) then
       if (get_progress(P_FTOTAL) < 2) then
         set_progress(P_FLOOR1, 1);
-        set_progress(P_FTOTAL, get_progress(P_FTOTAL)+1);
+        set_progress(P_FTOTAL, get_progress(P_FTOTAL) + 1);
         set_btile(42, 12, 190);
         set_btile(47, 9, 160);
         set_obs(47, 9, 1);
@@ -295,7 +297,7 @@ function zone_handler(zn)
       end
     else
       set_progress(P_FLOOR1, 0);
-      set_progress(P_FTOTAL, get_progress(P_FTOTAL)-1);
+      set_progress(P_FTOTAL, get_progress(P_FTOTAL) - 1);
       set_btile(42, 12, 189);
       set_btile(47, 9, 0);
       set_obs(47, 9, 1);
@@ -309,7 +311,7 @@ function zone_handler(zn)
     if (get_progress(P_FLOOR2) == 0) then
       if (get_progress(P_FTOTAL) < 2) then
         set_progress(P_FLOOR2, 1);
-        set_progress(P_FTOTAL, get_progress(P_FTOTAL)+1);
+        set_progress(P_FTOTAL, get_progress(P_FTOTAL) + 1);
         set_btile(42, 15, 190);
         set_btile(46, 7, 160);
         set_obs(46, 7, 0);
@@ -319,7 +321,7 @@ function zone_handler(zn)
       end
     else
       set_progress(P_FLOOR2, 0);
-      set_progress(P_FTOTAL, get_progress(P_FTOTAL)-1);
+      set_progress(P_FTOTAL, get_progress(P_FTOTAL) - 1);
       set_btile(42, 15, 189);
       set_btile(46, 7, 0);
       set_obs(56, 7, 1);
@@ -333,7 +335,7 @@ function zone_handler(zn)
     if (get_progress(P_FLOOR3) == 0) then
       if (get_progress(P_FTOTAL) < 2) then
         set_progress(P_FLOOR3, 1);
-        set_progress(P_FTOTAL, get_progress(P_FTOTAL)+1);
+        set_progress(P_FTOTAL, get_progress(P_FTOTAL) + 1);
         set_btile(55, 12, 190);
         set_btile(45, 8, 160);
         set_obs(45, 8, 0);
@@ -343,7 +345,7 @@ function zone_handler(zn)
       end
     else
       set_progress(P_FLOOR3, 0);
-      set_progress(P_FTOTAL, get_progress(P_FTOTAL)-1);
+      set_progress(P_FTOTAL, get_progress(P_FTOTAL) - 1);
       set_btile(55, 12, 189);
       set_btile(45, 8, 0);
       set_obs(45, 8, 1);
@@ -357,7 +359,7 @@ function zone_handler(zn)
     if (get_progress(P_FLOOR4) == 0) then
       if (get_progress(P_FTOTAL) < 2) then
         set_progress(P_FLOOR4, 1);
-        set_progress(P_FTOTAL, get_progress(P_FTOTAL)+1);
+        set_progress(P_FTOTAL, get_progress(P_FTOTAL) + 1);
         set_btile(55, 15, 190);
         set_btile(47, 10, 160);
         set_obs(47, 10, 0);
@@ -367,7 +369,7 @@ function zone_handler(zn)
       end
     else
       set_progress(P_FLOOR4, 0);
-      set_progress(P_FTOTAL, get_progress(P_FTOTAL)-1);
+      set_progress(P_FTOTAL, get_progress(P_FTOTAL) - 1);
       set_btile(55, 15, 189);
       set_btile(47, 10, 0);
       set_obs(47, 10, 1);
@@ -396,7 +398,7 @@ function zone_handler(zn)
   elseif (zn == 20) then
     if (get_progress(P_STONE1) == 0) then
       set_progress(P_STONE1, 1);
-      set_progress(P_WSTONES, get_progress(P_WSTONES)+1);
+      set_progress(P_WSTONES, get_progress(P_WSTONES) + 1);
       refresh();
       sfx(5);
       msg("White Stone procured!", 15, 0);
@@ -406,7 +408,7 @@ function zone_handler(zn)
   elseif (zn == 21) then
     if (get_progress(P_STONE2) == 0) then
       set_progress(P_STONE2, 1);
-      set_progress(P_WSTONES, get_progress(P_WSTONES)+1);
+      set_progress(P_WSTONES, get_progress(P_WSTONES) + 1);
       refresh();
       sfx(5);
       msg("White Stone procured!", 15, 0);
@@ -416,7 +418,7 @@ function zone_handler(zn)
   elseif (zn == 22) then
     if (get_progress(P_STONE3) == 0) then
       set_progress(P_STONE3, 1);
-      set_progress(P_BSTONES, get_progress(P_BSTONES)+1);
+      set_progress(P_BSTONES, get_progress(P_BSTONES) + 1);
       refresh();
       sfx(5);
       msg("Black Stone procured!", 15, 0);
@@ -426,7 +428,7 @@ function zone_handler(zn)
   elseif (zn == 23) then
     if (get_progress(P_STONE4) == 0) then
       set_progress(P_STONE4, 1);
-      set_progress(P_BSTONES, get_progress(P_BSTONES)+1);
+      set_progress(P_BSTONES, get_progress(P_BSTONES) + 1);
       refresh();
       sfx(5);
       msg("Black Stone procured!", 15, 0);
@@ -522,7 +524,7 @@ function zone_handler(zn)
 
   -- Fire (5: Oracle room)
   elseif (zn == 39) then
-    touch_fire(get_pidx(0));
+    touch_fire(party[0]);
 
   -- Locked door (3: Treasure room)
   elseif (zn == 40) then
@@ -538,7 +540,7 @@ function zone_handler(zn)
 
   -- zn 41 == no enemies attack (3: Treasure room, 5: Oracle room)
 
-  -- Guardian dragon (1: Main entrance)
+  -- Guardian Dragon (1: Main entrance)
   elseif (zn == 42) then
     if (get_progress(P_DRAGONDOWN) == 0) then
       bubble(255, "The Oracle is not to be disturbed!");
@@ -558,7 +560,7 @@ function zone_handler(zn)
         end
         set_progress(P_DRAGONDOWN, 1);
       else
-        return
+        return;
       end
     end
 
@@ -578,83 +580,36 @@ end
 
 
 function entity_handler(en)
+  local player_response, done_talking;
+
   -- Oracle
   if (en == 0) then
     if (get_progress(P_ORACLE) == 0) then
-      bubble(0,"Welcome.","","","");
-      bubble(HERO1,"I guess you knew I",
-                   "was coming, huh?","","");
-      bubble(0,"Quite right. I have known for",
-               "some time now that you would be",
-               "paying me a visit. I have been",
-               "waiting.");
-      bubble(HERO1,"Have any of the",
-                   "others been here?","","");
-      bubble(0,"I have not seen any of them.",
-               "They wouldn't be able to get",
-               "into the tower anyways.","");
-      bubble(HERO1,"I don't understand. Where are",
-                   "the others? I hardly seen any of",
-                   "them, so I assumed that they",
-                   "were way ahead of me.");
-      bubble(0,"I am not certain. They are",
-               "probably lost or confused. They",
-               "did not speak to Derig as you",
-               "did.");
-      bubble(0,"They probably have no idea",
-               "where to go.","","");
-      bubble(HERO1,"Why wouldn't they have spoken to",
-                   "Derig? It seemed as though Derig",
-                   "was there to help us.","");
-      bubble(0,"Actually, Derig chose you above",
-               "the others. He is a bit of a",
-               "prophet himself, and he knew",
-               "exactly who to help.");
-      bubble(0,"If you are concerned about the",
-               "others you may want to seek",
-               "them out.","");
-      bubble(0,"However, you should wait until",
-               "later, for there are more",
-               "important things to take care",
-               "of first.");
-      bubble(HERO1,"Yes, I suppose there are. Are",
-                   "you going to tell me how to",
-                   "find the staff?","");
-      bubble(0,"Well, not exactly, but I do know",
-               "where you have to go and how you",
-               "will get there.","");
-      bubble(0,"You have to gather several",
-               "items, all of which are made of",
-               "Opal, in order to proceed.","");
-      bubble(0,"Once you find these things, you",
-               "will then use them to travel the",
-               "underwater passage on the",
-               "western shore.");
-      bubble(0,"The passage will take you to the",
-               "the tiny kingdom of Esteria.",
-               "There you will find an evil",
-               "warlord named Binderak.");
-      bubble(0,"He is the one who acquired the",
-               "Staff from Malkaron all those",
-               "years ago. I believe he still",
-               "has that half of the Staff.");
-      bubble(0,"However, I may be wrong. And I",
-               "don't know where the other half",
-               "is. Unfortunately, that is all",
-               "that I can tell you.");
-      bubble(HERO1,"That's plenty. Thanks.","","","");
-      bubble(0,"Now you must go, for the Stone",
-               "Dragon will soon piece himself",
-               "back together and be even",
-               "stronger.");
-      bubble(HERO1,"Okay... thanks again.","","","");
-      bubble(0,"Oh, just one more thing.","","","");
-      bubble(0,"In the caves south of here there",
-               "was a locked door. That door",
-               "leads to a teleporter and will",
-               "now be unlocked.");
-      bubble(HERO1,"Thanks!","","","");
-      set_progress(P_ORACLE,1);
+      bubble(HERO1, "I guess you knew I was coming, huh?");
+      bubble(0, "Quite right. I have known for some time now that you would be paying me a visit. I have been waiting.");
+      bubble(HERO1, "Have any of the others been here?");
+      bubble(0, "I haven't seen any of them. They wouldn't be able to get into the tower anyways.");
+      bubble(HERO1, "I don't understand. Where are the others? I hardly seen any of them, so I assumed that they were way ahead of me.");
+      bubble(0, "I am not certain. They are probably lost or confused. They did not speak to Derig as you did.");
+      bubble(0, "They probably have no idea where to go.");
+      bubble(HERO1, "Why wouldn't they have spoken to Derig? It seemed as though Derig was there to help us.");
+      bubble(0, "Actually, Derig chose you above the others. He is a bit of a prophet himself, and he knew exactly who to help.");
+      bubble(0, "If you are concerned about the others you may want to seek them out.");
+      bubble(0, "However, you should wait until later, for there are more important things to take care of first.");
+      bubble(HERO1, "Yes, I suppose there are. Are you going to tell me how to find the staff?");
+      bubble(0, "Well, not exactly, but I do know where you have to go and how you will get there.");
+      bubble(0, "You have to gather several items, all of which are made of Opal, in order to proceed.");
+      bubble(0, "Once you find these things, you will then use them to travel the underwater passage on the western shore.");
+      bubble(0, "The passage will take you to the the tiny kingdom of Esteria. There you will find an evil warlord named Binderak.");
+      bubble(0, "He is the one who acquired the Staff from Malkaron all those years ago. I believe he still has that half of the Staff.");
+      bubble(0, "However, I may be wrong. And I don't know where the other half is. Unfortunately, that is all that I can tell you.");
+      bubble(HERO1, "That's plenty. Thanks.");
+      bubble(0, "Now you must go, for the Stone Dragon will soon piece himself back together and be even stronger.");
+      bubble(HERO1, "Okay... thanks again.");
+      bubble(0, "Oh, just one more thing.");
+      bubble(0, "In the caves south of here there was a locked door. That door leads to a teleporter and will now be unlocked.");
+      bubble(HERO1, "Thanks!");
+      set_progress(P_ORACLE, 1);
       set_autoparty(1);
       set_ent_script(HERO1, "X150Y10F1");
       if (get_numchrs() == 1) then
@@ -692,40 +647,40 @@ function LOC_stoner(a, b, c)
 
     -- No stones picked up
     if (get_progress(P_BSTONES) == 0 and get_progress(P_WSTONES) == 0) then
-      return
+      return;
     end
 
     -- Black stones picked up but no White stones
     if (get_progress(P_WSTONES) == 0 and get_progress(P_BSTONES) > 0) then
       set_progress(a, 1);
-      set_progress(P_BSTONES, get_progress(P_BSTONES)-1);
+      set_progress(P_BSTONES, get_progress(P_BSTONES) - 1);
       sfx(5);
       set_ftile(b, c, 222);
-      return
+      return;
     end
 
     -- White stones picked up but no Black stones
     if (get_progress(P_BSTONES) == 0 and get_progress(P_WSTONES) > 0) then
       set_progress(a, 2);
-      set_progress(P_WSTONES, get_progress(P_WSTONES)-1);
+      set_progress(P_WSTONES, get_progress(P_WSTONES) - 1);
       sfx(5);
       set_ftile(b, c, 221);
-      return
+      return;
     end
 
     -- At least one of each color stone picked up
     if (prompt(255, 2, 0, "What stone will you place?", "  black", "  white") == 0) then
       set_progress(a, 1);
-      set_progress(P_BSTONES, get_progress(P_BSTONES)-1);
+      set_progress(P_BSTONES, get_progress(P_BSTONES) - 1);
       sfx(5);
       set_ftile(b, c, 222);
-      return
+      return;
     else
       set_progress(a, 2);
-      set_progress(P_WSTONES, get_progress(P_WSTONES)-1);
+      set_progress(P_WSTONES, get_progress(P_WSTONES) - 1);
       sfx(5);
       set_ftile(b, c, 221);
-      return
+      return;
     end
 
   else
@@ -735,19 +690,19 @@ function LOC_stoner(a, b, c)
       -- Remove a White stone
       if (get_progress(a) == 1 and get_progress(P_TREASUREROOM) == 0) then
         set_progress(a, 0);
-        set_progress(P_BSTONES, get_progress(P_BSTONES)+1);
+        set_progress(P_BSTONES, get_progress(P_BSTONES) + 1);
         sfx(4);
         set_ftile(b, c, 220);
-        return
+        return;
       end
 
       -- Remove a Black stone
       if (get_progress(a) == 2 and get_progress(P_TREASUREROOM) == 0) then
         set_progress(a, 0);
-        set_progress(P_WSTONES, get_progress(P_WSTONES)+1);
+        set_progress(P_WSTONES, get_progress(P_WSTONES) + 1);
         sfx(4);
         set_ftile(b, c, 220);
-        return
+        return;
       end
     end
   end

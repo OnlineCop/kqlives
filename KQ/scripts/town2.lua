@@ -6,19 +6,19 @@ function autoexec()
   if (get_progress(P_GETPARTNER) == 0) then
     while (get_progress(P_PARTNER1) == 0) do
       a = krnd(8);
-      if (a ~= get_pidx(0)) then
-        set_progress(P_PARTNER1, a+1);
+      if (a ~= party[0]) then
+        set_progress(P_PARTNER1, a + 1);
       end
     end
     while (get_progress(P_PARTNER2) == 0) do
       a = krnd(8);
-      if (a ~= get_pidx(0) and a ~= get_progress(P_PARTNER1)-1) then
-        set_progress(P_PARTNER2, a+1);
+      if (a ~= party[0] and a ~= get_progress(P_PARTNER1) - 1) then
+        set_progress(P_PARTNER2, a + 1);
       end
     end
     for a=0, 7, 1 do
-      if (a ~= get_pidx(0)) then
-        give_xp(a, 300+krnd(100), 1);
+      if (a ~= party[0]) then
+        give_xp(a, 300 + krnd(100), 1);
         if (a == SENSAR or a == SARINA or a == TEMMIN or a == AYLA) then
           set_all_equip(a, I_SWORD2, I_SHIELD1, I_HELM1, I_ARMOR2, I_BAND1, 0);
         elseif (a == AJATHAR) then
@@ -32,11 +32,11 @@ function autoexec()
   end
   if (get_progress(P_GETPARTNER) == 1) then
     if (get_progress(P_PARTNER1) > 0) then
-      set_ent_id(8, get_progress(P_PARTNER1)-1);
+      set_ent_id(8, get_progress(P_PARTNER1) - 1);
       set_ent_active(8, 1);
     end
     if (get_progress(P_PARTNER2) > 0) then
-      set_ent_id(9, get_progress(P_PARTNER2)-1);
+      set_ent_id(9, get_progress(P_PARTNER2) - 1);
       set_ent_active(9, 1);
     end
   elseif (get_progress(P_GETPARTNER) > 1) then
@@ -44,13 +44,14 @@ function autoexec()
     set_ent_active(9, 0);
   end
   if (get_progress(P_FOUNDMAYOR) == 1) then
-    set_ent_id(10, get_progress(P_PARTNER3)-1);
+    set_ent_id(10, get_progress(P_PARTNER3) - 1);
     set_ent_active(10, 1);
   else
     set_ent_active(10, 0);
   end
   refresh();
 end
+
 
 function refresh()
   if (get_treasure(3) == 1) then
@@ -79,9 +80,11 @@ function refresh()
   end
 end
 
+
 function postexec()
-  return
+  return;
 end
+
 
 function zone_handler(zn)
   if (zn == 1) then
@@ -136,11 +139,11 @@ function zone_handler(zn)
     -- PH added code to check if you do stay over night
     -- This is done indirectly; if your gp goes down it
     -- means you must have spent some here.
-    local old_gp=get_gp();
+    local old_gp = get_gp();
     inn("Wayside Inn", 30, 1);
     -- This means you MUST stay at the inn before the
     -- bridge gets repaired. Correct?
-    if (get_gp()<old_gp) then
+    if (get_gp() < old_gp) then
       if (get_progress(P_FIGHTONBRIDGE) == 4) then
         set_progress(P_FIGHTONBRIDGE, 5);
         set_progress(P_SHOWBRIDGE, 1);
@@ -148,7 +151,8 @@ function zone_handler(zn)
       if (get_progress(P_GETPARTNER) < 2) then
         set_progress(P_GETPARTNER, 3);
         autoexec();
--- PH add: Prevents the non-interacting potential partner
+
+        -- PH add: Prevents the non-interacting potential partner
         set_ent_active(10, 0);
       end
     end
@@ -199,14 +203,14 @@ function zone_handler(zn)
     refresh();
 
   elseif (zn == 30) then
-    book_talk(get_pidx(0));
+    book_talk(party[0]);
 
   elseif (zn == 31) then
     chest(11, I_LTONIC, 1);
     refresh();
 
   elseif (zn == 32) then
-    book_talk(get_pidx(0));
+    book_talk(party[0]);
 
   elseif (zn == 33) then
     bubble(HERO1, "Hmmm... books about herbs.");
@@ -223,7 +227,7 @@ function zone_handler(zn)
     end
 
   elseif (zn == 37) then
-    touch_fire(get_pidx(0));
+    touch_fire(party[0]);
 
   elseif (zn == 38) then
     view_range(1, 104, 25, 118, 40);
@@ -243,6 +247,7 @@ function zone_handler(zn)
 
   end
 end
+
 
 function entity_handler(en)
   if (en == 0) then
@@ -348,23 +353,23 @@ function entity_handler(en)
       if (get_numchrs() == 1) then
         bubble(10, "Wow! You were great back there. I really appreciate what you did for me. In return, I shall accompany you.");
         bubble(10, "Oh... and here... take this.");
-        set_gp(get_gp()+1000);
+        set_gp(get_gp() + 1000);
         sfx(6);
         msg("You received 1000 gp!", 255, 0);
         bubble(10, "That's my pay from the mayor. We should use it to get some new equipment and such.");
-        add_chr(get_progress(P_PARTNER3)-1);
+        add_chr(get_progress(P_PARTNER3) - 1);
         set_progress(P_GETPARTNER, 3);
         copy_ent(10, HERO2);
         set_ent_active(10, 0);
         orient_heroes();
-        give_xp(get_pidx(get_numchrs()-1), 470+krnd(50), 1);
+        give_xp(get_pidx(get_numchrs() - 1), 470 + krnd(50), 1);
         msg("$1 joined!", 255, 0, xofs, yofs);
         set_progress(P_FOUNDMAYOR, 2);
       else
         bubble(10, "Wow! You were great back there. I really appreciate what you did for me.");
         bubble(10, "I would like to come along with you, but you already have a partner.");
         bubble(10, "At any rate, you've earned this.");
-        set_gp(get_gp()+500);
+        set_gp(get_gp() + 500);
         sfx(6);
         msg("You received 500 gp!", 255, 0, xofs, yofs);
         bubble(10, "That's half of what the mayor paid me. I'm actually surprised that he still thought I deserved it, but I'm not one to complain.");
@@ -383,13 +388,16 @@ function entity_handler(en)
   end
 end
 
+
 function LOC_partner_check(who)
-  if (prompt(who, 2, 0, "Hi $0, want to team up?", "  yes", "  no", "") == 0) then
+  if (prompt(who, 2, 0, "Hi $0, want to team up?",
+                        "  yes",
+                        "  no") == 0) then
     bubble(who, "Great! Let's go.");
     if (who == 8) then
-      add_chr(get_progress(P_PARTNER1)-1);
+      add_chr(get_progress(P_PARTNER1) - 1);
     else
-      add_chr(get_progress(P_PARTNER2)-1);
+      add_chr(get_progress(P_PARTNER2) - 1);
     end
     set_progress(P_GETPARTNER, 2);
     give_item(I_MHERB, 3);
@@ -402,4 +410,3 @@ function LOC_partner_check(who)
     bubble(who, "Oh... ok. Well maybe we'll run into each other again some time.");
   end
 end
-
