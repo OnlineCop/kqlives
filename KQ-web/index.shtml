@@ -2,35 +2,38 @@
 <html>
 <head>
   <title>KQ</title>
-                                                              
+                                                                        
+   
   <meta http-equiv="content-type"
  content="text/html; charset=ISO-8859-1">
-                                   
+                                           
   <meta name="author" content="Peter Hull">
 </head>
   <body text="#c0c0c0" bgcolor="#000000" link="#ffffff" vlink="#ffffff"
  alink="#99ff99">
-                 
+                     
 <h1 align="center">KQ - Main</h1>
-         Welcome to the new home for the KQ role-playing game.<br>
-         <br>
-<!--#include virtual="navigation_bar.html" -->                          <br>
-             
+           Welcome to the new home for the KQ role-playing game.<br>
+           <br>
+<!--#include virtual="navigation_bar.html" -->                          
+ <br>
+                 
 <h2>Headlines</h2>
-<!--#include virtual="kq-headlines.html" -->        <br>
-      <small>KQ was originally written by DoubleEdge software <br>
-        This page hosted by<br>
-    <a href="http://sourceforge.net"><img
+<!--#include virtual="kq-headlines.html" -->          <br>
+        <small>KQ was originally written by DoubleEdge software <br>
+          This page hosted by<br>
+      <a href="http://sourceforge.net"><img
  src="http://sourceforge.net/sflogo.php?group_id=61344;type=5"
  width="210" height="62" border="0" alt="SourceForge Logo">
-    </a><br>
-      </small>   <br>
-          <br>
+      </a><br>
+        </small>   <br>
+            <br>
+         <br>
+        <br>
        <br>
       <br>
-     <br>
+      <br>
     <br>
-    <br>
- 
+ <tt>$id$</tt> 
 </body>
 </html>
