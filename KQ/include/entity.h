@@ -61,6 +61,12 @@ void getcommand (int);          /*  staticed  */
 void entscript (int);           /*  staticed  */
 #endif /*  0  */
 
+/* move modes */
+#define MM_STAND  0
+#define MM_WANDER 1
+#define MM_SCRIPT 2
+#define MM_CHASE  3
+#define MM_TARGET 4
 
 
 #endif /*  __ENTITY_H  */

@@ -252,18 +252,7 @@ const char *kqres (int dir_id, const char *file);
 #define MAP_TUNNEL         32
 /*\}*/
 
-/*! \brief Animation specifier 
- *
- * Marks a block of tiles that are interchanged to give
- * an animation effect. Used in check_animation()
- */
-typedef struct
-{
-   unsigned short start;        /*!< First tile in sequence  */
-   unsigned short end;          /*!< Last tile in sequence */
-   unsigned short delay;        /*!< Frames to wait between tile changes */
-}
-s_anim;
+
 
 #include "structs.h"
 
@@ -447,7 +436,7 @@ extern unsigned char *progress, *z_seg, *s_seg, *o_seg, *treasure;
 extern BITMAP *kfonts, *portrait[MAXCHRS];
 extern s_map g_map;
 extern s_entity g_ent[MAX_ENT + PSIZE];
-extern s_anim tanim[6][MAX_ANIM];
+extern s_anim tanim[7][MAX_ANIM];
 extern s_anim adata[MAX_ANIM];
 extern int noe, pidx[MAXCHRS], numchrs, gp, xofs, yofs, gsvol, gmvol;
 extern unsigned char autoparty, alldead, is_sound, deadeffect,

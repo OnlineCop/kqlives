@@ -142,8 +142,8 @@ int combat (int bno)
       program_death (strbuf);
    }
 
-   /* TT: no battles during scripted movements */
-   if (g_ent[0].movemode == 2) {
+   /* TT: no battles during scripted/target movements */
+   if (g_ent[0].movemode != MM_STAND) {
       return 0;
    }
 

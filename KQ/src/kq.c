@@ -81,8 +81,9 @@
 /*! Name of the current map */
 char curmap[16];
 /*! Names of the tile sets (in the datafile) */
-char icon_sets[6][16] = { "LAND_PCX", "NEWTOWN_PCX", "CASTLE_PCX",
-   "INCAVE_PCX", "VILLAGE_PCX", "MOUNT_PCX"
+char icon_sets[7][16] = { "LAND_PCX", "NEWTOWN_PCX", "CASTLE_PCX",
+			  "INCAVE_PCX", "VILLAGE_PCX", "MOUNT_PCX",
+			  "SHRINE_BMP"
 };
 
 
@@ -132,7 +133,7 @@ s_entity g_ent[MAX_ENT + PSIZE];
  * You may have up to 5 animations per tile set and tiles
  * must be sequential; they cannot jump around on the set.
  */
-s_anim tanim[6][MAX_ANIM] = {
+s_anim tanim[7][MAX_ANIM] = {
    /* land.pcx */
    {{2, 5, 25}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}},
    /* newtown.pcx */
@@ -145,7 +146,9 @@ s_anim tanim[6][MAX_ANIM] = {
    /* village.pcx */
    {{38, 39, 25}, {80, 83, 25}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}},
    /* mount.pcx */
-   {{58, 59, 50}, {40, 42, 50}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}}
+   {{58, 59, 50}, {40, 42, 50}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}},
+   /* shrine.bmp */
+   { {0,0,0}, {0,0,0},{0,0,0},{0,0,0},{0,0,0}}
 };
 
 /*! Tile animation specifiers for the current tileset */
@@ -762,7 +765,7 @@ void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
          g_ent[i].speed = rand () % 4 + 1;
          g_ent[i].obsmode = 1;
          g_ent[i].moving = 0;
-         g_ent[i].movemode = 3;
+         g_ent[i].movemode = MM_CHASE;
          g_ent[i].chasing = 0;
          g_ent[i].extra = 50 + rand () % 50;
          g_ent[i].delay = rand () % 25 + 25;
@@ -1018,7 +1021,7 @@ void activate (void)
 
       if ((zx <= 16 && zy <= 3) || (zx <= 3 && zy <= 16))
          do_entity (p - 1);
-      if (g_ent[p - 1].movemode == 0 && g_map.map_no == mb)
+      if (g_ent[p - 1].movemode == MM_STAND && g_map.map_no == mb)
          g_ent[p - 1].facing = tf;
    }
 }
@@ -1656,7 +1659,7 @@ void kwait (int dtime)
  */
 void wait_for_entity (int est, int efi)
 {
-   int e, n;
+   int e, n, m;
    autoparty = 1;
    do {
       while (timer_count > 0) {
@@ -1676,7 +1679,8 @@ void wait_for_entity (int est, int efi)
 
       n = 0;
       for (e = est; e <= efi; ++e) {
-         if (g_ent[e].active == 1 && g_ent[e].movemode == 2) {
+	m=g_ent[e].movemode;
+         if (g_ent[e].active == 1 && (m==MM_SCRIPT || m==MM_TARGET)) {
             n = 1;
             break;
          }

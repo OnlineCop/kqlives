@@ -85,9 +85,37 @@ typedef struct
    unsigned char facehero;      //!< Look at player when talked to
    unsigned char transl;        //!< Entity is see-through or not
    char script[60];             //!< Movement/action script (pacing, etc.)
+  unsigned short target_x;      //!< x-coord the ent is moving to
+  unsigned short target_y;     //!< y-coord the ent is moving to
 }
 s_entity;
 
+/*! \brief Animation specifier 
+ *
+ * Marks a block of tiles that are interchanged to give
+ * an animation effect. Used in check_animation()
+ */
+typedef struct
+{
+   unsigned short start;        /*!< First tile in sequence  */
+   unsigned short end;          /*!< Last tile in sequence */
+   unsigned short delay;        /*!< Frames to wait between tile changes */
+}
+s_anim;
 
+/* PH eek! hack alert! */
+#ifndef MAX_ANIM
+#define MAX_ANIM 5
+#endif
+/*! \brief Tileset definition 
+ *
+ * This encapulates a tile set: graphics and animation.
+ * \author PH
+ * \date 20031222
+ */
+typedef struct {
+  char icon_set[16];
+  s_anim tanim[MAX_ANIM];
+} s_tileset;
 
 #endif/*__STRUCTS_H__*/

@@ -62,6 +62,8 @@ static int obstruction (int, int, int, int);
 static void parsems (int);
 static void getcommand (int);
 static void entscript (int);
+static void target(int);
+static void chase(int);
 
 
 
@@ -144,6 +146,7 @@ static void speed_adjust (int i)
  * for player input.
  *
  * \param   i Index of entity
+ * \date 20040310 PH added TARGET movemode, broke out chase into separate function
  */
 static void process_entity (int i)
 {
@@ -156,56 +159,23 @@ static void process_entity (int i)
                display_desc = 0;
             return;
          }
-         if (g_ent[i].movemode == 0)
+         switch (g_ent[i].movemode) {
+	 case MM_STAND:
             return;
-         if (g_ent[i].movemode == 1)
+	 case MM_WANDER:
             wander (i);
-         if (g_ent[i].movemode == 2)
+	    break;
+	 case MM_SCRIPT:
             entscript (i);
-         if (g_ent[i].movemode == 3) {
-            if (g_ent[i].chasing == 0) {
-               if (entity_near (i, 0, 3) == 1
-                   && rand () % 100 <= g_ent[i].extra) {
-                  g_ent[i].chasing = 1;
-                  if (g_ent[i].speed < 7)
-                     g_ent[i].speed++;
-                  g_ent[i].delay = 0;
-                  /* PH FIXME check for emoved here? or not? */
-                  if (g_ent[0].tilex > g_ent[i].tilex && emoved == 0)
-                     moveright (i);
-                  if (g_ent[0].tilex < g_ent[i].tilex && emoved == 0)
-                     moveleft (i);
-                  if (g_ent[0].tiley > g_ent[i].tiley && emoved == 0)
-                     movedown (i);
-                  if (g_ent[0].tiley < g_ent[i].tiley && emoved == 0)
-                     moveup (i);
-                  if (emoved == 0)
-                     wander (i);
-               } else
-                  wander (i);
-            } else {
-               if (entity_near (i, 0, 4) == 1) {
-                  /* PH FIXME check for emoved here? or not? */
-                  if (g_ent[0].tilex > g_ent[i].tilex)
-                     moveright (i);
-                  if (g_ent[0].tilex < g_ent[i].tilex && emoved == 0)
-                     moveleft (i);
-                  if (g_ent[0].tiley > g_ent[i].tiley && emoved == 0)
-                     movedown (i);
-                  if (g_ent[0].tiley < g_ent[i].tiley && emoved == 0)
-                     moveup (i);
-                  if (emoved == 0)
-                     wander (i);
-               } else {
-                  g_ent[i].chasing = 0;
-                  if (g_ent[i].speed > 1)
-                     g_ent[i].speed--;
-                  g_ent[i].delay = 25 + rand () % 25;
-                  wander (i);
-               }
-            }
+	    break;
+	 case MM_CHASE:
+	   chase(i);
+	    break;
+	 case MM_TARGET:
+	   target(i);	   
+	   break;
          }
-      } else {
+      } else { /* if (.moving==0) */
          if (g_ent[i].moving == MOVE_DOWN) {
             g_ent[i].y++;
             g_ent[i].movcnt--;
@@ -553,8 +523,8 @@ static void moveleft (int i)
  *
  * \param   ox Original x-coord position
  * \param   oy Original y-coord position
- * \param   mx Amount to move
- * \param   my Amount to move
+ * \param   mx Amount to move -1..+1
+ * \param   my Amount to move -1..+1
  * \returns 1 if path is obstructed, 0 otherwise
  */
 static int obstruction (int ox, int oy, int mx, int my)
@@ -710,7 +680,7 @@ static void getcommand (int n)
       break;
    case '\0':
       g_ent[n].cmd = 6;
-      g_ent[n].movemode = 0;
+      g_ent[n].movemode = MM_STAND;
       g_ent[n].cmdnum = 0;
       g_ent[n].sidx = 0;
       break;
@@ -823,7 +793,7 @@ void set_script (int n, char *movestring)
    g_ent[n].cmd = 0;
    g_ent[n].sidx = 0;
    g_ent[n].cmdnum = 0;
-   g_ent[n].movemode = 2;
+   g_ent[n].movemode = MM_SCRIPT;
    strncpy (g_ent[n].script, movestring, sizeof (g_ent[n].script));
 }
 
@@ -859,4 +829,108 @@ void count_entities (void)
    for (p = 0; p < MAX_ENT; p++)
       if (g_ent[p].active == 1)
          noe = p + 1;
+}
+
+/*! \brief Move entity towards target
+ *
+ * When entity is in target mode (MM_TARGET) move towards
+ * the goal. This is fairly simple; it doesn't do clever
+ * obstacle avoidance.
+ * It simply moves either horizontally or vertically, 
+ * preferring the _closer_ one. In other words, it will
+ * try to get on a vertical or horizontal line with its
+ * target.
+ *
+ * \param e index of entity
+ * \author PH
+ * \date 20040310
+ */
+static void target(int e) {
+  int dx, dy, ax, ay;
+  s_entity* ent=&g_ent[e];
+  ax=dx=ent->target_x-ent->tilex;
+  ay=dy=ent->target_y-ent->tiley;
+  if (ax<0) ax=-ax;
+  if (ay<0) ay=-ay;
+  if (ax<ay) {
+    /* Try to move horizontally */
+    if (dx<0) 
+      moveleft(e);
+    if (dx>0)
+      moveright(e);
+    /* Didn't move so try vertically */
+    if (emoved==0) {
+     if (dy<0)
+      moveup(e);
+     if (dy>0)
+      movedown(e);
+    }
+  } else {
+    /* Try to move vertically */
+    if (dy<0)
+      moveup(e);
+    if (dy>0)
+      movedown(e);
+    /* Didn't move so try horizontally */
+    if (emoved==0) {
+      if (dx<0) 
+	moveleft(e);
+      if (dx>0)
+	moveright(e);
+    }
+  }
+  if (dx==0 && dy==0) {
+    /* Got there */
+    ent->movemode=MM_STAND;
+  }
+}
+
+/*! \brief Chase player
+ *
+ * Chase after the main player #0, if he/she is near.
+ * Speed up until at maximum. If the player goes out 
+ * of range, wander for a bit.
+ *
+ * \param i index of entity
+ */
+static void chase(int i) {  
+  if (g_ent[i].chasing == 0) {
+    if (entity_near (i, 0, 3) == 1
+	&& rand () % 100 <= g_ent[i].extra) {
+      g_ent[i].chasing = 1;
+      if (g_ent[i].speed < 7)
+	g_ent[i].speed++;
+      g_ent[i].delay = 0;
+      if (g_ent[0].tilex > g_ent[i].tilex)
+	moveright (i);
+      if (g_ent[0].tilex < g_ent[i].tilex && emoved == 0)
+	moveleft (i);
+      if (g_ent[0].tiley > g_ent[i].tiley && emoved == 0)
+	movedown (i);
+      if (g_ent[0].tiley < g_ent[i].tiley && emoved == 0)
+	moveup (i);
+      if (emoved == 0)
+	wander (i);
+    } else
+      wander (i);
+  } else {
+    if (entity_near (i, 0, 4) == 1) {
+      if (g_ent[0].tilex > g_ent[i].tilex)
+	moveright (i);
+      if (g_ent[0].tilex < g_ent[i].tilex && emoved == 0)
+	moveleft (i);
+      if (g_ent[0].tiley > g_ent[i].tiley && emoved == 0)
+	movedown (i);
+      if (g_ent[0].tiley < g_ent[i].tiley && emoved == 0)
+	moveup (i);
+      if (emoved == 0)
+	wander (i);
+    } else {
+      g_ent[i].chasing = 0;
+      if (g_ent[i].speed > 1)
+	g_ent[i].speed--;
+      g_ent[i].delay = 25 + rand () % 25;
+      wander (i);
+    }
+  }
 }
