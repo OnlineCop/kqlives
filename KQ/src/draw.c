@@ -715,50 +715,48 @@ static void border (BITMAP * where, int x, int y, int x2, int y2)
  * \param bstyle style of border
  */
 static void draw_kq_box (BITMAP * where, int x1, int y1, int x2, int y2,
-                            int bg, int bstyle)
+                         int bg, int bstyle)
 {
-  int a;
-  /* Draw a maybe-translucent background */
-  if (bg==BLUE) {   drawing_mode (DRAW_MODE_TRANS, NULL, 0, 0); }
-  else {
-    bg=(bg==DARKBLUE) ? DBLUE: DRED;
-  }
-   rectfill (where, x1+2, y1+2, x2-3, y2-3, bg);
+   int a;
+   /* Draw a maybe-translucent background */
+   if (bg == BLUE)
+     {
+        drawing_mode (DRAW_MODE_TRANS, NULL, 0, 0);
+     }
+   else
+     {
+        bg = (bg == DARKBLUE) ? DBLUE : DRED;
+     }
+   rectfill (where, x1 + 2, y1 + 2, x2 - 3, y2 - 3, bg);
    drawing_mode (DRAW_MODE_SOLID, NULL, 0, 0);
    /* Now the border */
-   switch (bstyle) {
-   case B_TEXT:
-     border(where, x1,y1,x2-1,y2-1);
-     break;
-   case B_THOUGHT:
-     /* top and bottom */
-        for (a = x1+8; a < x2-8; a+=8)
+   switch (bstyle)
+     {
+     case B_TEXT:
+        border (where, x1, y1, x2 - 1, y2 - 1);
+        break;
+     case B_THOUGHT:
+        /* top and bottom */
+        for (a = x1 + 8; a < x2 - 8; a += 8)
           {
-             draw_sprite (where, bord[1], a,
-                          y1);
-             draw_sprite (where, bord[6], a ,
-                          y2 - 8);
+             draw_sprite (where, bord[1], a, y1);
+             draw_sprite (where, bord[6], a, y2 - 8);
           }
-	/* sides */
-        for (a = y1+8; a < y2-8; a+=12)
+        /* sides */
+        for (a = y1 + 8; a < y2 - 8; a += 12)
           {
-             draw_sprite (where, bord[3], x1,
-                          a);
-             draw_sprite (where, bord[4], x2-8 ,
-                          a);
+             draw_sprite (where, bord[3], x1, a);
+             draw_sprite (where, bord[4], x2 - 8, a);
           }
-	/* corners */
-     draw_sprite (where, bord[0], x1 , y1 );
-        draw_sprite (where, bord[2], x2 - 8,
-                     y1 );
-        draw_sprite (where, bord[5], x1,
-                     y2 - 8);
-        draw_sprite (where, bord[7], x2 - 8,
-                     y2 - 8);
-     break;
-   default: /* no border */
-     break;
-   }
+        /* corners */
+        draw_sprite (where, bord[0], x1, y1);
+        draw_sprite (where, bord[2], x2 - 8, y1);
+        draw_sprite (where, bord[5], x1, y2 - 8);
+        draw_sprite (where, bord[7], x2 - 8, y2 - 8);
+        break;
+     default:                  /* no border */
+        break;
+     }
 }
 
 /*! \brief Draw menu box
@@ -775,7 +773,7 @@ static void draw_kq_box (BITMAP * where, int x1, int y1, int x2, int y2,
 */
 void menubox (BITMAP * where, int x, int y, int w, int h, int c)
 {
-  draw_kq_box(where, x, y, x+w*8+16, y+h*8+16, c, B_TEXT);
+   draw_kq_box (where, x, y, x + w * 8 + 16, y + h * 8 + 16, c, B_TEXT);
 }
 
 
@@ -946,20 +944,21 @@ static void set_textpos (int who)
 static void draw_textbox (int bstyle)
 {
    int wid, hgt, a;
-   BITMAP* stem;
+   BITMAP *stem;
 /*    BITMAP *tm; */
 
    wid = gbbw * 8 + 16;
    hgt = gbbh * 12 + 16;
 
-        draw_kq_box (double_buffer, gbbx + xofs , gbby + yofs ,
-                        gbbx + xofs + wid , gbby + yofs + hgt , BLUE, bstyle);
-        if (gbt != -1) {
-	  /* select the correct stem-thingy that comes out of the speech bubble */
-	  stem=bub[gbt+(bstyle==B_THOUGHT ? 4 : 0)];
-	  /* and draw it */
-           draw_sprite (double_buffer, stem, gbx + xofs, gby + yofs);
-	}
+   draw_kq_box (double_buffer, gbbx + xofs, gbby + yofs,
+                gbbx + xofs + wid, gbby + yofs + hgt, BLUE, bstyle);
+   if (gbt != -1)
+     {
+        /* select the correct stem-thingy that comes out of the speech bubble */
+        stem = bub[gbt + (bstyle == B_THOUGHT ? 4 : 0)];
+        /* and draw it */
+        draw_sprite (double_buffer, stem, gbx + xofs, gby + yofs);
+     }
 
    for (a = 0; a < gbbh; a++)
      {
@@ -1328,10 +1327,12 @@ int prompt_ex (int who, const char *ptext, char *opt[], int n_opt)
                   if (redraw)
                     {
                        drawmap ();
-		       /* Draw the prompt text */
+                       /* Draw the prompt text */
                        draw_textbox (B_TEXT);
                        /* Draw the  options text */
-		       draw_kq_box(double_buffer, winx-5, winy-5, winx+winwidth*8+13,winy+winheight*12+5, BLUE, B_TEXT);
+                       draw_kq_box (double_buffer, winx - 5, winy - 5,
+                                    winx + winwidth * 8 + 13,
+                                    winy + winheight * 12 + 5, BLUE, B_TEXT);
                        for (i = 0; i < winheight; ++i)
                          {
                             print_font (double_buffer, winx + 8, winy + i * 12,
@@ -1486,10 +1487,10 @@ int prompt (int who, int numopt, int bstyle, char *sp1, char *sp2, char *sp3,
  * the confirm key to be pressed or for a specific amount of time.
  *
  * \param   m Message text
- * \param   icn Icon to display
+ * \param   icn Icon to display or 255 for none
  * \param   delay Time to wait (milliseconds?)
- * \param   x_m x-coord
- * \param   y_m y-coord
+ * \param   x_m x-coord of top-left (like xofs)
+ * \param   y_m y-coord of top-left
 */
 void message (char *m, int icn, int delay, int x_m, int y_m)
 {
