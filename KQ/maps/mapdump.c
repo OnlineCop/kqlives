@@ -191,10 +191,10 @@ static void usage (char *argv)
    printf ("   s  shows the shadows (default ON)\n");
    printf ("   z  shows the zones (default OFF)\n");
    printf ("   filename  is the .MAP file(s) to be used\n\n");
-   printf ("Example: %s +1oz -23es\n", argv);
-   printf ("  Output will be a map with only level 1, obstacles, and zones");
-   printf (" showing.\n");
-   printf ("  Layers 2 and 3, entities, and shadows will not be included.\n");
+   printf ("Example: %s +1oz -23es town1.map town2.map\n\n", argv);
+   printf ("  Output will be `town1.pcx' and `town2.pcx' with only level 1, obstacles,\n");
+   printf ("    and zones showing.\n");
+   printf ("  Layers 2 and 3, entities, and shadows will NOT be included.\n");
 }                               /* usage () */
 
 END_OF_FUNCTION (void usage);
