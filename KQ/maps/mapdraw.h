@@ -25,11 +25,9 @@
 #define A_SHADOWS                   8   // Shadows Attribute
 #define A_OBSTACLES                 9   // Obstacles Attribute
 #define A_ZONES                     10  // Zones Attribute
-#define LAYERS_ENTITY_SHADOW_VIEW   11  // Layers 1-3 + Entities + Shadows
-#define VIEW_ALL                    12  // Layers 1-3 + Attributes 1-4
-#define VIEW_NONE                   13  // No Layers, no Attributes, cannot add/remove
-#define BLOCK_COPY                  14  // Mode to start copying an area
-#define BLOCK_PASTE                 15  // Mode to paste the copied area
+#define BLOCK_COPY                  11  // Mode to start copying an area
+#define BLOCK_PASTE                 12  // Mode to paste the copied area
+#define GRAB_TILE                   13  // Select a tile in the map to draw
 
 #define ICONSET_SIZE    20 // Number of icons shown in the tile map
 

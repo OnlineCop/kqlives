@@ -138,8 +138,27 @@ void process_controls (void)
              showing.last_layer = draw_mode;
           }
 
-        /* Note: The Attribute must be the Active Mode in order to
-                 be able to draw to the map */
+        if (k == KEY_C) // View Layers 1+2+3, plus Entites and Shadows
+          {
+             draw_mode = LAYER_VIEW1_2_3;
+             showing.entities = 1;
+             showing.shadows = 1;
+             showing.obstacles = 0;
+             showing.zones = 0;
+             showing.last_layer = draw_mode;
+          }
+        if (k == KEY_A) // Displays Layers 1-3 and all Attributes
+          {
+             draw_mode = LAYER_VIEW1_2_3;
+             showing.entities = 1;
+             showing.shadows = 1;
+             showing.obstacles = 1;
+             showing.zones = 1;
+             showing.last_layer = draw_mode;
+          }
+
+        /* Note: The Attribute must be 'Active'
+                 to be able to draw to the map */
         if (k == KEY_F11)  // Toggle Entities Attribute
           {
              if (showing.entities == 1)
@@ -212,40 +231,23 @@ void process_controls (void)
                   showing.zones = 1;
                }
           }
-        if (k == KEY_C) // View Layers 1+2+3, plus Entites and Shadows
-          {
-             draw_mode = LAYERS_ENTITY_SHADOW_VIEW;
-             showing.entities = 1;
-             showing.shadows = 1;
-             showing.obstacles = 0;
-             showing.zones = 0;
-             showing.last_layer = LAYER_VIEW1_2_3;
-          }
-        if (k == KEY_A) // Displays Layers 1-3 and all Attributes
-          {
-             draw_mode = VIEW_ALL;
-             showing.entities = 1;
-             showing.shadows = 1;
-             showing.obstacles = 1;
-             showing.zones = 1;
-             showing.last_layer = LAYER_VIEW1_2_3;
-          }
-        if (k == KEY_0) // Turn off all Layers and Attributes
-          {
-             draw_mode = VIEW_NONE;
-             showing.entities = 0;
-             showing.shadows = 0;
-             showing.obstacles = 0;
-             showing.zones = 0;
-             showing.last_layer = draw_mode;
-          }
-        if (k == KEY_T)             // Copy a selection (copies all
-           draw_mode = BLOCK_COPY;  // (visible Zones and Attributes)
+        if (k == KEY_T) // Copy a selection
+           draw_mode = BLOCK_COPY;
         if (k == KEY_P) // Paste copied area
            draw_mode = BLOCK_PASTE;
+        if (k == KEY_G) // Get the tile under the mouse curser
+          {
+             if ((draw_mode != LAYER1) && (showing.last_layer != LAYER1) &&
+                 (draw_mode != LAYER2) && (showing.last_layer != LAYER2) &&
+                 (draw_mode != LAYER3) && (showing.last_layer != LAYER3))
+                showing.last_layer = LAYER1; // The default view mode
+             else if (draw_mode != GRAB_TILE)
+                showing.last_layer = draw_mode;
+             draw_mode = GRAB_TILE;
+          }
         if (k == KEY_W) // Clear contents of current map
            wipe_map ();
-        if (k == KEY_D) // Move location of entities
+        if (k == KEY_D) // Move (displace) location of entities
            displace_entities ();
         if (k == KEY_E) // Empty the contents of the clipboard
            clipb = 0;
@@ -263,7 +265,7 @@ void process_controls (void)
            clear_layer ();
         if (k == KEY_F5)   // Load a pcx file to become a map
            make_mapfrompcx ();
-        if (k == KEY_F6)   // Change all instances of a tile to another
+        if (k == KEY_F6)   // Change all instances of one tile to another
            global_change ();
         if (k == KEY_F7)   // Remove all obstructions on the map
            clear_obstructs ();
@@ -273,12 +275,12 @@ void process_controls (void)
            copy_layer ();
         if (k == KEY_F10)  // Enter a few words to describe the map
            describe_map ();
-        if (k == KEY_F12)  // Change to Entity modification mode
+        if (k == KEY_F12)  // Entity-modification mode
           {
              showing.entities = 1;
              update_entities ();
           }
-        if (k == KEY_ESC)  // Uh-oh button to stop copying
+        if (k == KEY_ESC)  // Clear the current Block Copy coordinates
           {
              if (copying == 1)
                {
@@ -411,8 +413,8 @@ void process_controls (void)
              //  below the view-screen from being drawn to when the mouse
              //  is over the options-area.  Second, it means that the user
              //  is still holding down the button when the mouse was moved
-             //  down there, so stop drawing instead of selecting one of
-             //  the options accidentally.
+             //  down there, so do nothing instead of selecting one of the
+             //  options accidentally.
              else
                 return;
           }
@@ -472,22 +474,34 @@ void process_controls (void)
         // Begin area copy (copies all zones)
         if (draw_mode == BLOCK_COPY && copying == 0)
           {
-             // Clear 'end block copy'
              copyx1 = gx + x;
              copyy1 = gy + y;
-             copyx2 = copyy2 = -1;
+             copyx2 = copyy2 = -1;  // Clear 'end block copy'
              copying = 1;
           }
         // Paste copied region(s) onto the map
         if (draw_mode == BLOCK_PASTE && clipb != 0)
           paste_region (gx + x, gy + y);
-     } // end of (mouse_b & 1)
 
-   /* Paste user-specified area to Layers and/or Attributes */
+        // Select a tile from the map and its icon from the icon map
+        if (draw_mode == GRAB_TILE)
+          {
+             if (showing.last_layer == LAYER1)
+                curtile = map[((gy + y) * gmap.xsize) + gx + x];
+             if (showing.last_layer == LAYER2)
+                curtile = b_map[((gy + y) * gmap.xsize) + gx + x];
+             if (showing.last_layer == LAYER3)
+                curtile = f_map[((gy + y) * gmap.xsize) + gx + x];
+
+             icon_set = curtile / ICONSET_SIZE; // Update icon map on right
+          }
+     } // end if (mouse_b & 1)
+
+   /* Paste Layers and/or Attributes */
    if ((mouse_b & 2) && (draw_mode == BLOCK_PASTE) && (clipb != 0))
      paste_region_special (gx + x, gy + y);
 
-   // Handle a right-click for all of the options
+   // Handle a right-click for all remaining options
    if (mouse_b & 2)
      {
         x = mouse_x / 16;
@@ -510,7 +524,7 @@ void process_controls (void)
         if (draw_mode == A_ZONES)
            z_map[((gy + y) * gmap.xsize) + gx + x] = 0;
 
-        // Finish area copy (copies all zones)
+        // Finish area copy
         if (draw_mode == BLOCK_COPY && copying == 1)
           {
              copyx2 = gx + x;
@@ -528,7 +542,7 @@ void process_controls (void)
         // Erase tile from Layer 3
         if (draw_mode == LAYER3)
            f_map[((gy + y) * gmap.xsize) + gx + x] = 0;
-     } // end of (mouse_b & 2)
+     } // end if (mouse_b & 2)
 
    x = mouse_x / 16;
    y = mouse_y / 16;
@@ -539,7 +553,7 @@ void process_controls (void)
 }
 
 
-// Incase of accidental button press, confirm with user
+// Confirm exit with user
 int confirm_exit (void)
 {
    cmessage ("Are you sure you want to exit? (y/n)");
@@ -547,7 +561,7 @@ int confirm_exit (void)
 }
 
 
-// Select a tile from the tile map on the right
+// Select a tile from the menu on the right
 void check_tilesel (int cx, int cy)
 {
    int xp, yp;
@@ -562,7 +576,7 @@ void check_tilesel (int cx, int cy)
 }
 
 
-// Select the options at the bottom of the screen
+// Select an option from the menus at the bottom of the screen
 void check_mdupdate (int cx, int cy)
 {
    int a;
@@ -575,7 +589,7 @@ void check_mdupdate (int cx, int cy)
         gmap.tileset++;
         if (gmap.tileset >= NUM_TILESETS)
            gmap.tileset = 0;
-        update_tileset ();
+        update_tileset (); // See instant results!
         draw_menubars ();
         while (mouse_b & 1);
         return;
@@ -765,44 +779,43 @@ void draw_map (void)
              //  view-window.
              w = ((gy + dy) * gmap.xsize) + gx + dx;
 
-/*
-TODO: This is where the Attributes need to toggle on or off, regardless
-      of which Layers are showing.  The current bug is that the
-      Attributes will turn on all 3 Layers when they are showing, then
-      the Layers turn back off when the Attributes are turned off.
-*/
              // Clears Layer 1 background and then draws
              if ((draw_mode == LAYER1) ||
                  (draw_mode == LAYER_VIEW1_2) ||
                  (draw_mode == LAYER_VIEW1_3) ||
                  (draw_mode == LAYER_VIEW1_2_3) ||
-                 (draw_mode == A_ENTITIES) ||
-                 (draw_mode == A_SHADOWS) ||
-                 (draw_mode == A_OBSTACLES) ||
-                 (draw_mode == A_ZONES) ||
-                 (draw_mode == LAYERS_ENTITY_SHADOW_VIEW) ||
-                 (draw_mode == VIEW_ALL) ||
                  (draw_mode == BLOCK_COPY) ||
                  (draw_mode == BLOCK_PASTE))
                {
                   if (draw_mode == LAYER1)
                      rectfill (double_buffer, dx * 16, dy * 16, dx * 16 + 15,
                                dy * 16 + 15, 0);
-                  blit (icons[map[w]], double_buffer, 0, 0, dx * 16, dy * 16,
-                        16, 16);
+                     blit (icons[map[w]], double_buffer, 0, 0, dx * 16,
+                           dy * 16, 16, 16);
                }
+
+             // This draws Layer 1 only if it was what was showing when
+             //  the user toggled the Attribute
+             if ((draw_mode == A_ENTITIES) ||
+                 (draw_mode == A_SHADOWS) ||
+                 (draw_mode == A_OBSTACLES) ||
+                 (draw_mode == A_ZONES) ||
+                 (draw_mode == GRAB_TILE))
+               {
+                  if (showing.last_layer == LAYER1 ||
+                      showing.last_layer == LAYER_VIEW1_2 ||
+                      showing.last_layer == LAYER_VIEW1_3 ||
+                      showing.last_layer == LAYER_VIEW1_2_3)
+                     blit (icons[map[w]], double_buffer, 0, 0, dx * 16,
+                           dy * 16, 16, 16);
+               }
+
 
              // Clears Layer 2 background and then draws
              if ((draw_mode == LAYER2) ||
                  (draw_mode == LAYER_VIEW1_2) ||
                  (draw_mode == LAYER_VIEW2_3) ||
                  (draw_mode == LAYER_VIEW1_2_3) ||
-                 (draw_mode == A_ENTITIES) ||
-                 (draw_mode == A_SHADOWS) ||
-                 (draw_mode == A_OBSTACLES) ||
-                 (draw_mode == A_ZONES) ||
-                 (draw_mode == LAYERS_ENTITY_SHADOW_VIEW) ||
-                 (draw_mode == VIEW_ALL) ||
                  (draw_mode == BLOCK_COPY) ||
                  (draw_mode == BLOCK_PASTE))
                {
@@ -813,17 +826,28 @@ TODO: This is where the Attributes need to toggle on or off, regardless
                                dy * 16);
                }
 
+             // This draws Layer 2 only if it was what was showing when
+             //  the user toggled the Attribute
+             if ((draw_mode == A_ENTITIES) ||
+                 (draw_mode == A_SHADOWS) ||
+                 (draw_mode == A_OBSTACLES) ||
+                 (draw_mode == A_ZONES) ||
+                 (draw_mode == GRAB_TILE))
+               {
+                  if (showing.last_layer == LAYER2 ||
+                      showing.last_layer == LAYER_VIEW1_2 ||
+                      showing.last_layer == LAYER_VIEW2_3 ||
+                      showing.last_layer == LAYER_VIEW1_2_3)
+                     draw_sprite (double_buffer, icons[b_map[w]], dx * 16,
+                                  dy * 16);
+               }
+
+
              // Clears Layer 3 background and then draws
              if ((draw_mode == LAYER3) ||
                  (draw_mode == LAYER_VIEW1_3) ||
                  (draw_mode == LAYER_VIEW2_3) ||
                  (draw_mode == LAYER_VIEW1_2_3) ||
-                 (draw_mode == A_ENTITIES) ||
-                 (draw_mode == A_SHADOWS) ||
-                 (draw_mode == A_OBSTACLES) ||
-                 (draw_mode == A_ZONES) ||
-                 (draw_mode == LAYERS_ENTITY_SHADOW_VIEW) ||
-                 (draw_mode == VIEW_ALL) ||
                  (draw_mode == BLOCK_COPY) ||
                  (draw_mode == BLOCK_PASTE))
                {
@@ -832,6 +856,22 @@ TODO: This is where the Attributes need to toggle on or off, regardless
                                dy * 16 + 15, 0);
                   draw_sprite (double_buffer, icons[f_map[w]], dx * 16,
                                dy * 16);
+               }
+
+             // This draws Layer 3 only if it was what was showing when
+             //  the user toggled the Attribute
+             if ((draw_mode == A_ENTITIES) ||
+                 (draw_mode == A_SHADOWS) ||
+                 (draw_mode == A_OBSTACLES) ||
+                 (draw_mode == A_ZONES) ||
+                 (draw_mode == GRAB_TILE))
+               {
+                  if (showing.last_layer == LAYER3 ||
+                      showing.last_layer == LAYER_VIEW1_3 ||
+                      showing.last_layer == LAYER_VIEW2_3 ||
+                      showing.last_layer == LAYER_VIEW1_2_3)
+                     draw_sprite (double_buffer, icons[f_map[w]], dx * 16,
+                                  dy * 16);
                }
 
              // Draw the Shadows
@@ -921,12 +961,13 @@ void draw_menubars (void)
    int p, xp, yp, a;
 
    // Description for the current draw_mode (could use work)
-   char dt[16][12] =
+   char dt[17][12] =
       { "Layer1", "Layer2", "Layer3",
         "View L1+2", "View L1+3", "View L2+3", "View L1+2+3",
         "Entities", "Shadows", "Obstacles", "Zones",
         "L1-3, E, S", "View-All", "View-None",
-        "Block Copy", "Block Paste"
+        "Block Copy", "Block Paste",
+        "Grab Tile"
       };
 
    // The white line that seperates the bottom menu
@@ -1593,7 +1634,7 @@ void copy_region (void)
      }
    if (cbw < 1)
      {
-        // This swaps the x-coord
+        // This swaps the x-coords
         swapx = copyx2;
         copyx2 = swapx;
         copyx1 = swapx;
@@ -1630,7 +1671,7 @@ void resize_map (void)
    int ld;     // User input
    int neww, newh; // New width and height
    int zx, zy; // Zone width and height
-   int bf;     //
+   int bf;     // Used in copying 'old size' information to 'new size'
    int oldw, oldh; // Old width and height
 
    rectfill (screen, 0, 0, 319, 29, 0);
@@ -1727,7 +1768,7 @@ void resize_map (void)
                }
           }
      }
-   // Clear out the old 'current map' for any later usage
+   // Free the 'old-map copy' memory
    free (c_map);
    c_map = (unsigned short *) malloc (gmap.xsize * gmap.ysize * 2);
    free (cb_map);
