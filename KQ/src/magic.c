@@ -72,15 +72,16 @@ static void geffect_all_allies (int, int);
  */
 int combat_spell (int whom, int is_item)
 {
-   int a, b, st, tgt, sn, tall = 0, nt = 1, ss = 0;
+   int a, b, st, tgt, spell_number, tall = 0, nt = 1, ss = 0;
 
-   sn = fighter[whom].csmem;
-   if (magic[sn].tgt == TGT_NONE)
+   spell_number = fighter[whom].csmem;
+   if (magic[spell_number].tgt == TGT_NONE)
       return 0;
    tgt = fighter[whom].ctmem;
    nt = 1;
    st = tgt;
-   if (magic[sn].tgt >= TGT_ALLY_ONE && magic[sn].tgt <= TGT_ALLY_ALL) {
+   if (magic[spell_number].tgt >= TGT_ALLY_ONE
+       && magic[spell_number].tgt <= TGT_ALLY_ALL) {
       if (tgt == SEL_ALL_ALLIES) {
          tall = 1;
          if (whom < PSIZE) {
@@ -103,31 +104,31 @@ int combat_spell (int whom, int is_item)
          }
       }
    }
-   strcpy (ctext, magic[sn].name);
+   strcpy (ctext, magic[spell_number].name);
    if (is_item == 0)
-      draw_castersprite (whom, eff[magic[sn].eff].kolor);
-   if (magic[sn].dmg > 0)
+      draw_castersprite (whom, eff[magic[spell_number].eff].kolor);
+   if (magic[spell_number].dmg > 0)
       ss = 1;
-   if (sn == M_LIFE || sn == M_FULLLIFE)
+   if (spell_number == M_LIFE || spell_number == M_FULLLIFE)
       deadeffect = 1;
-   if (sn == M_TREMOR || sn == M_EARTHQUAKE) {
+   if (spell_number == M_TREMOR || spell_number == M_EARTHQUAKE) {
       if (st == 0)
-         draw_hugesprite (st, 80, 126, magic[sn].eff, 1);
+         draw_hugesprite (st, 80, 126, magic[spell_number].eff, 1);
       else
-         draw_hugesprite (st, 80, 66, magic[sn].eff, 1);
+         draw_hugesprite (st, 80, 66, magic[spell_number].eff, 1);
    } else {
-      if (sn == M_FLOOD || sn == M_TSUNAMI) {
+      if (spell_number == M_FLOOD || spell_number == M_TSUNAMI) {
          if (st == 0)
-            draw_hugesprite (st, 80, 108, magic[sn].eff, 1);
+            draw_hugesprite (st, 80, 108, magic[spell_number].eff, 1);
          else
-            draw_hugesprite (st, 80, 56, magic[sn].eff, 1);
+            draw_hugesprite (st, 80, 56, magic[spell_number].eff, 1);
       } else {
-         if (sn != M_VISION && sn != M_WARP)
-            draw_spellsprite (st, tall, magic[sn].eff, ss);
+         if (spell_number != M_VISION && spell_number != M_WARP)
+            draw_spellsprite (st, tall, magic[spell_number].eff, ss);
       }
    }
 
-   if (sn == M_LIFE || sn == M_FULLLIFE)
+   if (spell_number == M_LIFE || spell_number == M_FULLLIFE)
       deadeffect = 0;
 
    if (cast_spell (whom, is_item) == 0) {
@@ -138,8 +139,8 @@ int combat_spell (int whom, int is_item)
       ;
    }
 
-   if (sn == M_ABSORB || sn == M_DRAIN) {
-      if (sn == M_ABSORB) {
+   if (spell_number == M_ABSORB || spell_number == M_DRAIN) {
+      if (spell_number == M_ABSORB) {
          if (ta[tgt] <= 0) {
             display_amount (tgt, FRED, 0);
             adjust_mp (tgt, ta[tgt]);
@@ -205,12 +206,12 @@ int combat_spell (int whom, int is_item)
  */
 int cast_spell (int whom, int is_item)
 {
-   int sn = fighter[whom].csmem;
+   int spell_number = fighter[whom].csmem;
    int tgt = fighter[whom].ctmem;
    int c;
 
    if (is_item == 0) {
-      c = mp_needed (whom, sn);
+      c = mp_needed (whom, spell_number);
       if (c < 1)
          c = 1;
       fighter[whom].mp -= c;
@@ -219,8 +220,10 @@ int cast_spell (int whom, int is_item)
          don't have a hit% or do damage
        */
 /*  DS IDEA: move this code to the function non_dmg_save() */
-      if (magic[sn].dmg == 0 && magic[sn].bon == 0 && magic[sn].hit == 0) {
-         if (rand () % 100 + 1 > fighter[whom].stats[A_AUR + magic[sn].stat]) {
+      if (magic[spell_number].dmg == 0 && magic[spell_number].bon == 0
+          && magic[spell_number].hit == 0) {
+         if (rand () % 100 + 1 >
+             fighter[whom].stats[A_AUR + magic[spell_number].stat]) {
 /*  DS: The spell fail, so set ta[target] to MISS */
             if (tgt != SEL_ALL_ALLIES)
                ta[tgt] = MISS;
@@ -243,37 +246,37 @@ int cast_spell (int whom, int is_item)
       }
    }
    /* call the appropriate spell effect function */
-   switch (magic[sn].icon) {
+   switch (magic[spell_number].icon) {
    case 40:
    case 41:
-      special_spells (whom, sn);
+      special_spells (whom, spell_number);
       break;
    case 45:
-      cure_oneall_allies (whom, tgt, sn);
+      cure_oneall_allies (whom, tgt, spell_number);
       break;
    case 46:
-      heal_one_ally (whom, tgt, sn);
+      heal_one_ally (whom, tgt, spell_number);
       break;
    case 47:
    case 42:
-      if (magic[sn].tgt == TGT_ALLY_ONE)
-         geffect_one_ally (whom, tgt, sn);
+      if (magic[spell_number].tgt == TGT_ALLY_ONE)
+         geffect_one_ally (whom, tgt, spell_number);
       else
-         geffect_all_allies (whom, sn);
+         geffect_all_allies (whom, spell_number);
       break;
    case 48:
    case 43:
-      if (magic[sn].tgt == TGT_ENEMY_ONE)
-         beffect_one_enemy (whom, tgt, sn);
+      if (magic[spell_number].tgt == TGT_ENEMY_ONE)
+         beffect_one_enemy (whom, tgt, spell_number);
       else
-         beffect_all_enemies (whom, sn);
+         beffect_all_enemies (whom, spell_number);
       break;
    case 49:
    case 44:
-      if (magic[sn].tgt == TGT_ENEMY_ALL)
-         damage_all_enemies (whom, sn);
+      if (magic[spell_number].tgt == TGT_ENEMY_ALL)
+         damage_all_enemies (whom, spell_number);
       else
-         damage_oneall_enemies (whom, tgt, sn);
+         damage_oneall_enemies (whom, tgt, spell_number);
       break;
    }
    return 1;
@@ -285,30 +288,34 @@ int cast_spell (int whom, int is_item)
  *
  * This is used to invoke items inbued with a spell
  *
- * \param   w Attacker
- * \param   i Item for imbued spell
- * \param   d Value for SAG and INT when casting imbued
- * \param   t Target (defender)
+ * \param   caster Attacker
+ * \param   target_item Item for imbued spell
+ * \param   sag_int_value Value for SAG and INT when casting imbued
+ * \param   tgt Target (defender)
  */
-void cast_imbued_spell (int w, int i, int d, int t)
+void cast_imbued_spell (int caster, int target_item, int sag_int_value,
+                        int tgt)
 {
    int a, ts[4];
 
+   /* Calculates TempStatus for A_INT, A_SAG, A_SPD, A_AUR */
    for (a = 0; a < 4; a++)
-      ts[a] = fighter[w].stats[A_INT + a];
-   fighter[w].stats[A_INT] = d;
-   fighter[w].stats[A_SAG] = d;
-   fighter[w].stats[A_AUR] = 100;
-   fighter[w].stats[A_SPI] = 100;
-   fighter[w].csmem = i;
-   fighter[w].ctmem = t;
-   if (t == TGT_CASTER) {
-      fighter[w].ctmem = w;
-      cast_spell (w, 1);
+      ts[a] = fighter[caster].stats[A_INT + a];
+   fighter[caster].stats[A_INT] = sag_int_value;
+   fighter[caster].stats[A_SAG] = sag_int_value;
+   fighter[caster].stats[A_SPD] = 100;
+   fighter[caster].stats[A_AUR] = 100;
+   // fighter[caster].stats[A_SPI] = 100;
+// TT: This appears to be incorrect; fixed to be SPD instead of SPI
+   fighter[caster].csmem = target_item;
+   fighter[caster].ctmem = tgt;
+   if (tgt == TGT_CASTER) {
+      fighter[caster].ctmem = caster;
+      cast_spell (caster, 1);
    } else
-      combat_spell (w, 1);
+      combat_spell (caster, 1);
    for (a = 0; a < 4; a++)
-      fighter[w].stats[A_INT + a] = ts[a];
+      fighter[caster].stats[A_INT + a] = ts[a];
 }
 
 
@@ -317,16 +324,17 @@ void cast_imbued_spell (int w, int i, int d, int t)
  *
  * Special spells like warp and vision.
  *
- * \param   cs Index of caster
- * \param   sn Index of spell
+ * \param   caster Index of caster
+ * \param   spell_number Index of spell
  */
-static void special_spells (int cs, int sn)
+static void special_spells (int caster, int spell_number)
 {
-   if (cs >= PSIZE) {
-      sprintf (strbuf, "Enemy %d tried to cast %s?!", cs, magic[sn].name);
+   if (caster >= PSIZE) {
+      sprintf (strbuf, "Enemy %d tried to cast %s?!", caster,
+               magic[spell_number].name);
       klog (strbuf);
    }
-   switch (sn) {
+   switch (spell_number) {
    case M_VISION:
       do_transition (TRANS_FADE_OUT, 2);
       vspell = 1;
@@ -343,12 +351,17 @@ static void special_spells (int cs, int sn)
          do_transition (TRANS_FADE_IN, 2);
          combatend = 2;
       } else {
-         if (g_map.map_no == MAP_MAIN)
+         if (g_map.map_no == MAP_MAIN) {
+            /* TT: I would like to have a check here: if the player casts Warp,
+             * the player can select WHERE to warp to, instead of just to the
+             * house, etc.
+             */
             change_map ("town4", g_map.warpx, g_map.warpy, g_map.warpx,
                         g_map.warpy);
-         else
+         } else {
             change_map ("main", g_map.warpx, g_map.warpy, g_map.warpx,
                         g_map.warpy);
+         }
       }
       break;
    case M_REPULSE:
@@ -363,17 +376,17 @@ static void special_spells (int cs, int sn)
  *
  * This function only handles healing spells (one or all allied targets).
  *
- * \param   cs Caster
+ * \param   caster Caster
  * \param   tgt Target
- * \param   sn Spell number
+ * \param   spell_number Spell number
  */
-static void cure_oneall_allies (int cs, int tgt, int sn)
+static void cure_oneall_allies (int caster, int tgt, int spell_number)
 {
    int a = 0, b = 0, z = 0, spwr;
    int nt, st, nn;
 
    if (tgt == SEL_ALL_ALLIES) {
-      if (cs < PSIZE) {
+      if (caster < PSIZE) {
          nt = numchrs;
          st = 0;
       } else {
@@ -387,13 +400,14 @@ static void cure_oneall_allies (int cs, int tgt, int sn)
       nn = 0;
    }
    spwr =
-      magic[sn].dmg +
-      (fighter[cs].stats[A_INT + magic[sn].stat] * magic[sn].bon / 100);
+      magic[spell_number].dmg +
+      (fighter[caster].stats[A_INT + magic[spell_number].stat] *
+       magic[spell_number].bon / 100);
    if (spwr < DMG_RND_MIN * 5)
       b = rand () % DMG_RND_MIN + spwr;
    else
       b = rand () % (spwr / 5) + spwr;
-   a = fighter[cs].stats[A_AUR + magic[sn].stat];
+   a = fighter[caster].stats[A_AUR + magic[spell_number].stat];
    b = b * a / 100;
    if (b < 1)
       b = 1;
@@ -426,11 +440,11 @@ static void cure_oneall_allies (int cs, int tgt, int sn)
  * This is for a special category of spells which are beneficial, but
  * not really effect spells or curative spells.
  *
- * \param   cs Caster
+ * \param   caster Caster
  * \param   tgt Target
- * \param   sn Spell number
+ * \param   spell_number Spell number
  */
-static void heal_one_ally (int cs, int tgt, int sn)
+static void heal_one_ally (int caster, int tgt, int spell_number)
 {
    int a, b = 0;
 
@@ -438,14 +452,15 @@ static void heal_one_ally (int cs, int tgt, int sn)
 /*      spells, the spell don't work correctly. In cast_spell() this */
 /*      is tested, so don't need to test again. */
 #if 0
-   if (rand () % 100 + 1 > fighter[cs].stats[A_AUR + magic[sn].stat]) {
+   if (rand () % 100 + 1 >
+       fighter[caster].stats[A_AUR + magic[spell_number].stat]) {
       ta[tgt] = MISS;
       return;
    }
 #endif
-/*  DS: Now the 'cs' argument isn't used, so I'm doing this: */
-   cs = cs;
-   switch (sn) {
+/*  DS: Now the 'caster' argument isn't used, so I'm doing this: */
+   caster = caster;
+   switch (spell_number) {
    case M_RESTORE:
       if (fighter[tgt].sts[S_DEAD] == 0) {
          fighter[tgt].sts[S_POISON] = 0;
@@ -485,26 +500,27 @@ static void heal_one_ally (int cs, int tgt, int sn)
  *
  * These are 'good' effect spells that affect a single allied target.
  *
- * \param   cs Caster
+ * \param   caster Caster
  * \param   tgt Target
- * \param   sn Spell number
+ * \param   spell_number Spell number
  */
-static void geffect_one_ally (int cs, int tgt, int sn)
+static void geffect_one_ally (int caster, int tgt, int spell_number)
 {
 /*  DS: The same problem of heal_one_ally(), this have been tested in
         cast_spell(), because the hit% of all magics with good effect
         are 0
  */
 #if 0
-   if (rand () % 100 + 1 > fighter[cs].stats[A_AUR + magic[sn].stat]
+   if (rand () % 100 + 1 >
+       fighter[caster].stats[A_AUR + magic[spell_number].stat]
        || fighter[tgt].sts[S_STONE] > 0) {
       ta[tgt] = MISS;
       return;
    }
 #endif
-/*  DS: Now the 'cs' argument isn't used, so I'm doing this: */
-   cs = cs;
-   switch (sn) {
+/*  DS: Now the 'caster' argument isn't used, so I'm doing this: */
+   caster = caster;
+   switch (spell_number) {
    case M_TRUEAIM:
       if (fighter[tgt].sts[S_TRUESHOT] == 0)
          fighter[tgt].sts[S_TRUESHOT] = 1;
@@ -565,26 +581,27 @@ static void geffect_one_ally (int cs, int tgt, int sn)
  *
  * These are 'good' effect spells that affect all allied targets.
  *
- * \param   cs Caster
- * \param   sn Spell Number
+ * \param   caster Caster
+ * \param   spell_number Spell Number
  */
-static void geffect_all_allies (int cs, int sn)
+static void geffect_all_allies (int caster, int spell_number)
 {
    int nt, st, a, b = 0;
 
-   if (cs < PSIZE) {
+   if (caster < PSIZE) {
       nt = numchrs;
       st = 0;
    } else {
       nt = numens;
       st = PSIZE;
    }
-   if (rand () % 100 + 1 > fighter[cs].stats[A_AUR + magic[sn].stat]) {
+   if (rand () % 100 + 1 >
+       fighter[caster].stats[A_AUR + magic[spell_number].stat]) {
       for (b = st; b < st + nt; b++)
          ta[b] = MISS;
       return;
    }
-   switch (sn) {
+   switch (spell_number) {
    case M_BLESS:
       for (b = st; b < st + nt; b++) {
          if (fighter[b].sts[S_BLESS] < 3) {
@@ -641,11 +658,11 @@ static void geffect_all_allies (int cs, int sn)
  *
  * This function handles 'bad' effect spells that have a single target.
  *
- * \param   cs Caster
+ * \param   caster Caster
  * \param   tgt Target
- * \param   sn Spell number
+ * \param   spell_number Spell number
  */
-static void beffect_one_enemy (int cs, int tgt, int sn)
+static void beffect_one_enemy (int caster, int tgt, int spell_number)
 {
    int r, a = 0, sp_hit;
 
@@ -653,12 +670,12 @@ static void beffect_one_enemy (int cs, int tgt, int sn)
       ta[tgt] = MISS;
       return;
    }
-   if (res_throw (tgt, magic[sn].elem) == 1) {
+   if (res_throw (tgt, magic[spell_number].elem) == 1) {
       ta[tgt] = MISS;
       return;
    }
-   sp_hit = magic[sn].hit;
-   switch (sn) {
+   sp_hit = magic[spell_number].hit;
+   switch (spell_number) {
    case M_BLIND:
       if (non_dmg_save (tgt, sp_hit) == 0 && fighter[tgt].sts[S_BLIND] == 0)
          fighter[tgt].sts[S_BLIND] = 1;
@@ -727,30 +744,30 @@ static void beffect_one_enemy (int cs, int tgt, int sn)
          ta[tgt] = MISS;
       break;
    case M_ABSORB:
-      spell_damage (cs, sn, tgt, 1);
+      spell_damage (caster, spell_number, tgt, 1);
       r = ta[tgt];
       if (non_dmg_save (tgt, sp_hit) == 1)
          r = r / 2;
       if (fighter[tgt].mp < abs (r))
          r = 0 - fighter[tgt].mp;
       ta[tgt] = r;
-      ta[cs] = 0 - r;
+      ta[caster] = 0 - r;
       break;
    case M_DRAIN:
-      spell_damage (cs, sn, tgt, 1);
+      spell_damage (caster, spell_number, tgt, 1);
       r = ta[tgt];
       if (non_dmg_save (tgt, sp_hit) == 1)
          r = r / 2;
       if (fighter[tgt].unl > 0) {
-         if (fighter[cs].hp < abs (r))
-            r = 0 - fighter[cs].hp;
+         if (fighter[caster].hp < abs (r))
+            r = 0 - fighter[caster].hp;
          ta[tgt] = 0 - r;
-         ta[cs] = r;
+         ta[caster] = r;
       } else {
          if (fighter[tgt].hp < abs (r))
             r = 0 - fighter[tgt].hp;
          ta[tgt] = r;
-         ta[cs] = 0 - r;
+         ta[caster] = 0 - r;
       }
       break;
    case M_DOOM:
@@ -786,25 +803,25 @@ static void beffect_one_enemy (int cs, int tgt, int sn)
  *
  * These are 'bad' effect spells that affect all enemy targets.
  *
- * \param   cs Caster
- * \param   sn Spell number
+ * \param   caster Caster
+ * \param   spell_number Spell number
  */
-static void beffect_all_enemies (int cs, int sn)
+static void beffect_all_enemies (int caster, int spell_number)
 {
    int nt, st, a, sp_hit;
 
-   if (cs < PSIZE) {
+   if (caster < PSIZE) {
       nt = numens;
       st = PSIZE;
    } else {
       nt = numchrs;
       st = 0;
    }
-   sp_hit = magic[sn].hit;
-   switch (sn) {
+   sp_hit = magic[spell_number].hit;
+   switch (spell_number) {
    case M_SLOW:
       for (a = st; a < st + nt; a++) {
-         if (res_throw (a, magic[sn].elem) == 0
+         if (res_throw (a, magic[spell_number].elem) == 0
              && non_dmg_save (a, sp_hit) == 0
              && fighter[a].sts[S_STONE] == 0) {
             if (fighter[a].sts[S_TIME] == 2)
@@ -839,7 +856,7 @@ static void beffect_all_enemies (int cs, int sn)
       break;
    case M_SLEEPALL:
       for (a = st; a < st + nt; a++) {
-         if (res_throw (a, magic[sn].elem) == 0
+         if (res_throw (a, magic[spell_number].elem) == 0
              && non_dmg_save (a, sp_hit) == 0 && fighter[a].sts[S_SLEEP] == 0
              && fighter[a].sts[S_STONE] == 0) {
             fighter[a].sts[S_SLEEP] = rand () % 2 + 4;
@@ -857,21 +874,21 @@ static void beffect_all_enemies (int cs, int sn)
  *
  * These are damage spells that affect the entire enemy party.
  *
- * \param   cs Caster
- * \param   sn Spell number
+ * \param   caster Caster
+ * \param   spell_number Spell number
  */
-static void damage_all_enemies (int cs, int sn)
+static void damage_all_enemies (int caster, int spell_number)
 {
    int nt, st;
 
-   if (cs < PSIZE) {
+   if (caster < PSIZE) {
       nt = numens;
       st = PSIZE;
    } else {
       nt = numchrs;
       st = 0;
    }
-   spell_damage (cs, sn, st, nt);
+   spell_damage (caster, spell_number, st, nt);
 }
 
 
@@ -880,16 +897,16 @@ static void damage_all_enemies (int cs, int sn)
  *
  * These are damage spells that affect the one or all of the enemy's party.
  *
- * \param   cs Caster
+ * \param   caster Caster
  * \param   tgt Traget
- * \param   sn Spell number
+ * \param   spell_number Spell number
  */
-static void damage_oneall_enemies (int cs, int tgt, int sn)
+static void damage_oneall_enemies (int caster, int tgt, int spell_number)
 {
    int nt, st;
 
    if (tgt == SEL_ALL_ENEMIES) {
-      if (cs < PSIZE) {
+      if (caster < PSIZE) {
          nt = numens;
          st = PSIZE;
       } else {
@@ -900,7 +917,7 @@ static void damage_oneall_enemies (int cs, int tgt, int sn)
       st = tgt;
       nt = 1;
    }
-   spell_damage (cs, sn, st, nt);
+   spell_damage (caster, spell_number, st, nt);
 }
 
 
@@ -1003,17 +1020,17 @@ void special_damage_oneall_enemies (int caster_index, int spell_dmg,
  * This function does all of the damage calculating for damage
  * spells, and fills the ta[] array with the damage amounts.
  *
- * \param   cs Caster
- * \param   sn Spell number
+ * \param   caster Caster
+ * \param   spell_number Spell number
  * \param   st Starting target
  * \param   nt Ending target
  */
-static void spell_damage (int cs, int sn, int st, int nt)
+static void spell_damage (int caster, int spell_number, int st, int nt)
 {
    int a = 0, b = 0, ad = 0, rt = 0, ne = 0;
 
    if (nt > 1) {
-      if (cs < PSIZE) {
+      if (caster < PSIZE) {
          for (a = PSIZE; a < PSIZE + numens; a++)
             if (fighter[a].sts[S_DEAD] == 0)
                ne++;
@@ -1026,21 +1043,22 @@ static void spell_damage (int cs, int sn, int st, int nt)
       ne = 1;
    if (ne == 0)
       return;
-   rt = magic[sn].elem;
+   rt = magic[spell_number].elem;
    ad =
-      magic[sn].dmg +
-      (fighter[cs].stats[A_INT + magic[sn].stat] * magic[sn].bon / 100);
+      magic[spell_number].dmg +
+      (fighter[caster].stats[A_INT + magic[spell_number].stat] *
+       magic[spell_number].bon / 100);
    if (ad < DMG_RND_MIN * 5)
       ad += rand () % DMG_RND_MIN;
    else
       ad += rand () % (ad / 5);
    if (ad < 1)
       ad = 1;
-   a = fighter[cs].stats[A_AUR + magic[sn].stat];
+   a = fighter[caster].stats[A_AUR + magic[spell_number].stat];
    ad = ad * a / 100;
    if (ad < 0)
       ad = 0;
-   if (ne > 1 && magic[sn].tgt != TGT_ENEMY_ALL)
+   if (ne > 1 && magic[spell_number].tgt != TGT_ENEMY_ALL)
       ad = ad / ne;
    for (a = st; a < st + nt; a++) {
       if (fighter[a].sts[S_DEAD] == 0 && fighter[a].mhp > 0) {
@@ -1055,7 +1073,8 @@ static void spell_damage (int cs, int sn, int st, int nt)
             b = b / 10;
          ta[a] = 0 - b;
          if (b < 0 && rt == R_POISON) {
-            if (!res_throw (a, rt) && !non_dmg_save (a, magic[sn].hit))
+            if (!res_throw (a, rt)
+                && !non_dmg_save (a, magic[spell_number].hit))
                set_timed_sts_effect (a, S_POISON);
          }
          if (ta[a] != 0)
@@ -1157,15 +1176,15 @@ int non_dmg_save (int tgt, int per)
  * \note this is the only place that mrp is used.
  *
  * \param   who Index of caster
- * \param   sn Spell number
+ * \param   spell_number Spell number
  * \returns needed MP or 0 if insufficient MP
  */
-int mp_needed (int who, int sn)
+int mp_needed (int who, int spell_number)
 {
    int amt;
 
-   if (sn > 0) {
-      amt = magic[sn].mpc * fighter[who].mrp / 100;
+   if (spell_number > 0) {
+      amt = magic[spell_number].mpc * fighter[who].mrp / 100;
       if (amt < 1)
          amt = 1;
       return amt;
@@ -1179,8 +1198,8 @@ int mp_needed (int who, int sn)
  *
  * I put this is just to make things nice and neat.
  *
- * \param who Index of character
- * \param amt Amount to adjust
+ * \param   who Index of character
+ * \param   amt Amount to adjust
  */
 void adjust_hp (int who, int amt)
 {
@@ -1197,8 +1216,8 @@ void adjust_hp (int who, int amt)
  *
  * I put this is just to make things nice and neat.
  *
- * \param who Index of character
- * \param amt Amount to adjust
+ * \param   who Index of character
+ * \param   amt Amount to adjust
  */
 void adjust_mp (int who, int amt)
 {
@@ -1218,11 +1237,11 @@ void adjust_mp (int who, int amt)
  *
  * \returns a struct by value (PH: a good thing???)
  */
-s_fighter status_adjust (int w)
+s_fighter status_adjust (int caster)
 {
    s_fighter tf;
 
-   tf = fighter[w];
+   tf = fighter[caster];
    if (tf.sts[S_STRENGTH] > 0)
       tf.stats[A_ATT] += tf.stats[A_STR] * tf.sts[S_STRENGTH] * 50 / 100;
    if (tf.sts[S_MALISON] == 1) {

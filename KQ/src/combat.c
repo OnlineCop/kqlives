@@ -126,7 +126,7 @@ int combat_check (int comx, int comy)
  * if it's a scripted battle.  Then call all the helper and setup functions
  * and start the combat by calling do_round.
  *
- * \param   bno combat identifier (index into battles[])
+ * \param   bno Combat identifier (index into battles[])
  * \returns 0 if no combat, 1 otherwise
  */
 int combat (int bno)
@@ -193,9 +193,9 @@ int combat (int bno)
 
 /*! \brief Really do combat once fighters have been inited
  *
- * \param bg Bckground image
- * \param mus Music
- * \param is_rnd if !=0 then this is a random combat
+ * \param   bg Background image
+ * \param   mus Music
+ * \param   is_rnd If !=0 then this is a random combat
  * \returns 1 if battle occurred
  */
 static int do_combat (char *bg, char *mus, int is_rnd)
@@ -897,7 +897,7 @@ static int check_end (void)
 
  * \param   ar Attacker ID
  * \param   dr Defender ID
- * \param   sk if non-zero, override the attacker's stats.
+ * \param   sk If non-zero, override the attacker's stats.
  * \returns 1 if damage done, 0 otherwise
  */
 int fight (int ar, int dr, int sk)

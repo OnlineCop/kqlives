@@ -45,9 +45,9 @@ typedef HRESULT (WINAPI * SHGETFOLDERPATH) (HWND, int, HANDLE, DWORD, LPTSTR);
 
 /*! \brief Return the name of 'significant' directories.
  *
- * \param dir Enumerated constant for directory type  \sa DATA_DIR et al.
- * \param file File name below that directory.
- * \returns The combined path
+ * \param   dir Enumerated constant for directory type  \sa DATA_DIR et al.
+ * \param   file File name below that directory.
+ * \returns the combined path
  */
 const char *kqres (int dir, const char *file)
 {

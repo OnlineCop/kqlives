@@ -59,21 +59,25 @@ static int tmpd[NUM_FIGHTERS];
  * This is used to select a player from the main menu.
  * Used in menu.c
  *
- * \returns Index of player (0..numchrs-1) or -1 if cancelled
+ * \returns index of player (0..numchrs-1) or -1 if cancelled
  */
 int select_player (void)
 {
-   int stop = 0, ptr, rd = 1;
+   /* TT: This takes up a lot of CPU, it doesn't update the background...
+    *     Is there a way to optimise it?
+    */
+
+   int stop = 0, ptr, redraw = 1;
 
    if (numchrs == 1)
       return 0;
    ptr = 0;
    while (!stop) {
-      if (rd == 1) {
+      if (redraw == 1) {
          draw_mainmenu (ptr);
          blit2screen (xofs, yofs);
       }
-      rd = 0;
+      redraw = 0;
       readcontrols ();
       if (up) {
          unpress ();
@@ -81,7 +85,7 @@ int select_player (void)
          if (ptr < 0)
             ptr = numchrs - 1;
          play_effect (SND_CLICK, 128);
-         rd = 1;
+         redraw = 1;
       }
       if (down) {
          unpress ();
@@ -89,7 +93,7 @@ int select_player (void)
          if (ptr > numchrs - 1)
             ptr = 0;
          play_effect (SND_CLICK, 128);
-         rd = 1;
+         redraw = 1;
       }
       if (balt) {
          unpress ();
@@ -119,15 +123,15 @@ int select_player (void)
  * \sa draw_icon()
  * \sa camp_item_targetting()
  *
- * \param   csa mode (target one, one/all or all)
- * \param   icn icon to draw (see also draw_icon() in draw.c)
- * \param   msg prompt message
- * \returns Index of player (0..numchrs-1) or -1 if cancelled
+ * \param   csa Mode (target one, one/all or all)
+ * \param   icn Icon to draw (see also draw_icon() in draw.c)
+ * \param   msg Prompt message
+ * \returns index of player (0..numchrs-1) or -1 if cancelled
  *          or SEL_ALL_ALLIES if 'all' was selected (by pressing L or R)
  */
 int select_any_player (int csa, int icn, char *msg)
 {
-   int stop = 0, ptr, rd = 1, shy, k, sa;
+   int stop = 0, ptr, redraw = 1, shy, k, sa;
 
    shy = 120 - (numchrs * 28);
    if (csa == 2)
@@ -136,7 +140,7 @@ int select_any_player (int csa, int icn, char *msg)
       sa = 0;
    ptr = 0;
    while (!stop) {
-      if (rd == 1) {
+      if (redraw == 1) {
          drawmap ();
          if (csa < TGT_ALLY_ALL) {
             menubox (double_buffer, 152 - ((strlen (msg) + 1) * 4) + xofs,
@@ -163,7 +167,7 @@ int select_any_player (int csa, int icn, char *msg)
          }
          blit2screen (xofs, yofs);
       }
-      rd = 0;
+      redraw = 0;
       readcontrols ();
       if (csa < TGT_ALLY_ALL) {
          if (left) {
@@ -174,7 +178,7 @@ int select_any_player (int csa, int icn, char *msg)
                else
                   sa = 0;
             }
-            rd = 1;
+            redraw = 1;
          }
          if (right) {
             unpress ();
@@ -184,21 +188,21 @@ int select_any_player (int csa, int icn, char *msg)
                else
                   sa = 0;
             }
-            rd = 1;
+            redraw = 1;
          }
          if (up) {
             unpress ();
             if (ptr > 0)
                ptr--;
             play_effect (SND_CLICK, 128);
-            rd = 1;
+            redraw = 1;
          }
          if (down) {
             unpress ();
             if (ptr < numchrs - 1)
                ptr++;
             play_effect (SND_CLICK, 128);
-            rd = 1;
+            redraw = 1;
          }
       }
       if (balt) {
@@ -231,12 +235,12 @@ int select_any_player (int csa, int icn, char *msg)
  * \param   whom ==person that is doing the action ??
  * \param   multi ==mode (target one, one/all or all)
  * \param   csd ==non-zero allows you to select a dead character
- * \returns Index of player (0..numchrs-1) or -1 if cancelled
+ * \returns index of player (0..numchrs-1) or -1 if cancelled
  *          or SEL_ALL_ALLIES if 'all' was selected (by pressing U or D)
  */
 int select_hero (int whom, int multi, int csd)
 {
-   int cntr = 0, ptr = 0, stp = 0, rd = 1, sa, a;
+   int cntr = 0, ptr = 0, stp = 0, redraw = 1, sa, a;
 
    if (multi == TGT_ALLY_ONEALL)
       sa = 1;
@@ -255,7 +259,7 @@ int select_hero (int whom, int multi, int csd)
       }
    }
    while (!stp) {
-      if (rd == 1) {
+      if (redraw == 1) {
          if (multi > TGT_NONE && sa == 1)
             battle_render (tmpd[ptr] + 1, whom + 1, 1);
          else
@@ -263,11 +267,11 @@ int select_hero (int whom, int multi, int csd)
          blit2screen (0, 0);
       }
       readcontrols ();
-      rd = 0;
+      redraw = 0;
       if (balt) {
          unpress ();
          stp = 1;
-         rd = 1;
+         redraw = 1;
       }
       if (bctrl) {
          unpress ();
@@ -278,14 +282,14 @@ int select_hero (int whom, int multi, int csd)
          ptr--;
          if (ptr < 0)
             ptr = cntr - 1;
-         rd = 1;
+         redraw = 1;
       }
       if (right) {
          unpress ();
          ptr++;
          if (ptr >= cntr)
             ptr = 0;
-         rd = 1;
+         redraw = 1;
       }
       if (multi == TGT_ALLY_ONE && cntr > 1) {
          if (up) {
@@ -294,7 +298,7 @@ int select_hero (int whom, int multi, int csd)
                sa = 1;
             else
                sa = 0;
-            rd = 1;
+            redraw = 1;
          }
          if (down) {
             unpress ();
@@ -302,7 +306,7 @@ int select_hero (int whom, int multi, int csd)
                sa = 1;
             else
                sa = 0;
-            rd = 1;
+            redraw = 1;
          }
       }
    }
@@ -333,12 +337,12 @@ int select_hero (int whom, int multi, int csd)
  *
  * \param   whom Attacker (person doing the action)
  * \param   multi Target(s)
- * \returns Enemy index (PSIZE..PSIZE+numens-1) or -1 if cancelled or
+ * \returns enemy index (PSIZE..PSIZE+numens-1) or -1 if cancelled or
  *          SEL_ALL_ENEMIES if 'all' was selected (by pressing U or D)
  */
 int select_enemy (int whom, int multi)
 {
-   int a, cntr = 0, ptr, stp, rd, sa;
+   int a, cntr = 0, ptr, stp, redraw, sa;
 
    for (a = PSIZE; a < PSIZE + numens; a++)
       if (can_attack (a) == 1)
@@ -349,9 +353,9 @@ int select_enemy (int whom, int multi)
       sa = 0;
    ptr = 0;
    stp = 0;
-   rd = 1;
+   redraw = 1;
    while (!stp) {
-      if (rd == 1) {
+      if (redraw == 1) {
          if (multi > 0 && sa == 1)
             battle_render (tmpd[ptr] + 1, whom + 1, 2);
          else
@@ -359,10 +363,10 @@ int select_enemy (int whom, int multi)
       }
       blit2screen (0, 0);
       readcontrols ();
-      rd = 0;
+      redraw = 0;
       if (balt) {
          unpress ();
-         rd = 1;
+         redraw = 1;
          stp = 1;
       }
       if (bctrl) {
@@ -374,14 +378,14 @@ int select_enemy (int whom, int multi)
          ptr--;
          if (ptr < 0)
             ptr = cntr - 1;
-         rd = 1;
+         redraw = 1;
       }
       if (right) {
          unpress ();
          ptr++;
          if (ptr > cntr - 1)
             ptr = 0;
-         rd = 1;
+         redraw = 1;
       }
       if (up) {
          unpress ();
@@ -390,7 +394,7 @@ int select_enemy (int whom, int multi)
                sa = 1;
             else
                sa = 0;
-            rd = 1;
+            redraw = 1;
          }
       }
       if (down) {
@@ -400,7 +404,7 @@ int select_enemy (int whom, int multi)
                sa = 1;
             else
                sa = 0;
-            rd = 1;
+            redraw = 1;
          }
       }
    }
@@ -422,8 +426,8 @@ int select_enemy (int whom, int multi)
  *
  * \param   whom Person doing the action
  * \param   csts Only select characters whose .sts[csts] ==0 or select any
- *             if csts ==NO_STS_CHECK
- * \returns Index of hero (0..numchrs-1)
+ *               if csts ==NO_STS_CHECK
+ * \returns index of hero (0..numchrs-1)
  */
 int auto_select_hero (int whom, int csts)
 {
@@ -472,29 +476,29 @@ int auto_select_hero (int whom, int csts)
  *               or select only where HP<75% of MHP if csts==CURE_CHECK
  *               or select any if csts==NO_STS_CHECK
  *               (Never selects a dead enemy)
- * \returns Enemy index (PSIZE..PSIZE+numens-1) or -1 if no enemy found
+ * \returns enemy index (PSIZE..PSIZE+numens-1) or -1 if no enemy found
  */
 int auto_select_enemy (int whom, int csts)
 {
-   int a, ne = 0;
+   int i, ne = 0;
 
-   for (a = PSIZE; a < PSIZE + numens; a++) {
-      if (fighter[a].sts[S_DEAD] == 0) {
+   for (i = PSIZE; i < PSIZE + numens; i++) {
+      if (fighter[i].sts[S_DEAD] == 0) {
          if (csts == NO_STS_CHECK) {
-            tmpd[ne] = a;
+            tmpd[ne] = i;
             ne++;
          } else {
             if (csts == CURE_CHECK) {
-               if (fighter[a].hp < fighter[a].mhp * 75 / 100) {
-                  tmpd[ne] = a;
+               if (fighter[i].hp < fighter[i].mhp * 75 / 100) {
+                  tmpd[ne] = i;
                   ne++;
                }
             } else {
-               if ((csts == S_BLESS && fighter[a].sts[csts] < 3)
-                   || (csts == S_STRENGTH && fighter[a].sts[csts] < 2)
+               if ((csts == S_BLESS && fighter[i].sts[csts] < 3)
+                   || (csts == S_STRENGTH && fighter[i].sts[csts] < 2)
                    || (csts != S_BLESS && csts != S_STRENGTH
-                       && fighter[a].sts[csts] == 0)) {
-                  tmpd[ne] = a;
+                       && fighter[i].sts[csts] == 0)) {
+                  tmpd[ne] = i;
                   ne++;
                }
             }
@@ -504,8 +508,8 @@ int auto_select_enemy (int whom, int csts)
    if (ne == 0)
       return -1;
    if (csts != NO_STS_CHECK) {
-      for (a = 0; a < ne; a++)
-         if (tmpd[a] == whom && rand () % 4 != 3)
+      for (i = 0; i < ne; i++)
+         if (tmpd[i] == whom && rand () % 4 != 3)
             return whom;
    }
    if (ne <= 1)
@@ -541,20 +545,20 @@ static int can_attack (int tgt)
  * which one is going to be the leader.
  * \author PH
  * \date 20030603
- * \param avail[] array of 'available' heroes
- * \param n_avail number of entries in avail
- * \param party_max the maximum number of heroes allowed in the party
+ * \param   avail[] Array of 'available' heroes
+ * \param   n_avail Number of entries in avail
+ * \param   party_max The maximum number of heroes allowed in the party
  * \returns 1 if the party changed, 0 if cancelled
  */
 int select_party (int *avail, int n_avail, int numchrs_max)
 {
    int i, j, x, y;
    int cur, oldcur;             /* cursor */
-   int rd;                      /* Screen needs update? */
+   int redraw;                  /* Screen needs update? */
    int running = 1;
    int hero = -1;
    int mask;
-   rd = 1;
+   redraw = 1;
    cur = 0;
    if (avail == NULL) {
       /* check input parameters */
@@ -571,7 +575,7 @@ int select_party (int *avail, int n_avail, int numchrs_max)
    print_font (double_buffer, 24 + xofs, 32 + yofs, "Available:", FGOLD);
    print_font (double_buffer, 24 + xofs, 80 + yofs, "In party:", FGOLD);
    while (running) {
-      if (rd) {
+      if (redraw) {
          /* Draw everything */
          /* draw the row of available heroes */
          y = yofs + 40;
@@ -608,7 +612,7 @@ int select_party (int *avail, int n_avail, int numchrs_max)
          }
          /* Show on the screen */
          blit2screen (xofs, yofs);
-         rd = 0;
+         redraw = 0;
       }
       oldcur = cur;
       readcontrols ();
@@ -696,11 +700,11 @@ int select_party (int *avail, int n_avail, int numchrs_max)
                }
             }
          }
-         rd = 1;
+         redraw = 1;
       }
       if (oldcur != cur) {
          play_effect (SND_CLICK, 128);
-         rd = 1;
+         redraw = 1;
       }
    }
    return 0;
@@ -714,8 +718,8 @@ int select_party (int *avail, int n_avail, int numchrs_max)
 
 static int mini_menu (int omask)
 {
-   int rd, cp;
-   rd = 1;
+   int redraw, cp;
+   redraw = 1;
    cp = 0;
 
    /* If no actions were allowed, or just one, skip the menu */
@@ -737,7 +741,7 @@ static int mini_menu (int omask)
    }
 
    while (1) {
-      if (rd) {
+      if (redraw) {
          menubox (double_buffer, MM_X - 13, MM_Y - 8, 6, 3, DARKBLUE);
          print_font (double_buffer, MM_X, MM_Y, "Join",
                      (omask & MM_JOIN) ? FNORMAL : FDARK);
@@ -747,14 +751,14 @@ static int mini_menu (int omask)
                      (omask & MM_LEAD) ? FNORMAL : FDARK);
          draw_sprite (double_buffer, menuptr, MM_X - 13, MM_Y + 8 * cp);
          blit2screen (xofs, yofs);
-         rd = 0;
+         redraw = 0;
       }
       readcontrols ();
       if (up) {
          unpress ();
          if (cp > 0) {
             play_effect (SND_CLICK, 128);
-            rd = 1;
+            redraw = 1;
             --cp;
          }
       }
@@ -763,7 +767,7 @@ static int mini_menu (int omask)
          unpress ();
          if (cp < 2) {
             play_effect (SND_CLICK, 128);
-            rd = 1;
+            redraw = 1;
             ++cp;
          }
       }

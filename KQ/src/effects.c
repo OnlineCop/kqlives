@@ -154,7 +154,7 @@ void display_amount (int tgt, int cl, int aflag)
  * combatspell().
  * deadeffect is normally 0, it is changed temporarily to 1
  *
- * \param    guy Id of character to check (index into fighter[] array)
+ * \param   guy Id of character to check (index into fighter[] array)
  * \returns 1 if alive, 0 if dead
  */
 int is_active (int guy)

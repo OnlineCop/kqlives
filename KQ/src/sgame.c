@@ -145,7 +145,7 @@ void load_sgstats (void)
  * This is the routine that displays the information about
  * each saved game for the save/load screen.
  *
- * \param saving 0 if loading, 1 if saving.
+ * \param   saving 0 if loading, 1 if saving.
  */
 static void show_sgstats (int saving)
 {
@@ -801,10 +801,12 @@ int system_menu (void)
          unpress ();
          if (ptr == 0) {
 #ifdef KQ_CHEATS
-            if (cansave == 1 || cheat) {
+            if (cansave == 1 || cheat)
 #else
-            if (cansave == 1) {
+            if (cansave == 1)
 #endif /* KQ_CHEATS */
+               // TT: This open bracket here so match-brace doesn't choke
+            {
                saveload (1);
                return 0;
             } else

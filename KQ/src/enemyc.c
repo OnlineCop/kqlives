@@ -363,8 +363,8 @@ void unload_enemies (void)
  * starting values for an enemy.
  * \author PH
  * \date 2003????
- * \param who the numeric id of the enemy to make
- * \param en pointer to an s_fighter structure to initialise
+ * \param   who The numeric id of the enemy to make
+ * \param   en Pointer to an s_fighter structure to initialise
  * \returns the value of en, for convenience, or NULL if an error occurred.
  * \sa make_enemy_by_name()
  */
@@ -391,8 +391,8 @@ static s_fighter *make_enemy (int who, s_fighter * en)
  * so don't delete it ;).
  * \author PH
  * \date 2003????
- * \param who the name  of the enemy to make
- * \param en pointer to an s_fighter structure to initialise
+ * \param   who The name  of the enemy to make
+ * \param   en Pointer to an s_fighter structure to initialise
  * \returns the value of en, for convenience, or NULL if an error occurred.
  * \sa make_enemy()
  */

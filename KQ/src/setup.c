@@ -291,9 +291,9 @@ static void parse_jb_setup (void)
  * The setting title is drawn, then its value right-aligned.
  * \author PH
  * \date 20030527
- * \param y y-coord of line
- * \param caption title of the setting (e.g. "Windowed mode:")
- * \param value the setting (e.g. "Yes")
+ * \param   y y-coord of line
+ * \param   caption Title of the setting (e.g. "Windowed mode:")
+ * \param   value The setting (e.g. "Yes")
  */
 static void citem (int y, char *caption, char *value)
 {

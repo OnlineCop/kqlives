@@ -97,11 +97,11 @@ void blit2screen (int xw, int yw)
  * or too small, re-allocate it. 
  * Then blit it. 
  *
- * \param target bitmap to copy to or NULL
- * \param source bitmap to copy from
+ * \param   target Bitmap to copy to or NULL
+ * \param   source Bitmap to copy from
  * \returns target or a new bitmap.
  */
-BITMAP *copy_bitmap (BITMAP * target, BITMAP * source)
+BITMAP *copy_bitmap (BITMAP *target, BITMAP *source)
 {
    if (target) {
       if (target->w < source->w || target->h < source->h) {
@@ -137,7 +137,7 @@ BITMAP *copy_bitmap (BITMAP * target, BITMAP * source)
  * \param   st Start of output color range
  * \param   fn End of output color range
  */
-void color_scale (BITMAP * src, BITMAP * dest, int st, int fn)
+void color_scale (BITMAP *src, BITMAP *dest, int st, int fn)
 {
    int ix, iy, z, a;
 
@@ -241,7 +241,7 @@ void revert_cframes (int who, int aflag)
  * \param   icx x-coord
  * \param   icy y-coord
  */
-void draw_icon (BITMAP * where, int ino, int icx, int icy)
+void draw_icon (BITMAP *where, int ino, int icx, int icy)
 {
    masked_blit (sicons, where, 0, ino * 8, icx, icy, 8, 8);
 }
@@ -263,7 +263,7 @@ void draw_icon (BITMAP * where, int ino, int icx, int icy)
  * \param   icx x-coord to draw to
  * \param   icy y-coord to draw to
  */
-void draw_stsicon (BITMAP * where, int cc, int who, int inum, int icx, int icy)
+void draw_stsicon (BITMAP *where, int cc, int who, int inum, int icx, int icy)
 {
    int j, st = 0, s;
 
@@ -290,8 +290,8 @@ void draw_stsicon (BITMAP * where, int cc, int who, int inum, int icx, int icy)
  * Does not seem to do any parallaxing. (?)
  * PH modified 20030309 Simplified this a bit, removed one blit() that wasn't neeeded.
  *
- * \param xw x-offset - always ==16
- * \param yw y-offset - always ==16
+ * \param   xw x-offset - always ==16
+ * \param   yw y-offset - always ==16
  */
 static void drawchar (int xw, int yw)
 {
@@ -653,7 +653,7 @@ static void draw_shadows (void)
  * \param   x2 Bottom-right x-coord
  * \param   y2 Bottom-right y-coord
  */
-static void border (BITMAP * where, int x, int y, int x2, int y2)
+static void border (BITMAP *where, int x, int y, int x2, int y2)
 {
    vline (where, x + 1, y + 3, y2 - 3, GREY2);
    vline (where, x + 2, y + 3, y2 - 3, GREY3);
@@ -696,15 +696,15 @@ static void border (BITMAP * where, int x, int y, int x2, int y2)
  * \author PH
  * \date 20030616
  *
- * \param where Bitmap to draw to
- * \param x1 x-coord of top left
- * \param y1 y-coord of top left
- * \param x2 x-coord of bottom right
- * \param y2 y-coord of bottom right
- * \param bg colour/style of background
- * \param bstyle style of border
+ * \param   where Bitmap to draw to
+ * \param   x1 x-coord of top left
+ * \param   y1 y-coord of top left
+ * \param   x2 x-coord of bottom right
+ * \param   y2 y-coord of bottom right
+ * \param   bg Colour/style of background
+ * \param   bstyle Style of border
  */
-static void draw_kq_box (BITMAP * where, int x1, int y1, int x2, int y2,
+static void draw_kq_box (BITMAP *where, int x1, int y1, int x2, int y2,
                          int bg, int bstyle)
 {
    int a;
@@ -758,7 +758,7 @@ static void draw_kq_box (BITMAP * where, int x1, int y1, int x2, int y2,
  * \param   h Height
  * \param   c Colour (see note above)
  */
-void menubox (BITMAP * where, int x, int y, int w, int h, int c)
+void menubox (BITMAP *where, int x, int y, int w, int h, int c)
 {
    draw_kq_box (where, x, y, x + w * 8 + 16, y + h * 8 + 16, c, B_TEXT);
 }
@@ -776,7 +776,7 @@ void menubox (BITMAP * where, int x, int y, int w, int h, int c)
  * \param   msg String to draw
  * \param   cl Font index (0..6)
  */
-void print_font (BITMAP * where, int sx, int sy, char *msg, int cl)
+void print_font (BITMAP *where, int sx, int sy, char *msg, int cl)
 {
    int z, cc, hgt = 8;
 
@@ -813,7 +813,7 @@ void print_font (BITMAP * where, int sx, int sy, char *msg, int cl)
  * \param   msg String to draw
  * \param   cl Font index (0..4)
  */
-void print_num (BITMAP * where, int sx, int sy, char *msg, int cl)
+void print_num (BITMAP *where, int sx, int sy, char *msg, int cl)
 {
    int z, cc;
 
@@ -1200,10 +1200,10 @@ const char *parse_string (const char *the_string)
  * \author PH
  * \date 20030417
  *
- * \param who which character is ASKING the question
- * \param ptext the prompt test
- * \param opt an array of options, null terminated
- * \param n_opt the number of options
+ * \param   who Which character is ASKING the question
+ * \param   ptext The prompt test
+ * \param   opt An array of options, null terminated
+ * \param   n_opt The number of options
  */
 int prompt_ex (int who, const char *ptext, char *opt[], int n_opt)
 {
@@ -1396,8 +1396,8 @@ int prompt (int who, int numopt, int bstyle, char *sp1, char *sp2, char *sp3,
  * \param   m Message text
  * \param   icn Icon to display or 255 for none
  * \param   delay Time to wait (milliseconds?)
- * \param   x_m x-coord of top-left (like xofs)
- * \param   y_m y-coord of top-left
+ * \param   x_m X-coord of top-left (like xofs)
+ * \param   y_m Y-coord of top-left
  */
 void message (char *m, int icn, int delay, int x_m, int y_m)
 {
@@ -1479,9 +1479,9 @@ void set_view (int vw, int x1, int y1, int x2, int y2)
       view_x2 = x2;
       view_y2 = y2;
    } else {
-      view_y1 = 0;
-      view_y2 = g_map.ysize - 1;
       view_x1 = 0;
+      view_y1 = 0;
       view_x2 = g_map.xsize - 1;
+      view_y2 = g_map.ysize - 1;
    }
 }

@@ -850,7 +850,7 @@ void count_entities (void)
  * either horizontally or vertically, preferring the _closer_ one. In other
  * words, it will try to get on a vertical or horizontal line with its target.
  *
- * \param   target_entity index of entity
+ * \param   target_entity Index of entity
  */
 static void target (int target_entity)
 {
@@ -903,7 +903,7 @@ static void target (int target_entity)
  * Speed up until at maximum. If the player goes out
  * of range, wander for a bit.
  *
- * \param   target_entity index of entity
+ * \param   target_entity Index of entity
  */
 static void chase (int target_entity)
 {

@@ -350,7 +350,7 @@ void auto_herochooseact (int who)
  * Select a target for the hero to attack.
  *
  * \param   whom Index of player (see constants in progress.h)
- * \returns Index of target
+ * \returns index of target
  */
 static int hero_attack (int whom)
 {

@@ -83,7 +83,8 @@ char curmap[16];
 /*! Names of the tile sets (in the datafile) */
 char icon_sets[7][16] = {
    "LAND_PCX", "NEWTOWN_PCX", "CASTLE_PCX", "INCAVE_PCX", "VILLAGE_PCX",
-   "MOUNT_PCX", "SHRINE_BMP"};
+   "MOUNT_PCX", "SHRINE_BMP"
+};
 
 
 
@@ -361,9 +362,9 @@ int maybe_poll_joystick ()
 /*! \brief Handle user input.
  *
  * Updates all of the game controls according to user input.
- * PH20030527 updated to re-enable the joystick
- * 2003-09-07 Edge <hardedged@excite.com> removed duplicate input, joystick code
- * 2003-09-07 Caz Jones lasttime code workaround pci-gameport bug
+ * 2003-05-27 PH: updated to re-enable the joystick
+ * 2003-09-07 Edge <hardedged@excite.com>: removed duplicate input, joystick code
+ * 2003-09-07 Caz Jones: last time code workaround pci-gameport bug
  * (should not affect non-buggy drivers - please report to edge)
  */
 void readcontrols (void)
@@ -387,7 +388,8 @@ void readcontrols (void)
    left = key[kleft];
    right = key[kright];
 
-   poll_music ();
+// TT: Is there a reason this has to be called twice in one function?
+//   poll_music ();
 
    /* Emergency kill-game set. */
    if (key[KEY_ALT] && key[KEY_X])
@@ -470,7 +472,7 @@ void data_dump (void)
  * scroll.  The center parameter is mostly used for warps and
  * such, so that the players start in the center of the screen.
  *
- * \param center Unused variable
+ * \param   center Unused variable
  */
 void calc_viewport (int center)
 {
@@ -800,9 +802,9 @@ void zone_check (void)
  * The wtx/wty co-ordinates indicate where to put the player.
  * The wvx/wvy co-ordinates indicate where to put the camera.
  *
- * \param wtx New x-coord
- * \param wty New y-coord
- * \param fspeed Speed of fading (See do_transition())
+ * \param   wtx New x-coord
+ * \param   wty New y-coord
+ * \param   fspeed Speed of fading (See do_transition())
  */
 void warp (int wtx, int wty, int fspeed)
 {
@@ -992,7 +994,7 @@ void wait_enter (void)
  * useful for debugging and tracing.
  * \note klog is deprecated; use Allegro's TRACE instead.
  *
- * \param msg String to add to log file
+ * \param   msg String to add to log file
  */
 void klog (char *msg)
 {
@@ -1581,7 +1583,7 @@ void program_death (char *message)
  * Determine if a given character is currently in play.
  *
  * \param   pn Character to ask about
- * \returns Where it is in the party list (1 or 2), or 0 if not
+ * \returns where it is in the party list (1 or 2), or 0 if not
  */
 int in_party (int pn)
 {

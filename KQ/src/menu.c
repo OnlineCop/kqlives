@@ -54,17 +54,19 @@ static void status_screen (int);
  */
 void menu (void)
 {
-   int st = 0, rd = 1, ptr = 0, z;
+   int stop = 0, ptr = 0, z;
 
    play_effect (SND_MENU, 128);
-   while (st == 0) {
-      if (rd == 1) {
-         drawmap ();
-         draw_mainmenu (-1);
-         draw_sprite (double_buffer, menuptr, 204 + xofs, ptr * 8 + 73 + yofs);
-         blit2screen (xofs, yofs);
+   timer_count = 0;
+   while (!stop) {
+      while (timer_count > 0) {
+         timer_count--;
+         check_animation ();
       }
-      rd = 0;
+      drawmap ();
+      draw_mainmenu (-1);
+      draw_sprite (double_buffer, menuptr, 204 + xofs, ptr * 8 + 73 + yofs);
+      blit2screen (xofs, yofs);
       readcontrols ();
       if (up) {
          unpress ();
@@ -72,7 +74,6 @@ void menu (void)
          if (ptr < 0)
             ptr = 4;
          play_effect (SND_CLICK, 128);
-         rd = 1;
       }
       if (down) {
          unpress ();
@@ -80,7 +81,6 @@ void menu (void)
          if (ptr > 4)
             ptr = 0;
          play_effect (SND_CLICK, 128);
-         rd = 1;
       }
       if (balt) {
          unpress ();
@@ -105,15 +105,14 @@ void menu (void)
                }
             }
          }
-         rd = 1;
       }
       if (bctrl) {
          unpress ();
-         st = 1;
+         stop = 1;
       }
       if (close_menu == 1) {
          close_menu = 0;
-         st = 1;
+         stop = 1;
       }
    }
 }
@@ -128,6 +127,11 @@ void draw_mainmenu (int swho)
 {
    int p;
 
+   timer_count = 0;
+   while (timer_count > 0) {
+      timer_count--;
+      check_animation ();
+   }
    drawmap ();
    for (p = 0; p < 2; p++)
       menubox (double_buffer, 44 + xofs, p * 56 + 64 + yofs, 18, 5, BLUE);
@@ -139,7 +143,7 @@ void draw_mainmenu (int swho)
    print_font (double_buffer, 220 + xofs, 96 + yofs, "Spec.", FGOLD);
    print_font (double_buffer, 220 + xofs, 104 + yofs, "Stats", FGOLD);
    print_font (double_buffer, 212 + xofs, 128 + yofs, "Time:", FGOLD);
-   /* PH print time as h:mm */
+   /* PH: print time as h:mm */
    sprintf (strbuf, ":%02d", kmin);
    print_font (double_buffer, 244 + xofs, 136 + yofs, strbuf, FNORMAL);
    sprintf (strbuf, "%d", khr);
@@ -161,10 +165,10 @@ void draw_mainmenu (int swho)
 /*! \brief Draw player's stats
  *
  * Draw the terse stats of a single player.
- * \param where bitmap to draw onto
- * \param i player (index in party array) to show info for
- * \param dx x-coord of stats view
- * \param dy y-coord of stats view
+ * \param   where Bitmap to draw onto
+ * \param   i Player (index in party array) to show info for
+ * \param   dx x-coord of stats view
+ * \param   dy y-coord of stats view
  */
 void draw_playerstat (BITMAP * where, int i, int dx, int dy)
 {
@@ -203,7 +207,7 @@ void draw_playerstat (BITMAP * where, int i, int dx, int dy)
  */
 void spec_items (void)
 {
-   int a, ii = 0, stop = 0, ptr = 0, rd = 1;
+   int a, ii = 0, stop = 0, ptr = 0, redraw = 1;
    char silist[20][20], spicon[20];
    char sidesc[20][20], siq[20];
 
@@ -318,7 +322,7 @@ void spec_items (void)
    }
    play_effect (SND_MENU, 128);
    while (!stop) {
-      if (rd == 1) {
+      if (redraw == 1) {
          drawmap ();
          menubox (double_buffer, 72 + xofs, 12 + yofs, 20, 1, BLUE);
          print_font (double_buffer, 108 + xofs, 20 + yofs, "Special Items",
@@ -342,14 +346,14 @@ void spec_items (void)
          blit2screen (xofs, yofs);
       }
       readcontrols ();
-      rd = 0;
+      redraw = 0;
       if (down) {
          unpress ();
          ptr++;
          if (ptr > ii - 1)
             ptr = 0;
          play_effect (SND_CLICK, 128);
-         rd = 1;
+         redraw = 1;
       }
       if (up) {
          unpress ();
@@ -357,7 +361,7 @@ void spec_items (void)
          if (ptr < 0)
             ptr = ii - 1;
          play_effect (SND_CLICK, 128);
-         rd = 1;
+         redraw = 1;
       }
       if (bctrl) {
          unpress ();
@@ -371,18 +375,18 @@ void spec_items (void)
 /*! \brief Draw a player's status screen
  *
  * Draw the verbose stats of a single player.
- * \param ch character to draw (index in pidx array)
+ * \param   ch Character to draw (index in pidx array)
  */
 static void status_screen (int ch)
 {
    int stop = 0;
-   int c, rd = 1, p, i, z = 0, bc = 0;
+   int c, redraw = 1, p, i, z = 0, bc = 0;
 
    play_effect (SND_MENU, 128);
    c = pidx[ch];
    update_equipstats ();
    while (!stop) {
-      if (rd == 1) {
+      if (redraw == 1) {
          // Redraw the map, clearing any menus under this new window
          drawmap ();
 
@@ -481,20 +485,20 @@ static void status_screen (int ch)
       }
       blit2screen (xofs, yofs);
       readcontrols ();
-      rd = 0;
+      redraw = 0;
       if (left && ch > 0) {
          unpress ();
          ch--;
          c = pidx[ch];
          play_effect (SND_MENU, 128);
-         rd = 1;
+         redraw = 1;
       }
       if (right && ch < numchrs - 1) {
          unpress ();
          ch++;
          c = pidx[ch];
          play_effect (SND_MENU, 128);
-         rd = 1;
+         redraw = 1;
       }
       if (bctrl) {
          unpress ();

@@ -562,7 +562,7 @@ int KQ_party_getter (lua_State * L)
  * the 'party[]' global (all heroes currently in play). Finally it sets the
  * 'entity[]' array.
  *
- * \param L the Lua state object
+ * \param   L::1 The Lua state object
  */
 static void init_obj (lua_State * L)
 {
@@ -1162,9 +1162,9 @@ static int KQ_set_ent_chrx (lua_State * L)
  * will try and go to the specified point.
  * You still need to call wait_entity after this.
  *
- * \param L::1 entity to set
- * \param L::2 x-coord (tile) to go to
- * \param L::3 y-coord
+ * \param   L::1 entity to set
+ * \param   L::2 x-coord (tile) to go to
+ * \param   L::3 y-coord
  * \returns Nothing
  */
 static int KQ_set_ent_target (lua_State * L)
@@ -1674,7 +1674,7 @@ static int KQ_get_tile_all (lua_State * L)
  *                           height)
  * These params are meant to be similar to the allegro blit() function.
  *
- * \param   L The Lua VM
+ * \param   L::1 The Lua VM
  * \returns 0 (no values returned to Lua)
  * \bugs    No error checking is done. Uses direct access to the struct s_map.
  */
@@ -2262,7 +2262,7 @@ static int KQ_chest (lua_State * L)
       if (amt == 1)
          sprintf (strbuf, "%s procured!", items[ino].name);
       else
-         sprintf (strbuf, "%s ^%d procured", items[ino].name, amt);
+         sprintf (strbuf, "%s ^%d procured!", items[ino].name, amt);
       play_effect (SND_UNEQUIP, 128);
       message (strbuf, items[ino].icon, 0, xofs, yofs);
       if (tno > -1)
@@ -2307,10 +2307,10 @@ static int KQ_rest (lua_State * L)
  * Show a brief message for a set period of time, or
  * until ALT is pressed.
  *
- * \param L::1 String message to show
- * \param L::2 Icon number or 255 for none (icons
+ * \param   L::1 String message to show
+ * \param   L::2 Icon number or 255 for none (icons
  *             are displayed, for instance, when items are procured)
- * \param L::3 Delay time (see wait()) , or 0 for indefinite
+ * \param   L::3 Delay time (see wait()) , or 0 for indefinite
  * \returns 0 (no value returned)
  *
  * 20040308 PH added code to default missing L::2 parameter to 255 (instead of 0)

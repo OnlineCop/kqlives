@@ -71,7 +71,7 @@ END_OF_FUNCTION (ticker);
  * generally =3*x^2-2*x^3
  * 
  * Here modified to return a value 0..32
- * \param x Where to evaluate the function
+ * \param   x Where to evaluate the function
  * \returns 0 if x<0, 32 if x>=32, otherwise a number between 0 and 32
  */
 static int ease (int x)
