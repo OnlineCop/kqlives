@@ -39,12 +39,18 @@
 
 /*  internal functions  */
 static int can_attack (int);
-
-
-
+static int mini_menu (int mask);
+static void party_add (int id, int lead);
+static void party_remove (int id);
+static void party_newlead (int id);
 /*  internal variables  */
 static int tmpd[NUM_FIGHTERS];
 
+/* internal defines */
+#define MM_NONE 0
+#define MM_JOIN 1
+#define MM_LEAVE 2
+#define MM_LEAD 4
 
 
 /*! \brief Select player from main menu
@@ -590,4 +596,369 @@ static int can_attack (int tgt)
        || fighter[tgt].sts[S_DEAD] != 0)
       return 0;
    return 1;
+}
+
+/*! \brief Select your party
+ * 
+ * This allows you to select the heroes in your party,
+ * taking a list of available characters.
+ * If there are two heroes active, you can select 
+ * which one is going to be the leader.
+ * \author PH
+ * \date 20030603
+ * \param avail[] array of 'available' heroes
+ * \param n_avail number of entries in avail
+ * \param party_max the maximum number of heroes allowed in the party
+ * \returns 1 if the party changed, 0 if cancelled
+ */
+int select_party (int *avail, int n_avail, int numchrs_max)
+{
+   int i, j, x, y;
+   int cur, oldcur;             /* cursor */
+   int rd;                      /* Screen needs update? */
+   int running = 1;
+   int hero = -1;
+   int mask;
+   rd = 1;
+   cur = 0;
+   if (avail == NULL)
+     {
+        /* check input parameters */
+        return 0;
+     }
+   /* Be sure to remove any available characters that are already in the party */
+   for (i = 0; i < n_avail; ++i)
+     {
+        for (j = 0; j < numchrs; ++j)
+           if (avail[i] == pidx[j])
+              avail[i] = -1;
+     }
+
+   menubox (double_buffer, 16 + xofs, 24 + yofs, 34, 12, BLUE);
+   print_font (double_buffer, 24 + xofs, 32 + yofs, "Available:", FGOLD);
+   print_font (double_buffer, 24 + xofs, 80 + yofs, "In party:", FGOLD);
+   while (running)
+     {
+        if (rd)
+          {
+             /* Draw everything */
+             /* draw the row of available heroes */
+             y = yofs + 40;
+             for (i = 0; i < n_avail; ++i)
+               {
+                  x = xofs + (320 - 32 * n_avail) / 2 + 32 * i;
+                  menubox (double_buffer, x, y, 2, 2,
+                           i == cur ? DARKRED : DARKBLUE);
+                  if (avail[i] >= 0)
+                     draw_sprite (double_buffer, frames[avail[i]][0], x + 8,
+                                  y + 8);
+               }
+             /* draw the party */
+             x = xofs + (320 - 40 * PSIZE) / 2;
+             y = yofs + 88;
+             for (i = 0; i < PSIZE; ++i)
+               {
+                  menubox (double_buffer, x, y, 2, 2,
+                           cur == (8 + i) ? DARKRED : DARKBLUE);
+                  if (pidx[i] >= 0)
+                     draw_sprite (double_buffer, frames[pidx[i]][0], x + 8,
+                                  y + 8);
+                  x += 40;
+               }
+             /* Draw the 'Exit' button */
+             menubox (double_buffer, x, y, 4, 1,
+                      cur == (PSIZE + 8) ? DARKRED : DARKBLUE);
+             print_font (double_buffer, x + 8, y + 8, "Exit", FNORMAL);
+             /* See which hero is selected and draw his/her stats */
+             if (cur < n_avail)
+               {
+                  hero = avail[cur];
+               }
+             else if (cur < numchrs + 8)
+               {
+                  hero = pidx[cur - 8];
+               }
+             else
+                hero = -1;
+             menubox (double_buffer, 92, 152, 18, 5, DARKBLUE);
+             if (hero != -1)
+               {
+                  draw_playerstat (double_buffer, hero, 100, 160);
+               }
+             /* Show on the screen */
+             blit2screen (xofs, yofs);
+             rd = 0;
+          }
+        oldcur = cur;
+        readcontrols ();
+        if (up)
+          {
+             /* move between the available row and the party row */
+             unpress ();
+             if (cur >= 8)
+               {
+                  cur = 0;
+               }
+          }
+        if (down)
+          {
+             /* move between the available row and the party row */
+             unpress ();
+             if (cur < 8)
+               {
+                  cur = 8;
+               }
+          }
+        if (left)
+          {
+             /* move between heroes on a row */
+             unpress ();
+             if (cur > 8)
+                --cur;
+             else if (cur > 0)
+               {
+                  --cur;
+               }
+          }
+        if (right)
+          {
+             /* move between heroes on a row */
+             unpress ();
+             if (cur < (n_avail - 1))
+               {
+                  cur++;
+               }
+             else if (cur >= 8 && cur <= (numchrs + 8))
+                ++cur;
+          }
+        if (bctrl)
+          {
+             unpress ();
+             running = 0;
+          }
+        if (balt)
+          {
+             unpress ();
+             if (cur == 10)
+               {
+                  /* selected the exit button */
+                  return 1;
+               }
+             if (hero == -1)
+               {
+                  /* Selected a space with no hero in it! */
+                  play_effect (SND_BAD, 128);
+               }
+             else
+               {
+                  mask = 0;
+                  /* pick context-sensitive mini-menu */
+                  if (cur < n_avail)
+                    {
+                       /* it's from the available heroes: options are join and lead */
+                       if (numchrs < numchrs_max)
+                         {
+                            mask |= MM_JOIN;
+                            if (numchrs > 0)
+                               mask |= MM_LEAD;
+                         }
+                       j = mini_menu (mask);
+                       if (j == MM_JOIN)
+                         {
+                            party_add (hero, 0);
+                            avail[cur] = -1;
+                         }
+                       else if (j == MM_LEAD)
+                         {
+                            party_add (hero, 1);
+                            avail[cur] = -1;
+                         }
+                    }
+                  else
+                    {
+                       /* it's from the party: options are lead and leave */
+                       if (numchrs > 1)
+                         {
+                            mask |= MM_LEAVE;
+                            if (cur > 8)
+                               mask |= MM_LEAD;
+                         }
+                       j = mini_menu (mask);
+                       if (j == MM_LEAVE)
+                         {
+                            party_remove (hero);
+                            /* and put back on the top row */
+                            for (x = 0; x < n_avail; ++x)
+                              {
+                                 if (avail[x] == -1)
+                                   {
+                                      avail[x] = hero;
+                                      break;
+                                   }
+                              }
+                         }
+                       else if (j == MM_LEAD)
+                         {
+                            party_newlead (hero);
+                         }
+                    }
+               }
+             rd = 1;
+          }
+        if (oldcur != cur)
+          {
+             play_effect (SND_CLICK, 128);
+             rd = 1;
+          }
+     }
+   return 0;
+}
+
+#define MM_X 162
+#define MM_Y 180
+static int mini_menu (int omask)
+{
+   int rd, cp;
+   rd = 1;
+   cp = 0;
+
+   /* If no actions were allowed, or just one, skip the menu */
+   if (omask == MM_JOIN)
+     {
+        message ("Join", 255, 1000, xofs, yofs);
+        return MM_JOIN;
+     }
+   if (omask == MM_LEAVE)
+     {
+        message ("Leave", 255, 1000, xofs, yofs);
+        return MM_LEAVE;
+     }
+   if (omask == MM_LEAD)
+     {
+        message ("Lead", 255, 1000, xofs, yofs);
+        return MM_LEAD;
+     }
+   if (omask == MM_NONE)
+     {
+        message ("No options", 255, 1000, xofs, yofs);
+        return MM_NONE;
+     }
+
+   while (1)
+     {
+        if (rd)
+          {
+             menubox (double_buffer, MM_X - 13, MM_Y - 8, 6, 3, DARKBLUE);
+             print_font (double_buffer, MM_X, MM_Y, "Join",
+                         (omask & MM_JOIN) ? FNORMAL : FDARK);
+             print_font (double_buffer, MM_X, MM_Y + 8, "Leave",
+                         (omask & MM_LEAVE) ? FNORMAL : FDARK);
+             print_font (double_buffer, MM_X, MM_Y + 16, "Lead",
+                         (omask & MM_LEAD) ? FNORMAL : FDARK);
+             draw_sprite (double_buffer, menuptr, MM_X - 13, MM_Y + 8 * cp);
+             blit2screen (xofs, yofs);
+             rd = 0;
+          }
+        readcontrols ();
+        if (up)
+          {
+             unpress ();
+             if (cp > 0)
+               {
+                  play_effect (SND_CLICK, 128);
+                  rd = 1;
+                  --cp;
+               }
+          }
+
+        if (down)
+          {
+             unpress ();
+             if (cp < 2)
+               {
+                  play_effect (SND_CLICK, 128);
+                  rd = 1;
+                  ++cp;
+               }
+          }
+        if (bctrl)
+          {
+             unpress ();
+             return 0;
+          }
+        if (balt)
+          {
+             unpress ();
+             if (omask & (1 << cp))
+                return 1 << cp;
+             else
+               {
+                  play_effect (SND_BAD, 128);
+               }
+          }
+     }
+}
+
+static void party_add (int id, int lead)
+{
+   s_entity *t;
+   if (numchrs < MAXCHRS)
+     {
+        if (numchrs > 0)
+          {
+             memcpy (&g_ent[numchrs], &g_ent[numchrs - 1], sizeof (*g_ent));
+             lastm[numchrs] = lastm[numchrs - 1] = MOVE_NOT;
+          }
+        if (lead)
+          {
+             t = &g_ent[0];
+             memmove (&pidx[1], &pidx[0], sizeof (*pidx) * numchrs);
+             memmove (&g_ent[1], &g_ent[0], sizeof (*g_ent) * numchrs);
+             pidx[0] = id;
+          }
+        else
+          {
+             t = &g_ent[numchrs];
+             pidx[numchrs] = id;
+          }
+        ++numchrs;
+        t->eid = id;
+        t->active = 1;
+        t->chrx = 255;
+     }
+}
+
+static void party_remove (int id)
+{
+   int i;
+   for (i = 0; i < numchrs; ++i)
+     {
+        if (pidx[i] == id)
+          {
+             --numchrs;
+             memmove (&pidx[i], &pidx[i + 1], sizeof (*pidx) * (numchrs - i));
+             memmove (&g_ent[i], &g_ent[i + 1],
+                      sizeof (*g_ent) * (numchrs - i));
+             pidx[numchrs] = -1;
+             g_ent[numchrs].active = 0;
+             return;
+          }
+     }
+}
+static void party_newlead (int id)
+{
+   int i, t;
+   for (i = 0; i < numchrs; ++i)
+     {
+        if (pidx[i] == id)
+          {
+             t = pidx[0];
+             pidx[0] = pidx[i];
+             pidx[i] = t;
+             t = g_ent[0].eid;
+             g_ent[0].eid = g_ent[i].eid;
+             g_ent[i].eid = t;
+             return;
+          }
+     }
 }

@@ -168,3 +168,46 @@ function thought(ent, ...)
   end
   thought_ex(ent, s);
 end
+
+-- select from heroes in the manor
+-- the available list is stored in eight consecutive P_ constants
+-- as 0 for nobody and 1..8 for characters 0..7
+function select_manor()
+   -- get the current list
+   heroes={}
+   for i=1,8 do
+      v=get_progress(i+P_MANORPARTY-1)
+      if (v~=0) then 
+	 heroes[i]=v-1
+      end
+   end
+   -- do the selecting
+   heroes=select_team(heroes)
+   -- put back in the list
+   for i=1,8 do
+      if (heroes[i]) then 
+	 v=heroes[i]+1
+      else
+	 v=0
+      end
+      set_progress(i+P_MANORPARTY-1, v)
+   end
+end
+
+-- Add this hero to the manor if not already there
+function add_to_manor(hero) 
+   for i=0,7 do
+      if (get_progress(i+P_MANORPARTY)==hero) then
+	 return
+      end
+   end
+   for i=0,7 do
+      if (get_progress(i+P_MANORPARTY)==0) then
+	 set_progress(i+P_MANORPARTY, hero+1)
+	 return
+      end
+   end
+end
+
+      
+   

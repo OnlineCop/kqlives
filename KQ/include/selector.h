@@ -30,13 +30,7 @@ int select_hero (int, int, int);        /*  only in heroc.c  */
 int select_enemy (int, int);    /*  heroc.c, hskill.c  */
 int auto_select_hero (int, int);        /*  enemyc.c, heroc.c  */
 int auto_select_enemy (int, int);       /*  enemyc.c, heroc.c  */
-
-
-
-#if 0
-int can_attack (int);           /*  staticed  */
-#endif /*  0  */
-
+int select_party (int *, int, int);
 
 
 #endif /*  __SELECTOR_H  */

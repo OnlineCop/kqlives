@@ -56,7 +56,7 @@
 #include "fade.h"
 #include "timing.h"
 #include "music.h"
-
+#include "selector.h"
 
 
 /*  internal functions  */
@@ -210,6 +210,7 @@ static void check_map_change (void);
 static int KQ_copy_tile_all (lua_State *);
 static int KQ_use_up (lua_State *);
 static int KQ_battle (lua_State *);
+static int KQ_select_team (lua_State *);
 
 
 static const struct luaL_reg lrs[] = {
@@ -362,6 +363,7 @@ static const struct luaL_reg lrs[] = {
    {"copy_tile_all", KQ_copy_tile_all},
    {"use_up", KQ_use_up},
    {"battle", KQ_battle},
+   {"select_team", KQ_select_team},
    {NULL, NULL}
 };
 
@@ -2924,6 +2926,33 @@ int KQ_istable (lua_State * L)
    return 1;
 }
 
+int KQ_select_team (lua_State * L)
+{
+   static int team[8];
+   int i;
+   TRACE ("%d---", lua_gettop (L));
+   for (i = 0; i < 8; ++i)
+     {
+        lua_rawgeti (L, 1, i + 1);
+        if (lua_type (L, -1) == LUA_TNIL)
+          {
+             team[i] = -1;
+          }
+        else
+           team[i] = lua_tonumber (L, -1);
+        lua_pop (L, 1);
+     }
+   select_party (team, 8, 2);
+   for (i = 0; i < 8; ++i)
+     {
+        if (team[i] == -1)
+           lua_pushnil (L);
+        else
+           lua_pushnumber (L, team[i]);
+        lua_rawseti (L, 1, i + 1);
+     }
+   return 1;
+}
 
 /*! \brief Initialise scripting engine
  *
