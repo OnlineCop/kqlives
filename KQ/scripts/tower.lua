@@ -420,7 +420,7 @@ function zone_handler(zn)
       sfx(26);
     end
 
--- zn 41 == no enemies attack (Oracle's room, treasure room)
+-- zn 41 == no enemies attack (room with Oracle, treasure room)
 
   elseif (zn == 42) then
     if (get_progress(P_DRAGONDOWN) == 0) then
