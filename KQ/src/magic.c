@@ -35,7 +35,7 @@
 #include "res.h"
 #include "itemdefs.h"
 #include "progress.h"
-
+#include "fade.h"
 
 
 /*  internal functions  */
@@ -345,20 +345,20 @@ static void special_spells (int cs, int sn)
    switch (sn)
      {
      case M_VISION:
-        fade_out (2);
+        do_transition (TRANS_FADE_OUT, 2);
         vspell = 1;
         battle_render (0, 0, 0);
         blit2screen (0, 0);
-        fade_in (pal, 2);
+        do_transition (TRANS_FADE_IN, 2);
         break;
      case M_WARP:
         if (in_combat == 1)
           {
-             fade_out (2);
+             do_transition (TRANS_FADE_OUT, 2);
              revert_equipstats ();
              drawmap ();
              blit2screen (xofs, yofs);
-             fade_in (pal, 2);
+             do_transition (TRANS_FADE_IN, 2);
              combatend = 2;
           }
         else
@@ -865,10 +865,10 @@ static void beffect_all_enemies (int cs, int sn)
         break;
      case M_VISION:
         vspell = 1;
-        fade_out (2);
+        do_transition (TRANS_FADE_OUT, 2);
         battle_render (0, 0, 0);
         blit2screen (0, 0);
-        fade_in (pal, 2);
+        do_transition (TRANS_FADE_IN, 2);
         break;
      case M_MALISON:
         for (a = st; a < st + nt; a++)

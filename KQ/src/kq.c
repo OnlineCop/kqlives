@@ -18,29 +18,30 @@
    the Free Software Foundation,
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
-/* $Id: kq.c,v 1.5 2002-10-10 18:43:18 peterhull90 Exp $ */
+/* $Id: kq.c,v 1.6 2002-10-25 17:19:56 peterhull90 Exp $ */
 
 #include <stdio.h>
 #include <time.h>
 #include <string.h>
 
-#include "setup.h"
-#include "entity.h"
+#include <allegro.h>
+
 #include "kq.h"
 #include "draw.h"
-#include "menu.h"
-#include "sgame.h"
-#include "mpcx.h"
-#include "allegro.h"
-#include "jgmod.h"
-#include "res.h"
-#include "progress.h"
+#include "entity.h"
+#include "fade.h"
+#include "intrface.h"
 #include "itemdefs.h"
 #include "itemmenu.h"
-#include "intrface.h"
 #include "masmenu.h"
+#include "menu.h"
+#include "mpcx.h"
+#include "music.h"
+#include "progress.h"
+#include "res.h"
+#include "setup.h"
 #include "scrnshot.h"
-
+#include "sgame.h"
 /*
    globals - and there's plenty of them!
 */
@@ -286,6 +287,9 @@ void readcontrols (void)
    down = 0;
    left = 0;
    right = 0;
+
+   poll_music ();
+
    /* PH 2002.09.21 in case this is needed (not sure on which platforms it is) */
    if (keyboard_needs_poll ())
      {
@@ -468,7 +472,7 @@ void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
    unsigned char cc[4];
 
    if (hold_fade == 0)
-      fade_out (4);
+      do_transition (TRANS_FADE_OUT, 4);
 
    sprintf (strbuf, "%s%s.map", MAP_DIR, map_name);
    pf = pack_fopen (strbuf, F_READ_PACKED);
@@ -479,7 +483,7 @@ void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
         clear_bitmap (double_buffer);
 
         if (hold_fade == 0)
-           fade_in (pal, 16);
+           do_transition (TRANS_FADE_IN, 16);
 
         g_map.xsize = -1;
         sprintf (strbuf, "Could not load %s!", map_name);
@@ -573,7 +577,7 @@ void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
    for (o = 0; o < MAX_ANIM; o++)
       adelay[o] = 0;
 
-   play_song (g_map.song_file, 0);
+   play_music (g_map.song_file, 0);
    mx = g_map.xsize * 16 - 304;
    my = g_map.ysize * 16 - 224;
 
@@ -620,7 +624,7 @@ void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
      {
         drawmap ();
         blit2screen (xofs, yofs);
-        fade_in (pal, 4);
+        do_transition (TRANS_FADE_IN, 4);
      }
 
    use_sstone = g_map.use_sstone;
@@ -688,7 +692,7 @@ void warp (int wtx, int wty, int fspeed)
    int i, f;
 
    if (hold_fade == 0)
-      fade_out (fspeed);
+      do_transition (TRANS_FADE_OUT, fspeed);
 
    if (numchrs == 0)
       f = 1;
@@ -712,7 +716,7 @@ void warp (int wtx, int wty, int fspeed)
    blit2screen (xofs, yofs);
 
    if (hold_fade == 0)
-      fade_in (pal, fspeed);
+      do_transition (TRANS_FADE_IN, fspeed);
 
    timer_count = 0;
 }
@@ -1269,12 +1273,7 @@ void deallocate_stuff (void)
 
    if (is_sound)
      {
-        if (is_mod_playing ())
-           stop_mod ();
-
-        if (gsong)
-           destroy_mod (gsong);
-
+        shutdown_music ();
         free_samples ();
      }
 }
@@ -1335,8 +1334,10 @@ void kwait (int dtime)
 
    while (cnt < dtime)
      {
+        poll_music ();
         while (timer_count > 0)
           {
+             poll_music ();
              timer_count--;
              cnt++;
              process_entities ();
@@ -1399,8 +1400,10 @@ void wait_for_entity (int est, int efi)
 
    while (ecnt > 0)
      {
+        poll_music ();
         while (timer_count > 0)
           {
+             poll_music ();
              timer_count--;
              process_entities ();
              check_animation ();
@@ -1492,7 +1495,7 @@ int main (void)
         if (alldead)
           {
              clear (screen);
-             fade_in (pal, 16);
+             do_transition (TRANS_FADE_IN, 16);
 
              if (start_menu (0) == 1)
                 change_map ("starting", 0, 0, 0, 0);

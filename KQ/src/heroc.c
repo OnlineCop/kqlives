@@ -47,6 +47,7 @@
 #include "progress.h"
 #include "itemdefs.h"
 #include "itemmenu.h"
+#include "timing.h"
 
 /** Text names of hero skills */
 char sk_names[MAXCHRS][7] =
@@ -381,7 +382,7 @@ static int hero_attack (int whom)
    cury = -1;
    battle_render (0, 0, 0);
    blit2screen (0, 0);
-   rest (150);
+   wait (150);
    fight (whom, tgt, 0);
    return 1;
 }
@@ -835,7 +836,7 @@ static void hero_run (int whom)
                      draw_sprite (double_buffer, frames[pidx[b]][fr], fx, fy);
                }
              blit2screen (0, 0);
-             rest (10);
+             wait (10);
           }
      }
    revert_equipstats ();

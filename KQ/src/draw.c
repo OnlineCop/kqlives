@@ -32,9 +32,11 @@
 
 #include "setup.h"
 #include "kq.h"
+#include "music.h"
 #include "draw.h"
 #include "combat.h"
 #include "res.h"
+#include "timing.h"
 #include "entity.h"
 #include "progress.h"
 
@@ -413,7 +415,7 @@ int is_forestsquare (int fx, int fy)
 */
 void drawmap (void)
 {
-   if (g_map.xsize == -1)
+   if (g_map.xsize <= 0)
      {
         clear_to_color (double_buffer, 1);
         return;
@@ -1180,7 +1182,7 @@ void message (char *m, int icn, int delay, int x_m, int y_m)
    if (delay == 0)
       wait_enter ();
    else
-      rest (delay);
+      wait (delay);
    blit (back, double_buffer, 0, 0, x_m, y_m, 352, 280);
 }
 

@@ -29,21 +29,24 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "enemyc.h"
-#include "effects.h"
+
+#include "kq.h"
+#include "combat.h"
+
 #include "draw.h"
+#include "effects.h"
+#include "enemyc.h"
+#include "fade.h"
 #include "heroc.h"
+#include "itemmenu.h"
 #include "magic.h"
 #include "masmenu.h"
 #include "menu.h"
+#include "music.h"
+#include "progress.h"
 #include "res.h"
 #include "setup.h"
-#include "combat.h"
-#include "progress.h"
-#include "itemmenu.h"
-
-
-
+#include "timing.h"
 /*! \name global variables  */
 /*\{*/
 int combatend;
@@ -123,7 +126,8 @@ int combat_check (int comx, int comy)
 int combat (int bno)
 {
    int zoom_step;
-   int saved_song;
+
+   /* ML 2002-09-22: not needed right now int saved_song; */
    int encounter;
    int lc;
 
@@ -183,29 +187,40 @@ int combat (int bno)
      }
 
    /*  RB: do the zoom at the beginning of the combat.  */
-   saved_song = mi.trk;
-   set_mod_volume (gmvol * 75 / 100);
-   play_song (battles[bno].bmusic, 0);
-   for (zoom_step = 0; zoom_step < 9; zoom_step++)
+   pause_music ();
+   set_music_volume ((gmvol / 250.0) * 0.75);
+   play_music (battles[bno].bmusic, 0);
+   if (stretch_view == 2)
+
      {
-
-        /*  RB FIXME: stretching when 640x480, stretching when 320x240?  */
-        /*            shouldn't one of those be the "common" size, and   */
-        /*            therefore not needing to stretch it?               */
-        /*            320x240 is the double_buffer size...               */
-        if (stretch_view == 1)
-           stretch_blit (double_buffer, screen, zoom_step * 16 + xofs,
-                         zoom_step * 12 + yofs, 320 - (zoom_step * 32),
-                         240 - (zoom_step * 24), 0, 0, 640, 480);
-        else
-           stretch_blit (double_buffer, screen, zoom_step * 16 + xofs,
-                         zoom_step * 12 + yofs, 320 - (zoom_step * 32),
-                         240 - (zoom_step * 24), 0, 0, 320, 240);
-
-        /*  RB FIXME: should we vsync here rather than rest?  */
-        rest (100);
+        do_transition (TRANS_FADE_OUT, 2);
+        clear_bitmap (double_buffer);
+        do_transition (TRANS_FADE_IN, 64);
      }
 
+   else
+      for (zoom_step = 0; zoom_step < 9; zoom_step++)
+
+        {
+           poll_music ();
+
+           /*  RB FIXME: stretching when 640x480, stretching when 320x240?  */
+           /*            shouldn't one of those be the "common" size, and   */
+           /*            therefore not needing to stretch it?               */
+           /*            320x240 is the double_buffer size...               */
+           if (stretch_view == 1)
+              stretch_blit (double_buffer, screen, zoom_step * 16 + xofs,
+                            zoom_step * 12 + yofs, 320 - (zoom_step * 32),
+                            240 - (zoom_step * 24), 0, 0, 640, 480);
+
+           else
+              stretch_blit (double_buffer, screen, zoom_step * 16 + xofs,
+                            zoom_step * 12 + yofs, 320 - (zoom_step * 32),
+                            240 - (zoom_step * 24), 0, 0, 320, 240);
+
+           /*  RB FIXME: should we vsync here rather than rest?  */
+           wait (100);
+        }
    snap_togrid ();
    roll_initiative ();
    curx = 0;
@@ -216,10 +231,10 @@ int combat (int bno)
    /*  RB: execute combat  */
    do_round ();
    unload_datafile_object (backart);
-   set_mod_volume (gmvol);
-   if (!alldead)
-      play_song (g_map.song_file, saved_song);
-
+   set_music_volume (gmvol / 250.0);
+   resume_music ();
+   if (alldead)
+      stop_music ();
    steps = 0;
    in_combat = 0;
    timer = 0;
@@ -948,10 +963,10 @@ int fight (int ar, int dr, int sk)
           {
              battle_render (dr + 1, 0, 0);
              blit2screen (0, 0);
-             rest (20);
+             wait (20);
              rectfill (double_buffer, 0, 0, 320, 240, 15);
              blit2screen (0, 0);
-             rest (20);
+             wait (20);
           }
      }
 
@@ -1282,18 +1297,18 @@ static int attack_result (int ar, int dr)
 /*                                                                           */
 static void enemies_win (void)
 {
-   play_song ("rain.s3m", 0);
+   play_music ("rain.s3m", 0);
    battle_render (0, 0, 0);
    /*  RB FIXME: rest()?  */
    blit2screen (0, 0);
-   rest (1000);
+   wait (1000);
    sprintf (strbuf, "%s was defeated!", party[pidx[0]].name);
    menubox (double_buffer, 152 - (strlen (strbuf) * 4), 48, strlen (strbuf),
             1, BLUE);
    print_font (double_buffer, 160 - (strlen (strbuf) * 4), 56, strbuf, FNORMAL);
    blit2screen (0, 0);
    wait_enter ();
-   fade_out (4);
+   do_transition (TRANS_FADE_OUT, 4);
    alldead = 1;
 }
 
@@ -1321,15 +1336,15 @@ static void heroes_win (void)
    s_fighter t1;
    s_fighter t2;
 
-   play_song ("rend5.s3m", 0);
-   rest (500);
+   play_music ("rend5.s3m", 0);
+   wait (500);
    revert_equipstats ();
    for (index = 0; index < numchrs; index++)
       fighter[index].aframe = 4;
 
    battle_render (0, 0, 0);
    blit2screen (0, 0);
-   rest (250);
+   wait (250);
    for (index = 0; index < numchrs; index++)
      {
         if ((fighter[index].sts[S_STONE] == 0)

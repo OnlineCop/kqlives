@@ -35,7 +35,11 @@
 #include <ctype.h>
 #include <string.h>
 
+#include <allegro.h>
+#include <allegro/internal/aintern.h>
+
 #include "setup.h"
+#include "fade.h"
 #include "kq.h"
 #include "draw.h"
 #include "sgame.h"
@@ -45,9 +49,10 @@
 #include "masmenu.h"
 #include "magic.h"
 #include "shopmenu.h"
+#include "timing.h"
 #include "progress.h"
 #include "menu.h"
-
+#include "music.h"
 /*! \name Globals */
 /*\{*/
 int snc[NUMSG], sgp[NUMSG], shr[NUMSG], smin[NUMSG], sid[NUMSG][PSIZE],
@@ -491,52 +496,53 @@ int start_menu (int c)
    int stop = 0, ptr = 0, rd = 1, a, b;
    DATAFILE *bg;
    BITMAP *staff, *dudes, *tdudes;
-   PALETTE whp;
-
    if (debugging == 0)
+
      {
         if (c == 0)
           {
-             for (a = 0; a < 256; a++)
-               {
-                  whp[a].r = 63;
-                  whp[a].g = 63;
-                  whp[a].b = 63;
-               }
-             play_song ("oxford.s3m", 0);
+             play_music ("oxford.s3m", 0);
              bg = load_datafile_object (PCX_DATAFILE, "KQT_PCX");
-             staff = create_bitmap (72, 226);
-             dudes = create_bitmap (112, 112);
-             tdudes = create_bitmap (112, 112);
+             staff = create_bitmap_ex (8, 72, 226);
+             dudes = create_bitmap_ex (8, 112, 112);
+             tdudes = create_bitmap_ex (8, 112, 112);
              blit ((BITMAP *) bg->dat, staff, 0, 7, 0, 0, 72, 226);
              blit ((BITMAP *) bg->dat, dudes, 80, 0, 0, 0, 112, 112);
              clear_bitmap (double_buffer);
              blit (staff, double_buffer, 0, 0, 124, 22, 72, 226);
              blit2screen (0, 0);
-             fade_in (pal, 1);
-             rest (1000);
+
+             //do_transition (TRANS_FADE_IN, 1);
+             wait (1000);
              for (a = 0; a < 42; a++)
                {
                   stretch_blit (staff, double_buffer, 0, 0, 72, 226,
                                 124 - (a * 32), 22 - (a * 96), 72 + (a * 64),
                                 226 + (a * 192));
                   blit2screen (0, 0);
-                  rest (100);
+                  wait (100);
                }
              for (a = 0; a < 5; a++)
                {
                   color_scale (dudes, tdudes, 53 - a, 53 + a);
                   draw_sprite (double_buffer, tdudes, 106, 64);
                   blit2screen (0, 0);
-                  rest (100);
+                  wait (100);
                }
              draw_sprite (double_buffer, dudes, 106, 64);
              blit2screen (0, 0);
-             rest (1000);
+             wait (1000);
              destroy_bitmap (staff);
              destroy_bitmap (dudes);
              destroy_bitmap (tdudes);
-             fade_from (pal, whp, 1);
+
+             /*
+                TODO: this fade should actually be to white
+                if (_color_depth == 8)
+                fade_from (pal, whp, 1);
+                else
+              */
+             do_transition (TRANS_FADE_WHITE, 1);
           }
         clear_to_color (double_buffer, 15);
         blit2screen (0, 0);
@@ -551,12 +557,13 @@ int start_menu (int c)
                           320, 52);
              blit2screen (0, 0);
              if (a == 0)
-                rest (500);
+                wait (500);
+
              else
-                rest (100);
+                wait (100);
           }
         if (c == 0)
-           rest (500);
+           wait (500);
      }
    else
      {
@@ -572,13 +579,11 @@ int start_menu (int c)
                           124);
              masked_blit ((BITMAP *) bg->dat, double_buffer, 0, 148, 0, 172,
                           320, 52);
-             menubox (double_buffer, 120, 116, 10, 3, BLUE);
+             menubox (double_buffer, 120, 116, 10, 4, BLUE);
              print_font (double_buffer, 136, 124, "Continue", FNORMAL);
              print_font (double_buffer, 136, 132, "New Game", FNORMAL);
-/* PH FIXME add option to change the config settings from Main Menu */
-/*   Otherwise you have to start a game, and maybe sit throught the intro before  */
-/* you can change anything. */
-             print_font (double_buffer, 152, 140, "Exit", FNORMAL);
+             print_font (double_buffer, 144, 140, "Config", FNORMAL);
+             print_font (double_buffer, 152, 148, "Exit", FNORMAL);
              draw_sprite (double_buffer, menuptr, 120, ptr * 8 + 124);
              blit2screen (0, 0);
           }
@@ -588,14 +593,14 @@ int start_menu (int c)
              unpress ();
              ptr--;
              if (ptr < 0)
-                ptr = 2;
+                ptr = 3;
              play_effect (SND_CLICK, 128);
           }
         if (down)
           {
              unpress ();
              ptr++;
-             if (ptr > 2)
+             if (ptr > 3)
                 ptr = 0;
              play_effect (SND_CLICK, 128);
           }
@@ -610,9 +615,24 @@ int start_menu (int c)
                   else if (saveload (0) == 1)
                      stop = 1;
                }
-             if (ptr == 1)
-                stop = 2;
-             if (ptr == 2)
+
+             else if (ptr == 1)
+
+               {
+                  stop = 2;
+               }
+
+             else if (ptr == 2)
+
+               {
+                  clear (double_buffer);
+                  config_menu ();
+
+                  /* TODO: Save Global Settings Here */
+               }
+
+             else if (ptr == 3)
+
                {
                   unload_datafile_object (bg);
                   program_death ("Then exit you shall!");

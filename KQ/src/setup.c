@@ -18,21 +18,30 @@
    the Free Software Foundation,
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
+/*! \file
+ * \brief Setup and menu code
+ *
+ * \author JB
+ * \date ??????
+ * \remark Updated  ML Oct-2002
+ */
 
 #include <stdio.h>
 #include <string.h>
-#include "setup.h"
+
 #include "kq.h"
+#include "setup.h"
+
 #include "combat.h"
 #include "draw.h"
+#include "music.h"
 #include "res.h"
-
-/*
-   globals
-*/
-
-JGMOD *gsong;
+#include "timing.h"
+/*! \name Globals */
+/*\{*/
+/*! Debug level 0..3 */
 char debugging = 0;
+/*! Look up table of names for keys */
 char keynames[115][12] = {
    "",
    "A", "B", "C", "D", "E", "F", "G", "H", "I", "J",
@@ -54,7 +63,7 @@ char keynames[115][12] = {
    "ALTGR", "LWIN", "RWIN",
    "MENU", "SCRLOCK", "NUMLOCK", "CAPSLOCK"
 };
-
+/*\}*/
 
 
 /*  internal variables  */
@@ -63,16 +72,17 @@ static DATAFILE *sfx[MAX_SAMPLES];
 
 
 /*  internal functions  */
-static void load_samples (void);
+static int load_samples (void);
 static int getavalue (char *, int, int, int, int);
 static int getakey (void);
 
 
 
-/*
-   Parse the setup.cfg file for key configurations.
-   This file would also contain sound options, but that
-   isn't necessary right now.
+/*! \brief Parse setup.cfgRead settings from file
+ *
+ * Parse the setup.cfg file for key configurations.
+ * This file would also contain sound options, but that
+ * isn't necessary right now.
 */
 void parse_setup (void)
 {
@@ -193,10 +203,11 @@ void parse_setup (void)
    fclose (s);
 }
 
-/*
-   This is the config menu that is called from the system
-   menu.  Here you can adjust the music or sound volume, or
-   the speed that the battle guage moves at.
+/*! \brief Display configuration menu 
+ *
+ * This is the config menu that is called from the system
+ * menu.  Here you can adjust the music or sound volume, or
+ * the speed that the battle gauge moves at.
 */
 void config_menu (void)
 {
@@ -462,7 +473,7 @@ void config_menu (void)
                          {
                             is_sound = 1;
                             sound_init ();
-                            play_song (g_map.song_file, 0);
+                            play_music (g_map.song_file, 0);
                          }
                     }
                   break;
@@ -471,10 +482,10 @@ void config_menu (void)
                     {
                        p = getavalue ("Sound Volume", 0, 25, gsvol / 10, 1);
                        if (p != -1)
-                         {
-                            gsvol = p * 10;
-                            set_volume (gsvol, 0);
-                         }
+                          gsvol = p * 10;
+
+                       /* make sure to set it no matter what */
+                       set_volume (gsvol, 0);
                     }
                   else
                      play_effect (SND_BAD, 128);
@@ -484,10 +495,10 @@ void config_menu (void)
                     {
                        p = getavalue ("Music Volume", 0, 25, gmvol / 10, 1);
                        if (p != -1)
-                         {
-                            gmvol = p * 10;
-                            set_mod_volume (gmvol);
-                         }
+                          gmvol = p * 10;
+
+                       /* make sure to st it no matter what */
+                       set_music_volume (gmvol / 250.0);
                     }
                   else
                      play_effect (SND_BAD, 128);
@@ -520,6 +531,28 @@ static int getakey (void)
    return 0;
 }
 
+
+/*! \brief play sound effects / music if adjusting it */
+#define IF_VOLUME_ALERT() \
+   if (!strcmp (capt, "Sound Volume")){\
+   set_volume (cv * 10, 0);\
+   play_effect (1, 127);\
+}\
+else if (!strcmp (capt, "Music Volume"))\
+set_music_volume (cv / 25.5);
+
+/*! \brief Get value for option
+ *
+ * Display a bar and allow the user to adjust
+ * between fixed limits
+ *
+ * \param capt Caption
+ * \param minu Minimum value of option
+ * \param maxu Maximum vlaue of option
+ * \param cv Current value (initial value)
+ * \param sp Show percent. If sp==1, show as a percentage of maxu
+ * \returns New value for option
+ */
 static int getavalue (char *capt, int minu, int maxu, int cv, int sp)
 {
    int stop = 0, a, b, rd = 1;
@@ -562,6 +595,7 @@ static int getavalue (char *capt, int minu, int maxu, int cv, int sp)
              if (cv < minu)
                 cv = minu;
              rd = 1;
+             IF_VOLUME_ALERT ();
           }
         if (right)
           {
@@ -570,6 +604,7 @@ static int getavalue (char *capt, int minu, int maxu, int cv, int sp)
              if (cv > maxu)
                 cv = maxu;
              rd = 1;
+             IF_VOLUME_ALERT ();
           }
         if (balt)
           {
@@ -586,7 +621,11 @@ static int getavalue (char *capt, int minu, int maxu, int cv, int sp)
 }
 
 
-
+/*! \brief Set mode
+ *
+ * Set the graphics mode, taking into account
+ * the Windowed and Stretched settings
+ */
 void set_graphics_mode (void)
 {
    if (stretch_view == 1)
@@ -609,57 +648,57 @@ void set_graphics_mode (void)
 
 
 
-/*                                                                           */
-/*  Author  : Josh Bolduc                                                    */
-/*  Created : ???????? - ??:??                                               */
-/*  Updated : 20020914 - 05:28 (RB)                                          */
-/*  Purpose :                                                                */
-/*  Returns : Nothing.                                                       */
-/*                                                                           */
+/*! \brief Initialise sound system
+ *
+ *  \author JB
+ *  \date ????????
+ *  \remark 20020914 - 05:28 RB : Updated
+ *   20020922 - ML : updated to use DUMB
+ *   20020922 - ML : Changed to only reserving 8 voices. (32 seemed over-kill?) 
+*/
 void sound_init (void)
 {
    if (is_sound == 1)
      {
-        reserve_voices (32, -1);
-        set_volume_per_voice (2);
-
         if (install_sound (DIGI_AUTODETECT, MIDI_AUTODETECT, NULL) == -1)
+
           {
-             reserve_voices (-1, -1);
              is_sound = 0;
           }
         else
           {
-             install_mod (28);
-             load_samples ();
-             is_sound = 2;
+
+             reserve_voices (8, 0);
+             set_volume_per_voice (2);
+             init_music ();
+             is_sound = load_samples ()? 0 : 2; /* load the wav files */
           }
      }
    else if (is_sound == 2)
      {
-        stop_music ();
-        remove_sound ();
-        reserve_voices (-1, -1);
-        remove_mod ();
+        shutdown_music ();
         free_samples ();
+        remove_sound ();
         is_sound = 0;
      }
 }
 
 
 
-/*                                                                           */
-/*  Author  : Josh Bolduc                                                    */
-/*  Created : ???????? - ??:??                                               */
-/*  Updated : 20020914 - 05:20 (RB)                                          */
-/*  Purpose : Load the list of samples from the data file.                   */
-/*  Returns : Nothing.                                                       */
-/*                                                                           */
-static void load_samples (void)
+/*! \brief Load sample files
+ *
+*  Load the list of samples from the data file.
+*  \author JB
+*  \date  ???????? - ??:??
+*  \remark Updated : 20020914 - 05:20 (RB)
+*  \remark ML 2002-09-22: altered this so it returns an error on failure 
+*  \returns  0 on success, non-zero on failure.
+*  \todo RB FIXME: This must be generated from the kqsnd.h header,  
+*            not hardcoded, to make it easier to maintain.    
+*            (a perl script?).                                
+*/
+static int load_samples (void)
 {
-   /*  RB FIXME: This must be generated from the kqsnd.h header,  */
-   /*            not hardcoded, to make it easier to maintain.    */
-   /*            (a perl script?).                                */
    AL_CONST char *sndfiles[MAX_SAMPLES] = {
       "WHOOSH_WAV", "MENUMOVE_WAV", "BAD_WAV", "ITEM_WAV",
       "EQUIP_WAV", "DEEQUIP_WAV", "BUYSELL_WAV", "TWINKLE_WAV",
@@ -676,7 +715,7 @@ static void load_samples (void)
    int index;
 
    if (is_sound == 0)
-      return;
+      return 1;
 
    for (index = 0; index < MAX_SAMPLES; index++)
      {
@@ -686,21 +725,20 @@ static void load_samples (void)
              sprintf (strbuf, "Error loading .WAV file: %s.\n",
                       sndfiles[index]);
              klog (strbuf);
-             /*  RB FIXME: why call sound_init() again?  */
-             /*  sound_init();  */
+             return 1;
           }
      }
+   return 0;
 }
 
 
 
-/*                                                                           */
-/*  Author  : Josh Bolduc                                                    */
-/*  Created : ???????? - ??:??                                               */
-/*  Updated : Never.                                                         */
-/*  Purpose : Duh.                                                           */
-/*  Returns : Nothing.                                                       */
-/*                                                                           */
+/*! \brief Release memory used by samples
+ *
+ *  Duh.                                                           
+ *  \author  : Josh Bolduc                                                    
+ *  \date ???????? - ??:??                                               
+*/
 void free_samples (void)
 {
    int index;
@@ -713,48 +751,13 @@ void free_samples (void)
 }
 
 
-
-/*
-   Play some music... if possible/necessary.
-*/
-void play_song (char *sngnme, int start_track)
-{
-   if (is_sound == 0)
-      return;
-   if (is_mod_playing ())
-      stop_mod ();
-   if (gsong)
-      destroy_mod (gsong);
-/*  RB: Modifed from "%s\%s" to "%s/%s"  */
-   sprintf (strbuf, "%s/%s", MUSIC_DIR, sngnme);
-   if (!(gsong = load_mod (strbuf)))
-     {
-        sprintf (strbuf, "Could not load %s!", sngnme);
-        klog (strbuf);
-     }
-   else
-     {
-        if (start_track > 0)
-           goto_mod_track (start_track);
-        play_mod (gsong, 1);
-     }
-}
-
-/*
-   I have no idea what this function does :p
-*/
-void stop_music (void)
-{
-   if (is_sound == 0)
-      return;
-   if (is_mod_playing ())
-      stop_mod ();
-}
-
-/*
-   Play an effect... if possible/necessary.  If the effect to
-   be played is the 'bad-move' effect, than do something visually
-   so that even if sound is off you know you did something bad :)
+/*! \brief Play sample effect
+ *
+ * Play an effect... if possible/necessary.  If the effect to
+ * be played is the 'bad-move' effect, than do something visually
+ * so that even if sound is off you know you did something bad :)
+ * \param efc Effect to play (index in sfx[])
+ * \param panning Left/right pan - see Allegro's play_sample
 */
 void play_effect (int efc, int panning)
 {
@@ -778,7 +781,7 @@ void play_effect (int efc, int panning)
         for (a = 0; a < 8; a++)
           {
              blit2screen (xo + bx[a], yo + by[a]);
-             rest (10);
+             wait (10);
           }
         blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
      }

@@ -30,6 +30,8 @@
 #include "res.h"
 #include "progress.h"
 #include "itemdefs.h"
+#include "fade.h"
+#include "music.h"
 
 unsigned short shops[NUMSHOPS][12][3] = {
    {{I_SHIELD1, 6, 10},
@@ -1102,13 +1104,13 @@ static void do_inn_effects (void)
         for (b = 0; b < 8; b++)
            party[c].sts[b] = 0;
      }
-   set_mod_volume (0);
+   pause_music ();
    play_effect (36, 128);
-   fade_out (2);
+   do_transition (TRANS_FADE_OUT, 2);
    drawmap ();
    blit2screen (xofs, yofs);
    progress[P_REPULSE] = 0;
-   rest (1500);
-   fade_in (pal, 2);
-   set_mod_volume (gmvol);
+   wait (1500);
+   do_transition (TRANS_FADE_IN, 2);
+   resume_music ();
 }

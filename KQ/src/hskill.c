@@ -34,6 +34,8 @@
 #include "setup.h"
 #include "res.h"
 #include "progress.h"
+#include "timing.h"
+#include "fade.h"
 
 
 
@@ -197,7 +199,7 @@ int skill_use (int who)
         cury = -1;
         battle_render (0, 0, 0);
         blit2screen (0, 0);
-        rest (150);
+        wait (150);
         multi_fight (who);
         dct = 0;
         break;
@@ -233,7 +235,7 @@ int skill_use (int who)
                             draw_fighter (who, 0);
                          }
                        blit2screen (0, 0);
-                       rest (50);
+                       wait (50);
                        blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
                     }
                }
@@ -270,7 +272,7 @@ int skill_use (int who)
                      if (is_active (g))
                         draw_fighter (g, 0);
                   blit2screen (0, 0);
-                  rest (50);
+                  wait (50);
                   blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
                }
              revert_cframes (PSIZE, 1);
@@ -381,9 +383,9 @@ int skill_use (int who)
         dct = 1;
         battle_render (0, who + 1, 0);
         blit2screen (0, 0);
-        rest (100);
+        wait (100);
         play_effect (SND_MENU, 128);
-        rest (500);
+        wait (500);
         dct = 0;
         battle_render (who, who, 0);
         fitm = 0;
@@ -434,7 +436,7 @@ int skill_use (int who)
         tgt = select_enemy (who, 0);
         if (tgt == -1)
            return 0;
-        fade_out (4);
+        do_transition (TRANS_FADE_OUT, 4);
         menubox (double_buffer, 84, 56, 17, 13, BLUE);
         sprintf (strbuf, "Name: %s", fighter[tgt].name);
         print_font (double_buffer, 92, 64, strbuf, FNORMAL);
@@ -476,7 +478,7 @@ int skill_use (int who)
                              b * 7 + 162, c * 8 + 102, g + b);
           }
         blit2screen (0, 0);
-        fade_in (pal, 4);
+        do_transition (TRANS_FADE_IN, 4);
         wait_enter ();
         break;
      }

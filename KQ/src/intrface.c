@@ -50,6 +50,9 @@
 #include "progress.h"
 #include "itemdefs.h"
 #include "shopmenu.h"
+#include "fade.h"
+#include "timing.h"
+#include "music.h"
 
 
 
@@ -1466,13 +1469,13 @@ static int KQ_book_talk (lua_State * L)
 
 static int KQ_do_fadeout (lua_State * L)
 {
-   fade_out (lua_tonumber (L, 1));
+   do_transition (TRANS_FADE_OUT, lua_tonumber (L, 1));
    return 0;
 }
 
 static int KQ_do_fadein (lua_State * L)
 {
-   fade_in (pal, lua_tonumber (L, 1));
+   do_transition (TRANS_FADE_IN, lua_tonumber (L, 1));
    return 0;
 }
 
@@ -1514,7 +1517,7 @@ static int KQ_door_in (lua_State * L)
    play_effect (25, 128);
    drawmap ();
    blit2screen (xofs, yofs);
-   rest (50);
+   wait (50);
    set_view (1, lua_tonumber (L, 3), lua_tonumber (L, 4), lua_tonumber (L, 5),
              lua_tonumber (L, 6));
    warp (lua_tonumber (L, 1), lua_tonumber (L, 2), 8);
@@ -1638,7 +1641,7 @@ static int KQ_wait (lua_State * L)
 
 static int KQ_rest (lua_State * L)
 {
-   rest (lua_tonumber (L, 1));
+   wait (lua_tonumber (L, 1));
    return 0;
 }
 
@@ -1758,8 +1761,7 @@ static int KQ_pause_song (lua_State * L)
    /*  RB TODO : */
    if (L != NULL)
       L = L;
-   g_trk = mi.trk;
-   stop_music ();
+   pause_music ();
    return 0;
 }
 
@@ -1768,7 +1770,7 @@ static int KQ_unpause_map_song (lua_State * L)
    /*  RB TODO  */
    if (L != NULL)
       L = L;
-   play_song (g_map.song_file, g_trk);
+   resume_music ();
    return 0;
 }
 
@@ -1777,13 +1779,13 @@ static int KQ_play_map_song (lua_State * L)
    /*  RB TODO  */
    if (L != NULL)
       L = L;
-   play_song (g_map.song_file, 0);
+   play_music (g_map.song_file, 0);
    return 0;
 }
 
 static int KQ_play_song (lua_State * L)
 {
-   play_song ((char *) lua_tostring (L, 1), 0);
+   play_music ((char *) lua_tostring (L, 1), 0);
    return 0;
 }
 
