@@ -331,7 +331,7 @@ void spec_items (void)
             if (siq[a] > 1) {
                sprintf (strbuf, "^%d", siq[a]);
                print_font (double_buffer, 224 + xofs,
-                           a * 8 + 68 + yofs, strbuf, FNORMAL);
+                           a * 8 + 44 + yofs, strbuf, FNORMAL);
             }
          }
          menubox (double_buffer, 72 + xofs, 204 + yofs, 20, 1, BLUE);
