@@ -27,6 +27,7 @@
  *
  * This includes any bits which are specific for Windows platforms
  */
+#include <allegro.h>
 #include <winalleg.h>
 #include "kq.h"
 static int init_path = 0;
@@ -52,6 +53,7 @@ const char *kqres (int dir, const char *file)
    static char ans[PATH_MAX];
    if (!init_path)
      {
+     	home=ans;
         /* Get home directory; this bit originally written by SH */
         SHFolder = LoadLibrary ("shfolder.dll");
         if (SHFolder != NULL)
