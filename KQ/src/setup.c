@@ -120,11 +120,6 @@ void parse_setup (void)
              fscanf (s, "%d", &dab);
              cheat = dab;
           }
-        if (!strcmp (strbuf, "slowcomputer"))
-          {
-             fscanf (s, "%d", &dab);
-             slow_computer = dab;
-          }
         if (!strcmp (strbuf, "debug"))
           {
              fscanf (s, "%d", &dab);
@@ -165,6 +160,12 @@ void parse_setup (void)
              fscanf (s, "%s", strbuf);
              if (!strcmp (strbuf, "no"))
                 use_joy = 0;
+          }
+        if (!strcmp (strbuf, "slow_computer"))
+          {
+             fscanf (s, "%s", strbuf);
+             if (!strcmp (strbuf, "yes"))
+                slow_computer = 1;
           }
         if (!strcmp (strbuf, "rightkey"))
           {
