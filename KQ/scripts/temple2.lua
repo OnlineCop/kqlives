@@ -6,34 +6,34 @@ end
 
 function refresh()
   if (get_treasure(21) == 1) then
-    set_ftile(90,16,41);
+    set_mtile(90,16,41);
   end
   if (get_treasure(22) == 1) then
-    set_ftile(91,17,41);
+    set_mtile(91,17,41);
   end
   if (get_treasure(23) == 1) then
-    set_ftile(92,18,41);
+    set_mtile(92,18,41);
   end
   if (get_treasure(24) == 1) then
-    set_ftile(93,17,41);
+    set_mtile(93,17,41);
   end
   if (get_treasure(25) == 1) then
-    set_ftile(94,16,41);
+    set_mtile(94,16,41);
   end
   if (get_treasure(26) == 1) then
-    set_ftile(69,17,41);
+    set_mtile(69,17,41);
   end
   if (get_treasure(27) == 1) then
-    set_ftile(30,67,41);
+    set_mtile(30,67,41);
   end
   if (get_treasure(28) == 1) then
-    set_ftile(34,71,41);
+    set_mtile(34,71,41);
   end
   if (get_treasure(29) == 1) then
-    set_ftile(68,87,41);
+    set_mtile(68,87,41);
   end
   if (get_treasure(30) == 1) then
-    set_ftile(69,87,41);
+    set_mtile(69,87,41);
   end
   if (get_progress(P_UNDEADJEWEL) == 2) then
     set_btile(69,69,237);

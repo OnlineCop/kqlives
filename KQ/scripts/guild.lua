@@ -6,8 +6,8 @@ end
 
 function refresh()
   if (get_progress(P_GUILDSECRET) == 1) then
-    set_ftile(12,25,0);
-    set_ftile(12,26,0);
+    set_mtile(12,25,0);
+    set_mtile(12,26,0);
     set_obs(12,26,0);
     set_zone(12,26,0);
     set_ftile(13,25,242);
@@ -18,7 +18,7 @@ function refresh()
     set_ent_active(1,0);
   end
   if (get_progress(P_OPALHELMET) == 1) then
-    set_ftile(58,24,265);
+    set_mtile(58,24,265);
   end
 end
 

@@ -53,20 +53,26 @@ function autoexec()
 end
 
 function refresh()
+  if (get_treasure(3) == 1) then
+    set_mtile(110,14,265);
+  end
+  if (get_treasure(4) == 1) then
+    set_mtile(111,14,265);
+  end
+  if (get_treasure(5) == 1) then
+    set_mtile(112,14,265);
+  end
   if (get_treasure(7) == 1) then
     set_obs(14,47,0);
   end
   if (get_treasure(10) == 1) then
     set_obs(35,38,0);
   end
-  if (get_treasure(3) == 1) then
-    set_ftile(110,14,265);
+  if (get_treasure(31) == 1) then
+    set_mtile(115,33,265);
   end
-  if (get_treasure(4) == 1) then
-    set_ftile(111,14,265);
-  end
-  if (get_treasure(5) == 1) then
-    set_ftile(112,14,265);
+  if (get_treasure(46) == 1) then
+    set_mtile(116,33,265);
   end
   if (get_progress(P_WARPSTONE) == 1) then
     set_mtile(35,15,0);
@@ -100,7 +106,7 @@ function zone_handler(zn)
     door_in(112,7,107,0,117,10);
 
   elseif (zn == 8) then
-    door_in(114,37,104,25,117,40);
+    door_in(114,37,104,25,118,40);
 
   elseif (zn == 9) then
     bubble(HERO1,"Locked.","","","");
@@ -115,7 +121,7 @@ function zone_handler(zn)
     door_out(24,31);
 
   elseif (zn == 13) then
-    door_out(44,47);
+    door_out(63,29);
 
   elseif (zn == 14) then
     door_out(18,42);
@@ -153,19 +159,19 @@ function zone_handler(zn)
 
   elseif (zn == 20) then
     view_range(1,119,0,122,24);
-    warp(121,21,8);
+    warp(121,3,8);
 
   elseif (zn == 21) then
+    view_range(1,109,12,117,21);
+    warp(116,15,8);
+
+  elseif (zn == 22) then
     view_range(1,94,12,107,23);
     warp(106,16,8);
 
-  elseif (zn == 22) then
-    view_range(1,109,12,117,19);
-    warp(116,15,8);
-
   elseif (zn == 23) then
     view_range(1,119,0,122,24);
-    warp(121,3,8);
+    warp(121,21,8);
 
   elseif (zn == 24) then
     chest(3,I_KNIFE2,1);
@@ -195,6 +201,7 @@ function zone_handler(zn)
 
   elseif (zn == 31) then
     chest(11,I_LTONIC,1);
+    refresh();
 
   elseif (zn == 32) then
     book_talk(get_pidx(0));
@@ -213,6 +220,25 @@ function zone_handler(zn)
     if (get_progress(P_WARPSTONE) == 1) then
       change_map("town6",38,56,38,56);
     end
+
+  elseif (zn == 37) then
+    touch_fire(get_pidx(0));
+
+  elseif (zn == 38) then
+    view_range(1,104,25,118,40);
+    warp(116,29,8);
+
+  elseif (zn == 39) then
+    view_range(1,109,12,117,21);
+    warp(113,19,8);
+    
+  elseif (zn == 40) then
+    chest(31,0,150);
+    refresh();
+
+  elseif (zn == 41) then
+    chest(46,I_STRSEED,2);
+    refresh();
 
   end
 end
@@ -403,7 +429,6 @@ function entity_handler(en)
         set_progress(P_GETPARTNER,3);
       end
     end
-
   end
 end
 

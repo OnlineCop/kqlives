@@ -21,25 +21,25 @@ end
 
 function refresh()
   if (get_treasure(55) == 1) then
-    set_ftile(66,45,265);
+    set_mtile(66,45,265);
   end
   if (get_treasure(56) == 1) then
-    set_ftile(73,43,265);
+    set_mtile(73,43,265);
   end
   if (get_treasure(57) == 1) then
-    set_ftile(81,24,265);
+    set_mtile(81,24,265);
   end
   if (get_treasure(58) == 1) then
-    set_ftile(83,11,265);
+    set_mtile(83,11,265);
   end
   if (get_treasure(59) == 1) then
-    set_ftile(84,11,265);
+    set_mtile(84,11,265);
   end
   if (get_treasure(60) == 1) then
-    set_ftile(13,57,265);
+    set_mtile(13,57,265);
   end
   if (get_treasure(61) == 1) then
-    set_ftile(14,57,265);
+    set_mtile(14,57,265);
   end
 end
 

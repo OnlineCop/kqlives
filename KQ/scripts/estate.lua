@@ -301,7 +301,7 @@ function entity_handler(en)
       view_range(1,71,5,87,20);
       set_ent_active(3,0);
       set_ent_active(2,0);
-      set_ftile(73,11,288);
+      set_mtile(73,11,288);
       place_ent(1,76,11);
       set_ent_facing(1,2);
       drawmap();

@@ -24,19 +24,19 @@ end
 
 function refresh()
   if (get_treasure(75) == 1) then
-    set_ftile(31,4,65);
+    set_mtile(31,4,65);
   end
   if (get_treasure(76) == 1) then
-    set_ftile(39,4,65);
+    set_mtile(39,4,65);
   end
   if (get_treasure(77) == 1) then
-    set_ftile(31,20,65);
+    set_mtile(31,20,65);
   end
   if (get_treasure(78) == 1) then
-    set_ftile(21,33,65);
+    set_mtile(21,33,65);
   end
   if (get_treasure(79) == 1) then
-    set_ftile(23,34,65);
+    set_mtile(23,34,65);
   end
 end
 
@@ -285,7 +285,7 @@ function zone_handler(zn)
     set_ent_active(17,0);
     set_ent_active(18,0);
     set_ent_active(19,0);
-    set_ftile(67,39,250);
+    set_mtile(67,39,250);
     set_autoparty(1);
     if (get_ent_tiley(HERO1) == 44) then
       set_ent_script(HERO1,"R4U1");
@@ -328,13 +328,13 @@ function zone_handler(zn)
     if (get_alldead() == 1) then
       return
     end
-    set_ftile(67,38,0);
-    set_ftile(66,39,0);
-    set_ftile(67,39,0);
-    set_ftile(68,39,0);
-    set_ftile(66,40,0);
-    set_ftile(67,40,0);
-    set_ftile(68,40,0);
+    set_mtile(67,38,0);
+    set_mtile(66,39,0);
+    set_mtile(67,39,0);
+    set_mtile(68,39,0);
+    set_mtile(66,40,0);
+    set_mtile(67,40,0);
+    set_mtile(68,40,0);
     set_progress(P_AVATARDEAD,2);
     set_obs(11,24,0);
     set_zone(11,24,1);
@@ -422,13 +422,13 @@ function LOC_avatar_abounds()
   for a=1,19,1 do
     set_ent_active(a,0);
   end
-  set_ftile(67,38,270);
-  set_ftile(66,39,271);
-  set_ftile(67,39,272);
-  set_ftile(68,39,273);
-  set_ftile(66,40,274);
-  set_ftile(67,40,275);
-  set_ftile(68,40,276);
+  set_mtile(67,38,270);
+  set_mtile(66,39,271);
+  set_mtile(67,39,272);
+  set_mtile(68,39,273);
+  set_mtile(66,40,274);
+  set_mtile(67,40,275);
+  set_mtile(68,40,276);
 
   move_camera(ax,ay,1);
 end

@@ -3,7 +3,7 @@
 function autoexec()
   if (get_progress(P_SHOWBRIDGE) == 0) then
     set_btile(240,29,80);
-    set_ftile(241,29,82);
+    set_mtile(241,29,82);
     set_obs(241,29,1);
     set_zone(240,29,7);
   end

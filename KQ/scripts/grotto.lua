@@ -31,7 +31,7 @@ function zone_handler(zn)
     change_map("main",129,19,129,19);
 
   elseif (zn == 2) then
-    bubble(HERO1,"Mmmm... cozy.","","","");
+    touch_fire(get_pidx(0));
 
   elseif (zn == 3) then
     if (get_progress(P_FELLINPIT) == 0) then

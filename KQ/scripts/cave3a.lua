@@ -6,13 +6,13 @@ end
 
 function refresh()
   if (get_treasure(17) > 0) then
-    set_ftile(43,5,41);
+    set_mtile(43,5,41);
   end
   if (get_treasure(18) > 0) then
-    set_ftile(44,6,41);
+    set_mtile(44,6,41);
   end
   if (get_treasure(19) > 0) then
-    set_ftile(45,5,41);
+    set_mtile(45,5,41);
   end
   if (get_progress(P_ORACLE) > 0) then
     set_ftile(5,41,119);

@@ -19,7 +19,7 @@ function refresh()
     set_zone(14,2,12);
   end
   if (get_progress(P_UNDEADJEWEL) > 0) then
-    set_ftile(20,32,65);
+    set_mtile(20,32,65);
   end
 end
 

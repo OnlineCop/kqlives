@@ -7,7 +7,7 @@ end
 
 function refresh()
   if (get_treasure(2) == 1) then
-    set_ftile(2,18,41);
+    set_mtile(2,18,41);
   end
   if (get_progress(P_DARKIMPBOSS) == 1) then
     set_ftile(41,42,0);

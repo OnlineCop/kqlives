@@ -92,23 +92,23 @@ function zone_handler(zn)
     chest(13,I_CAP2,1);
 
   elseif (zn == 26) then
-    book_talk(get_pidx(0));
+  bubble(HERO1,"Various books about magic.","","","");
 
   elseif (zn == 27) then
-    book_talk(get_pidx(0));
-
-  elseif (zn == 28) then
-    bubble(HERO1,"Various books about magic.","","","");
-
-  elseif (zn == 29) then
     bubble(HERO1,"The art of battle-magic.","","","");
 
-  elseif (zn == 30) then
+  elseif (zn == 28) then
     bubble(HERO1,"How magic can make you rich!","","","");
 
-  elseif (zn == 31) then
+  elseif (zn == 29) then
     bubble(HERO1,"Ten reasons why you should never",
                  "call a wizard 'pencil-neck'.","","");
+
+  elseif (zn == 30) then
+    touch_fire(get_pidx(0));
+
+  elseif (zn == 31) then
+    bubble(HERO1,"Locked.","","","");
 
   end
 end

@@ -8,40 +8,40 @@ function refresh()
   local a;
 
   if (get_treasure(33) == 1) then
-    set_ftile(76,7,65);
+    set_mtile(76,7,65);
   end
   if (get_treasure(34) == 1) then
-    set_ftile(77,6,65);
+    set_mtile(77,6,65);
   end
   if (get_treasure(35) == 1) then
-    set_ftile(79,4,65);
+    set_mtile(79,4,65);
   end
   if (get_treasure(36) == 1) then
-    set_ftile(80,3,65);
+    set_mtile(80,3,65);
   end
   if (get_treasure(37) == 1) then
-    set_ftile(79,7,65);
+    set_mtile(79,7,65);
   end
   if (get_treasure(38) == 1) then
-    set_ftile(81,7,65);
+    set_mtile(81,7,65);
   end
   if (get_treasure(39) == 1) then
-    set_ftile(81,6,65);
+    set_mtile(81,6,65);
   end
   if (get_treasure(40) == 1) then
-    set_ftile(81,5,65);
+    set_mtile(81,5,65);
   end
   if (get_treasure(41) == 1) then
-    set_ftile(83,7,65);
+    set_mtile(83,7,65);
   end
   if (get_treasure(42) == 1) then
-    set_ftile(83,6,65);
+    set_mtile(83,6,65);
   end
   if (get_treasure(43) == 1) then
-    set_ftile(83,4,65);
+    set_mtile(83,4,65);
   end
   if (get_treasure(44) == 1) then
-    set_ftile(85,22,65);
+    set_mtile(85,22,65);
   end
   if (get_progress(P_DRAGONDOWN) == 1) then
     for a=12,16,1 do

@@ -7,7 +7,7 @@ end
 
 function refresh()
   if (get_treasure(0) == 1) then
-    set_ftile(63,27,265);
+    set_mtile(63,27,265);
   end
   if (get_progress(P_START) == 0) then
     set_progress(P_START,1);
@@ -93,6 +93,9 @@ function zone_handler(zn)
 
   elseif (zn == 23) then
     door_out(37,56);
+
+  elseif (zn == 24) then
+    touch_fire(get_pidx(0));
 
   end
 end
