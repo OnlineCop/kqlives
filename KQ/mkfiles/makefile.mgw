@@ -47,7 +47,7 @@ OBJDIR         := $(OBJ_DIR)/mingw
 #                                                                             #
 ifdef STATICLINK
 COMPILER_FLAGS += -DALLEGRO_STATICLINK
-LIBRARY := alleg_s gdi32 user32 ole32 dinput ddraw dxguid winmm dsound
+LIBRARY += alleg_s gdi32 user32 ole32 dinput ddraw dxguid winmm dsound
 else
 LIBRARY += $(ALLEGRO)
 endif
