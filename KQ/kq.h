@@ -1,0 +1,306 @@
+/*
+   KQ is Copyright (C) 2002 - Josh Bolduc
+
+   This file is part of KQ... a freeware RPG.
+
+   KQ is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published
+   by the Free Software Foundation; either version 2, or (at your
+   option) any later version.
+
+   KQ is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with KQ; see the file COPYING.  If not, write to
+   the Free Software Foundation,
+       675 Mass Ave, Cambridge, MA 02139, USA.
+*/
+
+#ifndef __KQ_H
+#define __KQ_H
+
+#include "allegro.h"
+#include "entity.h"
+
+#define MAX_TILES        1024
+#define MAXE             40
+#define MAX_ANIM         5
+#define MAXCHRS          8
+#define PSIZE            2
+#define MAXFRAMES        12
+#define MAXEFRAMES       12
+#define MAXCFRAMES       8
+#define NUM_FIGHTERS     7
+#define MISS             9999
+#define NODISPLAY        9998
+#define SEL_ALL_ALLIES   9997
+#define SEL_ALL_ENEMIES  9996
+#define SCANALL          9995
+#define NO_STS_CHECK     9994
+#define CURE_CHECK       9993
+#define MAX_SHADOWS      12
+#define MAX_INV          64
+#define STEPS_NEEDED     15
+
+#define DATA_DIR       "data/"
+#define MAP_DIR        "maps/"
+#define SAVE_DIR       "saves/"
+#define MUSIC_DIR      "music/"
+#define SCRIPT_DIR     "scripts/"
+#define PCX_DATAFILE   "data/mpcx.dat"
+#define SPELL_DATAFILE "data/ssprites.dat"
+#define SOUND_DATAFILE "data/kqsnd.dat"
+
+#define set_btile(tx,ty,t) map_seg[ty*g_map.xsize+tx] = t
+#define set_mtile(tx,ty,t) b_seg[ty*g_map.xsize+tx] = t
+#define set_ftile(tx,ty,t) f_seg[ty*g_map.xsize+tx] = t
+#define set_zone(tx,ty,t) z_seg[ty*g_map.xsize+tx] = t
+#define set_obs(tx,ty,t) o_seg[ty*g_map.xsize+tx] = t
+#define set_shadow(tx,ty,t) s_seg[ty*g_map.xsize+tx] = t
+
+#define A_STR 0
+#define A_AGI 1
+#define A_VIT 2
+#define A_INT 3
+#define A_SAG 4
+#define A_SPD 5
+#define A_AUR 6
+#define A_SPI 7
+#define A_ATT 8
+#define A_HIT 9
+#define A_DEF 10
+#define A_EVD 11
+#define A_MAG 12
+
+#define S_POISON   0
+#define S_BLIND    1
+#define S_CHARM    2
+#define S_STOP     3
+#define S_STONE    4
+#define S_MUTE     5
+#define S_SLEEP    6
+#define S_DEAD     7
+#define S_MALISON  8
+#define S_RESIST   9
+#define S_TIME     10
+#define S_SHIELD   11
+#define S_BLESS    12
+#define S_STRENGTH 13
+#define S_ETHER    14
+#define S_TRUESHOT 15
+#define S_REGEN    16
+#define S_INFUSE   17
+
+#define C_ATTACK   1
+#define C_COMBO    2
+#define C_SPELL    3
+#define C_SKILL    4
+#define C_DEFEND   5
+#define C_INVOKE   6
+#define C_ITEM     7
+#define C_RUN      8
+
+#define R_EARTH     0
+#define R_BLACK     1
+#define R_FIRE      2
+#define R_THUNDER   3
+#define R_AIR       4
+#define R_WHITE     5
+#define R_WATER     6
+#define R_ICE       7
+#define R_POISON    8
+#define R_BLIND     9
+#define R_CHARM     10
+#define R_PARALYZE  11
+#define R_PETRIFY   12
+#define R_SILENCE   13
+#define R_SLEEP     14
+#define R_TIME      15
+#define R_NONE      16
+
+#define W_BASH         0
+#define W_MACE         1
+#define W_HAMMER       2
+#define W_SWORD        3
+#define W_AXE          4
+#define W_KNIFE        5
+#define W_SPEAR        6
+#define W_ROD          7
+#define W_STAFF        8
+#define W_SBOOK        27
+#define W_ABOOK        28
+#define W_CHENDIGAL    29
+
+#define USE_NOT          0
+#define USE_ANY_ONCE     1
+#define USE_ANY_INF      2
+#define USE_CAMP_ONCE    3
+#define USE_CAMP_INF     4
+#define USE_COMBAT_ONCE  5
+#define USE_COMBAT_INF   6
+#define USE_ATTACK       7
+#define USE_IMBUED       8
+
+#define TGT_CASTER        -1
+#define TGT_NONE          0
+#define TGT_ALLY_ONE      1
+#define TGT_ALLY_ONEALL   2
+#define TGT_ALLY_ALL      3
+#define TGT_ENEMY_ONE     4
+#define TGT_ENEMY_ONEALL  5
+#define TGT_ENEMY_ALL     6
+
+#define MOVE_NOT     0
+#define MOVE_DOWN    1
+#define MOVE_UP      2
+#define MOVE_LEFT    3
+#define MOVE_RIGHT   4
+
+#define FACE_DOWN    0
+#define FACE_UP      1
+#define FACE_LEFT    2
+#define FACE_RIGHT   3
+
+#define MAP_MAIN           0
+#define MAP_MANOR          1
+#define MAP_TOWN1          2
+#define MAP_CAVE1          3
+#define MAP_TOWN2          4
+#define MAP_BRIDGE         5
+#define MAP_TOWN3          6
+#define MAP_GROTTO         7
+#define MAP_CAVE2          8
+#define MAP_FORT           9
+#define MAP_CAVE3A         10
+#define MAP_CAVE3B         11
+#define MAP_TEMPLE1        12
+#define MAP_TEMPLE2        13
+#define MAP_STARTING       14
+#define MAP_TOWER          15
+#define MAP_GROTTO2        16
+#define MAP_TOWN4          17
+#define MAP_CAMP           18
+#define MAP_ESTATE         19
+#define MAP_TOWN5          20
+#define MAP_GUILD          21
+#define MAP_DVILLE         22
+#define MAP_COLISEUM       23
+#define MAP_CAVE4          24
+#define MAP_TOWN6          25
+#define MAP_PASS           26
+#define MAP_TOWN7          27
+#define MAP_CULT           28
+
+typedef struct
+{
+  unsigned short start, end, delay;
+} s_anim;
+
+typedef struct
+{
+  unsigned char map_no, zero_zone, map_mode, can_save;
+  unsigned char tileset, use_sstone, can_warp, extra_byte;
+  int xsize,ysize;
+  int pmult,pdiv;
+  int stx,sty;
+  int warpx,warpy;
+  int extra_sdword1,extra_sdword2;
+  char song_file[16];
+  char map_desc[40];
+} s_map;
+
+typedef struct
+{
+  char name[9];
+  int xp,next,lvl,mrp;
+  int hp,mhp,mp,mmp;
+  int stats[13];
+  char res[16];
+  unsigned char sts[24];
+  unsigned char eqp[6];
+  unsigned char spells[60];
+} s_player;
+
+typedef struct
+{
+  char name[25];
+  int xp,gp,lvl;
+  int cx,cy,cw,cl;
+  int hp,mhp,mp,mmp;
+  int dip,ditmc,ditmr,sitmc,sitmr;
+  int stats[13];
+  char res[16];
+  unsigned char facing,aframe,crit;
+  unsigned char sts[24],defend;
+  unsigned char ai[8],aip[8],atrack[8];
+  int csmem,ctmem,cwt,welem,unl;
+  int aux,bonus,bstat,mrp,imb_s,imb_a,imb[2];
+} s_fighter;
+
+void my_counter(void);
+void readcontrols(void);
+void data_dump(void);
+void calc_viewport(int);
+void change_map(char *,int,int,int,int);
+void zone_check(void);
+void warp(int,int,int);
+void check_animation(void);
+void activate(void);
+void unpress(void);
+void wait_enter(void);
+void startup(void);
+void load_data(void);
+void allocate_stuff(void);
+BITMAP *alloc_bmp(int,int,char *);
+void deallocate_stuff(void);
+void klog(char *);
+void init_players(void);
+void load_portraits(void);
+void kwait(int);
+void wait_for_entity(int,int);
+void program_death(char *);
+int in_party(int);
+
+extern char curmap[16];
+extern int right,left,up,down,besc,benter,balt,bctrl;
+extern int kright,kleft,kup,kdown,kesc,kenter,kalt,kctrl,jbalt,jbctrl,jbenter,jbesc;
+extern int vx,vy,mx,my,steps,lastm[PSIZE];;
+extern BITMAP *double_buffer, *map_icons[MAX_TILES];
+extern BITMAP *back, *tc, *tc2, *bub[8], *b_shield, *b_shell, *b_repulse, *b_mp;
+extern BITMAP *cframes[NUM_FIGHTERS][MAXCFRAMES], *tcframes[NUM_FIGHTERS][MAXCFRAMES], *frames[MAXCHRS][MAXFRAMES];
+extern BITMAP *eframes[MAXE][MAXEFRAMES], *pgb[9], *sfonts[5], *bord[8];
+extern BITMAP *menuptr, *mptr, *sptr, *stspics, *sicons, *bptr, *missbmp, *noway, *upptr, *dnptr;
+extern BITMAP *shadow[MAX_SHADOWS];
+extern unsigned short *map_seg, *b_seg, *f_seg;
+extern unsigned char *progress, *z_seg, *s_seg, *o_seg, *treasure;
+extern BITMAP *kfonts, *portrait[MAXCHRS];
+extern s_map g_map;
+extern s_entity g_ent[MAX_ENT+PSIZE];
+extern s_anim tanim[6][MAX_ANIM];
+extern s_anim adata[MAX_ANIM];
+extern int noe,pidx[PSIZE],numchrs,gp,xofs,yofs,gsvol,gmvol;
+extern unsigned char autoparty,autofollow,alldead,is_sound,deadeffect,vfollow,use_sstone;
+extern unsigned char kq_version,hold_fade,cansave,skip_intro,wait_retrace,windowed,stretch_view;
+extern unsigned short tilex[MAX_TILES], adelay[MAX_ANIM];
+extern char *strbuf;
+extern s_player party[MAXCHRS],players[MAXCHRS];
+extern s_fighter fighter[NUM_FIGHTERS];
+extern s_fighter tempa,tempd;
+extern int noi,shin[12],dct;
+extern char sname[39],ctext[39];
+extern volatile int timer,ksec,kmin,khr,timer_count;
+extern unsigned short lup[MAXCHRS][20];
+extern COLOR_MAP cmap;
+extern unsigned char can_run,display_desc;
+extern unsigned char draw_background,draw_middle,draw_foreground,draw_shadow;
+extern unsigned short g_inv[MAX_INV][2];
+extern int view_x1,view_y1,view_x2,view_y2,view_on,in_combat;
+extern int frate,mfrate,show_frate,use_joy,cheat_loaded;
+
+extern int cheat;
+extern int warx,wary;
+
+#endif
