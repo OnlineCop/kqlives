@@ -1,4 +1,4 @@
--- starting - various pieces of heroe's homes back in Antoria
+-- "starting - various pieces of heroes' homes back in Antoria"
 
 function autoexec()
   if (get_progress(P_SKIPINTRO) == 0) then

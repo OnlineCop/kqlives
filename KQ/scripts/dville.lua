@@ -1,4 +1,4 @@
--- dville - Denorian village southeast of Oracle's tower
+-- "dville - Denorian village southeast of Oracle's tower"
 
 function autoexec()
   return

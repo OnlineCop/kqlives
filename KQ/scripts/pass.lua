@@ -1,4 +1,4 @@
--- pass - Karnok's pass, between Sunarin and Pulcannen
+-- "pass - Karnok's pass, between Sunarin and Pulcannen"
 
 function autoexec()
   refresh();

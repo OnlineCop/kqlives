@@ -1,4 +1,4 @@
--- tower - Oracle's tower, southwest of mountain fort
+-- "tower - Oracle's tower, southwest of mountain fort"
 
 function autoexec()
   refresh();
@@ -152,8 +152,7 @@ end
 
 function zone_handler(zn)
   if (zn == 0) then
-    combat(54);
-
+--    combat(54);
   elseif (zn == 1) then
     if (get_progress(P_ORACLE) > 0) then
       set_progress(P_TOWEROPEN,0);

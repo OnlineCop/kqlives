@@ -1,4 +1,4 @@
--- manor - Nostik's manor southwest of Ekla
+-- "manor - Nostik's manor southwest of Ekla"
 
 function autoexec()
   local a;

@@ -1,4 +1,4 @@
--- cave3b - second part of cave on way to Oracle's tower
+-- "cave3b - second part of cave on way to Oracle's tower"
 
 function autoexec()
   refresh();
