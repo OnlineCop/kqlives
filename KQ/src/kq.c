@@ -656,9 +656,15 @@ void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
 
    for (i = 0; i < numchrs; i++)
      {
+        /* This allows us to either go to the map's default starting coords
+         * or specify exactly where on the map to go to (like when there
+         * are stairs or a doorway that they should start at).
+        */
         if (msx == 0 && msy == 0)
+           // Place players at default map starting coords
            place_ent (i, g_map.stx, g_map.sty);
         else
+           // Place players at specific coordinates in the map
            place_ent (i, msx, msy);
 
         lastm[i] = 0;
@@ -1675,29 +1681,39 @@ END_OF_MAIN ();
  *
  * The treasure chests are allocated in this way:
  * - 0: town1
- * - 2: cave1
+ * - 1..2: cave1
  * - 3..5: town2
+ * - 6: town1
  * - 7: town2
  * - 8: bridge
- * - 9..10: town2
- * - 12: town3
+ * - 9..11: town2
+ * - 12..14: town3
  * - 15: grotto
+ * - 16: cave2
  * - 17..19: cave3a
  * - 20: cave3b
  * - 21..30: temple2
+ * - 31: town2
  * - 32: town5
  * - 33..44: tower
  * - 45: town1
+ * - 46: town2
+ * - 47: guild
  * - 48..49: grotto2
+ * - 50: guild
+ * - 51..53: town4
+ * - 54: estate
  * - 55..61: camp
  * - 62..66: cave4
+ * - 67..69: town6
  * - 70: town6
- * - 72: town7
+ * - 71..72: town7
  * - 73..74: pass
  * - 75..79: cult
  * - 80: grotto
  * - 81: town4
  * - 82..83: pass
+ * - 
  * - 90..96: cave5
  * 
  * The names given are the base names of the maps/lua scripts

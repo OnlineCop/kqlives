@@ -9,42 +9,44 @@ void init_entities (void)
 {
    int p;
 
+   // Clear all entities' personalities
    for (p = 0; p < 50; p++)
      {
-        gent[p].chrx = 0;
-        gent[p].x = 0;
-        gent[p].y = 0;
-        gent[p].tilex = 0;
-        gent[p].tiley = 0;
-        gent[p].id = 0;
-        gent[p].active = 0;
-        gent[p].facing = 0;
-        gent[p].moving = 0;
-        gent[p].movcnt = 0;
-        gent[p].framectr = 0;
-        gent[p].movemode = 0;
-        gent[p].obsmode = 0;
-        gent[p].delay = 0;
-        gent[p].delayctr = 0;
-        gent[p].speed = 0;
+        gent[p].chrx = 0;  // Entity's identity (what s/he looks like)
+        gent[p].x = 0;  // x-coord on map
+        gent[p].y = 0;  // y-coord on map
+        gent[p].tilex = 0; // x-coord tile that entity is standing on
+        gent[p].tiley = 0; // y-coord tile that entity is standing on
+        gent[p].id = 0; // Entity type (fighter, enemy, normal)
+        gent[p].active = 0;   // "Alive" or not
+        gent[p].facing = 0;   // Direction
+        gent[p].moving = 0;   // In the middle of a move
+        gent[p].movcnt = 0;   // How far along the move entity is
+        gent[p].framectr = 0; // Counter for determining animation frame
+        gent[p].movemode = 0; // Stand, wander, script or chasing
+        gent[p].obsmode = 0;  // Determine if affected by obstacles or not
+        gent[p].delay = 0; // Movement delay (between steps)
+        gent[p].delayctr = 0; // Counter for movement delay
+        gent[p].speed = 0; // How hyperactive the entity is
         gent[p].scount = 0;
+        gent[p].cmd = 0;   // Move/Wait/Facing command
+        gent[p].sidx = 0;  // Script ID number
         gent[p].extra = 0;
-        gent[p].cmd = 0;
-        gent[p].sidx = 0;
-        gent[p].cmdnum = 0;
-        gent[p].chasing = 0;
+        gent[p].chasing = 0;  // Entity is following another
+        gent[p].cmdnum = 0;   // Number of times we need to repeat 'cmd'
         gent[p].atype = 0;
-        strcpy (gent[p].script, "");
+        strcpy (gent[p].script, "");   // Movement script (pacing, etc.)
      }
-   noe=0;
+   noe = 0;
 }
 
 
-// Move the entities
+// Adjust location of all entities
 void displace_entities (void)
 {
    int ld, nx, ny, a;
 
+   // Draw a box and ask for x-coord adjustment
    rectfill (screen, 0, 0, 319, 29, 0);
    rect (screen, 2, 2, 317, 27, 255);
    print_sfont (6, 6, "Displace entities", screen);
@@ -53,6 +55,8 @@ void displace_entities (void)
    if (ld == 0)
       return;
    nx = atoi (strbuf);
+
+   // Clear the box and ask for y-coord adjustment
    rectfill (screen, 0, 0, 319, 29, 0);
    rect (screen, 2, 2, 317, 27, 255);
    print_sfont (6, 6, "Displace entities", screen);
@@ -62,6 +66,7 @@ void displace_entities (void)
       return;
    ny = atoi (strbuf);
 
+   // This moves all the entities
    for (a = 0; a < noe; a++)
      {
         // Confirm that the input x-coords are within the map
@@ -94,6 +99,7 @@ void place_entity (int ex, int ey)
         a++;
         a--;
      }
+   // Set its personality
    gent[noe].chrx = cent;
    gent[noe].tilex = ex;
    gent[noe].tiley = ey;

@@ -43,6 +43,14 @@ void new_map (void)
    char fname[16];   // Map name
    int response, ld, p, q, ai = 0;
 
+   rectfill (screen, 0, 0, 319, 29, 0);
+   rect (screen, 2, 2, 317, 27, 255);
+   print_sfont (6, 6, "New map", screen);
+   print_sfont (6, 18, "Width: ", screen);
+   ld = get_line (48, 18, strbuf, 4);
+   if (ld == 0)
+      return;
+
    gmap.map_no = 0;
    gmap.zero_zone = 0;
 
@@ -56,13 +64,7 @@ void new_map (void)
    gmap.map_desc[0] = 0;
    gmap.stx = 0;
    gmap.sty = 0;
-   rectfill (screen, 0, 0, 319, 29, 0);
-   rect (screen, 2, 2, 317, 27, 255);
-   print_sfont (6, 6, "New map", screen);
-   print_sfont (6, 18, "Width: ", screen);
-   ld = get_line (48, 18, strbuf, 4);
-   if (ld == 0)
-      return;
+
    ai = atoi (strbuf);
    if (ai < 20 || ai > 640)
      {

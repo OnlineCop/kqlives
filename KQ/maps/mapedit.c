@@ -250,7 +250,7 @@ void process_controls (void)
           }
         if (k == KEY_W) // Clear contents of current map
            wipe_map ();
-        if (k == KEY_D) // Move (displace) location of entities
+        if (k == KEY_D) // Move (displace) location of all entities on map
            displace_entities ();
         if (k == KEY_E) // Empty the contents of the clipboard
            clipb = 0;
@@ -258,10 +258,15 @@ void process_controls (void)
            resize_map ();
         if (k == KEY_J) // Copy Layers 1, 2, 3 to mini PCX images
            maptopcx ();
-        if (k == KEY_F1)   // Load a saved map
-           load_map ();
-        if (k == KEY_F2)   // Create new map, lets you choose the tileset
+        if (k == KEY_L) // Set Zone to Last Zone
+           curzone = check_last_zone () + 1;
+
+        if (k == KEY_N) // Create new map, lets you choose the tileset
            new_map ();
+        if (k == KEY_F1)   // Show help
+           show_help();
+        if (k == KEY_F2)   // Load a saved map
+           load_map ();
         if (k == KEY_F3)   // Save the map you are working on
            save_map ();
         if (k == KEY_F4)   // Erase an entire layer from the map
@@ -1027,11 +1032,8 @@ void draw_menubars (void)
                 gmap.use_sstone == 0 ? "SunStone: NO" : "SunStone: YES",
                 double_buffer);
 
-   // Count and display the maximum Zone Attributes on the map
-   a = 0;
-   for (p = 0; p < gmap.xsize * gmap.ysize; p++)
-      if (z_map[p] > a)
-         a = z_map[p];
+   // Count Zone Attributes on map
+   a = check_last_zone ();
    sprintf (strbuf, "Last zone: %d", a);
    print_sfont (160, (SH - 10), strbuf, double_buffer);
 
@@ -1066,65 +1068,72 @@ void draw_menubars (void)
    print_sfont ((SW - 72), 164, "Mode:", double_buffer);
 
 // TT hack:
-// Since I haven't been able to remember the algorythm, this hack will do...
 /* { */ // <-- This brace is just to help localize the 'hack code'
 
-int draw_mode_display = 0;
-switch (draw_mode)
-  {
-     case MAP_LAYER1:
-        draw_mode_display = 0;
-        break;
-     case MAP_LAYER2:
-        draw_mode_display = 1;
-        break;
-     case MAP_LAYER3:
-        draw_mode_display = 2;
-        break;
-     case MAP_LAYER12:
-        draw_mode_display = 3;
-        break;
-     case MAP_LAYER13:
-        draw_mode_display = 4;
-        break;
-     case MAP_LAYER23:
-        draw_mode_display = 5;
-        break;
-     case MAP_LAYER123:
-        draw_mode_display = 6;
-        break;
-     case MAP_SHADOWS:
-        draw_mode_display = 7;
-        break;
-     case MAP_ZONES:
-        draw_mode_display = 8;
-        break;
-     case MAP_OBSTACLES:
-        draw_mode_display = 9;
-        break;
-     case MAP_ENTITIES:
-        draw_mode_display = 10;
-        break;
-     case BLOCK_COPY:
-        draw_mode_display = 11;
-        break;
-     case BLOCK_PASTE:
-        draw_mode_display = 12;
-        break;
-     case GRAB_TILE:
-        draw_mode_display = 13;
-        break;
-     default:
-        draw_mode_display = 0;
-        break;
-  }
-   print_sfont ((SW - 66), 170, dt[draw_mode_display], double_buffer);
+   int draw_mode_display = 0;
+   switch (draw_mode)
+     {
+        case MAP_LAYER1:
+           draw_mode_display = 0;
+           break;
+        case MAP_LAYER2:
+           draw_mode_display = 1;
+           break;
+        case MAP_LAYER3:
+           draw_mode_display = 2;
+           break;
+        case MAP_LAYER12:
+           draw_mode_display = 3;
+           break;
+        case MAP_LAYER13:
+           draw_mode_display = 4;
+           break;
+        case MAP_LAYER23:
+           draw_mode_display = 5;
+           break;
+        case MAP_LAYER123:
+           draw_mode_display = 6;
+           break;
+        case MAP_SHADOWS:
+           draw_mode_display = 7;
+           break;
+        case MAP_ZONES:
+           draw_mode_display = 8;
+           break;
+        case MAP_OBSTACLES:
+           draw_mode_display = 9;
+           break;
+        case MAP_ENTITIES:
+           draw_mode_display = 10;
+           break;
+        case BLOCK_COPY:
+           draw_mode_display = 11;
+           break;
+        case BLOCK_PASTE:
+           draw_mode_display = 12;
+           break;
+        case GRAB_TILE:
+           draw_mode_display = 13;
+           break;
+        default:
+           draw_mode_display = 0;
+           break;
+     }
+      print_sfont ((SW - 66), 170, dt[draw_mode_display], double_buffer);
 #if 0
-   print_sfont ((SW - 66), 170, dt[draw_mode], double_buffer);
+/* Okay, this is how the conversion works:
+     log(draw_mode) / log(2)
+   Of course, we need to make it display correctly:
+     (int)(ceil(log(draw_mode) / log(2)))
+   The only problem that we have is of: LAYER12, LAYER13, LAYER23, LAYER123
+   So, after much fussing over it, I decided to keep it as-is above
+*/
+      print_sfont ((SW - 66), 170, dt[(int)(ceil(log(draw_mode) / log(2)))], double_buffer);
 #endif
 
-// TT: end hack
 /* } */
+// TT: end hack
+
    // Display icon set and selected tile
    sprintf (strbuf, "#%d(%d)", icon_set, curtile);
    print_sfont ((SW - 72), 176, strbuf, double_buffer);
@@ -1318,8 +1327,10 @@ void clear_obstructs (void)
 {
    int co;
 
-   for (co = 0; co < gmap.xsize * gmap.ysize; co++)
-      o_map[co] = 0;
+   cmessage ("Do you want to clear Obstructions? (y/n)");
+   if (yninput ())
+      for (co = 0; co < gmap.xsize * gmap.ysize; co++)
+         o_map[co] = 0;
 }
 
 
@@ -1328,8 +1339,10 @@ void clear_shadows (void)
 {
    int co;
 
-   for (co = 0; co < gmap.xsize * gmap.ysize; co++)
-      s_map[co] = 0;
+   cmessage ("Do you want to clear Shadows? (y/n)");
+   if (yninput ())
+      for (co = 0; co < gmap.xsize * gmap.ysize; co++)
+         s_map[co] = 0;
 }
 
 
@@ -1556,6 +1569,84 @@ void cleanup (void)
 void wait_enter (void)
 {
    while ((readkey () >> 8) != KEY_ENTER);
+}
+
+
+// Handy-dandy help screen
+void show_help (void)
+{
+   #define NUMBER_OF_ITEMS 54
+
+   char *help_keys[NUMBER_OF_ITEMS] =
+     {
+      "               THIS IS THE HELP DIALOG               ",
+      "",
+      "F2 . . . . . . . . . . . . . . . . . . . . . Load Map",
+      "F3 . . . . . . . . . . . . . . . . . . . . . Save Map",
+      "N  . . . . . . . . . . . . . . . . . . . . .  New Map",
+      "R  . . . . . . . . . . . . . . . . . . . . Resize Map",
+      "",
+      "1  . . . . . . . . . . . . . . . . . . . Layer 1 Mode",
+      "2  . . . . . . . . . . . . . . . . . . . Layer 2 Mode",
+      "3  . . . . . . . . . . . . . . . . . . . Layer 3 Mode",
+      "4  . . . . . . . . . . . . . . . . .  View Layers 1+2",
+      "5  . . . . . . . . . . . . . . . . .  View Layers 1+3",
+      "6  . . . . . . . . . . . . . . . . .  View Layers 2+3",
+      "7  . . . . . . . . . . . . . . . .  View Layers 1+2+3",
+      "A  . . . . . . . . . . . View all Layers + Attributes",
+      "C  . . . . . . . . . View Layers 1-3 + S/E Attributes",
+      "",
+      "G  . . . . . . . . . . . . . . . . . . . .  Grab Tile",
+      "L  . . . . . . . . . . . . . . . . . . . . Last Layer",
+      "",
+      "F11  . . . . . . . . . . . . . . . . . .  Entity Mode",
+      "O  . . . . . . . . . . . . . . . . . .  Obstacle Mode",
+      "S  . . . . . . . . . . . . . . . . . . .  Shadow Mode",
+      "Z  . . . . . . . . . . . . . . . . . . . .  Zone Mode",
+      "T  . . . . . . . . . . . . . . . . .  Block Copy Mode",
+      "P  . . . . . . . . . . . . . . . . . Block Paste Mode",
+      "ESC  . . . . . . . . . . . . . . .  Cancel Block Copy",
+      "",
+      "-/+  . . . . . . . . . . . . . . . . Modify Selection",
+      "F12  . . . . . . . . . . . . . . . Modify Entity Mode",
+      "D  . . . . . . . . . . . . . . . .  Displace Entities",
+      "F10  . . . . . . . . . . . . .  Enter Map Description",
+      "",
+      "F4 . . . . . . . . . . . . . . . . . . .  Clear Layer",
+      "F7 . . . . . . . . . . . . . . . . Clear Obstructions",
+      "F8 . . . . . . . . . . . . . . . . . .  Clear Shadows",
+      "W  . . . . . . . . . . . . . . . . . . . .  Clear Map",
+      "",
+      "F5 . . . . . . . . . . . . . . . .  Make Map from PCX",
+      "J  . . . . . . . . . . . . . . . . Copy Layers to PCX",
+      "F6 . . . . . . . . . . . . . .  Copy instance of Tile",
+      "F9 . . . . . . . . . . . . . . .  Copy Layer to Layer",
+      "",
+      "F1 . . . . . . . . . . . . . . . . . . This Help Menu",
+      "Q  . . . . . . . . . . . . . . . . . . . . . . . Quit",
+      "",
+      "TAB  . . . . . . . . . . . . . .  Move 1 screen right",
+      "BACKSPACE  . . . . . . . . . . . . Move 1 screen left",
+      "PGUP . . . . . . . . . . . . . . . . Move 1 screen up",
+      "PGDN . . . . . . . . . . . . . . . Move 1 screen down",
+      "HOME . . . . . . . . . . . Move to the top of the map",
+      "END  . . . . . . . . . . . Move to the end of the map",
+      "",
+      "                [PRESS ESC OR ENTER]                 "
+   };
+
+   rectfill (screen, (19 * 6) - 5, 30, (54 * 8) + 5,
+             NUMBER_OF_ITEMS * 7 + 40, 0);
+   rect (screen, (19 * 6) - 3, 32, (54 * 8) + 3, (NUMBER_OF_ITEMS * 7) + 38,
+         255);
+
+   int this_counter = 0;
+   for (this_counter = 0; this_counter < NUMBER_OF_ITEMS; this_counter++) {
+      sprintf (strbuf, "%s", help_keys[this_counter]);
+      print_sfont (19*6, (this_counter * 7) + 35, strbuf, screen);
+   }
+   while(!key[KEY_ENTER] && !key[KEY_ESC]);
+
 }
 
 
@@ -1847,13 +1938,8 @@ void resize_map (void)
 // Clear the contents of a map
 void wipe_map (void)
 {
-   int r;   // Response
-
-   rectfill (screen, 0, 0, 319, 17, 0);
-   rect (screen, 2, 2, 317, 15, 255);
-   print_sfont (6, 6, "Really clear the whole map? (y/n)", screen);
-   r = yninput ();
-   if (r)
+   cmessage ("Do you want to clear the whole map? (y/n)");
+   if (yninput ())
      {
         memset (map, 0, gmap.xsize * gmap.ysize * 2);
         memset (b_map, 0, gmap.xsize * gmap.ysize * 2);
@@ -1978,4 +2064,14 @@ void update_tileset (void)
          blit (pcx_buffer, icons[tmapy * 20 + tmapx], tmapx * 16, tmapy * 16, 0, 0, 16, 16);
    icon_set = 0;
    destroy_bitmap (pcx_buffer);
+}
+
+// Count and display the maximum Zone Attributes on the map
+int check_last_zone (void)
+{
+   int a = 0, p;
+   for (p = 0; p < gmap.xsize * gmap.ysize; p++)
+      if (z_map[p] > a)
+         a = z_map[p];
+   return a;
 }

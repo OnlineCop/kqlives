@@ -34,26 +34,33 @@
 
 typedef struct
 {
-   unsigned char chrx;
-   unsigned short x, y;
-   unsigned short tilex, tiley;
-   unsigned char id;
-   unsigned char active;
-   unsigned char facing;
-   unsigned char moving, movcnt;
-   unsigned char framectr;
-   unsigned char movemode;
-   unsigned char obsmode;
-   unsigned char delay, delayctr;
-   unsigned char speed, scount;
-   unsigned char cmd, sidx;
-   unsigned char extra, chasing;
-   int cmdnum;
+   unsigned char chrx;  // Entity's identity (what s/he looks like)
+   unsigned short x; // x-coord on map
+   unsigned short y; // y-coord on map
+   unsigned short tilex;   // x-coord tile that entity is standing on
+   unsigned short tiley;   // y-coord tile that entity is standing on
+   unsigned char id; // Entity type (fighter, enemy, normal)
+   unsigned char active;   // "Alive/Showing on map" or not
+   unsigned char facing;   // Direction
+   unsigned char moving;   // In the middle of a move
+   unsigned char movcnt;   // How far along the move entity is
+   unsigned char framectr; // Counter for determining animation frame
+   unsigned char movemode; // Stand, wander, script or chasing
+   unsigned char obsmode;  // Determine if affected by obstacles or not
+   unsigned char delay; // Movement delay (between steps)
+   unsigned char delayctr; // Counter for movement delay
+   unsigned char speed; // How hyperactive the entity is
+   unsigned char scount;
+   unsigned char cmd;   // Move/Wait/Facing command
+   unsigned char sidx;  // Script ID number
+   unsigned char extra;
+   unsigned char chasing;  // Entity is following another
+   int cmdnum; // Number of times we need to repeat 'cmd'
    unsigned char atype;
-   unsigned char snapback;
-   unsigned char facehero;
-   unsigned char transl;
-   char script[60];
+   unsigned char snapback; // Snaps back to direction previously facing
+   unsigned char facehero; // Look at player when talked to
+   unsigned char transl;   // Entity is see-through or not
+   char script[60];  // Movement/action script (pacing, etc.)
 }
 s_entity;
 
@@ -122,6 +129,8 @@ void clear_layer (void);
 void print_sfont (int, int, char *, BITMAP *);
 void getfont (void);
 void update_tileset (void);
+void show_help (void);
+int check_last_zone (void);
 
 extern unsigned short *map, *b_map, *f_map, *c_map, *cf_map, *cb_map;
 extern unsigned char *z_map, *cz_map, *s_map, *cs_map, *o_map, *co_map;
