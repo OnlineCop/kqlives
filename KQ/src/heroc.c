@@ -671,6 +671,9 @@ static int hero_invoke (int whom)
  *
  * Invoke the specified item according to target.
  * Calls select_hero or select_enemy as required.
+ * \note Includes fix for bug (SF.net) "#858657 Iron Rod Multiple Target Fizzle"
+ *       aka (Debian) "#224521 Multitargeting with iron rod crashes"
+ *       submitted by Sam Hocevar
  *
  * \param   whom Index of target in Hero's party
  * \param   eno Item that is being invoked
@@ -711,10 +714,12 @@ static int hero_invokeitem (int whom, int eno)
       strcpy (ctext, "Magic Missiles");
       dct = 1;
       for (a = 0; a < b; a++) {
-         if (fighter[tg].sts[S_DEAD] == 0) {
+         if (tg == SEL_ALL_ENEMIES)
+            draw_attacksprite (PSIZE, 1, 4, 1);
+         else
             draw_attacksprite (tg, 0, 4, 1);
-            special_damage_oneall_enemies (whom, 16, -1, tg, 0);
-         }
+
+         special_damage_oneall_enemies (whom, 16, -1, tg, 0);
       }
       dct = 0;
    }
