@@ -78,7 +78,7 @@ s_item;
 /*! \brief A spell */
 typedef struct
 {
-   char name[13];
+   char name[14];
    unsigned char icon;
    char desc[26];
    unsigned char stat;
