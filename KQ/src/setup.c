@@ -188,7 +188,9 @@ void parse_setup (void)
         if (!strcmp (strbuf, "downkey"))
           {
              fscanf (s, "%s", strbuf);
-             kup = atoi (strbuf);
+             /* TT: huh?! */
+             // kup = atoi (strbuf);
+             kdown = atoi(strbuf);
           }
         if (!strcmp (strbuf, "sysmenukey"))
           {
@@ -226,6 +228,8 @@ void parse_setup (void)
 void config_menu (void)
 {
    int stop = 0, ptr = 0, rd = 1, p;
+   int temp_key = 0;
+
    char dc[16][40] = {
       "Display KQ in a window.",
       "Stretch to fit 640x480 resolution.",
@@ -468,36 +472,52 @@ void config_menu (void)
                      wait_retrace = 0;
                   break;
                case 4:
-                  kup = getakey ();
+                  while ((temp_key = getakey ()) == 0);
+                  kup = temp_key;
                   unpress ();
+                  temp_key = 0;
                   break;
                case 5:
-                  kdown = getakey ();
+                  while ((temp_key = getakey ()) == 0);
+                  kdown = temp_key;
                   unpress ();
+                  temp_key = 0;
                   break;
                case 6:
-                  kleft = getakey ();
+                  while ((temp_key = getakey ()) == 0);
+                  kleft = temp_key;
                   unpress ();
+                  temp_key = 0;
                   break;
                case 7:
-                  kright = getakey ();
+                  while ((temp_key = getakey ()) == 0);
+                  kright = temp_key;
                   unpress ();
+                  temp_key = 0;
                   break;
                case 8:
-                  kalt = getakey ();
+                  while ((temp_key = getakey ()) == 0);
+                  kalt = temp_key;
                   unpress ();
+                  temp_key = 0;
                   break;
                case 9:
-                  kctrl = getakey ();
+                  while ((temp_key = getakey ()) == 0);
+                  kctrl = temp_key;
                   unpress ();
+                  temp_key = 0;
                   break;
                case 10:
-                  kenter = getakey ();
+                  while ((temp_key = getakey ()) == 0);
+                  kenter = temp_key;
                   unpress ();
+                  temp_key = 0;
                   break;
                case 11:
-                  kesc = getakey ();
+                  while ((temp_key = getakey ()) == 0);
+                  kesc = temp_key;
                   unpress ();
+                  temp_key = 0;
                   break;
                case 12:
                   if (is_sound == 2)
@@ -543,7 +563,7 @@ void config_menu (void)
                      play_effect (SND_BAD, 128);
                   break;
                case 15:
-                  // TT: toggle slow_computer
+                  /* TT: toggle slow_computer */
                   slow_computer = (slow_computer == 0 ? 1 : 0);
                   break;
                }
@@ -573,6 +593,7 @@ static int getakey (void)
    menubox (double_buffer, 108 + xofs, 108 + yofs, 11, 1, DARKBLUE);
    print_font (double_buffer, 116 + xofs, 116 + yofs, "press a key", FNORMAL);
    blit2screen (xofs, yofs);
+
    while (keypressed () == 0)
      {
         for (a = 0; a < KEY_MAX; a++)
