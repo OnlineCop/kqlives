@@ -324,7 +324,9 @@ void process_controls (void)
         /* Copy Layers 1, 2, 3 to mini PCX images */
         if (k == KEY_J)
            maptopcx ();
-
+	/* Save whole map as a picture */
+	if (k==KEY_V)
+	  visual_map();
         /* Get the last Zone used and set the indicator to one greater than that */
         if (k == KEY_L)
            curzone = check_last_zone () + 1;
@@ -1005,6 +1007,52 @@ void check_mdupdate (int cx, int cy)
 } /* check_mupdate () */
 
 
+/*! \brief save the whole map as a pcx 
+ *
+ * Make one giant bitmap and draw all the layers on it,
+ * so you can get an overview of what's going on.
+ * Doesn't draw entities, and doesn't work well with parallax.
+ * (any ideas how to handle parallax?)
+ * \author PH
+ * \date 20030412
+ */
+void visual_map(void)
+{
+  int i,j, w;
+  BITMAP* bmp;
+  PALETTE pal;
+  int zones[256][3];
+  for (i=0; i<256; ++i) {
+    zones[i][0]=0;
+  }
+  if ((bmp=create_bitmap(gmap.xsize*16, gmap.ysize*16))!=NULL) {
+    for (j=0; j<gmap.ysize; ++j) {
+      w=gmap.xsize*j;
+      for (i=0; i<gmap.xsize; ++i) {
+	blit (icons[map[w]], bmp, 0, 0, i * 16,
+	      j * 16, 16, 16);
+	draw_sprite (bmp, icons[b_map[w]], i * 16,
+		     j * 16);
+	draw_sprite (bmp, icons[f_map[w]], i * 16,
+		     j * 16);
+	draw_trans_sprite (bmp, shadow[s_map[w]],
+			   i * 16, j * 16);
+	zones[z_map[w]][0]++;
+	zones[z_map[w]][1]=i;
+	zones[z_map[w]][2]=j;
+	++w;
+      }
+    }
+    for (i=0; i<256; ++i) {
+      if (zones[i][0]==1) {
+	textprintf(bmp, font, zones[i][1]*16, zones[i][2]*16, makecol(255,255,255), "%d", i);
+      }
+    }
+    get_palette(pal);
+    save_bitmap("vis_map.pcx",bmp, pal);
+    destroy_bitmap(bmp);
+  }
+}
 /*! \brief Update the screen
  *
  * Update the screen after all controls taken care of
@@ -1940,7 +1988,7 @@ void wait_enter (void)
 void show_help (void)
 {
   int this_counter;
-   #define NUMBER_OF_ITEMS 54
+   #define NUMBER_OF_ITEMS 55
 
    char *help_keys[NUMBER_OF_ITEMS] =
      {
@@ -1984,6 +2032,7 @@ void show_help (void)
       "",
       "F5 . . . . . . . . . . . . . . . .  Make Map from PCX",
       "J  . . . . . . . . . . . . . . . . Copy Layers to PCX",
+      "V  . . . . . . . . . . . . . . .  Visualise whole map",
       "F6 . . . . . . . . . . . . . .  Copy instance of Tile",
       "F9 . . . . . . . . . . . . . . .  Copy Layer to Layer",
       "",
