@@ -38,7 +38,7 @@ function postexec()
     bubble(HERO1,"Yeah, I guess so... it all",
                  "seems clear enough.","","");
     bubble(5,"Great! Head out whenever you're",
-             "you're ready","","");
+             "ready.","","");
     set_progress(P_TALKDERIG,4);
   end
 end
@@ -72,7 +72,7 @@ function entity_handler(en)
   
   elseif (en == 2) then
     if (get_progress(P_TALKDERIG) < 3) then
-      bubble(2,"We can not let you pass.","","","");
+      bubble(2,"We cannot let you pass.","","","");
     else
       bubble(2,"You are free to come and",
                "go as you please.","","");
