@@ -2623,42 +2623,35 @@ void visual_map (void)
    int i, j, w;
    BITMAP *bmp;
    PALETTE pal;
-   int zones[MAX_ZONES][3];
-
-   for (i = 0; i < MAX_ZONES; ++i) {
-      /* Clear the zones buffer */
-      /* TT fix: Updated to reset all zones */
-      zones[i][0] = 0;          /* whether or not there is a "zone" here */
-      zones[i][1] = 0;          /* x-coord of zone on bmp */
-      zones[i][2] = 0;          /* y-coord of zone on bmp */
-   }
 
    /* Create a bitmap the same size as the map */
    if ((bmp = create_bitmap (gmap.xsize * 16, gmap.ysize * 16)) != NULL) {
       for (j = 0; j < gmap.ysize; j++) {
-         /* Which tile is currently being evaluated */
-         w = gmap.xsize * j;
          for (i = 0; i < gmap.xsize; i++) {
+            /* Which tile is currently being evaluated */
+            w = gmap.xsize * j + i;
+
             blit (icons[map[w]], bmp, 0, 0, i * 16, j * 16, 16, 16);
             draw_sprite (bmp, icons[b_map[w]], i * 16, j * 16);
             draw_sprite (bmp, icons[f_map[w]], i * 16, j * 16);
             draw_trans_sprite (bmp, shadow[sh_map[w]], i * 16, j * 16);
-            /* TT: Which is better: set to 1 or increment? */
-            // zones[z_map[w]][0]++;
-            zones[z_map[w]][0] = 1;     /* ==1 if there is a "zone" here */
-            zones[z_map[w]][1] = i;     /* Pass zone's x-coord to array */
-            zones[z_map[w]][2] = j;     /* Pass zone's y-coord to array */
-            w++;
+
+            if (z_map[w] > 0 && z_map[w] < MAX_ZONES) {
+               if (z_map[w] < 10) {
+                  /* The zone's number is single-digit */
+                  textprintf (bmp, font, i * 16 + 4, j * 16 + 4, makecol (255, 255, 255), "%d", z_map[w]);
+               } else if (z_map[w] < 100) {
+                  /* The zone's number is double-digit */
+                  textprintf (bmp, font, i * 16, j * 16 + 4, makecol (255, 255, 255), "%d", z_map[w]);
+               } else if (i < 1000) {
+                  /* The zone's number is triple-digit */
+                  textprintf (bmp, font, i * 16 + 4, j * 16, makecol (255, 255, 255), "%d", (int) (z_map[w] / 100));
+                  textprintf (bmp, font, i * 16, j * 16 + 8, makecol (255, 255, 255), "%02d", (int) (z_map[w] % 100));
+               }
+            }
          }
       }
 
-      /* Print the zone number over the zones */
-      for (i = 0; i < MAX_ZONES; i++) {
-         if (zones[i][0] == 1) {
-            textprintf (bmp, font, zones[i][1] * 16, zones[i][2] * 16,
-                        makecol (255, 255, 255), "%d", i);
-         }
-      }
       get_palette (pal);
       save_bitmap ("vis_map.pcx", bmp, pal);
       destroy_bitmap (bmp);

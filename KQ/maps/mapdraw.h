@@ -77,6 +77,7 @@ void init_entities (void);
 void klog (char *);
 void prompt_load_map (void);
 void load_map (char *);
+void error_load (char *);
 void make_mapfrompcx (void);
 void maptopcx (void);
 void new_map (void);

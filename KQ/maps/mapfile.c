@@ -35,7 +35,7 @@ void prompt_load_map (void)
    print_sfont (6, 18, "Filename: ", screen);
    ld = get_line (66, 18, fname, 40);
 
-   /* Make sure the line isn't blank */
+   /* Return if the user hit ESC to cancel the dialog box */
    if (ld == 0)
       return;
 
@@ -43,12 +43,22 @@ void prompt_load_map (void)
    rectfill (screen, 0, 0, 319, 16, 0);
    rect (screen, 2, 2, 317, 14, 255);
 
-   /* If the line WAS blank, simply reload the current map */
+   /* If the line was blank, simply reload the current map */
    if (strlen (fname) < 1) {
       strcpy (fname, map_fname);
-      sprintf (strbuf, "Reload %s? (y/n)", fname);
+      if (exists(fname))
+         sprintf (strbuf, "Reload %s? (y/n)", fname);
+      else {
+         error_load (fname);
+         return;
+      }
    } else
-      sprintf (strbuf, "Load %s? (y/n)", fname);
+      if (exists(fname))
+         sprintf (strbuf, "Load %s? (y/n)", fname);
+      else {
+         error_load (fname);
+         return;
+      }
 
    print_sfont (6, 6, strbuf, screen);
 
@@ -71,13 +81,7 @@ void load_map (char *fname)
 
    pf = pack_fopen (fname, F_READ_PACKED);
    if (!pf) {
-      rectfill (screen, 0, 0, 319, 24, 0);
-      rect (screen, 2, 2, 317, 22, 255);
-      sprintf (strbuf, "Could not load \"%s\"", fname);
-      print_sfont (6, 6, strbuf, screen);
-      sprintf (strbuf, "[press enter]");
-      print_sfont (6, 14, strbuf, screen);
-      wait_enter ();
+      error_load (fname);
       return;
    }
 
@@ -140,6 +144,25 @@ void load_map (char *fname)
 }                               /* load_map () */
 
 
+/*! \brief Error in loading a map
+ *
+ * Display an error message for a file that doesn't exist.
+ *
+ */
+void error_load (char *fname)
+{
+   rectfill (screen, 0, 0, 319, 24, 0);
+   rect (screen, 2, 2, 317, 22, 255);
+   sprintf (strbuf, "Could not load \"%s\"", fname);
+   print_sfont (6, 6, strbuf, screen);
+   sprintf (strbuf, "[press enter]");
+   print_sfont (6, 14, strbuf, screen);
+   wait_enter ();
+   return;
+}
+
+
+
 /*! \brief Convert a PCX image to a map
  *
  * Take a PCX image and convert its values to make a map
@@ -153,7 +176,7 @@ void make_mapfrompcx (void)
    int  ld;
    int w, h, ax, ay;
    BITMAP *pb;
-   short* tm;
+   short *tm;
 
    rectfill (screen, 0, 0, 319, 21, 0);
    rect (screen, 2, 2, 317, 19, 255);
@@ -173,25 +196,25 @@ void make_mapfrompcx (void)
 
    if (yninput ()) {
       blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
-      tm=NULL;
+      tm = NULL;
       do {
-	rectfill (screen, 0, 0, 319, 27, 0);
-	rect (screen, 2, 2, 317, 25, 255);
-	print_sfont (6, 6, "Put to (B)ack (M)id (F)ore?", screen);
-	if (get_line(6,16,imp,sizeof(imp))>0) {
-	  switch(*imp) {
-	  case 'm': case 'M':
-	    tm=b_map;
-	      break;
-	  case 'b': case 'B':
-	    tm=map;
-	      break;
-	  case 'f': case 'F':
-	    tm=f_map;
-	      break;
-	  }
-	}
-      } while (map==NULL);
+         rectfill (screen, 0, 0, 319, 27, 0);
+         rect (screen, 2, 2, 317, 25, 255);
+         print_sfont (6, 6, "Put to (B)ack (M)id (F)ore?", screen);
+         if (get_line(6, 16, imp, sizeof(imp)) > 0) {
+            switch (*imp) {
+            case 'm': case 'M':
+               tm = b_map;
+               break;
+            case 'b': case 'B':
+               tm = map;
+               break;
+            case 'f': case 'F':
+               tm = f_map;
+               break;
+            }
+         }
+      } while (map == NULL);
 
       pb = load_bitmap (fname, pal);
       if (pb->w < gmap.xsize)
