@@ -949,6 +949,7 @@ void draw_map (void)
 void draw_menubars (void)
 {
    int p, xp, yp, a;
+   int draw_mode_display;
 /* TODO TT BUG:
    Wrote into the other kqlives guys; I can't figure the algorythm to
    get the following code to work: Since draw_mode now references as:
@@ -1070,7 +1071,7 @@ void draw_menubars (void)
 // TT hack:
 /* { */ // <-- This brace is just to help localize the 'hack code'
 
-   int draw_mode_display = 0;
+   draw_mode_display = 0;
    switch (draw_mode)
      {
         case MAP_LAYER1:
@@ -1575,6 +1576,7 @@ void wait_enter (void)
 // Handy-dandy help screen
 void show_help (void)
 {
+  int this_counter;
    #define NUMBER_OF_ITEMS 54
 
    char *help_keys[NUMBER_OF_ITEMS] =
@@ -1640,7 +1642,7 @@ void show_help (void)
    rect (screen, (19 * 6) - 3, 32, (54 * 8) + 3, (NUMBER_OF_ITEMS * 7) + 38,
          255);
 
-   int this_counter = 0;
+   this_counter = 0;
    for (this_counter = 0; this_counter < NUMBER_OF_ITEMS; this_counter++) {
       sprintf (strbuf, "%s", help_keys[this_counter]);
       print_sfont (19*6, (this_counter * 7) + 35, strbuf, screen);
