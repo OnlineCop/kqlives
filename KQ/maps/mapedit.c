@@ -1034,19 +1034,28 @@ void visual_map (void)
 
 /*! \brief Draw the layers with parallax
  *
- * Draws selected layer and will compensate for parallax.
+ * Draws a single layer (back, middle or fore) and will compensate for parallax.
+ * Drawing is done by draw_sprite() - so the bottom layer needs to go onto a black background.
+ * This is called by preview_map().
+ * The code is slightly overcomplicated but it is more general, if things need to change later.
+ *
  * \author PH
  * \date 20031205
+ * \param layer pointer to layer data array
+ * \param pr ==0 draw with parallax off or !=0 on
  */
 static void draw_layer (short *layer, int pr)
 {
    int i, j;
    int i0, j0, i1, j1;
    int x0, y0;
+   /* calculate the top left, taking parallax into account */
    i0 = pr ? gx * gmap.pmult / gmap.pdiv : gx;
    j0 = pr ? gy * gmap.pmult / gmap.pdiv : gy;
+   /* calculate bottom right */
    i1 = i0 + htiles;
    j1 = j0 + vtiles;
+   /* make sure these don't step off the edges of the map */
    if (i0 < 0)
       i0 = 0;
    if (j0 < 0)
@@ -1055,9 +1064,10 @@ static void draw_layer (short *layer, int pr)
       i1 = gmap.xsize;
    if (j1 > gmap.ysize)
       j1 = gmap.ysize;
+   /* calculate the pixel-based coordinate of the top left */
    x0 = i0 * 16;
    y0 = j0 * 16;
-
+   /* ..and draw the tilemap */
    for (j = j0; j < j1; ++j) {
       for (i = i0; i < i1; ++i) {
          draw_sprite(double_buffer, icons[layer[i + j * gmap.xsize]],
@@ -1071,6 +1081,8 @@ static void draw_layer (short *layer, int pr)
  *
  * Draws the shadows onto the screen and takes into consideration any layer
  * effects that need to take place (see map_mode_text[] for details).
+ * This is basically the same as draw_layer().
+ * \param pr ==0 draw with parallax off or !=0 on
  * \author PH
  * \date 20031205
  */
