@@ -513,6 +513,7 @@ static int confirm_save (void)
  *            should be displayed.
  * \returns 0 if new game, 1 if continuing, 2 if exit
 */
+extern int optionsbox (char *, int);
 int start_menu (int c)
 {
    int stop = 0, ptr = 0, rd = 1, a, b;
@@ -596,6 +597,7 @@ int start_menu (int c)
         bg = load_datafile_object (PCX_DATAFILE, "TITLE_PCX");
      }
 #endif
+
    while (!stop)
      {
         if (rd)

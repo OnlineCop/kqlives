@@ -845,13 +845,18 @@ void free_samples (void)
 void play_effect (int efc, int panning)
 {
    int a, s, xo = 0, yo = 0;
-   int bx[8] = { -1, 0, 1, 0, -1, 0, 1, 0 };
-   int by[8] = { -1, 0, 1, 0, 1, 0, -1, 0 };
-   int sc[] = { 1, 2, 3, 5, 3, 3, 3, 2, 1 };
+   static const int bx[8] = { -1, 0, 1, 0, -1, 0, 1, 0 };
+   static const int by[8] = { -1, 0, 1, 0, 1, 0, -1, 0 };
+   static const int sc[] = { 1, 2, 3, 5, 3, 3, 3, 2, 1 };
    SAMPLE *samp;
    PALETTE whiteout, old;
    pause_music ();
-   samp = (SAMPLE *) sfx[efc]->dat;
+   /* Patch provided by mattrope: */
+   /* sfx array is empty if sound is not initialized */
+   if (is_sound != 0)
+      samp = (SAMPLE *) sfx[efc]->dat;
+   else
+      samp = NULL;              /* PH not strictly needed but I added it */
    switch (efc)
      {
      default:

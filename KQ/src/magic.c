@@ -1310,12 +1310,13 @@ int mp_needed (int who, int sn)
 {
    int amt;
 
-   if (sn > 0) {
-   amt = magic[sn].mpc * fighter[who].mrp / 100;
-   if (amt < 1)
-      amt = 1;
-      return amt;
-   }
+   if (sn > 0)
+     {
+        amt = magic[sn].mpc * fighter[who].mrp / 100;
+        if (amt < 1)
+           amt = 1;
+        return amt;
+     }
    else
       return 0;
 }

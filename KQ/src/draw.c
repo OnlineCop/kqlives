@@ -76,13 +76,14 @@ const char *parse_string (const char *);
  * \param   xw x-coord in double_buffer of the top-left of the screen
  * \param   yw y-coord in double_buffer of the top-left of the screen
 */
+extern int skips;
 void blit2screen (int xw, int yw)
 {
    if (wait_retrace == 1)
       vsync ();
    if (show_frate == 1)
      {
-        sprintf (strbuf, "%d", mfrate);
+        sprintf (strbuf, "%d %d", mfrate, skips);
         print_font (double_buffer, xofs, yofs, strbuf, FNORMAL);
      }
    if (stretch_view == 1)
@@ -290,13 +291,11 @@ static void drawchar (int xw, int yw)
         fid = g_ent[i].eid;
         dx = g_ent[i].x - vx + xw;
         dy = g_ent[i].y - vy + yw;
-        fr = g_ent[i].facing * 3;
         if (g_ent[i].moving == 0)
            fr = g_ent[i].facing * 3 + 2;
         else
           {
-             if (g_ent[i].framectr > 10)
-                fr += 1;
+             fr = g_ent[i].facing * 3 + (g_ent[i].framectr > 10 ? 1 : 0);
           }
         if (i < PSIZE && i < numchrs)
           {
@@ -365,6 +364,8 @@ static void drawchar (int xw, int yw)
                     }
                }
           }
+/* 	sprintf(strbuf, "%d", g_ent[i].speed); */
+/* 	print_num(double_buffer, dx, dy, strbuf, 0); */
      }
 }
 
@@ -901,6 +902,7 @@ static void set_textpos (int who)
 /*! \brief Draw text box
  *
  * Hmm... I think this function draws the textbox :p
+ * \date 20030417 PH This now daws the text as well as just the box
  *
  * \param   bstyle Style (B_TEXT or B_THOUGHT)
 */
@@ -914,7 +916,10 @@ static void draw_textbox (int bstyle)
    if (bstyle == B_TEXT)
      {
         tm = create_bitmap (wid - 5, hgt - 5);
-        rectfill (tm, 0, 0, wid - 5, hgt - 5, BLUE);
+        /* PH clear_to_color() is better here
+           rectfill (tm, 0, 0, wid - 5, hgt - 5, BLUE);
+         */
+        clear_to_color (tm, BLUE);
         draw_trans_sprite (double_buffer, tm, gbbx + 2 + xofs, gbby + 2 + yofs);
         border (double_buffer, gbbx + xofs, gbby + yofs,
                 gbbx + xofs + wid - 1, gbby + yofs + hgt - 1);
@@ -954,6 +959,11 @@ static void draw_textbox (int bstyle)
      }
    else
       return;
+   for (a = 0; a < gbbh; a++)
+     {
+        print_font (double_buffer, gbbx + 8 + xofs,
+                    a * 12 + gbby + 8 + yofs, msgbuf[a], FBIG);
+     }
 }
 
 
@@ -1113,6 +1123,7 @@ static const char *relay (const char *buf)
 */
 void text_ex (int fmt, int who, const char *s)
 {
+   s = parse_string (s);
    if (fmt == B_MESSAGE)
      {
         fmt = B_TEXT;
@@ -1210,12 +1221,11 @@ static void generic_text (int who, int box_style)
           }
         drawmap ();
         draw_textbox (box_style);
-        for (a = 0; a < gbbh; a++)
-          {
-             for (a = 0; a < gbbh; a++)
-                print_font (double_buffer, gbbx + 8 + xofs,
-                            a * 12 + gbby + 8 + yofs, msgbuf[a], FBIG);
-          }
+/*         for (a = 0; a < gbbh; a++) */
+/*           { */
+/*                 print_font (double_buffer, gbbx + 8 + xofs, */
+/*                             a * 12 + gbby + 8 + yofs, msgbuf[a], FBIG); */
+/*           } */
         blit2screen (xofs, yofs);
         readcontrols ();
         if (balt)
@@ -1270,6 +1280,150 @@ const char *parse_string (const char *the_string)
 
 
 
+/*! \brief prompt for user input
+ *
+ * Present the user with a prompt and a list of options to select from.
+ * The prompt is shown, as per text_ex(), and the choices shown in
+ * a separate window at the bottom. If the prompt is longer than one
+ * box-full, it is shown box-by-box, until the last one, when the choices are shown.
+ * If there are more choices than will fit into the box at the bottom, arrows are shown
+ * to indicate more pages.
+ * Press ALT to select; CTRL does nothing.
+ *
+ * \author PH
+ * \date 20030417
+ *
+ * \param who which character is ASKING the question
+ * \param ptext the prompt test
+ * \param opt an array of options, null terminated
+ * \param n_opt the number of options
+ */
+int prompt_ex (int who, const char *ptext, char *opt[], int n_opt)
+{
+   int curopt = 0;
+   int topopt = 0;
+   int winheight;
+   int winwidth = 0;
+   int winx, winy;
+   int i, w, redraw, running;
+
+   BITMAP *blank;
+   ptext = parse_string (ptext);
+   while (1)
+     {
+        gbbw = 1;
+        gbbs = 0;
+        ptext = relay (ptext);
+        if (ptext)
+          {
+             generic_text (who, B_TEXT);
+          }
+        else
+          {
+             int a;
+             for (a = 0; a < 4; a++)
+               {
+                  int len = strlen (msgbuf[a]);
+                  /* FIXME: PH changed >1 to >0 */
+                  if (len > 0)
+                    {
+                       gbbh = a + 1;
+                       if ((signed int) len > gbbw)
+                          gbbw = len;
+                    }
+               }
+             set_textpos (0);
+             for (i = 0; i < n_opt; ++i)
+               {
+                  while (isspace (*opt[i]))
+                    {
+                       ++opt[i];
+                    }
+                  w = strlen (opt[i]);
+                  if (winwidth < w)
+                     winwidth = w;
+               }
+             winheight = n_opt > 4 ? 4 : n_opt;
+             blank = create_bitmap (winwidth * 8 + 8, winheight * 12);
+             clear_to_color (blank, BLUE);
+             winx = xofs + (320 - winwidth * 8) / 2;
+             winy = yofs + 230 - winheight * 12;
+             running = redraw = 1;
+             while (running)
+               {
+                  if (redraw)
+                    {
+                       drawmap ();
+                       draw_textbox (B_TEXT);
+                       /* Draw the  box itself */
+                       border (double_buffer, winx - 5, winy - 5,
+                               winx + blank->w + 5, winy + blank->h + 5);
+                       draw_trans_sprite (double_buffer, blank, winx, winy);
+                       for (i = 0; i < winheight; ++i)
+                         {
+                            print_font (double_buffer, winx + 8, winy + i * 12,
+                                        opt[i + topopt], FBIG);
+                         }
+                       draw_sprite (double_buffer, menuptr,
+                                    winx + 8 - menuptr->w,
+                                    (curopt - topopt) * 12 + winy + 4);
+                       /* Draw the 'up' and 'down' markers if there are more options than will fit in the window */
+                       if (topopt > 0)
+                          draw_sprite (double_buffer, upptr, winx, winy - 8);
+                       if (topopt < n_opt - winheight)
+                          draw_sprite (double_buffer, dnptr, winx,
+                                       winy + 12 * winheight);
+
+                       blit2screen (xofs, yofs);
+                       redraw = 0;
+                    }
+                  readcontrols ();
+                  if (up && curopt > 0)
+                    {
+                       play_effect (SND_CLICK, 128);
+                       unpress ();
+                       --curopt;
+                       redraw = 1;
+                    }
+                  else if (down && curopt < (n_opt - 1))
+                    {
+                       play_effect (SND_CLICK, 128);
+                       unpress ();
+                       ++curopt;
+                       redraw = 1;
+                    }
+                  else if (balt)
+                    {
+                       /* Selected an option */
+                       play_effect (SND_CLICK, 128);
+                       unpress ();
+                       running = 0;
+                    }
+                  else if (bctrl)
+                    {
+                       /* Just go "ow!" */
+                       unpress ();
+                       play_effect (SND_BAD, 128);
+                    }
+                  /* Adjust top position so that the current option is always shown */
+                  if (curopt < topopt)
+                    {
+                       topopt = curopt;
+                    }
+                  if (curopt >= topopt + winheight)
+                    {
+                       topopt = curopt - winheight + 1;
+
+                    }
+               }
+             destroy_bitmap (blank);
+             return curopt;
+          }
+     }
+}
+
+
+
 /*! \brief Do user prompt
  *
  * Draw a text box and wait for a response.  It is possible to offer up to four
@@ -1288,7 +1442,6 @@ int prompt (int who, int numopt, int bstyle, char *sp1, char *sp2, char *sp3,
             char *sp4)
 {
    int ly, stop = 0, ptr = 0, rd = 1, a;
-
    gbbw = 1;
    gbbh = 0;
    gbbs = 0;
@@ -1316,9 +1469,9 @@ int prompt (int who, int numopt, int bstyle, char *sp1, char *sp2, char *sp3,
           {
              drawmap ();
              draw_textbox (bstyle);
-             for (a = 0; a < gbbh; a++)
-                print_font (double_buffer, gbbx + 8 + xofs,
-                            a * 12 + gbby + 8 + yofs, msgbuf[a], FBIG);
+/*              for (a = 0; a < gbbh; a++) */
+/*                 print_font (double_buffer, gbbx + 8 + xofs, */
+/*                             a * 12 + gbby + 8 + yofs, msgbuf[a], FBIG); */
              draw_sprite (double_buffer, menuptr, gbbx + xofs + 8,
                           ptr * 12 + ly + yofs);
              blit2screen (xofs, yofs);

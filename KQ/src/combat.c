@@ -315,6 +315,8 @@ static void init_fighters (void)
         deffect[index] = 0;
         fighter[index].mhp = 0;
         fighter[index].aux = 0;
+        /* .defend was not initialized; patch supplied by Sam H */
+        fighter[index].defend = 0;
      }
 
    // TT: These two are only called once in the game; should we move them here?

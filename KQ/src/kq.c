@@ -317,7 +317,7 @@ int view_x1, view_y1, view_x2, view_y2, view_on = 0;
 /*! Are we in combat mode? */
 int in_combat = 0;
 /*! Frame rate stuff */
-int frate, mfrate = 0, show_frate = 0;
+int skips = 0, frate, mfrate = 0, show_frate = 0;
 /*! Should we use the joystick \note Not implemented at the moment */
 int use_joy = 1;
 #ifdef KQ_CHEATS
@@ -331,6 +331,8 @@ int cheat = 0;
  * int warx = 0, wary = 0;
 */
 
+/*! The number of frames per second */
+#define KQ_FPS 100
 
 
 /*! \brief Allegro timer callback
@@ -341,7 +343,7 @@ void my_counter (void)
 {
    timer++;
 
-   if (timer >= 100)
+   if (timer >= KQ_FPS)
      {
         timer = 0;
         ksec++;
@@ -1213,7 +1215,8 @@ static void startup (void)
    LOCK_VARIABLE (khr);
    LOCK_FUNCTION (my_counter);
 
-   install_int (my_counter, 10);
+/*    install_int (my_counter, 10); */
+   install_int_ex (my_counter, BPS_TO_TIMER (KQ_FPS));
    create_trans_table (&cmap, pal, 128, 128, 128, NULL);
    color_map = &cmap;
    load_sgstats ();
@@ -1468,17 +1471,18 @@ static void deallocate_stuff (void)
  */
 void load_heroes (void)
 {
-   PACKFILE* f;
+   PACKFILE *f;
    int i;
    sprintf (strbuf, "%s/hero.kq", DATA_DIR);
-   if ((f=pack_fopen(strbuf, F_READ_PACKED))==NULL) {
+   if ((f = pack_fopen (strbuf, F_READ_PACKED)) == NULL)
+     {
         program_death ("Cannot open hero data file");
-   }
+     }
    for (i = 0; i < MAXCHRS; ++i)
      {
-   pack_fread(&players[i], sizeof(s_player), f);
+        pack_fread (&players[i], sizeof (s_player), f);
      }
-   pack_fclose(f);
+   pack_fclose (f);
 }
 
 /*! \brief Initialise all players
@@ -1655,8 +1659,9 @@ void wait_for_entity (int est, int efi)
 */
 void program_death (char *message)
 {
-  char internal_buffer[80];
-  strcat(strncpy(internal_buffer, message, sizeof(internal_buffer)-1), "\n");
+   char internal_buffer[80];
+   strcat (strncpy (internal_buffer, message, sizeof (internal_buffer) - 1),
+           "\n");
    TRACE ("%s\n", message);
    deallocate_stuff ();
    set_gfx_mode (GFX_TEXT, 0, 0, 0, 0);
@@ -1719,16 +1724,22 @@ int main (void)
              alldead = 0;
              while (!stop)
                {
-                  while (timer_count > 0)
+                  if (timer_count < 1)
                     {
-                       timer_count--;
-                       process_entities ();
                        check_animation ();
+                       drawmap ();
+                       blit2screen (xofs, yofs);
+                       while (timer_count < 1)
+                         {
+                            yield_timeslice ();
+                         }
                     }
+                  timer_count--;
+                  poll_music ();
+                  process_entities ();
 
-                  drawmap ();
+
                   frate++;
-                  blit2screen (xofs, yofs);
 
                   if (key[kesc])
                      stop = system_menu ();

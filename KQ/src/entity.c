@@ -84,6 +84,7 @@ void process_entities (void)
 /*! \brief Adjust movement speed
  *
  * This has to adjust for each entity's speed.
+ * 'Normal' speed appears to be 4.
  *
  * \param   i Index of entity
 */

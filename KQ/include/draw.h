@@ -94,6 +94,7 @@ void text_ex (int, int, const char *);
 
 /*  intrface.c, setup.c  */
 int prompt (int, int, int, char *, char *, char *, char *);
+int prompt_ex (int, const char *, char *[], int);
 
 /*  combat.c, hskill.c, intrface.c, (item|shop)menu.c,  */
 /*  kq.c, sgame.c                                       */
