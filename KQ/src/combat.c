@@ -84,13 +84,14 @@ static void init_fighters (void);
 static int do_combat (char *gb, char *mus, int is_rnd);
 
 
+
 /*! \brief Does current location call for combat?
  *
  * This function checks the zone at the specified co-ordinates
  * and calls combat based on the map and zone.
  *
  * PH: it seems that this is rarely used (?) - only called by
- * entityat().                                               
+ * entityat().
  *
  * \param   comx x-coord of player
  * \param   comy y-coord of player
@@ -137,6 +138,7 @@ int combat (int bno)
    /* ML 2002-09-22: not needed right now int saved_song; */
    int encounter;
    int lc;
+
    /* PH: some checking! */
    if (bno < 0 || bno >= NUM_BATTLES)
      {
@@ -166,6 +168,7 @@ int combat (int bno)
    steps = 0;
    hero_level = party[pidx[0]].lvl;
    encounter = select_encounter (battles[bno].etnum, battles[bno].eidx);
+
    if (hero_level >= erows[encounter].lvl + 5 && battles[bno].eidx == 99)
      {
         lc = (hero_level - erows[encounter].lvl) * 5;
@@ -178,6 +181,7 @@ int combat (int bno)
              return 0;
           }
      }
+
    if (progress[P_REPULSE] > 0)
      {
         lc = (hero_level - erows[encounter].lvl) * 20;
@@ -197,7 +201,7 @@ int combat (int bno)
                      battles[bno].eidx == 99);
 }
 
-   /*! \brief Really do combat once fighters have been inited 
+   /*! \brief Really do combat once fighters have been inited
     *
     * \param bg Bckground image
     * \param mus Music
@@ -415,7 +419,7 @@ static void roll_initiative (void)
      }
 
    rcount = 0;
-   /* PH: this isn't right because not all members of the fighter[] array 
+   /* PH: this isn't right because not all members of the fighter[] array
     * are valid - e.g. if you are attacked by 1 enemy, there are 4 enemy
     * slots that aren't used. Currently, no enemies use imbued stuff, but
     * this may change (?)
@@ -563,12 +567,6 @@ void battle_render (int plyr, int hl, int sall)
         if (fighter[z].sts[S_DEAD] == 0)
           {
              draw_fighter (z, (sall == 1));
-#if 0
-             if (sall == 1)
-                draw_fighter (z, 1);
-             else
-                draw_fighter (z, 0);
-#endif
           }
         else
           {
@@ -598,12 +596,6 @@ void battle_render (int plyr, int hl, int sall)
 
         print_font (double_buffer, b + 8, 192, fighter[z].name,
                     (hl == z + 1) ? FGOLD : FNORMAL);
-#if 0
-        if (hl == z + 1)
-           print_font (double_buffer, b + 8, 192, fighter[z].name, FGOLD);
-        else
-           print_font (double_buffer, b + 8, 192, fighter[z].name, FNORMAL);
-#endif
 
         sprintf (strbuf, "HP: %3d/%3d", fighter[z].hp, fighter[z].mhp);
         /*  RB IDEA: If the character has less than 1/5 of his/her max    */
@@ -619,21 +611,9 @@ void battle_render (int plyr, int hl, int sall)
 
         print_font (double_buffer, b + 8, 208, strbuf,
                     (fighter[z].hp < (fighter[z].mhp / 5)) ? FRED : FNORMAL);
-#if 0
-        if (fighter[z].hp < (fighter[z].mhp / 5))
-           print_font (double_buffer, b + 8, 208, strbuf, FRED);
-        else
-           print_font (double_buffer, b + 8, 208, strbuf, FNORMAL);
-#endif
 
         hline (double_buffer, b + 8, 216, b + 95, 21);
         sz = (fighter[z].hp > 0) ? fighter[z].hp * 88 / fighter[z].mhp : 88;
-#if 0
-        if (fighter[z].hp > 0)
-           sz = fighter[z].hp * 88 / fighter[z].mhp;
-        else
-           sz = 88;
-#endif
 
         hline (double_buffer, b + 8, 216, b + 8 + sz, 12);
         sprintf (strbuf, "MP: %3d/%3d", fighter[z].mp, fighter[z].mmp);
@@ -641,20 +621,8 @@ void battle_render (int plyr, int hl, int sall)
         /*  RB IDEA: Same suggestion as with health, just above.  */
         print_font (double_buffer, b + 8, 218, strbuf,
                     (fighter[z].mp < (fighter[z].mmp / 5)) ? FRED : FNORMAL);
-#if 0
-        if (fighter[z].mp < (fighter[z].mmp / 5))
-           print_font (double_buffer, b + 8, 218, strbuf, FRED);
-        else
-           print_font (double_buffer, b + 8, 218, strbuf, FNORMAL);
-#endif
         hline (double_buffer, b + 8, 226, b + 95, 21);
         sz = (fighter[z].mp > 0) ? fighter[z].mp * 88 / fighter[z].mmp : 88;
-#if 0
-        if (fighter[z].mp > 0)
-           sz = fighter[z].mp * 88 / fighter[z].mmp;
-        else
-           sz = 88;
-#endif
         hline (double_buffer, b + 8, 226, b + 8 + sz, 12);
         draw_stsicon (double_buffer, 1, z, 17, b + 8, 200);
      }
@@ -664,12 +632,6 @@ void battle_render (int plyr, int hl, int sall)
         if (fighter[t].sts[S_DEAD] == 0)
           {
              draw_fighter (t, (sall == 2));
-#if 0
-             if (sall == 2)
-                draw_fighter (t, 1);
-             else
-                draw_fighter (t, 0);
-#endif
           }
      }
 
@@ -749,13 +711,6 @@ static void do_round (void)
                        cact[index] = 1;
                        if ((fighter[index].sts[S_ETHER] > 0) && (rcount == 0))
                           fighter[index].sts[S_ETHER]--;
-#if 0
-                       if (fighter[index].sts[S_ETHER] > 0)
-                         {
-                            if (rcount == 0)
-                               fighter[index].sts[S_ETHER]--;
-                         }
-#endif
 
                        /*  RB: the character is stopped?  */
                        if (fighter[index].sts[S_STOP] > 0)
@@ -915,12 +870,6 @@ void draw_fighter (int dude, int dcur)
    yy = fighter[dude].cy;
 
    ff = (!fighter[dude].aframe) ? fighter[dude].facing : fighter[dude].aframe;
-#if 0
-   if (fighter[dude].aframe == 0)
-      ff = fighter[dude].facing;
-   else
-      ff = fighter[dude].aframe;
-#endif
 
    if (fighter[dude].sts[S_STONE] > 0)
       convert_cframes (dude, 2, 12, 0);
@@ -929,6 +878,7 @@ void draw_fighter (int dude, int dcur)
       draw_trans_sprite (double_buffer, cframes[dude][ff], xx, yy);
    else
       draw_sprite (double_buffer, cframes[dude][ff], xx, yy);
+
    if (dcur == 1)
       draw_sprite (double_buffer, bptr, xx + (fighter[dude].cw / 2) - 8,
                    yy - 8);
@@ -1106,11 +1056,6 @@ int fight (int ar, int dr, int sk)
 
         if ((fighter[dr].sts[S_CHARM] > 0) && (ar == dr))
            fighter[dr].sts[S_CHARM] = 0;
-#if 0
-        if (fighter[dr].sts[S_CHARM] > 0)
-           if (ar == dr)
-              fighter[dr].sts[S_CHARM] = 0;
-#endif
         return 1;
      }
 
@@ -1197,11 +1142,6 @@ void multi_fight (int ar)
              if ((fighter[index].sts[S_CHARM] > 0) && (ta[index] > 0) &&
                  (ar == index))
                 fighter[index].sts[S_CHARM] = 0;
-#if 0
-             if ((fighter[index].sts[S_CHARM] > 0) && (ta[index] > 0))
-                if (ar == index)
-                   fighter[index].sts[S_CHARM] = 0;
-#endif
           }
      }
 
@@ -1328,7 +1268,13 @@ static int attack_result (int ar, int dr)
              if (rand () % 20 >= cfch)
                {
                   crit_hit = 1;
-                  /* PH the original is correct; it's inefficient to convert to double and back to int. */
+                  /* PH the original is correct; it's inefficient to convert
+                     to double and back to int.
+                     TT: So why don't we simply do:
+
+                     base = base * 3 / 2;
+
+                   */
 /*                   base *= 1.5; */
 /* #if 0 */
                   base = base * 15 / 10;
@@ -1485,11 +1431,6 @@ static void heroes_win (void)
                {
                   if ((rand () % 100) < 5)
                      fitm = fighter[index + PSIZE].ditmr;
-#if 0
-                  b = rand () % 100;
-                  if (b < 5)
-                     fitm = fighter[index + PSIZE].ditmr;
-#endif
                }
 
              if (fitm > 0)
