@@ -59,17 +59,8 @@ function autoexec()
     set_ent_facing(4, FACE_DOWN)
     set_ent_facing(HERO1, 1)
     if (get_progress(P_TALKDERIG) == 3) then
-      set_desc(0);
+      set_desc(0)
     end
-  end
-  refresh()
-end
-
-
-function refresh()
-  -- Chest in magic shop
-  if (get_treasure(0) == 1) then
-    set_mtile(63, 27, 265)
   end
 
   -- Monsters will not attack on the world map until this == 1
@@ -81,6 +72,16 @@ function refresh()
   if (get_progress(P_WARPSTONE) == 1) then
     set_ent_active(1, 0)
     set_ent_active(3, 0)
+  end
+
+  refresh()
+end
+
+
+function refresh()
+  -- Chest in magic shop
+  if (get_treasure(0) == 1) then
+    set_mtile(63, 27, 265)
   end
 end
 
