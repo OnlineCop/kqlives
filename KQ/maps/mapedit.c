@@ -65,6 +65,7 @@ int curzone = 0, curshadow = 0, curobs = 0;
 int copying = 0, copyx1 = -1, copyx2 = -1, copyy1 = -1, copyy2 = -1;
 int clipb = 0, cbh = 0, cbw = 0;
 int needupdate;
+const int COLUMN_WIDTH = 80;
 
 s_map gmap;
 s_entity gent[50];
@@ -195,8 +196,8 @@ void animate (void)
 
    /* TT TODO:
     * Firstly, I will need to declare the animation sequences.
-    * Second, I _think_ that tilex[] handles which tile is being shown on-
-    * screen.
+    * Second, I _think_ that tilex[] (now called map[]) handles which tile is
+    * being shown on-screen.
     */
    int i, j;
 
@@ -798,7 +799,7 @@ END_OF_FUNCTION (draw_map);
 void draw_menubars (void)
 {
    int p, xp, yp, a;
-   int draw_mode_display;
+   int draw_mode_display, draw_mode_last;
 
    /* Description for the current draw_mode (could use work) */
    char dt[15][12] = { "Layer1", "Layer2", "Layer3",
@@ -806,6 +807,110 @@ void draw_menubars (void)
       "Shadows", "Zones", "Obstacles", "Entities",
       "Block Copy", "Block Paste", "Grab Tile", "Preview"
    };
+
+   /* Determine the views that we're currently using */
+   draw_mode_display = 0;
+   draw_mode_last = 0;
+   switch (draw_mode) {
+   case MAP_LAYER1:
+      draw_mode_display = 0;
+      break;
+   case MAP_LAYER2:
+      draw_mode_display = 1;
+      break;
+   case MAP_LAYER3:
+      draw_mode_display = 2;
+      break;
+   case MAP_LAYER12:
+      draw_mode_display = 3;
+      break;
+   case MAP_LAYER13:
+      draw_mode_display = 4;
+      break;
+   case MAP_LAYER23:
+      draw_mode_display = 5;
+      break;
+   case MAP_LAYER123:
+      draw_mode_display = 6;
+      break;
+   case MAP_SHADOWS:
+      draw_mode_display = 7;
+      break;
+   case MAP_ZONES:
+      draw_mode_display = 8;
+      break;
+   case MAP_OBSTACLES:
+      draw_mode_display = 9;
+      break;
+   case MAP_ENTITIES:
+      draw_mode_display = 10;
+      break;
+   case BLOCK_COPY:
+      draw_mode_display = 11;
+      break;
+   case BLOCK_PASTE:
+      draw_mode_display = 12;
+      break;
+   case GRAB_TILE:
+      draw_mode_display = 13;
+      break;
+   case MAP_PREVIEW:
+      draw_mode_display = 14;
+      break;
+   default:
+      draw_mode_display = 0;
+      break;
+   }                            /* switch (draw_mode) */
+   switch (showing.last_layer) {
+   case MAP_LAYER1:
+      draw_mode_last = 0;
+      break;
+   case MAP_LAYER2:
+      draw_mode_last = 1;
+      break;
+   case MAP_LAYER3:
+      draw_mode_last = 2;
+      break;
+   case MAP_LAYER12:
+      draw_mode_last = 3;
+      break;
+   case MAP_LAYER13:
+      draw_mode_last = 4;
+      break;
+   case MAP_LAYER23:
+      draw_mode_last = 5;
+      break;
+   case MAP_LAYER123:
+      draw_mode_last = 6;
+      break;
+   case MAP_SHADOWS:
+      draw_mode_last = 7;
+      break;
+   case MAP_ZONES:
+      draw_mode_last = 8;
+      break;
+   case MAP_OBSTACLES:
+      draw_mode_last = 9;
+      break;
+   case MAP_ENTITIES:
+      draw_mode_last = 10;
+      break;
+   case BLOCK_COPY:
+      draw_mode_last = 11;
+      break;
+   case BLOCK_PASTE:
+      draw_mode_last = 12;
+      break;
+   case GRAB_TILE:
+      draw_mode_last = 13;
+      break;
+   case MAP_PREVIEW:
+      draw_mode_last = 14;
+      break;
+   default:
+      draw_mode_last = 0;
+      break;
+   }                            /* switch (showing.last_layer) */
 
    /* Displays the coordinates of the Block Copy */
    if (draw_mode == BLOCK_COPY && copyx1 != -1 && copyy1 != -1) {
@@ -873,45 +978,49 @@ void draw_menubars (void)
 
    /* Can the player use the Warp spell from here? */
    if (gmap.can_warp == 0)
-      print_sfont (80, (SH - 22), "Warp: NO", double_buffer);
+      print_sfont (COLUMN_WIDTH, (SH - 22), "Warp: NO", double_buffer);
    else
-      print_sfont (80, (SH - 22), "Warp: YES", double_buffer);
+      print_sfont (COLUMN_WIDTH, (SH - 22), "Warp: YES", double_buffer);
 
    /* Coordinates where Warp spell takes you to
       NOTE: only works for main.map apparently...
     */
    sprintf (strbuf, "WarpX: %d", gmap.warpx);
-   print_sfont (80, (SH - 16), strbuf, double_buffer);
+   print_sfont (COLUMN_WIDTH, (SH - 16), strbuf, double_buffer);
    sprintf (strbuf, "WarpY: %d", gmap.warpy);
-   print_sfont (80, (SH - 10), strbuf, double_buffer);
+   print_sfont (COLUMN_WIDTH, (SH - 10), strbuf, double_buffer);
 
    /* Default area to warp to when a map is entered */
    sprintf (strbuf, "Start X: %d", gmap.stx);
-   print_sfont (160, (SH - 40), strbuf, double_buffer);
+   print_sfont ((COLUMN_WIDTH * 2), (SH - 40), strbuf, double_buffer);
    sprintf (strbuf, "Start Y: %d", gmap.sty);
-   print_sfont (160, (SH - 34), strbuf, double_buffer);
+   print_sfont ((COLUMN_WIDTH * 2), (SH - 34), strbuf, double_buffer);
 
    /* Size of the current map */
    sprintf (strbuf, "Width: %d", gmap.xsize);
-   print_sfont (160, (SH - 28), strbuf, double_buffer);
+   print_sfont ((COLUMN_WIDTH * 2), (SH - 28), strbuf, double_buffer);
    sprintf (strbuf, "Height: %d", gmap.ysize);
-   print_sfont (160, (SH - 22), strbuf, double_buffer);
-
-   /* Parallaxing multiplication/division values (usually 1:1) */
-   sprintf (strbuf, "Mult: %d", gmap.pmult);
-   print_sfont (240, (SH - 40), strbuf, double_buffer);
-   sprintf (strbuf, "Div: %d", gmap.pdiv);
-   print_sfont (240, (SH - 34), strbuf, double_buffer);
+   print_sfont ((COLUMN_WIDTH * 2), (SH - 22), strbuf, double_buffer);
 
    /* Allow the player to use SunStones on this map */
-   print_sfont (160, (SH - 16),
+   print_sfont ((COLUMN_WIDTH * 2), (SH - 16),
                 gmap.use_sstone == 0 ? "SunStone: NO" : "SunStone: YES",
                 double_buffer);
 
    /* Count Zone attributes on map */
    a = check_last_zone ();
    sprintf (strbuf, "Last zone: %d", a);
-   print_sfont (160, (SH - 10), strbuf, double_buffer);
+   print_sfont ((COLUMN_WIDTH * 2), (SH - 10), strbuf, double_buffer);
+
+   /* Parallaxing multiplication/division values (usually 1:1) */
+   sprintf (strbuf, "Mult: %d", gmap.pmult);
+   print_sfont ((COLUMN_WIDTH * 3), (SH - 40), strbuf, double_buffer);
+   sprintf (strbuf, "Div: %d", gmap.pdiv);
+   print_sfont ((COLUMN_WIDTH * 3), (SH - 34), strbuf, double_buffer);
+
+   /* Debugging values */
+   sprintf (strbuf, "Last Layer: %s", dt[draw_mode_last]);
+   print_sfont ((COLUMN_WIDTH * 4), (SH - 28), strbuf, double_buffer);
 
    /* Display the iconset in the right menu */
    if (icon_set != 999) {
@@ -941,59 +1050,6 @@ void draw_menubars (void)
 
    /* Display the draw_mode */
    print_sfont ((SW - 72), 164, "Mode:", double_buffer);
-
-   /* Determine the views that we're currently using */
-   draw_mode_display = 0;
-   switch (draw_mode) {
-   case MAP_LAYER1:
-      draw_mode_display = 0;
-      break;
-   case MAP_LAYER2:
-      draw_mode_display = 1;
-      break;
-   case MAP_LAYER3:
-      draw_mode_display = 2;
-      break;
-   case MAP_LAYER12:
-      draw_mode_display = 3;
-      break;
-   case MAP_LAYER13:
-      draw_mode_display = 4;
-      break;
-   case MAP_LAYER23:
-      draw_mode_display = 5;
-      break;
-   case MAP_LAYER123:
-      draw_mode_display = 6;
-      break;
-   case MAP_SHADOWS:
-      draw_mode_display = 7;
-      break;
-   case MAP_ZONES:
-      draw_mode_display = 8;
-      break;
-   case MAP_OBSTACLES:
-      draw_mode_display = 9;
-      break;
-   case MAP_ENTITIES:
-      draw_mode_display = 10;
-      break;
-   case BLOCK_COPY:
-      draw_mode_display = 11;
-      break;
-   case BLOCK_PASTE:
-      draw_mode_display = 12;
-      break;
-   case GRAB_TILE:
-      draw_mode_display = 13;
-      break;
-   case MAP_PREVIEW:
-      draw_mode_display = 14;
-      break;
-   default:
-      draw_mode_display = 0;
-      break;
-   }                            /* switch (draw_mode) */
    print_sfont ((SW - 66), 170, dt[draw_mode_display], double_buffer);
 
    /* Display the iconset and selected icon */
@@ -1087,8 +1143,8 @@ END_OF_FUNCTION (draw_menubars);
  *
  * This allows the user to type in values, such as coords, names, etc.
  *
- * \param   window_x x-coord of the input "line"
- * \param   window_y y-coord of the input "line"
+ * \param   window_x X-coord of the input "line"
+ * \param   window_y Y-coord of the input "line"
  * \param   buffer Where to sent the result
  * \param   max_len Maximum characters to accept
  * \returns 0 if user hits ESC (cancel)
@@ -1422,8 +1478,7 @@ END_OF_FUNCTION (paste_region_special);
  * This is basically the same as draw_layer().
  * \author  PH
  * \date    20031205
- * \param   parallax 0 no parallax
- *                   >0 parallax
+ * \param   parallax 0 draws with parallax off, else parallax on
  */
 static void draw_shadow (int parallax)
 {
@@ -1678,16 +1733,16 @@ void process_keyboard (int k)
       /* Get the tile under the mouse curser */
 // TT TODO: I think that all the checks except *.last_layer should be removed.
 // That way, the user can 'grab' a zone, shadow, or obstacle
-      if ((draw_mode != MAP_LAYER1) && (draw_mode != MAP_LAYER2)
-          && (draw_mode != MAP_LAYER3) && (showing.last_layer != MAP_LAYER1)
-          && (showing.last_layer != MAP_LAYER2)
-          && (showing.last_layer != MAP_LAYER3))
+      if (draw_mode == GRAB_TILE)
+         return;
 
-         /* The default view mode */
-         showing.last_layer = MAP_LAYER1;
-      else if (draw_mode != GRAB_TILE)
-         /* One of the 3 layers was previously used; switch to that */
+      if ((draw_mode == MAP_LAYER1) || (draw_mode == MAP_LAYER2)
+          || (draw_mode == MAP_LAYER3))
          showing.last_layer = draw_mode;
+      else if ((showing.last_layer != MAP_LAYER1)
+               && (showing.last_layer != MAP_LAYER2)
+               && (showing.last_layer != MAP_LAYER3))
+         showing.last_layer = MAP_LAYER1;
       draw_mode = GRAB_TILE;
       break;
    case (KEY_J):
@@ -1969,16 +2024,16 @@ END_OF_FUNCTION (process_keyboard);
  *
  * Selects one of the options from the menus at the bottom of the screen
  *
- * \param   cx x-coord of the mouse
- * \param   cy y-coord of the mouse
+ * \param   cx X-coord of the mouse
+ * \param   cy Y-coord of the mouse
  */
 void process_menu_bottom (int cx, int cy)
 {
-   int a, column_width = 80;
+   int a;
    scare_mouse ();
 
    /* The mouse is over 'Icon:' menu */
-   if (cx >= 0 && cx < (column_width * 2) && cy >= (SH - 40)
+   if (cx >= 0 && cx < (COLUMN_WIDTH * 2) && cy >= (SH - 40)
        && cy <= (SH - 35)) {
       /* This allows the user to select the tileset used
          for the current map.
@@ -1995,9 +2050,9 @@ void process_menu_bottom (int cx, int cy)
    }
 
    /* The mouse is over 'Song:' menu */
-   if (cx >= 0 && cx < (column_width * 2) && cy >= (SH - 34)
+   if (cx >= 0 && cx < (COLUMN_WIDTH * 2) && cy >= (SH - 34)
        && cy <= (SH - 29)) {
-      rectfill (double_buffer, 36, (SH - 34), (column_width * 2) - 1,
+      rectfill (double_buffer, 36, (SH - 34), (COLUMN_WIDTH * 2) - 1,
                 (SH - 29), 0);
       print_sfont (30, (SH - 34), ">", double_buffer);
       hline (double_buffer, 36, (SH - 29), 113, 255);
@@ -2011,15 +2066,15 @@ void process_menu_bottom (int cx, int cy)
    }
 
    /* The mouse is over 'ZeroZone' menu */
-   if (cx >= 0 && cx < (column_width) && cy >= (SH - 28) && cy <= (SH - 23)) {
+   if (cx >= 0 && cx < (COLUMN_WIDTH) && cy >= (SH - 28) && cy <= (SH - 23)) {
       gmap.zero_zone = 1 - gmap.zero_zone;
       while (mouse_b & 1);
       return;
    }
 
    /* The mouse is over 'Map #' menu */
-   if (cx >= 0 && cx < (column_width) && cy >= (SH - 22) && cy <= (SH - 17)) {
-      rectfill (double_buffer, 42, (SH - 22), (column_width * 2) - 1,
+   if (cx >= 0 && cx < (COLUMN_WIDTH) && cy >= (SH - 22) && cy <= (SH - 17)) {
+      rectfill (double_buffer, 42, (SH - 22), (COLUMN_WIDTH * 2) - 1,
                 (SH - 17), 0);
       print_sfont (36, (SH - 22), ">", double_buffer);
       hline (double_buffer, 42, (SH - 17), 65, 255);
@@ -2039,7 +2094,7 @@ void process_menu_bottom (int cx, int cy)
    }
 
    /* The mouse is over 'Mode' menu */
-   if (cx >= 0 && cx < (column_width) && cy >= (SH - 16)
+   if (cx >= 0 && cx < (COLUMN_WIDTH) && cy >= (SH - 16)
        && cy <= (SH - 11)) {
       gmap.map_mode++;
       if (gmap.map_mode > 5)
@@ -2049,14 +2104,14 @@ void process_menu_bottom (int cx, int cy)
    }
 
    /* The mouse is over 'Save' menu */
-   if (cx >= 0 && cx < (column_width) && cy >= (SH - 10) && cy <= (SH - 5)) {
+   if (cx >= 0 && cx < (COLUMN_WIDTH) && cy >= (SH - 10) && cy <= (SH - 5)) {
       gmap.can_save = 1 - gmap.can_save;
       while (mouse_b & 1);
       return;
    }
 
    /* The mouse is over 'Warp' menu */
-   if (cx >= (column_width) && cx < (column_width * 2) && cy >= (SH - 22)
+   if (cx >= (COLUMN_WIDTH) && cx < (COLUMN_WIDTH * 2) && cy >= (SH - 22)
        && cy <= (SH - 17)) {
       gmap.can_warp = 1 - gmap.can_warp;
       while (mouse_b & 1);
@@ -2064,7 +2119,7 @@ void process_menu_bottom (int cx, int cy)
    }
 
    /* The mouse is over 'WarpX' menu */
-   if (cx >= (column_width) && cx < (column_width * 2) && cy >= (SH - 16)
+   if (cx >= (COLUMN_WIDTH) && cx < (COLUMN_WIDTH * 2) && cy >= (SH - 16)
        && cy <= (SH - 11)) {
       rectfill (double_buffer, 122, (SH - 16), 159, (SH - 11), 0);
       print_sfont (116, (SH - 16), ">", double_buffer);
@@ -2085,7 +2140,7 @@ void process_menu_bottom (int cx, int cy)
    }
 
    /* The mouse is over 'WarpY' menu */
-   if (cx >= (column_width) && cx < (column_width * 2) && cy >= (SH - 10)
+   if (cx >= (COLUMN_WIDTH) && cx < (COLUMN_WIDTH * 2) && cy >= (SH - 10)
        && cy <= (SH - 5)) {
       rectfill (double_buffer, 122, (SH - 10), 159, (SH - 5), 0);
       print_sfont (116, (SH - 10), ">", double_buffer);
@@ -2106,9 +2161,9 @@ void process_menu_bottom (int cx, int cy)
    }
 
    /* The mouse is over 'Start X' menu */
-   if (cx >= (column_width * 2) && cx < (column_width * 3) && cy >= (SH - 40)
+   if (cx >= (COLUMN_WIDTH * 2) && cx < (COLUMN_WIDTH * 3) && cy >= (SH - 40)
        && cy <= (SH - 35)) {
-      rectfill (double_buffer, 214, (SH - 40), ((column_width * 3) - 1),
+      rectfill (double_buffer, 214, (SH - 40), ((COLUMN_WIDTH * 3) - 1),
                 (SH - 35), 0);
       print_sfont (208, (SH - 40), ">", double_buffer);
       hline (double_buffer, 214, (SH - 35), 237, 255);
@@ -2128,9 +2183,9 @@ void process_menu_bottom (int cx, int cy)
    }
 
    /* The mouse is over 'Start Y' menu */
-   if (cx >= (column_width * 2) && cx < (column_width * 3) && cy >= (SH - 34)
+   if (cx >= (COLUMN_WIDTH * 2) && cx < (COLUMN_WIDTH * 3) && cy >= (SH - 34)
        && cy <= (SH - 29)) {
-      rectfill (double_buffer, 214, (SH - 34), ((column_width * 3) - 1),
+      rectfill (double_buffer, 214, (SH - 34), ((COLUMN_WIDTH * 3) - 1),
                 (SH - 29), 0);
       print_sfont (208, (SH - 34), ">", double_buffer);
       hline (double_buffer, 214, (SH - 29), 237, 255);
@@ -2150,7 +2205,7 @@ void process_menu_bottom (int cx, int cy)
    }
 
    /* Mouse is over 'Mult' menu */
-   if (cx >= (column_width * 3) && cx <= 319 && cy >= (SH - 40)
+   if (cx >= (COLUMN_WIDTH * 3) && cx <= 319 && cy >= (SH - 40)
        && cy <= (SH - 35)) {
       rectfill (double_buffer, 276, (SH - 40), 319, (SH - 35), 0);
       print_sfont (270, (SH - 40), ">", double_buffer);
@@ -2174,9 +2229,9 @@ void process_menu_bottom (int cx, int cy)
    }
 
    /* The mouse is over 'Div' menu */
-   if (cx >= (column_width * 3) && cx < (column_width * 4) && cy >= (SH - 34)
+   if (cx >= (COLUMN_WIDTH * 3) && cx < (COLUMN_WIDTH * 4) && cy >= (SH - 34)
        && cy <= (SH - 29)) {
-      rectfill (double_buffer, 270, (SH - 34), (column_width * 4) - 1,
+      rectfill (double_buffer, 270, (SH - 34), (COLUMN_WIDTH * 4) - 1,
                 (SH - 29), 0);
       print_sfont (264, (SH - 34), ">", double_buffer);
       hline (double_buffer, 270, (SH - 29), 293, 255);
@@ -2198,19 +2253,19 @@ void process_menu_bottom (int cx, int cy)
    }
 
    /* The mouse is over the 'Width' menu */
-   if (cx >= (column_width * 2) && cx < (column_width * 3) && cy >= (SH - 28)
+   if (cx >= (COLUMN_WIDTH * 2) && cx < (COLUMN_WIDTH * 3) && cy >= (SH - 28)
        && cy <= (SH - 23))
       /* 1 means resize width */
       resize_map (1);
 
    /* The mouse is over the 'Height' menu */
-   if (cx >= (column_width * 2) && cx < (column_width * 3) && cy >= (SH - 22)
+   if (cx >= (COLUMN_WIDTH * 2) && cx < (COLUMN_WIDTH * 3) && cy >= (SH - 22)
        && cy <= (SH - 17))
       /* 2 means resize height */
       resize_map (2);
 
    /* The mouse is over 'SunStone' menu */
-   if (cx >= (column_width * 2) && cx < (column_width * 3) && cy >= (SH - 16)
+   if (cx >= (COLUMN_WIDTH * 2) && cx < (COLUMN_WIDTH * 3) && cy >= (SH - 16)
        && cy <= (SH - 11)) {
       gmap.use_sstone = 1 - gmap.use_sstone;
       while (mouse_b & 1);
@@ -2225,8 +2280,8 @@ END_OF_FUNCTION (process_menu_bottom);
  *
  * Selects one of the tiles from the menu on the right
  *
- * \param   cx x-coord of the tile
- * \param   cy y-coord of the tile
+ * \param   cx X-coord of the tile
+ * \param   cy Y-coord of the tile
  */
 void process_menu_right (int cx, int cy)
 {
@@ -2329,6 +2384,8 @@ void process_mouse (const int mouse_button)
 
    /* Right mouse button */
    if (mouse_button == 2) {
+
+      /* Drawing to the map only happen when (dmode == 1) */
       if (dmode == 0) {
          switch (draw_mode) {
          case (BLOCK_COPY):
@@ -2354,6 +2411,8 @@ void process_mouse (const int mouse_button)
             break;
          }                      /* switch (draw_mode) */
       }                         /* if (dmode == 0) */
+
+      /* Now draw to the map */
       if (dmode == 1) {
          switch (draw_mode) {
          case (MAP_LAYER1):

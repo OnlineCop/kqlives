@@ -15,23 +15,23 @@
 #define SH            480
 #define WBUILD          1
 
-#define MAP_LAYER1  1           /* Map (sea-level) */
-#define MAP_LAYER2  2           /* Background (ground-level) */
-#define MAP_LAYER3  4           /* Foreground (tree-tops, etc.) */
-#define MAP_SHADOWS  8          /* Entities Attribute */
-#define MAP_ZONES  16           /* Shadows Attribute */
-#define MAP_OBSTACLES  32       /* Obstacles Attribute */
-#define MAP_ENTITIES  64        /* Zones Attribute */
+#define MAP_LAYER1      1       /* Map (sea-level) */
+#define MAP_LAYER2      2       /* Background (ground-level) */
+#define MAP_LAYER3      4       /* Foreground (tree-tops, etc.) */
+#define MAP_ENTITIES    8       /* Entities Attribute */
+#define MAP_OBSTACLES  16       /* Obstacles Attribute */
+#define MAP_SHADOWS    32       /* Shadows Attribute */
+#define MAP_ZONES      64       /* Zones Attribute */
 #define MAP_LAYER12  (MAP_LAYER1 | MAP_LAYER2)  /* Map + background */
 #define MAP_LAYER13  (MAP_LAYER1 | MAP_LAYER3)  /* Map + foreground */
 #define MAP_LAYER23  (MAP_LAYER2 | MAP_LAYER3)  /* Background + foreground */
-#define MAP_LAYER123 (MAP_LAYER1 | MAP_LAYER2 | MAP_LAYER3)     /* Map + background + foreground */
-#define BLOCK_COPY  128         /* Mode to start copying an area */
-#define BLOCK_PASTE  256        /* Mode to paste the copied area */
-#define GRAB_TILE  512          /* Select a tile in the map to draw */
-#define MAP_PREVIEW 1024        /* Draw a proper preview with layer ordering and parallax */
+#define MAP_LAYER123  (MAP_LAYER1 | MAP_LAYER2 | MAP_LAYER3)    /* Map + background + foreground */
+#define BLOCK_COPY    128       /* Mode to start copying an area */
+#define BLOCK_PASTE   256       /* Mode to paste the copied area */
+#define GRAB_TILE     512       /* Select a tile in the map to draw */
+#define MAP_PREVIEW  1024       /* Draw a proper preview with layer ordering and parallax */
 
-#define ICONSET_SIZE    20      /* Number of icons shown in the icon map */
+#define ICONSET_SIZE   20       /* Number of icons shown in the icon map */
 
 #include "../include/structs.h"
 
