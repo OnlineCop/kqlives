@@ -73,7 +73,7 @@
 #define P_TALKGELIK       42
 #define P_OPALHELMET      43
 #define P_FOUNDMAYOR      44
-#define P_PARTNER3        45
+#define P_TALK_TEMMIN     45
 #define P_EMBERSKEY       46
 #define P_FOUGHTGUILD     47
 #define P_GUILDSECRET     48
