@@ -170,6 +170,7 @@ static int KQ_do_fadeout (lua_State *);
 static int KQ_do_fadein (lua_State *);
 static int KQ_shop (lua_State *);
 static int KQ_inn (lua_State *);
+static int KQ_do_inn_effects (lua_State *);
 static int KQ_door_in (lua_State *);
 static int KQ_door_out (lua_State *);
 static int KQ_calc_viewport (lua_State *);
@@ -329,6 +330,7 @@ static const struct luaL_reg lrs[] = {
    {"do_fadein", KQ_do_fadein},
    {"shop", KQ_shop},
    {"inn", KQ_inn},
+   {"do_inn_effects", KQ_do_inn_effects},
    {"door_in", KQ_door_in},
    {"door_out", KQ_door_out},
    {"calc_viewport", KQ_calc_viewport},
@@ -484,17 +486,19 @@ static int get_field (const char *n)
  * \param L::1 which party member (0..numchrs-1)
  * \returns hero object
  */
-static int party_getter(lua_State* L) {
-    int which=lua_tonumber(L, 2);
-    if (which>=0 && which<numchrs) {
-        lua_getglobal(L, "player");
-        lua_rawgeti(L, -1, pidx[which]);
-    }
-    else {
-        lua_pushnil(L);
-    }
-    return 1;
+static int party_getter (lua_State * L)
+{
+   int which = lua_tonumber (L, 2);
+   if (which >= 0 && which < numchrs) {
+      lua_getglobal (L, "player");
+      lua_rawgeti (L, -1, pidx[which]);
+   } else {
+      lua_pushnil (L);
+   }
+   return 1;
 }
+
+
 /*! \brief Set party array
  *
  * Implement setting the character objects in the
@@ -504,52 +508,53 @@ static int party_getter(lua_State* L) {
  * \param L::2 hero object
  * \returns 0 (no values returned)
  */
-static int party_setter(lua_State* L) {
-    int which=lua_tonumber(L, 2);
-    if (which>=0 && which <PSIZE) {
-/* check if it is a valid hero object */
-        if (lua_isnil(L, 3)) {
-            int i;
-            /* is there a character there anyway? */
-            if (which>=numchrs) return 0;
-            /* it was nil, erase a character */
-            for (i=which; i<(PSIZE-1); ++i) {
-                pidx[i]=pidx[i+1];
-                memcpy(&g_ent[i], &g_ent[i+1], sizeof(s_entity));
+static int party_setter (lua_State * L)
+{
+   int which = lua_tonumber (L, 2);
+   if (which >= 0 && which < PSIZE) {
+      /* check if it is a valid hero object */
+      if (lua_isnil (L, 3)) {
+         int i;
+         /* is there a character there anyway? */
+         if (which >= numchrs)
+            return 0;
+         /* it was nil, erase a character */
+         for (i = which; i < (PSIZE - 1); ++i) {
+            pidx[i] = pidx[i + 1];
+            memcpy (&g_ent[i], &g_ent[i + 1], sizeof (s_entity));
+         }
+         --numchrs;
+         g_ent[numchrs].active = 0;
+         pidx[numchrs] = -1;
+      } else if (lua_istable (L, 3)) {
+         s_player *tt;
+         lua_pushstring (L, LUA_PLR_KEY);
+         lua_rawget (L, -2);
+         tt = lua_touserdata (L, -1);
+         if (tt) {
+            /* OK so far */
+            if (which > numchrs)
+               which = numchrs;
+            pidx[which] = tt - party;
+            if (which >= numchrs) {
+               /* Added a character in */
+               numchrs = which + 1;
+               memcpy (&g_ent[which], &g_ent[0], sizeof (s_entity));
+               g_ent[which].x = g_ent[0].x;
+               g_ent[which].y = g_ent[0].y;
+               /* orient heroes */
+               lastm[0] = lastm[1] = MOVE_NOT;
             }
-            --numchrs;
-            g_ent[numchrs].active=0;
-            pidx[numchrs]=-1;
-        }
-        else if (lua_istable(L, 3)) {
-            s_player* tt;
-            lua_pushstring (L, LUA_PLR_KEY);
-            lua_rawget (L, -2);
-            tt=lua_touserdata(L, -1);
-            if (tt) {
-                /* OK so far */
-                if (which>numchrs) which=numchrs;
-                pidx[which]=tt-party;
-                if (which>=numchrs) {
-                    /* Added a character in */
-                    numchrs=which+1;
-                    memcpy(&g_ent[which], &g_ent[0], sizeof(s_entity));
-                    g_ent[which].x=g_ent[0].x;
-                    g_ent[which].y=g_ent[0].y;
-                    /* orient heroes */
-                    lastm[0]=lastm[1]=MOVE_NOT;
-                }
-                g_ent[which].chrx=0;
-                g_ent[which].eid=pidx[which];
-                 
-            }
-            /* else, it was a table but not a hero */
-        }
-        else {
-        /* else, it wasn't a table */
-        }
-    }
-    return 0;
+            g_ent[which].chrx = 0;
+            g_ent[which].eid = pidx[which];
+
+         }
+         /* else, it was a table but not a hero */
+      } else {
+         /* else, it wasn't a table */
+      }
+   }
+   return 0;
 }
 
 
@@ -725,11 +730,11 @@ static int KQ_char_getter (lua_State * L)
          lua_pushnumber (L, ent->active);
          break;
       case 16:
-          lua_pushcfunction(L, KQ_bubble_ex);
-          break;
+         lua_pushcfunction (L, KQ_bubble_ex);
+         break;
       case 17:
-          lua_pushcfunction(L, KQ_thought_ex);
-              
+         lua_pushcfunction (L, KQ_thought_ex);
+
       }
    }
    if (top == lua_gettop (L)) {
@@ -756,7 +761,7 @@ static void init_obj (lua_State * L)
 {
    int i = 0;
    int tag = lua_newtag (L);
-   int ptag = lua_newtag(L);
+   int ptag = lua_newtag (L);
 
    /* do all the players */
    for (i = 0; i < MAXCHRS; ++i) {
@@ -781,13 +786,13 @@ static void init_obj (lua_State * L)
    }
    /* party pseudo-array */
    lua_newtable (L);
-   lua_settag(L, ptag);
-   lua_setglobal(L, "party");
-   lua_pushcfunction(L, party_getter);
-   lua_settagmethod(L, ptag, "gettable");
-   lua_pushcfunction(L, party_setter);
-   lua_settagmethod(L, ptag, "settable");
-   
+   lua_settag (L, ptag);
+   lua_setglobal (L, "party");
+   lua_pushcfunction (L, party_getter);
+   lua_settagmethod (L, ptag, "gettable");
+   lua_pushcfunction (L, party_setter);
+   lua_settagmethod (L, ptag, "settable");
+
    /* player[] array */
    lua_newtable (L);
    for (i = 0; i < MAXCHRS; ++i) {
@@ -836,30 +841,31 @@ int tmx, tmy, tmvx, tmvy, changing_map = 0;
  * \param   pos position on the lua stack
  * \returns real entity number
  */
-static int real_entity_num (lua_State* L, int pos)
+static int real_entity_num (lua_State * L, int pos)
 {
-    if (lua_isnumber(L, pos)) {
-        int ee= (int) lua_tonumber(L, pos);
-        switch(ee) {
-            case HERO1:
-                return 0;
-            case HERO2:
-                return 1;
-            case 255:
-                return 255;
-            default:
-                return ee+PSIZE;
-        }
-    }
-    if (lua_istable(L, pos)) {
-        s_entity* ent;
-        lua_pushstring (L, LUA_ENT_KEY);
-        lua_rawget (L, pos);
-        ent = (s_entity *) lua_touserdata (L, -1);
-        lua_pop (L, 1);
-        if (ent) return ent-g_ent;
-    }
-    return 255; /* means "nobody" */
+   if (lua_isnumber (L, pos)) {
+      int ee = (int) lua_tonumber (L, pos);
+      switch (ee) {
+      case HERO1:
+         return 0;
+      case HERO2:
+         return 1;
+      case 255:
+         return 255;
+      default:
+         return ee + PSIZE;
+      }
+   }
+   if (lua_istable (L, pos)) {
+      s_entity *ent;
+      lua_pushstring (L, LUA_ENT_KEY);
+      lua_rawget (L, pos);
+      ent = (s_entity *) lua_touserdata (L, -1);
+      lua_pop (L, 1);
+      if (ent)
+         return ent - g_ent;
+   }
+   return 255;                  /* means "nobody" */
 }
 
 
@@ -1418,7 +1424,7 @@ static int KQ_set_ent_tilex (lua_State * L)
 
 static int KQ_get_ent_tiley (lua_State * L)
 {
-   int a = real_entity_num(L, 1);
+   int a = real_entity_num (L, 1);
 
    lua_pushnumber (L, g_ent[a].tiley);
    return 1;
@@ -2255,8 +2261,7 @@ static int KQ_face_each_other (lua_State * L)
 static int KQ_wait_for_entity (lua_State * L)
 {
    int a = real_entity_num (L, 1);
-   int b =
-      lua_gettop (L) > 1 ? real_entity_num (L, 2) : a;
+   int b = lua_gettop (L) > 1 ? real_entity_num (L, 2) : a;
 
    wait_for_entity (a, b);
    return 0;
@@ -2349,6 +2354,14 @@ static int KQ_inn (lua_State * L)
 {
    inn ((char *) lua_tostring (L, 1), (int) lua_tonumber (L, 2),
         (int) lua_tonumber (L, 3));
+   return 0;
+}
+
+
+
+static int KQ_do_inn_effects (lua_State * L)
+{
+   do_inn_effects ((int) lua_tonumber (L, 1));
    return 0;
 }
 
@@ -2596,6 +2609,7 @@ static int KQ_move_camera (lua_State * L)
             ct2 = 0;
          }
          check_animation ();
+         yield_timeslice ();
       }
       drawmap ();
       blit2screen (xofs, yofs);
@@ -2809,6 +2823,15 @@ static int KQ_pnum (lua_State * L)
 
 
 
+/* This allows the LUA script to accept keyboard input, useful for things such
+ * as the original LOC_choose_hero() in starting.lua where you could choose the
+ * character you start with. It is called in the LUA script as follows:
+ *
+ * read_controls(0, 0, 1, 1, 1, 0, 0, 0)
+ *
+ * This would mean that the script will only make use of the LEFT, RIGHT, and
+ * ALT keys and ignore everything else.
+ */
 static int KQ_read_controls (lua_State * L)
 {
    int a = (int) lua_tonumber (L, 1);
@@ -2911,7 +2934,7 @@ static int KQ_use_up (lua_State * L)
  */
 int KQ_bubble_ex (lua_State * L)
 {
-   int entity=real_entity_num(L, 1);
+   int entity = real_entity_num (L, 1);
    const char *msg = lua_tostring (L, 2);
 
    text_ex (B_TEXT, entity, msg);

@@ -419,6 +419,8 @@ static void player_move (void)
 static void moveup (int target_entity)
 {
    int tx, ty;
+   if (g_ent[target_entity].active == 0)
+      return;
 
    emoved = 0;
    tx = g_ent[target_entity].x / 16;
@@ -485,6 +487,10 @@ static void moveright (int target_entity)
       return;
    if (g_ent[target_entity].obsmode == 1
        && (obstruction (tx, ty, 1, 0) || entityat (tx + 1, ty, target_entity)))
+      /* TT TODO: Here would be good to check if there is an NPC in the
+       * direction we are trying to move. If there is, and the NPC is on WANDER
+       * then encourage it to move to a new square immediately.
+       */
       return;
    g_ent[target_entity].tilex++;
    g_ent[target_entity].moving = MOVE_RIGHT;
@@ -721,7 +727,10 @@ static void getcommand (int target_entity)
       g_ent[target_entity].active = 0;
       break;
    default:
+#ifdef DEBUGMODE
       program_death ("Invalid entity command!");
+#endif
+      break;
    }
 }
 
@@ -735,6 +744,8 @@ static void getcommand (int target_entity)
  */
 static void entscript (int target_entity)
 {
+   if (g_ent[target_entity].active == 0)
+      return;
    if (g_ent[target_entity].cmd == 0)
       getcommand (target_entity);
    switch (g_ent[target_entity].cmd) {
@@ -804,7 +815,10 @@ static void entscript (int target_entity)
  */
 void set_script (int target_entity, char *movestring)
 {
-   g_ent[target_entity].active = 1;
+   /* TT remove: I don't understand why we are making the entity active here;
+    * this should be something that would come from a LUA script before it.
+    */
+//   g_ent[target_entity].active = 1;
    g_ent[target_entity].moving = MOVE_NOT;
    g_ent[target_entity].movcnt = 0;
    g_ent[target_entity].cmd = 0;

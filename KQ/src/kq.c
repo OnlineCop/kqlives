@@ -961,6 +961,7 @@ void wait_enter (void)
          unpress ();
          stop = 1;
       }
+      yield_timeslice ();
    }
 
    timer_count = 0;
@@ -1130,7 +1131,8 @@ static void startup (void)
    pb = load_datafile_object (PCX_DATAFILE, "ENTITIES_PCX");
    for (q = 0; q < MAXE; q++)
       for (p = 0; p < MAXEFRAMES; p++)
-         blit ((BITMAP *) pb->dat, eframes[q][p], p * 16, q * 16, 0, 0, 16, 16);
+         blit ((BITMAP *) pb->dat, eframes[q][p], p * 16, q * 16, 0, 0, 16,
+               16);
    unload_datafile_object (pb);
    /* initialise tilesets */
    pf = pack_fopen (kqres (DATA_DIR, "tileset.kq"), F_READ_PACKED);
@@ -1194,7 +1196,8 @@ void load_heroes (void)
       program_death ("Could not load kqfaces.pcx!");
 
    for (i = 0; i < 4; ++i) {
-      blit ((BITMAP *) pcxb->dat, players[i].portrait, 0, i * 40, 0, 0, 40, 40);
+      blit ((BITMAP *) pcxb->dat, players[i].portrait, 0, i * 40, 0, 0, 40,
+            40);
       blit ((BITMAP *) pcxb->dat, players[i + 4].portrait, 40, i * 40, 0, 0,
             40, 40);
    }
@@ -1544,6 +1547,7 @@ void wait_for_entity (int est, int efi)
             break;
          }
       }
+      yield_timeslice ();
    }
    while (n);
    autoparty = 0;

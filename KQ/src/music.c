@@ -28,7 +28,7 @@
  * Interfaces to wither JGMOD or DUMB, depending on #defines
  */
 
-#ifndef KQ_USE_JGMOD
+#ifndef KQ_USE_JGMOD /* { */
 /* DUMB version of music */
 #include <aldumb.h>
 #include "kq.h"
@@ -200,7 +200,7 @@ void resume_music (void)
    }
 }
 
-#else /* KQ_USE_JGMOD */
+#else /* } KQ_USE_JGMOD { */
 #include <jgmod.h>
 #include <stdio.h>
 #include "kq.h"
@@ -327,4 +327,4 @@ void resume_music ()
    resume_mod ();
 }
 
-#endif /* KQ_USE_JGMOD */
+#endif /* } KQ_USE_JGMOD */

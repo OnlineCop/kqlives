@@ -434,14 +434,17 @@ void drawmap (void)
       clear_to_color (double_buffer, 1);
       return;
    }
-   clear_bitmap(double_buffer);
-   if (draw_background) draw_backlayer ();
+   clear_bitmap (double_buffer);
+   if (draw_background)
+      draw_backlayer ();
    if (g_map.map_mode == 1 || g_map.map_mode == 3 || g_map.map_mode == 5)
       drawchar (16, 16);
-   if (draw_middle) draw_midlayer ();
+   if (draw_middle)
+      draw_midlayer ();
    if (g_map.map_mode == 0 || g_map.map_mode == 2 || g_map.map_mode == 4)
       drawchar (16, 16);
-   if (draw_foreground) draw_forelayer ();
+   if (draw_foreground)
+      draw_forelayer ();
    draw_shadows ();
 /*
    This is an obvious hack here.  When I first started, xofs and yofs could
@@ -510,11 +513,12 @@ static void draw_backlayer (void)
          for (dx = 0; dx < 21; dx++) {
             if (xtc + dx >= v_x1 && xtc + dx <= v_x2) {
                pix = map_seg[((ytc + dy) * g_map.xsize) + xtc + dx];
-               blit (map_icons[tilex[pix]], double_buffer, 0, 0, dx * 16 + xofs,
-                     dy * 16 + yofs, 16, 16);
+               blit (map_icons[tilex[pix]], double_buffer, 0, 0,
+                     dx * 16 + xofs, dy * 16 + yofs, 16, 16);
+
             } /*else
                blit (map_icons[0], double_buffer, 0, 0, dx * 16 + xofs,
-	       dy * 16 + yofs, 16, 16);*/
+	                  dy * 16 + yofs, 16, 16);*/
          }
       }
    }
@@ -1168,6 +1172,7 @@ static void generic_text (int who, int box_style)
          unpress ();
          stop = 1;
       }
+      yield_timeslice ();
    }
    timer_count = 0;
 }
@@ -1235,7 +1240,7 @@ int prompt_ex (int who, const char *ptext, char *opt[], int n_opt)
    int winheight;
    int winwidth = 0;
    int winx, winy;
-   int i, w, redraw, running;
+   int i, w, running;
 
    ptext = parse_string (ptext);
    while (1) {
@@ -1270,44 +1275,43 @@ int prompt_ex (int who, const char *ptext, char *opt[], int n_opt)
          winheight = n_opt > 4 ? 4 : n_opt;
          winx = xofs + (320 - winwidth * 8) / 2;
          winy = yofs + 230 - winheight * 12;
-         running = redraw = 1;
+         running = 1;
          while (running) {
-            if (redraw) {
-               drawmap ();
-               /* Draw the prompt text */
-               set_textpos (who);
-               draw_textbox (B_TEXT);
-               /* Draw the  options text */
-               draw_kq_box (double_buffer, winx - 5, winy - 5,
-                            winx + winwidth * 8 + 13,
-                            winy + winheight * 12 + 5, BLUE, B_TEXT);
-               for (i = 0; i < winheight; ++i) {
-                  print_font (double_buffer, winx + 8, winy + i * 12,
-                              opt[i + topopt], FBIG);
-               }
-               draw_sprite (double_buffer, menuptr, winx + 8 - menuptr->w,
-                            (curopt - topopt) * 12 + winy + 4);
-               /* Draw the 'up' and 'down' markers if there are more options than will fit in the window */
-               if (topopt > 0)
-                  draw_sprite (double_buffer, upptr, winx, winy - 8);
-               if (topopt < n_opt - winheight)
-                  draw_sprite (double_buffer, dnptr, winx,
-                               winy + 12 * winheight);
-
-               blit2screen (xofs, yofs);
-               redraw = 0;
+            while (timer_count > 0) {
+               timer_count--;
+               check_animation ();
             }
+            drawmap ();
+            /* Draw the prompt text */
+            set_textpos (who);
+            draw_textbox (B_TEXT);
+            /* Draw the  options text */
+            draw_kq_box (double_buffer, winx - 5, winy - 5,
+                         winx + winwidth * 8 + 13,
+                         winy + winheight * 12 + 5, BLUE, B_TEXT);
+            for (i = 0; i < winheight; ++i) {
+               print_font (double_buffer, winx + 8, winy + i * 12,
+                           opt[i + topopt], FBIG);
+            }
+            draw_sprite (double_buffer, menuptr, winx + 8 - menuptr->w,
+                         (curopt - topopt) * 12 + winy + 4);
+            /* Draw the 'up' and 'down' markers if there are more options than will fit in the window */
+            if (topopt > 0)
+               draw_sprite (double_buffer, upptr, winx, winy - 8);
+            if (topopt < n_opt - winheight)
+               draw_sprite (double_buffer, dnptr, winx, winy + 12 * winheight);
+
+            blit2screen (xofs, yofs);
+
             readcontrols ();
             if (up && curopt > 0) {
                play_effect (SND_CLICK, 128);
                unpress ();
                --curopt;
-               redraw = 1;
             } else if (down && curopt < (n_opt - 1)) {
                play_effect (SND_CLICK, 128);
                unpress ();
                ++curopt;
-               redraw = 1;
             } else if (balt) {
                /* Selected an option */
                play_effect (SND_CLICK, 128);
@@ -1318,6 +1322,7 @@ int prompt_ex (int who, const char *ptext, char *opt[], int n_opt)
                unpress ();
                play_effect (SND_BAD, 128);
             }
+
             /* Adjust top position so that the current option is always shown */
             if (curopt < topopt) {
                topopt = curopt;
@@ -1326,6 +1331,7 @@ int prompt_ex (int who, const char *ptext, char *opt[], int n_opt)
                topopt = curopt - winheight + 1;
 
             }
+            yield_timeslice ();
          }
          return curopt;
       }
@@ -1351,7 +1357,7 @@ int prompt_ex (int who, const char *ptext, char *opt[], int n_opt)
 int prompt (int who, int numopt, int bstyle, char *sp1, char *sp2, char *sp3,
             char *sp4)
 {
-   int ly, stop = 0, ptr = 0, rd = 1, a;
+   int ly, stop = 0, ptr = 0, a;
 
    gbbw = 1;
    gbbh = 0;
@@ -1373,17 +1379,19 @@ int prompt (int who, int numopt, int bstyle, char *sp1, char *sp2, char *sp3,
       return -1;
    ly = (gbbh - numopt) * 12 + gbby + 10;
    while (!stop) {
-      if (rd == 1) {
-         drawmap ();
-         draw_textbox (bstyle);
-/*              for (a = 0; a < gbbh; a++) */
-/*                 print_font (double_buffer, gbbx + 8 + xofs, */
-/*                             a * 12 + gbby + 8 + yofs, msgbuf[a], FBIG); */
-         draw_sprite (double_buffer, menuptr, gbbx + xofs + 8,
-                      ptr * 12 + ly + yofs);
-         blit2screen (xofs, yofs);
+      while (timer_count > 0) {
+         timer_count--;
+         check_animation ();
       }
-      rd = 0;
+      drawmap ();
+      draw_textbox (bstyle);
+/*           for (a = 0; a < gbbh; a++) */
+/*              print_font (double_buffer, gbbx + 8 + xofs, */
+/*                          a * 12 + gbby + 8 + yofs, msgbuf[a], FBIG); */
+      draw_sprite (double_buffer, menuptr, gbbx + xofs + 8,
+                   ptr * 12 + ly + yofs);
+      blit2screen (xofs, yofs);
+
       readcontrols ();
       if (up) {
          unpress ();
@@ -1391,7 +1399,6 @@ int prompt (int who, int numopt, int bstyle, char *sp1, char *sp2, char *sp3,
          if (ptr < 0)
             ptr = 0;
          play_effect (SND_CLICK, 128);
-         rd = 1;
       }
       if (down) {
          unpress ();
@@ -1399,12 +1406,12 @@ int prompt (int who, int numopt, int bstyle, char *sp1, char *sp2, char *sp3,
          if (ptr > numopt - 1)
             ptr = numopt - 1;
          play_effect (SND_CLICK, 128);
-         rd = 1;
       }
       if (balt) {
          unpress ();
          stop = 1;
       }
+      yield_timeslice ();
    }
    return ptr;
 }

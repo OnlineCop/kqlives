@@ -263,31 +263,33 @@ static void optimize_equip (int c)
 void equip_menu (int c)
 {
    int stop = 0, yptr = 0, sl = 1;
-   int rd = 1, a, b, d;
+   int a, b, d;
 
    eqp_act = 0;
    play_effect (SND_MENU, 128);
    while (!stop) {
-      if (rd) {
-         drawmap ();
-         draw_equipmenu (c, sl);
-         if (sl == 0) {
-            draw_equippable (c, yptr, 0);
-            if (eqp_act == 2)
-               draw_equippreview (c, yptr, 0);
-            else
-               draw_equippreview (c, -1, 0);
-         } else {
-            draw_equippable (c, -1, 0);
-            draw_equippreview (c, -1, 0);
-         }
-         if (sl == 0)
-            draw_sprite (double_buffer, menuptr, 12 + xofs,
-                         yptr * 8 + 36 + yofs);
-         blit2screen (xofs, yofs);
+      while (timer_count > 0) {
+         timer_count--;
+         check_animation ();
       }
+      drawmap ();
+      draw_equipmenu (c, sl);
+      if (sl == 0) {
+         draw_equippable (c, yptr, 0);
+         if (eqp_act == 2)
+            draw_equippreview (c, yptr, 0);
+         else
+            draw_equippreview (c, -1, 0);
+      } else {
+         draw_equippable (c, -1, 0);
+         draw_equippreview (c, -1, 0);
+      }
+      if (sl == 0)
+         draw_sprite (double_buffer, menuptr, 12 + xofs, yptr * 8 + 36 + yofs);
+      blit2screen (xofs, yofs);
+
       readcontrols ();
-      rd = 0;
+
       if (sl == 1) {
          if (left) {
             unpress ();
@@ -295,7 +297,6 @@ void equip_menu (int c)
             if (eqp_act < 0)
                eqp_act = 3;
             play_effect (SND_CLICK, 128);
-            rd = 1;
          }
          if (right) {
             unpress ();
@@ -303,7 +304,6 @@ void equip_menu (int c)
             if (eqp_act > 3)
                eqp_act = 0;
             play_effect (SND_CLICK, 128);
-            rd = 1;
          }
       } else {
          if (down) {
@@ -312,7 +312,6 @@ void equip_menu (int c)
             if (yptr > 5)
                yptr = 0;
             play_effect (SND_CLICK, 128);
-            rd = 1;
          }
          if (up) {
             unpress ();
@@ -320,31 +319,29 @@ void equip_menu (int c)
             if (yptr < 0)
                yptr = 5;
             play_effect (SND_CLICK, 128);
-            rd = 1;
          }
       }
       if (balt) {
          unpress ();
          if (sl == 1) {
+            // If the selection is over 'Equip' or 'Remove'
             if (eqp_act == 0 || eqp_act == 2)
                sl = 0;
-            else {
-               if (eqp_act == 3) {
-                  b = 0;
-                  d = 0;
-                  for (a = 0; a < 6; a++) {
-                     if (party[pidx[c]].eqp[a] > 0) {
-                        d++;
-                        b += deequip (c, a);
-                     }
+            else if (eqp_act == 1)
+               optimize_equip (c);
+            else if (eqp_act == 3) {
+               b = 0;
+               d = 0;
+               for (a = 0; a < 6; a++) {
+                  if (party[pidx[c]].eqp[a] > 0) {
+                     d++;
+                     b += deequip (c, a);
                   }
-                  if (b == d)
-                     play_effect (SND_UNEQUIP, 128);
-                  else
-                     play_effect (SND_BAD, 128);
                }
-               if (eqp_act == 1)
-                  optimize_equip (c);
+               if (b == d)
+                  play_effect (SND_UNEQUIP, 128);
+               else
+                  play_effect (SND_BAD, 128);
             }
          } else {
             if (eqp_act == 0)
@@ -358,7 +355,6 @@ void equip_menu (int c)
                }
             }
          }
-         rd = 1;
       }
       if (bctrl) {
          unpress ();
@@ -366,7 +362,6 @@ void equip_menu (int c)
             sl = 1;
          else
             stop = 1;
-         rd = 1;
       }
    }
 }
@@ -382,30 +377,32 @@ void equip_menu (int c)
  */
 static void choose_equipment (int c, int slot)
 {
-   int stop = 0, yptr = 0, rd = 1, pptr = 0, sm = 0, ym = 15;
+   int stop = 0, yptr = 0, pptr = 0, sm = 0, ym = 15;
 
    while (!stop) {
-      if (rd) {
-         drawmap ();
-         draw_equipmenu (c, 0);
-         draw_equippable (c, slot, pptr);
-         if (tot == 0) {
-            draw_equippreview (c, -1, 0);
-            play_effect (SND_BAD, 128);
-            return;
-         }
-         draw_equippreview (c, slot, g_inv[t_inv[pptr + yptr]][0]);
-         draw_sprite (double_buffer, menuptr, 12 + xofs,
-                      yptr * 8 + 100 + yofs);
-         blit2screen (xofs, yofs);
-         if (tot < 16) {
-            sm = 0;
-            ym = tot - 1;
-         } else
-            sm = tot - 16;
+      while (timer_count > 0) {
+         timer_count--;
+         check_animation ();
       }
+      drawmap ();
+      draw_equipmenu (c, 0);
+      draw_equippable (c, slot, pptr);
+      if (tot == 0) {
+         draw_equippreview (c, -1, 0);
+         play_effect (SND_BAD, 128);
+         return;
+      }
+      draw_equippreview (c, slot, g_inv[t_inv[pptr + yptr]][0]);
+      draw_sprite (double_buffer, menuptr, 12 + xofs, yptr * 8 + 100 + yofs);
+      blit2screen (xofs, yofs);
+      if (tot < 16) {
+         sm = 0;
+         ym = tot - 1;
+      } else
+         sm = tot - 16;
+
       readcontrols ();
-      rd = 0;
+
       if (down) {
          unpress ();
          if (yptr == 15) {
@@ -417,7 +414,6 @@ static void choose_equipment (int c, int slot)
                yptr++;
          }
          play_effect (SND_CLICK, 128);
-         rd = 1;
       }
       if (up) {
          unpress ();
@@ -428,7 +424,6 @@ static void choose_equipment (int c, int slot)
          } else
             yptr--;
          play_effect (SND_CLICK, 128);
-         rd = 1;
       }
       if (balt) {
          unpress ();

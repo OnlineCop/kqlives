@@ -63,21 +63,20 @@ static int tmpd[NUM_FIGHTERS];
  */
 int select_player (void)
 {
-   /* TT: This takes up a lot of CPU, it doesn't update the background...
-    *     Is there a way to optimise it?
-    */
-
-   int stop = 0, ptr, redraw = 1;
+   int stop = 0, ptr;
 
    if (numchrs == 1)
       return 0;
    ptr = 0;
    while (!stop) {
-      if (redraw == 1) {
-         draw_mainmenu (ptr);
-         blit2screen (xofs, yofs);
+      while (timer_count > 0) {
+         timer_count--;
+         check_animation ();
       }
-      redraw = 0;
+      drawmap ();
+      draw_mainmenu (ptr);
+      blit2screen (xofs, yofs);
+
       readcontrols ();
       if (up) {
          unpress ();
@@ -85,7 +84,6 @@ int select_player (void)
          if (ptr < 0)
             ptr = numchrs - 1;
          play_effect (SND_CLICK, 128);
-         redraw = 1;
       }
       if (down) {
          unpress ();
@@ -93,7 +91,6 @@ int select_player (void)
          if (ptr > numchrs - 1)
             ptr = 0;
          play_effect (SND_CLICK, 128);
-         redraw = 1;
       }
       if (balt) {
          unpress ();
@@ -103,6 +100,7 @@ int select_player (void)
          unpress ();
          return -1;
       }
+      yield_timeslice ();
    }
    return ptr;
 }
@@ -131,7 +129,7 @@ int select_player (void)
  */
 int select_any_player (int csa, int icn, char *msg)
 {
-   int stop = 0, ptr, redraw = 1, shy, k, sa;
+   int stop = 0, ptr, shy, k, sa;
 
    shy = 120 - (numchrs * 28);
    if (csa == 2)
@@ -140,34 +138,35 @@ int select_any_player (int csa, int icn, char *msg)
       sa = 0;
    ptr = 0;
    while (!stop) {
-      if (redraw == 1) {
-         drawmap ();
+      while (timer_count > 0) {
+         timer_count--;
+         check_animation ();
+      }
+      drawmap ();
+      if (csa < TGT_ALLY_ALL) {
+         menubox (double_buffer, 152 - ((strlen (msg) + 1) * 4) + xofs,
+                  8 + yofs, strlen (msg) + 1, 1, BLUE);
+         draw_icon (double_buffer, icn,
+                    160 - ((strlen (msg) + 1) * 4) + xofs, 16 + yofs);
+         print_font (double_buffer, 168 - ((strlen (msg) + 1) * 4) + xofs,
+                     16 + yofs, msg, FNORMAL);
+      }
+      for (k = 0; k < numchrs; k++) {
+         menubox (double_buffer, 80 + xofs, k * 56 + shy + yofs, 18, 5, BLUE);
+         draw_playerstat (double_buffer, pidx[k], 88 + xofs,
+                          k * 56 + shy + 8 + yofs);
          if (csa < TGT_ALLY_ALL) {
-            menubox (double_buffer, 152 - ((strlen (msg) + 1) * 4) + xofs,
-                     8 + yofs, strlen (msg) + 1, 1, BLUE);
-            draw_icon (double_buffer, icn,
-                       160 - ((strlen (msg) + 1) * 4) + xofs, 16 + yofs);
-            print_font (double_buffer, 168 - ((strlen (msg) + 1) * 4) + xofs,
-                        16 + yofs, msg, FNORMAL);
-         }
-         for (k = 0; k < numchrs; k++) {
-            menubox (double_buffer, 80 + xofs, k * 56 + shy + yofs, 18, 5,
-                     BLUE);
-            draw_playerstat (double_buffer, pidx[k], 88 + xofs,
-                             k * 56 + shy + 8 + yofs);
-            if (csa < TGT_ALLY_ALL) {
-               if (sa == 0) {
-                  if (k == ptr)
-                     draw_sprite (double_buffer, menuptr, 72 + xofs,
-                                  k * 56 + shy + 24 + yofs);
-               } else
+            if (sa == 0) {
+               if (k == ptr)
                   draw_sprite (double_buffer, menuptr, 72 + xofs,
                                k * 56 + shy + 24 + yofs);
-            }
+            } else
+               draw_sprite (double_buffer, menuptr, 72 + xofs,
+                            k * 56 + shy + 24 + yofs);
          }
-         blit2screen (xofs, yofs);
       }
-      redraw = 0;
+      blit2screen (xofs, yofs);
+
       readcontrols ();
       if (csa < TGT_ALLY_ALL) {
          if (left) {
@@ -178,7 +177,6 @@ int select_any_player (int csa, int icn, char *msg)
                else
                   sa = 0;
             }
-            redraw = 1;
          }
          if (right) {
             unpress ();
@@ -188,21 +186,18 @@ int select_any_player (int csa, int icn, char *msg)
                else
                   sa = 0;
             }
-            redraw = 1;
          }
          if (up) {
             unpress ();
             if (ptr > 0)
                ptr--;
             play_effect (SND_CLICK, 128);
-            redraw = 1;
          }
          if (down) {
             unpress ();
             if (ptr < numchrs - 1)
                ptr++;
             play_effect (SND_CLICK, 128);
-            redraw = 1;
          }
       }
       if (balt) {
@@ -213,6 +208,7 @@ int select_any_player (int csa, int icn, char *msg)
          unpress ();
          stop = 2;
       }
+      yield_timeslice ();
    }
    if (csa == TGT_ALLY_ALL || stop == 2)
       return -1;
@@ -240,7 +236,7 @@ int select_any_player (int csa, int icn, char *msg)
  */
 int select_hero (int whom, int multi, int csd)
 {
-   int cntr = 0, ptr = 0, stp = 0, redraw = 1, sa, a;
+   int cntr = 0, ptr = 0, stop = 0, sa, a;
 
    if (multi == TGT_ALLY_ONEALL)
       sa = 1;
@@ -258,20 +254,22 @@ int select_hero (int whom, int multi, int csd)
          }
       }
    }
-   while (!stp) {
-      if (redraw == 1) {
-         if (multi > TGT_NONE && sa == 1)
-            battle_render (tmpd[ptr] + 1, whom + 1, 1);
-         else
-            battle_render (tmpd[ptr] + 1, whom + 1, 0);
-         blit2screen (0, 0);
+   while (!stop) {
+      while (timer_count > 0) {
+         timer_count--;
+         check_animation ();
       }
+      if (multi > TGT_NONE && sa == 1)
+         battle_render (tmpd[ptr] + 1, whom + 1, 1);
+      else
+         battle_render (tmpd[ptr] + 1, whom + 1, 0);
+      blit2screen (0, 0);
+
       readcontrols ();
-      redraw = 0;
+
       if (balt) {
          unpress ();
-         stp = 1;
-         redraw = 1;
+         stop = 1;
       }
       if (bctrl) {
          unpress ();
@@ -282,14 +280,12 @@ int select_hero (int whom, int multi, int csd)
          ptr--;
          if (ptr < 0)
             ptr = cntr - 1;
-         redraw = 1;
       }
       if (right) {
          unpress ();
          ptr++;
          if (ptr >= cntr)
             ptr = 0;
-         redraw = 1;
       }
       if (multi == TGT_ALLY_ONE && cntr > 1) {
          if (up) {
@@ -298,7 +294,6 @@ int select_hero (int whom, int multi, int csd)
                sa = 1;
             else
                sa = 0;
-            redraw = 1;
          }
          if (down) {
             unpress ();
@@ -306,9 +301,9 @@ int select_hero (int whom, int multi, int csd)
                sa = 1;
             else
                sa = 0;
-            redraw = 1;
          }
       }
+      yield_timeslice ();
    }
    if (sa == 0)
       return tmpd[ptr];
@@ -342,7 +337,7 @@ int select_hero (int whom, int multi, int csd)
  */
 int select_enemy (int whom, int multi)
 {
-   int a, cntr = 0, ptr, stp, redraw, sa;
+   int a, cntr = 0, ptr, stop, sa;
 
    for (a = PSIZE; a < PSIZE + numens; a++)
       if (can_attack (a) == 1)
@@ -352,22 +347,24 @@ int select_enemy (int whom, int multi)
    else
       sa = 0;
    ptr = 0;
-   stp = 0;
-   redraw = 1;
-   while (!stp) {
-      if (redraw == 1) {
-         if (multi > 0 && sa == 1)
-            battle_render (tmpd[ptr] + 1, whom + 1, 2);
-         else
-            battle_render (tmpd[ptr] + 1, whom + 1, 0);
+   stop = 0;
+
+   while (!stop) {
+      while (timer_count > 0) {
+         timer_count--;
+         check_animation ();
       }
+      if (multi > 0 && sa == 1)
+         battle_render (tmpd[ptr] + 1, whom + 1, 2);
+      else
+         battle_render (tmpd[ptr] + 1, whom + 1, 0);
+
       blit2screen (0, 0);
       readcontrols ();
-      redraw = 0;
+
       if (balt) {
          unpress ();
-         redraw = 1;
-         stp = 1;
+         stop = 1;
       }
       if (bctrl) {
          unpress ();
@@ -378,14 +375,12 @@ int select_enemy (int whom, int multi)
          ptr--;
          if (ptr < 0)
             ptr = cntr - 1;
-         redraw = 1;
       }
       if (right) {
          unpress ();
          ptr++;
          if (ptr > cntr - 1)
             ptr = 0;
-         redraw = 1;
       }
       if (up) {
          unpress ();
@@ -394,7 +389,6 @@ int select_enemy (int whom, int multi)
                sa = 1;
             else
                sa = 0;
-            redraw = 1;
          }
       }
       if (down) {
@@ -404,9 +398,9 @@ int select_enemy (int whom, int multi)
                sa = 1;
             else
                sa = 0;
-            redraw = 1;
          }
       }
+      yield_timeslice ();
    }
    if (sa == 0)
       return tmpd[ptr];
@@ -554,11 +548,9 @@ int select_party (int *avail, int n_avail, int numchrs_max)
 {
    int i, j, x, y;
    int cur, oldcur;             /* cursor */
-   int redraw;                  /* Screen needs update? */
    int running = 1;
    int hero = -1;
    int mask;
-   redraw = 1;
    cur = 0;
    if (avail == NULL) {
       /* check input parameters */
@@ -575,45 +567,47 @@ int select_party (int *avail, int n_avail, int numchrs_max)
    print_font (double_buffer, 24 + xofs, 32 + yofs, "Available:", FGOLD);
    print_font (double_buffer, 24 + xofs, 80 + yofs, "In party:", FGOLD);
    while (running) {
-      if (redraw) {
-         /* Draw everything */
-         /* draw the row of available heroes */
-         y = yofs + 40;
-         for (i = 0; i < n_avail; ++i) {
-            x = xofs + (320 - 32 * n_avail) / 2 + 32 * i;
-            menubox (double_buffer, x, y, 2, 2, i == cur ? DARKRED : DARKBLUE);
-            if (avail[i] >= 0)
-               draw_sprite (double_buffer, frames[avail[i]][0], x + 8, y + 8);
-         }
-         /* draw the party */
-         x = xofs + (320 - 40 * PSIZE) / 2;
-         y = yofs + 88;
-         for (i = 0; i < PSIZE; ++i) {
-            menubox (double_buffer, x, y, 2, 2,
-                     cur == (MAXCHRS + i) ? DARKRED : DARKBLUE);
-            if (i < numchrs && pidx[i] >= 0)
-               draw_sprite (double_buffer, frames[pidx[i]][0], x + 8, y + 8);
-            x += 40;
-         }
-         /* Draw the 'Exit' button */
-         menubox (double_buffer, x, y, 4, 1,
-                  cur == (PSIZE + MAXCHRS) ? DARKRED : DARKBLUE);
-         print_font (double_buffer, x + 8, y + 8, "Exit", FNORMAL);
-         /* See which hero is selected and draw his/her stats */
-         if (cur < n_avail) {
-            hero = avail[cur];
-         } else if (cur < numchrs + MAXCHRS) {
-            hero = pidx[cur - MAXCHRS];
-         } else
-            hero = -1;
-         menubox (double_buffer, 92, 152, 18, 5, DARKBLUE);
-         if (hero != -1) {
-            draw_playerstat (double_buffer, hero, 100, 160);
-         }
-         /* Show on the screen */
-         blit2screen (xofs, yofs);
-         redraw = 0;
+      while (timer_count > 0) {
+         timer_count--;
+         check_animation ();
       }
+      /* Draw everything */
+      /* draw the row of available heroes */
+      y = yofs + 40;
+      for (i = 0; i < n_avail; ++i) {
+         x = xofs + (320 - 32 * n_avail) / 2 + 32 * i;
+         menubox (double_buffer, x, y, 2, 2, i == cur ? DARKRED : DARKBLUE);
+         if (avail[i] >= 0)
+            draw_sprite (double_buffer, frames[avail[i]][0], x + 8, y + 8);
+      }
+      /* draw the party */
+      x = xofs + (320 - 40 * PSIZE) / 2;
+      y = yofs + 88;
+      for (i = 0; i < PSIZE; ++i) {
+         menubox (double_buffer, x, y, 2, 2,
+                  cur == (MAXCHRS + i) ? DARKRED : DARKBLUE);
+         if (i < numchrs && pidx[i] >= 0)
+            draw_sprite (double_buffer, frames[pidx[i]][0], x + 8, y + 8);
+         x += 40;
+      }
+      /* Draw the 'Exit' button */
+      menubox (double_buffer, x, y, 4, 1,
+               cur == (PSIZE + MAXCHRS) ? DARKRED : DARKBLUE);
+      print_font (double_buffer, x + 8, y + 8, "Exit", FNORMAL);
+      /* See which hero is selected and draw his/her stats */
+      if (cur < n_avail) {
+         hero = avail[cur];
+      } else if (cur < numchrs + MAXCHRS) {
+         hero = pidx[cur - MAXCHRS];
+      } else
+         hero = -1;
+      menubox (double_buffer, 92, 152, 18, 5, DARKBLUE);
+      if (hero != -1) {
+         draw_playerstat (double_buffer, hero, 100, 160);
+      }
+      /* Show on the screen */
+      blit2screen (xofs, yofs);
+
       oldcur = cur;
       readcontrols ();
       if (up) {
@@ -700,12 +694,11 @@ int select_party (int *avail, int n_avail, int numchrs_max)
                }
             }
          }
-         redraw = 1;
       }
-      if (oldcur != cur) {
+      if (oldcur != cur)
          play_effect (SND_CLICK, 128);
-         redraw = 1;
-      }
+
+      yield_timeslice ();
    }
    return 0;
 }
@@ -718,8 +711,7 @@ int select_party (int *avail, int n_avail, int numchrs_max)
 
 static int mini_menu (int omask)
 {
-   int redraw, cp;
-   redraw = 1;
+   int cp;
    cp = 0;
 
    /* If no actions were allowed, or just one, skip the menu */
@@ -741,24 +733,25 @@ static int mini_menu (int omask)
    }
 
    while (1) {
-      if (redraw) {
-         menubox (double_buffer, MM_X - 13, MM_Y - 8, 6, 3, DARKBLUE);
-         print_font (double_buffer, MM_X, MM_Y, "Join",
-                     (omask & MM_JOIN) ? FNORMAL : FDARK);
-         print_font (double_buffer, MM_X, MM_Y + 8, "Leave",
-                     (omask & MM_LEAVE) ? FNORMAL : FDARK);
-         print_font (double_buffer, MM_X, MM_Y + 16, "Lead",
-                     (omask & MM_LEAD) ? FNORMAL : FDARK);
-         draw_sprite (double_buffer, menuptr, MM_X - 13, MM_Y + 8 * cp);
-         blit2screen (xofs, yofs);
-         redraw = 0;
+      while (timer_count > 0) {
+         timer_count--;
+         check_animation ();
       }
+      menubox (double_buffer, MM_X - 13, MM_Y - 8, 6, 3, DARKBLUE);
+      print_font (double_buffer, MM_X, MM_Y, "Join",
+                  (omask & MM_JOIN) ? FNORMAL : FDARK);
+      print_font (double_buffer, MM_X, MM_Y + 8, "Leave",
+                  (omask & MM_LEAVE) ? FNORMAL : FDARK);
+      print_font (double_buffer, MM_X, MM_Y + 16, "Lead",
+                  (omask & MM_LEAD) ? FNORMAL : FDARK);
+      draw_sprite (double_buffer, menuptr, MM_X - 13, MM_Y + 8 * cp);
+      blit2screen (xofs, yofs);
+
       readcontrols ();
       if (up) {
          unpress ();
          if (cp > 0) {
             play_effect (SND_CLICK, 128);
-            redraw = 1;
             --cp;
          }
       }
@@ -767,7 +760,6 @@ static int mini_menu (int omask)
          unpress ();
          if (cp < 2) {
             play_effect (SND_CLICK, 128);
-            redraw = 1;
             ++cp;
          }
       }
@@ -783,6 +775,7 @@ static int mini_menu (int omask)
             play_effect (SND_BAD, 128);
          }
       }
+      yield_timeslice ();
    }
 }
 

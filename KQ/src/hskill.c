@@ -155,7 +155,7 @@ int hero_skillcheck (int dude)
  */
 int skill_use (int who)
 {
-   int tgt, fitm, a, b, c, p, cts, tx, ty, g = 0, nt = 0, nn[NUM_FIGHTERS];
+   int tgt, fitm, a, b, c, p, cts, tx, ty, g = 0, next_target = 0, nn[NUM_FIGHTERS];
    BITMAP *temp;
 
    tempa = status_adjust (who);
@@ -167,32 +167,31 @@ int skill_use (int who)
       temp = create_bitmap (320, 240);
       blit ((BITMAP *) backart->dat, temp, 0, 0, 0, 0, 320, 240);
       color_scale (temp, (BITMAP *) backart->dat, 16, 31);
-      a = fighter[who].mhp / 20;
+      b = fighter[who].mhp / 20;
       strcpy (ctext, "Rage");
       dct = 1;
       tempa.stats[A_ATT] = fighter[who].stats[A_ATT];
       tempa.stats[A_HIT] = fighter[who].stats[A_HIT];
       if (fighter[tgt].crit == 1) {
-         tempa.stats[A_ATT] += a;
-         tempa.stats[A_HIT] += a;
+         tempa.stats[A_ATT] += b;
+         tempa.stats[A_HIT] += b;
       }
       fight (who, tgt, 1);
       if (fighter[tgt].sts[S_DEAD] == 1) {
          for (a = PSIZE; a < PSIZE + numens; a++) {
             if (fighter[a].sts[S_DEAD] == 0) {
-               nn[nt] = a;
-               nt++;
+               nn[next_target] = a;
+               next_target++;
             }
          }
-         if (nt > 0) {
-            tgt = nn[rand () % nt];
+         if (next_target > 0) {
+            tgt = nn[rand () % next_target];
             fight (who, tgt, 1);
          }
       }
-      /* PH Is this a bug? 'a' is initially set to fighter[who].mhp/20, which makes sense */
-      /* however 'a' is re-used in the loop above, so its value is a bit indeterminate here */
-      fighter[who].hp -= (a * 2);
-      ta[who] = (a * 2);
+
+      fighter[who].hp -= (b * 2);
+      ta[who] = (b * 2);
       dct = 0;
       blit (temp, (BITMAP *) backart->dat, 0, 0, 0, 0, 320, 240);
       display_amount (who, FDECIDE, 0);
@@ -380,9 +379,11 @@ int skill_use (int who)
       fitm = 0;
       if (rand () % 100 < cts) {
          if (fighter[tgt].sitmr > 0 && (rand () % 100) < 5) {
+            /* This steals a rare item from monster, if there is one */
             fitm = fighter[tgt].sitmr;
             fighter[tgt].sitmr = 0;
          } else if (fighter[tgt].sitmc > 0 && (rand () % 100) < 95) {
+            /* This steals a common item from a monster */
             fitm = fighter[tgt].sitmc;
             fighter[tgt].sitmc = 0;
          }

@@ -476,23 +476,24 @@ static int load_game (void)
  */
 static int saveload (int am_saving)
 {
-   int stop = 0, rd = 1;
+   int stop = 0;
 
    play_effect (SND_MENU, 128);
    while (!stop) {
-      if (rd == 1) {
-         clear_bitmap (double_buffer);
-         show_sgstats (am_saving);
-         blit2screen (0, 0);
+      while (timer_count > 0) {
+         timer_count--;
+         check_animation ();
       }
-      rd = 0;
+      clear_bitmap (double_buffer);
+      show_sgstats (am_saving);
+      blit2screen (0, 0);
+
       readcontrols ();
       if (up) {
          unpress ();
          save_ptr--;
          if (save_ptr < 0)
             save_ptr = NUMSG - 1;
-         rd = 1;
          play_effect (SND_CLICK, 128);
       }
       if (down) {
@@ -500,7 +501,6 @@ static int saveload (int am_saving)
          save_ptr++;
          if (save_ptr > NUMSG - 1)
             save_ptr = 0;
-         rd = 1;
          play_effect (SND_CLICK, 128);
       }
       if (balt) {
@@ -520,12 +520,12 @@ static int saveload (int am_saving)
                   stop = 1;
             }
          }
-         rd = 1;
       }
       if (bctrl) {
          unpress ();
          stop = 1;
       }
+      yield_timeslice ();
    }
    return stop - 1;
 }
@@ -561,6 +561,7 @@ static int confirm_save (void)
          unpress ();
          return 0;
       }
+      yield_timeslice ();
    }
    return 0;
 }
@@ -588,7 +589,7 @@ extern int optionsbox (char *, int);
 
 int start_menu (int c)
 {
-   int stop = 0, ptr = 0, rd = 1, a, b;
+   int stop = 0, ptr = 0, redraw = 1, a, b;
    DATAFILE *bg;
    BITMAP *staff, *dudes, *tdudes;
 #ifdef KQ_CHEATS
@@ -660,7 +661,7 @@ int start_menu (int c)
 #endif
 
    while (!stop) {
-      if (rd) {
+      if (redraw) {
          clear_bitmap (double_buffer);
          masked_blit ((BITMAP *) bg->dat, double_buffer, 0, 0, 0, 0, 320, 124);
 #if 0
@@ -673,7 +674,7 @@ int start_menu (int c)
          print_font (double_buffer, 136, 140, "Config", FNORMAL);
          print_font (double_buffer, 144, 148, "Exit", FNORMAL);
          draw_sprite (double_buffer, menuptr, 112, ptr * 8 + 124);
-         rd = 0;
+         redraw = 0;
       }
       display_credits ();
       blit2screen (0, 0);
@@ -681,7 +682,7 @@ int start_menu (int c)
       if (bhelp) {
          unpress ();
          show_help ();
-         rd = 1;
+         redraw = 1;
       }
       if (up) {
          unpress ();
@@ -689,7 +690,7 @@ int start_menu (int c)
          if (ptr < 0)
             ptr = 3;
          play_effect (SND_CLICK, 128);
-         rd = 1;
+         redraw = 1;
       }
       if (down) {
          unpress ();
@@ -697,7 +698,7 @@ int start_menu (int c)
          if (ptr > 3)
             ptr = 0;
          play_effect (SND_CLICK, 128);
-         rd = 1;
+         redraw = 1;
       }
       if (balt) {
          unpress ();
@@ -707,13 +708,13 @@ int start_menu (int c)
                stop = 2;
             else if (saveload (0) == 1)
                stop = 1;
-            rd = 1;
+            redraw = 1;
          } else if (ptr == 1) {
             stop = 2;
          } else if (ptr == 2) {
             clear (double_buffer);
             config_menu ();
-            rd = 1;
+            redraw = 1;
 
             /* TODO: Save Global Settings Here */
          } else if (ptr == 3) {
@@ -722,6 +723,7 @@ int start_menu (int c)
             return 2;
          }
       }
+      yield_timeslice ();
    }
    unload_datafile_object (bg);
    if (stop == 2) {
@@ -763,6 +765,10 @@ int system_menu (void)
 
    unpress ();
    while (!stop) {
+      while (timer_count > 0) {
+         timer_count--;
+         check_animation ();
+      }
       drawmap ();
       menubox (double_buffer, xofs, yofs, 8, 4, BLUE);
       if (cansave == 1)
@@ -826,6 +832,7 @@ int system_menu (void)
          unpress ();
          return 0;
       }
+      yield_timeslice ();
    }
    return 0;
 }

@@ -154,7 +154,7 @@ void hero_init (void)
  */
 void hero_choose_action (int who)
 {
-   int stop = 0, sptr = 1, ptr = 0, rd = 1, a, amy;
+   int stop = 0, sptr = 1, ptr = 0, a, amy;
    int my = 0, chi[9], tt;
    char ca[9][8];
 
@@ -165,70 +165,71 @@ void hero_choose_action (int who)
    fighter[who].facing = 0;
    if (pidx[who] != CORIN && pidx[who] != CASANDRA)
       fighter[who].aux = 0;
-   while (stop == 0) {
-      if (rd == 1) {
-         battle_render (who + 1, who + 1, 0);
-         my = 0;
-         strcpy (ca[my], "Attack");
-         chi[my] = C_ATTACK;
-         my++;
+   while (!stop) {
+      while (timer_count > 0) {
+         timer_count--;
+         check_animation ();
+      }
+      battle_render (who + 1, who + 1, 0);
+      my = 0;
+      strcpy (ca[my], "Attack");
+      chi[my] = C_ATTACK;
+      my++;
 #if 0
 
-         strcpy (ca[my], "Combo");
-         chi[my] = C_COMBO;
-         my++;
+      strcpy (ca[my], "Combo");
+      chi[my] = C_COMBO;
+      my++;
 #endif
-         if (hero_skillcheck (who)) {
-            strcpy (ca[my], sk_names[pidx[who]]);
-            chi[my] = C_SKILL;
-            my++;
-         }
-         if (fighter[who].sts[S_MUTE] == 0 && available_spells (who) > 0) {
-            strcpy (ca[my], "Spell");
-            chi[my] = C_SPELL;
-            my++;
-         }
-         if (progress[P_USEITEMINCOMBAT] == 0) {
-            strcpy (ca[my], "Item");
-            chi[my] = C_ITEM;
-            my++;
-         }
-         tt = 0;
-         for (a = 0; a < 6; a++)
-            if (can_invoke_item (party[pidx[who]].eqp[a]))
-               tt++;
-         if (tt > 0) {
-            strcpy (ca[my], "Invoke");
-            chi[my] = C_INVOKE;
-            my++;
-         }
-         if (my > 5)
-            amy = 224 - (my * 8);
-         else
-            amy = 184;
-         menubox (double_buffer, 120, amy, 8, my, BLUE);
-         for (a = 0; a < my; a++)
-            print_font (double_buffer, 136, a * 8 + amy + 8, ca[a], FNORMAL);
-         if (sptr == 1)
-            draw_sprite (double_buffer, menuptr, 120, ptr * 8 + amy + 8);
-         if (sptr == 0) {
-            menubox (double_buffer, 64, amy, 6, 1, BLUE);
-            print_font (double_buffer, 72, amy + 8, "Defend", FNORMAL);
-         }
-         if (sptr == 2) {
-            menubox (double_buffer, 192, amy, 3, 1, BLUE);
-            print_font (double_buffer, 200, amy + 8, "Run", FNORMAL);
-         }
-         blit2screen (0, 0);
+      if (hero_skillcheck (who)) {
+         strcpy (ca[my], sk_names[pidx[who]]);
+         chi[my] = C_SKILL;
+         my++;
       }
-      rd = 0;
+      if (fighter[who].sts[S_MUTE] == 0 && available_spells (who) > 0) {
+         strcpy (ca[my], "Spell");
+         chi[my] = C_SPELL;
+         my++;
+      }
+      if (progress[P_USEITEMINCOMBAT] == 0) {
+         strcpy (ca[my], "Item");
+         chi[my] = C_ITEM;
+         my++;
+      }
+      tt = 0;
+      for (a = 0; a < 6; a++)
+         if (can_invoke_item (party[pidx[who]].eqp[a]))
+            tt++;
+      if (tt > 0) {
+         strcpy (ca[my], "Invoke");
+         chi[my] = C_INVOKE;
+         my++;
+      }
+      if (my > 5)
+         amy = 224 - (my * 8);
+      else
+         amy = 184;
+      menubox (double_buffer, 120, amy, 8, my, BLUE);
+      for (a = 0; a < my; a++)
+         print_font (double_buffer, 136, a * 8 + amy + 8, ca[a], FNORMAL);
+      if (sptr == 1)
+         draw_sprite (double_buffer, menuptr, 120, ptr * 8 + amy + 8);
+      if (sptr == 0) {
+         menubox (double_buffer, 64, amy, 6, 1, BLUE);
+         print_font (double_buffer, 72, amy + 8, "Defend", FNORMAL);
+      }
+      if (sptr == 2) {
+         menubox (double_buffer, 192, amy, 3, 1, BLUE);
+         print_font (double_buffer, 200, amy + 8, "Run", FNORMAL);
+      }
+      blit2screen (0, 0);
+
       readcontrols ();
       if (up) {
          unpress ();
          ptr--;
          if (ptr < 0)
             ptr = my - 1;
-         rd = 1;
          play_effect (SND_CLICK, 128);
       }
       if (down) {
@@ -236,7 +237,6 @@ void hero_choose_action (int who)
          ptr++;
          if (ptr >= my)
             ptr = 0;
-         rd = 1;
          play_effect (SND_CLICK, 128);
       }
       if (left) {
@@ -244,14 +244,12 @@ void hero_choose_action (int who)
          sptr--;
          if (sptr < 0)
             sptr = 0;
-         rd = 1;
       }
       if (right) {
          unpress ();
          sptr++;
          if (sptr > 1 + can_run)
             sptr = 1 + can_run;
-         rd = 1;
       }
       if (balt) {
          unpress ();
@@ -299,8 +297,8 @@ void hero_choose_action (int who)
                break;
             }
          }
-         rd = 1;
       }
+      yield_timeslice ();
    }
 }
 
@@ -423,21 +421,23 @@ static void combat_draw_items (int pg)
  */
 static int combat_item_menu (int whom)
 {
-   int z, rd = 1, stp = 0, ptr = 0, pptr = 0;
+   int z, stop = 0, ptr = 0, pptr = 0;
 
    blit (double_buffer, back, 0, 0, 0, 0, 352, 280);
-   while (!stp) {
-      if (rd == 1) {
-         blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
-         combat_draw_items (pptr);
-         draw_sprite (double_buffer, menuptr, 72, ptr * 8 + 16);
-         /* put description of selected item */
-         menubox (double_buffer, 72, 152, 20, 1, BLUE);
-         print_font (double_buffer, 80, 160,
-                     items[g_inv[ptr + pptr * 16][0]].desc, FNORMAL);
-         blit2screen (0, 0);
+   while (!stop) {
+      while (timer_count > 0) {
+         timer_count--;
+         check_animation ();
       }
-      rd = 0;
+      blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
+      combat_draw_items (pptr);
+      draw_sprite (double_buffer, menuptr, 72, ptr * 8 + 16);
+      /* put description of selected item */
+      menubox (double_buffer, 72, 152, 20, 1, BLUE);
+      print_font (double_buffer, 80, 160,
+                  items[g_inv[ptr + pptr * 16][0]].desc, FNORMAL);
+      blit2screen (0, 0);
+
       readcontrols ();
       if (up) {
          unpress ();
@@ -445,7 +445,6 @@ static int combat_item_menu (int whom)
          if (ptr < 0)
             ptr = 15;
          play_effect (SND_CLICK, 128);
-         rd = 1;
       }
       if (down) {
          unpress ();
@@ -453,7 +452,6 @@ static int combat_item_menu (int whom)
          if (ptr > 15)
             ptr = 0;
          play_effect (SND_CLICK, 128);
-         rd = 1;
       }
       if (left) {
          unpress ();
@@ -461,7 +459,6 @@ static int combat_item_menu (int whom)
          if (pptr < 0)
             pptr = 3;
          play_effect (SND_CLICK, 128);
-         rd = 1;
       }
       if (right) {
          unpress ();
@@ -469,7 +466,6 @@ static int combat_item_menu (int whom)
          if (pptr > 3)
             pptr = 0;
          play_effect (SND_CLICK, 128);
-         rd = 1;
       }
       if (balt) {
          unpress ();
@@ -488,18 +484,17 @@ static int combat_item_menu (int whom)
                if (items[fighter[whom].csmem].use != USE_ANY_INF
                    && items[fighter[whom].csmem].use != USE_COMBAT_INF)
                   remove_item (pptr * 16 + ptr, 1);
-               stp = 2;
+               stop = 2;
             }
          }
-         rd = 1;
       }
       if (bctrl) {
          unpress ();
-         stp = 1;
-         rd = 1;
+         stop = 1;
       }
+      yield_timeslice ();
    }
-   return stp - 1;
+   return stop - 1;
 }
 
 
@@ -622,19 +617,21 @@ static int can_invoke_item (int t1)
  */
 static int hero_invoke (int whom)
 {
-   int rd = 1, stp = 0, ptr = 0;
+   int stop = 0, ptr = 0;
    int dud;
 
    blit (double_buffer, back, 0, 0, 0, 0, 352, 280);
    dud = pidx[whom];
-   while (!stp) {
-      if (rd == 1) {
-         blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
-         draw_invokable (dud);
-         draw_sprite (double_buffer, menuptr, 72, ptr * 8 + 88);
-         blit2screen (0, 0);
+   while (!stop) {
+      while (timer_count > 0) {
+         timer_count--;
+         check_animation ();
       }
-      rd = 0;
+      blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
+      draw_invokable (dud);
+      draw_sprite (double_buffer, menuptr, 72, ptr * 8 + 88);
+      blit2screen (0, 0);
+
       readcontrols ();
       if (up) {
          unpress ();
@@ -642,7 +639,6 @@ static int hero_invoke (int whom)
          if (ptr < 0)
             ptr = 5;
          play_effect (SND_CLICK, 128);
-         rd = 1;
       }
       if (down) {
          unpress ();
@@ -650,24 +646,22 @@ static int hero_invoke (int whom)
          if (ptr > 5)
             ptr = 0;
          play_effect (SND_CLICK, 128);
-         rd = 1;
       }
       if (balt) {
          unpress ();
          if (can_invoke_item (party[dud].eqp[ptr])) {
             if (hero_invokeitem (whom, party[dud].eqp[ptr]) == 1)
-               stp = 2;
+               stop = 2;
          } else
             play_effect (SND_BAD, 128);
-         rd = 1;
       }
       if (bctrl) {
          unpress ();
-         stp = 1;
-         rd = 1;
+         stop = 1;
       }
+      yield_timeslice ();
    }
-   return stp - 1;
+   return stop - 1;
 }
 
 
@@ -721,8 +715,8 @@ static int hero_invokeitem (int whom, int eno)
       ta[tg] = 0;
       for (a = 0; a < b; a++) {
          if (fighter[tg].sts[S_DEAD] == 0) {
-            draw_attacksprite(tg,0,4,1);
-            special_damage_oneall_enemies(whom,16,-1,tg,0);
+            draw_attacksprite (tg, 0, 4, 1);
+            special_damage_oneall_enemies (whom, 16, -1, tg, 0);
          }
       }
       dct = 0;
@@ -901,25 +895,27 @@ static void combat_draw_spell_menu (int c, int ptr, int pg)
  */
 int combat_spell_menu (int c)
 {
-   int rd = 1, ptr = 0, pgno = 0, stop = 0;
+   int ptr = 0, pgno = 0, stop = 0;
 
    blit (double_buffer, back, 0, 0, 0, 0, 352, 280);
    play_effect (SND_MENU, 128);
    while (!stop) {
-      if (rd) {
-         blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
-         combat_draw_spell_menu (c, ptr, pgno);
-         blit2screen (0, 0);
+      while (timer_count > 0) {
+         timer_count--;
+         check_animation ();
       }
+      blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
+      combat_draw_spell_menu (c, ptr, pgno);
+      blit2screen (0, 0);
+
       readcontrols ();
-      rd = 0;
+
       if (down) {
          unpress ();
          ptr++;
          if (ptr > 11)
             ptr = 0;
          play_effect (SND_CLICK, 128);
-         rd = 1;
       }
       if (up) {
          unpress ();
@@ -927,7 +923,6 @@ int combat_spell_menu (int c)
          if (ptr < 0)
             ptr = 11;
          play_effect (SND_CLICK, 128);
-         rd = 1;
       }
       if (right) {
          unpress ();
@@ -935,7 +930,6 @@ int combat_spell_menu (int c)
          if (pgno > 4)
             pgno = 0;
          play_effect (SND_CLICK, 128);
-         rd = 1;
       }
       if (left) {
          unpress ();
@@ -943,7 +937,6 @@ int combat_spell_menu (int c)
          if (pgno < 0)
             pgno = 4;
          play_effect (SND_CLICK, 128);
-         rd = 1;
       }
       if (balt) {
          unpress ();
@@ -951,12 +944,12 @@ int combat_spell_menu (int c)
             fighter[c].csmem = party[pidx[c]].spells[pgno * 12 + ptr];
             stop = 2;
          }
-         rd = 1;
       }
       if (bctrl) {
          unpress ();
          stop = 1;
       }
+      yield_timeslice ();
    }
    if (stop == 2) {
       if ((fighter[c].csmem == M_LIFE || fighter[c].csmem == M_FULLLIFE)

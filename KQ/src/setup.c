@@ -317,7 +317,7 @@ static void citem (int y, char *caption, char *value)
  */
 void config_menu (void)
 {
-   int stop = 0, ptr = 0, rd = 1, p;
+   int stop = 0, ptr = 0, p;
    int temp_key = 0;
    /* helper strings */
    static char *dc[16] = {
@@ -343,58 +343,61 @@ void config_menu (void)
    push_config_state ();
    set_config_file (kqres (SETTINGS_DIR, "kq.cfg"));
    while (!stop) {
-      if (rd) {
-         drawmap ();
-         menubox (double_buffer, 88 + xofs, yofs, 16, 1, BLUE);
-         print_font (double_buffer, 96 + xofs, 8 + yofs, "KQ Configuration",
-                     FGOLD);
-         menubox (double_buffer, 32 + xofs, 24 + yofs, 30, 19, BLUE);
-         citem (32, "Windowed mode:", windowed == 1 ? "YES" : "NO");
-         citem (40, "Stretch Display:", stretch_view == 1 ? "YES" : "NO");
-         citem (48, "Show Frame Rate:", show_frate == 1 ? "YES" : "NO");
-         citem (56, "Wait for Retrace:", wait_retrace == 1 ? "YES" : "NO");
-         citem (72, "Up Key:", keynames[kup]);
-         citem (80, "Down Key:", keynames[kdown]);
-         citem (88, "Left Key:", keynames[kleft]);
-         citem (96, "Right Key:", keynames[kright]);
-         citem (104, "Confirm Key:", keynames[kalt]);
-         citem (112, "Cancel Key:", keynames[kctrl]);
-         citem (120, "Menu Key:", keynames[kenter]);
-         citem (128, "System Menu Key:", keynames[kesc]);
-         citem (144, "Sound System:", is_sound ? "ON" : "OFF");
-
-         if (is_sound == 2) {
-            sprintf (strbuf, "%3d%%", gsvol * 100 / 250);
-            citem (152, "Sound Volume:", strbuf);
-
-            sprintf (strbuf, "%3d%%", gmvol * 100 / 250);
-            citem (160, "Music Volume:", strbuf);
-         }
-
-         /* TT: This needs to check for ==0 because 1 means sound init */
-         if (is_sound == 0) {
-            print_font (double_buffer, 48 + xofs, 152 + yofs, "Sound Volume:",
-                        FDARK);
-            print_font (double_buffer, 48 + xofs, 160 + yofs, "Music Volume:",
-                        FDARK);
-         }
-
-         citem (176, "Slow Computer:", slow_computer ? "YES" : "NO");
-
-         /* this affects the VISUAL placement of the arrow */
-         p = ptr;
-         if (ptr > 3)
-            p++;
-         if (ptr > 11)
-            p++;
-         if (ptr > 14)
-            p++;
-         draw_sprite (double_buffer, menuptr, 32 + xofs, p * 8 + 32 + yofs);
-         /* This is the bottom window, where the description goes */
-         menubox (double_buffer, xofs, 216 + yofs, 38, 1, BLUE);
-         print_font (double_buffer, 8 + xofs, 224 + yofs, dc[ptr], FNORMAL);
-         blit2screen (xofs, yofs);
+      while (timer_count > 0) {
+         timer_count--;
+         check_animation ();
       }
+      drawmap ();
+      menubox (double_buffer, 88 + xofs, yofs, 16, 1, BLUE);
+      print_font (double_buffer, 96 + xofs, 8 + yofs, "KQ Configuration",
+                  FGOLD);
+      menubox (double_buffer, 32 + xofs, 24 + yofs, 30, 19, BLUE);
+      citem (32, "Windowed mode:", windowed == 1 ? "YES" : "NO");
+      citem (40, "Stretch Display:", stretch_view == 1 ? "YES" : "NO");
+      citem (48, "Show Frame Rate:", show_frate == 1 ? "YES" : "NO");
+      citem (56, "Wait for Retrace:", wait_retrace == 1 ? "YES" : "NO");
+      citem (72, "Up Key:", keynames[kup]);
+      citem (80, "Down Key:", keynames[kdown]);
+      citem (88, "Left Key:", keynames[kleft]);
+      citem (96, "Right Key:", keynames[kright]);
+      citem (104, "Confirm Key:", keynames[kalt]);
+      citem (112, "Cancel Key:", keynames[kctrl]);
+      citem (120, "Menu Key:", keynames[kenter]);
+      citem (128, "System Menu Key:", keynames[kesc]);
+      citem (144, "Sound System:", is_sound ? "ON" : "OFF");
+
+      if (is_sound == 2) {
+         sprintf (strbuf, "%3d%%", gsvol * 100 / 250);
+         citem (152, "Sound Volume:", strbuf);
+
+         sprintf (strbuf, "%3d%%", gmvol * 100 / 250);
+         citem (160, "Music Volume:", strbuf);
+      }
+
+      /* TT: This needs to check for ==0 because 1 means sound init */
+      if (is_sound == 0) {
+         print_font (double_buffer, 48 + xofs, 152 + yofs, "Sound Volume:",
+                     FDARK);
+         print_font (double_buffer, 48 + xofs, 160 + yofs, "Music Volume:",
+                     FDARK);
+      }
+
+      citem (176, "Slow Computer:", slow_computer ? "YES" : "NO");
+
+      /* this affects the VISUAL placement of the arrow */
+      p = ptr;
+      if (ptr > 3)
+         p++;
+      if (ptr > 11)
+         p++;
+      if (ptr > 14)
+         p++;
+      draw_sprite (double_buffer, menuptr, 32 + xofs, p * 8 + 32 + yofs);
+      /* This is the bottom window, where the description goes */
+      menubox (double_buffer, xofs, 216 + yofs, 38, 1, BLUE);
+      print_font (double_buffer, 8 + xofs, 224 + yofs, dc[ptr], FNORMAL);
+      blit2screen (xofs, yofs);
+
       readcontrols ();
       if (up) {
          unpress ();
@@ -405,7 +408,6 @@ void config_menu (void)
          if (ptr < 0)
             ptr = 15;
          play_effect (SND_CLICK, 128);
-         rd = 1;
       }
       if (down) {
          unpress ();
@@ -416,7 +418,6 @@ void config_menu (void)
          if (ptr > 15)
             ptr = 0;
          play_effect (SND_CLICK, 128);
-         rd = 1;
       }
       if (balt) {
          unpress ();
@@ -580,12 +581,12 @@ void config_menu (void)
             set_config_int (NULL, "slow_computer", slow_computer);
             break;
          }
-         rd = 1;
       }
       if (bctrl) {
          unpress ();
          stop = 1;
       }
+      yield_timeslice ();
    }
    pop_config_state ();
 }
@@ -644,42 +645,44 @@ static int getakey (void)
  */
 static int getavalue (char *capt, int minu, int maxu, int cv, int sp)
 {
-   int stop = 0, a, b, rd = 1;
+   int stop = 0, a, b;
 
    if (maxu == 0)
       return -1;
    while (!stop) {
-      if (rd == 1) {
-         menubox (double_buffer, 148 - (maxu * 4) + xofs, 100 + yofs, maxu + 1,
-                  3, DARKBLUE);
-         print_font (double_buffer, 160 - (strlen (capt) * 4) + xofs,
-                     108 + yofs, capt, FGOLD);
-         print_font (double_buffer, 152 - (maxu * 4) + xofs, 116 + yofs, "<",
-                     FNORMAL);
-         print_font (double_buffer, 160 + (maxu * 4) + xofs, 116 + yofs, ">",
-                     FNORMAL);
-         b = 160 - (maxu * 4) + xofs;
-         for (a = 0; a < cv; a++) {
-            rectfill (double_buffer, a * 8 + b + 1, 117 + yofs, a * 8 + b + 7,
-                      123 + yofs, 50);
-            rectfill (double_buffer, a * 8 + b, 116 + yofs, a * 8 + b + 6,
-                      122 + yofs, 21);
-         }
-         if (sp == 1)
-            sprintf (strbuf, "%d%%", cv * 100 / maxu);
-         else
-            sprintf (strbuf, "%d", cv);
-         print_font (double_buffer, 160 - (strlen (strbuf) * 4) + xofs,
-                     124 + yofs, strbuf, FGOLD);
-         blit2screen (xofs, yofs);
+      while (timer_count > 0) {
+         timer_count--;
+         check_animation ();
       }
+      menubox (double_buffer, 148 - (maxu * 4) + xofs, 100 + yofs, maxu + 1,
+               3, DARKBLUE);
+      print_font (double_buffer, 160 - (strlen (capt) * 4) + xofs,
+                  108 + yofs, capt, FGOLD);
+      print_font (double_buffer, 152 - (maxu * 4) + xofs, 116 + yofs, "<",
+                  FNORMAL);
+      print_font (double_buffer, 160 + (maxu * 4) + xofs, 116 + yofs, ">",
+                  FNORMAL);
+      b = 160 - (maxu * 4) + xofs;
+      for (a = 0; a < cv; a++) {
+         rectfill (double_buffer, a * 8 + b + 1, 117 + yofs, a * 8 + b + 7,
+                   123 + yofs, 50);
+         rectfill (double_buffer, a * 8 + b, 116 + yofs, a * 8 + b + 6,
+                   122 + yofs, 21);
+      }
+      if (sp == 1)
+         sprintf (strbuf, "%d%%", cv * 100 / maxu);
+      else
+         sprintf (strbuf, "%d", cv);
+      print_font (double_buffer, 160 - (strlen (strbuf) * 4) + xofs,
+                  124 + yofs, strbuf, FGOLD);
+      blit2screen (xofs, yofs);
+
       readcontrols ();
       if (left) {
          unpress ();
          cv--;
          if (cv < minu)
             cv = minu;
-         rd = 1;
          IF_VOLUME_ALERT ();
       }
       if (right) {
@@ -687,7 +690,6 @@ static int getavalue (char *capt, int minu, int maxu, int cv, int sp)
          cv++;
          if (cv > maxu)
             cv = maxu;
-         rd = 1;
          IF_VOLUME_ALERT ();
       }
       if (balt) {
@@ -698,6 +700,7 @@ static int getavalue (char *capt, int minu, int maxu, int cv, int sp)
          unpress ();
          return -1;
       }
+      yield_timeslice ();
    }
    return cv;
 }
@@ -728,6 +731,7 @@ void show_help (void)
    do {
       blit2screen (xofs, yofs);
       readcontrols ();
+      yield_timeslice ();
    }
    while (!balt);
    unpress ();
@@ -783,6 +787,8 @@ void sound_init (void)
       is_sound = load_samples ()? 0 : 2;        /* load the wav files */
       break;
    case 2:
+      /* TT: We forgot to add this line, causing phantom music to loop */
+      stop_music ();
       free_samples ();
       is_sound = 0;
       break;

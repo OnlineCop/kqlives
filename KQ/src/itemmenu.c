@@ -50,7 +50,6 @@ char item_act;
 static void draw_itemmenu (int, int, int);
 static void sort_items (void);
 static void join_items (void);
-static int confirm_drop (void);
 static void camp_item_targetting (int);
 static void sort_inventory (void);
 
@@ -121,18 +120,20 @@ static void draw_itemmenu (int ptr, int pg, int sl)
  */
 void camp_item_menu (void)
 {
-   int stop = 0, ptr = 0, rd = 1, pptr = 0, sel = 0;
+   int stop = 0, ptr = 0, pptr = 0, sel = 0;
 
    item_act = 0;
    play_effect (SND_MENU, 128);
    while (!stop) {
-      if (rd == 1) {
-         drawmap ();
-         draw_itemmenu (ptr, pptr, sel);
-         blit2screen (xofs, yofs);
+      while (timer_count > 0) {
+         timer_count--;
+         check_animation ();
       }
+      drawmap ();
+      draw_itemmenu (ptr, pptr, sel);
+      blit2screen (xofs, yofs);
       readcontrols ();
-      rd = 0;
+
       if (sel == 0) {
          if (down) {
             unpress ();
@@ -140,7 +141,6 @@ void camp_item_menu (void)
             if (ptr > 15)
                ptr = 0;
             play_effect (SND_CLICK, 128);
-            rd = 1;
          }
          if (up) {
             unpress ();
@@ -148,36 +148,37 @@ void camp_item_menu (void)
             if (ptr < 0)
                ptr = 15;
             play_effect (SND_CLICK, 128);
-            rd = 1;
          }
       }
       if (right) {
          unpress ();
          if (sel == 0) {
+            /* One of the 16 items in the list */
             pptr++;
             if (pptr > MAX_INV / 16 - 1)
                pptr = 0;
          } else {
+            /* Use / Sort / Drop */
             item_act++;
             if (item_act > 2)
                item_act = 0;
          }
          play_effect (SND_CLICK, 128);
-         rd = 1;
       }
       if (left) {
          unpress ();
          if (sel == 0) {
+            /* One of the 16 items in the list */
             pptr--;
             if (pptr < 0)
                pptr = MAX_INV / 16 - 1;
          } else {
+            /* Use / Sort / Drop */
             item_act--;
             if (item_act < 0)
                item_act = 2;
          }
          play_effect (SND_CLICK, 128);
-         rd = 1;
       }
       if (balt) {
          unpress ();
@@ -188,19 +189,49 @@ void camp_item_menu (void)
                sel = 0;
          } else {
             if (g_inv[pptr * 16 + ptr][0] > 0) {
+               // Player's cursor was over the USE menu
                if (item_act == 0)
                   camp_item_targetting (pptr * 16 + ptr);
+               // Player's curor was over the DROP menu
                else {
                   if (item_act == 2) {
-                     if (confirm_drop () == 1)
+                     int stop2 = 0;
+
+                     /* Make sure the player really wants to drop the item specified. */
+                     while (!stop2) {
+                        yield_timeslice ();
+
+                        while (timer_count > 0) {
+                           timer_count--;
+                           check_animation ();
+                        }
+                        drawmap ();
+                        draw_itemmenu (ptr, pptr, sel);
+                        menubox (double_buffer, 72 + xofs, 204 + yofs, 20, 1,
+                                 DARKBLUE);
+                        print_font (double_buffer, 104 + xofs, 212 + yofs,
+                                    "Confirm/Cancel", FNORMAL);
+                        blit2screen (xofs, yofs);
+                        readcontrols ();
+
+                        if (balt) {
+                           unpress ();
+                           stop2 = 2;
+                        }
+                        if (bctrl) {
+                           unpress ();
+                           stop2 = 1;
+                        }
+                     }
+                     if (stop2 == 2) {
                         // Drop ALL of the selected items
                         remove_item (pptr * 16 + ptr,
                                      g_inv[pptr * 16 + ptr][1]);
+                     }
                   }
                }
             }
          }
-         rd = 1;
       }
       if (bctrl) {
          unpress ();
@@ -208,8 +239,8 @@ void camp_item_menu (void)
             sel = 1;
          else
             stop = 1;
-         rd = 1;
       }
+      yield_timeslice ();
    }
 }
 
@@ -287,36 +318,6 @@ static void join_items (void)
 
 
 
-/*! \brief Confirm before dropping item
- *
- * Make sure the player really wants to drop the item specified.
- *
- * \returns 1 if confirm, 0 if cancel
- */
-static int confirm_drop (void)
-{
-   int stop = 0;
-
-   menubox (double_buffer, 72 + xofs, 204 + yofs, 20, 1, DARKBLUE);
-   print_font (double_buffer, 104 + xofs, 212 + yofs, "Confirm/Cancel",
-               FNORMAL);
-   blit2screen (xofs, yofs);
-   while (!stop) {
-      readcontrols ();
-      if (balt) {
-         unpress ();
-         stop = 2;
-      }
-      if (bctrl) {
-         unpress ();
-         stop = 1;
-      }
-   }
-   return stop - 1;
-}
-
-
-
 /*! \brief Use item on selected target
  *
  * Do target selection for using an item and then use it.
@@ -334,8 +335,8 @@ static void camp_item_targetting (int pp)
       return;
    while (1) {
       update_equipstats ();
-      tg =
-         select_any_player (items[t1].tgt - 1, items[t1].icon, items[t1].name);
+      tg = select_any_player (items[t1].tgt - 1, items[t1].icon,
+                              items[t1].name);
       if (tg > -1) {
          z = item_effects (0, tg, t1);
          if (z == 0)
@@ -352,6 +353,7 @@ static void camp_item_targetting (int pp)
          }
       } else
          return;
+      yield_timeslice ();
    }
 }
 

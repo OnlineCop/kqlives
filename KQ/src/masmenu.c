@@ -228,7 +228,7 @@ static void camp_draw_spell_menu (int c, int pg, int ptr)
  */
 void camp_spell_menu (int c)
 {
-   int a, b = 0, rd = 1, smove = 0, stop = 0, tsn;
+   int a, b = 0, smove = 0, stop = 0, tsn;
    int pg[2] = { 0, 0 };
    int ptr[2] = { 0, 0 };
 
@@ -238,31 +238,29 @@ void camp_spell_menu (int c)
    }
    update_equipstats ();
    play_effect (SND_MENU, 128);
-   while (stop == 0) {
-      if (rd == 1) {
-         drawmap ();
-         camp_draw_spell_menu (c, pg[smove], ptr[smove]);
-         if (smove == 0)
+   while (!stop) {
+      while (timer_count > 0) {
+         timer_count--;
+         check_animation ();
+      }
+      drawmap ();
+      camp_draw_spell_menu (c, pg[smove], ptr[smove]);
+      if (smove == 0)
+         draw_sprite (double_buffer, mptr, 88 + xofs, ptr[0] * 8 + 100 + yofs);
+      else {
+         if (pg[0] == pg[1])
             draw_sprite (double_buffer, mptr, 88 + xofs,
                          ptr[0] * 8 + 100 + yofs);
-         else {
-            if (pg[0] == pg[1])
-               draw_sprite (double_buffer, mptr, 88 + xofs,
-                            ptr[0] * 8 + 100 + yofs);
-            draw_sprite (double_buffer, sptr, 88 + xofs,
-                         ptr[1] * 8 + 100 + yofs);
-         }
-         blit2screen (xofs, yofs);
+         draw_sprite (double_buffer, sptr, 88 + xofs, ptr[1] * 8 + 100 + yofs);
       }
+      blit2screen (xofs, yofs);
       readcontrols ();
-      rd = 0;
       if (down) {
          unpress ();
          ptr[smove]++;
          if (ptr[smove] > 11)
             ptr[smove] = 0;
          play_effect (SND_CLICK, 128);
-         rd = 1;
       }
       if (up) {
          unpress ();
@@ -270,7 +268,6 @@ void camp_spell_menu (int c)
          if (ptr[smove] < 0)
             ptr[smove] = 11;
          play_effect (SND_CLICK, 128);
-         rd = 1;
       }
       if (right) {
          unpress ();
@@ -278,7 +275,6 @@ void camp_spell_menu (int c)
          if (pg[smove] > 4)
             pg[smove] = 0;
          play_effect (SND_CLICK, 128);
-         rd = 1;
       }
       if (left) {
          unpress ();
@@ -286,7 +282,6 @@ void camp_spell_menu (int c)
          if (pg[smove] < 0)
             pg[smove] = 4;
          play_effect (SND_CLICK, 128);
-         rd = 1;
       }
       if (balt) {
          unpress ();
@@ -317,7 +312,6 @@ void camp_spell_menu (int c)
                ptr[1] = ptr[0];
             }
          }
-         rd = 1;
       }
       if (bctrl) {
          unpress ();
@@ -325,10 +319,10 @@ void camp_spell_menu (int c)
             smove = 0;
          else
             stop = 1;
-         rd = 1;
       }
       if (close_menu == 1)
          stop = 1;
+      yield_timeslice ();
    }
 }
 
@@ -381,6 +375,7 @@ static void camp_spell_targeting (int mc, int sn)
       } else
          play_effect (SND_TWINKLE, 128);        /* this should be a failure sound */
       revert_equipstats ();
+      yield_timeslice ();
    }
 }
 

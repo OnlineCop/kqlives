@@ -620,7 +620,7 @@ static void do_round (void)
 
    st = 0;
    timer_count = 0;
-   while (combatend == 0) {
+   while (!combatend) {
       if (timer_count >= 10) {
          rcount += BATTLE_INC;
 
@@ -738,6 +738,7 @@ static void do_round (void)
 
          timer_count = 0;
       }
+      yield_timeslice ();
    }
 }
 
@@ -1100,66 +1101,66 @@ void multi_fight (int ar)
  * \param   ar Attacker
  * \param   dr Defender
  * \returns 0 if attack was a miss, 1 if attack was successful,
- *          or 2 if attack was a critical hit).
+ *          or 2 if attack was a critical hit.
  */
 static int attack_result (int ar, int dr)
 {
    int c;
-   int cfch;
-   int ar_cs = 0;
+   int check_for_critical_hit;
+   int attacker_critical_status = 0;
    int crit_hit = 0;
    int base;
    int to_hit;
    int mult;
    int dmg;                     /* extra */
-   int ar_att;
-   int ar_hit;
-   int ar_welem;
-   int dr_def;
-   int dr_evd;
+   int attacker_attack;
+   int attacker_hit;
+   int attacker_weapon_element;
+   int defender_defense;
+   int defender_evade;
 
-   ar_att = tempa.stats[A_ATT];
-   ar_hit = tempa.stats[A_HIT];
-   ar_welem = tempa.welem;
-   dr_def = tempd.stats[A_DEF];
-   dr_evd = tempd.stats[A_EVD];
+   attacker_attack = tempa.stats[A_ATT];
+   attacker_hit = tempa.stats[A_HIT];
+   attacker_weapon_element = tempa.welem;
+   defender_defense = tempd.stats[A_DEF];
+   defender_evade = tempd.stats[A_EVD];
 
    /*  JB: check to see if the attacker is in critical status...  */
    /*      increases chance for a critical hit                    */
    if (tempa.mhp > 250) {
       if (tempa.hp <= 50)
-         ar_cs = 1;
+         attacker_critical_status = 1;
    } else {
       if (tempa.hp <= (tempa.mhp / 5))
-         ar_cs = 1;
+         attacker_critical_status = 1;
    }
 
    /*  JB: check to see if the defender is 'defending'  */
    if (tempd.defend == 1)
-      dr_def = (dr_def * 15) / 10;
+      defender_defense = (defender_defense * 15) / 10;
 
    /*  JB: if the attacker is empowered by trueshot  */
    if (tempa.sts[S_TRUESHOT] > 0) {
       fighter[ar].sts[S_TRUESHOT] = 0;
-      dr_evd = 0;
+      defender_evade = 0;
    }
 
-   ar_att += (tempa.stats[tempa.bstat] * tempa.bonus / 100);
-   if (ar_att < DMG_RND_MIN * 5)
-      base = (rand () % DMG_RND_MIN) + ar_att;
+   attacker_attack += (tempa.stats[tempa.bstat] * tempa.bonus / 100);
+   if (attacker_attack < DMG_RND_MIN * 5)
+      base = (rand () % DMG_RND_MIN) + attacker_attack;
    else
-      base = (rand () % (ar_att / 5)) + ar_att;
+      base = (rand () % (attacker_attack / 5)) + attacker_attack;
 
-   base -= dr_def;
+   base -= defender_defense;
    if (base < 1)
       base = 1;
 
    mult = 0;
-   to_hit = ar_hit + dr_evd;
+   to_hit = attacker_hit + defender_evade;
    if (to_hit < 1)
       to_hit = 1;
 
-   if (rand () % to_hit < ar_hit)
+   if (rand () % to_hit < attacker_hit)
       mult++;
 
    /*  JB: If the defender is etherealized, set mult to 0  */
@@ -1168,15 +1169,15 @@ static int attack_result (int ar, int dr)
 
    if (mult > 0) {
       if (tempd.crit == 1) {
-         cfch = 1;
-         if (ar_cs == 1)
-            cfch = 2;
+         check_for_critical_hit = 1;
+         if (attacker_critical_status == 1)
+            check_for_critical_hit = 2;
          /* PH I _think_ this makes Sensar 2* as likely to make a critical hit */
          if (pidx[ar] == SENSAR)
-            cfch = cfch * 2;
+            check_for_critical_hit = check_for_critical_hit * 2;
 
-         cfch = (20 - cfch);
-         if (rand () % 20 >= cfch) {
+         check_for_critical_hit = (20 - check_for_critical_hit);
+         if (rand () % 20 >= check_for_critical_hit) {
             crit_hit = 1;
             /* TT: Changed following line from:
              * base = base * 15 / 10;
@@ -1194,7 +1195,7 @@ static int attack_result (int ar, int dr)
       if (base < 1)
          base = 1;
 
-      c = ar_welem - 1;
+      c = attacker_weapon_element - 1;
       if ((c >= R_EARTH) && (c <= R_ICE))
          base = res_adjust (dr, c, base);
 
