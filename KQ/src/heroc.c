@@ -431,6 +431,10 @@ static int combat_item_menu (int whom)
          blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
          combat_draw_items (pptr);
          draw_sprite (double_buffer, menuptr, 72, ptr * 8 + 16);
+         /* put description of selected item */
+         menubox (double_buffer, 72, 152, 20, 1, BLUE);
+         print_font (double_buffer, 80, 160,
+                     items[g_inv[ptr + pptr * 16][0]].desc, FNORMAL);
          blit2screen (0, 0);
       }
       rd = 0;
