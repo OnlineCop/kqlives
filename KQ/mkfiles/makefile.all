@@ -190,5 +190,9 @@ endif
 #                                                                             #
 depend:
 	$(GCC) $(DEPFLAGS) $(SRC_DIR)/*.$(SRC_SUFFIX) > _depend.tmp
+ifdef SLASHFLIP
+	sed -e "s/^\([a-zA-Z0-9_]*\)\.o:/$(subst /,\/,$(OBJDIR))\/\1\.$(OBJ_SUFFIX):/" _depend.tmp > $(subst /,\, $(OBJDIR)/makefile.dep)
+else
 	sed -e "s/^\([a-zA-Z0-9_]*\)\.o:/$(subst /,\/,$(OBJDIR))\/\1\.$(OBJ_SUFFIX):/" _depend.tmp > $(OBJDIR)/makefile.dep
+endif
 	$(RM) $(RMFLAGS) _depend.tmp

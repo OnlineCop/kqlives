@@ -28,7 +28,7 @@ PREPROCESSOR   := $(GPP) -P -undef
 LINKER         := $(GCC)
 COMPILER_FLAGS := $(CFLAGS) -DHAVE_LOADLIBRARY
 OBJDIR         := $(OBJ_DIR)/mingw
-
+SLASHFLIP      := 1
 
 
 ###############################################################################
