@@ -1464,34 +1464,6 @@ static void allocate_stuff (void)
 }
 
 
-/*! \brief Create bitmap
- *
- * This function allocates a bitmap and kills the
- * program if it fails. The name you supply is
- * shown if this happens.
- *
- * \param   bx Width
- * \param   by Height
- * \param   bname Name of bitmap
- * \returns the pointer to the created bitmap
-*/
-static BITMAP *alloc_bmp (int bx, int by, char *bname)
-{
-   BITMAP *tmp;
-
-   tmp = create_bitmap (bx, by);
-
-   if (!tmp)
-     {
-        sprintf (strbuf, "Could not allocate %s!.", bname);
-        program_death (strbuf);
-     }
-
-   return tmp;
-}
-
-
-
 /*! \brief Free allocated memory
  *
  * This frees memory and such things.

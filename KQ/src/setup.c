@@ -220,7 +220,7 @@ void parse_setup (void)
 
 
 /*! \brief Draw a setting and its title
- * 
+ *
  * Helper function for the config menu.
  * The setting title is drawn, then its value right-aligned.
  * \author PH
@@ -299,7 +299,12 @@ void config_menu (void)
                   sprintf (strbuf, "%3d%%", gmvol * 100 / 250);
                   citem (160, "Music Volume:", strbuf);
                }
+
+             /* TT: This needs to check for ==0 because 1 means sound init */
+             if (is_sound == 0)
+#if 0
              else
+#endif
                {
                   print_font (double_buffer, 48 + xofs, 152 + yofs,
                               "Sound Volume:", FDARK);

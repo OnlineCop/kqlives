@@ -459,7 +459,7 @@ extern BITMAP *shadow[MAX_SHADOWS];     /*  draw.c  */
 extern unsigned short *map_seg;
 extern unsigned short *b_seg, *f_seg;
 extern unsigned char *progress, *z_seg, *s_seg, *o_seg, *treasure;
-extern BITMAP *kfonts;
+extern BITMAP *kfonts, *portrait[MAXCHRS];
 extern s_map g_map;
 extern s_entity g_ent[MAX_ENT + PSIZE];
 extern s_anim tanim[6][MAX_ANIM];
