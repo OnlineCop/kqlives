@@ -34,10 +34,15 @@
  * globals, but I tried to lay them out as attractivly as possible until we
  * figure out what all of them are for. Plus I tried to keep everything below
  * 80 characters a line, and labels what few variables struck me as obvious
+ *
+ * Thanks due to Edge <hardedged@excite.com> and Caz Jones for BeOS joystick fixes
 */
 
 #include <stdio.h>
 #include <time.h>
+#ifdef ALLEGRO_BEOS
+#include <sys/time.h>
+#endif
 #include <string.h>
 /* #if defined(HAVE_GETPWUID) */
 /* #include <unistd.h> */
@@ -386,11 +391,34 @@ void my_counter (void)
 END_OF_FUNCTION (my_counter);
 
 
+#ifdef ALLEGRO_BEOS
+static inline long long gettime()
+{
+	struct timeval tv;
+	gettimeofday(&tv, 0);
+	return (tv.tv_sec * 1000000) + (tv.tv_usec);
+}
+int maybe_poll_joystick() {
+  long long lasttime=0;
+  long long nowtime=gettime();
+  if ((unsigned long long) nowtime > (unsigned long long) lasttime) {
+    lasttime=nowtime+150000;
+    return poll_joystick();
+  }
+  else
+    return -1;
+}
+#else
+#define maybe_poll_joystick poll_joystick
+#endif
 
 /*! \brief Handle user input.
  *
  * Updates all of the game controls according to user input.
  * PH20030527 updated to re-enable the joystick
+ * 2003-09-07 Edge <hardedged@excite.com> removed duplicate input, joystick code
+ * 2003-09-07 Caz Jones lasttime code workaround pci-gameport bug
+ * (should not affect non-buggy drivers - please report to edge)
 */
 void readcontrols (void)
 {
@@ -443,9 +471,8 @@ void readcontrols (void)
           }
      }
 
-   if (use_joy > 0)
-     {
-        if (poll_joystick () == 0)
+   if (use_joy > 0 && maybe_poll_joystick()==0)
+
           {
              stk = &joy[use_joy - 1];
              left |= stk->stick[0].axis[0].d1;
@@ -459,7 +486,6 @@ void readcontrols (void)
              besc |= stk->button[3].b;
 
           }
-     }
 }
 
 

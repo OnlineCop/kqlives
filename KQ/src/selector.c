@@ -926,7 +926,7 @@ static void party_add (int id, int lead)
         ++numchrs;
         t->eid = id;
         t->active = 1;
-        t->chrx = 255;
+        t->chrx = 0;
      }
 }
 

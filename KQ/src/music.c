@@ -49,7 +49,7 @@ void init_music ()
 {
    atexit (&dumb_exit);
    dumb_register_stdfiles ();
-   dumb_resampling_quality = 4;
+   dumb_resampling_quality = 2;
 
    /* initialize all music players */
    current_music_player = MAX_MUSIC_PLAYERS;

@@ -1992,7 +1992,7 @@ static int KQ_add_chr (lua_State * L)
         pidx[numchrs] = a;
         g_ent[numchrs].active = 1;
         g_ent[numchrs].eid = a;
-        g_ent[numchrs].chrx = 255;
+        g_ent[numchrs].chrx = 0;
         numchrs++;
      }
    return 0;
