@@ -49,7 +49,7 @@ function zone_handler(zn)
 
   elseif (zn == 3) then
     bubble(HERO1, "It only opens",
-                  "from the inside", "","");
+                  "from the inside","","");
 --  if (get_progress(P_CAVEKEY) == 0) then
 --    bubble(HERO1,"Locked.","","","");
 --    return
@@ -109,7 +109,7 @@ function miner( en)
     bubble(en, "Howdy!");
     bubble(HERO1, "Hello. Is this your cabin?");
     bubble(en, "It sure is! My name's Rufus. I work in the abandoned mines in these parts.");
-    bubble(en, "But I'll warn you now. There's something nasty hiding in them there mines.");
+    bubble(en, "But I'll warn ya now. There's something nasty hiding in them there mines.");
     bubble(HERO1,"Like what?");
     bubble(en, "I guess I've said enough...");
     set_progress(P_TALKRUFUS,1);
@@ -118,8 +118,8 @@ function miner( en)
     return
   end
   elseif (get_progress(P_TALKRUFUS)==1) then
-    bubble(HERO1, "Hello again");
-    bubble(en, "Don't forget what I told you about the mines.");
+    bubble(HERO1, "Hello again.");
+    bubble(en, "Don't forget what I told you about them mines.");
     if (get_progress(P_CAVEKEY)==0) then
     bubble(HERO1, "I won't.");
     return

@@ -154,7 +154,7 @@ function zone_handler(zn)
         bubble(HERO1,"Hmm... I guess you're right. I just",
                      "don't like being out of control. We",
                      "still don't really know what's",
-                     "going on!","");
+                     "going on!");
         bubble(HERO2,"I'm sure we'll come to understand",
                      "what this is all about in time.",
                      "If nothing else, all this running",

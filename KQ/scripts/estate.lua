@@ -104,6 +104,12 @@ function zone_handler(zn)
   elseif (zn == 10) then
     door_out(36,23);
 
+  elseif (zn == 11) then
+    if (get_progress(P_TALKGELIK) < 4) then
+      set_ent_script(HERO1,"U1F0");
+      wait_for_entity(HERO1,HERO1);
+    end
+
   elseif (zn == 12) then
     if (get_progress(P_TALKGELIK) < 4) then
       set_progress(P_TALKGELIK,4);
