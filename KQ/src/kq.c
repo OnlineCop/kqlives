@@ -1439,13 +1439,6 @@ static void allocate_stuff (void)
    for (p = 0; p < 8; p++)
       bub[p] = alloc_bmp (16, 16, "bub[x]");
 
-// TT fix for thought bubble
-#if 0
-   for (p = 0; p < 8; p++)
-      bord[p] = alloc_bmp (8, 8, "bord[x]");
-#endif
-
-// TT add {
    for (p = 0; p < 3; p++)
      {
         bord[p] = alloc_bmp (8, 8, "bord[x]");
@@ -1454,7 +1447,6 @@ static void allocate_stuff (void)
 
    for (p = 3; p < 5; p++)
       bord[p] = alloc_bmp (8, 12, "bord[x]");
-// } TT add
 
    for (p = 0; p < 8; p++)
       players[p].portrait = alloc_bmp (40, 40, "portrait[x]");
@@ -1810,13 +1802,9 @@ int in_party (int pn)
 {
    int a;
 
-   /* TT: updated for in_party */
    for (a = 0; a < MAXCHRS; a++)
-#if 0
-      for (a = 0; a < numchrs; a++)
-#endif
-         if (pidx[a] == pn)
-            return a + 1;
+      if (pidx[a] == pn)
+         return a + 1;
 
    return 0;
 }

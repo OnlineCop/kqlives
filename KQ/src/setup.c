@@ -87,6 +87,8 @@ static int getakey (void);
  * Parse the setup.cfg file for key configurations.
  * This file would also contain sound options, but that
  * isn't necessary right now.
+ *
+ * Remember that setup.cfg is found in the /saves dir!
 */
 void parse_setup (void)
 {
@@ -109,7 +111,7 @@ void parse_setup (void)
    sprintf (strbuf, "%s/setup.cfg", savedir);
    if (!(s = fopen (strbuf, "r")))
      {
-        klog ("Could not open setup.cfg - Using defaults.");
+        klog ("Could not open saves/setup.cfg - Using defaults.");
         return;
      }
    fscanf (s, "%s", strbuf);
@@ -356,10 +358,7 @@ void config_menu (void)
              switch (ptr)
                {
                case 0:
-                  text_ex (B_TEXT, 255, "Changing the display mode to or"
-                           "from windowed view could have"
-                           "serious ramifications. It is"
-                           "advised that you save first.");
+                  text_ex (B_TEXT, 255, "Changing the display mode to or from windowed view could have serious ramifications. It is advised that you save first.");
                   if (windowed == 0)
                      sprintf (strbuf, "Switch to windowed mode?");
                   else
@@ -375,11 +374,8 @@ void config_menu (void)
                     }
                   break;
                case 1:
-                  text_ex (B_TEXT, 255, "Changing the stretched view option"
-                           "could have serious ramifications."
-                           "It is advised that you save your"
-                           "game before trying this.");
-                  if (windowed == 0)
+                  text_ex (B_TEXT, 255, "Changing the stretched view option could have serious ramifications. It is advised that you save your game before trying this.");
+                  if (stretch_view == 0)
                      sprintf (strbuf, "Try to stretch the display?");
                   else
                      sprintf (strbuf, "Switch to unstretched display?");
