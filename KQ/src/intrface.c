@@ -21,10 +21,10 @@
 
 /*! \file
  * \brief Interface functions
- * \author JB,PH
- * \date ????????
- * \updated 20021125 -- Added extra functions
- * \updated 20030308 -- Added object interface
+ * \author JB, PH
+ * \date Created ????????
+ * \date Updated 20021125 -- Added extra functions
+ * \date Updated 20030308 -- Added object interface
  *
  * This file implements the interface between
  * the C code and the Lua scripts.
@@ -365,70 +365,64 @@ static const struct luaL_reg lrs[] = {
    {NULL, NULL}
 };
 
+
 /*! \brief Maps a text field name to an identifier */
 static struct s_field
 {
    const char *name;
    int id;
 }
+
+
 fields[] =
 {
-   {
-   "name", 0}
-   ,
-   {
-   "xp", 1}
-   ,
-   {
-   "next", 2}
-   ,
-   {
-   "lvl", 3}
-   ,
-   {
-   "mrp", 4}
-   ,
-   {
-   "hp", 5}
-   ,
-   {
-   "mhp", 6}
-   ,
-   {
-   "mp", 7}
-   ,
-   {
-   "mmp", 8}
-   ,
+   {"name", 0},
+   {"xp", 1},
+   {"next", 2},
+   {"lvl", 3},
+   {"mrp", 4},
+   {"hp", 5},
+   {"mhp", 6},
+   {"mp", 7},
+   {"mmp", 8},
 };
-static int fieldcmp(const void* pa, const void* pb) {
-  const struct s_field *a=(const struct s_field*) pa;
-  const struct s_field *b=(const struct s_field*) pb;
-  return strcmp(a->name, b->name);
+
+
+static int fieldcmp (const void *pa, const void *pb)
+{
+   const struct s_field *a = (const struct s_field *) pa;
+   const struct s_field *b = (const struct s_field *) pb;
+   return strcmp (a->name, b->name);
 }
+
+
 /*! \brief Sort field array 
  * 
  * This uses qsort to sort the fields, ready for bsearch to search them 
  * \author PH
- * \date 20030407
+ * \date Created 20030407
  */
-static void fieldsort(void) {
-  qsort(fields, sizeof(fields)/sizeof(*fields), sizeof(struct s_field), fieldcmp);
+static void fieldsort (void)
+{
+  qsort (fields, sizeof (fields) / sizeof (*fields), sizeof (struct s_field), fieldcmp);
 }
-/*! \brief get the field number from a name.
+
+
+/*! \brief Get the field number from a name.
  *
  * Note that the field list MUST be sorted first
  * \author PH 20030309
- * \param n the field name
+ * \param   n The field name
  * \returns the index, or -1 if not found
  */
 static int get_field (const char *n)
 {
-   struct s_field* ans;
-struct s_field st;
-  st.name=n;
-  ans=bsearch(&st, fields,  sizeof(fields)/sizeof(*fields), sizeof(struct s_field), fieldcmp);
-  return ans ? ans->id : -1;
+   struct s_field *ans;
+   struct s_field st;
+   st.name = n;
+   ans = bsearch (&st, fields,  sizeof (fields) / sizeof (*fields),
+                  sizeof (struct s_field), fieldcmp);
+   return ans ? ans->id : -1;
 /*    int i = 0; */
 /*    while (fields[i].name) */
 /*      { */
@@ -441,103 +435,106 @@ struct s_field st;
 /*    return -1; */
 }
 
+
 /*! \brief Object interface for party 
  *
  * This implements the settable tag method
  */
-int KQ_party_setter (lua_State * l)
+int KQ_party_setter (lua_State *L)
 {
    int prop;
    s_player *pl;
-   prop = get_field (lua_tostring (l, 2));
-   lua_pushstring (l, "_obj");
-   lua_rawget (l, 1);
-   pl = (s_player *) lua_touserdata (l, -1);
-   lua_pop (l, 1);
+   prop = get_field (lua_tostring (L, 2));
+   lua_pushstring (L, "_obj");
+   lua_rawget (L, 1);
+   pl = (s_player *) lua_touserdata (L, -1);
+   lua_pop (L, 1);
    switch (prop)
      {
      case 0:
-        strncpy (pl->name, lua_tostring (l, 3), sizeof (pl->name));
+        strncpy (pl->name, lua_tostring (L, 3), sizeof (pl->name));
         break;
      case 1:
-        pl->xp = lua_tonumber (l, 3);
+        pl->xp = lua_tonumber (L, 3);
         break;
      case 2:
-        pl->next = lua_tonumber (l, 3);
+        pl->next = lua_tonumber (L, 3);
         break;
      case 3:
-        pl->lvl = lua_tonumber (l, 3);
+        pl->lvl = lua_tonumber (L, 3);
         break;
      case 4:
-        pl->mrp = lua_tonumber (l, 3);
+        pl->mrp = lua_tonumber (L, 3);
         break;
      case 5:
-        pl->hp = lua_tonumber (l, 3);
+        pl->hp = lua_tonumber (L, 3);
         break;
      case 6:
-        pl->mhp = lua_tonumber (l, 3);
+        pl->mhp = lua_tonumber (L, 3);
         break;
      case 7:
-        pl->mp = lua_tonumber (l, 3);
+        pl->mp = lua_tonumber (L, 3);
         break;
      case 8:
-        pl->mmp = lua_tonumber (l, 3);
+        pl->mmp = lua_tonumber (L, 3);
         break;
      default:
-        lua_rawset (l, 1);
+        lua_rawset (L, 1);
         break;
      }
    return 0;
 }
 
+
 /*! \brief Object interface for party 
  *
  * This implements the gettable tag method
  */
-int KQ_party_getter (lua_State * l)
+int KQ_party_getter (lua_State *L)
 {
    int prop;
    s_player *pl;
-   prop = get_field (lua_tostring (l, 2));
-   lua_pushstring (l, "_obj");
-   lua_rawget (l, 1);
-   pl = (s_player *) lua_touserdata (l, -1);
-   lua_pop (l, 1);
+   prop = get_field (lua_tostring (L, 2));
+   lua_pushstring (L, "_obj");
+   lua_rawget (L, 1);
+   pl = (s_player *) lua_touserdata (L, -1);
+   lua_pop (L, 1);
    switch (prop)
      {
      case 0:
-        lua_pushstring (l, pl->name);
+        lua_pushstring (L, pl->name);
         break;
      case 1:
-        lua_pushnumber (l, pl->xp);
+        lua_pushnumber (L, pl->xp);
         break;
      case 2:
-        lua_pushnumber (l, pl->next);
+        lua_pushnumber (L, pl->next);
         break;
      case 3:
-        lua_pushnumber (l, pl->lvl);
+        lua_pushnumber (L, pl->lvl);
         break;
      case 4:
-        lua_pushnumber (l, pl->mrp);
+        lua_pushnumber (L, pl->mrp);
         break;
      case 5:
-        lua_pushnumber (l, pl->hp);
+        lua_pushnumber (L, pl->hp);
         break;
      case 6:
-        lua_pushnumber (l, pl->mhp);
+        lua_pushnumber (L, pl->mhp);
         break;
      case 7:
-        lua_pushnumber (l, pl->mp);
+        lua_pushnumber (L, pl->mp);
         break;
      case 8:
-        lua_pushnumber (l, pl->mmp);
+        lua_pushnumber (L, pl->mmp);
         break;
      default:
-        lua_rawget (l, 1);
+        lua_rawget (L, 1);
         break;
      }
    return 1;
 }
+
 
 /*! \brief Initialise the object interface for heroes and entities
  *
@@ -550,60 +547,61 @@ int KQ_party_getter (lua_State * l)
  * 
  * \param l the Lua state object
  */
-static void init_obj (lua_State * l)
+static void init_obj (lua_State *L)
 {
    int i = 0;
-   int tag = lua_newtag (l);
+   int tag = lua_newtag (L);
    for (i = 0; i < MAXCHRS; ++i)
      {
-        lua_newtable (l);
-        lua_settag (l, tag);
-        lua_pushstring (l, "_obj");
-        lua_pushuserdata (l, &party[i]);
-        lua_rawset (l, -3);
-        lua_setglobal (l, party[i].name);
+        lua_newtable (L);
+        lua_settag (L, tag);
+        lua_pushstring (L, "_obj");
+        lua_pushuserdata (L, &party[i]);
+        lua_rawset (L, -3);
+        lua_setglobal (L, party[i].name);
      }
-   lua_pushcfunction (l, KQ_party_getter);
-   lua_settagmethod (l, tag, "gettable");
-   lua_pushcfunction (l, KQ_party_setter);
-   lua_settagmethod (l, tag, "settable");
+   lua_pushcfunction (L, KQ_party_getter);
+   lua_settagmethod (L, tag, "gettable");
+   lua_pushcfunction (L, KQ_party_setter);
+   lua_settagmethod (L, tag, "settable");
    /* party[] array */
-   lua_newtable (l);
+   lua_newtable (L);
    for (i = 0; i < numchrs; ++i)
      {
-        lua_getglobal (l, party[pidx[i]].name);
+        lua_getglobal (L, party[pidx[i]].name);
 	/* also fill in the entity reference */
-	lua_pushstring(l, "_ent");
-	lua_pushuserdata(l, &g_ent[i]);
-	lua_rawset(l, -3);
+	lua_pushstring (L, "_ent");
+	lua_pushuserdata (L, &g_ent[i]);
+	lua_rawset (L, -3);
 	/* and add to the array */
-        lua_rawseti (l, -2, i);
+        lua_rawseti (L, -2, i);
      }
-   lua_setglobal (l, "party");
+   lua_setglobal (L, "party");
    /* player[] array */
-   lua_newtable (l);
+   lua_newtable (L);
    for (i = 0; i < MAXCHRS; ++i)
      {
-        lua_getglobal (l, party[i].name);
-        lua_rawseti (l, -2, i);
+        lua_getglobal (L, party[i].name);
+        lua_rawseti (L, -2, i);
      }
-   lua_setglobal (l, "player");
+   lua_setglobal (L, "player");
    /* entity[] array
     * at the moment,  NPCs aren't fully implemented - the
     * only thing you can do is call bubble()/thought()
     * so they can just be an index
     */
-   lua_newtable(l);
-   for (i=0; i<numchrs; ++i) {
-     lua_getglobal(l, party[pidx[i]].name);
-   lua_rawseti(l, -2, i);
+   lua_newtable (L);
+   for (i = 0; i < numchrs; ++i) {
+     lua_getglobal (L, party[pidx[i]].name);
+   lua_rawseti (L, -2, i);
 }
-   for (i=PSIZE; i<noe+PSIZE; ++i) {
-     lua_pushnumber(l, i);
-     lua_rawseti(l, -2, i);
+   for (i = PSIZE; i < noe + PSIZE; ++i) {
+     lua_pushnumber (L, i);
+     lua_rawseti (L, -2, i);
    }
-   lua_setglobal(l, "entity");
+   lua_setglobal (L, "entity");
 }
+
 
 int g_trk, g_keys[8];
 BITMAP *g_bmp[5];
@@ -630,7 +628,6 @@ static int real_entity_num (int ee)
 }
 
 
-
 /*! \brief Get player ID
  *
  * This just gets the player's ID
@@ -638,14 +635,13 @@ static int real_entity_num (int ee)
  * \param   L::1 Which character inquired about
  * \returns character's ID
 */
-static int KQ_get_pidx (lua_State * L)
+static int KQ_get_pidx (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
 
    lua_pushnumber (L, pidx[a]);
    return 1;
 }
-
 
 
 /*! \brief Get player progress
@@ -655,7 +651,7 @@ static int KQ_get_pidx (lua_State * L)
  * \param   L::1 Which Progress to evaluate
  * \returns the value of the Progress
 */
-static int KQ_get_progress (lua_State * L)
+static int KQ_get_progress (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
 
@@ -663,7 +659,6 @@ static int KQ_get_progress (lua_State * L)
       lua_pushnumber (L, progress[a]);
    return 1;
 }
-
 
 
 /*! \brief Set player progress
@@ -674,7 +669,7 @@ static int KQ_get_progress (lua_State * L)
  * \param   L::2 The value of L::1
  * \returns 0 when done
 */
-static int KQ_set_progress (lua_State * L)
+static int KQ_set_progress (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
 
@@ -684,7 +679,6 @@ static int KQ_set_progress (lua_State * L)
 }
 
 
-
 /*! \brief Get person's name
  *
  * This gets the name of one of the people in the party
@@ -692,7 +686,7 @@ static int KQ_set_progress (lua_State * L)
  * \param   L::1 Which party member to evaluate
  * \returns person's name
 */
-static int KQ_get_party_name (lua_State * L)
+static int KQ_get_party_name (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
 
@@ -702,7 +696,6 @@ static int KQ_get_party_name (lua_State * L)
 }
 
 
-
 /*! \brief Get person's experience
  *
  * This gets the selected player's experience
@@ -710,7 +703,7 @@ static int KQ_get_party_name (lua_State * L)
  * \param   L::1 Which person's EXP to get
  * \returns person's experience
 */
-static int KQ_get_party_xp (lua_State * L)
+static int KQ_get_party_xp (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
 
@@ -718,7 +711,6 @@ static int KQ_get_party_xp (lua_State * L)
       lua_pushnumber (L, party[a].xp);
    return 1;
 }
-
 
 
 /*! \brief Set person's experience
@@ -729,7 +721,7 @@ static int KQ_get_party_xp (lua_State * L)
  * \param   L::2 Amount of EXP to set
  * \returns 0 when done
 */
-static int KQ_set_party_xp (lua_State * L)
+static int KQ_set_party_xp (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
 
@@ -739,7 +731,6 @@ static int KQ_set_party_xp (lua_State * L)
 }
 
 
-
 /*! \brief Get person's needed experience
  *
  * This gets the experience still needed to get a level-up for a person
@@ -747,7 +738,7 @@ static int KQ_set_party_xp (lua_State * L)
  * \param   L::1 Which person's EXP to evaluate
  * \returns 0 when done
 */
-static int KQ_get_party_next (lua_State * L)
+static int KQ_get_party_next (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
 
@@ -755,7 +746,6 @@ static int KQ_get_party_next (lua_State * L)
       lua_pushnumber (L, party[a].next);
    return 1;
 }
-
 
 
 /*! \brief Set person's needed experience
@@ -766,7 +756,7 @@ static int KQ_get_party_next (lua_State * L)
  * \param   L::2 Amount of EXP to set
  * \returns 0 when done
 */
-static int KQ_set_party_next (lua_State * L)
+static int KQ_set_party_next (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
 
@@ -776,7 +766,6 @@ static int KQ_set_party_next (lua_State * L)
 }
 
 
-
 /*! \brief Get person's level
  *
  * This gets the person's current level
@@ -784,7 +773,7 @@ static int KQ_set_party_next (lua_State * L)
  * \param   L::1 Which person's level to check
  * \returns person's level
 */
-static int KQ_get_party_lvl (lua_State * L)
+static int KQ_get_party_lvl (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
 
@@ -792,7 +781,6 @@ static int KQ_get_party_lvl (lua_State * L)
       lua_pushnumber (L, party[a].lvl);
    return 1;
 }
-
 
 
 /*! \brief Set person's level
@@ -803,7 +791,7 @@ static int KQ_get_party_lvl (lua_State * L)
  * \param   L::2 Which level to set L::1 to
  * \returns 0 when done
 */
-static int KQ_set_party_lvl (lua_State * L)
+static int KQ_set_party_lvl (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
 
@@ -813,7 +801,6 @@ static int KQ_set_party_lvl (lua_State * L)
 }
 
 
-
 /*! \brief Get person's mrp
  *
  * This gets the person's current mrp
@@ -821,7 +808,7 @@ static int KQ_set_party_lvl (lua_State * L)
  * \param   L::1 Which person's mrp to check
  * \returns person's mrp
 */
-static int KQ_get_party_mrp (lua_State * L)
+static int KQ_get_party_mrp (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
 
@@ -829,7 +816,6 @@ static int KQ_get_party_mrp (lua_State * L)
       lua_pushnumber (L, party[a].mrp);
    return 1;
 }
-
 
 
 /*! \brief Set person's mrp
@@ -840,7 +826,7 @@ static int KQ_get_party_mrp (lua_State * L)
  * \param   L::2 Amount of mrp to set to L::1
  * \returns 0 when done
 */
-static int KQ_set_party_mrp (lua_State * L)
+static int KQ_set_party_mrp (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
 
@@ -850,7 +836,6 @@ static int KQ_set_party_mrp (lua_State * L)
 }
 
 
-
 /*! \brief Get person's HP
  *
  * This gets the person's current hit points
@@ -858,7 +843,7 @@ static int KQ_set_party_mrp (lua_State * L)
  * \param   L::1 Which person's HP to check
  * \returns person's HP
 */
-static int KQ_get_party_hp (lua_State * L)
+static int KQ_get_party_hp (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
 
@@ -866,7 +851,6 @@ static int KQ_get_party_hp (lua_State * L)
       lua_pushnumber (L, party[a].hp);
    return 1;
 }
-
 
 
 /*! \brief Set person's HP
@@ -877,7 +861,7 @@ static int KQ_get_party_hp (lua_State * L)
  * \param   L::2 Amount of HP to set to L::1
  * \returns 0 when done
 */
-static int KQ_set_party_hp (lua_State * L)
+static int KQ_set_party_hp (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
 
@@ -887,7 +871,6 @@ static int KQ_set_party_hp (lua_State * L)
 }
 
 
-
 /*! \brief Get person's MHP
  *
  * This gets the person's maximum hit points
@@ -895,7 +878,7 @@ static int KQ_set_party_hp (lua_State * L)
  * \param   L::1 Which person's MHP to check
  * \returns person's MHP
 */
-static int KQ_get_party_mhp (lua_State * L)
+static int KQ_get_party_mhp (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
 
@@ -903,7 +886,6 @@ static int KQ_get_party_mhp (lua_State * L)
       lua_pushnumber (L, party[a].mhp);
    return 1;
 }
-
 
 
 /*! \brief Set person's level
@@ -914,7 +896,7 @@ static int KQ_get_party_mhp (lua_State * L)
  * \param   L::2 Amount of MHP to set to L::1
  * \returns 0 when done
 */
-static int KQ_set_party_mhp (lua_State * L)
+static int KQ_set_party_mhp (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
 
@@ -924,7 +906,6 @@ static int KQ_set_party_mhp (lua_State * L)
 }
 
 
-
 /*! \brief Get person's MP
  *
  * This gets the person's current magic points
@@ -932,7 +913,7 @@ static int KQ_set_party_mhp (lua_State * L)
  * \param   L::1 Which person's mp to check
  * \returns person's MP
 */
-static int KQ_get_party_mp (lua_State * L)
+static int KQ_get_party_mp (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
 
@@ -940,7 +921,6 @@ static int KQ_get_party_mp (lua_State * L)
       lua_pushnumber (L, party[a].mp);
    return 1;
 }
-
 
 
 /*! \brief Set person's MP
@@ -951,7 +931,7 @@ static int KQ_get_party_mp (lua_State * L)
  * \param   L::2 Amount of MP to set to L::1
  * \returns 0 when done
 */
-static int KQ_set_party_mp (lua_State * L)
+static int KQ_set_party_mp (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
 
@@ -961,7 +941,6 @@ static int KQ_set_party_mp (lua_State * L)
 }
 
 
-
 /*! \brief Get person's MMP
  *
  * This gets the person's maximum magic points
@@ -969,7 +948,7 @@ static int KQ_set_party_mp (lua_State * L)
  * \param   L::1 Which person's MMP to check
  * \returns person's MMP
 */
-static int KQ_get_party_mmp (lua_State * L)
+static int KQ_get_party_mmp (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
 
@@ -977,7 +956,6 @@ static int KQ_get_party_mmp (lua_State * L)
       lua_pushnumber (L, party[a].mmp);
    return 1;
 }
-
 
 
 /*! \brief Set person's MMP
@@ -988,7 +966,7 @@ static int KQ_get_party_mmp (lua_State * L)
  * \param   L::2 Amont of MMP to set to L::1
  * \returns 0 when done
 */
-static int KQ_set_party_mmp (lua_State * L)
+static int KQ_set_party_mmp (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
 
@@ -996,7 +974,6 @@ static int KQ_set_party_mmp (lua_State * L)
       party[a].mmp = lua_tonumber (L, 2);
    return 0;
 }
-
 
 
 /*! \brief Get person's equipment (unused)
@@ -1007,7 +984,7 @@ static int KQ_set_party_mmp (lua_State * L)
  * \param   L::2 Which equipment slot
  * \returns person's equipment
 */
-static int KQ_get_party_eqp (lua_State * L)
+static int KQ_get_party_eqp (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
    int b = lua_tonumber (L, 2);
@@ -1016,7 +993,6 @@ static int KQ_get_party_eqp (lua_State * L)
       lua_pushnumber (L, party[a].eqp[b]);
    return 1;
 }
-
 
 
 /*! \brief Set person's equipment (unused)
@@ -1028,7 +1004,7 @@ static int KQ_get_party_eqp (lua_State * L)
  * \param   L::3 Equipment to set in slot L::2
  * \returns 0 when done
 */
-static int KQ_set_party_eqp (lua_State * L)
+static int KQ_set_party_eqp (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
    int b = lua_tonumber (L, 2);
@@ -1039,7 +1015,6 @@ static int KQ_set_party_eqp (lua_State * L)
 }
 
 
-
 /*! \brief Get person's stats
  *
  * This gets the person's stats
@@ -1048,7 +1023,7 @@ static int KQ_set_party_eqp (lua_State * L)
  * \param   L::2 Which stat to check
  * \returns person's stats
 */
-static int KQ_get_party_stats (lua_State * L)
+static int KQ_get_party_stats (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
    int b = lua_tonumber (L, 2);
@@ -1057,7 +1032,6 @@ static int KQ_get_party_stats (lua_State * L)
       lua_pushnumber (L, party[a].stats[b]);
    return 1;
 }
-
 
 
 /*! \brief Set person's stats (unused)
@@ -1069,7 +1043,7 @@ static int KQ_get_party_stats (lua_State * L)
  * \param   L::3 Value to stick in L::2
  * \returns 0 when done
 */
-static int KQ_set_party_stats (lua_State * L)
+static int KQ_set_party_stats (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
    int b = lua_tonumber (L, 2);
@@ -1080,7 +1054,6 @@ static int KQ_set_party_stats (lua_State * L)
 }
 
 
-
 /*! \brief Get person's res
  *
  * This gets the person's resistance
@@ -1089,7 +1062,7 @@ static int KQ_set_party_stats (lua_State * L)
  * \param   L::2 Which res to check
  * \returns person's res
 */
-static int KQ_get_party_res (lua_State * L)
+static int KQ_get_party_res (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
    int b = lua_tonumber (L, 2);
@@ -1098,7 +1071,6 @@ static int KQ_get_party_res (lua_State * L)
       lua_pushnumber (L, party[a].res[b]);
    return 1;
 }
-
 
 
 /*! \brief Set person's res
@@ -1110,7 +1082,7 @@ static int KQ_get_party_res (lua_State * L)
  * \param   L::3 Value to set to res
  * \returns 0 when done
 */
-static int KQ_set_party_res (lua_State * L)
+static int KQ_set_party_res (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
    int b = lua_tonumber (L, 2);
@@ -1121,8 +1093,7 @@ static int KQ_set_party_res (lua_State * L)
 }
 
 
-
-static int KQ_get_ent_chrx (lua_State * L)
+static int KQ_get_ent_chrx (lua_State *L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
 
@@ -1130,7 +1101,8 @@ static int KQ_get_ent_chrx (lua_State * L)
    return 1;
 }
 
-static int KQ_set_ent_chrx (lua_State * L)
+
+static int KQ_set_ent_chrx (lua_State *L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
 
@@ -1138,7 +1110,8 @@ static int KQ_set_ent_chrx (lua_State * L)
    return 0;
 }
 
-static int KQ_get_ent_tilex (lua_State * L)
+
+static int KQ_get_ent_tilex (lua_State *L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
 
@@ -1146,7 +1119,8 @@ static int KQ_get_ent_tilex (lua_State * L)
    return 1;
 }
 
-static int KQ_set_ent_tilex (lua_State * L)
+
+static int KQ_set_ent_tilex (lua_State *L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
 
@@ -1155,7 +1129,8 @@ static int KQ_set_ent_tilex (lua_State * L)
    return 0;
 }
 
-static int KQ_get_ent_tiley (lua_State * L)
+
+static int KQ_get_ent_tiley (lua_State *L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
 
@@ -1163,7 +1138,8 @@ static int KQ_get_ent_tiley (lua_State * L)
    return 1;
 }
 
-static int KQ_set_ent_tiley (lua_State * L)
+
+static int KQ_set_ent_tiley (lua_State *L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
 
@@ -1172,7 +1148,8 @@ static int KQ_set_ent_tiley (lua_State * L)
    return 0;
 }
 
-static int KQ_get_ent_id (lua_State * L)
+
+static int KQ_get_ent_id (lua_State *L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
 
@@ -1180,7 +1157,8 @@ static int KQ_get_ent_id (lua_State * L)
    return 1;
 }
 
-static int KQ_set_ent_id (lua_State * L)
+
+static int KQ_set_ent_id (lua_State *L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
 
@@ -1188,7 +1166,8 @@ static int KQ_set_ent_id (lua_State * L)
    return 0;
 }
 
-static int KQ_get_ent_active (lua_State * L)
+
+static int KQ_get_ent_active (lua_State *L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
 
@@ -1196,7 +1175,8 @@ static int KQ_get_ent_active (lua_State * L)
    return 1;
 }
 
-static int KQ_set_ent_active (lua_State * L)
+
+static int KQ_set_ent_active (lua_State *L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
    int b = lua_tonumber (L, 2);
@@ -1206,7 +1186,8 @@ static int KQ_set_ent_active (lua_State * L)
    return 0;
 }
 
-static int KQ_get_ent_facing (lua_State * L)
+
+static int KQ_get_ent_facing (lua_State *L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
 
@@ -1214,7 +1195,8 @@ static int KQ_get_ent_facing (lua_State * L)
    return 1;
 }
 
-static int KQ_set_ent_facing (lua_State * L)
+
+static int KQ_set_ent_facing (lua_State *L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
    int b = lua_tonumber (L, 2);
@@ -1224,7 +1206,8 @@ static int KQ_set_ent_facing (lua_State * L)
    return 0;
 }
 
-static int KQ_get_ent_movemode (lua_State * L)
+
+static int KQ_get_ent_movemode (lua_State *L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
 
@@ -1232,7 +1215,8 @@ static int KQ_get_ent_movemode (lua_State * L)
    return 1;
 }
 
-static int KQ_set_ent_movemode (lua_State * L)
+
+static int KQ_set_ent_movemode (lua_State *L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
    int b = lua_tonumber (L, 2);
@@ -1242,7 +1226,8 @@ static int KQ_set_ent_movemode (lua_State * L)
    return 0;
 }
 
-static int KQ_get_ent_obsmode (lua_State * L)
+
+static int KQ_get_ent_obsmode (lua_State *L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
 
@@ -1250,7 +1235,8 @@ static int KQ_get_ent_obsmode (lua_State * L)
    return 1;
 }
 
-static int KQ_set_ent_obsmode (lua_State * L)
+
+static int KQ_set_ent_obsmode (lua_State *L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
    int b = lua_tonumber (L, 2);
@@ -1260,7 +1246,8 @@ static int KQ_set_ent_obsmode (lua_State * L)
    return 0;
 }
 
-static int KQ_get_ent_speed (lua_State * L)
+
+static int KQ_get_ent_speed (lua_State *L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
 
@@ -1268,7 +1255,8 @@ static int KQ_get_ent_speed (lua_State * L)
    return 1;
 }
 
-static int KQ_set_ent_speed (lua_State * L)
+
+static int KQ_set_ent_speed (lua_State *L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
    int b = lua_tonumber (L, 2);
@@ -1278,7 +1266,8 @@ static int KQ_set_ent_speed (lua_State * L)
    return 0;
 }
 
-static int KQ_get_ent_atype (lua_State * L)
+
+static int KQ_get_ent_atype (lua_State *L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
 
@@ -1286,7 +1275,8 @@ static int KQ_get_ent_atype (lua_State * L)
    return 1;
 }
 
-static int KQ_set_ent_atype (lua_State * L)
+
+static int KQ_set_ent_atype (lua_State *L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
 
@@ -1294,7 +1284,8 @@ static int KQ_set_ent_atype (lua_State * L)
    return 0;
 }
 
-static int KQ_get_ent_snapback (lua_State * L)
+
+static int KQ_get_ent_snapback (lua_State *L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
 
@@ -1302,7 +1293,8 @@ static int KQ_get_ent_snapback (lua_State * L)
    return 1;
 }
 
-static int KQ_set_ent_snapback (lua_State * L)
+
+static int KQ_set_ent_snapback (lua_State *L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
    int b = lua_tonumber (L, 2);
@@ -1312,7 +1304,8 @@ static int KQ_set_ent_snapback (lua_State * L)
    return 0;
 }
 
-static int KQ_get_ent_facehero (lua_State * L)
+
+static int KQ_get_ent_facehero (lua_State *L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
 
@@ -1320,7 +1313,8 @@ static int KQ_get_ent_facehero (lua_State * L)
    return 1;
 }
 
-static int KQ_set_ent_facehero (lua_State * L)
+
+static int KQ_set_ent_facehero (lua_State *L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
    int b = lua_tonumber (L, 2);
@@ -1330,7 +1324,8 @@ static int KQ_set_ent_facehero (lua_State * L)
    return 0;
 }
 
-static int KQ_get_ent_transl (lua_State * L)
+
+static int KQ_get_ent_transl (lua_State *L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
 
@@ -1338,7 +1333,8 @@ static int KQ_get_ent_transl (lua_State * L)
    return 1;
 }
 
-static int KQ_set_ent_transl (lua_State * L)
+
+static int KQ_set_ent_transl (lua_State *L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
    int b = lua_tonumber (L, 2);
@@ -1348,7 +1344,8 @@ static int KQ_set_ent_transl (lua_State * L)
    return 0;
 }
 
-static int KQ_set_ent_script (lua_State * L)
+
+static int KQ_set_ent_script (lua_State *L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
 
@@ -1356,7 +1353,8 @@ static int KQ_set_ent_script (lua_State * L)
    return 0;
 }
 
-static int KQ_get_treasure (lua_State * L)
+
+static int KQ_get_treasure (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
 
@@ -1365,49 +1363,57 @@ static int KQ_get_treasure (lua_State * L)
    return 1;
 }
 
-static int KQ_get_gp (lua_State * L)
+
+static int KQ_get_gp (lua_State *L)
 {
    lua_pushnumber (L, gp);
    return 1;
 }
 
-static int KQ_set_gp (lua_State * L)
+
+static int KQ_set_gp (lua_State *L)
 {
    gp = lua_tonumber (L, 1);
    return 0;
 }
 
-static int KQ_get_vx (lua_State * L)
+
+static int KQ_get_vx (lua_State *L)
 {
    lua_pushnumber (L, vx);
    return 1;
 }
 
-static int KQ_set_vx (lua_State * L)
+
+static int KQ_set_vx (lua_State *L)
 {
    vx = lua_tonumber (L, 1);
    return 0;
 }
 
-static int KQ_get_vy (lua_State * L)
+
+static int KQ_get_vy (lua_State *L)
 {
    lua_pushnumber (L, vy);
    return 1;
 }
 
-static int KQ_set_vy (lua_State * L)
+
+static int KQ_set_vy (lua_State *L)
 {
    vy = lua_tonumber (L, 1);
    return 0;
 }
 
-static int KQ_get_alldead (lua_State * L)
+
+static int KQ_get_alldead (lua_State *L)
 {
    lua_pushnumber (L, alldead);
    return 1;
 }
 
-static int KQ_set_alldead (lua_State * L)
+
+static int KQ_set_alldead (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
 
@@ -1416,13 +1422,15 @@ static int KQ_set_alldead (lua_State * L)
    return 0;
 }
 
-static int KQ_get_autoparty (lua_State * L)
+
+static int KQ_get_autoparty (lua_State *L)
 {
    lua_pushnumber (L, autoparty);
    return 1;
 }
 
-static int KQ_set_autoparty (lua_State * L)
+
+static int KQ_set_autoparty (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
 
@@ -1431,13 +1439,15 @@ static int KQ_set_autoparty (lua_State * L)
    return 0;
 }
 
-static int KQ_get_numchrs (lua_State * L)
+
+static int KQ_get_numchrs (lua_State *L)
 {
    lua_pushnumber (L, numchrs);
    return 1;
 }
 
-static int KQ_set_all_equip (lua_State * L)
+
+static int KQ_set_all_equip (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
    int b, c;
@@ -1453,49 +1463,56 @@ static int KQ_set_all_equip (lua_State * L)
    return 0;
 }
 
-static int KQ_set_btile (lua_State * L)
+
+static int KQ_set_btile (lua_State *L)
 {
    set_btile ((int) lua_tonumber (L, 1), (int) lua_tonumber (L, 2),
               (int) lua_tonumber (L, 3));
    return 0;
 }
 
-static int KQ_set_mtile (lua_State * L)
+
+static int KQ_set_mtile (lua_State *L)
 {
    set_mtile ((int) lua_tonumber (L, 1), (int) lua_tonumber (L, 2),
               (int) lua_tonumber (L, 3));
    return 0;
 }
 
-static int KQ_set_ftile (lua_State * L)
+
+static int KQ_set_ftile (lua_State *L)
 {
    set_ftile ((int) lua_tonumber (L, 1), (int) lua_tonumber (L, 2),
               (int) lua_tonumber (L, 3));
    return 0;
 }
 
-static int KQ_set_obs (lua_State * L)
+
+static int KQ_set_obs (lua_State *L)
 {
    set_obs ((int) lua_tonumber (L, 1), (int) lua_tonumber (L, 2),
             (int) lua_tonumber (L, 3));
    return 0;
 }
 
-static int KQ_set_zone (lua_State * L)
+
+static int KQ_set_zone (lua_State *L)
 {
    set_zone ((int) lua_tonumber (L, 1), (int) lua_tonumber (L, 2),
              (int) lua_tonumber (L, 3));
    return 0;
 }
 
-static int KQ_set_shadow (lua_State * L)
+
+static int KQ_set_shadow (lua_State *L)
 {
    set_shadow ((int) lua_tonumber (L, 1), (int) lua_tonumber (L, 2),
                (int) lua_tonumber (L, 3));
    return 0;
 }
 
-static int KQ_set_tile_all (lua_State * L)
+
+static int KQ_set_tile_all (lua_State *L)
 {
    int a, tvs[8];
 
@@ -1517,7 +1534,6 @@ static int KQ_set_tile_all (lua_State * L)
 }
 
 
-
 /* PH: not used (yet?), therefore commented out */
 /* static int KQ_get_tile_all(lua_State* L) { */
 /* 	 int tx=lua_tonumber(L, 1); */
@@ -1534,19 +1550,20 @@ static int KQ_set_tile_all (lua_State * L)
 /* } */
 
 
-
 /*! \brief Copy tile block
  * \author PH
- * \date 20021125
+ * \date Created 20021125
  *
  * Copies a region of the map (all layers).
- * Invocation: copy_tile_all(source_x, source_y, dest_x, dest_y, width, height).
+ * Invocation: copy_tile_all(source_x, source_y, dest_x, dest_y, width,
+ *                           height)
  * These params are meant to be similar to the allegro blit() function.
- * \param L The Lua VM
+ *
+ * \param   L The Lua VM
  * \returns 0 (no values returned to Lua)
- * \bugs No error checking is done. Uses direct access to the struct s_map.
+ * \bugs    No error checking is done. Uses direct access to the struct s_map.
 */
-static int KQ_copy_tile_all (lua_State * L)
+static int KQ_copy_tile_all (lua_State *L)
 {
    int sx = lua_tonumber (L, 1);
    int sy = lua_tonumber (L, 2);
@@ -1555,8 +1572,10 @@ static int KQ_copy_tile_all (lua_State * L)
    int wid = lua_tonumber (L, 5);
    int hgt = lua_tonumber (L, 6);
    int os, od, i, j;
-   /*      sprintf(strbuf, "Copy (%d,%d)x(%d,%d) to (%d,%d)", sx,sy,wid,hgt,dx,dy);
-      klog(strbuf); */
+   /*      sprintf (strbuf, "Copy (%d,%d)x(%d,%d) to (%d,%d)", sx, sy, wid,
+                    hgt, dx, dy);
+      klog(strbuf);
+    */
    for (j = 0; j < hgt; ++j)
      {
         for (i = 0; i < wid; ++i)
@@ -1574,7 +1593,8 @@ static int KQ_copy_tile_all (lua_State * L)
    return 0;
 }
 
-static int KQ_set_desc (lua_State * L)
+
+static int KQ_set_desc (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
 
@@ -1583,7 +1603,8 @@ static int KQ_set_desc (lua_State * L)
    return 0;
 }
 
-static int KQ_set_foreground (lua_State * L)
+
+static int KQ_set_foreground (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
 
@@ -1592,7 +1613,8 @@ static int KQ_set_foreground (lua_State * L)
    return 0;
 }
 
-static int KQ_set_holdfade (lua_State * L)
+
+static int KQ_set_holdfade (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
 
@@ -1601,13 +1623,15 @@ static int KQ_set_holdfade (lua_State * L)
    return 0;
 }
 
-static int KQ_get_noe (lua_State * L)
+
+static int KQ_get_noe (lua_State *L)
 {
    lua_pushnumber (L, noe);
    return 1;
 }
 
-static int KQ_set_noe (lua_State * L)
+
+static int KQ_set_noe (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
 
@@ -1616,7 +1640,8 @@ static int KQ_set_noe (lua_State * L)
    return 0;
 }
 
-static int KQ_set_run (lua_State * L)
+
+static int KQ_set_run (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
 
@@ -1625,7 +1650,8 @@ static int KQ_set_run (lua_State * L)
    return 0;
 }
 
-static int KQ_set_save (lua_State * L)
+
+static int KQ_set_save (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
 
@@ -1634,7 +1660,8 @@ static int KQ_set_save (lua_State * L)
    return 0;
 }
 
-static int KQ_set_sstone (lua_State * L)
+
+static int KQ_set_sstone (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
 
@@ -1643,7 +1670,8 @@ static int KQ_set_sstone (lua_State * L)
    return 0;
 }
 
-static int KQ_set_warp (lua_State * L)
+
+static int KQ_set_warp (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
 
@@ -1654,7 +1682,8 @@ static int KQ_set_warp (lua_State * L)
    return 0;
 }
 
-static int KQ_set_vfollow (lua_State * L)
+
+static int KQ_set_vfollow (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
 
@@ -1663,13 +1692,15 @@ static int KQ_set_vfollow (lua_State * L)
    return 0;
 }
 
-static int KQ_create_df (lua_State * L)
+
+static int KQ_create_df (lua_State *L)
 {
    g_df = load_datafile_object (lua_tostring (L, 1), lua_tostring (L, 2));
    return 0;
 }
 
-static int KQ_destroy_df (lua_State * L)
+
+static int KQ_destroy_df (lua_State *L)
 {
    /*  RB TODO:  */
    if (L != NULL)
@@ -1678,7 +1709,8 @@ static int KQ_destroy_df (lua_State * L)
    return 0;
 }
 
-static int KQ_create_bmp (lua_State * L)
+
+static int KQ_create_bmp (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
 
@@ -1688,7 +1720,8 @@ static int KQ_create_bmp (lua_State * L)
    return 0;
 }
 
-static int KQ_destroy_bmp (lua_State * L)
+
+static int KQ_destroy_bmp (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
 
@@ -1697,7 +1730,8 @@ static int KQ_destroy_bmp (lua_State * L)
    return 0;
 }
 
-static int KQ_df2bmp (lua_State * L)
+
+static int KQ_df2bmp (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
 
@@ -1708,7 +1742,8 @@ static int KQ_df2bmp (lua_State * L)
    return 0;
 }
 
-static int KQ_blit (lua_State * L)
+
+static int KQ_blit (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
 
@@ -1719,7 +1754,8 @@ static int KQ_blit (lua_State * L)
    return 0;
 }
 
-static int KQ_maskblit (lua_State * L)
+
+static int KQ_maskblit (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
 
@@ -1731,7 +1767,8 @@ static int KQ_maskblit (lua_State * L)
    return 0;
 }
 
-static int KQ_drawsprite (lua_State * L)
+
+static int KQ_drawsprite (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
 
@@ -1741,7 +1778,8 @@ static int KQ_drawsprite (lua_State * L)
    return 0;
 }
 
-static int KQ_screen_dump (lua_State * L)
+
+static int KQ_screen_dump (lua_State *L)
 {
    /*  RB: TODO  */
    if (L != NULL)
@@ -1750,7 +1788,8 @@ static int KQ_screen_dump (lua_State * L)
    return 0;
 }
 
-static int KQ_drawmap (lua_State * L)
+
+static int KQ_drawmap (lua_State *L)
 {
    /*  RB TODO  */
    if (L != NULL)
@@ -1759,7 +1798,8 @@ static int KQ_drawmap (lua_State * L)
    return 0;
 }
 
-static int KQ_prompt (lua_State * L)
+
+static int KQ_prompt (lua_State *L)
 {
    char *txt[4];
    int a, b = real_entity_num (lua_tonumber (L, 1));
@@ -1787,7 +1827,6 @@ static int KQ_prompt (lua_State * L)
 /* } */
 
 
-
 /* static int KQ_thought (lua_State * L)
  * {
  *    char *txt[4];
@@ -1800,7 +1839,8 @@ static int KQ_prompt (lua_State * L)
  * }
 */
 
-static int KQ_copy_ent (lua_State * L)
+
+static int KQ_copy_ent (lua_State *L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
    int b = real_entity_num (lua_tonumber (L, 2));
@@ -1809,7 +1849,8 @@ static int KQ_copy_ent (lua_State * L)
    return 0;
 }
 
-static int KQ_place_ent (lua_State * L)
+
+static int KQ_place_ent (lua_State *L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
 
@@ -1817,7 +1858,8 @@ static int KQ_place_ent (lua_State * L)
    return 0;
 }
 
-static int KQ_face_each_other (lua_State * L)
+
+static int KQ_face_each_other (lua_State *L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
    int b = real_entity_num (lua_tonumber (L, 2));
@@ -1854,7 +1896,8 @@ static int KQ_face_each_other (lua_State * L)
    return 0;
 }
 
-static int KQ_wait_for_entity (lua_State * L)
+
+static int KQ_wait_for_entity (lua_State *L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
    int b = lua_gettop (L) > 1 ? real_entity_num (lua_tonumber (L, 2)) : a;
@@ -1863,7 +1906,8 @@ static int KQ_wait_for_entity (lua_State * L)
    return 0;
 }
 
-static int KQ_add_chr (lua_State * L)
+
+static int KQ_add_chr (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
 
@@ -1878,7 +1922,8 @@ static int KQ_add_chr (lua_State * L)
    return 0;
 }
 
-static int KQ_remove_chr (lua_State * L)
+
+static int KQ_remove_chr (lua_State *L)
 {
    int a, b;
 
@@ -1906,7 +1951,8 @@ static int KQ_remove_chr (lua_State * L)
    return 0;
 }
 
-static int KQ_krnd (lua_State * L)
+
+static int KQ_krnd (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
 
@@ -1918,7 +1964,6 @@ static int KQ_krnd (lua_State * L)
 }
 
 
-
 /* /\*! \brief Response for touching a fire. */
 /*  * */
 /*  * This gives one of three random responses per character for when the */
@@ -1927,7 +1972,7 @@ static int KQ_krnd (lua_State * L)
 /*  * \param   L::1 Which person is touching the fire */
 /*  * \returns 0 when done */
 /* *\/ */
-/* static int KQ_touch_fire (lua_State * L) */
+/* static int KQ_touch_fire (lua_State *L) */
 /* { */
 /*    switch ((int) lua_tonumber (L, 1)) */
 /*      { */
@@ -2060,7 +2105,7 @@ static int KQ_krnd (lua_State * L)
 /*  * \param   L::1 Which person is reading the book */
 /*  * \returns 0 when done */
 /* *\/ */
-/* static int KQ_book_talk (lua_State * L) */
+/* static int KQ_book_talk (lua_State *L) */
 /* { */
 /*    switch ((int) lua_tonumber (L, 1)) */
 /*      { */
@@ -2176,31 +2221,36 @@ static int KQ_krnd (lua_State * L)
 /*    return 0; */
 /* } */
 
-static int KQ_do_fadeout (lua_State * L)
+
+static int KQ_do_fadeout (lua_State *L)
 {
    do_transition (TRANS_FADE_OUT, lua_tonumber (L, 1));
    return 0;
 }
 
-static int KQ_do_fadein (lua_State * L)
+
+static int KQ_do_fadein (lua_State *L)
 {
    do_transition (TRANS_FADE_IN, lua_tonumber (L, 1));
    return 0;
 }
 
-static int KQ_shop (lua_State * L)
+
+static int KQ_shop (lua_State *L)
 {
    shop (lua_tonumber (L, 1));
    return 0;
 }
 
-static int KQ_inn (lua_State * L)
+
+static int KQ_inn (lua_State *L)
 {
    inn ((char *) lua_tostring (L, 1), lua_tonumber (L, 2), lua_tonumber (L, 3));
    return 0;
 }
 
-static int KQ_door_in (lua_State * L)
+
+static int KQ_door_in (lua_State *L)
 {
    int hx, hy, hy2, db, dt;
 
@@ -2236,7 +2286,8 @@ static int KQ_door_in (lua_State * L)
    return 0;
 }
 
-static int KQ_door_out (lua_State * L)
+
+static int KQ_door_out (lua_State *L)
 {
    use_sstone = 1;
    set_view (0, 0, 0, 0, 0);
@@ -2244,13 +2295,15 @@ static int KQ_door_out (lua_State * L)
    return 0;
 }
 
-static int KQ_calc_viewport (lua_State * L)
+
+static int KQ_calc_viewport (lua_State *L)
 {
    calc_viewport (lua_tonumber (L, 1));
    return 0;
 }
 
-static int KQ_change_map (lua_State * L)
+
+static int KQ_change_map (lua_State *L)
 {
    strcpy (tmap_name, (char *) lua_tostring (L, 1));
    tmx = lua_tonumber (L, 2);
@@ -2261,25 +2314,29 @@ static int KQ_change_map (lua_State * L)
    return 0;
 }
 
-static int KQ_give_item (lua_State * L)
+
+static int KQ_give_item (lua_State *L)
 {
    check_inventory (lua_tonumber (L, 1), lua_tonumber (L, 2));
    return 0;
 }
 
-static int KQ_warp (lua_State * L)
+
+static int KQ_warp (lua_State *L)
 {
    warp (lua_tonumber (L, 1), lua_tonumber (L, 2), lua_tonumber (L, 3));
    return 0;
 }
 
-static int KQ_give_xp (lua_State * L)
+
+static int KQ_give_xp (lua_State *L)
 {
    give_xp (lua_tonumber (L, 1), lua_tonumber (L, 2), lua_tonumber (L, 3));
    return 0;
 }
 
-static int KQ_chest (lua_State * L)
+
+static int KQ_chest (lua_State *L)
 {
    int gd = 0, a = 0;
    int tno = lua_tonumber (L, 1);
@@ -2337,32 +2394,37 @@ static int KQ_chest (lua_State * L)
    return 0;
 }
 
-static int KQ_combat (lua_State * L)
+
+static int KQ_combat (lua_State *L)
 {
    combat (lua_tonumber (L, 1));
    return 0;
 }
 
-static int KQ_wait (lua_State * L)
+
+static int KQ_wait (lua_State *L)
 {
    kwait (lua_tonumber (L, 1));
    return 0;
 }
 
-static int KQ_rest (lua_State * L)
+
+static int KQ_rest (lua_State *L)
 {
    wait (lua_tonumber (L, 1));
    return 0;
 }
 
-static int KQ_msg (lua_State * L)
+
+static int KQ_msg (lua_State *L)
 {
    message ((char *) lua_tostring (L, 1), lua_tonumber (L, 2),
             lua_tonumber (L, 3), xofs, yofs);
    return 0;
 }
 
-static int KQ_move_camera (lua_State * L)
+
+static int KQ_move_camera (lua_State *L)
 {
    int ct2 = 0, xinc = 0, yinc = 0, xtot = 0, ytot = 0;
    int mcx = lua_tonumber (L, 1);
@@ -2421,7 +2483,8 @@ static int KQ_move_camera (lua_State * L)
    return 0;
 }
 
-static int KQ_in_forest (lua_State * L)
+
+static int KQ_in_forest (lua_State *L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
    lua_pushnumber (L, is_forestsquare (g_ent[a].tilex, g_ent[a].tiley));
@@ -2433,7 +2496,8 @@ static int KQ_in_forest (lua_State * L)
    return 1;
 }
 
-static int KQ_orient_heroes (lua_State * L)
+
+static int KQ_orient_heroes (lua_State *L)
 {
    /*  RB TODO  */
    if (L != NULL)
@@ -2467,7 +2531,8 @@ static int KQ_orient_heroes (lua_State * L)
    return 0;
 }
 
-static int KQ_pause_song (lua_State * L)
+
+static int KQ_pause_song (lua_State *L)
 {
    /*  RB TODO : */
    if (L != NULL)
@@ -2476,7 +2541,8 @@ static int KQ_pause_song (lua_State * L)
    return 0;
 }
 
-static int KQ_unpause_map_song (lua_State * L)
+
+static int KQ_unpause_map_song (lua_State *L)
 {
    /*  RB TODO  */
    if (L != NULL)
@@ -2485,7 +2551,8 @@ static int KQ_unpause_map_song (lua_State * L)
    return 0;
 }
 
-static int KQ_play_map_song (lua_State * L)
+
+static int KQ_play_map_song (lua_State *L)
 {
    /*  RB TODO  */
    if (L != NULL)
@@ -2494,13 +2561,15 @@ static int KQ_play_map_song (lua_State * L)
    return 0;
 }
 
-static int KQ_play_song (lua_State * L)
+
+static int KQ_play_song (lua_State *L)
 {
    play_music ((char *) lua_tostring (L, 1), 0);
    return 0;
 }
 
-static int KQ_stop_song (lua_State * L)
+
+static int KQ_stop_song (lua_State *L)
 {
    /*  RB TODO  */
    if (L != NULL)
@@ -2509,7 +2578,8 @@ static int KQ_stop_song (lua_State * L)
    return 0;
 }
 
-static int KQ_view_range (lua_State * L)
+
+static int KQ_view_range (lua_State *L)
 {
    int a, b[5];
 
@@ -2519,7 +2589,8 @@ static int KQ_view_range (lua_State * L)
    return 0;
 }
 
-static int KQ_sfx (lua_State * L)
+
+static int KQ_sfx (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
 
@@ -2527,7 +2598,8 @@ static int KQ_sfx (lua_State * L)
    return 0;
 }
 
-static int KQ_clear_buffer (lua_State * L)
+
+static int KQ_clear_buffer (lua_State *L)
 {
 /*  RB TODO  */
    if (L != NULL)
@@ -2536,7 +2608,8 @@ static int KQ_clear_buffer (lua_State * L)
    return 0;
 }
 
-static int KQ_mbox (lua_State * L)
+
+static int KQ_mbox (lua_State *L)
 {
    menubox (double_buffer, lua_tonumber (L, 1) + xofs,
             lua_tonumber (L, 2) + yofs, lua_tonumber (L, 3), lua_tonumber (L,
@@ -2545,7 +2618,8 @@ static int KQ_mbox (lua_State * L)
    return 0;
 }
 
-static int KQ_dark_mbox (lua_State * L)
+
+static int KQ_dark_mbox (lua_State *L)
 {
    menubox (double_buffer, lua_tonumber (L, 1) + xofs,
             lua_tonumber (L, 2) + yofs, lua_tonumber (L, 3), lua_tonumber (L,
@@ -2554,7 +2628,8 @@ static int KQ_dark_mbox (lua_State * L)
    return 0;
 }
 
-static int KQ_light_mbox (lua_State * L)
+
+static int KQ_light_mbox (lua_State *L)
 {
    menubox (double_buffer, lua_tonumber (L, 1) + xofs,
             lua_tonumber (L, 2) + yofs, lua_tonumber (L, 3), lua_tonumber (L,
@@ -2563,7 +2638,8 @@ static int KQ_light_mbox (lua_State * L)
    return 0;
 }
 
-static int KQ_drawframe (lua_State * L)
+
+static int KQ_drawframe (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
    int b = lua_tonumber (L, 2);
@@ -2573,7 +2649,8 @@ static int KQ_drawframe (lua_State * L)
    return 0;
 }
 
-static int KQ_draw_pstat (lua_State * L)
+
+static int KQ_draw_pstat (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
 
@@ -2583,7 +2660,8 @@ static int KQ_draw_pstat (lua_State * L)
    return 0;
 }
 
-static int KQ_ptext (lua_State * L)
+
+static int KQ_ptext (lua_State *L)
 {
    print_font (double_buffer, lua_tonumber (L, 1) + xofs,
                lua_tonumber (L, 2) + yofs, (char *) lua_tostring (L, 3),
@@ -2591,7 +2669,8 @@ static int KQ_ptext (lua_State * L)
    return 0;
 }
 
-static int KQ_pnum (lua_State * L)
+
+static int KQ_pnum (lua_State *L)
 {
    int a = lua_tonumber (L, 3);
 
@@ -2601,7 +2680,8 @@ static int KQ_pnum (lua_State * L)
    return 0;
 }
 
-static int KQ_read_controls (lua_State * L)
+
+static int KQ_read_controls (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
    int b = lua_tonumber (L, 2);
@@ -2615,6 +2695,7 @@ static int KQ_read_controls (lua_State * L)
 
    for (z = 0; z < 8; z++)
       g_keys[z] = 0;
+
    readcontrols ();
    if (up && a == 1)
      {
@@ -2659,7 +2740,8 @@ static int KQ_read_controls (lua_State * L)
    return 0;
 }
 
-static int KQ_check_key (lua_State * L)
+
+static int KQ_check_key (lua_State *L)
 {
    int a = lua_tonumber (L, 1);
 
@@ -2670,13 +2752,15 @@ static int KQ_check_key (lua_State * L)
    return 1;
 }
 
-static int KQ_log (lua_State * L)
+
+static int KQ_log (lua_State *L)
 {
    klog ((char *) lua_tostring (L, 1));
    return 0;
 }
 
-static int KQ_wait_enter (lua_State * L)
+
+static int KQ_wait_enter (lua_State *L)
 {
 /*  RB TODO  */
    if (L != NULL)
@@ -2684,13 +2768,16 @@ static int KQ_wait_enter (lua_State * L)
    wait_enter ();
    return 0;
 }
+
+
 extern int useup_item (int);
-static int KQ_use_up (lua_State * L)
+static int KQ_use_up (lua_State *L)
 {
    int i = lua_tonumber (L, 1);
    lua_pushnumber (L, useup_item (i));
    return 1;
 }
+
 
 /*  static char *mybuf = NULL;  */
 /*  static int mylen = 0;  */
@@ -2705,41 +2792,44 @@ static int KQ_use_up (lua_State * L)
  * The 'ent' param can be a number, or an object e.g. party[0].
  */
 
-int KQ_bubble_ex (lua_State * l)
+int KQ_bubble_ex (lua_State *L)
 {
    int entity;
-   s_entity* ent;
-   const char *msg = lua_tostring (l, 2);
+   s_entity *ent;
+   const char *msg = lua_tostring (L, 2);
 
-   switch(lua_type(l,1)) {
-   case LUA_TNUMBER:
-    entity= real_entity_num (lua_tonumber (l, 1));
-    break;
-   case LUA_TTABLE:
-     lua_pushstring(l, "_ent");
-     lua_rawget(l, 1);
-     ent=lua_touserdata(l, -1);
-     /* convert from pointer to an index for text_ex */
-     entity= ent ? ent-g_ent : 255;
-     break;
-   default:
-     entity=255;
-     break;
-   }
+   switch (lua_type (L, 1))
+     {
+        case LUA_TNUMBER:
+           entity = real_entity_num (lua_tonumber (L, 1));
+           break;
+        case LUA_TTABLE:
+           lua_pushstring (L, "_ent");
+           lua_rawget (L, 1);
+           ent = lua_touserdata (L, -1);
+           /* convert from pointer to an index for text_ex */
+           entity = ent ? ent - g_ent : 255;
+           break;
+        default:
+           entity = 255;
+           break;
+     }
    text_ex (B_TEXT, entity, msg);
    return 0;
 }
 
-int KQ_thought_ex (lua_State * l)
+
+int KQ_thought_ex (lua_State *L)
 {
-   int entity = real_entity_num (lua_tonumber (l, 1));
-   const char *msg = lua_tostring (l, 2);
+   int entity = real_entity_num (lua_tonumber (L, 1));
+   const char *msg = lua_tostring (L, 2);
    text_ex (B_THOUGHT, entity, msg);
    return 0;
 }
 
+
 /* Do a battle
- * Usage: battle(bg_name, mus_name, encounter, encounter, ...);
+ * Usage: battle (bg_name, mus_name, encounter, encounter, ...);
  * bg_name: name of background tile
  * mus_name: name of music track
  * encounter: list of encounters
@@ -2749,13 +2839,14 @@ int KQ_thought_ex (lua_State * l)
  * lvl: level of this battle
  * monster: name of a monster
  */
-int KQ_battle (lua_State * l)
+int KQ_battle (lua_State *L)
 {
-   l = l;
+   L = L;
    return 1;
 }
 
-int KQ_istable (lua_State * L)
+
+int KQ_istable (lua_State *L)
 {
    if (lua_istable (L, 1))
      {
@@ -2767,6 +2858,7 @@ int KQ_istable (lua_State * L)
      }
    return 1;
 }
+
 
 /*! \brief Initialise scripting engine
  *
@@ -2787,7 +2879,7 @@ void do_luainit (char *fname)
    theL = lua_open (0);
    if (theL == NULL)
       program_death ("Could not initialise scripting engine");
-   fieldsort();
+   fieldsort ();
    while (rg->name)
      {
         lua_register (theL, rg->name, rg->func);
@@ -2805,7 +2897,6 @@ void do_luainit (char *fname)
      }
    lua_settop (theL, oldtop);
 }
-
 
 
 #ifdef KQ_CHEATS
@@ -2860,7 +2951,6 @@ void do_luakill (void)
 }
 
 
-
 /*! \brief Run initial code
  *
  * Calls the function autoexec() which
@@ -2881,7 +2971,6 @@ void do_autoexec (void)
 }
 
 
-
 /*! \brief Run initial graphical code
  *
  * This function is called after the map is faded back in. It's possible
@@ -2896,7 +2985,6 @@ void do_postexec (void)
    lua_settop (theL, oldtop);
    check_map_change ();
 }
-
 
 
 /*! \brief Trigger zone action
@@ -2919,7 +3007,6 @@ void do_zone (int zn_num)
 }
 
 
-
 /*! \brief Trigger entity action
  *
  * Run the lua function entity_handler(int) to take action based on the entity
@@ -2937,7 +3024,6 @@ void do_entity (int en_num)
    lua_settop (theL, oldtop);
    check_map_change ();
 }
-
 
 
 /*! \brief Check to change the map

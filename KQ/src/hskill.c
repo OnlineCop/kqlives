@@ -50,6 +50,7 @@
 static void infusion (int, int);
 void reveal (int);
 
+
 /*! \brief Is hero's special skill available?
  *
  * Check if the hero can use his/her special
