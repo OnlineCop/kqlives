@@ -306,12 +306,13 @@ s_player;
 
 /*! \brief Hero information
  *
- * This holds static or constant information about a hero 
+ * This holds static or constant information about a hero. PH: It's not fully used yet
+ * the intention is to cut down on some of those globals.
  */
 typedef struct
 {
-   char name[9];
-   BITMAP *portait;             /*!< The hero's portrait for the stats screen */
+   s_player plr;                /*!< all other statistics */
+   BITMAP *portrait;            /*!< The hero's portrait for the stats screen */
    BITMAP *frames[MAXFRAMES];   /*!< Frames for movement */
    BITMAP *cframes[MAXCFRAMES]; /*!< Frames for combat */
    int xpi, bxp, hpi, mpi;      /*!< for level_up() */
@@ -428,7 +429,7 @@ extern int balt;                /*  selector.c, (eqp|item|mas|shop)menu.c,  */
 extern int bctrl;               /*  selector.c, (eqp|item|mas|shop)menu.c,  */
                         /*  sgame.c, heroc.c, intrface.c, setup.c,  */
                         /*  menu.c                                  */
-
+extern int bhelp;
 extern int kright;              /*  setup.c, sgame.c  */
 extern int kleft;               /*  setup.c, sgame.c  */
 extern int kup;                 /*  setup.c, sgame.c  */
@@ -457,7 +458,7 @@ extern BITMAP *shadow[MAX_SHADOWS];     /*  draw.c  */
 extern unsigned short *map_seg;
 extern unsigned short *b_seg, *f_seg;
 extern unsigned char *progress, *z_seg, *s_seg, *o_seg, *treasure;
-extern BITMAP *kfonts, *portrait[MAXCHRS];
+extern BITMAP *kfonts /*, *portrait[MAXCHRS] */ ;
 extern s_map g_map;
 extern s_entity g_ent[MAX_ENT + PSIZE];
 extern s_anim tanim[6][MAX_ANIM];
@@ -469,7 +470,8 @@ extern unsigned char kq_version, hold_fade, cansave, skip_intro, wait_retrace,
    windowed, stretch_view;
 extern unsigned short tilex[MAX_TILES], adelay[MAX_ANIM];
 extern char *strbuf;
-extern s_player party[MAXCHRS], players[MAXCHRS];
+extern s_player party[MAXCHRS];
+extern s_heroinfo players[MAXCHRS];
 extern s_fighter fighter[NUM_FIGHTERS];
 extern s_fighter tempa, tempd;
 extern int noi, shin[12], dct;
