@@ -11,6 +11,7 @@ rem  glance you cannot see it, but believe me, it is there. Be careful if you
 rem  edit this file: if your editor replaces '\t' for spaces, the generated
 rem  makefile won't work!
 rem
+
 set TAB=	
 if [%TAB%] == [] goto ooes_error
 
