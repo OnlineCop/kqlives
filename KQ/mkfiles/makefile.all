@@ -122,7 +122,7 @@ clean:
 #  backup copies! So be careful when using it!                                #
 #                                                                             #
 distclean: clean
-	$(RM) $(RMFLAGS) $(PACKAGE_TGZ) $(PACKAGE_ZIP) 
+	$(RM) $(RMFLAGS) $(PACKAGE_TGZ) $(PACKAGE_ZIP)
 
 
 
@@ -169,10 +169,10 @@ ifneq ($(UPXPRG),)
 	COMPRESSOR := $(UPXPRG)
 	COMP_FLAGS := --best
 else
-ifneq ($(DJPPRG),)
-	COMPRESSOR := $(DJPPRG)
-	COMP_FLAGS := -s
-endif
+	ifneq ($(DJPPRG),)
+		COMPRESSOR := $(DJPPRG)
+		COMP_FLAGS := -s
+	endif
 endif
 
 compress:

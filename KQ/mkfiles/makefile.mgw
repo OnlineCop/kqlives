@@ -46,10 +46,10 @@ SLASHFLIP      := 1
 #  try adding it to the ALLEGRO list (only if you are linking statically).    #
 #                                                                             #
 ifdef STATICLINK
-COMPILER_FLAGS += -DALLEGRO_STATICLINK
-LIBRARY += alleg_s gdi32 user32 ole32 dinput ddraw dxguid winmm dsound
+	COMPILER_FLAGS += -DALLEGRO_STATICLINK
+	LIBRARY += alleg_s gdi32 user32 ole32 dinput ddraw dxguid winmm dsound
 else
-LIBRARY += $(ALLEGRO)
+	LIBRARY += $(ALLEGRO)
 endif
 
 
@@ -61,7 +61,7 @@ endif
 #                                                                             #
 COMPILER_FLAGS += -mwindows
 LDFLAGS += -mwindows $(addprefix -l,$(LIBRARY))
-FILES+=win.c
+FILES += win.c
 
 #                                                                             #
 #  Generate the object files.                                                 #
