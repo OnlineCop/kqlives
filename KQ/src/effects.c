@@ -79,7 +79,7 @@ void fight_animation (int tgt, int who, int ma)
 void display_amount (int tgt, int cl, int aflag)
 {
    int dx, dy, sz, c, f, n, g, k, p, z;
-   // TT: used for the slow_computer routine
+   /* TT: used for the slow_computer routine */
    int pcount, ccount;
 
    if (aflag == 1)
@@ -430,7 +430,7 @@ void draw_attacksprite (int tgt, int aflag, int ef, int shows)
 
 
 
-/*! \brief Draw castig sprite
+/*! \brief Draw casting sprite
  *
  * Draw the casting sprite.  Effect is x and y centered.  One suggestion
  * I received was to have the casting sprite stay on screen until the

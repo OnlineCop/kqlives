@@ -756,7 +756,7 @@ static int hero_invokeitem (int whom, int eno)
    /*
       This will likely become a separate function, but here is
       where we are invoking items.
-   */
+    */
    if (eno == I_STAFF1)
      {
         strcpy (ctext, "Neutralize Poison");

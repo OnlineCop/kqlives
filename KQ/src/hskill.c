@@ -48,7 +48,7 @@
 
 /*  internal function  */
 static void infusion (int, int);
-
+void reveal (int);
 
 /*! \brief Is hero's special skill available?
  *
@@ -158,8 +158,7 @@ int hero_skillcheck (int dude)
 */
 int skill_use (int who)
 {
-   int tgt, fitm, a, b, c, p, d = 0, cts, tx, ty, g = 0, nt =
-      0, nn[NUM_FIGHTERS];
+   int tgt, fitm, a, b, c, p, cts, tx, ty, g = 0, nt = 0, nn[NUM_FIGHTERS];
    BITMAP *temp;
 
    tempa = status_adjust (who);
@@ -460,56 +459,60 @@ int skill_use (int who)
         tgt = select_enemy (who, 0);
         if (tgt == -1)
            return 0;
-        do_transition (TRANS_FADE_OUT, 4);
-        menubox (double_buffer, 84, 56, 17, 13, BLUE);
-        sprintf (strbuf, "Name: %s", fighter[tgt].name);
-        print_font (double_buffer, 92, 64, strbuf, FNORMAL);
-        sprintf (strbuf, "Level: %d", fighter[tgt].lvl);
-        print_font (double_buffer, 92, 72, strbuf, FNORMAL);
-        sprintf (strbuf, "HP: %d/%d", fighter[tgt].hp, fighter[tgt].mhp);
-        print_font (double_buffer, 92, 80, strbuf, FNORMAL);
-        sprintf (strbuf, "MP: %d/%d", fighter[tgt].mp, fighter[tgt].mmp);
-        print_font (double_buffer, 92, 88, strbuf, FNORMAL);
-        print_font (double_buffer, 92, 96, "Earth", FNORMAL);
-        print_font (double_buffer, 92, 104, "Black", FNORMAL);
-        print_font (double_buffer, 92, 112, "Fire", FNORMAL);
-        print_font (double_buffer, 92, 120, "Thunder", FNORMAL);
-        print_font (double_buffer, 92, 128, "Air", FNORMAL);
-        print_font (double_buffer, 92, 136, "White", FNORMAL);
-        print_font (double_buffer, 92, 144, "Water", FNORMAL);
-        print_font (double_buffer, 92, 152, "Ice", FNORMAL);
-        for (c = 0; c < 8; c++)
-          {
-             rectfill (double_buffer, 156, c * 8 + 97, 226, c * 8 + 103, 3);
-             if (fighter[tgt].res[c] > 10)
-               {
-                  g = 50;
-                  d = fighter[tgt].res[c] - 10;
-               }
-             if (fighter[tgt].res[c] < 0)
-               {
-                  g = 18;
-                  d = abs (fighter[tgt].res[c]);
-               }
-             if (fighter[tgt].res[c] >= 0 && fighter[tgt].res[c] <= 10)
-               {
-                  g = 34;
-                  d = fighter[tgt].res[c];
-               }
-             if (d > 0)
-                for (b = 0; b < d; b++)
-                   rectfill (double_buffer, b * 7 + 157, c * 8 + 98,
-                             b * 7 + 162, c * 8 + 102, g + b);
-          }
-        blit2screen (0, 0);
-        do_transition (TRANS_FADE_IN, 4);
-        wait_enter ();
+        reveal (tgt);
         break;
      }
    return 1;
 }
 
-
+void reveal (int tgt)
+{
+   int c, d = 0, g = 0, b;
+   do_transition (TRANS_FADE_OUT, 4);
+   menubox (double_buffer, 84, 56, 17, 13, BLUE);
+   sprintf (strbuf, "Name: %s", fighter[tgt].name);
+   print_font (double_buffer, 92, 64, strbuf, FNORMAL);
+   sprintf (strbuf, "Level: %d", fighter[tgt].lvl);
+   print_font (double_buffer, 92, 72, strbuf, FNORMAL);
+   sprintf (strbuf, "HP: %d/%d", fighter[tgt].hp, fighter[tgt].mhp);
+   print_font (double_buffer, 92, 80, strbuf, FNORMAL);
+   sprintf (strbuf, "MP: %d/%d", fighter[tgt].mp, fighter[tgt].mmp);
+   print_font (double_buffer, 92, 88, strbuf, FNORMAL);
+   print_font (double_buffer, 92, 96, "Earth", FNORMAL);
+   print_font (double_buffer, 92, 104, "Black", FNORMAL);
+   print_font (double_buffer, 92, 112, "Fire", FNORMAL);
+   print_font (double_buffer, 92, 120, "Thunder", FNORMAL);
+   print_font (double_buffer, 92, 128, "Air", FNORMAL);
+   print_font (double_buffer, 92, 136, "White", FNORMAL);
+   print_font (double_buffer, 92, 144, "Water", FNORMAL);
+   print_font (double_buffer, 92, 152, "Ice", FNORMAL);
+   for (c = 0; c < 8; c++)
+     {
+        rectfill (double_buffer, 156, c * 8 + 97, 226, c * 8 + 103, 3);
+        if (fighter[tgt].res[c] > 10)
+          {
+             g = 50;
+             d = fighter[tgt].res[c] - 10;
+          }
+        if (fighter[tgt].res[c] < 0)
+          {
+             g = 18;
+             d = abs (fighter[tgt].res[c]);
+          }
+        if (fighter[tgt].res[c] >= 0 && fighter[tgt].res[c] <= 10)
+          {
+             g = 34;
+             d = fighter[tgt].res[c];
+          }
+        if (d > 0)
+           for (b = 0; b < d; b++)
+              rectfill (double_buffer, b * 7 + 157, c * 8 + 98,
+                        b * 7 + 162, c * 8 + 102, g + b);
+     }
+   blit2screen (0, 0);
+   do_transition (TRANS_FADE_IN, 4);
+   wait_enter ();
+}
 
 /*! \brief Do infusion skill
  *

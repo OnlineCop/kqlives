@@ -81,7 +81,7 @@ static void do_round (void);
 static void roll_initiative (void);
 static void snap_togrid (void);
 static void init_fighters (void);
-
+static int do_combat (char *gb, char *mus, int is_rnd);
 
 
 /*! \brief Does current location call for combat?
@@ -108,7 +108,7 @@ int combat_check (int comx, int comy)
     *           calling combat with the FIRST zone, not the LAST
     *           one.
     * PH: done this 20020222
-   */
+    */
    for (i = 0; i < NUM_BATTLES; i++)
      {
         if (battles[i].mapnum == g_map.map_no && battles[i].zonenum == zn)
@@ -133,17 +133,10 @@ int combat_check (int comx, int comy)
 */
 int combat (int bno)
 {
-   int zoom_step;
    int hero_level;
    /* ML 2002-09-22: not needed right now int saved_song; */
    int encounter;
    int lc;
-
-#if 0
-   sprintf (strbuf, "Battle %d:", bno);
-   klog (strbuf);
-#endif
-
    /* PH: some checking! */
    if (bno < 0 || bno >= NUM_BATTLES)
      {
@@ -162,77 +155,29 @@ int combat (int bno)
      {
         /* TT: This will skip battles if the player hasn't moved the necessary
            number of steps AND a random number does not equal zero.
-        */
+         */
         if ((steps < STEPS_NEEDED) || ((rand () % battles[bno].enc) > 0))
           {
-#if 0
-             sprintf (strbuf, "Skipped due to 1-in-%d or %d<%d",
-                      battles[bno].enc, steps, STEPS_NEEDED);
-             klog (strbuf);
-#endif
              return 0;
           }
-#if 0
-        else
-          {
-             sprintf (strbuf, "Steps %d >= %d", steps, STEPS_NEEDED);
-             klog (strbuf);
-          }
-     }
-   else
-     {
-        sprintf (strbuf, "battle->enc=%d", battles[bno].enc);
-        klog (strbuf);
-#endif
      }
 
    /*  RB: had one! choose what we had just found  */
    steps = 0;
    hero_level = party[pidx[0]].lvl;
    encounter = select_encounter (battles[bno].etnum, battles[bno].eidx);
-#if 0
-   sprintf (strbuf, "Encounter %d:", encounter);
-   klog (strbuf);
-#endif
-
-   /* !! should be party[pidx[0]].lvl */
    if (hero_level >= erows[encounter].lvl + 5 && battles[bno].eidx == 99)
      {
-#if 0
-        sprintf (strbuf, "Query level %d vs %d", hero_level,
-                 erows[encounter].lvl);
-        klog (strbuf);
-#endif
         lc = (hero_level - erows[encounter].lvl) * 5;
 
         /* TT: This will skip battles based on a random number from hero's
            level minus enemy's level.
-        */
+         */
         if ((rand () % 100) < lc)
           {
-#if 0
-             sprintf (strbuf, "Skipped, delta level %d", lc);
-             klog (strbuf);
-#endif
              return 0;
           }
-#if 0
-        else
-          {
-             sprintf (strbuf, "Proceeding, delta level %d\n", lc);
-             klog (strbuf);
-          }
-#endif
      }
-#if 0
-   else
-     {
-        sprintf (strbuf, "No Query level %d vs %d or eidx==%d", hero_level,
-                 erows[encounter].lvl, battles[bno].eidx);
-        klog (strbuf);
-     }
-#endif
-
    if (progress[P_REPULSE] > 0)
      {
         lc = (hero_level - erows[encounter].lvl) * 20;
@@ -243,19 +188,29 @@ int combat (int bno)
            battle */
         if ((rand () % 100) < lc)
           {
-#if 0
-             sprintf (strbuf, "Skipped, repulse delta %d\n", lc);
-             klog (strbuf);
-
-#endif
              return 0;
           }
      }
 
-   in_combat = 1;
    init_fighters ();
-   backart = load_datafile_object (PCX_DATAFILE, battles[bno].backimg);
-   if (battles[bno].eidx == 99)
+   return do_combat (battles[bno].backimg, battles[bno].bmusic,
+                     battles[bno].eidx == 99);
+}
+
+   /*! \brief Really do combat once fighters have been inited 
+    *
+    * \param bg Bckground image
+    * \param mus Music
+    * \param is_rnd if !=0 then this is a random combat
+    * \returns 1 if battle occurred
+    */
+
+static int do_combat (char *bg, char *mus, int is_rnd)
+{
+   int zoom_step;
+   in_combat = 1;
+   backart = load_datafile_object (PCX_DATAFILE, bg);
+   if (is_rnd)
      {
         if ((numchrs == 1) && (pidx[0] == AYLA))
           {
@@ -285,7 +240,7 @@ int combat (int bno)
    /*  RB: do the zoom at the beginning of the combat.  */
    pause_music ();
    set_music_volume ((gmvol / 250.0) * 0.75);
-   play_music (battles[bno].bmusic, 0);
+   play_music (mus, 0);
    if (stretch_view == 2)
 
      {
@@ -342,8 +297,8 @@ int combat (int bno)
 
 /*! \brief Initiate fighter structs and initial vars
  * \author Josh Bolduc
- * \created ????????
- * \updated
+ * \date Created ????????
+ * \date Updated
  *
  * Pre-combat setup of fighter structures and initial vars.
 */
@@ -369,8 +324,8 @@ static void init_fighters (void)
 
 /*! \brief Fighter on-screen locations in battle
  * \author Josh Bolduc
- * \created ????????
- * \updated
+ * \date Created ????????
+ * \date Updated
  *
  * Calculate where the fighters should be drawn.
 */
@@ -416,8 +371,8 @@ static void snap_togrid (void)
 
 /*! \brief Choose who attacks first, speeds, etc.
  * \author Josh Bolduc
- * \created ????????
- * \updated
+ * \date Created ????????
+ * \date Updated
  *
  * Set up surprise vars, speeds, act vars, etc.
 */
@@ -460,12 +415,27 @@ static void roll_initiative (void)
      }
 
    rcount = 0;
+   /* PH: this isn't right because not all members of the fighter[] array 
+    * are valid - e.g. if you are attacked by 1 enemy, there are 4 enemy
+    * slots that aren't used. Currently, no enemies use imbued stuff, but
+    * this may change (?)
+    */
+/*    for (i = 0; i < NUM_FIGHTERS; i++) */
+/*      { */
+/*         /\*  TODO: Unroll this loop  *\/ */
+/*         for (j = 0; j < 2; j++) */
+/*            if (fighter[i].imb[j] > 0) */
+/*               cast_imbued_spell (i, fighter[i].imb[j], 1, TGT_CASTER); */
+/*      } */
+/* PH: This should be ok */
    for (i = 0; i < NUM_FIGHTERS; i++)
      {
-        /*  TODO: Unroll this loop  */
-        for (j = 0; j < 2; j++)
-           if (fighter[i].imb[j] > 0)
-              cast_imbued_spell (i, fighter[i].imb[j], 1, TGT_CASTER);
+        if (i < numchrs || (i >= PSIZE && i < (PSIZE + numens)))
+          {
+             for (j = 0; j < 2; j++)
+                if (fighter[i].imb[j] > 0)
+                   cast_imbued_spell (i, fighter[i].imb[j], 1, TGT_CASTER);
+          }
      }
 
    battle_render (-1, -1, 0);
@@ -481,8 +451,8 @@ static void roll_initiative (void)
 
 /*! \brief Draw the battle screen
  * \author Josh Bolduc
- * \created ????????
- * \updated 20020914 - 16:16 (RB)
+ * \date Created ????????
+ * \date Updated 20020914 - 16:16 (RB)
  *
  * Draw the battle screen.
  *
@@ -716,8 +686,8 @@ void battle_render (int plyr, int hl, int sall)
 
 /*! \brief Battle gauge, action controls
  * \author Josh Bolduc
- * \created ????????
- * \updated 20020914 - 16:16 (RB)
+ * \date Created ????????
+ * \date Updated 20020914 - 16:16 (RB)
  *
  * This function controls the battle gauges and calls for action
  * when necessary. This is also where things like poison, sleep,
@@ -878,8 +848,8 @@ static void do_round (void)
 
 /*! \brief Choose an action
  * \author Josh Bolduc
- * \created ????????
- * \updated
+ * \date Created ????????
+ * \date Updated
  *
  * Choose a fighter action.
 */
@@ -928,8 +898,8 @@ static void do_action (int dude)
 
 /*! \brief Display one fighter on the screen
  * \author Josh Bolduc
- * \created ????????
- * \updated 20020914 - 16:37 (RB)
+ * \date Created ????????
+ * \date Updated 20020914 - 16:37 (RB)
  *
  * Display a single fighter on the screen. Checks for dead and
  * stone, and if the fighter is selected. Also displays 'Vision'
@@ -959,7 +929,6 @@ void draw_fighter (int dude, int dcur)
       draw_trans_sprite (double_buffer, cframes[dude][ff], xx, yy);
    else
       draw_sprite (double_buffer, cframes[dude][ff], xx, yy);
-
    if (dcur == 1)
       draw_sprite (double_buffer, bptr, xx + (fighter[dude].cw / 2) - 8,
                    yy - 8);
@@ -991,8 +960,8 @@ void draw_fighter (int dude, int dcur)
 
 /*! \brief Check if all heroes/enemies dead.
  * \author Josh Bolduc
- * \created ????????
- * \updated
+ * \date Created ????????
+ * \date Updated
  *
  * Just check to see if all the enemies or heroes are dead.
  *
@@ -1035,12 +1004,13 @@ static int check_end (void)
 
 
 /*! \brief Main fighting routine
- * \author Josh Bolduc
- * \created ????????
- * \updated
  *
  * I don't really need to describe this :p
  *
+ * \author Josh Bolduc
+ * \date created ????????
+ * \date updated
+
  * \param   ar Attacker ID
  * \param   dr Defender ID
  * \param   sk if non-zero, override the attacker's stats.
@@ -1151,8 +1121,8 @@ int fight (int ar, int dr, int sk)
 
 /*! \brief Attack all enemies at once
  * \author Josh Bolduc
- * \created ????????
- * \updated
+ * \date Created ????????
+ * \date Updated
  *
  * This is different than fight in that all enemies are attacked
  * simultaneously, once. As a note, the attackers stats are
@@ -1264,8 +1234,8 @@ void multi_fight (int ar)
 
 /*! \brief Attack all enemies at once
  * \author Josh Bolduc
- * \created ????????
- * \updated
+ * \date Created ????????
+ * \date Updated
  *
  * This does the actual attack calculation. The damage done to
  * the target is kept in the ta[] array.
@@ -1358,10 +1328,11 @@ static int attack_result (int ar, int dr)
              if (rand () % 20 >= cfch)
                {
                   crit_hit = 1;
-                  base *= 1.5;
-#if 0
+                  /* PH the original is correct; it's inefficient to convert to double and back to int. */
+/*                   base *= 1.5; */
+/* #if 0 */
                   base = base * 15 / 10;
-#endif
+/* #endif */
                }
           }
 
@@ -1413,8 +1384,8 @@ static int attack_result (int ar, int dr)
 
 /*! \brief Enemies defeated the player
  * \author Josh Bolduc
- * \created ????????
- * \updated
+ * \date created ????????
+ * \date updated
  *
  * Play some sad music and set the dead flag so that the game
  * will return to the main menu.
@@ -1440,8 +1411,8 @@ static void enemies_win (void)
 
 /*! \brief Player defeated the enemies
  * \author Josh Bolduc
- * \created ????????
- * \updated
+ * \date Created ????????
+ * \date Updated
  *
  * Distribute the booty!
 */
@@ -1552,11 +1523,11 @@ static void heroes_win (void)
             && (party[pidx[c]].sts[S_DEAD] == 0))
           {
              b = c * 160;
-             t1 = player2fighter (pidx[c]);
+             player2fighter (pidx[c], &t1);
              if (give_xp (pidx[c], txp, 0) == 1)
                {
                   menubox (double_buffer, b, 40, 18, 9, BLUE);
-                  t2 = player2fighter (pidx[c]);
+                  player2fighter (pidx[c], &t2);
                   print_font (double_buffer, b + 8, 48, "Level up!", FGOLD);
                   print_font (double_buffer, b + 8, 56, "Max HP", FNORMAL);
                   print_font (double_buffer, b + 8, 64, "Max MP", FNORMAL);
@@ -1613,8 +1584,8 @@ static void heroes_win (void)
 
 /*! \brief Kill a fighter
  * \author Josh Bolduc
- * \created ????????
- * \updated 20020917 (PH) -- added cheat mode
+ * \date Created ????????
+ * \date Updated 20020917 (PH) -- added cheat mode
  *
  * Do what it takes to put a fighter out of commission.
  *

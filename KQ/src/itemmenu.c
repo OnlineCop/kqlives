@@ -297,7 +297,7 @@ static void join_items (void)
      {
         /* foreach instance of item, put the quantity into a temp
          * inventory then remove that item from the real inventory
-        */
+         */
         t_inv[g_inv[a][0]] += g_inv[a][1];
         g_inv[a][0] = 0;
         g_inv[a][1] = 0;
@@ -430,7 +430,7 @@ int check_inventory (int ii, int qq)
            v = n;
         /* Check if this item index == ii, and if it is,
          * check if there is enough room in that slot to fit all of qq.
-        */
+         */
         if (g_inv[n][0] == ii && g_inv[n][1] <= 9 - qq)
            d = n;
      }

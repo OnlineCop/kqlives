@@ -509,9 +509,9 @@ static int confirm_save (void)
  * \todo PH make the config menu accessible from here, otherwise you have to
  *          sit through the intro before you can change any settings.
  *
- * \param   c Non-zero if the intro (the bit with the staff and the eight heroes)
+ * \param   c Non-zero if the splash (the bit with the staff and the eight heroes)
  *            should be displayed.
- * \returns 0 if new game, 1 if continuing
+ * \returns 0 if new game, 1 if continuing, 2 if exit
 */
 int start_menu (int c)
 {
@@ -523,9 +523,9 @@ int start_menu (int c)
 
      {
 #endif
+        play_music ("oxford.s3m", 0);
         if (c == 0)
           {
-             play_music ("oxford.s3m", 0);
              bg = load_datafile_object (PCX_DATAFILE, "KQT_PCX");
              staff = create_bitmap_ex (8, 72, 226);
              dudes = create_bitmap_ex (8, 112, 112);
@@ -661,7 +661,8 @@ int start_menu (int c)
 
                {
                   unload_datafile_object (bg);
-                  program_death ("Then exit you shall!");
+                  klog ("Then exit you shall!");
+                  return 2;
                }
           }
      }
@@ -669,7 +670,7 @@ int start_menu (int c)
    if (stop == 2)
      {
         for (a = 0; a < MAXCHRS; a++)
-           party[a] = players[a];
+           memcpy (&party[a], &players[a], sizeof (s_player));
         init_players ();
         memset (progress, 0, 2000);
         memset (treasure, 0, 1000);

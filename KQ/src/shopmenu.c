@@ -524,7 +524,7 @@ static void draw_sideshot (int itm)
      }
    for (j = 0; j < MAX_INV; j++)
       if (g_inv[j][0] == itm)
-         ownd += g_inv[j][1]; // quantity of this item
+         ownd += g_inv[j][1];   // quantity of this item
    sprintf (strbuf, "Own: %d", ownd);
    print_font (double_buffer, 88 + xofs, 224 + yofs, strbuf, FNORMAL);
    if (slot < 6)

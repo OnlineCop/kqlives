@@ -163,7 +163,7 @@ unsigned short tilex[MAX_TILES];
 unsigned short adelay[MAX_ANIM];
 /*! Temporary buffer for string operations (used everywhere!) */
 char *strbuf;
-/*! Charcters actually in play */
+/*! Characters actually in play */
 s_player party[MAXCHRS];
 
 /*! Initial character data
@@ -172,88 +172,89 @@ s_player party[MAXCHRS];
  * structure. I had to invent my own little (somewhat ugly) layout since it
  * all shot past the 80-character mark by quite a ways :)
 */
-s_player players[MAXCHRS] = {
-   {
-    "Sensar", 0, 70, 1, 100, 40, 40, 0, 0,
-    {800, 500, 700, 300, 300, 4000, 9000, 9000, 0, 7500, 0, 100, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-     0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-    },
-   {
-    "Sarina", 0, 70, 1, 100, 36, 36, 4, 4,
-    {600, 600, 600, 400, 400, 6000, 9000, 9000, 0, 6000, 0, 100, 0},
-    {0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-     0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-    },
-   {
-    "Corin", 0, 70, 1, 100, 25, 25, 15, 15,
-    {400, 400, 500, 800, 400, 4500, 12000, 9000, 0, 5000, 0, 100, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-     0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-    },
-   {
-    "Ajathar", 0, 70, 1, 100, 30, 30, 8, 8,
-    {600, 500, 500, 400, 800, 5000, 9000, 11000, 0, 5000, 0, 100, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-     0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-    },
-   {
-    "Casandra", 0, 70, 1, 100, 24, 24, 16, 16,
-    {300, 600, 400, 800, 600, 5500, 10000, 10000, 0, 5000, 0, 100, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 8, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-     0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-    },
-   {
-    "Temmin", 0, 70, 1, 100, 35, 35, 5, 5,
-    {700, 500, 800, 300, 500, 5500, 8000, 10000, 0, 6000, 0, 100, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-     0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-    },
-   {
-    "Ayla", 0, 70, 1, 100, 32, 32, 8, 8,
-    {500, 800, 500, 600, 400, 7000, 10000, 8000, 0, 5000, 0, 100, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-     0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-    },
-   {
-    "Noslom", 0, 70, 1, 65, 22, 22, 18, 18,
-    {300, 600, 300, 700, 700, 5500, 10000, 10000, 0, 5000, 0, 100, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-     0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-    }
-};
+s_player players[MAXCHRS];
+/* s_player players[MAXCHRS] = { */
+/*    { */
+/*     "Sensar", 0, 70, 1, 100, 40, 40, 0, 0, */
+/*     {800, 500, 700, 300, 300, 4000, 9000, 9000, 0, 7500, 0, 100, 0}, */
+/*     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, */
+/*     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, */
+/*     {0, 0, 0, 0, 0, 0}, */
+/*     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, */
+/*      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, */
+/*      0, 0, 0, 0, 0, 0, 0, 0, 0, 0} */
+/*     }, */
+/*    { */
+/*     "Sarina", 0, 70, 1, 100, 36, 36, 4, 4, */
+/*     {600, 600, 600, 400, 400, 6000, 9000, 9000, 0, 6000, 0, 100, 0}, */
+/*     {0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, */
+/*     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, */
+/*     {0, 0, 0, 0, 0, 0}, */
+/*     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, */
+/*      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, */
+/*      0, 0, 0, 0, 0, 0, 0, 0, 0, 0} */
+/*     }, */
+/*    { */
+/*     "Corin", 0, 70, 1, 100, 25, 25, 15, 15, */
+/*     {400, 400, 500, 800, 400, 4500, 12000, 9000, 0, 5000, 0, 100, 0}, */
+/*     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, */
+/*     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, */
+/*     {0, 0, 0, 0, 0, 0}, */
+/*     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, */
+/*      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, */
+/*      0, 0, 0, 0, 0, 0, 0, 0, 0, 0} */
+/*     }, */
+/*    { */
+/*     "Ajathar", 0, 70, 1, 100, 30, 30, 8, 8, */
+/*     {600, 500, 500, 400, 800, 5000, 9000, 11000, 0, 5000, 0, 100, 0}, */
+/*     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, */
+/*     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, */
+/*     {0, 0, 0, 0, 0, 0}, */
+/*     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, */
+/*      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, */
+/*      0, 0, 0, 0, 0, 0, 0, 0, 0, 0} */
+/*     }, */
+/*    { */
+/*     "Casandra", 0, 70, 1, 100, 24, 24, 16, 16, */
+/*     {300, 600, 400, 800, 600, 5500, 10000, 10000, 0, 5000, 0, 100, 0}, */
+/*     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 8, 0}, */
+/*     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, */
+/*     {0, 0, 0, 0, 0, 0}, */
+/*     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, */
+/*      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, */
+/*      0, 0, 0, 0, 0, 0, 0, 0, 0, 0} */
+/*     }, */
+/*    { */
+/*     "Temmin", 0, 70, 1, 100, 35, 35, 5, 5, */
+/*     {700, 500, 800, 300, 500, 5500, 8000, 10000, 0, 6000, 0, 100, 0}, */
+/*     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, */
+/*     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, */
+/*     {0, 0, 0, 0, 0, 0}, */
+/*     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, */
+/*      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, */
+/*      0, 0, 0, 0, 0, 0, 0, 0, 0, 0} */
+/*     }, */
+/*    { */
+/*     "Ayla", 0, 70, 1, 100, 32, 32, 8, 8, */
+/*     {500, 800, 500, 600, 400, 7000, 10000, 8000, 0, 5000, 0, 100, 0}, */
+/*     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, */
+/*     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, */
+/*     {0, 0, 0, 0, 0, 0}, */
+/*     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, */
+/*      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, */
+/*      0, 0, 0, 0, 0, 0, 0, 0, 0, 0} */
+/*     }, */
+/*    { */
+/*     "Noslom", 0, 70, 1, 65, 22, 22, 18, 18, */
+/*     {300, 600, 300, 700, 700, 5500, 10000, 10000, 0, 5000, 0, 100, 0}, */
+/*     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, */
+/*     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, */
+/*     {0, 0, 0, 0, 0, 0}, */
+/*     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, */
+/*      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, */
+/*      0, 0, 0, 0, 0, 0, 0, 0, 0, 0} */
+/*     } */
+/* }; */
 
 /*! Table to manage stats for the level up process (see level_up()) */
 unsigned short lup[MAXCHRS][20] = {
@@ -266,7 +267,7 @@ unsigned short lup[MAXCHRS][20] = {
    {10, 70, 7, 5, 110, 170, 90, 120, 70, 25, 50, 20, 25, 25, 0, 30, 0},
    {10, 70, 8, 6, 50, 100, 50, 160, 160, 10, 90, 90, 5, 0, 0, 20, 0}
 };
-/*! Characters when they arein combat */
+/*! Characters when they are in combat */
 s_fighter fighter[NUM_FIGHTERS];
 /*! Temp store for adjusted stats */
 s_fighter tempa, tempd;
@@ -289,7 +290,7 @@ static void data_dump (void);
 static BITMAP *alloc_bmp (int, int, char *);
 static void allocate_stuff (void);
 static void load_data (void);
-
+static void load_heroes (void);
 
 
 /*! \note 23: for keeping time. timer_counter is the game timer the main game
@@ -664,7 +665,7 @@ void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
         /* This allows us to either go to the map's default starting coords
          * or specify exactly where on the map to go to (like when there
          * are stairs or a doorway that they should start at).
-        */
+         */
         if (msx == 0 && msy == 0)
            // Place players at default map starting coords
            place_ent (i, g_map.stx, g_map.sty);
@@ -1034,20 +1035,22 @@ void wait_enter (void)
  *
  * This is for logging events within the program.  Very
  * useful for debugging and tracing.
+ * \note klog is deprecated; use Allegro's TRACE instead.
  *
  * \param msg String to add to log file
 */
 void klog (char *msg)
 {
-   FILE *ff;
+   TRACE ("%s\n", msg);
+/*    FILE *ff; */
 
-   ff = fopen ("game.log", "a");
+/*    ff = fopen ("game.log", "a"); */
 
-   if (!ff)
-      program_death ("Could not open log!");
+/*    if (!ff) */
+/*       program_death ("Could not open log!"); */
 
-   fprintf (ff, "%s\n", msg);
-   fclose (ff);
+/*    fprintf (ff, "%s\n", msg); */
+/*    fclose (ff); */
 }
 
 
@@ -1187,6 +1190,7 @@ static void startup (void)
       blit ((BITMAP *) pcxb->dat, pgb[i], i * 16, 48, 0, 0, 9, 9);
 
    unload_datafile_object (pcxb);
+   load_heroes ();
    pcxb = load_datafile_object (PCX_DATAFILE, "KQFACES_PCX");
 
    if (!pcxb)
@@ -1319,7 +1323,7 @@ static void allocate_stuff (void)
      }
 
    for (p = 3; p < 5; p++)
-     bord[p] = alloc_bmp (8,12, "bord[x]");
+      bord[p] = alloc_bmp (8, 12, "bord[x]");
 // } TT add
 
    for (p = 0; p < 8; p++)
@@ -1455,6 +1459,27 @@ static void deallocate_stuff (void)
 }
 
 
+/*! \brief Load initial hero stuff from file
+ *
+ * \author PH
+ * \date 20030320
+ * Loads the hero stats from a file
+ *
+ */
+void load_heroes (void)
+{
+   PACKFILE* f;
+   int i;
+   sprintf (strbuf, "%s/hero.kq", DATA_DIR);
+   if ((f=pack_fopen(strbuf, F_READ_PACKED))==NULL) {
+        program_death ("Cannot open hero data file");
+   }
+   for (i = 0; i < MAXCHRS; ++i)
+     {
+   pack_fread(&players[i], sizeof(s_player), f);
+     }
+   pack_fclose(f);
+}
 
 /*! \brief Initialise all players
  *
@@ -1630,9 +1655,13 @@ void wait_for_entity (int est, int efi)
 */
 void program_death (char *message)
 {
-   klog (message);
+  char internal_buffer[80];
+  strcat(strncpy(internal_buffer, message, sizeof(internal_buffer)-1), "\n");
+   TRACE ("%s\n", message);
    deallocate_stuff ();
-   exit (-1);
+   set_gfx_mode (GFX_TEXT, 0, 0, 0, 0);
+   allegro_message (internal_buffer);
+   exit (EXIT_FAILURE);
 }
 
 
@@ -1663,48 +1692,60 @@ int in_party (int pn)
 */
 int main (void)
 {
-   int stop = 0;
-
+   int stop, game_on, skip_splash;
    startup ();
-
-   if (start_menu (0) == 1)
-      change_map ("starting", 0, 0, 0, 0);
-
-   timer_count = 0;
-   timer = 0;
-
-   while (!stop)
+   game_on = 1;
+   skip_splash = 0;             /* Also this can be overridden by settings in config */
+   while (game_on)
      {
-        while (timer_count > 0)
+        switch (start_menu (skip_splash))
           {
-             timer_count--;
-             process_entities ();
-             check_animation ();
+          case 0:
+             break;
+          case 1:
+             change_map ("starting", 0, 0, 0, 0);
+             break;
+          default:
+             /* Someone pressed 'EXIT'  */
+             game_on = 0;
+             break;
           }
-
-        drawmap ();
-        frate++;
-        blit2screen (xofs, yofs);
-
-        if (key[kesc])
-           stop = system_menu ();
-
-        if (alldead)
+        skip_splash = 1;        /* Only show it once at the start */
+        if (game_on)
           {
-             clear (screen);
-             do_transition (TRANS_FADE_IN, 16);
-
-             if (start_menu (0) == 1)
-                change_map ("starting", 0, 0, 0, 0);
-
-             alldead = 0;
+             stop = 0;
              timer_count = 0;
              timer = 0;
+             alldead = 0;
+             while (!stop)
+               {
+                  while (timer_count > 0)
+                    {
+                       timer_count--;
+                       process_entities ();
+                       check_animation ();
+                    }
+
+                  drawmap ();
+                  frate++;
+                  blit2screen (xofs, yofs);
+
+                  if (key[kesc])
+                     stop = system_menu ();
+
+                  if (alldead)
+                    {
+                       clear (screen);
+                       do_transition (TRANS_FADE_IN, 16);
+                       stop = 1;
+                    }
+
+               }
           }
      }
 
    deallocate_stuff ();
-   return 0;
+   return EXIT_SUCCESS;
 }
 
 END_OF_MAIN ();

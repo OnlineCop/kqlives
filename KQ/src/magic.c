@@ -51,7 +51,12 @@ static void beffect_all_enemies (int, int);
 static void geffect_one_ally (int, int, int);
 static void geffect_all_allies (int, int);
 
-
+/*! \file
+ * \brief Magic spells
+ *
+ * \author JB
+ * \date ????????
+ */
 
 /*! \brief Call spells for combat
  *
@@ -1295,6 +1300,7 @@ int non_dmg_save (int tgt, int per)
  *
  * This returns the amount of mp needed to cast a spell.  This
  * function was created to allow for different mp consumption rates.
+ * \note this is the only place that mrp is used.
  *
  * \param   who Index of caster
  * \param   sn Spell number
@@ -1304,12 +1310,12 @@ int mp_needed (int who, int sn)
 {
    int amt;
 
-   amt = magic[sn].mpc;
-   amt = amt * fighter[who].mrp / 100;
+   if (sn > 0) {
+   amt = magic[sn].mpc * fighter[who].mrp / 100;
    if (amt < 1)
       amt = 1;
-   if (sn > 0)
       return amt;
+   }
    else
       return 0;
 }

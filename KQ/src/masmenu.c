@@ -34,7 +34,14 @@
 #include "combat.h"
 #include "selector.h"
 
-
+/*! \file
+ * \brief Menus for spells
+ *
+ * Menu functions for grimoire (spell book)
+ * and fuunctions for learning new spells.
+ * \author JB
+ * \date ????????
+ */
 
 /*  global variables  */
 int close_menu;

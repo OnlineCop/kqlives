@@ -190,7 +190,7 @@ void parse_setup (void)
              fscanf (s, "%s", strbuf);
              /* TT: huh?! */
              // kup = atoi (strbuf);
-             kdown = atoi(strbuf);
+             kdown = atoi (strbuf);
           }
         if (!strcmp (strbuf, "sysmenukey"))
           {
@@ -422,10 +422,10 @@ void config_menu (void)
              switch (ptr)
                {
                case 0:
-                  bubble_text (255, "Changing the display mode to or",
-                               "from windowed view could have",
-                               "serious ramifications. It is",
-                               "advised that you save first.");
+                  text_ex (B_TEXT, 255, "Changing the display mode to or"
+                           "from windowed view could have"
+                           "serious ramifications. It is"
+                           "advised that you save first.");
                   if (windowed == 0)
                      sprintf (strbuf, "Switch to windowed mode?");
                   else
@@ -441,10 +441,10 @@ void config_menu (void)
                     }
                   break;
                case 1:
-                  bubble_text (255, "Changing the stretched view option",
-                               "could have serious ramifications.",
-                               "It is advised that you save your",
-                               "game before trying this.");
+                  text_ex (B_TEXT, 255, "Changing the stretched view option"
+                           "could have serious ramifications."
+                           "It is advised that you save your"
+                           "game before trying this.");
                   if (windowed == 0)
                      sprintf (strbuf, "Try to stretch the display?");
                   else

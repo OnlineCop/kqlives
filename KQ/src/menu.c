@@ -34,7 +34,12 @@
 #include "progress.h"
 #include "itemdefs.h"
 
-
+/*! \file 
+ * \brief Main menu functions
+ *
+ * \author JB
+ * \date ??????
+ */
 
 /*  internal functions  */
 static void level_up (int);
@@ -563,7 +568,7 @@ void update_equipstats (void)
    int i;
 
    for (i = 0; i < numchrs; i++)
-      fighter[i] = player2fighter (pidx[i]);
+      player2fighter (pidx[i], &fighter[i]);
 }
 
 
@@ -573,11 +578,12 @@ void update_equipstats (void)
  * This function converts from the party structure to fighter structure.
  * Pass the character index and the function returns a fighter structure.
  * This is used for combat and for menu functions.
+ * PH modified 20030308 I didn't like the way this returned a structure by value.
  *
  * \param   who Index of player to convert
  * \returns tf (fighter structure)
 */
-s_fighter player2fighter (int who)
+s_fighter *player2fighter (int who, s_fighter * pf)
 {
    int j, a, b;
    int z[5] = { 5, 3, 2, 1, 4 };
@@ -600,9 +606,8 @@ s_fighter player2fighter (int who)
       tf.sts[j] = party[who].sts[j];
    for (j = 0; j < 13; j++)
      {
-        tf.stats[j] = (party[who].lvl - 1) * lup[who][j + 4];
-        tf.stats[j] += party[who].stats[j];
-        tf.stats[j] /= 100;
+        tf.stats[j] = ((party[who].lvl - 1) * lup[who][j + 4]
+                       + party[who].stats[j]) / 100;
      }
    for (j = 0; j < 16; j++)
       tf.res[j] = party[who].res[j];
@@ -718,7 +723,8 @@ s_fighter player2fighter (int who)
    tf.crit = 1;
    tf.aux = 0;
    tf.unl = 0;
-   return tf;
+   memcpy (pf, &tf, sizeof (tf));
+   return pf;
 }
 
 
@@ -821,7 +827,7 @@ static void level_up (int pr)
    int bxp, xpi;
    s_fighter tmpf;
 
-   tmpf = player2fighter (pr);
+   player2fighter (pr, &tmpf);
    xpi = lup[pr][0];
    bxp = lup[pr][1];
    party[pr].lvl++;

@@ -140,7 +140,7 @@ void color_scale (BITMAP * src, BITMAP * dest, int st, int fn)
  * \param   who Character to convert
  * \param   st Start of output range
  * \param   fn End of output range
- * \param   aflag If ==1 then ignore \p who and covert all
+ * \param   aflag If ==1 then \p who<PSIZE means convert all heroes, otherwise all enemies
 */
 void convert_cframes (int who, int st, int fn, int aflag)
 {
@@ -269,6 +269,7 @@ void draw_stsicon (BITMAP * where, int cc, int who, int inum, int icx, int icy)
  * Draw the heroes on the map.  It's kind of clunky, but this is also where
  * it takes care of walking in forests and only showing a disembodied head.
  * Does not seem to do any parallaxing. (?)
+ * PH modified 20030309 Simplified this a bit, removed one blit() that wasn't neeeded.
  *
  * \param xw x-offset - always ==16
  * \param yw y-offset - always ==16
@@ -277,10 +278,12 @@ static void drawchar (int xw, int yw)
 {
    int fr, dx, dy, i, f, fid;
    int spec = 0;
+   BITMAP *spr = NULL;
 
-   // TT: this draws player 2 over player 1
-   //  for (i = 0; i < PSIZE + noe; i++)
-   // try the 2nd line instead...
+   /* TT: this draws player 2 over player 1
+    *  for (i = 0; i < PSIZE + noe; i++)
+    * try the 2nd line instead...
+    */
    for (i = PSIZE + noe - 1; i >= 0; i--)
      {
         spec = 0;
@@ -300,104 +303,70 @@ static void drawchar (int xw, int yw)
              if (party[fid].sts[S_DEAD] != 0)
                 fr = g_ent[i].facing * 3 + 2;
              if (party[fid].sts[S_POISON] != 0)
-                color_scale (frames[fid][fr], tc2, 32, 47);
-             else
-                blit (frames[fid][fr], tc2, 0, 0, 0, 0, 16, 18);
-             if (g_map.tileset == 0)
                {
-                  if (is_forestsquare (g_ent[i].tilex, g_ent[i].tiley))
-                    {
-                       f = 0;
-                       if (g_ent[i].moving == 0)
-                          f = 1;
-                       if (g_ent[i].moving == 1
-                           && is_forestsquare (g_ent[i].tilex,
-                                               g_ent[i].tiley - 1))
-                          f = 1;
-                       if (g_ent[i].moving == 2
-                           && is_forestsquare (g_ent[i].tilex,
-                                               g_ent[i].tiley + 1))
-                          f = 1;
-                       if (g_ent[i].moving == 3
-                           && is_forestsquare (g_ent[i].tilex + 1,
-                                               g_ent[i].tiley))
-                          f = 1;
-                       if (g_ent[i].moving == 4
-                           && is_forestsquare (g_ent[i].tilex - 1,
-                                               g_ent[i].tiley))
-                          f = 1;
-                       if (f == 1)
-                         {
-                            clear_to_color (tc, 0);
-                            blit (tc2, tc, 0, 0, 0, 0, 16, 6);
-                            if (party[pidx[i]].sts[S_DEAD] == 0)
-                               draw_sprite (double_buffer, tc, dx, dy);
-                            else
-                               draw_trans_sprite (double_buffer, tc, dx, dy);
-                         }
-                       else
-                         {
-                            if (party[pidx[i]].sts[S_DEAD] == 0)
-                               draw_sprite (double_buffer, tc2, dx, dy);
-                            else
-                               draw_trans_sprite (double_buffer, tc2, dx, dy);
-                         }
-                    }
-                  else
-                    {
-                       if (party[fid].sts[S_DEAD] == 0)
-                          draw_sprite (double_buffer, tc2, dx, dy);
-                       else
-                          draw_trans_sprite (double_buffer, tc2, dx, dy);
-                    }
+                  color_scale (frames[fid][fr], tc2, 32, 47);
+                  spr = tc2;
                }
              else
                {
-                  if (party[fid].sts[S_DEAD] == 0)
-                     draw_sprite (double_buffer, tc2, dx, dy);
-                  else
-                     draw_trans_sprite (double_buffer, tc2, dx, dy);
+                  spr = frames[fid][fr];
                }
+             if (is_forestsquare (g_ent[i].tilex, g_ent[i].tiley))
+               {
+                  f = 0;
+                  if (g_ent[i].moving == 0)
+                     f = 1;
+                  if (g_ent[i].moving == 1
+                      && is_forestsquare (g_ent[i].tilex, g_ent[i].tiley - 1))
+                     f = 1;
+                  if (g_ent[i].moving == 2
+                      && is_forestsquare (g_ent[i].tilex, g_ent[i].tiley + 1))
+                     f = 1;
+                  if (g_ent[i].moving == 3
+                      && is_forestsquare (g_ent[i].tilex + 1, g_ent[i].tiley))
+                     f = 1;
+                  if (g_ent[i].moving == 4
+                      && is_forestsquare (g_ent[i].tilex - 1, g_ent[i].tiley))
+                     f = 1;
+                  if (f == 1)
+                    {
+                       clear_to_color (tc, 0);
+                       blit (spr, tc, 0, 0, 0, 0, 16, 6);
+                       spr = tc;
+                    }
+               }
+             if (party[fid].sts[S_DEAD] == 0)
+                draw_sprite (double_buffer, spr, dx, dy);
+             else
+                draw_trans_sprite (double_buffer, spr, dx, dy);
+
           }
         else
           {
-             if (g_ent[i].active)
+             if (g_ent[i].active && g_ent[i].tilex >= view_x1
+                 && g_ent[i].tilex <= view_x2 && g_ent[i].tiley >= view_y1
+                 && g_ent[i].tiley <= view_y2)
                {
-                  if (g_ent[i].tilex >= view_x1 && g_ent[i].tilex <= view_x2
-                      && g_ent[i].tiley >= view_y1 && g_ent[i].tiley <= view_y2)
+                  if (dx >= -16 && dx <= 336 && dy >= -16 && dy <= 256)
                     {
-                       if (dx >= -16 && dx <= 336 && dy >= -16 && dy <= 256)
+                       if (g_ent[i].eid >= ID_ENEMY)
                          {
-                            if (g_ent[i].eid >= ID_ENEMY)
-                              {
-                                 if (g_ent[i].transl == 0)
-                                    draw_sprite (double_buffer,
-                                                 eframes[g_ent[i].chrx][fr],
-                                                 dx, dy);
-                                 else
-                                    draw_trans_sprite (double_buffer,
-                                                       eframes[g_ent[i].
-                                                               chrx][fr], dx,
-                                                       dy);
-                              }
-                            else
-                              {
-                                 if (g_ent[i].transl == 0)
-                                    draw_sprite (double_buffer,
-                                                 frames[g_ent[i].eid][fr], dx,
-                                                 dy);
-                                 else
-                                    draw_trans_sprite (double_buffer,
-                                                       frames[g_ent[i].
-                                                              eid][fr], dx, dy);
-                              }
+                            spr = eframes[g_ent[i].chrx][fr];
                          }
+                       else
+                         {
+                            spr = frames[g_ent[i].eid][fr];
+                         }
+
+                       if (g_ent[i].transl == 0)
+                          draw_sprite (double_buffer, spr, dx, dy);
+                       else
+                          draw_trans_sprite (double_buffer, spr, dx, dy);
                     }
                }
           }
      }
 }
-
 
 
 /*! \brief Check for forest square
@@ -406,6 +375,7 @@ static void drawchar (int xw, int yw)
  * the tile at the specified co-ordinates is a forest tile.  This could be
  * a headache if the tileset changes!
  * Looks in the \p map_seg[] array
+ * PH modified 20030309 added check for map (only main map has forest)
  *
  * \param   fx x-coord to check
  * \param   fy y-coord to check
@@ -414,7 +384,8 @@ static void drawchar (int xw, int yw)
 int is_forestsquare (int fx, int fy)
 {
    int f;
-
+   if (g_map.map_no != MAP_MAIN)
+      return 0;
    f = map_seg[(fy * g_map.xsize) + fx];
    if (f == 63 || f == 65 || f == 66 || f == 67 || f == 71 || f == 72
        || f == 73 || f == 74)
@@ -982,7 +953,7 @@ static void draw_textbox (int bstyle)
            draw_sprite (double_buffer, bub[gbt + 4], gbx + xofs, gby + yofs);
      }
    else
-     return;
+      return;
 }
 
 
@@ -1128,47 +1099,53 @@ static const char *relay (const char *buf)
 
 
 
-/*! \brief Display speech bubble
+/*! \brief Display speech/thought bubble
  * \author PH
  * \date 20021220
  *
  * Displays text, like bubble_text, but passing the args
  * through relay() first
- *
+ * \date updated 20030401 merged thought and speech
  * \sa bubble_text()
+ * \param   fmt Format, B_TEXT or B_THOUGHT
  * \param   who Character that is speaking
  * \param   s The text to display
 */
-void bubble_text_ex (int who, const char *s)
+void text_ex (int fmt, int who, const char *s)
 {
+   if (fmt == B_MESSAGE)
+     {
+        fmt = B_TEXT;
+        who = 255;
+     }
    while (s)
      {
         s = relay (s);
-        generic_text (who, B_TEXT);
+        generic_text (who, fmt);
      }
 }
 
 
 
-/*! \brief Display thought bubble
- * \author PH
- * \date 20021220
- *
- * Displays text, like thought_text, but passing the args
- * through relay() first
- *
- * \sa thought_text()
- * \param   who Character that is thinking
- * \param   s The text to display
-*/
-void thought_text_ex (int who, const char *s)
-{
-   while (s)
-     {
-        s = relay (s);
-        generic_text (who, B_THOUGHT);
-     }
-}
+/* /\*! \brief Display thought bubble */
+/*  * \author PH */
+/*  * \date 20021220 */
+/*  * */
+/*  * Displays text, like thought_text, but passing the args */
+/*  * through relay() first */
+/*  * */
+/*  * \sa thought_text() */
+/*  * \param   who Character that is thinking */
+/*  * \param   s The text to display */
+/* *\/ */
+/* void thought_text_ex (int who, const char *s) */
+/* { */
+/*    while (s) */
+/*      { */
+/*         s = relay (s); */
+/*         generic_text (who, B_THOUGHT); */
+/*      } */
+/* } */
 
 
 

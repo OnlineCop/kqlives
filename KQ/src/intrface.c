@@ -24,6 +24,7 @@
  * \author JB,PH
  * \date ????????
  * \updated 20021125 -- Added extra functions
+ * \updated 20030308 -- Added object interface
  *
  * This file implements the interface between
  * the C code and the Lua scripts.
@@ -153,8 +154,8 @@ static int KQ_drawsprite (lua_State *);
 static int KQ_screen_dump (lua_State *);
 static int KQ_drawmap (lua_State *);
 static int KQ_prompt (lua_State *);
-static int KQ_bubble (lua_State *);
-static int KQ_thought (lua_State *);
+static int KQ_bubble_ex (lua_State *);
+static int KQ_thought_ex (lua_State *);
 static int KQ_copy_ent (lua_State *);
 static int KQ_place_ent (lua_State *);
 static int KQ_face_each_other (lua_State *);
@@ -162,8 +163,8 @@ static int KQ_wait_for_entity (lua_State *);
 static int KQ_add_chr (lua_State *);
 static int KQ_remove_chr (lua_State *);
 static int KQ_krnd (lua_State *);
-static int KQ_touch_fire (lua_State *);
-static int KQ_book_talk (lua_State *);
+/* static int KQ_touch_fire (lua_State *); */
+/* static int KQ_book_talk (lua_State *); */
 static int KQ_do_fadeout (lua_State *);
 static int KQ_do_fadein (lua_State *);
 static int KQ_shop (lua_State *);
@@ -202,11 +203,13 @@ static int KQ_read_controls (lua_State *);
 static int KQ_check_key (lua_State *);
 static int KQ_log (lua_State *);
 static int KQ_wait_enter (lua_State *);
+static int KQ_istable (lua_State *);
 static void check_map_change (void);
 /* New functions */
 /*static int KQ_get_tile_all(lua_State*);*/
 static int KQ_copy_tile_all (lua_State *);
 static int KQ_use_up (lua_State *);
+static int KQ_battle (lua_State *);
 
 
 static const struct luaL_reg lrs[] = {
@@ -304,8 +307,8 @@ static const struct luaL_reg lrs[] = {
    {"screen_dump", KQ_screen_dump},
    {"drawmap", KQ_drawmap},
    {"prompt", KQ_prompt},
-   {"bubble", KQ_bubble},
-   {"thought", KQ_thought},
+   {"bubble_ex", KQ_bubble_ex},
+   {"thought_ex", KQ_thought_ex},
    {"copy_ent", KQ_copy_ent},
    {"place_ent", KQ_place_ent},
    {"face_each_other", KQ_face_each_other},
@@ -313,8 +316,9 @@ static const struct luaL_reg lrs[] = {
    {"add_chr", KQ_add_chr},
    {"remove_chr", KQ_remove_chr},
    {"krnd", KQ_krnd},
-   {"touch_fire", KQ_touch_fire},
-   {"book_talk", KQ_book_talk},
+   /* Now handled by Lua script */
+/*    {"touch_fire", KQ_touch_fire}, */
+/*    {"book_talk", KQ_book_talk}, */
    {"do_fadeout", KQ_do_fadeout},
    {"do_fadein", KQ_do_fadein},
    {"shop", KQ_shop},
@@ -356,10 +360,250 @@ static const struct luaL_reg lrs[] = {
    /*   {"get_tile_all", KQ_get_tile_all}, */
    {"copy_tile_all", KQ_copy_tile_all},
    {"use_up", KQ_use_up},
+   {"battle", KQ_battle},
+   {"istable", KQ_istable},
    {NULL, NULL}
 };
 
+/*! \brief Maps a text field name to an identifier */
+static struct s_field
+{
+   const char *name;
+   int id;
+}
+fields[] =
+{
+   {
+   "name", 0}
+   ,
+   {
+   "xp", 1}
+   ,
+   {
+   "next", 2}
+   ,
+   {
+   "lvl", 3}
+   ,
+   {
+   "mrp", 4}
+   ,
+   {
+   "hp", 5}
+   ,
+   {
+   "mhp", 6}
+   ,
+   {
+   "mp", 7}
+   ,
+   {
+   "mmp", 8}
+   ,
+};
+static int fieldcmp(const void* pa, const void* pb) {
+  const struct s_field *a=(const struct s_field*) pa;
+  const struct s_field *b=(const struct s_field*) pb;
+  return strcmp(a->name, b->name);
+}
+/*! \brief Sort field array 
+ * 
+ * This uses qsort to sort the fields, ready for bsearch to search them 
+ * \author PH
+ * \date 20030407
+ */
+static void fieldsort(void) {
+  qsort(fields, sizeof(fields)/sizeof(*fields), sizeof(struct s_field), fieldcmp);
+}
+/*! \brief get the field number from a name.
+ *
+ * Note that the field list MUST be sorted first
+ * \author PH 20030309
+ * \param n the field name
+ * \returns the index, or -1 if not found
+ */
+static int get_field (const char *n)
+{
+   struct s_field* ans;
+struct s_field st;
+  st.name=n;
+  ans=bsearch(&st, fields,  sizeof(fields)/sizeof(*fields), sizeof(struct s_field), fieldcmp);
+  return ans ? ans->id : -1;
+/*    int i = 0; */
+/*    while (fields[i].name) */
+/*      { */
+/*         if (strcmp (fields[i].name, n) == 0) */
+/*           { */
+/*              return fields[i].id; */
+/*           } */
+/*         ++i; */
+/*      } */
+/*    return -1; */
+}
 
+/*! \brief Object interface for party 
+ *
+ * This implements the settable tag method
+ */
+int KQ_party_setter (lua_State * l)
+{
+   int prop;
+   s_player *pl;
+   prop = get_field (lua_tostring (l, 2));
+   lua_pushstring (l, "_obj");
+   lua_rawget (l, 1);
+   pl = (s_player *) lua_touserdata (l, -1);
+   lua_pop (l, 1);
+   switch (prop)
+     {
+     case 0:
+        strncpy (pl->name, lua_tostring (l, 3), sizeof (pl->name));
+        break;
+     case 1:
+        pl->xp = lua_tonumber (l, 3);
+        break;
+     case 2:
+        pl->next = lua_tonumber (l, 3);
+        break;
+     case 3:
+        pl->lvl = lua_tonumber (l, 3);
+        break;
+     case 4:
+        pl->mrp = lua_tonumber (l, 3);
+        break;
+     case 5:
+        pl->hp = lua_tonumber (l, 3);
+        break;
+     case 6:
+        pl->mhp = lua_tonumber (l, 3);
+        break;
+     case 7:
+        pl->mp = lua_tonumber (l, 3);
+        break;
+     case 8:
+        pl->mmp = lua_tonumber (l, 3);
+        break;
+     default:
+        lua_rawset (l, 1);
+        break;
+     }
+   return 0;
+}
+
+/*! \brief Object interface for party 
+ *
+ * This implements the gettable tag method
+ */
+int KQ_party_getter (lua_State * l)
+{
+   int prop;
+   s_player *pl;
+   prop = get_field (lua_tostring (l, 2));
+   lua_pushstring (l, "_obj");
+   lua_rawget (l, 1);
+   pl = (s_player *) lua_touserdata (l, -1);
+   lua_pop (l, 1);
+   switch (prop)
+     {
+     case 0:
+        lua_pushstring (l, pl->name);
+        break;
+     case 1:
+        lua_pushnumber (l, pl->xp);
+        break;
+     case 2:
+        lua_pushnumber (l, pl->next);
+        break;
+     case 3:
+        lua_pushnumber (l, pl->lvl);
+        break;
+     case 4:
+        lua_pushnumber (l, pl->mrp);
+        break;
+     case 5:
+        lua_pushnumber (l, pl->hp);
+        break;
+     case 6:
+        lua_pushnumber (l, pl->mhp);
+        break;
+     case 7:
+        lua_pushnumber (l, pl->mp);
+        break;
+     case 8:
+        lua_pushnumber (l, pl->mmp);
+        break;
+     default:
+        lua_rawget (l, 1);
+        break;
+     }
+   return 1;
+}
+
+/*! \brief Initialise the object interface for heroes and entities
+ *
+ * This registers a new tag type for the heroes.
+ * and adds the gettable method to it. It then creates global variables for all 
+ * heroes with their names as defined (Sensar etc.)
+ * Then it sets the 'player[]' global (all heroes) and the
+ * 'party[]' global (all heroes currently in play)
+ * Finally it sets the 'entity[]' array
+ * 
+ * \param l the Lua state object
+ */
+static void init_obj (lua_State * l)
+{
+   int i = 0;
+   int tag = lua_newtag (l);
+   for (i = 0; i < MAXCHRS; ++i)
+     {
+        lua_newtable (l);
+        lua_settag (l, tag);
+        lua_pushstring (l, "_obj");
+        lua_pushuserdata (l, &party[i]);
+        lua_rawset (l, -3);
+        lua_setglobal (l, party[i].name);
+     }
+   lua_pushcfunction (l, KQ_party_getter);
+   lua_settagmethod (l, tag, "gettable");
+   lua_pushcfunction (l, KQ_party_setter);
+   lua_settagmethod (l, tag, "settable");
+   /* party[] array */
+   lua_newtable (l);
+   for (i = 0; i < numchrs; ++i)
+     {
+        lua_getglobal (l, party[pidx[i]].name);
+	/* also fill in the entity reference */
+	lua_pushstring(l, "_ent");
+	lua_pushuserdata(l, &g_ent[i]);
+	lua_rawset(l, -3);
+	/* and add to the array */
+        lua_rawseti (l, -2, i);
+     }
+   lua_setglobal (l, "party");
+   /* player[] array */
+   lua_newtable (l);
+   for (i = 0; i < MAXCHRS; ++i)
+     {
+        lua_getglobal (l, party[i].name);
+        lua_rawseti (l, -2, i);
+     }
+   lua_setglobal (l, "player");
+   /* entity[] array
+    * at the moment,  NPCs aren't fully implemented - the
+    * only thing you can do is call bubble()/thought()
+    * so they can just be an index
+    */
+   lua_newtable(l);
+   for (i=0; i<numchrs; ++i) {
+     lua_getglobal(l, party[pidx[i]].name);
+   lua_rawseti(l, -2, i);
+}
+   for (i=PSIZE; i<noe+PSIZE; ++i) {
+     lua_pushnumber(l, i);
+     lua_rawseti(l, -2, i);
+   }
+   lua_setglobal(l, "entity");
+}
 
 int g_trk, g_keys[8];
 BITMAP *g_bmp[5];
@@ -1298,7 +1542,8 @@ static int KQ_set_tile_all (lua_State * L)
  * Copies a region of the map (all layers).
  * Invocation: copy_tile_all(source_x, source_y, dest_x, dest_y, width, height).
  * These params are meant to be similar to the allegro blit() function.
- *
+ * \param L The Lua VM
+ * \returns 0 (no values returned to Lua)
  * \bugs No error checking is done. Uses direct access to the struct s_map.
 */
 static int KQ_copy_tile_all (lua_State * L)
@@ -1528,6 +1773,7 @@ static int KQ_prompt (lua_State * L)
 }
 
 
+/* These are now handled by lua scripts */
 
 /* static int KQ_bubble (lua_State * L) */
 /* { */
@@ -1673,276 +1919,262 @@ static int KQ_krnd (lua_State * L)
 
 
 
-/*! \brief Response for touching a fire.
- *
- * This gives one of three random responses per character for when the
- * player faces a fire and presses ALT.
- *
- * \param   L::1 Which person is touching the fire
- * \returns 0 when done
-*/
-static int KQ_touch_fire (lua_State * L)
-{
-   switch ((int) lua_tonumber (L, 1))
-     {
-     case 0:  // SENSAR
-        switch (rand () % 3)
-          {
-          case 0:
-             bubble_text (0, "What th..? Ouch! That's hot!","","","");
-             break;
-          case 1:
-             bubble_text (0, "There's no way I'm sticking",
-                             "my hand in that fire!","","");
-             break;
-          case 2:
-             bubble_text (0, "This feels pretty nice.","","","");
-             break;
-          }
-        break;
-     case 1:  // SARINA
-        switch (rand () % 3)
-          {
-          case 0:
-             bubble_text (0, "Mmm, wood smoke.","","","");
-             break;
-          case 1:
-             bubble_text (0, "Smells like burnt hair.",
-                             "Hey wait... that's MY hair!","","");
-             break;
-          case 2:
-             bubble_text (0, "Ooh, cozy.","","","");
-             break;
-          }
-        break;
-     case 2:  // CORIN
-        switch (rand () % 3)
-          {
-          case 0:
-             bubble_text (0, "I sure like fire.","","","");
-             break;
-          case 1:
-             bubble_text (0, "Watching this is relaxing.","","","");
-             break;
-          case 2:
-             bubble_text (0, "This is making me sleepy.","","","");
-             break;
-          }
-        break;
-     case 3:  // AJATHAR
-        switch (rand () % 3)
-          {
-          case 0:
-             bubble_text (0, "Hmm... I want marshmallows.","","","");
-             break;
-          case 1:
-             bubble_text (0, "You call this a fire?!","","","");
-             break;
-          case 2:
-             bubble_text (0, "Ah, relaxing.","","","");
-             break;
-          }
-        break;
-     case 4:  // CASANDRA
-        switch (rand () % 3)
-          {
-          case 0:
-             bubble_text (0, "Something's burning. I",
-                             "hope it's one of those",
-                             "stupid books!","");
-             break;
-          case 1:
-             bubble_text (0, "The fire is getting low.","","","");
-             break;
-          case 2:
-             bubble_text (0, "Yessir, this is a fire.","","","");
-             break;
-          }
-        break;
-     case 5:  // TEMMIN
-        switch (rand () % 3)
-          {
-          case 0:
-             bubble_text (0, "Ah, the age-old fire.","","","");
-             break;
-          case 1:
-             bubble_text (0, "This needs more coal.","","","");
-             break;
-          case 2:
-             bubble_text (0, "This would be great",
-                             "to read a book next to.","","");
-             break;
-          }
-        break;
-     case 6:  // AYLA
-        switch (rand () % 3)
-          {
-          case 0:
-             bubble_text (0, "I wonder how hot this is?","","","");
-             break;
-          case 1:
-             bubble_text (0, "Someone should clean all",
-                             "this soot out of here.","","");
-             break;
-          case 2:
-             bubble_text (0, "Well, my face is warm",
-                             "now, but my butt is",
-                             "still freezing!","");
-             break;
-          }
-        break;
-     case 7:  // NOSLOM
-        switch (rand () % 3)
-          {
-          case 0:
-             bubble_text (0, "I prefer torches.","","","");
-             break;
-          case 1:
-             bubble_text (0, "I love the crackel of",
-                             "a good fire.","","");
-             break;
-          case 2:
-             bubble_text (0, "I wonder if a spell would",
-                             "make this burn brighter?","","");
-             break;
-          }
-        break;
-     }
-   return 0;
-}
+/* /\*! \brief Response for touching a fire. */
+/*  * */
+/*  * This gives one of three random responses per character for when the */
+/*  * player faces a fire and presses ALT. */
+/*  * */
+/*  * \param   L::1 Which person is touching the fire */
+/*  * \returns 0 when done */
+/* *\/ */
+/* static int KQ_touch_fire (lua_State * L) */
+/* { */
+/*    switch ((int) lua_tonumber (L, 1)) */
+/*      { */
+/*      case 0:                   // SENSAR */
+/*         switch (rand () % 3) */
+/*           { */
+/*           case 0: */
+/*              text_ex (B_TEXT, 0, "What th..? Ouch! That's hot!"); */
+/*              break; */
+/*           case 1: */
+/*              text_ex (B_TEXT, 0, */
+/*                       "There's no way I'm sticking my hand in that fire!"); */
+/*              break; */
+/*           case 2: */
+/*              text_ex (B_TEXT, 0, "This feels pretty nice."); */
+/*              break; */
+/*           } */
+/*         break; */
+/*      case 1:                   // SARINA */
+/*         switch (rand () % 3) */
+/*           { */
+/*           case 0: */
+/*              text_ex (B_TEXT, 0, "Mmm, wood smoke."); */
+/*              break; */
+/*           case 1: */
+/*              text_ex (B_TEXT, 0, */
+/*                       "Smells like burnt hair. Hey wait... that's MY hair!"); */
+/*              break; */
+/*           case 2: */
+/*              text_ex (B_TEXT, 0, "Ooh, cozy."); */
+/*              break; */
+/*           } */
+/*         break; */
+/*      case 2:                   // CORIN */
+/*         switch (rand () % 3) */
+/*           { */
+/*           case 0: */
+/*              text_ex (B_TEXT, 0, "I sure like fire."); */
+/*              break; */
+/*           case 1: */
+/*              text_ex (B_TEXT, 0, "Watching this is relaxing."); */
+/*              break; */
+/*           case 2: */
+/*              text_ex (B_TEXT, 0, "This is making me sleepy."); */
+/*              break; */
+/*           } */
+/*         break; */
+/*      case 3:                   // AJATHAR */
+/*         switch (rand () % 3) */
+/*           { */
+/*           case 0: */
+/*              text_ex (B_TEXT, 0, "Hmm... I want marshmallows."); */
+/*              break; */
+/*           case 1: */
+/*              text_ex (B_TEXT, 0, "You call this a fire?!"); */
+/*           case 2: */
+/*              text_ex (B_TEXT, 0, "Ah, relaxing."); */
+/*           } */
+/*         break; */
+/*      case 4:                   // CASANDRA */
+/*         switch (rand () % 3) */
+/*           { */
+/*           case 0: */
+/*              text_ex (B_TEXT, 0, */
+/*                       "Something's burning. I hope it's one of those stupid books!"); */
+/*              break; */
+/*           case 1: */
+/*              text_ex (B_TEXT, 0, "The fire is getting low."); */
+/*              break; */
+/*           case 2: */
+/*              text_ex (B_TEXT, 0, "Yessir, this is a fire."); */
+/*              break; */
+/*           } */
+/*         break; */
+/*      case 5:                   // TEMMIN */
+/*         switch (rand () % 3) */
+/*           { */
+/*           case 0: */
+/*              text_ex (B_TEXT, 0, "Ah, the age-old fire."); */
+/*              break; */
+/*           case 1: */
+/*              text_ex (B_TEXT, 0, "This needs more coal."); */
+/*           case 2: */
+/*              text_ex (B_TEXT, 0, "This would be great to read a book next to."); */
+/*              break; */
+/*           } */
+/*         break; */
+/*      case 6:                   // AYLA */
+/*         switch (rand () % 3) */
+/*           { */
+/*           case 0: */
+/*              text_ex (B_TEXT, 0, "I wonder how hot this is?"); */
+/*              break; */
+/*           case 1: */
+/*              text_ex (B_TEXT, 0, */
+/*                       "Someone should clean all this soot out of here."); */
+/*              break; */
+/*           case 2: */
+/*              text_ex (B_TEXT, 0, */
+/*                       "Well, my face is warm now, but my butt is still freezing!"); */
+/*              break; */
+/*           } */
+/*         break; */
+/*      case 7:                   // NOSLOM */
+/*         switch (rand () % 3) */
+/*           { */
+/*           case 0: */
+/*              text_ex (B_TEXT, 0, "I prefer torches."); */
+/*              break; */
+/*           case 1: */
+/*              text_ex (B_TEXT, 0, "I love the crackle of a good fire."); */
+/*              break; */
+/*           case 2: */
+/*              text_ex (B_TEXT, 0, */
+/*                       "I wonder if a spell would make this burn brighter?"); */
+/*              break; */
+/*           } */
+/*         break; */
+/*      } */
+/*    return 0; */
+/* } */
 
 
 
-/*! \brief Response for reading a book.
- *
- * This gives one of three random responses per character for when the
- * player faces a bookshelf and presses ALT.
- *
- * \param   L::1 Which person is reading the book
- * \returns 0 when done
-*/
-static int KQ_book_talk (lua_State * L)
-{
-   switch ((int) lua_tonumber (L, 1))
-     {
-     case 0:
-        switch (rand () % 3)
-          {
-          case 0:
-             bubble_text (0, "Reading makes me sleepy...", "", "", "");
-             break;
-          case 1:
-             bubble_text (0, "So many books...", "", "", "");
-             break;
-          case 2:
-             bubble_text (0, "Reading is for wimps.", "", "", "");
-             break;
-          }
-        break;
-     case 1:
-        switch (rand () % 3)
-          {
-          case 0:
-             bubble_text (0, "Ugh... this would take me",
-                          "forever to read.", "", "");
-             break;
-          case 1:
-             bubble_text (0, "I never liked reading.", "", "", "");
-             break;
-          case 2:
-             bubble_text (0, "Who wrote this trash?", "", "", "");
-             break;
-          }
-        break;
-     case 2:
-        switch (rand () % 3)
-          {
-          case 0:
-             bubble_text (0, "Doesn't anybody leave spellbooks",
-                          "lying around?", "", "");
-             break;
-          case 1:
-             bubble_text (0, "Why would I read this?", "", "", "");
-             break;
-          case 2:
-             bubble_text (0, "Can't talk... reading.", "", "", "");
-             break;
-          }
-        break;
-     case 3:
-        switch (rand () % 3)
-          {
-          case 0:
-             bubble_text (0, "Hmmm... I don't approve of that.", "", "", "");
-             break;
-          case 1:
-             bubble_text (0, "I'm too busy to read now.", "", "", "");
-             break;
-          case 2:
-             bubble_text (0, "How many books can you write",
-                          "that start with 'The Joy of...'?", "", "");
-             break;
-          }
-        break;
-     case 4:
-        switch (rand () % 3)
-          {
-          case 0:
-             bubble_text (0, "Boring.", "", "", "");
-             break;
-          case 1:
-             bubble_text (0, "Somebody should burn these.", "", "", "");
-             break;
-          case 2:
-             bubble_text (0, "Terrible... just terrible.", "", "", "");
-             break;
-          }
-        break;
-     case 5:
-        switch (rand () % 3)
-          {
-          case 0:
-             bubble_text (0, "If only I had more time...", "", "", "");
-             break;
-          case 1:
-             bubble_text (0, "So many books...", "", "", "");
-             break;
-          case 2:
-             bubble_text (0, "Some of these are pretty old.", "", "", "");
-             break;
-          }
-        break;
-     case 6:
-        switch (rand () % 3)
-          {
-          case 0:
-             bubble_text (0, "I don't have time for this.", "", "", "");
-             break;
-          case 1:
-             bubble_text (0, "What language is this", "written in?", "", "");
-             break;
-          case 2:
-             bubble_text (0, "The pages are stuck together!?", "", "", "");
-             break;
-          }
-        break;
-     case 7:
-        switch (rand () % 3)
-          {
-          case 0:
-             bubble_text (0, "Fascinating.", "", "", "");
-             break;
-          case 1:
-             bubble_text (0, "I have this one.", "", "", "");
-             break;
-          case 2:
-             bubble_text (0, "Romance novels... gack!", "", "", "");
-             break;
-          }
-        break;
-     }
-   return 0;
-}
+/* /\*! \brief Response for reading a book. */
+/*  * */
+/*  * This gives one of three random responses per character for when the */
+/*  * player faces a bookshelf and presses ALT. */
+/*  * */
+/*  * \param   L::1 Which person is reading the book */
+/*  * \returns 0 when done */
+/* *\/ */
+/* static int KQ_book_talk (lua_State * L) */
+/* { */
+/*    switch ((int) lua_tonumber (L, 1)) */
+/*      { */
+/*      case 0: */
+/*         switch (rand () % 3) */
+/*           { */
+/*           case 0: */
+/*              text_ex (B_TEXT, 0, "Reading makes me sleepy..."); */
+/*              break; */
+/*           case 1: */
+/*              text_ex (B_TEXT, 0, "So many books..."); */
+/*              break; */
+/*           case 2: */
+/*              text_ex (B_TEXT, 0, "Reading is for wimps."); */
+/*           } */
+/*         break; */
+/*      case 1: */
+/*         switch (rand () % 3) */
+/*           { */
+/*           case 0: */
+/*              text_ex (B_TEXT, 0, "Ugh... this would take me forever to read."); */
+/*              break; */
+/*           case 1: */
+/*              text_ex (B_TEXT, 0, "I never liked reading."); */
+/*              break; */
+/*           case 2: */
+/*              text_ex (B_TEXT, 0, "Who wrote this trash?"); */
+/*              break; */
+/*           } */
+/*         break; */
+/*      case 2: */
+/*         switch (rand () % 3) */
+/*           { */
+/*           case 0: */
+/*              text_ex (B_TEXT, 0, */
+/*                       "Doesn't anybody leave spellbooks lying around?"); */
+/*              break; */
+/*           case 1: */
+/*              text_ex (B_TEXT, 0, "Why would I read this?"); */
+/*              break; */
+/*           case 2: */
+/*              text_ex (B_TEXT, 0, "Can't talk... reading."); */
+/*              break; */
+/*           } */
+/*         break; */
+/*      case 3: */
+/*         switch (rand () % 3) */
+/*           { */
+/*           case 0: */
+/*              text_ex (B_TEXT, 0, "Hmmm... I don't approve of that."); */
+/*              break; */
+/*           case 1: */
+/*              text_ex (B_TEXT, 0, "I'm too busy to read now."); */
+/*              break; */
+/*           case 2: */
+/*              text_ex (B_TEXT, 0, */
+/*                       "How many books can you write that start with 'The Joy of...'?"); */
+/*              break; */
+/*           } */
+/*         break; */
+/*      case 4: */
+/*         switch (rand () % 3) */
+/*           { */
+/*           case 0: */
+/*              text_ex (B_TEXT, 0, "Boring."); */
+/*           case 1: */
+/*              text_ex (B_TEXT, 0, "Somebody should burn these."); */
+/*           case 2: */
+/*              text_ex (B_TEXT, 0, "Terrible... just terrible."); */
+/*           } */
+/*         break; */
+/*      case 5: */
+/*         switch (rand () % 3) */
+/*           { */
+/*           case 0: */
+/*              text_ex (B_TEXT, 0, "If only I had more time..."); */
+/*              break; */
+/*           case 1: */
+/*              text_ex (B_TEXT, 0, "So many books..."); */
+/*              break; */
+/*           case 2: */
+/*              text_ex (B_TEXT, 0, "Some of these are pretty old."); */
+/*           } */
+/*         break; */
+/*      case 6: */
+/*         switch (rand () % 3) */
+/*           { */
+/*           case 0: */
+/*              text_ex (B_TEXT, 0, "I don't have time for this."); */
+/*              break; */
+/*           case 1: */
+/*              text_ex (B_TEXT, 0, "What language is this written in?"); */
+/*              break; */
+/*           case 2: */
+/*              text_ex (B_TEXT, 0, "The pages are stuck together!?"); */
+/*              break; */
+/*           } */
+/*         break; */
+/*      case 7: */
+/*         switch (rand () % 3) */
+/*           { */
+/*           case 0: */
+/*              text_ex (B_TEXT, 0, "Fascinating."); */
+/*              break; */
+/*           case 1: */
+/*              text_ex (B_TEXT, 0, "I have this one."); */
+/*              break; */
+/*           case 2: */
+/*              text_ex (B_TEXT, 0, "Romance novels... gack!"); */
+/*           } */
+/*         break; */
+/*      } */
+/*    return 0; */
+/* } */
 
 static int KQ_do_fadeout (lua_State * L)
 {
@@ -2192,11 +2424,12 @@ static int KQ_move_camera (lua_State * L)
 static int KQ_in_forest (lua_State * L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
-
-   if (g_map.map_no == MAP_MAIN)
-      lua_pushnumber (L, is_forestsquare (g_ent[a].tilex, g_ent[a].tiley));
-   else
-      lua_pushnumber (L, 0);
+   lua_pushnumber (L, is_forestsquare (g_ent[a].tilex, g_ent[a].tiley));
+   /* PH: this check is no longer needed */
+/*    if (g_map.map_no == MAP_MAIN) */
+/*       lua_pushnumber (L, is_forestsquare (g_ent[a].tilex, g_ent[a].tiley)); */
+/*    else */
+/*       lua_pushnumber (L, 0); */
    return 1;
 }
 
@@ -2459,65 +2692,81 @@ static int KQ_use_up (lua_State * L)
    return 1;
 }
 
-static char *mybuf = NULL;
-static int mylen = 0;
-extern void bubble_text_ex (int, const char *);
-extern char *parse_string (const char *);
+/*  static char *mybuf = NULL;  */
+/*  static int mylen = 0;  */
+/* extern void bubble_text_ex (int, const char *); */
+/* extern void thought_text_ex (int, const char *); */
+/* extern char *parse_string (const char *); */
 
+/* The text_ex function just takes one string, and does the line breaks automatically.
+ * The old bubble/thought functions which took four strings are handled by 
+ * code in global.lua. This is for backward compatibility with the old scripts.
+ * You can use either, but bubble_ex() does avoid some extra processing.
+ * The 'ent' param can be a number, or an object e.g. party[0].
+ */
 
-int KQ_bubble (lua_State * l)
+int KQ_bubble_ex (lua_State * l)
 {
-   int n = lua_gettop (l);
+   int entity;
+   s_entity* ent;
+   const char *msg = lua_tostring (l, 2);
+
+   switch(lua_type(l,1)) {
+   case LUA_TNUMBER:
+    entity= real_entity_num (lua_tonumber (l, 1));
+    break;
+   case LUA_TTABLE:
+     lua_pushstring(l, "_ent");
+     lua_rawget(l, 1);
+     ent=lua_touserdata(l, -1);
+     /* convert from pointer to an index for text_ex */
+     entity= ent ? ent-g_ent : 255;
+     break;
+   default:
+     entity=255;
+     break;
+   }
+   text_ex (B_TEXT, entity, msg);
+   return 0;
+}
+
+int KQ_thought_ex (lua_State * l)
+{
    int entity = real_entity_num (lua_tonumber (l, 1));
-   int i;
-   int il, lsf = 0;
-   char *str;
-   for (i = 2; i <= n; ++i)
-     {
-        str = parse_string (lua_tostring (l, i));
-        il = strlen (str);
-        if (lsf + il + 1 > mylen)
-          {
-             mylen = 2 * (lsf + il + 1);
-             mybuf = realloc (mybuf, mylen);
-             /*             printf ("Now alloc'd %d\n", mylen); */
-          }
-        memcpy (mybuf + lsf, str, il);
-        lsf += il;
-        if (i < n)
-           mybuf[lsf++] = '\n';
-     }
-   mybuf[lsf] = '\0';
-   bubble_text_ex (entity, mybuf);
-   return 0;
-}
-int KQ_thought (lua_State * L)
-{
-   int n = lua_gettop (L);
-   int entity = real_entity_num (lua_tonumber (L, 1));
-   int i;
-   int il, lsf = 0;
-   char *str;
-   for (i = 2; i <= n; ++i)
-     {
-        str = parse_string (lua_tostring (L, i));
-        il = strlen (str);
-        if (lsf + il + 1 > mylen)
-          {
-             mylen = 2 * (lsf + il + 1);
-             mybuf = realloc (mybuf, mylen);
-             /*             printf ("Now alloc'd %d\n", mylen); */
-          }
-        memcpy (mybuf + lsf, str, il);
-        lsf += il;
-        if (i < n)
-           mybuf[lsf++] = '\n';
-     }
-   mybuf[lsf] = '\0';
-   thought_text_ex (entity, mybuf);
+   const char *msg = lua_tostring (l, 2);
+   text_ex (B_THOUGHT, entity, msg);
    return 0;
 }
 
+/* Do a battle
+ * Usage: battle(bg_name, mus_name, encounter, encounter, ...);
+ * bg_name: name of background tile
+ * mus_name: name of music track
+ * encounter: list of encounters
+ *
+ * Format of encounter: {prob, lvl; monster, monster, ...}
+ * prob: probability this will occur
+ * lvl: level of this battle
+ * monster: name of a monster
+ */
+int KQ_battle (lua_State * l)
+{
+   l = l;
+   return 1;
+}
+
+int KQ_istable (lua_State * L)
+{
+   if (lua_istable (L, 1))
+     {
+        lua_pushnumber (L, 1);
+     }
+   else
+     {
+        lua_pushnil (L);
+     }
+   return 1;
+}
 
 /*! \brief Initialise scripting engine
  *
@@ -2535,16 +2784,20 @@ void do_luainit (char *fname)
 {
    int oldtop;
    const struct luaL_reg *rg = lrs;
-   sprintf (strbuf, "%s%s.lob", SCRIPT_DIR, fname);
    theL = lua_open (0);
    if (theL == NULL)
       program_death ("Could not initialise scripting engine");
+   fieldsort();
    while (rg->name)
      {
         lua_register (theL, rg->name, rg->func);
         ++rg;
      }
+   init_obj (theL);
    oldtop = lua_gettop (theL);
+   sprintf (strbuf, "%sglobal.lob", SCRIPT_DIR);
+   lua_dofile (theL, strbuf);
+   sprintf (strbuf, "%s%s.lob", SCRIPT_DIR, fname);
    if (lua_dofile (theL, strbuf) != 0)
      {
         sprintf (strbuf, "Could not open script:%s", fname);
@@ -2600,10 +2853,10 @@ void do_luakill (void)
 #ifdef KQ_CHEATS
    cheat_loaded = 0;
 #endif
-   /* delete working buffer */
-   free (mybuf);
-   mybuf = NULL;
-   mylen = 0;
+/*    /\* delete working buffer *\/ */
+/*    free (mybuf); */
+/*    mybuf = NULL; */
+/*    mylen = 0; */
 }
 
 
