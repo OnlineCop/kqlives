@@ -868,7 +868,8 @@ void play_effect (int efc, int panning)
 
         /* PH What is this line for? */
         blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
-        play_sample (samp, gsvol, panning, 1000, 0);
+        if (is_sound != 0)
+            play_sample (samp, gsvol, panning, 1000, 0);
         clear_bitmap (double_buffer);
         blit (back, double_buffer, xofs, yofs, xofs, yofs, 320, 240);
         if (in_combat == 0)
