@@ -1,32 +1,39 @@
 Map Editor for KQ
+by TeamTerradactyl
 
-In order to use the map editor, Mapdraw, you will need to compile the source.  To run the binary, you need to change to the maps/ directory and invoke Mapdraw.  (Mapdraw does not currently support command-line arguments.)
+Thank you in your interest in the KQ game's map editor, Mapdraw.
 
-You will see a level editor with map stats on the bottom and tiles on the right.  There is no current GUI menus, so you will have to make use of the keyboard shortcuts (hit F1 to see a list of possible keys).
+Mapdraw has been designed for developers to create the maps quickly and with as little pain as possible.  There is no current GUI menus (such as File, Edit, etc.), so you will have to make use of the keyboard shortcuts (use F1 to see a list of possible keys).
 
-To load a previously saved map, press F2.  It will prompt you for the map name.  You will need to supply Mapdraw with the path and/or filename of the .MAP file.
+The maps used in KQ have 3 layers: Background, middle, and foreground.
+- Layer 1, background: 90% of the drawing goes here.
+- Layer 2, middle: Objects and tiles which must be drawn on top of another go here.  This includes dishes on a table background, shrubs covering an item on the ground, etc.
+- Layer 3, foreground: Drawn over the top of the Player's sprite, such as bookshelf- or treetops, ceilings, etc.
 
-The maps used in KQ have 3 layers:
-- Layer 1 is the background layer.
-- Layer 2 is the middle layer.  Some maps will draw the middle layer above the Player's sprite.  Most, however, will simply draw over the background but under the Player.  This includes dishes on a table background tile, shrubs covering an item on the ground, etc.
-- Layer 3 is the foreground layer.  This is drawn over the top of the Player's sprite, such as tall bookshelves, treetops, or doorways and ceilings that partially obfuscate the Player.
+*NOTE: KQ makes use of Parallax, which means that one layer can move more quickly or slowly than another in order to create a spacial depth perception.  (See pass.map and cave3b.map for examples.)  This may affect the above descriptions slightly.
 
-The maps also have 4 attributes saved on each individual map:
-- Shadows are drawn over EVERYTHING.  This is a partially transparent layer where, when the Player is standing under it, part or all of their sprite will be lightened or darkened.  (Key: S)
-- Obstacles are placed on the map wherever a sprite is not able to walk onto.  Be sure, when making or modifying a map, that all areas of the map are enclosed with an obstacle so the Player doesn't walk outide of the area s/he is supposed to stay within.  (Key: O)
+Besides the 3 layers, maps have 4 attributes:
+- Shadows are drawn over EVERYTHING.  This is a partially transparent layer where, when the Player is standing under it, part or all of their sprite will be lightened or darkened.
+- Obstacles restrict movement.
   - The most common obstacle used is the SQUARE, where nothing can move onto the tile from any 4 directions.
-  - The other types are the T-shaped obstacles.  These will block movement only in one direction, meaning you can enter the tile from 3 directions, but cannot move onto or off of the tile from the 4th.
-- Entities are, for the most part, hard-coded onto the maps.  (Key: E)
-  - You can modify their attributes such as initial direction they are facing, whether or not they face the Player when being talked to, their sprite (what they look like), etc. by pressing F12.
-- Zones are used in the Lua files (in the scripts/ directory) to trigger a response when a player walks over the specified tile.
+  - The other types are the T-shaped obstacles.  These will block movement only in one direction, meaning you can enter the tile from 3 directions, but cannot move onto or off of the tile from the 4th.  Examples are chairs, beds, and pillars.
+- Entities initial attributes are saved into the maps.
+  - Their attributes can also be changed at run-time by scripts.  This includes coordinates, direction, speed, scripted movements, etc.
+- Zones are trigger-points used in the Lua files (in the scripts/ directory).  This is anything from changing maps, to treasure chests, to starting battles.
+
+===============================
+
+Now that you understand the basic structure of the MAP file, you can create or modify your maps.
 
 You can draw to the individual layers by selecting Layer 1, 2, or 3 (Key: 1, 2, or 3).  If you want to view more than one layer (as indicated in the F1 help screen), press 4-7.
 
-Attributes are toggled.  That means that if you select Shadows, for example (Key: S), you will be in draw mode for all shadows on the map, and no other layer is affected.
+Attributes are toggled, meaning that if you select Shadows, for example (Key: S), you will be in draw mode for all shadows on the map, and no other layer or attribute is affected.
 
 The + and - keys (either by the backspace key or on the number pad) are used to choose which tile (they are on the right-side menu) or Attribute (select between different Shadows or Obstacles, for example) you will draw to the map.
 
 There are other key shortcuts as well, but you can experiment with them with the F1 Help menu.
+
+To load a previously saved map, press F2.  It will prompt you for the map name.  You will need to supply Mapdraw with the path and/or filename of the MAP file.
 
 
 ===============================
