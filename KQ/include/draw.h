@@ -42,6 +42,7 @@
 #define FDECIDE    7
 #define B_TEXT     0
 #define B_THOUGHT  1
+#define B_MESSAGE  2
 
 
 
@@ -85,10 +86,11 @@ void print_font (BITMAP *, int, int, char *, int);
 void print_num (BITMAP *, int, int, char *, int);
 
 /*  intrface.c  */
-void thought_text (int, char *, char *, char *, char *);
+/* void thought_text (int, char *, char *, char *, char *); */
 
 /*  intrface.c, setup.c  */
-void bubble_text (int, char *, char *, char *, char *);
+/* void bubble_text (int, char *, char *, char *, char *); */
+void text_ex (int, int, const char *);
 
 /*  intrface.c, setup.c  */
 int prompt (int, int, int, char *, char *, char *, char *);

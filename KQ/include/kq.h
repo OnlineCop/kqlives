@@ -40,8 +40,10 @@
 #define PSIZE               2
 #define MAXFRAMES          12
 #define MAXEFRAMES         12
+/* PH: MAXCFRAMES never seems to be used properly - all frames are identical for enemies? */
 #define MAXCFRAMES          8
 #define NUM_FIGHTERS        7
+#define NUM_STATS          13
 #define MISS             9999
 #define NODISPLAY        9998
 #define SEL_ALL_ALLIES   9997
@@ -123,7 +125,7 @@
 #define C_RUN      8
 /*\}*/
 
-/*! \name Runes */
+/*! \name Runes/Resistances? */
 /*\{*/
 #define R_EARTH     0
 #define R_BLACK     1
@@ -235,7 +237,10 @@
 #define MAP_PASS           26
 #define MAP_TOWN7          27
 #define MAP_CULT           28
-#define MAP_CAVE5          30   /*sic */
+#define MAP_SHRINE         29
+#define MAP_CAVE5          30
+#define MAP_ESTERIA        31
+#define MAP_TUNNEL         32
 /*\}*/
 
 /*! \brief Animation specifier 
@@ -286,12 +291,12 @@ typedef struct
    int xp;                      /*!< Entity experience */
    int next;                    /*!< Experience needed for level-up */
    int lvl;                     /*!< Entity's level */
-   int mrp;                     /*!<  */
+   int mrp;                     /*!< Magic use rate (0-100) */
    int hp;                      /*!< Hit points */
    int mhp;                     /*!< Maximum hit points */
    int mp;                      /*!< Magic points */
    int mmp;                     /*!< Maximum magic points */
-   int stats[13];
+   int stats[NUM_STATS];
    char res[16];
    unsigned char sts[24];
    unsigned char eqp[6];        /*!< Weapons, armor, etc. equipped */
@@ -299,6 +304,20 @@ typedef struct
 }
 s_player;
 
+/*! \brief Hero information
+ *
+ * This holds static or constant information about a hero 
+ */
+typedef struct
+{
+   char name[9];
+   BITMAP *portait;             /*!< The hero's portrait for the stats screen */
+   BITMAP *frames[MAXFRAMES];   /*!< Frames for movement */
+   BITMAP *cframes[MAXCFRAMES]; /*!< Frames for combat */
+   int xpi, bxp, hpi, mpi;      /*!< for level_up() */
+   int stat_mult[NUM_STATS];    /*!<stats multipliers for level calculations (see player2fighter() ) */
+}
+s_heroinfo;
 
 /*! \brief Fighter 
  *
@@ -356,6 +375,7 @@ typedef struct
    int imb_s;
    int imb_a;
    int imb[2];
+   BITMAP *img;
 }
 s_fighter;
 
