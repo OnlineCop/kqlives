@@ -279,6 +279,7 @@ void draw_stsicon (BITMAP * where, int cc, int who, int inum, int icx, int icy)
 static void drawchar (int xw, int yw)
 {
    int fr, dx, dy, i, f, fid;
+   BITMAP **sprite_base;
    int spec = 0;
    BITMAP *spr = NULL;
 
@@ -299,17 +300,21 @@ static void drawchar (int xw, int yw)
              fr = g_ent[i].facing * 3 + (g_ent[i].framectr > 10 ? 1 : 0);
           }
         if (i < PSIZE && i < numchrs)
+           /* It's a hero */
           {
+             /* Masquerade: if chrx!=0 then this hero is disguised as someone else... */
+             sprite_base = g_ent[i].chrx ? eframes[g_ent[i].chrx] : frames[fid];
+
              if (party[fid].sts[S_DEAD] != 0)
                 fr = g_ent[i].facing * 3 + 2;
              if (party[fid].sts[S_POISON] != 0)
                {
-                  color_scale (frames[fid][fr], tc2, 32, 47);
+                  color_scale (sprite_base[fr], tc2, 32, 47);
                   spr = tc2;
                }
              else
                {
-                  spr = frames[fid][fr];
+                  spr = sprite_base[fr];
                }
              if (is_forestsquare (g_ent[i].tilex, g_ent[i].tiley))
                {
@@ -342,6 +347,7 @@ static void drawchar (int xw, int yw)
 
           }
         else
+           /* It's an NPC */
           {
              if (g_ent[i].active && g_ent[i].tilex >= view_x1
                  && g_ent[i].tilex <= view_x2 && g_ent[i].tiley >= view_y1
