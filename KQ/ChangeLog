@@ -1,3 +1,12 @@
+2002-09-24  peterhull90  <peterhull90@dell.valleyway>
+
+	* manor.lua, cave3a.lua, cave3b.lua, dville.lua, pass.lua, starting.lua, tower.lua:
+	Put quotes around initial comments
+
+2002-09-23  reybrujo  <reybrujo@dell.valleyway>
+
+	* prep.pl: Fixed included files location
+
 2002-09-22  peterhull90  <peterhull90@dell.valleyway>
 
 	* src/kq.c, src/scrnshot.c:
