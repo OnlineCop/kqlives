@@ -182,12 +182,14 @@ unsigned short adelay[MAX_ANIM];
 char *strbuf = NULL;
 /* char *savedir = NULL; */
 
+
 /*! Characters in play. The pidx[] array references this for the heroes actually
- * on screen, e.g. party[pidx[0]] is the 'lead' character, 
+ * on screen, e.g. party[pidx[0]] is the 'lead' character,
  * party[pidx[1]] is the follower, if there are 2 in the party.
  * We need to store all of them, because heroes join and leave during the game.
 */
 s_player party[MAXCHRS];
+
 
 /*! Initial character data
  *
@@ -196,88 +198,92 @@ s_player party[MAXCHRS];
  * all shot past the 80-character mark by quite a ways :)
 */
 s_heroinfo players[MAXCHRS];
-/* s_player players[MAXCHRS] = { */
-/*    { */
-/*     "Sensar", 0, 70, 1, 100, 40, 40, 0, 0, */
-/*     {800, 500, 700, 300, 300, 4000, 9000, 9000, 0, 7500, 0, 100, 0}, */
-/*     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, */
-/*     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, */
-/*     {0, 0, 0, 0, 0, 0}, */
-/*     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, */
-/*      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, */
-/*      0, 0, 0, 0, 0, 0, 0, 0, 0, 0} */
-/*     }, */
-/*    { */
-/*     "Sarina", 0, 70, 1, 100, 36, 36, 4, 4, */
-/*     {600, 600, 600, 400, 400, 6000, 9000, 9000, 0, 6000, 0, 100, 0}, */
-/*     {0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, */
-/*     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, */
-/*     {0, 0, 0, 0, 0, 0}, */
-/*     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, */
-/*      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, */
-/*      0, 0, 0, 0, 0, 0, 0, 0, 0, 0} */
-/*     }, */
-/*    { */
-/*     "Corin", 0, 70, 1, 100, 25, 25, 15, 15, */
-/*     {400, 400, 500, 800, 400, 4500, 12000, 9000, 0, 5000, 0, 100, 0}, */
-/*     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, */
-/*     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, */
-/*     {0, 0, 0, 0, 0, 0}, */
-/*     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, */
-/*      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, */
-/*      0, 0, 0, 0, 0, 0, 0, 0, 0, 0} */
-/*     }, */
-/*    { */
-/*     "Ajathar", 0, 70, 1, 100, 30, 30, 8, 8, */
-/*     {600, 500, 500, 400, 800, 5000, 9000, 11000, 0, 5000, 0, 100, 0}, */
-/*     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, */
-/*     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, */
-/*     {0, 0, 0, 0, 0, 0}, */
-/*     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, */
-/*      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, */
-/*      0, 0, 0, 0, 0, 0, 0, 0, 0, 0} */
-/*     }, */
-/*    { */
-/*     "Casandra", 0, 70, 1, 100, 24, 24, 16, 16, */
-/*     {300, 600, 400, 800, 600, 5500, 10000, 10000, 0, 5000, 0, 100, 0}, */
-/*     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 8, 0}, */
-/*     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, */
-/*     {0, 0, 0, 0, 0, 0}, */
-/*     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, */
-/*      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, */
-/*      0, 0, 0, 0, 0, 0, 0, 0, 0, 0} */
-/*     }, */
-/*    { */
-/*     "Temmin", 0, 70, 1, 100, 35, 35, 5, 5, */
-/*     {700, 500, 800, 300, 500, 5500, 8000, 10000, 0, 6000, 0, 100, 0}, */
-/*     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, */
-/*     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, */
-/*     {0, 0, 0, 0, 0, 0}, */
-/*     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, */
-/*      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, */
-/*      0, 0, 0, 0, 0, 0, 0, 0, 0, 0} */
-/*     }, */
-/*    { */
-/*     "Ayla", 0, 70, 1, 100, 32, 32, 8, 8, */
-/*     {500, 800, 500, 600, 400, 7000, 10000, 8000, 0, 5000, 0, 100, 0}, */
-/*     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, */
-/*     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, */
-/*     {0, 0, 0, 0, 0, 0}, */
-/*     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, */
-/*      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, */
-/*      0, 0, 0, 0, 0, 0, 0, 0, 0, 0} */
-/*     }, */
-/*    { */
-/*     "Noslom", 0, 70, 1, 65, 22, 22, 18, 18, */
-/*     {300, 600, 300, 700, 700, 5500, 10000, 10000, 0, 5000, 0, 100, 0}, */
-/*     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, */
-/*     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, */
-/*     {0, 0, 0, 0, 0, 0}, */
-/*     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, */
-/*      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, */
-/*      0, 0, 0, 0, 0, 0, 0, 0, 0, 0} */
-/*     } */
-/* }; */
+
+#if 0
+s_player players[MAXCHRS] = {
+   {
+    "Sensar", 0, 70, 1, 100, 40, 40, 0, 0,
+    {800, 500, 700, 300, 300, 4000, 9000, 9000, 0, 7500, 0, 100, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+    },
+   {
+    "Sarina", 0, 70, 1, 100, 36, 36, 4, 4,
+    {600, 600, 600, 400, 400, 6000, 9000, 9000, 0, 6000, 0, 100, 0},
+    {0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+    },
+   {
+    "Corin", 0, 70, 1, 100, 25, 25, 15, 15,
+    {400, 400, 500, 800, 400, 4500, 12000, 9000, 0, 5000, 0, 100, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+    },
+   {
+    "Ajathar", 0, 70, 1, 100, 30, 30, 8, 8,
+    {600, 500, 500, 400, 800, 5000, 9000, 11000, 0, 5000, 0, 100, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+    },
+   {
+    "Casandra", 0, 70, 1, 100, 24, 24, 16, 16,
+    {300, 600, 400, 800, 600, 5500, 10000, 10000, 0, 5000, 0, 100, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 8, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+    },
+   {
+    "Temmin", 0, 70, 1, 100, 35, 35, 5, 5,
+    {700, 500, 800, 300, 500, 5500, 8000, 10000, 0, 6000, 0, 100, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+    },
+   {
+    "Ayla", 0, 70, 1, 100, 32, 32, 8, 8,
+    {500, 800, 500, 600, 400, 7000, 10000, 8000, 0, 5000, 0, 100, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+    },
+   {
+    "Noslom", 0, 70, 1, 65, 22, 22, 18, 18,
+    {300, 600, 300, 700, 700, 5500, 10000, 10000, 0, 5000, 0, 100, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+    }
+};
+#endif
+
 
 /*! Table to manage stats for the level up process (see level_up()) */
 unsigned short lup[MAXCHRS][20] = {
@@ -290,6 +296,8 @@ unsigned short lup[MAXCHRS][20] = {
    {10, 70, 7, 5, 110, 170, 90, 120, 70, 25, 50, 20, 25, 25, 0, 30, 0},
    {10, 70, 8, 6, 50, 100, 50, 160, 160, 10, 90, 90, 5, 0, 0, 20, 0}
 };
+
+
 /*! Characters when they are in combat */
 s_fighter fighter[NUM_FIGHTERS];
 /*! Temp store for adjusted stats */
@@ -310,7 +318,7 @@ char ctext[39];
 #ifdef KQ_CHEATS
 static void data_dump (void);
 #endif
-static BITMAP *alloc_bmp (int, int, char *);
+BITMAP *alloc_bmp (int, int, char *);
 static void allocate_stuff (void);
 static void load_data (void);
 static void load_heroes (void);
@@ -394,23 +402,26 @@ END_OF_FUNCTION (my_counter);
 #ifdef ALLEGRO_BEOS
 static inline long long gettime()
 {
-	struct timeval tv;
-	gettimeofday(&tv, 0);
-	return (tv.tv_sec * 1000000) + (tv.tv_usec);
+  struct timeval tv;
+  gettimeofday(&tv, 0);
+  return (tv.tv_sec * 1000000) + (tv.tv_usec);
 }
+
 int maybe_poll_joystick() {
-  long long lasttime=0;
-  long long nowtime=gettime();
+  long long lasttime = 0;
+  long long nowtime = gettime();
   if ((unsigned long long) nowtime > (unsigned long long) lasttime) {
-    lasttime=nowtime+150000;
+    lasttime = nowtime + 150000;
     return poll_joystick();
   }
   else
     return -1;
 }
+
 #else
 #define maybe_poll_joystick poll_joystick
 #endif
+
 
 /*! \brief Handle user input.
  *
@@ -462,7 +473,7 @@ void readcontrols (void)
      {
         save_screenshot (screen, "kq");
         play_effect (SND_TWINKLE, 128);
-        /* wait for key to be released before continuing */
+        /* Wait for key to be released before continuing */
         /* PH 2002.09.21 n.b. keyboard not necessarily in polling mode */
         while (key[KEY_F12])
           {
@@ -683,9 +694,11 @@ void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
    for (i = 0; i < g_map.xsize * g_map.ysize; ++i)
       f_seg[i] = pack_igetw (pf);
 
-   /*pack_fread (map_seg, (g_map.xsize * g_map.ysize * 2), pf);
-      pack_fread (b_seg, (g_map.xsize * g_map.ysize * 2), pf);
-      pack_fread (f_seg, (g_map.xsize * g_map.ysize * 2), pf); */
+#if 0
+   pack_fread (map_seg, (g_map.xsize * g_map.ysize * 2), pf);
+   pack_fread (b_seg, (g_map.xsize * g_map.ysize * 2), pf);
+   pack_fread (f_seg, (g_map.xsize * g_map.ysize * 2), pf);
+#endif
    pack_fread (z_seg, (g_map.xsize * g_map.ysize), pf);
    pack_fread (s_seg, (g_map.xsize * g_map.ysize), pf);
    pack_fread (o_seg, (g_map.xsize * g_map.ysize), pf);
@@ -760,7 +773,8 @@ void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
 
    play_music (g_map.song_file, 0);
    mx = g_map.xsize * 16 - 304;
-   my = g_map.ysize * 16 - 256; /*PH fixme: was 224, drawmap() draws 16 rows, so should be 16*16=256 */
+   /*PH fixme: was 224, drawmap() draws 16 rows, so should be 16*16=256 */
+   my = g_map.ysize * 16 - 256;
 
    if (mvx == 0 && mvy == 0)
      {
@@ -1032,37 +1046,39 @@ void unpress (void)
      }
    timer_count = 0;
 
-/*    int cc = 0; */
+#if 0
+    int cc = 0;
 
-/*    timer_count = 0; */
+    timer_count = 0;
 
-/*    while (cc < 8) */
-/*      { */
-/*         cc = 0; */
-/*         readcontrols (); */
+    while (cc < 8)
+      {
+         cc = 0;
+         readcontrols ();
 
-/*         if (up == 0) */
-/*            cc++; */
-/*         if (down == 0) */
-/*            cc++; */
-/*         if (right == 0) */
-/*            cc++; */
-/*         if (left == 0) */
-/*            cc++; */
-/*         if (balt == 0) */
-/*            cc++; */
-/*         if (bctrl == 0) */
-/*            cc++; */
-/*         if (benter == 0) */
-/*            cc++; */
-/*         if (besc == 0) */
-/*            cc++; */
+         if (up == 0)
+            cc++;
+         if (down == 0)
+            cc++;
+         if (right == 0)
+            cc++;
+         if (left == 0)
+            cc++;
+         if (balt == 0)
+            cc++;
+         if (bctrl == 0)
+            cc++;
+         if (benter == 0)
+            cc++;
+         if (besc == 0)
+            cc++;
 
-/*         if (timer_count > 19) */
-/*            cc = 8; */
-/*      } */
+         if (timer_count > 19)
+            cc = 8;
+      }
 
-/*    timer_count = 0; */
+    timer_count = 0;
+#endif
 }
 
 
@@ -1103,15 +1119,17 @@ void wait_enter (void)
 void klog (char *msg)
 {
    TRACE ("%s\n", msg);
-/*    FILE *ff; */
+#if 0
+   FILE *ff;
 
-/*    ff = fopen ("game.log", "a"); */
+   ff = fopen ("game.log", "a");
 
-/*    if (!ff) */
-/*       program_death ("Could not open log!"); */
+   if (!ff)
+      program_death ("Could not open log!");
 
-/*    fprintf (ff, "%s\n", msg); */
-/*    fclose (ff); */
+   fprintf (ff, "%s\n", msg);
+   fclose (ff);
+#endif
 }
 
 
@@ -1319,7 +1337,7 @@ static void load_data (void)
  * \param   bname Name of bitmap
  * \returns the pointer to the created bitmap
 */
-static BITMAP *alloc_bmp (int bx, int by, char *bname)
+BITMAP *alloc_bmp (int bx, int by, char *bname)
 {
    BITMAP *tmp;
 
@@ -1468,9 +1486,9 @@ static void deallocate_stuff (void)
         for (p = 0; p < NUM_FIGHTERS; p++)
           {
              destroy_bitmap (cframes[p][i]);
-             /* PH this might stop crashes, not an ideal solution though.
+             /* PH: This might stop crashes, not an ideal solution though.
               * Reason: enemy handling uses tcframes just as a pointer to
-              * a bitmap alloc'd elsewhere, hero handling does not. 
+              * a bitmap alloc'd elsewhere, hero handling does not.
               */
 /*              destroy_bitmap (tcframes[p][i]); */
           }
@@ -1710,66 +1728,68 @@ void wait_for_entity (int est, int efi)
    autoparty = 0;
 }
 
-/* void wait_for_entity (int est, int efi) */
-/* { */
-/*    int ewatch, ecnt = 0, wait_ent[50], a; */
 
-/*    if (efi < est) */
-/*       return; */
-/*    /\* PH perverse code: *\/ */
-/*    ewatch = efi - est + 1; */
+#if 0
+void wait_for_entity (int est, int efi)
+{
+   int ewatch, ecnt = 0, wait_ent[50], a;
 
-/*    for (a = est; a < est + ewatch; a++) */
-/*      { */
-/*         if (g_ent[a].active == 1 && g_ent[a].movemode == 2) */
-/*           { */
-/*              wait_ent[a] = 1; */
-/*              ecnt++; */
-/*           } */
-/*         else */
-/*            wait_ent[a] = 0; */
-/*      } */
+   if (efi < est)
+      return;
+   /\* PH perverse code: *\/
+   ewatch = efi - est + 1;
 
-/*    autoparty = 1; */
-/*    timer_count = 0; */
+   for (a = est; a < est + ewatch; a++)
+     {
+        if (g_ent[a].active == 1 && g_ent[a].movemode == 2)
+          {
+             wait_ent[a] = 1;
+             ecnt++;
+          }
+        else
+           wait_ent[a] = 0;
+     }
 
-/*    while (ecnt > 0) */
-/*      { */
-/*         poll_music (); */
-/*         while (timer_count > 0) */
-/*           { */
-/*              poll_music (); */
-/*              timer_count--; */
-/*              process_entities (); */
-/*              check_animation (); */
+   autoparty = 1;
+   timer_count = 0;
 
-/*              for (a = est; a < est + ewatch; a++) */
-/*                { */
-/*                   if (wait_ent[a] == 1) */
-/*                     { */
-/*                        if (g_ent[a].movemode == 0) */
-/*                          { */
-/*                             wait_ent[a] = 0; */
-/*                             ecnt--; */
-/*                          } */
-/*                     } */
-/*                } */
-/*           } */
+   while (ecnt > 0)
+     {
+        poll_music ();
+        while (timer_count > 0)
+          {
+             poll_music ();
+             timer_count--;
+             process_entities ();
+             check_animation ();
 
-/*         drawmap (); */
-/*         blit2screen (xofs, yofs); */
+             for (a = est; a < est + ewatch; a++)
+               {
+                  if (wait_ent[a] == 1)
+                    {
+                       if (g_ent[a].movemode == 0)
+                         {
+                            wait_ent[a] = 0;
+                            ecnt--;
+                         }
+                    }
+               }
+          }
 
-/*         if (key[KEY_W] && key[KEY_ALT]) */
-/*            break; */
+        drawmap ();
+        blit2screen (xofs, yofs);
 
-/*         if (key[KEY_X] && key[KEY_ALT]) */
-/*            program_death (strbuf); */
-/*      } */
+        if (key[KEY_W] && key[KEY_ALT])
+           break;
 
-/*    timer_count = 0; */
-/*    autoparty = 0; */
-/* } */
+        if (key[KEY_X] && key[KEY_ALT])
+           program_death (strbuf);
+     }
 
+   timer_count = 0;
+   autoparty = 0;
+}
+#endif
 
 
 /*! \brief End program due to fatal error
@@ -1785,8 +1805,8 @@ void program_death (char *message)
            "\n");
    TRACE ("%s\n", message);
    deallocate_stuff ();
-   set_gfx_mode (GFX_TEXT, 0, 0, 0, 0);
    allegro_message (internal_buffer);
+   set_gfx_mode (GFX_TEXT, 0, 0, 0, 0);
    exit (EXIT_FAILURE);
 }
 
@@ -1820,7 +1840,8 @@ int main (void)
    int stop, game_on, skip_splash;
    startup ();
    game_on = 1;
-   skip_splash = 0;             /* Also this can be overridden by settings in config */
+   /* Also this can be overridden by settings in config */
+   skip_splash = 0;
    while (game_on)
      {
         switch (start_menu (skip_splash))
@@ -1835,7 +1856,8 @@ int main (void)
              game_on = 0;
              break;
           }
-        skip_splash = 1;        /* Only show it once at the start */
+        /* Only show it once at the start */
+        skip_splash = 1;
         if (game_on)
           {
              stop = 0;
@@ -1866,7 +1888,7 @@ int main (void)
                     }
                   if (bhelp)
                     {
-                       /* to do - in-game help system. */
+                       /* TODO: In-game help system. */
                     }
 
 

@@ -52,7 +52,7 @@ const char *kqres (int dir, const char *file)
         break;
      case SAVE_DIR:
         sprintf (ans, "saves/%s", file);
-	break;
+        break;
      case SETTINGS_DIR:
         sprintf (ans, "./%s", file);
         break;

@@ -371,8 +371,8 @@ static void drawchar (int xw, int yw)
                     }
                }
           }
-/* 	sprintf(strbuf, "%d", g_ent[i].speed); */
-/* 	print_num(double_buffer, dx, dy, strbuf, 0); */
+/*      sprintf(strbuf, "%d", g_ent[i].speed); */
+/*      print_num(double_buffer, dx, dy, strbuf, 0); */
      }
 }
 

@@ -150,7 +150,7 @@ int combat_spell (int whom, int is_item)
         /* do failure sound and/or graphic */
 /*  DS: If you return from here, the word 'miss' don't appear in the fight */
 /*      when the magic fails                                               */
-/* 	return 0; */
+/*      return 0; */
         ;
      }
 
@@ -497,11 +497,13 @@ static void heal_one_ally (int cs, int tgt, int sn)
 /*  DS: Because these lines, sometimes when you cast restore or others */
 /*      spells, the spell don't work correctly. In cast_spell() this */
 /*      is tested, so don't need to test again. */
-/*   if (rand () % 100 + 1 > fighter[cs].stats[A_AUR + magic[sn].stat]) */
-/*     { */
-/* 	ta[tgt] = MISS; */
-/* 	return; */
-/*     } */
+#if 0
+  if (rand () % 100 + 1 > fighter[cs].stats[A_AUR + magic[sn].stat])
+    {
+       ta[tgt] = MISS;
+       return;
+    }
+#endif
 /*  DS: Now the 'cs' argument isn't used, so I'm doing this: */
    cs = cs;
    switch (sn)
@@ -560,12 +562,14 @@ static void geffect_one_ally (int cs, int tgt, int sn)
 /*  DS: The same problem of heal_one_ally(), this have been tested in */
 /*      cast_spell(), because the hit% of all magics with good effect */
 /*      are 0 */
-/*    if (rand () % 100 + 1 > fighter[cs].stats[A_AUR + magic[sn].stat] */
-/*        || fighter[tgt].sts[S_STONE] > 0) */
-/*      { */
-/* 	ta[tgt] = MISS; */
-/* 	return; */
-/*      } */
+#if 0
+   if (rand () % 100 + 1 > fighter[cs].stats[A_AUR + magic[sn].stat]
+       || fighter[tgt].sts[S_STONE] > 0)
+     {
+        ta[tgt] = MISS;
+        return;
+     }
+#endif
 /*  DS: Now the 'cs' argument isn't used, so I'm doing this: */
    cs = cs;
    switch (sn)

@@ -384,13 +384,13 @@ void process_controls (void)
                   break;
                }
           }
-        if (k == KEY_UP)
+        if (k == KEY_UP || (k >= KEY_7_PAD && k <= KEY_9_PAD))
            gy--;
-        if (k == KEY_DOWN)
+        if (k == KEY_DOWN || (k >= KEY_1_PAD && k <= KEY_3_PAD)
            gy++;
-        if (k == KEY_RIGHT)
+        if (k == KEY_RIGHT || k == KEY_3_PAD || k == KEY_6_PAD || k == KEY_9_PAD)
            gx++;
-        if (k == KEY_LEFT)
+        if (k == KEY_LEFT || k == KEY_1_PAD || k == KEY_4_PAD || k == KEY_7_PAD)
            gx--;
         if (k == KEY_PGUP)
            gy -= vtiles;

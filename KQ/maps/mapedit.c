@@ -69,17 +69,7 @@ char *strbuf;
 /* gx and gy are view-window coords; x and y are everything else */
 short gx = 0, gy = 0, x = 0, y = 0;
 
-/* TT: unused? */
-#if 0
-unsigned short int cb;
-#endif
-
 int draw_mode = MAP_LAYER123, curtile = 0, dmode = 0;
-
-/* TT: unused? */
-#if 0
-int curent = 0;
-#endif
 
 int curzone = 0, curshadow = 0, curobs = 0;
 int copying = 0, copyx1 = -1, copyx2 = -1, copyy1 = -1, copyy2 = -1;
@@ -346,9 +336,9 @@ void process_controls (void)
         /* Save whole map as a picture */
         if (k==KEY_V)
            visual_map();
-        /* Get the last Zone used and set the indicator to one greater than that */
+        /* Get the last Zone used and set the indicator to that */
         if (k == KEY_L)
-           curzone = check_last_zone () + 1;
+           curzone = check_last_zone ();
 
         /* Create a new map; you can choose the tileset to use for it */
         if (k == KEY_N)
@@ -417,7 +407,7 @@ void process_controls (void)
           }
 
         /* Change the values for the current mode */
-        if (k == KEY_MINUS)
+        if (k == KEY_MINUS || k == KEY_MINUS_PAD)
           {
              switch (draw_mode)
                {
@@ -432,6 +422,10 @@ void process_controls (void)
                   curshadow--;
                   if (curshadow < 0)
                      curshadow = MAX_SHADOWS - 1;
+/* TT TODO: If we create a light tile somewhere on the side or bottom and put a
+   shadow over the top of it so the user can see what it looks like, it might
+   make it easier on the user.
+ */
                   break;
                /* Select which Obstacle to set on the map */
                case MAP_OBSTACLES:
@@ -455,7 +449,7 @@ void process_controls (void)
           } /* if (k == KEY_MINUS) */
 
         /* Change the values for the current mode */
-        if (k == KEY_EQUALS)
+        if (k == KEY_EQUALS || k == KEY_PLUS_PAD)
           {
              switch (draw_mode)
                {
@@ -493,16 +487,16 @@ void process_controls (void)
           } /* if (k == KEY_EQUALS) */
 
         /* Move the view-window up one tile */
-        if (k == KEY_UP)
+        if (k == KEY_UP    || k == KEY_7_PAD || k == KEY_8_PAD || k == KEY_9_PAD)
            gy--;
         /* Move the view-window down one tile */
-        if (k == KEY_DOWN)
+        if (k == KEY_DOWN  || k == KEY_1_PAD || k == KEY_2_PAD || k == KEY_3_PAD)
            gy++;
         /* Move the view-window right one tile */
-        if (k == KEY_RIGHT)
+        if (k == KEY_RIGHT || k == KEY_3_PAD || k == KEY_6_PAD || k == KEY_9_PAD)
            gx++;
         /* Move the view-window left one tile */
-        if (k == KEY_LEFT)
+        if (k == KEY_LEFT  || k == KEY_1_PAD || k == KEY_4_PAD || k == KEY_7_PAD)
            gx--;
         /* Move the view-window up one page */
         if (k == KEY_PGUP)

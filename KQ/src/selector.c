@@ -659,7 +659,7 @@ int select_party (int *avail, int n_avail, int numchrs_max)
              for (i = 0; i < PSIZE; ++i)
                {
                   menubox (double_buffer, x, y, 2, 2,
-                           cur == (8 + i) ? DARKRED : DARKBLUE);
+                           cur == (MAXCHRS + i) ? DARKRED : DARKBLUE);
                   if (i < numchrs && pidx[i] >= 0)
                      draw_sprite (double_buffer, frames[pidx[i]][0], x + 8,
                                   y + 8);
@@ -667,16 +667,16 @@ int select_party (int *avail, int n_avail, int numchrs_max)
                }
              /* Draw the 'Exit' button */
              menubox (double_buffer, x, y, 4, 1,
-                      cur == (PSIZE + 8) ? DARKRED : DARKBLUE);
+                      cur == (PSIZE + MAXCHRS) ? DARKRED : DARKBLUE);
              print_font (double_buffer, x + 8, y + 8, "Exit", FNORMAL);
              /* See which hero is selected and draw his/her stats */
              if (cur < n_avail)
                {
                   hero = avail[cur];
                }
-             else if (cur < numchrs + 8)
+             else if (cur < numchrs + MAXCHRS)
                {
-                  hero = pidx[cur - 8];
+                  hero = pidx[cur - MAXCHRS];
                }
              else
                 hero = -1;
@@ -695,7 +695,7 @@ int select_party (int *avail, int n_avail, int numchrs_max)
           {
              /* move between the available row and the party row */
              unpress ();
-             if (cur >= 8)
+             if (cur >= MAXCHRS)
                {
                   cur = 0;
                }
@@ -704,16 +704,16 @@ int select_party (int *avail, int n_avail, int numchrs_max)
           {
              /* move between the available row and the party row */
              unpress ();
-             if (cur < 8)
+             if (cur < MAXCHRS)
                {
-                  cur = 8;
+                  cur = MAXCHRS;
                }
           }
         if (left)
           {
              /* move between heroes on a row */
              unpress ();
-             if (cur > 8)
+             if (cur > MAXCHRS)
                 --cur;
              else if (cur > 0)
                {
@@ -728,7 +728,7 @@ int select_party (int *avail, int n_avail, int numchrs_max)
                {
                   cur++;
                }
-             else if (cur >= 8 && cur <= (numchrs + 8))
+             else if (cur >= MAXCHRS && cur <= (numchrs + MAXCHRS))
                 ++cur;
           }
         if (bctrl)
@@ -780,7 +780,7 @@ int select_party (int *avail, int n_avail, int numchrs_max)
                        if (numchrs > 1)
                          {
                             mask |= MM_LEAVE;
-                            if (cur > 8)
+                            if (cur > MAXCHRS)
                                mask |= MM_LEAD;
                          }
                        j = mini_menu (mask);
