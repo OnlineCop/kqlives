@@ -1264,16 +1264,16 @@ static int KQ_prompt (lua_State * L)
    return 1;
 }
 
-static int KQ_bubble (lua_State * L)
-{
-   char *txt[4];
-   int a, b = real_entity_num (lua_tonumber (L, 1));
+/* static int KQ_bubble (lua_State * L) */
+/* { */
+/*    char *txt[4]; */
+/*    int a, b = real_entity_num (lua_tonumber (L, 1)); */
 
-   for (a = 0; a < 4; a++)
-      txt[a] = (char *) lua_tostring (L, a + 2);
-   bubble_text (b, txt[0], txt[1], txt[2], txt[3]);
-   return 0;
-}
+/*    for (a = 0; a < 4; a++) */
+/*       txt[a] = (char *) lua_tostring (L, a + 2); */
+/*    bubble_text (b, txt[0], txt[1], txt[2], txt[3]); */
+/*    return 0; */
+/* } */
 
 static int KQ_thought (lua_State * L)
 {
@@ -2033,6 +2033,39 @@ static int KQ_wait_enter (lua_State * L)
    return 0;
 }
 
+static char *mybuf = NULL;
+static int mylen = 0;
+extern void bubble_text_ex (int, const char *);
+extern char *parse_string (const char *);
+
+int KQ_bubble (lua_State * l)
+{
+   int n = lua_gettop (l);
+   int entity = real_entity_num (lua_tonumber (l, 1));
+   int i;
+   int il, lsf = 0;
+   char *str;
+   for (i = 2; i <= n; ++i)
+     {
+        str = parse_string (lua_tostring (l, i));
+        il = strlen (str);
+        if (lsf + il + 1 > mylen)
+          {
+             mylen = 2 * (lsf + il + 1);
+             mybuf = realloc (mybuf, mylen);
+             /*             printf ("Now alloc'd %d\n", mylen); */
+          }
+        memcpy (mybuf + lsf, str, il);
+        lsf += il;
+        if (i < n)
+           mybuf[lsf++] = '\n';
+     }
+   mybuf[lsf] = '\0';
+   bubble_text_ex (entity, mybuf);
+   return 0;
+}
+
+
 /*! \brief Initialise scripting engine
  *
  * Initialise the Lua scripting engine
@@ -2105,6 +2138,10 @@ void do_luakill (void)
    if (theL)
       lua_close (theL);
    cheat_loaded = 0;
+   /* delete working buffer */
+   free (mybuf);
+   mybuf = NULL;
+   mylen = 0;
 }
 
 /*! \brief Run initial code 

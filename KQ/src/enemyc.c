@@ -118,6 +118,44 @@ int select_encounter (int en, int etid)
 /*! \brief load from file
  *
  * Load enemy data from files.
+ * The format of allstat.mon is a space separated sequence of rows.
+ * Within a row, the column order is:
+ * 
+ * -# Name
+ * -# ignored (index number)
+ * -# x-coord of image (in the datafile)
+ * -# y-coord of image
+ * -# width of image 
+ * -# height of image
+ * -# xp
+ * -# gold
+ * -# level
+ * -# max hp
+ * -# max mp
+ * -# dip (?)
+ * -# ditmc (?)
+ * -# ditmr (?)
+ * -# sitmc (?)
+ * -# sitmr (?)
+ * -# strength (agility and vitality are set to 0)
+ * -# intelligence AND sagacity (both set to same)
+ * -# stat[5]
+ * -# stat[6]
+ * -# stat[7]
+ * -# stat[8]
+ * -# stat[9]
+ * -# stat[10]
+ * -# stat[11]
+ * -# stat[12]
+ * -# bonus (bstat set to 0)
+ * -# cwt (?)
+ * -# welem (?)
+ * -# unl (?)
+ * -# crit (?)
+ * -# imb_s (?)
+ * -# imb[0] (?)
+ * -# imb[1] (?)
+ * -# imb[2] (?)
 */
 void enemy_init (void)
 {

@@ -758,24 +758,32 @@ void free_samples (void)
  * Play an effect... if possible/necessary.  If the effect to
  * be played is the 'bad-move' effect, than do something visually
  * so that even if sound is off you know you did something bad :)
+ * PH added explode effect.
  * \param efc Effect to play (index in sfx[])
  * \param panning Left/right pan - see Allegro's play_sample()
 */
 void play_effect (int efc, int panning)
 {
-   int a, xo = 0, yo = 0;
+   int a, s, xo = 0, yo = 0;
    int bx[8] = { -1, 0, 1, 0, -1, 0, 1, 0 };
    int by[8] = { -1, 0, 1, 0, 1, 0, -1, 0 };
-
-   if (is_sound != 0)
-      play_sample ((SAMPLE *) sfx[efc]->dat, gsvol, panning, 1000, 0);
-   if (efc == SND_BAD)
+   int sc[] = { 1, 2, 3, 5, 3, 3, 3, 2, 1 };
+   SAMPLE *samp;
+   PALETTE whiteout, old;
+   pause_music ();
+   samp = (SAMPLE *) sfx[efc]->dat;
+   switch (efc)
      {
+     default:
+        if (is_sound != 0)
+           play_sample (samp, gsvol, panning, 1000, 0);
+        break;
+     case SND_BAD:
         blit (double_buffer, back, 0, 0, 0, 0, 352, 280);
 
         /* PH What is this line for? */
         blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
-
+        play_sample (samp, gsvol, panning, 1000, 0);
         clear_bitmap (double_buffer);
         blit (back, double_buffer, xofs, yofs, xofs, yofs, 320, 240);
         if (in_combat == 0)
@@ -789,5 +797,36 @@ void play_effect (int efc, int panning)
              wait (10);
           }
         blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
+        break;
+     case SND_EXPLODE:
+        blit (double_buffer, back, 0, 0, 0, 0, 352, 280);
+        clear_bitmap (double_buffer);
+        get_palette (old);
+        for (a = 0; a < 256; ++a)
+          {
+             s = (old[a].r + old[a].g + old[a].b) > 40 ? 0 : 63;
+             whiteout[a].r = whiteout[a].g = whiteout[a].b = s;
+          }
+        blit (back, double_buffer, xofs, yofs, xofs, yofs, 320, 240);
+        if (is_sound)
+          {
+             play_sample (samp, gsvol, panning, 1000, 0);
+          }
+        for (s = 0; s < (int) (sizeof (sc) / sizeof (*sc)); ++s)
+          {
+             if (s == 1)
+                set_palette (whiteout);
+             if (s == 6)
+                set_palette (old);
+
+             for (a = 0; a < 8; a++)
+               {
+                  blit2screen (xofs + bx[a] * sc[s], yofs + by[a] * sc[s]);
+                  wait (10);
+               }
+          }
+        blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
+        break;
      }
+   resume_music ();
 }

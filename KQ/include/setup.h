@@ -38,7 +38,7 @@
 #define SND_UNEQUIP  5
 #define SND_MONEY    6
 #define SND_TWINKLE  7
-
+#define SND_EXPLODE 42
 
 
 void parse_setup (void);        /*  kq.c  */
@@ -56,13 +56,6 @@ extern char debugging;          /*  combat.c, setup.c, sgame.c  */
 
 
 
-/* #if 0 */
-/* extern struct DATAFILE *sfx[MAX_SAMPLES];       /\*  staticed  *\/ */
-
-/* int getavalue (char *, int, int, int, int);     /\*  staticed  *\/ */
-/* int load_samples (void);        /\*  staticed  *\/ */
-/* int getakey (void);             /\*  staticed  *\/ */
-/* #endif /\*  0  *\/ */
 
 
 

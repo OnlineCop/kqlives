@@ -29,7 +29,7 @@
 
 #include <stdio.h>
 #include <string.h>
-
+#include <ctype.h>
 #include "setup.h"
 #include "kq.h"
 #include "music.h"
@@ -43,7 +43,9 @@
 /*
    globals
 */
-char msgbuf[4][36];
+#define MSG_ROWS 4
+#define MSG_COLS 36
+char msgbuf[MSG_ROWS][MSG_COLS];
 int gbx, gby, gbbx, gbby, gbt, gbbw, gbbh, gbbs;
 unsigned char BLUE = 2, DARKBLUE = 0, DARKRED = 4;
 
@@ -59,7 +61,7 @@ static void border (BITMAP *, int, int, int, int);
 static void set_textpos (int);
 static void draw_textbox (int);
 static void generic_text (int, int);
-static char *parse_string (char *);
+const char *parse_string (const char *);
 
 
 
@@ -930,7 +932,7 @@ static void draw_textbox (int bstyle)
  * \param sp3 Line 3 of text
  * \param sp4 Line 4 of text
  *
- * \todo PH I'd like to make this divide a long string into lines/pages automatically 
+ * \sa bubble_text_ex()
 */
 void bubble_text (int who, char *sp1, char *sp2, char *sp3, char *sp4)
 {
@@ -941,7 +943,155 @@ void bubble_text (int who, char *sp1, char *sp2, char *sp3, char *sp4)
    generic_text (who, B_TEXT);
 }
 
-/*! \brief Draw though bubble
+/*! \brief The internal processing modes during text reformatting
+ *
+ * \sa relay()
+ */
+enum m_mode
+{ M_UNDEF, M_SPACE, M_NONSPACE, M_END };
+/*! \brief Split text into lines 
+ *
+ * Takes a string and re-formats it to fit into the 
+ * msgbuf text buffer, for displaying with 
+ * generic_text(). 
+ * Processes as much as it can to fit in one
+ * box, and returns a pointer to the next unprocessed
+ * character
+ * \author PH
+ * \date 20021220
+ *
+ * \param buf The string to reformat
+ * \returns The rest of the string that has not been processed, or NULL if it has all been processed.
+ */
+static const char *relay (const char *buf)
+{
+   int lasts, lastc, i, cr, cc;
+   char tc;
+   enum m_mode state;
+   for (i = 0; i < 4; ++i)
+      memset (msgbuf[i], 0, MSG_COLS);
+   i = 0;
+   cc = 0;
+   cr = 0;
+   lasts = -1;
+   lastc = 0;
+   state = M_UNDEF;
+   while (1)
+     {
+        tc = buf[i];
+        switch (state)
+          {
+          case M_UNDEF:
+             switch (tc)
+               {
+               case ' ':
+                  lasts = i;
+                  lastc = cc;
+                  state = M_SPACE;
+                  break;
+               case '\0':
+                  msgbuf[cr][cc] = '\0';
+                  state = M_END;
+                  break;
+               case '\n':
+                  msgbuf[cr][cc] = '\0';
+                  cc = 0;
+                  ++i;
+                  if (++cr >= 4)
+                     return &buf[i];
+                  break;
+               default:
+                  state = M_NONSPACE;
+                  break;
+               }
+             break;
+          case M_SPACE:
+             switch (tc)
+               {
+               case ' ':
+                  if (cc < MSG_COLS)
+                    {
+                       msgbuf[cr][cc++] = tc;
+                       ++i;
+                    }
+                  break;
+               default:
+                  state = M_UNDEF;
+                  break;
+               }
+             break;
+          case M_NONSPACE:
+             switch (tc)
+               {
+               case ' ':
+               case '\0':
+               case '\n':
+                  state = M_UNDEF;
+                  break;
+               default:
+                  if (cc < MSG_COLS)
+                    {
+                       msgbuf[cr][cc++] = tc;
+                    }
+                  else
+                    {
+                       msgbuf[cr++][lastc] = '\0';
+                       cc = 1;
+                       i = lasts;
+                       if (cr >= MSG_ROWS)
+                         {
+                            return &buf[1 + lasts];
+                         }
+                    }
+                  ++i;
+               }
+             break;
+          case M_END:
+             return NULL;
+             break;
+          }
+     }
+}
+
+/*! \brief display speech bubble
+ *
+ * Displays text, like bubble_text, but passing the args
+ * through relay() first
+ * \author PH
+ * \date 20021220
+ * \param who Character that is speaking
+ * \param s the text to display
+ * \sa bubble_text()
+ */
+void bubble_text_ex (int who, const char *s)
+{
+   while (s)
+     {
+        s = relay (s);
+        generic_text (who, B_TEXT);
+     }
+}
+
+/*! \brief display thought bubble
+ *
+ * Displays text, like thought_text, but passing the args
+ * through relay() first
+ * \author PH
+ * \date 20021220
+ * \param who Character that is speaking
+ * \param s the text to display
+ * \sa thought_text()
+ */
+void thought_text_ex (int who, const char *s)
+{
+   while (s)
+     {
+        s = relay (s);
+        generic_text (who, B_THOUGHT);
+     }
+}
+
+/*! \brief Draw thought bubble
  *
  *  Draw a thought bubble and display the text.
  *
@@ -951,7 +1101,7 @@ void bubble_text (int who, char *sp1, char *sp2, char *sp3, char *sp4)
  * \param sp3 Line 3 of text
  * \param sp4 Line 4 of text
  *
- * \todo PH I'd like to make this divide a long string into lines/pages automatically 
+ * \sa thought_text_ex()
  */
 void thought_text (int who, char *sp1, char *sp2, char *sp3, char *sp4)
 {
@@ -962,7 +1112,7 @@ void thought_text (int who, char *sp1, char *sp2, char *sp3, char *sp4)
    generic_text (who, B_THOUGHT);
 }
 
-/*! Text box drawing
+/*! \brief Text box drawing
  *
  * Generic routine to actually display a text box and wait for a keypress.
  *
@@ -972,17 +1122,19 @@ void thought_text (int who, char *sp1, char *sp2, char *sp3, char *sp4)
 static void generic_text (int who, int box_style)
 {
    int a, stop = 0;
-
+   int len;
    gbbw = 1;
    gbbh = 0;
    gbbs = 0;
    for (a = 0; a < 4; a++)
      {
-        if (strlen (msgbuf[a]) > 1)
+        len = strlen (msgbuf[a]);
+        /* FIXME: PH changed >1 to >0 */
+        if (len > 0)
           {
              gbbh = a + 1;
-             if ((signed int) strlen (msgbuf[a]) > gbbw)
-                gbbw = strlen (msgbuf[a]);
+             if ((signed int) len > gbbw)
+                gbbw = len;
           }
      }
    set_textpos (who);
@@ -1024,7 +1176,7 @@ static void generic_text (int who, int box_style)
  * \returns processed string, in a static buffer \p strbuf
  *          or \p the_string, if it had no replacement chars.
 */
-static char *parse_string (char *the_string)
+const char *parse_string (const char *the_string)
 {
    int a, who = -1, flag = 0;
    char crud[255];

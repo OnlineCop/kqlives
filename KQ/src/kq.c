@@ -288,6 +288,7 @@ static void allocate_stuff (void);
 static void load_data (void);
 
 
+
 /*! 23: for keeping time. timer_counter is the game timer the main game loop uses
  *  for logic (see int main()) and the rest track your playtime in hours, minutes
  * and seconds. They're all used in the my_counter() timer function just below
@@ -306,7 +307,7 @@ unsigned char draw_background = 1, draw_middle = 1,
    draw_foreground = 1, draw_shadow = 1;
 /*! Items in inventory. g_inv[][0] is the item id, g_inv[][1] is the quantity */
 unsigned short g_inv[MAX_INV][2];
-/*! View coordinates; the view is a way of selecting a subset of th emap to show. */
+/*! View coordinates; the view is a way of selecting a subset of the map to show. */
 int view_x1, view_y1, view_x2, view_y2, view_on = 0;
 /*! Are we in combat mode? */
 int in_combat = 0;

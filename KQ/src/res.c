@@ -1158,7 +1158,8 @@ s_erow erows[NUM_ETROWS] = {
    {21, 27, 100, {53, 53, 0, 0, 0}},
    {21, 0, 0, {52, 0, 0, 0, 0}},
    {21, 0, 0, {52, 52, 52, 0, 0}},
-   {21, 0, 0, {54, 0, 0, 0, 0}}
+   {21, 0, 0, {54, 0, 0, 0, 0}},
+   {22, 0, 0, {60, 57, 58, 59, 0}}
 };
 
 s_encounter battles[NUM_BATTLES] = {
@@ -1217,5 +1218,6 @@ s_encounter battles[NUM_BATTLES] = {
    {MAP_TEMPLE2, 0, 25, 7, 99, "hm.s3m", "BACK2_PCX"},
    {MAP_TEMPLE2, 255, 1, 7, 4, "walk.s3m", "BACK2_PCX"},
    {MAP_TOWER, 0, 25, 8, 99, "hm.s3m", "BACK5_PCX"},
-   {MAP_TOWER, 255, 1, 8, 4, "walk.s3m", "BACK5_PCX"}
+   {MAP_TOWER, 255, 1, 8, 4, "walk.s3m", "BACK5_PCX"},
+   {MAP_MAIN, 255, 1, 22, 0, "hm.s3m", "BACK2_PCX"},
 };

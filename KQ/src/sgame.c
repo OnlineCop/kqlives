@@ -43,7 +43,7 @@
 #include "kq.h"
 #include "draw.h"
 #include "sgame.h"
-#include "kqsnd.h"
+/*#include "kqsnd.h"*/
 #include "combat.h"
 #include "res.h"
 #include "masmenu.h"

@@ -35,8 +35,8 @@
 #define NUM_ITEMS     190
 #define NUM_SPELLS     61
 #define NUM_EFFECTS    52
-#define NUM_ETROWS    106
-#define NUM_BATTLES    56
+#define NUM_ETROWS    107
+#define NUM_BATTLES    57
 /*\}*/
 
 
@@ -115,7 +115,7 @@ typedef struct
 {
    unsigned char tnum;
    unsigned char lvl;
-   unsigned char per;
+   unsigned char per;           /*!< When random encounters are specified, this is the cumulative percentage that this one will be selected */
    unsigned char idx[5];        /*!< Index of enemies */
 }
 s_erow;
@@ -124,8 +124,8 @@ s_erow;
 /*! \brief An actual battle */
 typedef struct
 {
-   unsigned char mapnum;
-   unsigned char zonenum;
+   unsigned char mapnum;        /*!< Map where this battle occurs */
+   unsigned char zonenum;       /*!< Zone that triggers this battle */
    unsigned char enc;
    unsigned char etnum;
    unsigned char eidx;

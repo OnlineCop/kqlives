@@ -101,14 +101,20 @@
 #define P_PASSDOOR1       78
 #define P_PASSDOOR2       79
 #define P_PASSDOOR3       80
-
+/* New indicators */
+#define P_BOMB1           81
+#define P_BOMB2           82
+#define P_BOMB3           83
+#define P_BOMB4           84
+#define P_BOMB5           85
+#define P_DYNAMITE        86
 #define P_SHOPSTART       1750
 #define P_SKIPINTRO       1997
 #define P_REPULSE         1998
 #define P_TEMP            1999
 /*\}*/
 
-/*! \name Special identifiers for bubble */
+/*! \name Special identifiers for bubble() */
 /*\{*/
 #define HERO1             200
 #define HERO2             201

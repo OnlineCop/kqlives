@@ -713,8 +713,11 @@ static void parsems (int n)
 static void getcommand (int n)
 {
    char s;
-
-   s = g_ent[n].script[g_ent[n].sidx++];
+   /* PH FIXME: prevented from running off end of string */
+   if (g_ent[n].sidx < sizeof (g_ent[n].script))
+      s = g_ent[n].script[g_ent[n].sidx++];
+   else
+      s = '\0';
    switch (s)
      {
      case 'U':
@@ -737,7 +740,7 @@ static void getcommand (int n)
         g_ent[n].cmd = 5;
         parsems (n);
         break;
-     case 0:
+     case '\0':
         g_ent[n].cmd = 6;
         g_ent[n].movemode = 0;
         g_ent[n].cmdnum = 0;
@@ -846,7 +849,7 @@ void set_script (int n, char *movestring)
    g_ent[n].sidx = 0;
    g_ent[n].cmdnum = 0;
    g_ent[n].movemode = 2;
-   strcpy (g_ent[n].script, movestring);
+   strncpy (g_ent[n].script, movestring, sizeof (g_ent[n].script));
 }
 
 /*! \brief set position
