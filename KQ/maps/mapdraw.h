@@ -14,20 +14,20 @@
 #define SH            480
 #define WBUILD          1
 
-#define LAYER1                      0   // map (sea-level)
-#define LAYER2                      1   // background (ground-level)
-#define LAYER3                      2   // foreground (tree-tops, etc.)
-#define LAYER_VIEW1_2               3   // map + background
-#define LAYER_VIEW1_3               4   // map + foreground
-#define LAYER_VIEW2_3               5   // background + foreground
-#define LAYER_VIEW1_2_3             6   // map + background + foreground
-#define A_ENTITIES                  7   // Entities Attribute
-#define A_SHADOWS                   8   // Shadows Attribute
-#define A_OBSTACLES                 9   // Obstacles Attribute
-#define A_ZONES                     10  // Zones Attribute
-#define BLOCK_COPY                  11  // Mode to start copying an area
-#define BLOCK_PASTE                 12  // Mode to paste the copied area
-#define GRAB_TILE                   13  // Select a tile in the map to draw
+#define MAP_LAYER1  1  // map (sea-level)
+#define MAP_LAYER2  2  // background (ground-level)
+#define MAP_LAYER3  4  // foreground (tree-tops, etc.)
+#define MAP_SHADOWS  8  // Entities Attribute
+#define MAP_ZONES  16  // Shadows Attribute
+#define MAP_OBSTACLES  32  // Obstacles Attribute
+#define MAP_ENTITIES  64  // Zones Attribute
+#define MAP_LAYER12  (MAP_LAYER1 | MAP_LAYER2)  // map + background
+#define MAP_LAYER13  (MAP_LAYER1 | MAP_LAYER3)  // map + foreground
+#define MAP_LAYER23  (MAP_LAYER2 | MAP_LAYER3)  // background + foreground
+#define MAP_LAYER123 (MAP_LAYER1 | MAP_LAYER2 | MAP_LAYER3)  // map + background + foreground
+#define BLOCK_COPY  128  // Mode to start copying an area
+#define BLOCK_PASTE  256  // Mode to paste the copied area
+#define GRAB_TILE  512  // Select a tile in the map to draw
 
 #define ICONSET_SIZE    20 // Number of icons shown in the tile map
 

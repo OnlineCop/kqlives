@@ -153,7 +153,7 @@ void update_entities (void)
    int tgx = gx, tgy = gy; // Temporary window coordinates
    int tdm = draw_mode; // Temporary draw_mode
 
-   draw_mode = A_ENTITIES;
+   draw_mode = MAP_ENTITIES;
 
    if (noe == 0)
      {

@@ -36,7 +36,7 @@ char *strbuf;  // Used everywhere for strings
 
 short gx = 0, gy = 0, x = 0, y = 0; // View-screen and misc coordinates
 unsigned short int cb;
-int draw_mode = LAYER_VIEW1_2_3, curtile = 0, dmode = 0;
+int draw_mode = MAP_LAYER123, curtile = 0, dmode = 0;
 int curent = 0, curzone = 0, curshadow = 0, curobs = 0;
 int copying = 0, copyx1 = -1, copyx2 = -1, copyy1 = -1, copyy2 = -1;
 int clipb = 0, cbh = 0, cbw = 0;
@@ -113,21 +113,21 @@ void process_controls (void)
         k = (readkey () >> 8);
 
         /* Note: The only modes that will draw to the map are
-                 LAYER1, LAYER2, or LAYER3 */
+                 MAP_LAYER1, MAP_LAYER2, or MAP_LAYER3 */
         if (k == KEY_1) // Layer 1
-           draw_mode = LAYER1;
+           draw_mode = MAP_LAYER1;
         if (k == KEY_2) // Layer 2
-           draw_mode = LAYER2;
+           draw_mode = MAP_LAYER2;
         if (k == KEY_3) // Layer 3
-           draw_mode = LAYER3;
+           draw_mode = MAP_LAYER3;
         if (k == KEY_4) // Show Layers 1+2
-           draw_mode = LAYER_VIEW1_2;
+           draw_mode = MAP_LAYER12;
         if (k == KEY_5) // Show Layers 1+3
-           draw_mode = LAYER_VIEW1_3;
+           draw_mode = MAP_LAYER13;
         if (k == KEY_6) // Show Layers 2+3
-           draw_mode = LAYER_VIEW2_3;
+           draw_mode = MAP_LAYER23;
         if (k == KEY_7) // Show Layers 1+2+3
-           draw_mode = LAYER_VIEW1_2_3;
+           draw_mode = MAP_LAYER123;
 
         if (k >= KEY_1 && k <= KEY_7)  // Turn off Attributes
           {
@@ -140,7 +140,7 @@ void process_controls (void)
 
         if (k == KEY_C) // View Layers 1+2+3, plus Entites and Shadows
           {
-             draw_mode = LAYER_VIEW1_2_3;
+             draw_mode = MAP_LAYER123;
              showing.entities = 1;
              showing.shadows = 1;
              showing.obstacles = 0;
@@ -149,7 +149,7 @@ void process_controls (void)
           }
         if (k == KEY_A) // Displays Layers 1-3 and all Attributes
           {
-             draw_mode = LAYER_VIEW1_2_3;
+             draw_mode = MAP_LAYER123;
              showing.entities = 1;
              showing.shadows = 1;
              showing.obstacles = 1;
@@ -163,17 +163,17 @@ void process_controls (void)
           {
              if (showing.entities == 1)
                {
-                  if (draw_mode == A_ENTITIES)
+                  if (draw_mode == MAP_ENTITIES)
                     {
                        draw_mode = showing.last_layer;
                        showing.entities = 0;
                     }
                   else
-                     draw_mode = A_ENTITIES;
+                     draw_mode = MAP_ENTITIES;
                }
              else
                {
-                  draw_mode = A_ENTITIES;
+                  draw_mode = MAP_ENTITIES;
                   showing.entities = 1;
                }
           }
@@ -181,17 +181,17 @@ void process_controls (void)
           {
              if (showing.shadows == 1)
                {
-                  if (draw_mode == A_SHADOWS)
+                  if (draw_mode == MAP_SHADOWS)
                     {
                        draw_mode = showing.last_layer;
                        showing.shadows = 0;
                     }
                   else
-                     draw_mode = A_SHADOWS;
+                     draw_mode = MAP_SHADOWS;
                }
              else
                {
-                  draw_mode = A_SHADOWS;
+                  draw_mode = MAP_SHADOWS;
                   showing.shadows = 1;
                }
           }
@@ -199,17 +199,17 @@ void process_controls (void)
           {
              if (showing.obstacles == 1)
                {
-                  if (draw_mode == A_OBSTACLES)
+                  if (draw_mode == MAP_OBSTACLES)
                     {
                        draw_mode = showing.last_layer;
                        showing.obstacles = 0;
                     }
                   else
-                     draw_mode = A_OBSTACLES;
+                     draw_mode = MAP_OBSTACLES;
                }
              else
                {
-                  draw_mode = A_OBSTACLES;
+                  draw_mode = MAP_OBSTACLES;
                   showing.obstacles = 1;
                }
           }
@@ -217,17 +217,17 @@ void process_controls (void)
           {
              if (showing.zones == 1)
                {
-                  if (draw_mode == A_ZONES)
+                  if (draw_mode == MAP_ZONES)
                     {
                        draw_mode = showing.last_layer;
                        showing.zones = 0;
                     }
                   else
-                     draw_mode = A_ZONES;
+                     draw_mode = MAP_ZONES;
                }
              else
                {
-                  draw_mode = A_ZONES;
+                  draw_mode = MAP_ZONES;
                   showing.zones = 1;
                }
           }
@@ -237,10 +237,13 @@ void process_controls (void)
            draw_mode = BLOCK_PASTE;
         if (k == KEY_G) // Get the tile under the mouse curser
           {
-             if ((draw_mode != LAYER1) && (showing.last_layer != LAYER1) &&
-                 (draw_mode != LAYER2) && (showing.last_layer != LAYER2) &&
-                 (draw_mode != LAYER3) && (showing.last_layer != LAYER3))
-                showing.last_layer = LAYER1; // The default view mode
+             if ((draw_mode != MAP_LAYER1) &&
+                 (draw_mode != MAP_LAYER2) &&
+                 (draw_mode != MAP_LAYER3) &&
+                 (showing.last_layer != MAP_LAYER1) &&
+                 (showing.last_layer != MAP_LAYER2) &&
+                 (showing.last_layer != MAP_LAYER3))
+                showing.last_layer = MAP_LAYER1; // The default view mode
              else if (draw_mode != GRAB_TILE)
                 showing.last_layer = draw_mode;
              draw_mode = GRAB_TILE;
@@ -293,22 +296,22 @@ void process_controls (void)
           {
              switch (draw_mode)
                {
-               case A_ENTITIES:  // Select an Entity to draw
+               case MAP_ENTITIES:  // Select an Entity to draw
                   cent--;
                   if (cent < 0)
                      cent = MAX_EPICS - 1;
                   break;
-               case A_SHADOWS:   // Select a Shadow to draw
+               case MAP_SHADOWS:   // Select a Shadow to draw
                   curshadow--;
                   if (curshadow < 0)
                      curshadow = MAX_SHADOWS - 1;
                   break;
-               case A_OBSTACLES: // Select an Obstacle to draw
+               case MAP_OBSTACLES: // Select an Obstacle to draw
                   curobs--;
                   if (curobs < 0)
                      curobs = 5;
                   break;
-               case A_ZONES:  // Select a Zone to draw
+               case MAP_ZONES:  // Select a Zone to draw
                   curzone--;
                   if (curzone < 0)
                      curzone = MAX_ZONES - 1;
@@ -324,22 +327,22 @@ void process_controls (void)
           {
              switch (draw_mode)
                {
-               case A_ENTITIES:  // Select an Entity to draw
+               case MAP_ENTITIES:  // Select an Entity to draw
                   cent++;
                   if (cent == MAX_EPICS)
                      cent = 0;
                   break;
-               case A_SHADOWS:   // Select a Shadow to draw
+               case MAP_SHADOWS:   // Select a Shadow to draw
                   curshadow++;
                   if (curshadow >= MAX_SHADOWS)
                      curshadow = 0;
                   break;
-               case A_OBSTACLES: // Select an Obstacle to draw
+               case MAP_OBSTACLES: // Select an Obstacle to draw
                   curobs++;
                   if (curobs > 5)
                      curobs = 0;
                   break;
-               case A_ZONES:  // Select a Zone to draw
+               case MAP_ZONES:  // Select a Zone to draw
                   curzone++;
                   if (curzone >= MAX_ZONES)
                      curzone = 0;
@@ -436,39 +439,39 @@ void process_controls (void)
           }
 
         // Draw to the map
-        if ((draw_mode == LAYER1) || (draw_mode == LAYER2) ||
-            (draw_mode == LAYER3) || (draw_mode == A_OBSTACLES) ||
-            (draw_mode == A_ZONES) || (draw_mode == A_ENTITIES) ||
-            (draw_mode == A_SHADOWS) || (draw_mode == BLOCK_PASTE))
+        if ((draw_mode == MAP_LAYER1) || (draw_mode == MAP_LAYER2) ||
+            (draw_mode == MAP_LAYER3) || (draw_mode == MAP_OBSTACLES) ||
+            (draw_mode == MAP_ZONES) || (draw_mode == MAP_ENTITIES) ||
+            (draw_mode == MAP_SHADOWS) || (draw_mode == BLOCK_PASTE))
            dmode = 1;
 
         // Draw to Layer 1
         // This must draw only to Layer 1.  We never want to draw to two
         //  layers at once.
-        if (draw_mode == LAYER1)
+        if (draw_mode == MAP_LAYER1)
            map[((gy + y) * gmap.xsize) + gx + x] = curtile;
 
         // Draw to Layer 2
         // This must draw only to Layer 2.  Same as above.
-        if (draw_mode == LAYER2)
+        if (draw_mode == MAP_LAYER2)
            b_map[((gy + y) * gmap.xsize) + gx + x] = curtile;
 
         // Draw to Layer 3
         // This must draw only to Layer 3.  Ditto.
-        if (draw_mode == LAYER3)
+        if (draw_mode == MAP_LAYER3)
            f_map[((gy + y) * gmap.xsize) + gx + x] = curtile;
 
         // Add Obstacle
-        if (draw_mode == A_OBSTACLES)
+        if (draw_mode == MAP_OBSTACLES)
            o_map[((gy + y) * gmap.xsize) + gx + x] = curobs;
         // Add Zone
-        if (draw_mode == A_ZONES)
+        if (draw_mode == MAP_ZONES)
            z_map[((gy + y) * gmap.xsize) + gx + x] = curzone;
         // Add Entity
-        if (draw_mode == A_ENTITIES)
+        if (draw_mode == MAP_ENTITIES)
            place_entity ((mouse_x / 16) + gx, (mouse_y / 16) + gy);
         // Add Shadow
-        if (draw_mode == A_SHADOWS)
+        if (draw_mode == MAP_SHADOWS)
            s_map[((gy + y) * gmap.xsize) + gx + x] = curshadow;
 
         // Begin area copy (copies all zones)
@@ -486,11 +489,11 @@ void process_controls (void)
         // Select a tile from the map and its icon from the icon map
         if (draw_mode == GRAB_TILE)
           {
-             if (showing.last_layer == LAYER1)
+             if (showing.last_layer == MAP_LAYER1)
                 curtile = map[((gy + y) * gmap.xsize) + gx + x];
-             if (showing.last_layer == LAYER2)
+             if (showing.last_layer == MAP_LAYER2)
                 curtile = b_map[((gy + y) * gmap.xsize) + gx + x];
-             if (showing.last_layer == LAYER3)
+             if (showing.last_layer == MAP_LAYER3)
                 curtile = f_map[((gy + y) * gmap.xsize) + gx + x];
 
              icon_set = curtile / ICONSET_SIZE; // Update icon map on right
@@ -512,16 +515,16 @@ void process_controls (void)
           return;
 
         // Remove Entity
-        if (draw_mode == A_ENTITIES)
+        if (draw_mode == MAP_ENTITIES)
            erase_entity (mouse_x / 16 + gx, mouse_y / 16 + gy);
         // Remove Shadow
-        if (draw_mode == A_SHADOWS)
+        if (draw_mode == MAP_SHADOWS)
            s_map[((gy + y) * gmap.xsize) + gx + x] = 0;
         // Remove Obstacle
-        if (draw_mode == A_OBSTACLES)
+        if (draw_mode == MAP_OBSTACLES)
            o_map[((gy + y) * gmap.xsize) + gx + x] = 0;
         // Remove Zone
-        if (draw_mode == A_ZONES)
+        if (draw_mode == MAP_ZONES)
            z_map[((gy + y) * gmap.xsize) + gx + x] = 0;
 
         // Finish area copy
@@ -534,13 +537,13 @@ void process_controls (void)
           }
 
         // Erase tile from Layer 1
-        if (draw_mode == LAYER1)
+        if (draw_mode == MAP_LAYER1)
            map[((gy + y) * gmap.xsize) + gx + x] = 0;
         // Erase tile from Layer 2
-        if (draw_mode == LAYER2)
+        if (draw_mode == MAP_LAYER2)
            b_map[((gy + y) * gmap.xsize) + gx + x] = 0;
         // Erase tile from Layer 3
-        if (draw_mode == LAYER3)
+        if (draw_mode == MAP_LAYER3)
            f_map[((gy + y) * gmap.xsize) + gx + x] = 0;
      } // end if (mouse_b & 2)
 
@@ -780,14 +783,11 @@ void draw_map (void)
              w = ((gy + dy) * gmap.xsize) + gx + dx;
 
              // Clears Layer 1 background and then draws
-             if ((draw_mode == LAYER1) ||
-                 (draw_mode == LAYER_VIEW1_2) ||
-                 (draw_mode == LAYER_VIEW1_3) ||
-                 (draw_mode == LAYER_VIEW1_2_3) ||
+             if ((draw_mode & MAP_LAYER1) ||
                  (draw_mode == BLOCK_COPY) ||
                  (draw_mode == BLOCK_PASTE))
                {
-                  if (draw_mode == LAYER1)
+                  if (draw_mode == MAP_LAYER1)
                      rectfill (double_buffer, dx * 16, dy * 16, dx * 16 + 15,
                                dy * 16 + 15, 0);
                      blit (icons[map[w]], double_buffer, 0, 0, dx * 16,
@@ -796,30 +796,24 @@ void draw_map (void)
 
              // This draws Layer 1 only if it was what was showing when
              //  the user toggled the Attribute
-             if ((draw_mode == A_ENTITIES) ||
-                 (draw_mode == A_SHADOWS) ||
-                 (draw_mode == A_OBSTACLES) ||
-                 (draw_mode == A_ZONES) ||
+             if ((draw_mode == MAP_ENTITIES) ||
+                 (draw_mode == MAP_SHADOWS) ||
+                 (draw_mode == MAP_OBSTACLES) ||
+                 (draw_mode == MAP_ZONES) ||
                  (draw_mode == GRAB_TILE))
                {
-                  if (showing.last_layer == LAYER1 ||
-                      showing.last_layer == LAYER_VIEW1_2 ||
-                      showing.last_layer == LAYER_VIEW1_3 ||
-                      showing.last_layer == LAYER_VIEW1_2_3)
+                  if (showing.last_layer & MAP_LAYER1)
                      blit (icons[map[w]], double_buffer, 0, 0, dx * 16,
                            dy * 16, 16, 16);
                }
 
 
              // Clears Layer 2 background and then draws
-             if ((draw_mode == LAYER2) ||
-                 (draw_mode == LAYER_VIEW1_2) ||
-                 (draw_mode == LAYER_VIEW2_3) ||
-                 (draw_mode == LAYER_VIEW1_2_3) ||
+             if ((draw_mode & MAP_LAYER2) ||
                  (draw_mode == BLOCK_COPY) ||
                  (draw_mode == BLOCK_PASTE))
                {
-                  if (draw_mode == LAYER2)
+                  if (draw_mode == MAP_LAYER2)
                      rectfill (double_buffer, dx * 16, dy * 16, dx * 16 + 15,
                                dy * 16 + 15, 0);
                   draw_sprite (double_buffer, icons[b_map[w]], dx * 16,
@@ -828,30 +822,24 @@ void draw_map (void)
 
              // This draws Layer 2 only if it was what was showing when
              //  the user toggled the Attribute
-             if ((draw_mode == A_ENTITIES) ||
-                 (draw_mode == A_SHADOWS) ||
-                 (draw_mode == A_OBSTACLES) ||
-                 (draw_mode == A_ZONES) ||
+             if ((draw_mode == MAP_ENTITIES) ||
+                 (draw_mode == MAP_SHADOWS) ||
+                 (draw_mode == MAP_OBSTACLES) ||
+                 (draw_mode == MAP_ZONES) ||
                  (draw_mode == GRAB_TILE))
                {
-                  if (showing.last_layer == LAYER2 ||
-                      showing.last_layer == LAYER_VIEW1_2 ||
-                      showing.last_layer == LAYER_VIEW2_3 ||
-                      showing.last_layer == LAYER_VIEW1_2_3)
+                  if (showing.last_layer & MAP_LAYER2)
                      draw_sprite (double_buffer, icons[b_map[w]], dx * 16,
                                   dy * 16);
                }
 
 
              // Clears Layer 3 background and then draws
-             if ((draw_mode == LAYER3) ||
-                 (draw_mode == LAYER_VIEW1_3) ||
-                 (draw_mode == LAYER_VIEW2_3) ||
-                 (draw_mode == LAYER_VIEW1_2_3) ||
+             if ((draw_mode & MAP_LAYER3) ||
                  (draw_mode == BLOCK_COPY) ||
                  (draw_mode == BLOCK_PASTE))
                {
-                  if (draw_mode == LAYER3)
+                  if (draw_mode == MAP_LAYER3)
                      rectfill (double_buffer, dx * 16, dy * 16, dx * 16 + 15,
                                dy * 16 + 15, 0);
                   draw_sprite (double_buffer, icons[f_map[w]], dx * 16,
@@ -860,16 +848,13 @@ void draw_map (void)
 
              // This draws Layer 3 only if it was what was showing when
              //  the user toggled the Attribute
-             if ((draw_mode == A_ENTITIES) ||
-                 (draw_mode == A_SHADOWS) ||
-                 (draw_mode == A_OBSTACLES) ||
-                 (draw_mode == A_ZONES) ||
+             if ((draw_mode == MAP_ENTITIES) ||
+                 (draw_mode == MAP_SHADOWS) ||
+                 (draw_mode == MAP_OBSTACLES) ||
+                 (draw_mode == MAP_ZONES) ||
                  (draw_mode == GRAB_TILE))
                {
-                  if (showing.last_layer == LAYER3 ||
-                      showing.last_layer == LAYER_VIEW1_3 ||
-                      showing.last_layer == LAYER_VIEW2_3 ||
-                      showing.last_layer == LAYER_VIEW1_2_3)
+                  if (showing.last_layer & MAP_LAYER3)
                      draw_sprite (double_buffer, icons[f_map[w]], dx * 16,
                                   dy * 16);
                }
@@ -959,12 +944,19 @@ void draw_map (void)
 void draw_menubars (void)
 {
    int p, xp, yp, a;
-
+/* TODO TT BUG:
+   Wrote into the other kqlives guys; I can't figure the algorythm to
+   get the following code to work: Since draw_mode now references as:
+   1, 2, 4, 8, 16, 32, 64, ...
+   it won't print correctly.  It needs to be 0, 1, 2, 3, 4, ...
+   so until they update that, this will have a problem, at least when
+   displaying the Active draw_mode.
+*/
    // Description for the current draw_mode (could use work)
    char dt[14][12] =
       { "Layer1", "Layer2", "Layer3",
         "View L1+2", "View L1+3", "View L2+3", "View L1+2+3",
-        "Entities", "Shadows", "Obstacles", "Zones",
+        "Shadows", "Zones", "Obstacles", "Entities",
         "Block Copy", "Block Paste",
         "Grab Tile"
       };
@@ -1072,7 +1064,67 @@ void draw_menubars (void)
    rectfill (double_buffer, (SW - 72), 164, (SW - 1), (SH - 1), 0);
    // Display the draw_mode (see beginning of function for descriptions)
    print_sfont ((SW - 72), 164, "Mode:", double_buffer);
+
+// TT hack:
+// Since I haven't been able to remember the algorythm, this hack will do...
+/* { */ // <-- This brace is just to help localize the 'hack code'
+
+int draw_mode_display = 0;
+switch (draw_mode)
+  {
+     case MAP_LAYER1:
+        draw_mode_display = 0;
+        break;
+     case MAP_LAYER2:
+        draw_mode_display = 1;
+        break;
+     case MAP_LAYER3:
+        draw_mode_display = 2;
+        break;
+     case MAP_LAYER12:
+        draw_mode_display = 3;
+        break;
+     case MAP_LAYER13:
+        draw_mode_display = 4;
+        break;
+     case MAP_LAYER23:
+        draw_mode_display = 5;
+        break;
+     case MAP_LAYER123:
+        draw_mode_display = 6;
+        break;
+     case MAP_SHADOWS:
+        draw_mode_display = 7;
+        break;
+     case MAP_ZONES:
+        draw_mode_display = 8;
+        break;
+     case MAP_OBSTACLES:
+        draw_mode_display = 9;
+        break;
+     case MAP_ENTITIES:
+        draw_mode_display = 10;
+        break;
+     case BLOCK_COPY:
+        draw_mode_display = 11;
+        break;
+     case BLOCK_PASTE:
+        draw_mode_display = 12;
+        break;
+     case GRAB_TILE:
+        draw_mode_display = 13;
+        break;
+     default:
+        draw_mode_display = 0;
+        break;
+  }
+   print_sfont ((SW - 66), 170, dt[draw_mode_display], double_buffer);
+#if 0
    print_sfont ((SW - 66), 170, dt[draw_mode], double_buffer);
+#endif
+
+// TT: end hack
+/* } */
    // Display icon set and selected tile
    sprintf (strbuf, "#%d(%d)", icon_set, curtile);
    print_sfont ((SW - 72), 176, strbuf, double_buffer);
@@ -1089,7 +1141,7 @@ void draw_menubars (void)
       print_sfont ((SW - 64), 194, "drawing", double_buffer);
 
    // Displays the value of the Obstacle under the mouse
-   if (draw_mode == A_OBSTACLES)
+   if (draw_mode == MAP_OBSTACLES)
      {
         sprintf (strbuf, "Obs. #%d", curobs);
         print_sfont (320, (SH - 46), strbuf, double_buffer);
@@ -1103,7 +1155,7 @@ void draw_menubars (void)
           }
      }
    // Displays the value of the Zone under the mouse
-   if (draw_mode == A_ZONES)
+   if (draw_mode == MAP_ZONES)
      {
         sprintf (strbuf, "Zone #%d", curzone);
         print_sfont (320, (SH - 46), strbuf, double_buffer);
@@ -1128,7 +1180,7 @@ void draw_menubars (void)
           }
      }
    // Displays the Entity icon and total and current Entities
-   if (draw_mode == A_ENTITIES)
+   if (draw_mode == MAP_ENTITIES)
      {
         sprintf (strbuf, "%d", cent);
         print_sfont ((SW - 14), (SH - 38), strbuf, double_buffer);
@@ -1138,7 +1190,7 @@ void draw_menubars (void)
         print_sfont ((SW - 14), (SH - 12), strbuf, double_buffer);
      }
    // Displays the value of the Shadow under the mouse
-   if (draw_mode == A_SHADOWS)
+   if (draw_mode == MAP_SHADOWS)
      {
         sprintf (strbuf, "Shd. #%d", curshadow);
         print_sfont (320, (SH - 46), strbuf, double_buffer);
