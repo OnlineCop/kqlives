@@ -97,8 +97,6 @@ void display_credits (void)
         if (*(++cc) == NULL)
            cc = credits;
         print_font (wk, (wk->w - 8 * strlen (*cc)) / 2, 10, *cc, FNORMAL);
-        print_font (double_buffer, (320 - 8 * strlen (pressf1)) / 2, 218,
-                    pressf1, FNORMAL);
         ticks = 0;
      }
    e = 320 - ticks;
@@ -109,6 +107,8 @@ void display_credits (void)
           {
              blit (wk, double_buffer, i, ease (i + e), i + x0, 185, 1, 32);
           }
+        print_font (double_buffer, (320 - 8 * strlen (pressf1)) / 2, 210,
+                    pressf1, FNORMAL);
         last_e = e;
      }
 }
