@@ -143,13 +143,17 @@ void load_map (char *fname)
 /*! \brief Convert a PCX image to a map
  *
  * Take a PCX image and convert its values to make a map
+ * 20040129 PH improved so you can reload pcx onto any layer 
+ *          used to be only background or foreground
  */
 void make_mapfrompcx (void)
 {
    char fname[16];
-   int res2, ld;
+   char imp[16];
+   int  ld;
    int w, h, ax, ay;
    BITMAP *pb;
+   short* tm;
 
    rectfill (screen, 0, 0, 319, 21, 0);
    rect (screen, 2, 2, 317, 19, 255);
@@ -169,12 +173,27 @@ void make_mapfrompcx (void)
 
    if (yninput ()) {
       blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
-      rectfill (screen, 0, 0, 319, 17, 0);
-      rect (screen, 2, 2, 317, 15, 255);
-      print_sfont (6, 6, "Put to background? (y/n) - n=foreground", screen);
-      res2 = yninput ();
+      tm=NULL;
+      do {
+	rectfill (screen, 0, 0, 319, 27, 0);
+	rect (screen, 2, 2, 317, 25, 255);
+	print_sfont (6, 6, "Put to (B)ack (M)id (F)ore?", screen);
+	if (get_line(6,16,imp,sizeof(imp))>0) {
+	  switch(*imp) {
+	  case 'm': case 'M':
+	    tm=b_map;
+	      break;
+	  case 'b': case 'B':
+	    tm=map;
+	      break;
+	  case 'f': case 'F':
+	    tm=f_map;
+	      break;
+	  }
+	}
+      } while (map==NULL);
 
-      pb = load_pcx (fname, pal);
+      pb = load_bitmap (fname, pal);
       if (pb->w < gmap.xsize)
          w = pb->w;
       else
@@ -187,10 +206,7 @@ void make_mapfrompcx (void)
 
       for (ay = 0; ay < h; ay++) {
          for (ax = 0; ax < w; ax++) {
-            if (res2)
-               map[ay * gmap.xsize + ax] = pb->line[ay][ax];
-            else
-               f_map[ay * gmap.xsize + ax] = pb->line[ay][ax];
+               tm[ay * gmap.xsize + ax] = pb->line[ay][ax];
          }
       }
       destroy_bitmap (pb);
