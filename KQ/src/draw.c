@@ -516,9 +516,9 @@ static void draw_backlayer (void)
                blit (map_icons[tilex[pix]], double_buffer, 0, 0,
                      dx * 16 + xofs, dy * 16 + yofs, 16, 16);
 
-            } /*else
-               blit (map_icons[0], double_buffer, 0, 0, dx * 16 + xofs,
-	                  dy * 16 + yofs, 16, 16);*/
+            }                   /*else
+                                   blit (map_icons[0], double_buffer, 0, 0, dx * 16 + xofs,
+                                   dy * 16 + yofs, 16, 16); */
          }
       }
    }
@@ -1232,6 +1232,7 @@ const char *parse_string (const char *the_string)
  * \param   ptext The prompt test
  * \param   opt An array of options, null terminated
  * \param   n_opt The number of options
+ * \return  option selected, 0= first option etc.
  */
 int prompt_ex (int who, const char *ptext, char *opt[], int n_opt)
 {
