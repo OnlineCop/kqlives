@@ -1,7 +1,8 @@
 -- cave1 - underground tunnel from Ekla to Randen
 
 function autoexec()
-  return
+--PH added refresh here to get rid of DarkImp
+  refresh();
 end
 
 function refresh()
