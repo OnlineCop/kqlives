@@ -141,6 +141,8 @@
 
 #define P_BANGTHUMB       104
 #define P_WALKING         105
+#define P_MAYORGUARD1     106
+#define P_MAYORGUARD2     107
 
 
 /* 'specials' */
