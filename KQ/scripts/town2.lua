@@ -362,7 +362,7 @@ function entity_handler(en)
                   "I really appreciate what you did",
                   "for me. In return, I shall",
                   "accompany you.");
-        bubble(eno,"Oh... and here... take this.","","","");
+        bubble(10,"Oh... and here... take this.","","","");
         set_gp(get_gp()+1000);
         sfx(6);
         msg("You received 1000 gp!",255,0);

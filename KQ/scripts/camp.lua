@@ -201,7 +201,8 @@ function entity_handler(en)
     end
     set_ent_script(20,"D1R6U1");
     set_ent_script(21,"D1R3U2");
-    wait_for_entity(E_G1L,E_G1R);
+    wait_for_entity(20,21);
+    drawmap();
     set_run(0);
     combat(3);
     set_run(1)
@@ -274,11 +275,15 @@ function entity_handler(en)
               "me there after?","");
     bubble(HERO1,"Sure.","","","");
     set_ftile(41,14,0);
+    set_obs(41,14,0);
     set_autoparty(1);
     set_ent_script(HERO1,"D2R1F2");
     if (get_numchrs() == 2) then
       if (get_ent_tilex(HERO2) == get_ent_tilex(HERO1)+1) then
         set_ent_script(HERO2,"L1D3R1F2");
+        wait_for_entity(HERO1,HERO2);
+      elseif (get_ent_tilex(HERO2) == get_ent_tilex(HERO1)-1) then
+        set_ent_script(HERO2,"R1D3R1F2");
         wait_for_entity(HERO1,HERO2);
       else
         set_ent_script(HERO2,"D2R1F2");
