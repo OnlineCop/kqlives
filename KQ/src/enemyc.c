@@ -44,7 +44,9 @@ int cf[NUM_FIGHTERS];
 
 
 /*  internal prototypes  */
+#if 0
 static void load_enemyframes (int, int, int);
+#endif
 static int enemy_cancast (int, int);
 static void enemy_curecheck (int);
 static void enemy_spellcheck (int, int);
@@ -294,6 +296,9 @@ static int enemies_cap = 0;
 static DATAFILE *enemy_pcx = NULL;
 /*! \brief Load all enemies from disk
  *
+ * Loads up enemies from the *.mon files and fills the enemies[] array.
+ * \author PH
+ * \date 2003????
  */
 void load_enemies (void)
 {
@@ -305,7 +310,7 @@ void load_enemies (void)
         /* Already done the loading */
         return;
      }
-   klog ("Loading enemies from disk");
+/*    klog ("Loading enemies from disk"); */
    enemy_pcx = load_datafile_object (PCX_DATAFILE, "ENEMY2_PCX");
    if (enemy_pcx == NULL)
      {
@@ -384,19 +389,19 @@ void load_enemies (void)
         f->imb_s = tmp;
         fscanf (edat, "%d", &tmp);
         f->imb_a = tmp;
-        sprintf (strbuf, "Img for %d: (%d,%d)x(%d,%d)", enemies_n - 1, lx, ly,
-                 f->cw, f->cl);
-        klog (strbuf);
+/*         sprintf (strbuf, "Img for %d: (%d,%d)x(%d,%d)", enemies_n - 1, lx, ly, */
+/*                  f->cw, f->cl); */
+/*         klog (strbuf); */
         f->img =
            create_sub_bitmap ((BITMAP *) enemy_pcx->dat, lx, ly, f->cw, f->cl);
         for (p = 0; p < 2; p++)
           {
              fscanf (edat, "%d", &tmp);
-             if (tmp > 0)
-               {
-                  sprintf (strbuf, "%s has imbued %d", f->name, tmp);
-                  klog (strbuf);
-               }
+/*              if (tmp > 0) */
+/*                { */
+/*                   sprintf (strbuf, "%s has imbued %d", f->name, tmp); */
+/*                   klog (strbuf); */
+/*                } */
              f->imb[p] = tmp;
           }
      }
@@ -419,7 +424,7 @@ void load_enemies (void)
         for (p = 0; p < 8; p++)
           {
              fscanf (edat, "%d", &tmp);
-             fighter->ai[p] = tmp;
+             f->ai[p] = tmp;
           }
         for (p = 0; p < 8; p++)
           {
@@ -437,7 +442,11 @@ void load_enemies (void)
    fclose (edat);
 }
 
-/*! 
+/*! \brief Unload the data loaded by load_enemies()
+ * 
+ * JB would have said 'duh' here! Not much explanation required.
+ * \author PH
+ * \date 2003????
  */
 void unload_enemies (void)
 {
@@ -455,7 +464,18 @@ void unload_enemies (void)
      }
 }
 
-s_fighter *make_enemy (int who, s_fighter * en)
+/*! \brief Prepare an enemy for battle
+ *
+ * Fills out a supplied s_fighter structure with the default,
+ * starting values for an enemy.
+ * \author PH
+ * \date 2003????
+ * \param who the numeric id of the enemy to make
+ * \param en pointer to an s_fighter structure to initialise
+ * \returns the value of en, for convenience, or NULL if an error occurred.
+ * \sa make_enemy_by_name()
+ */
+static s_fighter *make_enemy (int who, s_fighter * en)
 {
    if (enemies && who >= 0 && who < enemies_n)
      {
@@ -466,10 +486,25 @@ s_fighter *make_enemy (int who, s_fighter * en)
      }
    else
      {
+        /* PH probably should call program_death() here? */
         return NULL;
      }
 }
-s_fighter *make_enemy_by_name (const char *who, s_fighter * en)
+
+#if 0
+/*! \brief Prepare an enemy for battle
+ *
+ * Fills out a supplied s_fighter structure with the default,
+ * starting values for an enemy. Currently not used, but it will be, 
+ * so don't delete it ;).
+ * \author PH
+ * \date 2003????
+ * \param who the name  of the enemy to make
+ * \param en pointer to an s_fighter structure to initialise
+ * \returns the value of en, for convenience, or NULL if an error occurred.
+ * \sa make_enemy()
+ */
+static s_fighter *make_enemy_by_name (const char *who, s_fighter * en)
 {
    int i;
    if (enemies != NULL)
@@ -485,6 +520,17 @@ s_fighter *make_enemy_by_name (const char *who, s_fighter * en)
      }
    return NULL;
 }
+#endif
+/*! \brief Initialise enemy & sprites
+ *
+ * If required, load the all the enemies, then
+ * init the ones that are going into battle, by calling make_enemy() and
+ * copying the graphics sprites into cframes[] and tcframes[].
+ * Looks at the cf[] array to see which enemies to do.
+ *
+ * \author PH
+ * \date 2003????
+ */
 
 void enemy_init (void)
 {
@@ -497,8 +543,10 @@ void enemy_init (void)
         f = make_enemy (cf[i], &fighter[i + PSIZE]);
         for (p = 0; p < MAXCFRAMES; ++p)
           {
+             /* If, in a previous combat, we made a bitmap, destroy it now */
              if (cframes[i + PSIZE][p])
                 destroy_bitmap (cframes[i + PSIZE][p]);
+             /* and create a new one */
              cframes[i + PSIZE][p] = create_bitmap (f->img->w, f->img->h);
              blit (f->img, cframes[i + PSIZE][p], 0, 0, 0, 0, f->img->w,
                    f->img->h);
@@ -507,10 +555,11 @@ void enemy_init (void)
      }
 }
 
-
+#if 0
 /*! \brief Copy frames from main bitmap
  *
  * Extract the appropriate frames from the enemy pcx file.
+ * \note PH no longer used; enemy_init does this.
  *
  * \param   who Enemy id
  * \param   locx x-coord of frame
@@ -535,13 +584,14 @@ static void load_enemyframes (int who, int locx, int locy)
      }
    unload_datafile_object (pcx);
 }
-
+#endif
 
 
 /*! \brief Choose action for enemy
  *
  * There is the beginning of some intelligence to this... however, the
  * magic checking and skill checking functions aren't very smart yet :)
+ * \todo PH would be good to have this script-enabled.
  *
  * \param   who Target action will be performed on
 */
