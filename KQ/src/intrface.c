@@ -2268,7 +2268,7 @@ static int KQ_add_chr (lua_State * L)
 {
    int a = (int) lua_tonumber (L, 1);
 
-   if (numchrs < MAXCHRS) {
+   if (numchrs < PSIZE) {
       pidx[numchrs] = a;
       g_ent[numchrs].active = 1;
       g_ent[numchrs].eid = a;
@@ -2290,8 +2290,8 @@ static int KQ_remove_chr (lua_State * L)
          a--;
          pidx[a] = -1;
          numchrs--;
-         if (a != MAXCHRS - 1) {
-            for (b = 0; b < MAXCHRS - 1; b++) {
+         if (a != PSIZE - 1) {
+            for (b = 0; b < PSIZE - 1; b++) {
                if (pidx[b] == -1) {
                   pidx[b] = pidx[b + 1];
                   pidx[b + 1] = -1;
