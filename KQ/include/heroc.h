@@ -49,7 +49,7 @@ void draw_invokable (int);      /*  staticed  */
 int can_invoke_item (int);      /*  staticed  */
 int hero_invoke (int);          /*  staticed  */
 int hero_invokeitem (int, int); /*  staticed  */
-void hero_run (int);            /*  staticed  */
+void hero_run (void);            /*  staticed  */
 void combat_draw_spell_menu (int, int, int);    /*  staticed  */
 int combat_spell_targeting (int);       /*  staticed  */
 int combat_castable (int, int); /*  staticed  */
