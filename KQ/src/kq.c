@@ -57,6 +57,7 @@
 #include "setup.h"
 #include "scrnshot.h"
 #include "sgame.h"
+#include "shopmenu.h"
 
 /*! Name of the current map */
 char curmap[16];
