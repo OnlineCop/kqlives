@@ -21,7 +21,7 @@
 /*! \name Progress indicators */
 /*\{*/
 
-#define P_INTRO           91
+#define P_MANOR           91
 #define P_PLAYERS         92
 
 #define P_START           0
@@ -105,6 +105,7 @@
 #define P_PASSDOOR1       78
 #define P_PASSDOOR2       79
 #define P_PASSDOOR3       80
+
 /* New indicators */
 #define P_BOMB1           81
 #define P_BOMB2           82
@@ -116,6 +117,7 @@
 #define P_EARLYPROGRESS   88
 #define P_OPALDRAGONOUT   89
 #define P_OPALARMOUR      90
+
 /* These are to store who's waiting in the manor */
 #define P_MANORPARTY      91
 #define P_MANORPARTY1     92

@@ -3,10 +3,12 @@
 -- "{
 -- Which globals should we have for manor?
 --
--- P_INTRO
+-- P_MANOR
 --   (0) New game; Nostik hasn't spoken yet
 --   (1) Nostik explained the quest, but you haven't yet spoken to the butler
 --   (2) Butler has already spoken to you
+--   (3) You have recruited others and they are waiting around the table
+--    *  We have to somehow "set_progress(P_MANOR, 3)"... it's not active yet.
 --
 -- P_PLAYERS
 --   (0) You haven't recruited anyone yet
@@ -22,15 +24,15 @@
 -- When you return to the manor, the dining room should be empty unless you
 -- have 'recruited' other party members into your team.  If you have, then
 -- those members are sitting in their places around the table.  Even the
--- person that is trailing you will be sitting there; they will join you when
--- you leave the manor.  If you talk to the butler, he will allow you to pick
--- them to join you or switch around your party.  Irregardless of who you
--- choose, they don't 'jump up' and start trailing you immediately; they stay
--- around the table until you leave.  This prevents 'jumping' when a character
--- is traded.  The 'removed' character would otherwise magically disappear
--- from behind you and appear at the table, and the person you're recruiting
--- will disappear from their seat and be standing behind/under you.  I just
--- don't like that; it just looks like bad coding.
+-- person that is trailing you will be sitting there; no one will join your
+-- little "procession" until you leave the manor.  When you talk to the party
+-- members around the table, PH's team selector will be activated.
+-- Irregardless of who you choose, they don't 'jump up' and start trailing you
+-- immediately; they stay around the table until you leave.  This prevents
+-- 'jumping' when a character is traded.  The 'removed' character would
+-- otherwise magically disappear from behind you and appear at the table, and
+-- the person you're recruiting will disappear from their seat and be standing
+-- behind/under you.  I just don't like that; it just looks like bad coding.
 --
 -- Quick reference:
 --
@@ -51,10 +53,10 @@ function autoexec()
   local a;
 
   -- There needs to be a check to see if there are any recruits.  If so, we
-  -- need to set P_INTRO=3 so the code below can function correctly.
+  -- need to set P_MANOR=3 so the code below can function correctly.
 
   -- Nostik has not explained the quest yet
-  if (get_progress(P_INTRO) == 0) then
+  if (get_progress(P_MANOR) == 0) then
     -- Init all 8 heroes
     for a = 0, 7, 1 do
       -- Set up entities 0-7 in manor.map as your team members
@@ -75,16 +77,16 @@ function autoexec()
     -- Center map on your character coords
     calc_viewport(1);
 
-  -- P_INTRO should NEVER ==1 when entering manor.map
+  -- P_MANOR should NEVER ==1 when entering manor.map
 
-  -- P_INTRO ==2 when you already talked to Hunert, but you have no recruits
-  elseif (get_progress(P_INTRO) == 2) then
+  -- P_MANOR ==2 when you already talked to Hunert, but you have no recruits
+  elseif (get_progress(P_MANOR) == 2) then
     for a = 0, 7, 1 do
       set_ent_active(a, 0);
     end
 
   -- You have recruited at least 1 other party member
-  elseif (get_progress(P_INTRO) == 3) then
+  elseif (get_progress(P_MANOR) == 3) then
     for a = 1, 7, 1 do
 
 -- **HERE** is the trouble code:
@@ -122,45 +124,44 @@ end
 function postexec()
   local player_response, done_talking;
 
-  if (get_progress(P_INTRO) == 0) then
+  if (get_progress(P_MANOR) == 0) then
     rest(200);
-    bubble(8, "Welcome all.");
---    bubble(8, "I am the legendary Nostik. I am a wizard. A very old wizard in fact. I know the secret of the Great Magic, and you have come to learn.");
---    bubble(8, "Be heretofore warned however: my words are not to be meddled with, for you are crunchy and taste good with...");
-      bubble(8, "Well, never mind. I shall get right to the point.");
---    bubble(8, "I have said that I am in need of adventurers to partake in a quest for me. You eight have shown great courage to stay. Courage alone isn't enough, however. You must prove your worthiness of this Great Magic. Does anyone wish to leave?");
---    set_ent_script(8, "W25F1W35F3W35F0W35F3W50");
---    wait_for_entity(8, 8);
-    if (prompt(8, 2, 1, "Very well then. Do you need a",
-                     "background?", "  yes", "  no") == 0) then
+
+    -- SLF: Hey, I want to add some contributions here. They will be as simple as
+    -- possible and whoever wants to do more can make them actually sound good.
+    bubble(8, "Alright everyone, let me hit all of the major points.");
+    bubble(8, "You eight are interested in helping rid the monsters that sprang up. I don't know where they came from, and I don't know how to get rid of them.");
+    bubble(8, "I want you to go out and discover where they came from. Get rid of them so we can enjoy peace once again. I have two hunches as to where they came from.");
+    if (prompt(8, 2, 1, "Do you want to hear about",
+                        "my theories?", "  yes", "  no") == 0) then
       -- yes
-      while(not done_talking) do
-        player_response = prompt(8, 3, 0, "What do you want to learn about?",
-                                       "  Staff of Xenarum",
-                                       "  Malkaron",
-                                       "  Done");
-        -- Staff of Xenarum
+      while (not done_talking) do
+        player_response = prompt(8, 3, 0, "Which do you want to hear?",
+                                          "  Staff of Xenarum",
+                                          "  Malkaron",
+                                          "  Done");
+
         if (player_response == 0) then
-          bubble(8, "A very long time ago, a great priest appeared at the Xenarum shrine. There he chose three Disciples to follow and learn of a better life. Some say that this priest was the very Adrial the Messiah.");
-          bubble(8, "Taking a non-violent approach to everything, Adrial chose Three Disciples to follow him and spread peace and knowledge around the land. Adrial taught of becoming the best that you can be in the followings of `The God'. The legend suggests that his Three Disciples were jealous of his connection with `The God' and betrayed him.");
-          bubble(8, "This is where you come in. Supposedly one Adrial's Disciples, Chaiman, kept a journal of his voyage. Inside the journal speaks of what actually happened with the miracles and everything. No one has ever seen this journal but word has it that it is kept somewhere in Xenarum. That land is inaccessible except with the Staff of Xenarum, which is the key to the Shifting Mounts.");
-          bubble(8, "Your journey is to find this Staff. Bring it to me; I must see what is in that journal! I am offering to teach any of you the Great Magic in exchange for that Staff.");
-          bubble(8, "You see now why I have chosen only the eight of you; this journey must be as inconspicuous as possible, as the Three Disciples may have minions everywhere. You can travel with anyone you wish, but please stay in groups of no more than two. More than that will draw attention to you, and may put all of us in jeopardy.");
-        -- Malkaron
-        elseif (player_response == 1) then
-          -- explain the whole Maklaron bit
-          thought(8, "Oh great. How will I explain THIS one? (add your own script here)");
-        -- Finished with options
-        elseif (player_response == 2) then
-          done_talking = 1;
-        -- We should never reach this one:
+          -- Staff of Xenarum
+          bubble(8, "I was captured and tortured by Malkaron. He stole my Staff of Xenarum, which I feel holds great power.");
+          bubble(8, "I had learned of the staff from years of study, read about its amazing power, and found it in ancient ruins.");
+          bubble(8, "I never tapped its full potential but know it has been a very powerful tool for good or evil.");
+          bubble(8, "It may be in Malkaron's hands, and he may be controlling the monsters.");
+        elseif (player_repsonse == 1) then
+          -- Malkaron
+          bubble(8, "A corrupt man, Malkaron was a power-hungry nobleman in a frozen country. Because of that, many have dubbed him the Ice Lord.");
+          bubble(8, "15 years ago, he captured me and took my Staff of Xenarum. He mysteriously became very powerful very quickly. I believe it was the staff that gave him such great power.");
+          bubble(8, "Rebels in his army found me and helped me escape. I lost my eyes fleeing and Hunert has stayed with me from that time.");
+          bubble(8, "I cannot help you by going out myself, but I shall be here if you would need me.");
         else
-          bubble(8, "That's not an option, Einstein.");
+          -- We should never reach this one; it is just error-checking:
+          bubble(8, "That's not an option, Einstein!");
         end
       end
-    end
-    bubble(8, "I thank you for your help. Talk to my butler before you leave and he will help you get started on your journey.");
-    set_progress(P_INTRO, 1);
+	end
+
+    bubble(8, "When you are ready to go, talk to Hunert and he will get you started on your journey.");
+    set_progress(P_MANOR, 1);
   end
 end
 
@@ -188,7 +189,7 @@ function zone_handler(zn)
 
   -- In front of exit
   elseif (zn == 6) then
-    if (get_progress(P_INTRO) == 1) then
+    if (get_progress(P_MANOR) == 1) then
       bubble(9, "Hey! Hold on!");
       -- Turn around, see who is yelling
       set_ent_facing(HERO1, 1);
@@ -206,12 +207,8 @@ function zone_handler(zn)
       wait_for_entity(9, 9);
       -- Butler normal speed
       set_ent_speed(9, 3);
-      bubble(9, "Maybe you didn't hear Master",
-                "Nostik when he said that you",
-                "were supposed to see me before",
-                "you left.");
-      bubble(9, "Anyways, Master Nostik asked",
-                "me to give you this.");
+      bubble(9, "You would be a fool to leave without hearing what I have to say.");
+      bubble(9, "First, Nostik gives you this.");
       LOC_talk_butler();
     end
 
@@ -221,6 +218,7 @@ function zone_handler(zn)
   end
 end
 
+
 function entity_handler(en)
   -- You are talking to other party members
   if (en >= 0 and en <= 7) then
@@ -228,93 +226,49 @@ function entity_handler(en)
 
   -- Nostik
   elseif (en == 8) then
-    if (get_progress(P_INTRO) == 0) then
+    if (get_progress(P_MANOR) == 0) then
       bubble(8, "Talk to my butler before you leave and he will help you get started on your journey.");
-    elseif (get_progress(P_INTRO) == 3) then
+    elseif (get_progress(P_MANOR) == 3) then
       bubble(8, "Zzz... zzz... zzz...");
     else
-      bubble(8, "Feel free to look through my books and scrolls. I have made a study about this Disciple's journal and you may learn much.");
+      bubble(8, "You may find a lot of information about the Staff of Xenarum in the books and scrolls in this manor. I have written many of them myself, actually!");
     end
 
   -- Butler Hunert
   elseif (en == 9) then
-    if (get_progress(P_INTRO) == 1) then
-      bubble(9, "Ah yes, Master Nostik asked",
-                "me to give you this.");
+    if (get_progress(P_MANOR) == 1) then
+      bubble(9, "Ah yes, Master Nostik asked me to give you this.");
       LOC_talk_butler();
-    elseif (get_progress(P_INTRO) == 2) then
-      bubble(9, "Good luck.");
-    elseif (get_progress(P_INTRO) >= 3) then
-      bubble(9, "Your friends are here waiting for you. Nostik is asleep upstairs. Don't wake him.");
-      bubble(9, "Who do you want in your party?");
-      -- PH, this is where your script comes in?
+    elseif (get_progress(P_MANOR) == 2) then
+      bubble(9, "Welcome back, $0. Have you spoken with the other members of your group? The abilities they possess may come in useful in your work.");
+    elseif (get_progress(P_MANOR) == 3) then
+      bubble(9, "The others in your group are here. I'm sure if you talk to them, they will join your party.");
+      bubble(9, "Welcome back. Nostik has retired to his room. Please don't wake him.");
     end
-
   end
+
 end
+
 
 function LOC_talk_butler()
   drawmap();
   screen_dump();
   sfx(6);
   msg("You've acquired 200 gp!", 255, 0);
-  set_gp(get_gp()+200);
+  set_gp(get_gp() + 200);
   drawmap();
   screen_dump();
---  bubble(9, "Oh and there is one thing",
---            "that I better warn you about.");
---  bubble(9, "It's nothing major really, but",
---            "this world just happens to be",
---            "full of monsters that will",
---            "constantly attack you.");
---  bubble(HERO1, "Well, that's not so",
---                "weird actually.");
---  bubble(9, "These creatures are not your",
---            "ordinary violent miscreants.");
---  bubble(HERO1, "Are they ever?");
---  bubble(9, "These creatures are the",
---            "manifestations of evil spirits.");
---  bubble(9, "These creatures exist in a realm",
---            "between the world of the living",
---            "and the world of the dead.");
---  bubble(9, "They have no qualms about",
---            "attacking anyone or anything.");
---  bubble(HERO1, "That kind of thing happens",
---                "everywhere. I didn't think",
---                "it would be any different here.");
---  bubble(9, "Yes, but in your world, these",
---            "wandering monsters are real and",
---            "visible... even avoidable. That",
---            "is not the case here.");
---  bubble(HERO1, "Why not?");
---  bubble(9, "Well, like I said, the monsters",
---            "here are spirits. That means",
---            "that you can't see them.");
---  bubble(9, "You will see them once they",
---            "attack you, but then it's",
---            "already too late.");
---  bubble(HERO1, "So, do you mean to say that I",
---                "could be attacked at any time",
---                "without any warning whatsoever?");
---  bubble(9, "Well, not necessarily. For some",
---            "unknown reason, these spirits",
---            "do not enter the towns and",
---            "villages of the land.");
---  bubble(9, "In most other places though,",
---            "these encounters are highly",
---            "probable.");
---  if (get_pidx(0) == AYLA) then
---    bubble(HERO1, "This reward your boss is",
---                  "offering better be a lot",
---                  "more than just handsome.");
---  else
---    bubble(HERO1, "Oh well, I didn't think this",
---                  "would be a walk in the park.");
---  end
---  bubble(9, "Yes, well, you had better be leaving now.");
-  bubble(HERO1, "Certainly, thanks.");
-  set_progress(P_INTRO, 2);
+  bubble(9, "The source of the monsters is a mystery. They appear out of nowhere and may attack randomly.");
+  bubble(HERO1, "You mean they will just go on a wild rampage and start gouging us for no reason?");
+  bubble(9, "Heh heh. That's a good way of putting it. It seems to me that they have no qualms about attacking anyone or anything.");
+  bubble(HERO1, "That will sure make it hard to sleep at night.");
+  bubble(9, "Maybe so. Try sleeping in a town or village inn. Monsters seem to avoid populated places for some reason.");
+  bubble(HERO1, "I wonder why that is?");
+  msg("Hunert shrugs", 255, 0);
+  bubble(HERO1, "Well, thank you for the information.");
+  set_progress(P_MANOR, 2);
 end
+
 
 function LOC_chit_chat(a)
   local b;
@@ -342,5 +296,6 @@ function LOC_chit_chat(a)
   -- This causes some glitches that we are going to have to fix; it is perfect
   -- here because everyone is conveniently located right here.  Now I need
   -- to fix it so it properly handles multiple party members.
-  add_chr(b);
+-- SLF remove:
+--  add_chr(b);
 end
