@@ -1599,7 +1599,7 @@ void show_help (void)
       "C  . . . . . . . . . View Layers 1-3 + S/E Attributes",
       "",
       "G  . . . . . . . . . . . . . . . . . . . .  Grab Tile",
-      "L  . . . . . . . . . . . . . . . . . . . . Last Layer",
+      "L  . . . . . . . . . . . . . . . . . . . .  Last Zone",
       "",
       "F11  . . . . . . . . . . . . . . . . . .  Entity Mode",
       "O  . . . . . . . . . . . . . . . . . .  Obstacle Mode",
