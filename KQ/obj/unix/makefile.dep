@@ -36,8 +36,7 @@ obj/unix/hskill.o: src/hskill.c \
  include/selector.h include/itemmenu.h include/draw.h include/combat.h \
  include/magic.h include/heroc.h include/setup.h include/res.h \
  include/progress.h
-obj/unix/intrface.o: src/intrface.c \
- d:/compiler/unix/include/lua.h include/intrface.h include/setup.h \
+obj/unix/intrface.o: src/intrface.c include/intrface.h include/setup.h \
  include/effects.h include/draw.h include/kq.h include/entity.h \
  include/combat.h include/heroc.h include/menu.h include/enemyc.h \
  include/magic.h include/sgame.h include/itemmenu.h include/masmenu.h \
