@@ -79,7 +79,7 @@ function postexec()
                 "Largon. He wants me to go",
                 "and investigate some matter",
                 "regarding a magical staff.");
-  set_mtile(37,19,0);
+  set_ftile(37,19,0);
   set_ent_script(HERO1,"F0W10");
   wait_for_entity(HERO1,HERO1);
   thought(HERO1,"I don't like the sound of this",
@@ -137,7 +137,7 @@ function postexec()
                 "a public notice.","");
   bubble(HERO1,"Wait a minute!","","","");
   bubble(HERO1,"Magical staff!","","","");
-  thought(HERO1,"I could definetely use that.","","","");
+  thought(HERO1,"I could definitely use that.","","","");
   thought(HERO1,"Looks like I'm going to",
                 "Reisha Mountain.","","");
   set_ent_speed(0,5);
@@ -180,7 +180,7 @@ function postexec()
   set_ent_speed(HERO1,4);
   set_ent_script(HERO1,"U6R2F3W50");
   wait_for_entity(HERO1,HERO1);
-  set_mtile(100,4,312);
+  set_ftile(100,4,312);
   wait(50);
   thought(HERO1,"This is so perfect.","","","");
   thought(HERO1,"Just as my luck starts running",
