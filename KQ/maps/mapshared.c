@@ -148,7 +148,6 @@ void load_map (const char *filename)
 
    strcpy (map_fname, load_fname);
    load_s_map (&gmap, pf);
-
    for (i = 0; i < 50; ++i)
       load_s_entity (gent + i, pf);
 

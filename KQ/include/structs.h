@@ -27,7 +27,28 @@
 
 #ifndef __STRUCTS_H__
 #define __STRUCTS_H__
-/*! \brief Map definition */
+/*! \brief Position marker
+ *
+ * A marker is a named position on the map.
+ * These are set up in the mapeditor and accessed via scripts.
+ * They are to make it easier to pinpoint locations in the maps,
+ * for example, the locations that doors lead to.
+ * \author PH
+ * \date 20050126
+ */
+
+typedef struct
+{
+   char name[32];               /*!< The name of this marker */
+   short x;                     /*! <The X position it refers to */
+   short y;                     /*! <The Y position it refers to */
+} s_marker;
+
+/*! \brief Map definition 
+ *
+ * This is the structure of each map on disk
+ * \note 20050126 PH add extensions for markers (rev1 map)
+ */
 typedef struct
 {
    signed char map_no;          /*!< Map identifier */
@@ -46,10 +67,12 @@ typedef struct
    int sty;                     /*!< Default start y-coord */
    int warpx;                   /*!< x-coord where warp spell takes you to (see special_spells()) */
    int warpy;                   /*!< y-coord where warp spell takes you to (see special_spells()) */
-   int extra_sdword1;           /*!< Not used */
+   int revision;                /*!< Internal revision number for the map file */
    int extra_sdword2;           /*!< Not used */
    char song_file[16];          /*!< Base file name for map song */
    char map_desc[40];           /*!< Map name (shown when map first appears) */
+   short num_markers;           /*!< How many markers defined on the map */
+   s_marker *markers;           /*!< Pointer to the array markers */
 }
 s_map;
 

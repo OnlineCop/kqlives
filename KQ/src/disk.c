@@ -29,8 +29,12 @@
 
 #include "disk.h"
 
+static int load_s_marker (s_marker *, PACKFILE *);
+static int save_s_marker (const s_marker *, PACKFILE *);
+
 int load_s_map (s_map * sm, PACKFILE * f)
 {
+   int i;
    sm->map_no = pack_getc (f);
    sm->zero_zone = pack_getc (f);
    sm->map_mode = pack_getc (f);
@@ -47,10 +51,20 @@ int load_s_map (s_map * sm, PACKFILE * f)
    sm->sty = pack_igetl (f);
    sm->warpx = pack_igetl (f);
    sm->warpy = pack_igetl (f);
-   sm->extra_sdword1 = pack_igetl (f);
+   sm->revision = pack_igetl (f);
    sm->extra_sdword2 = pack_igetl (f);
    pack_fread (sm->song_file, sizeof (sm->song_file), f);
    pack_fread (sm->map_desc, sizeof (sm->map_desc), f);
+   if (sm->revision == 1) {
+      /* Markers stuff */
+      sm->num_markers = pack_igetw (f);
+      sm->markers = realloc (sm->markers, sm->num_markers * sizeof (s_marker));
+      for (i = 0; i < sm->num_markers; ++i) {
+         load_s_marker (&sm->markers[i], f);
+      }
+   } else {
+      sm->num_markers = 0;
+   }
    return 0;
 }
 
@@ -58,6 +72,7 @@ int load_s_map (s_map * sm, PACKFILE * f)
 
 int save_s_map (s_map * sm, PACKFILE * f)
 {
+   int i;
    pack_putc (sm->map_no, f);
    pack_putc (sm->zero_zone, f);
    pack_putc (sm->map_mode, f);
@@ -74,10 +89,16 @@ int save_s_map (s_map * sm, PACKFILE * f)
    pack_iputl (sm->sty, f);
    pack_iputl (sm->warpx, f);
    pack_iputl (sm->warpy, f);
-   pack_iputl (sm->extra_sdword1, f);
+   pack_iputl (1, f);           /* Revision 1 */
    pack_iputl (sm->extra_sdword2, f);
    pack_fwrite (sm->song_file, sizeof (sm->song_file), f);
    pack_fwrite (sm->map_desc, sizeof (sm->map_desc), f);
+
+   /* Markers stuff */
+   pack_iputw (sm->num_markers, f);
+   for (i = 0; i < sm->num_markers; ++i) {
+      save_s_marker (&sm->markers[i], f);
+   }
    return 0;
 }
 
@@ -252,5 +273,21 @@ int save_s_tileset (s_tileset * s, PACKFILE * f)
       pack_iputw (s->tanim[i].end, f);
       pack_iputw (s->tanim[i].delay, f);
    }
+   return 0;
+}
+
+int load_s_marker (s_marker * m, PACKFILE * f)
+{
+   pack_fread (m->name, sizeof (m->name), f);
+   m->x = pack_igetw (f);
+   m->y = pack_igetw (f);
+   return 0;
+}
+
+int save_s_marker (const s_marker * m, PACKFILE * f)
+{
+   pack_fwrite (m->name, sizeof (m->name), f);
+   pack_iputw (m->x, f);
+   pack_iputw (m->y, f);
    return 0;
 }

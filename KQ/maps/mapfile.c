@@ -309,11 +309,12 @@ void new_map (void)
    gmap.sty = 0;
    gmap.warpx = 0;
    gmap.warpy = 0;
-   gmap.extra_sdword1 = 0;
+   gmap.revision = 1;
    gmap.extra_sdword2 = 0;
    gmap.song_file[0] = 0;
    gmap.map_desc[0] = 0;
-
+   gmap.num_markers = 0;
+   gmap.markers = NULL;
    bufferize ();
    update_tileset ();
    init_entities ();

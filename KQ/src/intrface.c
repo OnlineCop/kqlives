@@ -747,6 +747,32 @@ static int KQ_char_getter (lua_State * L)
 }
 
 
+/*! \brief Initialise marker support 
+ *
+ * Add a table containing all the markers
+ * \author PH
+ * \date 20050130
+ */
+static void init_markers (lua_State * L)
+{
+   int i;
+   s_marker *m;
+   lua_newtable (L);
+   for (i = 0; i < g_map.num_markers; ++i) {
+      m = &g_map.markers[i];
+      lua_pushstring (L, m->name);
+      lua_newtable (L);
+      lua_pushstring (L, "x");
+      lua_pushnumber (L, m->x);
+      lua_rawset (L, -3);
+      lua_pushstring (L, "y");
+      lua_pushnumber (L, m->y);
+      lua_rawset (L, -3);
+      lua_rawset (L, -3);
+   }
+   lua_setglobal (L, "markers");
+}
+
 /*! \brief Initialise the object interface for heroes and entities
  *
  * This registers a new tag type for the heroes and adds the gettable method
@@ -3054,6 +3080,7 @@ void do_luainit (char *fname)
       ++rg;
    }
    init_obj (theL);
+   init_markers (theL);
    oldtop = lua_gettop (theL);
    if (lua_dofile (theL, kqres (SCRIPT_DIR, "global.lob")) != 0) {
       sprintf (strbuf, "Could not open script: global.lob");

@@ -289,8 +289,7 @@ void check_layers ()
             i = (j * gmap1.xsize + k);
             if ((unsigned short) b_map1[i] != (unsigned short) b_map2[i]) {
                sprintf (strbuf, "[(%d, %d) %d/%d]", k, j,
-                        (unsigned short) b_map1[i],
-                        (unsigned short) b_map2[i]);
+                        (unsigned short) b_map1[i], (unsigned short) b_map2[i]);
                if (strlen (strbuf) < 16)
                   fprintf (stdout, "%s\t\t", strbuf);
                else
@@ -317,8 +316,7 @@ void check_layers ()
             i = (j * gmap1.xsize + k);
             if ((unsigned short) f_map1[i] != (unsigned short) f_map2[i]) {
                sprintf (strbuf, "[(%d, %d) %d/%d]", k, j,
-                        (unsigned short) f_map1[i],
-                        (unsigned short) f_map2[i]);
+                        (unsigned short) f_map1[i], (unsigned short) f_map2[i]);
                if (strlen (strbuf) < 16)
                   fprintf (stdout, "%s\t\t", strbuf);
                else
@@ -442,7 +440,7 @@ void check_map (void)
    int i;
    int _map_no, _zero_zone, _map_mode, _can_save, _tileset, _use_sstone,
       _can_warp, _extra_byte, _xsize, _ysize, _pmult, _pdiv, _stx, _sty,
-      _warpx, _warpy, _extra_sdword1, _extra_sdword2, _song_file, _map_desc;
+      _warpx, _warpy, _revision, _extra_sdword2, _song_file, _map_desc;
 
    _map_no = gmap1.map_no != gmap2.map_no ? 1 : 0;
    _zero_zone = gmap1.zero_zone != gmap2.zero_zone ? 1 : 0;
@@ -460,7 +458,7 @@ void check_map (void)
    _sty = gmap1.sty != gmap2.sty ? 1 : 0;
    _warpx = gmap1.warpx != gmap2.warpx ? 1 : 0;
    _warpy = gmap1.warpy != gmap2.warpy ? 1 : 0;
-   _extra_sdword1 = gmap1.extra_sdword1 != gmap2.extra_sdword1 ? 1 : 0;
+   _revision = gmap1.revision != gmap2.revision ? 1 : 0;
    _extra_sdword2 = gmap1.extra_sdword2 != gmap2.extra_sdword2 ? 1 : 0;
 
    _song_file = 0;
@@ -482,7 +480,7 @@ void check_map (void)
    if ((_map_no) || (_zero_zone) || (_map_mode) || (_can_save) || (_tileset)
        || (_use_sstone) || (_can_warp) || (_extra_byte) || (_xsize) || (_ysize)
        || (_pmult) || (_pdiv) || (_stx) || (_sty) || (_warpx) || (_warpy)
-       || (_extra_sdword1) || (_extra_sdword2) || (_song_file)
+       || (_revision) || (_extra_sdword2) || (_song_file)
        || (_map_desc)) {
       fprintf (stdout,
                "\nStructure:\tmap 1:\t\tmap 2:\n======================================\n");
@@ -528,9 +526,8 @@ void check_map (void)
       fprintf (stdout, "  warpx:      \t%d\t\t%d\n", gmap1.warpx, gmap2.warpx);
    if (_warpy)
       fprintf (stdout, "  warpy:      \t%d\t\t%d\n", gmap1.warpy, gmap2.warpy);
-   if (_extra_sdword1)
-      fprintf (stdout, "  extra_sdword1:%d\t\t%d\n", gmap1.extra_sdword1,
-               gmap2.extra_sdword1);
+   if (_revision)
+      fprintf (stdout, "  revision:%d\t\t%d\n", gmap1.revision, gmap2.revision);
    if (_extra_sdword2)
       fprintf (stdout, "  extra_sdword2:%d\t\t%d\n", gmap1.extra_sdword2,
                gmap2.extra_sdword2);

@@ -17,6 +17,7 @@
 #define MAX_ZONES     256
 #define MAX_SHADOWS    12
 #define MAX_OBSTACLES   5
+#define MAX_MARKERS   256
 #define SW            640
 #define SH            480
 #define WBUILD          1
@@ -35,6 +36,7 @@
 #define BLOCK_COPY    128       /* Mode to start copying an area */
 #define BLOCK_PASTE   256       /* Mode to paste the copied area */
 #define MAP_PREVIEW   512       /* Draw a proper preview with layer ordering and parallax */
+#define MAP_MARKERS  1024       /* Markers mode */
 
 #define ICONSET_SIZE   20       /* Number of icons shown in the icon map */
 
@@ -49,6 +51,7 @@
 typedef struct
 {
    int entities, shadows, obstacles, zones;
+   int markers;
    int last_layer;              /* Tracks last-used layer */
 }
 s_show;
@@ -132,7 +135,8 @@ void set_pcx (BITMAP **, const char *, PALETTE, const int);
 void visual_map (const char *);
 
 
-extern BITMAP *double_buffer, *pcx_buffer, *icons[MAX_TILES], *eframes[MAX_EPICS][12];
+extern BITMAP *double_buffer, *pcx_buffer, *icons[MAX_TILES],
+   *eframes[MAX_EPICS][12];
 extern BITMAP *font6, *mesh;
 extern PALETTE pal;
 

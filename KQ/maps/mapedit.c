@@ -108,6 +108,12 @@ unsigned short tilex[MAX_TILES];
 const int htiles = (SW - 80) / 16;
 const int vtiles = (SH - 48) / 16;
 
+/*! Markers in use in this map */
+s_marker markers[MAX_MARKERS];
+short num_markers;
+BITMAP *marker_image;
+int curmarker;
+void add_change_marker (int x, int y, int b);
 
 /* Welcome to Mapdraw, folks! */
 int main (int argc, char *argv[])
@@ -127,6 +133,15 @@ int main (int argc, char *argv[])
          if (gent[i].active == 1)
             number_of_ents = i + 1;
       }
+      if (gmap.revision == 1) {
+         /* copy out the markers */
+         memcpy (markers, gmap.markers,
+                 (num_markers = gmap.num_markers) * sizeof (s_marker));
+         curmarker = 0;
+      } else {
+         num_markers = 0;
+      }
+
    }
 
    while (!main_stop) {
@@ -682,6 +697,7 @@ void draw_map (void)
          case MAP_ENTITIES:
          case MAP_SHADOWS:
          case MAP_OBSTACLES:
+         case MAP_MARKERS:
          case MAP_ZONES:
             if (showing.last_layer & MAP_LAYER1)
                drawlayer1 = 1;
@@ -810,7 +826,20 @@ void draw_map (void)
          }
       }                         /* for (dx) */
    }                            /* for (dy) */
+   /* Draw the Markers */
+   if (showing.markers == 1) {
+      for (i = 0; i < num_markers; ++i) {
+         if ((markers[i].x >= window_x) && (markers[i].x < window_x + htiles)
+             && (markers[i].y >= window_y)
+             && (markers[i].y < window_y + vtiles)) {
+            draw_sprite (double_buffer, marker_image,
+                         (markers[i].x - window_x) * 16 + 8,
+                         (markers[i].y - window_y) * 16 - 8);
+         }                      /* If marker is visible */
+      }                         /* For each marker */
+   }
 
+   /* If showing markers */
    /* Draw the Entities */
    if (showing.entities == 1) {
       for (i = 0; i < number_of_ents; i++) {
@@ -867,10 +896,10 @@ void draw_menubars (void)
    int draw_mode_display, draw_mode_last;
 
    /* Description for the current draw_mode (could use work) */
-   char dt[14][12] = { "Layer1", "Layer2", "Layer3",
+   char dt[][12] = { "Layer1", "Layer2", "Layer3",
       "View L1+2", "View L1+3", "View L2+3", "View L1+2+3",
       "Shadows", "Zones", "Obstacles", "Entities",
-      "Block Copy", "Block Paste", "Preview"
+      "Block Copy", "Block Paste", "Preview", "Markers",
    };
 
    /* Determine the views that we're currently using */
@@ -918,6 +947,9 @@ void draw_menubars (void)
       break;
    case MAP_PREVIEW:
       draw_mode_display = 13;
+      break;
+   case MAP_MARKERS:
+      draw_mode_display = 14;
       break;
    default:
       draw_mode_display = 0;
@@ -1082,8 +1114,7 @@ void draw_menubars (void)
             /* This loops the first 20 icons around when you're at the end of
              * the icon_set
              */
-            blit (icons[p], double_buffer, 0, 0, (SW - 40), p * 16 + 1, 16,
-                  16);
+            blit (icons[p], double_buffer, 0, 0, (SW - 40), p * 16 + 1, 16, 16);
             blit (icons[ICONSET_SIZE / 2 + p], double_buffer, 0, 0, (SW - 24),
                   p * 16 + 1, 16, 16);
          }                      // if..else ()
@@ -1206,7 +1237,11 @@ void draw_menubars (void)
          print_sfont ((COLUMN_WIDTH * 4), (SH - 40), strbuf, double_buffer);
       }
    }
-
+   if (draw_mode == MAP_MARKERS) {
+      /* draw the currently selected marker */
+      print_sfont ((COLUMN_WIDTH * 4) + 24, (SH - 16), markers[curmarker].name,
+                   double_buffer);
+   }
    if (draw_mode >= MAP_OBSTACLES && draw_mode <= MAP_ZONES) {
       if (highlight)
          sprintf (strbuf, "Highlight: ON");
@@ -1984,6 +2019,27 @@ void process_keyboard (const int k)
       /* Clear the contents of the current map */
       wipe_map ();
       break;
+   case KEY_M:
+      /* Show markers or not */
+      if (showing.markers == 1) {
+         if (draw_mode == MAP_MARKERS) {
+            draw_mode = showing.last_layer;
+            showing.markers = 0;
+         } else {
+            if (draw_mode == MAP_PREVIEW)
+               showing.last_layer = MAP_LAYER123;
+            draw_mode = MAP_MARKERS;
+         }
+      } else {
+         if (draw_mode < MAP_ENTITIES)
+            showing.last_layer = draw_mode;
+         else if (draw_mode == MAP_PREVIEW)
+            showing.last_layer = MAP_LAYER123;
+         showing.markers = 1;
+         draw_mode = MAP_MARKERS;
+      }
+      grab_tile = 0;
+      break;
    case (KEY_Z):
       /* Toggle whether zones should be shown or turned off */
       if (showing.zones == 1) {
@@ -2017,10 +2073,24 @@ void process_keyboard (const int k)
    case (KEY_F2):
       /* Load a map */
       prompt_load_map ();
+      if (gmap.revision == 1) {
+         /* copy out the markers */
+         memcpy (markers, gmap.markers,
+                 (num_markers = gmap.num_markers) * sizeof (s_marker));
+         curmarker = 0;
+      } else {
+         num_markers = 0;
+      }
+
       grab_tile = 0;
       break;
    case (KEY_F3):
       /* Save the map you are working on */
+
+      /* Copy the markers back in */
+      gmap.markers = realloc (gmap.markers, num_markers * sizeof (s_marker));
+      memcpy (gmap.markers, markers, num_markers * sizeof (s_marker));
+      gmap.num_markers = num_markers;
       save_map ();
       break;
    case (KEY_F4):
@@ -2113,6 +2183,17 @@ void process_keyboard (const int k)
          if (curzone < 0)
             curzone = MAX_ZONES - 1;
          break;
+         /* Page through the markers on the map */
+      case MAP_MARKERS:
+         if (num_markers > 0) {
+            curmarker--;
+            if (curmarker < 0)
+               curmarker = num_markers - 1;
+         }
+         window_x = markers[curmarker].x - htiles / 2;
+         window_y = markers[curmarker].y - vtiles / 2;
+         normalize_view ();
+         break;
          /* Change the iconset's "page" */
       default:
          icon_set--;
@@ -2148,6 +2229,17 @@ void process_keyboard (const int k)
          curzone++;
          if (curzone >= MAX_ZONES)
             curzone = 0;
+         break;
+         /* Page through the markers on the map */
+      case MAP_MARKERS:
+         if (num_markers > 0) {
+            curmarker++;
+            if (curmarker >= num_markers)
+               curmarker = 0;
+         }
+         window_x = markers[curmarker].x - htiles / 2;
+         window_y = markers[curmarker].y - vtiles / 2;
+         normalize_view ();
          break;
       default:
          /* Change the iconset's "page" */
@@ -2562,8 +2654,7 @@ void process_mouse (const int mouse_button)
             break;
          case (MAP_ENTITIES):
             /* Draw to Entity layer */
-            place_entity ((mouse_x / 16) + window_x,
-                          (mouse_y / 16) + window_y);
+            place_entity ((mouse_x / 16) + window_x, (mouse_y / 16) + window_y);
             break;
          case (MAP_OBSTACLES):
             /* Draw to Obstacle layer */
@@ -2576,6 +2667,13 @@ void process_mouse (const int mouse_button)
          case (MAP_ZONES):
             /* Draw to Zone layer */
             z_map[((window_y + y) * gmap.xsize) + window_x + x] = curzone;
+            break;
+         case MAP_MARKERS:
+            /* Add or change a marker */
+            add_change_marker (x + window_x, y + window_y, 1);
+            /* This isn't ideal, but just wait for the button to be released */
+            while (mouse_b)
+               yield_timeslice ();
             break;
          default:
             break;
@@ -2637,6 +2735,10 @@ void process_mouse (const int mouse_button)
          case (MAP_ZONES):
             /* Remove a Zone */
             z_map[((window_y + y) * gmap.xsize) + window_x + x] = 0;
+            break;
+         case MAP_MARKERS:
+            /* Remove a marker */
+            add_change_marker (x + window_x, y + window_y, 2);
             break;
          default:
             break;
@@ -2725,7 +2827,8 @@ void read_controls (void)
          get_tile ();
       } else {
          /* Draw to the map */
-         if (draw_mode >= MAP_LAYER1 && draw_mode <= MAP_ZONES)
+         if ((draw_mode >= MAP_LAYER1 && draw_mode <= MAP_ZONES)
+             || (draw_mode == MAP_MARKERS))
             dmode = 1;
 
          /* Ensures that the user doesn't draw outside the map's height/width */
@@ -2750,7 +2853,8 @@ void read_controls (void)
          get_tile ();
       } else {
          /* Draw to the map */
-         if (draw_mode >= MAP_LAYER1 && draw_mode <= MAP_ZONES)
+         if ((draw_mode >= MAP_LAYER1 && draw_mode <= MAP_ZONES)
+             || (draw_mode == MAP_MARKERS))
             dmode = 1;
 
          /* Ensures that the user doesn't draw outside the map's height/width */
@@ -2977,7 +3081,7 @@ void show_help (void)
       "4  . . . . . . . . . . . .  View Layers 1+2  E  . . . . . . . . . . . . . .  Entity Mode",
       "5  . . . . . . . . . . . .  View Layers 1+3  F12  . . . . . . . . . . Modify Entity Mode",
       "6  . . . . . . . . . . . .  View Layers 2+3  D  . . . . . . . . . . .  Displace Entities",
-      "7  . . . . . . . . . . .  View Layers 1+2+3",
+      "7  . . . . . . . . . . .  View Layers 1+2+3  M  . . . . . . . . . . . . . .  Marker Mode",
       "A  . . . . . . View all Layers + Attributes  T  . . . . . . . . . . . .  Block Copy Mode",
       "C  . . . . . Show map preview (w/ parallax)  P  . . . . . . . . . . . . Block Paste Mode",
       "                                             ESC  . . . . . . . . . .  Cancel Block Copy",
@@ -3036,7 +3140,7 @@ void startup (void)
    COLOR_MAP cmap;
 
    /* Used for highlighting */
-   unsigned char hilite[] = {
+   static unsigned char hilite[] = {
       00, 00, 00, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 00, 00, 00,
       00, 00, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 00, 00,
       00, 25, 25, 25, 45, 45, 45, 45, 45, 45, 45, 45, 25, 25, 25, 00,
@@ -3098,6 +3202,13 @@ void startup (void)
       icons[k] = create_bitmap (16, 16);
       clear (icons[k]);
    }
+
+   /* Create the marker image */
+   marker_image = create_bitmap (16, 16);
+   clear_bitmap (marker_image);
+   vline (marker_image, 0, 0, 16, makecol (255, 255, 255));
+   vline (marker_image, 1, 0, 16, makecol (192, 192, 192));
+   rectfill (marker_image, 2, 0, 10, 8, makecol (255, 0, 0));
 
    set_pcx (&pcx_buffer, icon_files[gmap.tileset], pal, 1);
    max_sets = (pcx_buffer->h / 16);
@@ -3283,3 +3394,47 @@ int yninput (void)
    blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
    return done - 1;
 }                               /* yninput () */
+
+/* Action handler for clicking in marker mode button b; */
+void add_change_marker (int x, int y, int b)
+{
+   s_marker *m;
+   s_marker *found = NULL;
+   /* Does a marker exist here? */
+   for (m = markers; m < markers + num_markers; ++m) {
+      if (m->x == x && m->y == y) {
+         found = m;
+         break;
+      }
+   }
+   if (found) {
+      /* There is a marker here */
+      if (b == 1) {
+         /* Rename it */
+         rect (screen, x * 16 - 2, y * 16 + 5, x * 16 + 8 * 32 + 1, y * 16 + 25,
+               makecol (255, 255, 255));
+         rectfill (screen, x * 16 - 1, y * 16 + 6, x * 16 + 8 * 32, y * 16 + 24,
+                   makecol (0, 0, 0));
+         print_sfont (x * 16, y * 16 + 8, found->name, screen);
+         print_sfont (x * 16, y * 16 + 16, ">", screen);
+         if ((get_line (x * 16 + 8, y * 16 + 16, strbuf, 31) != 0)
+             && (strbuf[0] != '\0'))
+            strcpy (found->name, strbuf);
+      } else if (b == 2) {
+         /* delete it  and shuffle up */
+         --num_markers;
+         memcpy (found, found + 1,
+                 (&markers[num_markers] - found) * sizeof (s_marker));
+      }
+   } else {
+      if (b == 1) {
+         /* Add a marker with default name */
+         if (num_markers < MAX_MARKERS) {
+            m = &markers[num_markers++];
+            m->x = x;
+            m->y = y;
+            sprintf (m->name, "%d_%d", x, y);
+         }
+      }
+   }
+}
