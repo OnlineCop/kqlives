@@ -132,6 +132,7 @@ void update_tileset (void);
 void show_help (void);
 int check_last_zone (void);
 void get_tile (void);
+void visual_map (void);
 
 extern unsigned short *map, *b_map, *f_map, *c_map, *cf_map, *cb_map;
 extern unsigned char *z_map, *cz_map, *s_map, *cs_map, *o_map, *co_map;
