@@ -451,7 +451,7 @@ extern s_anim tanim[6][MAX_ANIM];
 extern s_anim adata[MAX_ANIM];
 extern int noe, pidx[MAXCHRS], numchrs, gp, xofs, yofs, gsvol, gmvol;
 extern unsigned char autoparty, alldead, is_sound, deadeffect,
-   vfollow, use_sstone;
+   vfollow, use_sstone, sound_avail;
 extern unsigned char kq_version, hold_fade, cansave, skip_intro, wait_retrace,
    windowed, stretch_view;
 extern unsigned short tilex[MAX_TILES], adelay[MAX_ANIM];

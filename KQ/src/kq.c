@@ -167,8 +167,8 @@ int gsvol = 250, gmvol = 250;
 unsigned char autoparty = 0;
 /*! Are all heroes dead? */
 unsigned char alldead = 0;
-/*! Is sound activated? */
-unsigned char is_sound = 1;
+/*! Is sound activated/available? */
+unsigned char is_sound = 1, sound_avail;
 /*! Makes is_active() return TRUE even if the character is dead */
 unsigned char deadeffect = 0;
 /*! Does the viewport follow the characters?*/
@@ -1162,6 +1162,10 @@ static void startup (void)
    allocate_stuff ();
    install_keyboard ();
    install_timer ();
+   /* KQ uses digi sound but it doesn't use MIDI */
+   //   reserve_voices (8, 0);
+   sound_avail=install_sound (DIGI_AUTODETECT, MIDI_NONE, NULL)<0 ? 0:1;
+   if (!sound_avail) TRACE("Error with sound: %s\n", allegro_error);
    parse_setup ();
    sound_init ();
    set_graphics_mode ();
