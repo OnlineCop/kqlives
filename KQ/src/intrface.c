@@ -1274,7 +1274,6 @@ static int KQ_get_party_res (lua_State * L)
  * \param   L::1 Which person's res to set
  * \param   L::2 Which res to set
  * \param   L::3 Value to set to res
- * \returns 0 when done
  */
 static int KQ_set_party_res (lua_State * L)
 {
@@ -1317,7 +1316,6 @@ static int KQ_set_ent_chrx (lua_State * L)
  * \param   L::1 entity to set
  * \param   L::2 x-coord (tile) to go to
  * \param   L::3 y-coord
- * \returns Nothing
  */
 static int KQ_set_ent_target (lua_State * L)
 {
@@ -2362,11 +2360,21 @@ static int KQ_give_item (lua_State * L)
 }
 
 
-
+/*! \brief Warp to another part of the map
+ *
+ * Move the heroes to another part of the map, in
+ * one 'jump' (e.g when going through a door)
+ * \param L::1 x-coord to go to
+ * \param L::2 y-coord to go to
+ * \param L::3 speed of the transition, defaults to '8'
+ * \author JB
+ * \date ???
+ * \date 20040731 PH Added default for speed
+ */
 static int KQ_warp (lua_State * L)
 {
-   warp ((int) lua_tonumber (L, 1), (int) lua_tonumber (L, 2),
-         (int) lua_tonumber (L, 3));
+   int warpspeed = lua_isnil (L, 3) ? 8 : (int) lua_tonumber (L, 3);
+   warp ((int) lua_tonumber (L, 1), (int) lua_tonumber (L, 2), warpspeed);
    return 0;
 }
 
