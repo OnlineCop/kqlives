@@ -22,48 +22,63 @@
  */
 void displace_entities (void)
 {
-   int ld, nx, ny, a;
+   int response, displace_x, displace_y, a;
 
    /* Draw a box and ask for x-coord adjustment */
-   rectfill (screen, 0, 0, 319, 29, 0);
-   rect (screen, 2, 2, 317, 27, 255);
-   print_sfont (6, 6, "Displace entities", screen);
-   print_sfont (6, 18, "X adjust: ", screen);
-   ld = get_line (66, 18, strbuf, 4);
+   make_rect (double_buffer, 3, 17);
+   print_sfont (6, 6, "Displace entities", double_buffer);
+   print_sfont (6, 12, "X adjust: ", double_buffer);
 
-   /* Make sure the line isn't blank */
-   if (ld == 0)
+   blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+   response = get_line (66, 12, strbuf, 4);
+
+   /* If the user hits ESC, break out of the function entirely */
+   if (response == 0)
       return;
 
-   /* This number CAN be negative! */
-   nx = atoi (strbuf);
+   /* This number CAN be negative OR blank! */
+   displace_x = atoi (strbuf);
+
+   /* This is incase we need to redraw the map, the information will still be
+    * visible to the user
+    */
+   sprintf (strbuf, "X adjust: %d", displace_x);
+   print_sfont (6, 12, strbuf, double_buffer);
 
    /* Clear the box and ask for y-coord adjustment */
-   rectfill (screen, 0, 0, 319, 29, 0);
-   rect (screen, 2, 2, 317, 27, 255);
-   print_sfont (6, 6, "Displace entities", screen);
-   print_sfont (6, 18, "Y adjust: ", screen);
-   ld = get_line (66, 18, strbuf, 4);
+   print_sfont (6, 18, "Y adjust: ", double_buffer);
 
-   /* Make sure the line isn't blank */
-   if (ld == 0)
+   blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+   response = get_line (66, 18, strbuf, 4);
+
+   /* If the user hits ESC, break out of the function entirely */
+   if (response == 0)
       return;
 
-   /* This number CAN be negative! */
-   ny = atoi (strbuf);
+   /* This number CAN be negative OR blank! */
+   displace_y = atoi (strbuf);
 
    /* This moves all the entities */
    for (a = 0; a < number_of_ents; a++) {
       /* Confirm that the input x-coords are within the map */
-      if (gent[a].tilex + nx < gmap.xsize && gent[a].tilex + nx >= 0) {
-         gent[a].tilex += nx;
-         gent[a].x = gent[a].tilex * 16;
-      }
-      /* Confirm that the input x-coords are within the map */
-      if (gent[a].tiley + ny < gmap.ysize && gent[a].tiley + ny >= 0) {
-         gent[a].tiley += ny;
-         gent[a].y = gent[a].tiley * 16;
-      }
+      if (gent[a].tilex + displace_x >= gmap.xsize)
+         gent[a].tilex = gmap.xsize - 1;
+      else if (gent[a].tilex + displace_x < 0)
+         gent[a].tilex = 0;
+      else
+         gent[a].tilex += displace_x;
+
+      gent[a].x = gent[a].tilex * 16;
+
+      /* Confirm that the input y-coords are within the map */
+      if (gent[a].tiley + displace_y >= gmap.ysize)
+         gent[a].tiley = gmap.ysize - 1;
+      else if (gent[a].tiley + displace_y < 0)
+         gent[a].tiley = 0;
+      else
+         gent[a].tiley += displace_y;
+
+      gent[a].y = gent[a].tiley * 16;
    }
 }                               /* displace_entities () */
 
@@ -77,7 +92,14 @@ void displace_entities (void)
  */
 void draw_entdata (const int ent_index)
 {
-   int a, ent_x, ent_y;
+   int ent_x, ent_y;
+   char *dir_facing[4] = { "S", "N", "W", "E" };
+   char *ent_movemode[4] =
+      { "stand (0)", "wander (1)", "script (2)", "chase (3)" };
+   char *ent_atype[2] = { "normal", "constant" };
+   char *ent_obsmode[2] = { "ignore obstructions", "obstructive" };
+   char *ent_transl[2] = { "opaque", "translucent" };
+   char *do_dont[2] = { "", "don't " };
 
    /* Move the window so the user can see the selected entity and make sure
       the view isn't out of the boundaries */
@@ -100,93 +122,38 @@ void draw_entdata (const int ent_index)
    sprintf (strbuf, "Current: %d", ent_index);
    print_sfont (SW - 78, 6, strbuf, double_buffer);
 
-   /* Print all the options in the bottom menu */
-   sprintf (strbuf, "1 - change entity sprite (%d)", gent[ent_index].chrx);
-   print_sfont (160, SH - 46, strbuf, double_buffer);
-
-   switch (gent[ent_index].facing) {
-   case 0:
-      sprintf (strbuf, "S");
-      break;
-   case 1:
-      sprintf (strbuf, "N");
-      break;
-   case 2:
-      sprintf (strbuf, "W");
-      break;
-   case 3:
-      sprintf (strbuf, "E");
-      break;
-   }
-   sprintf (strbuf, "8 - direction facing (%s)", strbuf);
-   print_sfont (160, SH - 40, strbuf, double_buffer);
-
-#if 0
-   /* Display the direction facing: makes more sense that just "1" or "3" */
-   if (gent[ent_index].facing == 0)
-      print_sfont (160, SH - 40, "8 - direction facing (S)", double_buffer);
-   if (gent[ent_index].facing == 1)
-      print_sfont (160, SH - 40, "8 - direction facing (N)", double_buffer);
-   if (gent[ent_index].facing == 2)
-      print_sfont (160, SH - 40, "8 - direction facing (W)", double_buffer);
-   if (gent[ent_index].facing == 3)
-      print_sfont (160, SH - 40, "8 - direction facing (E)", double_buffer);
-#endif
-
-   if (gent[ent_index].obsmode == 0)
-      strcpy (strbuf, "7 - ignore obstructions");
-   else
-      strcpy (strbuf, "7 - obstructive");
-   print_sfont (160, SH - 34, strbuf, double_buffer);
-   sprintf (strbuf, "x = %d", gent[ent_index].tilex);
-   print_sfont (24, SH - 46, strbuf, double_buffer);
-   sprintf (strbuf, "y = %d", gent[ent_index].tiley);
-   print_sfont (24, SH - 40, strbuf, double_buffer);
-   switch (gent[ent_index].movemode) {
-   case 0:
-      strcpy (strbuf, "stand (0)");
-      break;
-   case 1:
-      strcpy (strbuf, "wander (1)");
-      break;
-   case 2:
-      strcpy (strbuf, "script (2)");
-      break;
-   case 3:
-      strcpy (strbuf, "chase (3)");
-      break;
-   }
-   print_sfont (24, SH - 34, strbuf, double_buffer);
-   sprintf (strbuf, "delay = %d", gent[ent_index].delay);
-   print_sfont (24, SH - 28, strbuf, double_buffer);
-   sprintf (strbuf, "speed = %d", gent[ent_index].speed);
-   print_sfont (24, SH - 22, strbuf, double_buffer);
-   if (gent[ent_index].atype == 0)
-      sprintf (strbuf, "9 - atype = %d (normal)", gent[ent_index].atype);
-   else
-      sprintf (strbuf, "9 - atype = %d (constant)", gent[ent_index].atype);
+   /* Options in the first column */
+   sprintf (strbuf, "1 - x = %d", gent[ent_index].tilex);
+   print_sfont (0, SH - 46, strbuf, double_buffer);
+   sprintf (strbuf, "2 - y = %d", gent[ent_index].tiley);
+   print_sfont (0, SH - 40, strbuf, double_buffer);
+   sprintf (strbuf, "3 - %s", ent_movemode[gent[ent_index].movemode]);
+   print_sfont (0, SH - 34, strbuf, double_buffer);
+   sprintf (strbuf, "4 - delay = %d", gent[ent_index].delay);
+   print_sfont (0, SH - 28, strbuf, double_buffer);
+   sprintf (strbuf, "5 - speed = %d", gent[ent_index].speed);
+   print_sfont (0, SH - 22, strbuf, double_buffer);
+   sprintf (strbuf, "6 - atype = %d (%s)", gent[ent_index].atype,
+            ent_atype[gent[ent_index].atype]);
    print_sfont (0, SH - 16, strbuf, double_buffer);
-   print_sfont (24, SH - 10, gent[ent_index].script, double_buffer);
-   for (a = 1; a < 6; a++) {
-      sprintf (strbuf, "%d -", a + 1);
-      print_sfont (0, a * 6 + (SH - 52), strbuf, double_buffer);
-   }
-   print_sfont (0, SH - 10, "0 -", double_buffer);
-   if (gent[ent_index].snapback == 0)
-      strcpy (strbuf, "S - snap back");
-   else
-      strcpy (strbuf, "S - don't snap back");
+   sprintf (strbuf, "0 - %s", gent[ent_index].script);
+   print_sfont (0, SH - 10, strbuf, double_buffer);
+
+   /* Options in the second column */
+   sprintf (strbuf, "7 - change entity sprite (%d)", gent[ent_index].chrx);
+   print_sfont (160, SH - 46, strbuf, double_buffer);
+   sprintf (strbuf, "8 - direction facing (%s)",
+            dir_facing[gent[ent_index].facing]);
+   print_sfont (160, SH - 40, strbuf, double_buffer);
+   sprintf (strbuf, "9 - %s", ent_obsmode[gent[ent_index].obsmode]);
+   print_sfont (160, SH - 34, strbuf, double_buffer);
+   sprintf (strbuf, "S - %ssnap back", do_dont[gent[ent_index].snapback]);
    print_sfont (160, SH - 28, strbuf, double_buffer);
-   if (gent[ent_index].facehero == 0)
-      strcpy (strbuf, "F - face hero");
-   else
-      strcpy (strbuf, "F - don't face hero");
+   sprintf (strbuf, "F - %sface hero", do_dont[gent[ent_index].facehero]);
    print_sfont (160, SH - 22, strbuf, double_buffer);
-   if (gent[ent_index].transl == 0)
-      strcpy (strbuf, "T - opaque");
-   else
-      strcpy (strbuf, "T - translucent");
+   sprintf (strbuf, "T - %s", ent_transl[gent[ent_index].transl]);
    print_sfont (160, SH - 16, strbuf, double_buffer);
+
    blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
 }                               /* draw_entdata () */
 
@@ -239,10 +206,7 @@ void erase_entity (const int ent_x, const int ent_y)
       return;
 
    /* Be careful not to delete everyone standing here */
-   while (mouse_b & 2) {
-      a++;
-      a--;
-   }
+   while (mouse_b & 2);
 
    for (a = 0; a < number_of_ents; a++)
       /* Get the index number of the last-drawn entity from this spot */
@@ -355,10 +319,10 @@ void place_entity (int ent_x, int ent_y)
 
    /* Set its personality/attributes/stats */
    gent[number_of_ents].chrx = current_ent;     /* What it looks like */
-   gent[number_of_ents].tilex = ent_x;     /* which tile it's standing on */
-   gent[number_of_ents].tiley = ent_y;     /* ..same.. */
-   gent[number_of_ents].x = ent_x * 16;    /* Will be the same as tilex unless moving */
-   gent[number_of_ents].y = ent_y * 16;    /* ..same.. */
+   gent[number_of_ents].tilex = ent_x;  /* which tile it's standing on */
+   gent[number_of_ents].tiley = ent_y;  /* ..same.. */
+   gent[number_of_ents].x = ent_x * 16; /* Will be the same as tilex unless moving */
+   gent[number_of_ents].y = ent_y * 16; /* ..same.. */
    gent[number_of_ents].active = 1;     /* Showing on map or not */
    gent[number_of_ents].eid = 255;      /* */
    gent[number_of_ents].movemode = 0;   /* 0=stand, 1=wander, 2=script, 3=chase */
@@ -377,14 +341,12 @@ void place_entity (int ent_x, int ent_y)
  */
 void update_entities (void)
 {
-   /* Well, it doesn't mean GO... */
-   int stop = 0;
+   int response, done;
    /* Entity's index */
    int et = 0;
    /* Key press */
    int c;
-   /* User input */
-   int a;
+
    /* Temporary window coordinates */
    int t_window_x = window_x, t_window_y = window_y;
 
@@ -395,13 +357,14 @@ void update_entities (void)
       return;
    }
 
-   while (!stop) {
+   done = 0;
+   while (!done) {
       draw_entdata (et);
       c = (readkey () >> 8);
 
       /* Stop updating entities */
       if (c == KEY_ESC)
-         stop = 1;
+         done = 1;
 
       /* Select the previous entity in the queue */
       if (c == KEY_DOWN) {
@@ -413,25 +376,18 @@ void update_entities (void)
       /* Select the following entity in the queue */
       if (c == KEY_UP) {
          et++;
-         if (et == number_of_ents)
+         if (et >= number_of_ents)
             et = 0;
       }
 
-      /* Change the entity's sprite (what it looks like) */
-      if (c == KEY_1) {
-         gent[et].chrx++;
-         if (gent[et].chrx == MAX_EPICS)
-            gent[et].chrx = 0;
-      }
-
       /* Change the x-coord */
-      if (c == KEY_2) {
+      if (c == KEY_1) {
          rectfill (screen, 48, SH - 46, 71, SH - 41, 0);
          hline (screen, 48, SH - 41, 71, 255);
-         a = get_line (48, SH - 46, strbuf, 4);
+         response = get_line (48, SH - 46, strbuf, 4);
 
          /* Make sure the line isn't blank */
-         if (a == 0)
+         if (response == 0)
             return;
 
          gent[et].tilex = atoi (strbuf);
@@ -439,13 +395,13 @@ void update_entities (void)
       }
 
       /* Change the y-coord */
-      if (c == KEY_3) {
+      if (c == KEY_2) {
          rectfill (screen, 48, SH - 40, 71, SH - 35, 0);
          hline (screen, 48, SH - 35, 71, 255);
-         a = get_line (48, SH - 40, strbuf, 4);
+         response = get_line (48, SH - 40, strbuf, 4);
 
          /* Make sure the line isn't blank */
-         if (a == 0)
+         if (response == 0)
             return;
 
          gent[et].tiley = atoi (strbuf);
@@ -453,35 +409,45 @@ void update_entities (void)
       }
 
       /* Change the method of movement (Stand, Wander, Script, Chase) */
-      if (c == KEY_4) {
+      if (c == KEY_3) {
          gent[et].movemode++;
          if (gent[et].movemode > 3)
             gent[et].movemode = 0;
       }
 
       /* Change the movement delay */
-      if (c == KEY_5) {
+      if (c == KEY_4) {
          rectfill (screen, 72, SH - 28, 95, SH - 23, 0);
          hline (screen, 72, SH - 23, 95, 255);
-         a = get_line (72, SH - 28, strbuf, 4);
+         response = get_line (72, SH - 28, strbuf, 4);
 
          /* Make sure the line isn't blank */
-         if (a == 0)
+         if (response == 0)
             return;
 
          gent[et].delay = atoi (strbuf);
       }
 
       /* Change the entity's speed */
-      if (c == KEY_6) {
+      if (c == KEY_5) {
          gent[et].speed++;
          if (gent[et].speed > 7)
             gent[et].speed = 1;
       }
 
-      /* Entity is walk-through-able or solid */
-      if (c == KEY_7)
-         gent[et].obsmode = 1 - gent[et].obsmode;
+      /* Change the atype (unused) */
+      if (c == KEY_6) {
+         gent[et].atype++;
+         if (gent[et].atype > 1)
+            gent[et].atype = 0;
+      }
+
+      /* Change the entity's sprite (what it looks like) */
+      if (c == KEY_7) {
+         gent[et].chrx++;
+         if (gent[et].chrx == MAX_EPICS)
+            gent[et].chrx = 0;
+      }
 
       /* Change the direction entity is facing */
       if (c == KEY_8) {
@@ -490,21 +456,18 @@ void update_entities (void)
             gent[et].facing = 0;
       }
 
-      /* Change the atype (unused) */
-      if (c == KEY_9) {
-         gent[et].atype++;
-         if (gent[et].atype > 1)
-            gent[et].atype = 0;
-      }
+      /* Entity is walk-through-able or solid */
+      if (c == KEY_9)
+         gent[et].obsmode = 1 - gent[et].obsmode;
 
       /* Change the entity's scripted movement */
       if (c == KEY_0) {
          rectfill (screen, 24, SH - 10, 319, SH - 5, 0);
          hline (screen, 24, SH - 5, 319, 255);
-         a = get_line (24, SH - 10, strbuf, 61);
+         response = get_line (24, SH - 10, strbuf, 61);
 
          /* Make sure the line isn't blank */
-         if (a == 0)
+         if (response == 0)
             return;
 
          strcpy (gent[et].script, strbuf);
@@ -531,7 +494,7 @@ void update_entities (void)
          if (gent[et].transl > 1)
             gent[et].transl = 0;
       }
-   }                            /* while (!stop) */
+   }                            /* while (!done) */
    window_x = t_window_x;
    window_y = t_window_y;
 }                               /* update_entities () */

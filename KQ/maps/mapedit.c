@@ -109,7 +109,7 @@ const int vtiles = (SH - 48) / 16;
 /* Welcome to Mapdraw, folks! */
 int main (int argc, char *argv[])
 {
-   int stop = 0, oldmouse_x = 0, oldmouse_y = 0;
+   int main_stop = 0, oldmouse_x = 0, oldmouse_y = 0;
    int i;
 
    needupdate = 0;
@@ -126,7 +126,7 @@ int main (int argc, char *argv[])
       }
    }
 
-   while (!stop) {
+   while (!main_stop) {
       read_controls ();
       if (needupdate) {
          if (draw_mode == MAP_PREVIEW)
@@ -151,9 +151,9 @@ int main (int argc, char *argv[])
       }
 
       if (key[KEY_Q])
-         stop = confirm_exit ();
+         main_stop = confirm_exit ();
       yield_timeslice ();
-   }                            /* while (!stop) */
+   }                            /* while (!main_stop) */
    cleanup ();
    return 0;
 }                               /* main () */
@@ -320,8 +320,7 @@ void clear_layer (void)
    int response, i, done;
    int selected_layer = 0;
 
-   rectfill (double_buffer, 0, 0, 94, 22, 0);
-   rect (double_buffer, 2, 2, 92, 20, 255);
+   make_rect (double_buffer, 2, 15);
    print_sfont (6, 6, "Clear Layer", double_buffer);
    print_sfont (6, 12, "Layer (1-3): ", double_buffer);
 
@@ -429,11 +428,10 @@ int confirm_exit (void)
  */
 void copy_layer (void)
 {
-   int response, from_layer = 0, to_layer = 0;
-   int a, b, done;
+   int response, done, a, b;
+   int from_layer = 0, to_layer = 0;
 
-   rectfill (double_buffer, 0, 0, 124, 28, 0);
-   rect (double_buffer, 2, 2, 122, 26, 255);
+   make_rect (double_buffer, 3, 20);
    print_sfont (6, 6, "Copy Layer to Layer", double_buffer);
    print_sfont (6, 12, "From (1-3):", double_buffer);
 
@@ -490,25 +488,18 @@ void copy_layer (void)
    }
 
    for (a = 0; a < gmap.xsize * gmap.ysize; a++) {
-      switch (from_layer) {
-      case 1:
-   b = map[a];
-   break;
-      case 2:
-   b = b_map[a];
-   break;
-      case 3:
-   b = f_map[a];
-   break;
-      default:
-   b = 0;
-      }
+      if (from_layer == 1)
+         b = map[a];
+      else if (from_layer == 2)
+         b = b_map[a];
+      else if (from_layer == 3)
+         b = f_map[a];
 
       if (to_layer == 1)
          map[a] = b;
       else if (to_layer == 2)
          b_map[a] = b;
-      else
+      else if (to_layer == 3)
          f_map[a] = b;
    }
 }                               /* copy_layer () */
@@ -621,8 +612,7 @@ void describe_map (void)
 {
    int response, done;
 
-   rectfill (double_buffer, 0, 0, 346, 29, 0);
-   rect (double_buffer, 2, 2, 344, 27, 255);
+   make_rect (double_buffer, 3, 57);
    print_sfont (6, 6, "Enter map description", double_buffer);
    sprintf (strbuf, "Current: %s", gmap.map_desc);
    print_sfont (6, 12, strbuf, double_buffer);
@@ -991,6 +981,10 @@ void draw_menubars (void)
       break;
    }                            /* switch (showing.last_layer) */
 
+   /* Clear the bottom and right sides so we don't leave any artifacts */
+   rectfill (double_buffer, 0, SH - 48, SW - 80, SH, 0);
+   rectfill (double_buffer, SW - 79, 0, SW - 1, SH - 1, 0);
+
    /* The white horizontal line that seperates the bottom menu */
    hline (double_buffer, 0, (SH - 48), (SW - 81), 255);
 
@@ -1092,7 +1086,9 @@ void draw_menubars (void)
             blit (icons[icon_set * ICONSET_SIZE + p + (ICONSET_SIZE * 3 / 2)],
                   double_buffer, 0, 0, (SW - 24), p * 16 + 1, 16, 16);
          } else {
-            /* This loops the first 20 icons around when you're at the end of the icon_set */
+            /* This loops the first 20 icons around when you're at the end of
+             * the icon_set
+             */
             blit (icons[p], double_buffer, 0, 0, (SW - 40), p * 16 + 1, 16,
                   16);
             blit (icons[ICONSET_SIZE / 2 + p], double_buffer, 0, 0, (SW - 24),
@@ -1101,26 +1097,22 @@ void draw_menubars (void)
       }
    }
 
-   /* Show which icon the user selected with a rectangle */
-   /* There are now showing 40 icons, total.  This is the left 20: */
+   /* Calculate from the total 40 icons, which one the user selected */
    if (curtile >= icon_set * ICONSET_SIZE
        && curtile < (icon_set + 2) * ICONSET_SIZE) {
+      /* These are the left 20: */
       xp = (curtile - (icon_set * ICONSET_SIZE)) / (ICONSET_SIZE / 2);
       yp = (curtile - (icon_set * ICONSET_SIZE)) % (ICONSET_SIZE / 2);
-
-      /* This draws the rectangle around the selected icon on the left */
-      rect (double_buffer, (xp * 16) + (SW - 72), (yp * 16) + 1,
-            (xp * 16) + (SW - 56), (yp * 16) + 16, 255);
    } else if (curtile >= 0 && curtile < ICONSET_SIZE
               && (icon_set == max_sets - 1)) {
+      /* These are the right 20: */
       xp = (curtile / (ICONSET_SIZE / 2)) + 2;
       yp = curtile % (ICONSET_SIZE / 2);
-      rect (double_buffer, (xp * 16) + (SW - 72), (yp * 16) + 1,
-            (xp * 16) + (SW - 56), (yp * 16) + 16, 255);
    }
 
-   /* Clear everything under the iconset */
-   rectfill (double_buffer, (SW - 72), 164, (SW - 1), (SH - 1), 0);
+   /* Draw the rectangle around the selected icon */
+   rect (double_buffer, (xp * 16) + (SW - 72), (yp * 16),
+         (xp * 16) + (SW - 56), (yp * 16) + 16, 255);
 
    /* Display the draw_mode */
    print_sfont ((SW - 72), 164, "Mode:", double_buffer);
@@ -1239,7 +1231,8 @@ void draw_menubars (void)
  * \returns 0 if user hits ESC (cancel)
  * \returns 1 if user hits ENTER
  */
-int get_line (const int line_x, const int line_y, char *buffer, const int max_len)
+int get_line (const int line_x, const int line_y, char *buffer,
+              const int max_len)
 {
    int index = 0, ch;
    BITMAP *under;
@@ -1320,8 +1313,7 @@ void global_change (void)
    /* Layers and attributes */
    int p1 = 0, p2 = 0, p3 = 0, ps = 0, po = 0, pz = 0;
 
-   rectfill (double_buffer, 0, 0, 130, 35, 0);
-   rect (double_buffer, 2, 2, 128, 33, 255);
+   make_rect (double_buffer, 4, 16);
    print_sfont (6, 6, "From Tile: ", double_buffer);
 
    done = 0;
@@ -1403,7 +1395,7 @@ void global_change (void)
       }
    }
 
-   for (i = 0; done && i < gmap.xsize * gmap.ysize; i++) {
+   for (i = 0; i < gmap.xsize * gmap.ysize; i++) {
       if (p1)
          if (map[i] == tile_from)
             map[i] = tile_to;
@@ -1447,6 +1439,27 @@ void klog (char *msg)
    fprintf (ff, "%s\n", msg);
    fclose (ff);
 }                               /* klog () */
+
+
+/*! \brief Create a rectangle around the selection
+ *
+ * This will create an outlined rectangle at the top-left corner of the screen
+ * which will ALWAYS be drawn to double_buffer (never screen).
+ *
+ * \param   rect_height The number of lines we will draw around
+ * \param   rect_width The number of CHARACTERS we will draw around
+ */
+void make_rect (BITMAP * where, const int rect_height, const int rect_width)
+{
+   if (rect_height < 1 || rect_width < 1)
+      return;
+
+   /* Letters are all 6 tiles tall/wide */
+   rectfill (where, 0, 0, ((rect_width + 1) * 6) + 4,
+             ((rect_height + 1) * 6) + 4, 0);
+   rect (where, 2, 2, ((rect_width + 1) * 6) + 2, ((rect_height + 1) * 6) + 2,
+         255);
+}                               /* make_rect () */
 
 
 /*! \brief All this does is ensure that we are within the map boundaries */
@@ -1514,8 +1527,7 @@ void paste_region_special (const int tx, const int ty)
    if (clipb == 0)
       return;
 
-   rectfill (double_buffer, 0, 0, 178, 29, 0);
-   rect (double_buffer, 2, 2, 176, 27, 255);
+   make_rect (double_buffer, 2, 29);
    print_sfont (6, 6, "Paste which layers? (123soz)", double_buffer);
 
    done = 0;
@@ -1724,7 +1736,8 @@ void draw_layer (short *layer, const int parallax)
  * \param   string A "thinner" version of yarn, made from cotton or wool
  * \param   where The destination, or where it will be drawn to
  */
-void print_sfont (const int print_x, const int print_y, const char *string, BITMAP *where)
+void print_sfont (const int print_x, const int print_y, const char *string,
+                  BITMAP * where)
 {
    int i, c;
 
@@ -2685,8 +2698,7 @@ void resize_map (const int selection)
    new_height = old_height = gmap.ysize;
 
    if (selection == 0 || selection == 1) {
-      rectfill (double_buffer, 0, 0, 70, 29, 0);
-      rect (double_buffer, 2, 2, 68, 27, 255);
+      make_rect (double_buffer, 3, 11);
       print_sfont (6, 6, "Resize map", double_buffer);
       print_sfont (6, 18, "Width: ", double_buffer);
 
@@ -2715,8 +2727,7 @@ void resize_map (const int selection)
    }
 
    if (selection == 0 || selection == 2) {
-      rectfill (double_buffer, 0, 0, 70, 29, 0);
-      rect (double_buffer, 2, 2, 68, 27, 255);
+      make_rect (double_buffer, 3, 11);
       print_sfont (6, 6, "Resize map", double_buffer);
       print_sfont (6, 18, "Height: ", double_buffer);
 
@@ -3125,8 +3136,9 @@ void update_tileset (void)
  */
 void wait_enter (void)
 {
-   int a, done = 0;
+   int a, done;
 
+   done = 0;
    while (!done) {
       a = (readkey () >> 8);
       if (a == KEY_ENTER || a == KEY_ENTER_PAD)
@@ -3167,8 +3179,9 @@ void wipe_map (void)
  */
 int yninput (void)
 {
-   int ch, done = 0;
+   int ch, done;
 
+   done = 0;
    while (!done) {
       /* ENTER/ESC functions the same as Y/N */
       ch = (readkey () >> 8);

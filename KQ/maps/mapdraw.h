@@ -1,9 +1,15 @@
-/*
- * This is the KQ map editor
- * (Pete's hacked version)
- * (TT's edited hacked version)
- * December 2002 (and Jan 2003)
- */
+/***************************************************************************\
+ * This is the header file for the KQ map editor, suppored by the kqlives  *
+ * community.  Questions and suggestions to the group are welcome.  Please *
+ * join our mailing list: kqlives-main@lists.sourceforge.net               *
+ *                                                                         *
+ * Visit our website: http://kqlives.sourceforge.net/index.php             *
+ *                                                                         *
+ * Mapdraw.h contains everything that needs to be shared across files.     *
+\***************************************************************************/
+
+#ifndef __MAPDRAW_H
+#define __MAPDRAW_H
 
 #define MAX_TILES    1024
 #define NUM_TILESETS    7
@@ -86,6 +92,7 @@ int get_line (const int, const int, char *, const int);
 void get_tile (void);
 void global_change (void);
 void klog (char *);
+void make_rect (BITMAP *, const int, const int);
 void normalize_view (void);
 void paste_region (const int, const int);
 void paste_region_special (const int, const int);
@@ -128,12 +135,12 @@ void set_pcx (BITMAP **, const char *, PALETTE, const int);
 void visual_map (const char *);
 
 
-BITMAP *double_buffer, *pcx_buffer, *icons[MAX_TILES], *eframes[MAX_EPICS][12];
-BITMAP *font6, *mesh;
-PALETTE pal;
+extern BITMAP *double_buffer, *pcx_buffer, *icons[MAX_TILES], *eframes[MAX_EPICS][12];
+extern BITMAP *font6, *mesh;
+extern PALETTE pal;
 
-char map_fname[40], *strbuf;
-short icon_set;
+extern char map_fname[40], *strbuf;
+extern short icon_set;
 
 extern char *icon_files[NUM_TILESETS];
 
@@ -148,5 +155,7 @@ extern s_anim adata[MAX_ANIM];
 extern short window_x, window_y;
 extern short max_sets;
 
-unsigned short *map, *b_map, *f_map, *c_map, *cf_map, *cb_map;
-unsigned char *z_map, *sh_map, *o_map, *cz_map, *csh_map, *co_map;
+extern unsigned short *map, *b_map, *f_map, *c_map, *cf_map, *cb_map;
+extern unsigned char *z_map, *sh_map, *o_map, *cz_map, *csh_map, *co_map;
+
+#endif

@@ -327,60 +327,62 @@ void new_map (void)
 void prompt_load_map (void)
 {
    char fname[40];
-   int i, ld;
+   int response, done, i;
 
-   rectfill (screen, 0, 0, 319, 29, 0);
-   rect (screen, 2, 2, 317, 27, 255);
-   print_sfont (6, 6, "Load a map", screen);
+   make_rect (double_buffer, 3, 50);
+   print_sfont (6, 6, "Load a map", double_buffer);
    sprintf (strbuf, "Current: %s", map_fname);
-   print_sfont (6, 12, strbuf, screen);
-   print_sfont (6, 18, "Filename: ", screen);
-   ld = get_line (66, 18, fname, 40);
+   print_sfont (6, 12, strbuf, double_buffer);
+   print_sfont (6, 18, "Filename: ", double_buffer);
 
-   /* Return if the user hit ESC to cancel the dialog box */
-   if (ld == 0)
-      return;
+   done = 0;
+   while (!done) {
+      blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+      response = get_line (66, 18, fname, sizeof (fname));
 
-   blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
-   rectfill (screen, 0, 0, 319, 16, 0);
-   rect (screen, 2, 2, 317, 14, 255);
+      /* If the user hits ESC, break out of the function entirely */
+      if (response == 0)
+         return;
 
-   /* If the line was blank, simply reload the current map */
-   if (strlen (fname) < 1) {
-      strcpy (fname, map_fname);
-      if (!exists (fname)) {
-         replace_extension (fname, fname, "map", sizeof (fname));
+      /* If the line was blank, simply reload the current map */
+      if (strlen (fname) < 1) {
+         strcpy (fname, map_fname);
+
          if (!exists (fname)) {
-            error_load (fname);
-            return;
+            replace_extension (fname, fname, "map", sizeof (fname));
+            if (!exists (fname)) {
+               error_load (fname);
+               return;
+            }
          }
-      }
-      sprintf (strbuf, "Reload %s? (y/n)", fname);
-   } else {
-      if (!exists (fname)) {
-         replace_extension (fname, fname, "map", sizeof (fname));
+         sprintf (strbuf, "Reload %s? (y/n)", fname);
+      } else {
          if (!exists (fname)) {
-            error_load (fname);
-            return;
+            replace_extension (fname, fname, "map", sizeof (fname));
+            if (!exists (fname)) {
+               error_load (fname);
+               return;
+            }
          }
+         sprintf (strbuf, "Load %s? (y/n)", fname);
       }
-      sprintf (strbuf, "Load %s? (y/n)", fname);
+
+      cmessage (strbuf);
+
+      if (yninput ()) {
+         draw_map ();
+         load_map (fname);
+
+         /* Recount the number of entities on the map */
+         number_of_ents = 0;
+
+         for (i = 0; i < 50; i++) {
+            if (gent[i].active == 1)
+               number_of_ents = i + 1;
+         }
+         done = 1;
+      }                         /* if (yninput ()) */
    }
-
-   print_sfont (6, 6, strbuf, screen);
-
-   if (yninput ()) {
-      draw_map ();
-      load_map (fname);
-
-      /* Recount the number of entities on the map */
-      number_of_ents = 0;
-
-      for (i = 0; i < 50; i++) {
-         if (gent[i].active == 1)
-            number_of_ents = i + 1;
-      }
-   }                            /* if (yninput ()) */
 }                               /* prompt_load_map () */
 
 
@@ -391,66 +393,73 @@ void prompt_load_map (void)
 void save_map (void)
 {
    char fname[40];
-   int ld, p, q;
+   int response, done;
+   int p, q;
    PACKFILE *pf;
 
-   rectfill (screen, 0, 0, 319, 29, 0);
-   rect (screen, 2, 2, 317, 27, 255);
-   print_sfont (6, 6, "Save a map", screen);
+   make_rect (double_buffer, 3, 49);
+   print_sfont (6, 6, "Save a map", double_buffer);
    sprintf (strbuf, "Current: %s", map_fname);
-   print_sfont (6, 12, strbuf, screen);
-   print_sfont (6, 18, "Filename: ", screen);
-   ld = get_line (66, 18, fname, 40);
+   print_sfont (6, 12, strbuf, double_buffer);
+   print_sfont (6, 18, "Filename: ", double_buffer);
 
-   /* Make sure the line isn't blank */
-   if (ld == 0)
-      return;
+   done = 0;
+   while (!done) {
+      blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+      response = get_line (66, 18, fname, sizeof (fname));
 
-   blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
-   rectfill (screen, 0, 0, 319, 17, 0);
-   rect (screen, 2, 2, 317, 15, 255);
-
-   /* If the line WAS blank, simply save as current map's name */
-   if (strlen (fname) < 1) {
-      if (strlen (map_fname) < 1)
+      /* If the user hits ESC, break out of the function entirely */
+      if (response == 0)
          return;
-      else
-         strcpy (fname, map_fname);
+
+      /* If the line WAS blank, simply save as current map's name */
+      if (strlen (fname) < 1) {
+         if (strlen (map_fname) < 1)
+            return;
+         else
+            strcpy (fname, map_fname);
+      }
+
+      replace_extension (fname, fname, "map", sizeof (fname));
+
+      sprintf (strbuf, "Filename: %s", fname);
+      print_sfont (6, 18, strbuf, double_buffer);
+
+      sprintf (strbuf, "Save %s? (y/n)", fname);
+      cmessage (strbuf);
+
+      if (yninput ())
+         done = 1;
    }
 
-   replace_extension (fname, fname, "map", sizeof (fname));
-   sprintf (strbuf, "Save %s? (y/n)", fname);
-   print_sfont (6, 6, strbuf, screen);
+   strcpy (map_fname, fname);
+   pf = pack_fopen (fname, F_WRITE_PACKED);
+   save_s_map (&gmap, pf);
 
-   if (yninput ()) {
-      strcpy (map_fname, fname);
-      pf = pack_fopen (fname, F_WRITE_PACKED);
-      save_s_map (&gmap, pf);
-      for (q = 0; q < 50; ++q) {
-         save_s_entity (&gent[q], pf);
-      }
-      for (q = 0; q < gmap.ysize; ++q) {
-         for (p = 0; p < gmap.xsize; ++p) {
-            pack_iputw (map[q * gmap.xsize + p], pf);
-         }
-      }
-      for (q = 0; q < gmap.ysize; ++q) {
-         for (p = 0; p < gmap.xsize; ++p) {
-            pack_iputw (b_map[q * gmap.xsize + p], pf);
-         }
-      }
-      for (q = 0; q < gmap.ysize; ++q) {
-         for (p = 0; p < gmap.xsize; ++p) {
-            pack_iputw (f_map[q * gmap.xsize + p], pf);
-         }
-      }
-
-      pack_fwrite (z_map, (gmap.xsize * gmap.ysize), pf);
-      pack_fwrite (sh_map, (gmap.xsize * gmap.ysize), pf);
-      pack_fwrite (o_map, (gmap.xsize * gmap.ysize), pf);
-      pack_fclose (pf);
-
-      cmessage ("Map saved!");
-      wait_enter ();
+   for (q = 0; q < 50; ++q) {
+      save_s_entity (&gent[q], pf);
    }
+   for (q = 0; q < gmap.ysize; ++q) {
+      for (p = 0; p < gmap.xsize; ++p) {
+         pack_iputw (map[q * gmap.xsize + p], pf);
+      }
+   }
+   for (q = 0; q < gmap.ysize; ++q) {
+      for (p = 0; p < gmap.xsize; ++p) {
+         pack_iputw (b_map[q * gmap.xsize + p], pf);
+      }
+   }
+   for (q = 0; q < gmap.ysize; ++q) {
+      for (p = 0; p < gmap.xsize; ++p) {
+         pack_iputw (f_map[q * gmap.xsize + p], pf);
+      }
+   }
+
+   pack_fwrite (z_map, (gmap.xsize * gmap.ysize), pf);
+   pack_fwrite (sh_map, (gmap.xsize * gmap.ysize), pf);
+   pack_fwrite (o_map, (gmap.xsize * gmap.ysize), pf);
+   pack_fclose (pf);
+
+   cmessage ("Map saved!");
+   wait_enter ();
 }                               /* save_map () */
