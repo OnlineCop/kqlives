@@ -37,7 +37,7 @@ const char *ss_exit_msg[5] = {
 /*	save_screenshot()
 
     Saves the src_bmp as a sequential list of files.
-	The screenshot will be saved into /saves/{prefix}0001.pcx
+	The screenshot will be saved into /shots/{prefix}0001.pcx
 
 	Parameters:
 		[in] src_bmp: the bitmap to save

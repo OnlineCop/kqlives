@@ -18,7 +18,7 @@
    the Free Software Foundation,
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
-/* $Id: kq.c,v 1.3 2002-09-22 13:49:32 peterhull90 Exp $ */
+/* $Id: kq.c,v 1.4 2002-09-22 15:10:42 peterhull90 Exp $ */
 
 #include <stdio.h>
 #include <time.h>
@@ -263,6 +263,10 @@ void readcontrols(void)
    down  = 0;
    left  = 0;
    right = 0;
+   /* PH 2002.09.21 in case this is needed (not sure on which platforms it is) */
+   if (keyboard_needs_poll()) {
+     poll_keyboard();
+   }
 
    if (key[kup])    up=1;
    if (key[kdown])  down=1;
@@ -280,9 +284,12 @@ void readcontrols(void)
    /* ML,2002.09.21: Saves sequential screen captures to disk. See scrnshot.c/h for more info. */
    if (key[KEY_F12])
    {
-	   save_screenshot(screen, "kq");
-	   /* wait for key to be released before continuing */
-	   while (key[KEY_F12]) poll_keyboard(); 
+     save_screenshot(screen, "kq");
+     /* wait for key to be released before continuing */
+     /* PH 2002.09.21 n.b. keyboard not necessarily in polling mode */
+     while (key[KEY_F12]) {
+       if (keyboard_needs_poll()) poll_keyboard(); 
+     }
    }
 
    if (use_joy > 0) {
