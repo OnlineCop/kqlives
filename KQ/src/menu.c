@@ -306,6 +306,14 @@ void spec_items (void)
         spicon[ii] = 62;
         ii++;
      }
+   if (progress[P_OPALARMOUR] == 1)
+     {
+        strcpy (silist[ii], "Opal Armour");
+        strcpy (sidesc[ii], "Piece of opal set");
+        siq[ii] = 1;
+        spicon[ii] = 14;
+        ii++;
+     }
    if (progress[P_CAVEKEY] == 1)
      {
         strcpy (silist[ii], "Cave Key");

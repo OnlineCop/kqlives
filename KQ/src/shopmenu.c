@@ -560,7 +560,7 @@ int shop (int shop_num)
      {
         if (shops[shop_no][a][2] > 0)
            if ((khr * 60) + kmin - progress[P_SHOPSTART + shop_no] >
-              shops[shop_no][a][2])
+               shops[shop_no][a][2])
               shopq[shop_no][a] = shops[shop_no][a][1];
         shin[a] = shops[shop_no][a][0];
      }

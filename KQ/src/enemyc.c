@@ -91,8 +91,13 @@ int select_encounter (int en, int etid)
         i = rand () % 100 + 1;
         while (entry < 0)
           {
+             sprintf (strbuf, "Row %d is %d - need %d", where, erows[where].per,
+                      i);
+             klog (strbuf);
              if (i <= erows[where].per)
-                entry = where;
+               {
+                  entry = where;
+               }
              else
                 where++;
              if (erows[where].tnum > en || where >= NUM_ETROWS)

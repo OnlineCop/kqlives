@@ -69,7 +69,7 @@ function zone_handler(zn)
     drawmap();
     screen_dump();
    end
-   change_map("cave5",35,4,0,0);
+   change_map("cave5",4,93,0,0);
   elseif (zn == 4) then
    chest(73,I_VITSEED,1);
    refresh();

@@ -1,7 +1,7 @@
 -- cave5 - "The new Opal cave in the mountain pass"
 
 --todo: top door back in from pass, some chests on wrong level inside cave cabin, obstacles for pass chests
---      no comment for second side of double pillar.
+--     
 
 function autoexec()
   refresh();
@@ -118,19 +118,17 @@ end
 function destroy4a()
 -- double pillar (left)
   local p=get_progress(P_BOMB4);
-  if (p==0 and has_dynamite()) then
+  if ((p==0 or p==2) and has_dynamite()) then
     hero_escape("L7D2L4D4L2");
     sfx(42);
-    set_progress(P_BOMB4, 1);
+    oneliner(HERO1, {"I must have utterly destroyed it", "I wish I'd never seen this dreadful cave",
+                     "I don't like this one bit", "Perhaps I will become the first Master of Dynamite!",
+                     "I don't even care if this is necessary or not", "Another goal attained",
+		     "This is almost painful", "As one sows, so shall he reap..."});
+    set_progress(P_BOMB4, p+1);
   elseif (p==1) then
     -- already destroyed this side
-    bubble(HERO1, "I weakened it, but", "it might need another",
-                  "hit to destroy it","");
-  elseif (p==2 and has_dynamite()) then
-    -- really destroyed it!
-    hero_escape("L7D2L4D4L2");
-    sfx(42);
-    set_progress(P_BOMB4, 3);
+    bubble(HERO1, "I weakened it, but it might need another hit to destroy it");
   end
   refresh();
 end
@@ -138,18 +136,17 @@ end
 function destroy4b()
 -- double pillar (right)
 local p=get_progress(P_BOMB4);
-if (p==0 and has_dynamite()) then
+if ((p==0 or p==1) and has_dynamite()) then
  hero_escape("R5D4R7D1R5");
  sfx(42);
- set_progress(P_BOMB4, 2);
+ oneliner(HERO1, {"Another great hit!", "Ow. This is so dusty", 
+                  "This is totally unsafe", "I wonder if I will be able to make use of these skills",
+                  "I should have just blown the whole mountain up", "No collateral damage here",
+		  "This can't be good for my health", "I feel the need to reflect upon my actions"});
+ set_progress(P_BOMB4, p+2);
 elseif (p==2) then
  -- already destroyed this side
  bubble(HERO1, "I weakened it, but it might need another hit to destroy it.");
-elseif (p==1 and has_dynamite()) then
- -- really destroyed it!
- hero_escape("R5D4R7D1R5");
- sfx(42);
- set_progress(P_BOMB4, 3);
 end
 refresh();
 end
@@ -188,6 +185,7 @@ function hero_escape(script)
       onestep="R1"
     elseif (dx>0) then
       onestep="L1"
+
     elseif (dy<0) then
       onestep="D1"
     elseif (dy>0) then
@@ -209,13 +207,13 @@ function opaldragon()
 local spd;
 if (get_progress(P_OPALDRAGONOUT)==0) then
     bubble(HERO1, "Ohhh!");
-    bubble(HERO1, "It's real!");
+    bubble(HERO1, "The legend was true!");
     spd=get_ent_speed(HERO1);
     set_ent_speed(HERO1,1);
     set_ent_script(HERO1, "U7");
     wait_for_entity(HERO1, HERO1);
     set_ent_speed(HERO1, spd);
-    combat(16);
+    combat(58);
     set_progress(P_OPALDRAGONOUT,1);
     refresh();
 end
@@ -223,7 +221,7 @@ end
 
 function zone_handler(zn)
 if (zn==0) then
- -- do nothing
+ combat(57);
 elseif (zn==1) then 
  destroy1();
 elseif (zn==2) then
@@ -279,8 +277,16 @@ elseif (zn==21) then
  chest(95, I_VITSEED,2);
  refresh();
 elseif (zn==22) then
- chest(96, 0, 1000);
- refresh();
+ if (get_progress(P_OPALARMOUR)==0) then
+  set_progress(P_OPALARMOUR,1)
+  sfx(5);	
+  msg("Opal Armour procured!",255,0);
+  refresh();
+ end;
+elseif(zn==23) then
+ combat(59);
+-- // clear the zone so it doesn't repeat the combat
+ set_zone(get_ent_tilex(HERO1),get_ent_tiley(HERO1),0);
 end
 end
 
@@ -305,7 +311,10 @@ end
 -- 13 save point room (south) 
 -- 14 save point room (north)  
 -- 15 opal dragon room south 
--- 16..22 chests
+-- 16..21 chests
+-- 22 opal armour
+-- 23 ghosts
+
 
 -- character crib for PH
 -- SENSAR   0

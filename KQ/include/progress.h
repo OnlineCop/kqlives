@@ -111,6 +111,7 @@
 #define P_TALKRUFUS       87
 #define P_EARLYPROGRESS   88
 #define P_OPALDRAGONOUT   89
+#define P_OPALARMOUR      90
 /* 'specials' */
 #define P_SHOPSTART       1750
 #define P_SKIPINTRO       1997
