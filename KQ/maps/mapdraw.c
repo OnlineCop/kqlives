@@ -215,7 +215,7 @@ int vtiles = (SH - 48) / 16;
 
 int main (void)
 {
-   int stop = 0, k;
+   int stop = 0;
 
    startup ();
    while (!stop)
@@ -1682,7 +1682,7 @@ void wipe_map (void)
 void maptopcx (void)
 {
    BITMAP *pf, *pb, *pm;
-   int jx, jy, t;
+   int jx, jy;
 
    pb = create_bitmap (gmap.xsize, gmap.ysize);
    pm = create_bitmap (gmap.xsize, gmap.ysize);
@@ -2060,7 +2060,7 @@ void print_sfont (int x, int y, char *string, BITMAP * where)
 {
    int i, c;
 
-   for (i = 0; i < strlen (string); i++)
+   for (i = 0; i < (signed)strlen (string); i++)
      {
         c = string[i];
         c -= 32;
