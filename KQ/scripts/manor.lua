@@ -27,6 +27,8 @@ function postexec()
 end
 
 function postexec()
+  local player_response, done_talking;
+
   if (get_progress(P_TALKBUTLER) == 0) then
     rest(200);
     bubble(8,"Welcome all.","","","");
@@ -36,14 +38,28 @@ function postexec()
     bubble(8,"I have said that I am in need of adventurers to partake in a quest for me. You eight have shown great courage to stay. Courage alone isn't enough, however. You must prove your worthiness of this Great Magic. Does anyone wish to leave?");
     set_ent_script(8,"W25F1W35F3W35F0W35F3W50");
     wait_for_entity(8,8);
-    if (prompt(8,2,0,"Very well then. Do you need a background?",
-                     "","  yes","  no") == 0) then
+    if (prompt(8,2,0,"Very well then. Do you need a",
+                     "background?","  yes","  no") == 0) then
       -- yes
-      bubble(8,"A very long time ago, a great priest appeared at the Xenarum shrine. There he chose three Disciples to follow and learn of a better life. Some say that this priest was the very Adrial the Messiah.");
-      bubble(8,"Taking a non-violent approach to everything, Adrial chose Three Disciples to follow him and spread peace and knowledge around the land. Adrial taught of becoming the best that you can be in the followings of `The God'. The legend suggests that his Three Disciples were jealous of his connection with `The God' and betrayed him.");
-      bubble(8,"This is where you come in. Supposedly one Adrial's Disciples, Chaiman, kept a journal of his voyage. Inside the journal speaks of what actually happened with the miracles and everything. No one has ever seen this journal but word has it that it is kept somewhere in Xenarum. That land is inaccessible except with the Staff of Xenarum, which is the key to the Shifting Mounts.");
-      bubble(8,"Your journey is to find this Staff. Bring it to me; I must see what is in that journal! I am offering to teach any of you the Great Magic in exchange for that Staff.");
-      bubble(8,"You see now why I have chosen only the eight of you; this journey must be as inconspicuous as possible, as the Three Disciples may have minions everywhere. You can travel with anyone you wish, but please stay in groups of no more than two. More than that will draw attention to you, and may put all of us in jeopardy.");
+      while(not done_talking) do
+        player_response = prompt(8,3,0,"What do you want to learn about?",
+                                       "  Staff of Xenarum",
+                                       "  Malkaron",
+                                       "  Done");
+        if (player_response == 0) then
+          bubble(8,"A very long time ago, a great priest appeared at the Xenarum shrine. There he chose three Disciples to follow and learn of a better life. Some say that this priest was the very Adrial the Messiah.");
+          bubble(8,"Taking a non-violent approach to everything, Adrial chose Three Disciples to follow him and spread peace and knowledge around the land. Adrial taught of becoming the best that you can be in the followings of `The God'. The legend suggests that his Three Disciples were jealous of his connection with `The God' and betrayed him.");
+          bubble(8,"This is where you come in. Supposedly one Adrial's Disciples, Chaiman, kept a journal of his voyage. Inside the journal speaks of what actually happened with the miracles and everything. No one has ever seen this journal but word has it that it is kept somewhere in Xenarum. That land is inaccessible except with the Staff of Xenarum, which is the key to the Shifting Mounts.");
+          bubble(8,"Your journey is to find this Staff. Bring it to me; I must see what is in that journal! I am offering to teach any of you the Great Magic in exchange for that Staff.");
+          bubble(8,"You see now why I have chosen only the eight of you; this journey must be as inconspicuous as possible, as the Three Disciples may have minions everywhere. You can travel with anyone you wish, but please stay in groups of no more than two. More than that will draw attention to you, and may put all of us in jeopardy.");
+        elseif (player_response == 1) then
+          -- explain the whole Maklaron bit
+          thought(8,"Oh great. How will I explain",
+                    "THIS one?","","");
+        elseif (player_response == 2) then
+          done_talking=1;
+        end
+      end
     end
     bubble(8,"I thank you for your help. Talk to my butler before you leave and he will help you get started on your journey.");
   end
