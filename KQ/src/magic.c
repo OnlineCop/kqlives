@@ -131,13 +131,7 @@ int combat_spell (int whom, int is_item)
    if (spell_number == M_LIFE || spell_number == M_FULLLIFE)
       deadeffect = 0;
 
-   if (cast_spell (whom, is_item) == 0) {
-      /* do failure sound and/or graphic */
-/*  DS: If you return from here, the word 'miss' don't appear in the fight */
-/*      when the magic fails                                               */
-/*      return 0; */
-      ;
-   }
+   cast_spell (whom, is_item);
 
    if (spell_number == M_ABSORB || spell_number == M_DRAIN) {
       if (spell_number == M_ABSORB) {
@@ -169,7 +163,7 @@ int combat_spell (int whom, int is_item)
       if (ss == 0) {
          b = 0;
          for (a = st; a < st + nt; a++)
-            if (ta[a] == MISS && ta[a] != NODISPLAY)
+            if (ta[a] == MISS)
                b++;
          if (b > 0)
             display_amount (st, FNORMAL, tall);
@@ -296,17 +290,15 @@ int cast_spell (int whom, int is_item)
 void cast_imbued_spell (int caster, int target_item, int sag_int_value,
                         int tgt)
 {
-   int a, ts[4];
+   int a, ts[5];
 
-   /* Calculates TempStatus for A_INT, A_SAG, A_SPD, A_AUR */
-   for (a = 0; a < 4; a++)
+   /* Calculates TempStatus for A_INT, A_SAG, A_AUR, A_SPI */
+   for (a = 0; a < 5; a++)
       ts[a] = fighter[caster].stats[A_INT + a];
    fighter[caster].stats[A_INT] = sag_int_value;
    fighter[caster].stats[A_SAG] = sag_int_value;
-   fighter[caster].stats[A_SPD] = 100;
    fighter[caster].stats[A_AUR] = 100;
-   // fighter[caster].stats[A_SPI] = 100;
-// TT: This appears to be incorrect; fixed to be SPD instead of SPI
+   fighter[caster].stats[A_SPI] = 100;
    fighter[caster].csmem = target_item;
    fighter[caster].ctmem = tgt;
    if (tgt == TGT_CASTER) {
@@ -314,7 +306,7 @@ void cast_imbued_spell (int caster, int target_item, int sag_int_value,
       cast_spell (caster, 1);
    } else
       combat_spell (caster, 1);
-   for (a = 0; a < 4; a++)
+   for (a = 0; a < 5; a++)
       fighter[caster].stats[A_INT + a] = ts[a];
 }
 
@@ -666,6 +658,7 @@ static void beffect_one_enemy (int caster, int tgt, int spell_number)
 {
    int r, a = 0, sp_hit;
 
+   ta[tgt] = NODISPLAY;
    if (fighter[tgt].sts[S_STONE] > 0) {
       ta[tgt] = MISS;
       return;
@@ -817,6 +810,8 @@ static void beffect_all_enemies (int caster, int spell_number)
       nt = numchrs;
       st = 0;
    }
+   for (a = st; a < st + nt; a++)
+      ta[a] = NODISPLAY;
    sp_hit = magic[spell_number].hit;
    switch (spell_number) {
    case M_SLOW:
