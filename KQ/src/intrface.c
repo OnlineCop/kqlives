@@ -161,6 +161,7 @@ static int KQ_wait_for_entity (lua_State *);
 static int KQ_add_chr (lua_State *);
 static int KQ_remove_chr (lua_State *);
 static int KQ_krnd (lua_State *);
+static int KQ_touch_fire (lua_State *);
 static int KQ_book_talk (lua_State *);
 static int KQ_do_fadeout (lua_State *);
 static int KQ_do_fadein (lua_State *);
@@ -311,6 +312,7 @@ static const struct luaL_reg lrs[] = {
    {"add_chr", KQ_add_chr},
    {"remove_chr", KQ_remove_chr},
    {"krnd", KQ_krnd},
+   {"touch_fire", KQ_touch_fire},
    {"book_talk", KQ_book_talk},
    {"do_fadeout", KQ_do_fadeout},
    {"do_fadein", KQ_do_fadein},
@@ -1403,6 +1405,136 @@ static int KQ_krnd (lua_State * L)
    else
       lua_pushnumber (L, 0);
    return 1;
+}
+
+static int KQ_touch_fire (lua_State * L)
+{
+   switch ((int) lua_tonumber (L, 1))
+     {
+     case 0:  // SENSAR
+        switch (rand () % 3)
+          {
+          case 0:
+             bubble_text (0, "What th..? Ouch! That's hot!","","","");
+             break;
+          case 1:
+             bubble_text (0, "There's no way I'm sticking",
+                             "my hand in that fire!","","");
+             break;
+          case 2:
+             bubble_text (0, "This feels pretty nice.","","","");
+             break;
+          }
+        break;
+     case 1:  // SARINA
+        switch (rand () % 3)
+          {
+          case 0:
+             bubble_text (0, "Mmm, wood smoke.","","","");
+             break;
+          case 1:
+             bubble_text (0, "Smells like burnt hair.",
+                             "Hey wait... that's MY hair!","","");
+             break;
+          case 2:
+             bubble_text (0, "Ooh, cozy.","","","");
+             break;
+          }
+        break;
+     case 2:  // CORIN
+        switch (rand () % 3)
+          {
+          case 0:
+             bubble_text (0, "I sure like fire.","","","");
+             break;
+          case 1:
+             bubble_text (0, "Watching this is relaxing.","","","");
+             break;
+          case 2:
+             bubble_text (0, "This is making me sleepy.","","","");
+             break;
+          }
+        break;
+     case 3:  // AJATHAR
+        switch (rand () % 3)
+          {
+          case 0:
+             bubble_text (0, "Hmm... I want marshmallows.","","","");
+             break;
+          case 1:
+             bubble_text (0, "You call this a fire?!","","","");
+             break;
+          case 2:
+             bubble_text (0, "Ah, relaxing.","","","");
+             break;
+          }
+        break;
+     case 4:  // CASANDRA
+        switch (rand () % 3)
+          {
+          case 0:
+             bubble_text (0, "Something's burning. I",
+                             "hope it's one of those",
+                             "stupid books!","");
+             break;
+          case 1:
+             bubble_text (0, "The fire is getting low.","","","");
+             break;
+          case 2:
+             bubble_text (0, "Yessir, this is a fire.","","","");
+             break;
+          }
+        break;
+     case 5:  // TEMMIN
+        switch (rand () % 3)
+          {
+          case 0:
+             bubble_text (0, "Ah, the age-old fire.","","","");
+             break;
+          case 1:
+             bubble_text (0, "This needs more coal.","","","");
+             break;
+          case 2:
+             bubble_text (0, "This would be great",
+                             "to read a book next to.","","");
+             break;
+          }
+        break;
+     case 6:  // AYLA
+        switch (rand () % 3)
+          {
+          case 0:
+             bubble_text (0, "I wonder how hot this is?","","","");
+             break;
+          case 1:
+             bubble_text (0, "Someone should clean all",
+                             "this soot out of here.","","");
+             break;
+          case 2:
+             bubble_text (0, "Well, my face is warm",
+                             "now, but my butt is",
+                             "still freezing!","");
+             break;
+          }
+        break;
+     case 7:  // NOSLOM
+        switch (rand () % 3)
+          {
+          case 0:
+             bubble_text (0, "I prefer torches.","","","");
+             break;
+          case 1:
+             bubble_text (0, "I love the crackel of",
+                             "a good fire.","","");
+             break;
+          case 2:
+             bubble_text (0, "I wonder if a spell would",
+                             "make this burn brighter?","","");
+             break;
+          }
+        break;
+     }
+   return 0;
 }
 
 static int KQ_book_talk (lua_State * L)
