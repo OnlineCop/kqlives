@@ -4,102 +4,150 @@
 #include "mapdraw.h"
 
 
-// Give each of the entities a purpose
+/*! \brief Prepares the entity array for new entries
+ *
+ * This is called for each time the user wants to reset the entities;
+*/
 void init_entities (void)
 {
    int p;
 
-   // Clear all entities' personalities
+   /* Clear all entities' personalities */
    for (p = 0; p < 50; p++)
      {
-        gent[p].chrx = 0;  // Entity's identity (what s/he looks like)
-        gent[p].x = 0;  // x-coord on map
-        gent[p].y = 0;  // y-coord on map
-        gent[p].tilex = 0; // x-coord tile that entity is standing on
-        gent[p].tiley = 0; // y-coord tile that entity is standing on
-        gent[p].id = 0; // Entity type (fighter, enemy, normal)
-        gent[p].active = 0;   // "Alive" or not
-        gent[p].facing = 0;   // Direction
-        gent[p].moving = 0;   // In the middle of a move
-        gent[p].movcnt = 0;   // How far along the move entity is
-        gent[p].framectr = 0; // Counter for determining animation frame
-        gent[p].movemode = 0; // Stand, wander, script or chasing
-        gent[p].obsmode = 0;  // Determine if affected by obstacles or not
-        gent[p].delay = 0; // Movement delay (between steps)
-        gent[p].delayctr = 0; // Counter for movement delay
-        gent[p].speed = 0; // How hyperactive the entity is
+        /* Entity's identity (what s/he looks like) */
+        gent[p].chrx = 0;
+        /* x-coord on map */
+        gent[p].x = 0;
+        /* y-coord on map */
+        gent[p].y = 0;
+        /* x-coord tile that entity is standing on */
+        gent[p].tilex = 0;
+        /* y-coord tile that entity is standing on */
+        gent[p].tiley = 0;
+        /* Entity type (fighter, enemy, normal) */
+        gent[p].id = 0;
+        /* "Alive" and on-screen or not */
+        gent[p].active = 0;
+        /* Direction facing */
+        gent[p].facing = 0;
+        /* In the middle of a move */
+        gent[p].moving = 0;
+        /* How far along into the move s/he is */
+        gent[p].movcnt = 0;
+        /* Counter for determining animation frame */
+        gent[p].framectr = 0;
+        /* Stand, wander, script, or chasing */
+        gent[p].movemode = 0;
+        /* Affected by obstacles (some can walk through walls/other NPCs) */
+        gent[p].obsmode = 0;
+        /* Movement delay (between steps) */
+        gent[p].delay = 0;
+        /* Counter for movement delay */
+        gent[p].delayctr = 0;
+        /* How hyperactive the entity is */
+        gent[p].speed = 0;
+        /* Hyperactivity counter */
         gent[p].scount = 0;
-        gent[p].cmd = 0;   // Move/Wait/Facing command
-        gent[p].sidx = 0;  // Script ID number
+        /* Move, wait, facing command */
+        gent[p].cmd = 0;
+        /* Script index number */
+        gent[p].sidx = 0;
+        /* ??? */
         gent[p].extra = 0;
-        gent[p].chasing = 0;  // Entity is following another
-        gent[p].cmdnum = 0;   // Number of times we need to repeat 'cmd'
+        /* Entity is following another */
+        gent[p].chasing = 0;
+        /* Number of times we need to repeat 'cmd' */
+        gent[p].cmdnum = 0;
+        /* (unused) */
         gent[p].atype = 0;
-        strcpy (gent[p].script, "");   // Movement script (pacing, etc.)
-     }
+        /* Movement script (pacing, etc.) */
+        strcpy (gent[p].script, "");
+     } /* for (p = 0; p < 50; p++) */
+
+   /* Reset the entity count */
    noe = 0;
-}
+} /* init_entities () */
 
 
-// Adjust location of all entities
+/*! \brief Offset the x/y coodinates of entities
+ *
+ * Adjusts the location of all entities on the map
+*/
 void displace_entities (void)
 {
    int ld, nx, ny, a;
 
-   // Draw a box and ask for x-coord adjustment
+   /* Draw a box and ask for x-coord adjustment */
    rectfill (screen, 0, 0, 319, 29, 0);
    rect (screen, 2, 2, 317, 27, 255);
    print_sfont (6, 6, "Displace entities", screen);
    print_sfont (6, 18, "X adjust: ", screen);
    ld = get_line (66, 18, strbuf, 4);
+
+   /* Make sure the line isn't blank */
    if (ld == 0)
       return;
+
+   /* This number CAN be negative! */
    nx = atoi (strbuf);
 
-   // Clear the box and ask for y-coord adjustment
+   /* Clear the box and ask for y-coord adjustment */
    rectfill (screen, 0, 0, 319, 29, 0);
    rect (screen, 2, 2, 317, 27, 255);
    print_sfont (6, 6, "Displace entities", screen);
    print_sfont (6, 18, "Y adjust: ", screen);
    ld = get_line (66, 18, strbuf, 4);
+
+   /* Make sure the line isn't blank */
    if (ld == 0)
       return;
+
+   /* This number CAN be negative! */
    ny = atoi (strbuf);
 
-   // This moves all the entities
+   /* This moves all the entities */
    for (a = 0; a < noe; a++)
      {
-        // Confirm that the input x-coords are within the map
+        /* Confirm that the input x-coords are within the map */
         if (gent[a].tilex + nx < gmap.xsize && gent[a].tilex + nx >= 0)
           {
              gent[a].tilex += nx;
              gent[a].x = gent[a].tilex * 16;
           }
-        // Confirm that the input x-coords are within the map
+        /* Confirm that the input x-coords are within the map */
         if (gent[a].tiley + ny < gmap.ysize && gent[a].tiley + ny >= 0)
           {
              gent[a].tiley += ny;
              gent[a].y = gent[a].tiley * 16;
           }
      }
-}
+} /* displace_entities () */
 
 
-// Give the little lemming a home
+/*! \brief Place an entity on the map
+ *
+ * Give the little lemming a home
+ *
+ * \param   ex Entity's x-coord
+ * \param   ey Entity's y-coord
+*/
 void place_entity (int ex, int ey)
 {
    int a;
 
-   // Yea, can't have to many lemmings on the map at once
+   /* Yea, can't have to many lemmings on the map at once */
    if (noe >= 50)
       return;
-   // Wait for the over-zealous user to let go of the mouse button
+
+   /* Wait for the over-zealous user to let go of the mouse button */
    while (mouse_b & 1)
      {
         a++;
         a--;
      }
-   // Set its personality
+
+   /* Set its personality/attributes/stats */
    gent[noe].chrx = cent;
    gent[noe].tilex = ex;
    gent[noe].tiley = ey;
@@ -114,53 +162,78 @@ void place_entity (int ex, int ey)
    gent[noe].facing = 0;
    strcpy (gent[noe].script, "");
    noe++;
-}
+} /* place_entity () */
 
 
-// Rub the useless guy out
+/*! \brief Remove an entity from the map
+ *
+ * Rub the useless guy out
+ *
+ * \param   pex Entity's x-coord
+ * \param   pey Entity's y-coord
+*/
 void erase_entity (int pex, int pey)
 {
    int a, enn = -1;
 
+   /* This function does nothing if there aren't already entities to remove */
    if (noe == 0)
       return;
-   // Be careful not to delete everyone standing here
+
+   /* Be careful not to delete everyone standing here */
    while (mouse_b & 2)
      {
         a++;
         a--;
      }
-   // Could you imaging a 3D game?  pex, pey and Pez!  Yum-yum.
+
+   /* Could you imaging a 3D game?  pex, pey and Pez!  Yum-yum. */
    for (a = 0; a < noe; a++)
-      // Get the index number of the last-drawn entity from this spot
+      /* Get the index number of the last-drawn entity from this spot */
       if (gent[a].tilex == pex && gent[a].tiley == pey)
          enn = a;
+
+   /* There is no entity under the mouse */
    if (enn == -1)
       return;
+
+   /* This is how we erase instances of an entity; set active to 0 */
    gent[enn].active = 0;
-   // This shifts all entity indexes 'above' the selected one, down one
+
+   /* This re-numerates the index of entities */
    for (a = enn + 1; a < noe; a++)
      {
         gent[a - 1] = gent[a];
         gent[a].active = 0;
      }
-   // Oh yea, and do this too
+
+   /* Oh yea, and do this too */
    noe--;
-}
+} /* erase_entity () */
 
 
-// Allow the user to give each entity its own personality
+/*! \brief Update stats for entities
+ *
+ * Allow the user to give each entity its own personality
+*/
 void update_entities (void)
 {
-   int stop = 0;  // Well, it doesn't mean GO...
-   int et = 0; // Index of entity
-   int c;   // Key press
-   int a;   // User input
-   int tgx = gx, tgy = gy; // Temporary window coordinates
-   int tdm = draw_mode; // Temporary draw_mode
+   /* Well, it doesn't mean GO... */
+   int stop = 0;
+   /* Entity's index */
+   int et = 0;
+   /* Key press */
+   int c;
+   /* User input */
+   int a;
+   /* Temporary window coordinates */
+   int tgx = gx, tgy = gy;
+   /* Temporary draw_mode */
+   int tdm = draw_mode;
 
    draw_mode = MAP_ENTITIES;
 
+   /* Updating entities ineffective if no one is there */
    if (noe == 0)
      {
         cmessage ("No entities!");
@@ -172,141 +245,173 @@ void update_entities (void)
      {
         draw_entdata (et);
         c = (readkey () >> 8);
+
+        /* Stop updating entities */
         if (c == KEY_ESC)
            stop = 1;
+
+        /* Select the previous entity in the queue */
         if (c == KEY_DOWN)
           {
              et--;
              if (et < 0)
                 et = noe - 1;
           }
+
+        /* Select the following entity in the queue */
         if (c == KEY_UP)
           {
              et++;
              if (et == noe)
                 et = 0;
           }
-        if (c == KEY_1) // Entity's sprite (what it looks like)
+
+        /* Change the entity's sprite (what it looks like) */
+        if (c == KEY_1)
           {
              gent[et].chrx++;
              if (gent[et].chrx == MAX_EPICS)
                 gent[et].chrx = 0;
           }
-        if (c == KEY_2) // Change the x-coordinate
+
+        /* Change the x-coord */
+        if (c == KEY_2)
           {
              rectfill (screen, 48, SH - 46, 71, SH - 41, 0);
              hline (screen, 48, SH - 41, 71, 255);
              a = get_line (48, SH - 46, strbuf, 4);
-             if (a != 0)
-               {
-                  gent[et].tilex = atoi (strbuf);
-                  gent[et].x = gent[et].tilex * 16;
-               }
+
+             /* Make sure the line isn't blank */
+             if (a == 0)
+                return;
+
+             gent[et].tilex = atoi (strbuf);
+             gent[et].x = gent[et].tilex * 16;
           }
-        if (c == KEY_3) // Change the y-coordinate
+
+        /* Change the y-coord */
+        if (c == KEY_3)
           {
              rectfill (screen, 48, SH - 40, 71, SH - 35, 0);
              hline (screen, 48, SH - 35, 71, 255);
              a = get_line (48, SH - 40, strbuf, 4);
-             if (a != 0)
-               {
-                  gent[et].tiley = atoi (strbuf);
-                  gent[et].y = gent[et].tiley * 16;
-               }
+
+             /* Make sure the line isn't blank */
+             if (a == 0)
+                return;
+
+             gent[et].tiley = atoi (strbuf);
+             gent[et].y = gent[et].tiley * 16;
           }
-        if (c == KEY_4) // Stand-Wander-Script-Chase mode
+
+        /* Change the method of movement (Stand, Wander, Script, Chase) */
+        if (c == KEY_4)
           {
              gent[et].movemode++;
              if (gent[et].movemode > 3)
                 gent[et].movemode = 0;
           }
-        if (c == KEY_5) // Delay
+
+        /* Change the movement delay */
+        if (c == KEY_5)
           {
              rectfill (screen, 72, SH - 28, 95, SH - 23, 0);
              hline (screen, 72, SH - 23, 95, 255);
              a = get_line (72, SH - 28, strbuf, 4);
-             if (a != 0)
-                gent[et].delay = atoi (strbuf);
+
+             /* Make sure the line isn't blank */
+             if (a == 0)
+                return;
+
+             gent[et].delay = atoi (strbuf);
           }
-        if (c == KEY_6) // Speed
+
+        /* Change the entity's speed */
+        if (c == KEY_6)
           {
              gent[et].speed++;
              if (gent[et].speed > 7)
                 gent[et].speed = 1;
           }
-        if (c == KEY_7) // Obstructive
+
+        /* Entity is walk-through-able or solid */
+        if (c == KEY_7)
            gent[et].obsmode = 1 - gent[et].obsmode;
-        if (c == KEY_8) // Change direction
+
+        /* Change the direction entity is facing */
+        if (c == KEY_8)
           {
              gent[et].facing++;
              if (gent[et].facing > 3)
                 gent[et].facing = 0;
           }
+
+        /* Change the atype (unused) */
         if (c == KEY_9)
           {
-             gent[et].atype = 1 - gent[et].atype;
-
-             // This does the same as:
-             /*
              gent[et].atype++;
              if (gent[et].atype > 1)
                 gent[et].atype = 0;
-             */
           }
+
+        /* Change the entity's scripted movement */
         if (c == KEY_0)
           {
              rectfill (screen, 24, SH - 10, 319, SH - 5, 0);
              hline (screen, 24, SH - 5, 319, 255);
              a = get_line (24, SH - 10, strbuf, 61);
-             if (a != 0)
-                strcpy (gent[et].script, strbuf);
+
+             /* Make sure the line isn't blank */
+             if (a == 0)
+                return;
+
+             strcpy (gent[et].script, strbuf);
           }
+
+        /* After you talk to this entity, it will return to the direction it
+           was facing before you ever talked to him/her */
         if (c == KEY_S)
           {
-             gent[et].snapback = 1 - gent[et].snapback;
-
-             // This does the same as:
-             /*
              gent[et].snapback++;
              if (gent[et].snapback > 1)
                 gent[et].snapback = 0;
-             */
           }
+
+        /* Face the hero when s/he is talking to this entity */
         if (c == KEY_F)
           {
-             gent[et].facehero = 1 - gent[et].facehero;
-
-             // This does the same as:
-             /*
              gent[et].facehero++;
              if (gent[et].facehero > 1)
                 gent[et].facehero = 0;
-             */
           }
+
+        /* Make this entity transparent */
         if (c == KEY_T)
           {
-             gent[et].transl = 1 - gent[et].transl;
-
-             // This does the same as:
-             /*
              gent[et].transl++;
              if (gent[et].transl > 1)
                 gent[et].transl = 0;
-             */
           }
-     }
+     } /* while (!stop) */
    gx = tgx;
    gy = tgy;
    draw_mode = tdm;
-}
+} /* update_entities () */
 
 
-// Fill in the options at the bottom of the screen
+/* Display the entity menu
+ *
+ * Display the stats for the current entity in the menu at the bottom of the
+ * screen.
+ *
+ * \param   en Index of current entity
+*/
 void draw_entdata (int en)
 {
    int a, tdx, tdy;
 
-   // Make sure we're not out of the boundaries
+   /* Move the window so the user can see the selected entity and make sure
+      the view isn't out of the boundaries */
    gx = gent[en].tilex - (htiles / 2);
    gy = gent[en].tiley - (vtiles / 2);
    if (gx > gmap.xsize - 1 - htiles)
@@ -325,12 +430,27 @@ void draw_entdata (int en)
    rect (double_buffer, tdx - 1, tdy - 1, tdx + 16, tdy + 16, 255);
    hline (double_buffer, 0, SH - 48, SW - 80, 255);
    vline (double_buffer, SW - 80, 0, SH - 48, 255);
+
+   /* Print the number of entities and currently-selected one in right menu */
    sprintf (strbuf, "Total: %d", noe);
    print_sfont (SW - 78, 0, strbuf, double_buffer);
    sprintf (strbuf, "Current: %d", en);
    print_sfont (SW - 78, 6, strbuf, double_buffer);
+
+   /* Print all the options in the bottom menu */
    print_sfont (160, SH - 46, "1 - change entity sprite", double_buffer);
-   print_sfont (160, SH - 40, "8 - change entity facing", double_buffer);
+
+   /* TT: hack */
+   if (gent[en].facing == 0)
+      print_sfont (160, SH - 40, "8 - direction facing (S)", double_buffer);
+   if (gent[en].facing == 1)
+      print_sfont (160, SH - 40, "8 - direction facing (N)", double_buffer);
+   if (gent[en].facing == 2)
+      print_sfont (160, SH - 40, "8 - direction facing (W)", double_buffer);
+   if (gent[en].facing == 3)
+      print_sfont (160, SH - 40, "8 - direction facing (E)", double_buffer);
+
+   /* TT: end hack */
    if (gent[en].obsmode == 0)
       strcpy (strbuf, "7 - Ignore obstructions");
    else
@@ -388,4 +508,4 @@ void draw_entdata (int en)
       strcpy (strbuf, "T - Translucent");
    print_sfont (160, SH - 16, strbuf, double_buffer);
    blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
-}
+} /* draw_entdata () */
