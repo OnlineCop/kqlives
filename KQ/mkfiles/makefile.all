@@ -89,18 +89,19 @@ editor:
 	$(MAKE) -C maps
 
 
-$(RES_C): other/items.csv other/spells.csv other/effects.csv other/encount.csv other/battles.csv
-	cat other/res-skel.1.c > $(RES_C)
-	other/kq2h.pl other/items.csv >> $(RES_C)
-	cat other/res-skel.2.c >> $(RES_C)
-	other/kq2h.pl other/spells.csv >> $(RES_C)
-	cat other/res-skel.3.c >> $(RES_C)
-	other/kq2h.pl other/effects.csv >> $(RES_C)
-	cat other/res-skel.4.c >> $(RES_C)
-	other/kq2h.pl other/encount.csv >> $(RES_C)
-	cat other/res-skel.5.c >> $(RES_C)
-	other/kq2h.pl other/battles.csv>> $(RES_C)
-	cat other/res-skel.6.c >> $(RES_C)
+# $(RES_C): other/items.csv other/spells.csv other/effects.csv other/encount.csv other/battles.csv
+# 	cat other/res-skel.1.c > $(RES_C)
+# 	other/kq2h.pl other/items.csv >> $(RES_C)
+# 	cat other/res-skel.2.c >> $(RES_C)
+# 	other/kq2h.pl other/spells.csv >> $(RES_C)
+# 	cat other/res-skel.3.c >> $(RES_C)
+# 	other/kq2h.pl other/effects.csv >> $(RES_C)
+# 	cat other/res-skel.4.c >> $(RES_C)
+# 	other/kq2h.pl other/encount.csv >> $(RES_C)
+# 	cat other/res-skel.5.c >> $(RES_C)
+# 	other/kq2h.pl other/battles.csv>> $(RES_C)
+# 	cat other/res-skel.6.c >> $(RES_C)
+
 
 #                                                                             #
 #  The clean target deletes the executable, the object files and the runner,  #
