@@ -354,6 +354,14 @@ lua_State *theL;
 char tmap_name[16];
 int tmx, tmy, tmvx, tmvy, changing_map = 0;
 
+/*! \brief Process HERO1 and HERO2 pseudo-entity numbers
+ *
+ * Calculate what's the real entity number,
+ * given an enemy number or HERO1 or HERO2
+ * 
+ * \param ee input number
+ * \returns real entity number
+ */
 static int real_entity_num (int ee)
 {
    if (ee == 255)
