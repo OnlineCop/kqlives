@@ -388,9 +388,9 @@ function LOC_storyline(en)
     set_ent_movemode(1, 2)
     set_ent_tilex(1, 48)
     set_ent_tiley(1, 54)
-    set_ent_script(1, "R2F0W75")
+    set_ent_script(1, "R2F0W50")
     wait_for_entity(1, 24)
-    bubble(1, "$0?")
+    bubble(1, "$0? Hello?")
 
   elseif (en == TEMMIN) then
     view_range(1, 67, 20, 98, 41)
