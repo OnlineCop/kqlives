@@ -1,7 +1,15 @@
 #include <stdio.h>
 #include <string.h>
-#include "allegro.h"void load_game (char *);void load_game_v84 (void);void load_game_v85_90 (void);void save_game (char *);int invchk (int, int);
-typedef struct
+#include "allegro.h"
+
+void load_game (char *);
+void load_game_v84 (void);
+void load_game_v85_90 (void);
+void save_game (char *);
+int invchk (int, int);
+
+
+typedef struct
 {
    char name[9];
    int xp, next, lvl, mrp;
@@ -14,7 +22,9 @@
    unsigned char spells[60];
 }
 old_player;
-typedef struct
+
+
+typedef struct
 {
    char name[9];
    int xp, next, lvl, mrp;
@@ -26,8 +36,10 @@ old_player;
    unsigned char spells[60];
 }
 new_player;
-old_player opar[8];
-new_player npar[8] = {
+
+old_player opar[8];
+
+new_player npar[8] = {
    {"Sensar", 0, 70, 1, 100, 40, 40, 0, 0,
     {800, 500, 700, 300, 300, 4000, 9000, 9000, 0, 7500, 0, 100, 0},
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}},
@@ -53,12 +65,19 @@ new_player;
     {300, 600, 300, 700, 700, 5500, 10000, 10000, 0, 5000, 0, 100, 0},
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}
 };
-unsigned short g_inv[64][2], startx, starty, shopq[50][12];
-char curmap[16];
+
+unsigned short g_inv[64][2], startx, starty, shopq[50][12];
+
+char curmap[16];
 unsigned char *progress, *treasure, tv, gs, windowed = 0,
    stretch_view = 0, wait_retrace = 0;
-int gsvol, gmvol, gp, numchrs, smin, shr, pidx[2];int kup = KEY_UP, kdown = KEY_DOWN, kleft = KEY_LEFT, kright = KEY_RIGHT;int kalt = KEY_ALT, kctrl = KEY_LCONTROL, kenter = KEY_ENTER, kesc = KEY_ESC;int jbalt = 0, jbctrl = 1, jbenter = 2, jbesc = 3;
-PACKFILE *sdat;
+
+int gsvol, gmvol, gp, numchrs, smin, shr, pidx[2];
+int kup = KEY_UP, kdown = KEY_DOWN, kleft = KEY_LEFT, kright = KEY_RIGHT;
+int kalt = KEY_ALT, kctrl = KEY_LCONTROL, kenter = KEY_ENTER, kesc = KEY_ESC;
+int jbalt = 0, jbctrl = 1, jbenter = 2, jbesc = 3;
+
+PACKFILE *sdat;
 
 int ic[180] = {
    0, 16, 17, 18, 25, 26, 27, 9, 10, 11, 12, 13, 14, 15, 1, 2, 4, 20, 21, 22,
@@ -73,13 +92,16 @@ int ic[180] = {
    142, 175, 174, 173, 143, 158, 180, 181, 155, 185, 159, 183, 184, 154, 186,
    146, 187, 106, 107, 108, 109, 110, 119, 120
 };
-int sc[61] = {
+
+int sc[61] = {
    0, 1, 8, 20, 30, 10, 13, 17, 29, 21, 3, 44, 9, 6, 12, 14, 22, 18, 23, 24,
    26, 25, 49, 2, 35, 4, 5, 7, 39, 36, 45, 42, 41, 50, 51, 52, 55, 33, 34, 37,
    11, 38, 40, 43, 15, 48, 47, 46, 16, 31, 53, 54, 28, 58, 32, 56, 57, 27, 59,
    19, 60
 };
-void load_game (char *fname)
+
+
+void load_game (char *fname)
 {
    fprintf (stdout, "Loading %s... ", fname);
    sdat = pack_fopen (fname, F_READ_PACKED);
@@ -112,13 +134,18 @@ int ic[180] = {
       load_game_v85_90 ();
    pack_fclose (sdat);
    fprintf (stdout, "loaded.\n");
-}
-void load_game_v84 (void)
+
+}
+
+
+void load_game_v84 (void)
 {
    int a;
-   for (a = 0; a < 8; a++)
+
+   for (a = 0; a < 8; a++)
       pack_fread (&opar[a], sizeof (old_player), sdat);
-   pack_fread (progress, 2000, sdat);
+
+   pack_fread (progress, 2000, sdat);
    pack_fread (treasure, 1000, sdat);
    pack_fread (&gsvol, sizeof (gsvol), sdat);
    pack_fread (&gmvol, sizeof (gmvol), sdat);
@@ -133,10 +160,13 @@ int ic[180] = {
       pack_fread (&pidx[a], sizeof (pidx[a]), sdat);
 }
 
+
 void load_game_v85_90 (void)
 {
+
    int a, tvar;
-   for (a = 0; a < 8; a++)
+
+   for (a = 0; a < 8; a++)
       pack_fread (&npar[a], sizeof (new_player), sdat);
    pack_fread (progress, 2000, sdat);
    pack_fread (treasure, 1000, sdat);
@@ -175,11 +205,14 @@ void load_game_v85_90 (void)
    for (a = 0; a < 2; a++)
       pack_fread (&pidx[a], sizeof (pidx[a]), sdat);
 }
-void save_game (char *fname)
+
+void save_game (char *fname)
 {
-   PACKFILE *gdat;
+
+   PACKFILE *gdat;
    int a;
-   fprintf (stdout, "Saving %s... ", fname);
+
+   fprintf (stdout, "Saving %s... ", fname);
    gdat = pack_fopen (fname, F_WRITE_PACKED);
    if (!gdat) {
       fprintf (stdout, "\nCould not save game data.\n");
@@ -221,10 +254,12 @@ void load_game_v85_90 (void)
    pack_fclose (gdat);
 }
 
+
 int invchk (int i, int q)
 {
    int n, v = 64, d = 64;
-   if (i == 0 || q == 0)
+
+   if (i == 0 || q == 0)
       return 3;
    for (n = 63; n >= 0; n--) {
       if (g_inv[n][0] == 0)
@@ -243,7 +278,9 @@ int invchk (int i, int q)
    g_inv[v][1] += q;
    return 2;
 }
-int main (int argc, char **argv)
+
+
+int main (int argc, char **argv)
 {
    int a, b, c, binv = 0, beqp = 0, bstg = 0;
    char tfn[4], tex[4], from_name[8], to_name[8];
@@ -255,11 +292,13 @@ int invchk (int i, int q)
                "  if included, the extention should not contain the .\n");
       return 1;
    }
-   if (strlen (argv[1]) != 3) {
+
+   if (strlen (argv[1]) != 3) {
       fprintf (stdout, "File name is not correct.\n");
       return 1;
    }
-   strcpy (tfn, argv[1]);
+
+   strcpy (tfn, argv[1]);
 
    if (argc == 2)
       strcpy (tex, "dat");
