@@ -49,7 +49,7 @@ void do_autoexec (void);        /*  kq.c  */
 void do_postexec (void);        /*  kq.c  */
 void do_zone (int);             /*  kq.c  */
 void do_entity (int);           /*  kq.c  */
-
+void do_timefunc(const char*);
 
 
 #if 0

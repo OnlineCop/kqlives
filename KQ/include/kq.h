@@ -379,6 +379,8 @@ void kwait (int);               /*  intrface.c  */
 void program_death (char *);    /*  everywhere ;)  */
 int in_party (int);             /*  combat.c, intrface.c  */
 void wait_for_entity (int, int);        /*  intrface.c  */
+char* get_timer_event(void);
+int add_timer_event(const char*, int);
 
 
 
