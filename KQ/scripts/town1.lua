@@ -1,14 +1,6 @@
 -- town1 - "Ekla"
 
--- TT todo:
 -- /*
--- Reflect NPCs scripts to accommodate theory that monsters appeared
--- out of nowhere.  Unadium-coin lady will not help until after you find
--- her father/grandfather.
---
--- When we talk to townspeople, they should talk about the monster influx.
--- 
---
 -- P_EARLYPROGRESS: Used when talking to Derig in the Grotto.
 --   0 - Have not yet entered Ekla
 --   1 - Entered Ekla
@@ -28,125 +20,152 @@
 --   1 - You defeated it and the pathway is now clear
 -- P_PORTALGONE: Whether the portal in the tunnel is still working
 --   0 - Still letting monsters through
---   1 - You touched Rod of Cancellation to it
--- P_UCOIN: Received Unadium Coin from old woman in house
---   0 - Have not yet talked to woman
---   1 - Declined her offer to help get rid of Tunnel Portal
---   2 - Accepted her offer to help
---   3 - Received Coin (unnecessary, since it immediately follows 2)
---   4 - Returned Coin; received SunStone
+--   1 - The Portal is sealed shut
+-- P_UCOIN: Unadium Coin from Jen
+--   0 - Have not yet talked to the granddaughter, Jen
+--   1 - Spoke to Jen
+--   2 - Received coin
+--   3 - Returned coin
 -- P_CANCELROD: Possession of Rod of Cancellation
 --   0 - Do not have it
 --   1 - Got it
+--   2 - Returned it to Derig
+-- P_TALKDERIG: If you've spoken to Derig
+--   0 - Never entered grotto
+--   1 - Entered grotto; didn't fall down pit
+--   2 - Fell down pit in grotto, didn't speak with Derig
+--   3 - Fell down pit, spoke with Derig
+--   4 - Derig told you about the Rod of Cancellation
+--   5 - Returned Unadium coin and Rod of Cancellation to Derig
 -- */
 
 
 function autoexec()
+  -- If we have never been in the town before
   if (get_progress(P_EARLYPROGRESS) == 0) then
-    set_progress(P_EARLYPROGRESS, 1);
+    set_progress(P_EARLYPROGRESS, 1)
   end
-  refresh();
+
+  -- Remove Derig from the screen
+  if (get_progress(P_TALKDERIG) < 3) or (get_progress(P_TALKDERIG) > 4) then
+    set_ent_active(4, 0)
+  else
+    -- Move daughter to chair by the table
+    set_ent_tilex(2, 64)
+    set_ent_tiley(2, 50)
+    set_ent_facing(2, 0)
+    set_ent_facing(4, 0)
+    set_ent_facing(HERO1, 1)
+  end
+  refresh()
 end
 
 
 function refresh()
   -- Chest in magic shop
   if (get_treasure(0) == 1) then
-    set_mtile(63, 27, 265);
+    set_mtile(63, 27, 265)
   end
+
   -- Monsters will not attack on the world map until this == 1
   if (get_progress(P_START) == 0) then
-    set_progress(P_START, 1);
+    set_progress(P_START, 1)
   end
-  -- TT:
-  -- Two people are wandering around until you use the transporter from
-  -- Ajantara to Randen.
+
+  -- Two people are wandering around until you use the transporter from Ajantara to Randen.
   if (get_progress(P_WARPSTONE) == 1) then
-    set_ent_active(1, 0);
-    set_ent_active(3, 0);
+    set_ent_active(1, 0)
+    set_ent_active(3, 0)
   end
 end
 
 
 function postexec()
-  return;
+  if (get_progress(P_TALKDERIG) == 3) then
+    bubble(4, "I'm Derig. If I'm here, then you found me in the Grotto.")
+    bubble(4, "I am old and I saw how they sealed the portal. It was the Rod of Cancellation. It is in another part of the grotto.")
+    bubble(4, "I would go get it but I am old and monsters are there in the forest around the grotto.")
+    bubble(4, "My daughter will give you the Unadium Coin, which is the key to the rune on the ground in the clearing.")
+    set_progress(P_TALKDERIG, 4)
+  end
+  return
 end
 
 
 function zone_handler(zn)
   if (zn == 1) then
-    change_map("main", 132, 30, 132, 30);
+    change_map("main", 132, 30, 132, 30)
 
   elseif (zn == 2) then
-    inn("The Blue Boar Inn", 25, 1);
+    inn("The Blue Boar Inn", 25, 1)
 
   elseif (zn == 3) then
-    shop(0);
+    shop(0)
 
   elseif (zn == 4) then
-    shop(1);
+    shop(1)
 
   elseif (zn == 5) then
-    shop(2);
+    shop(2)
 
   elseif (zn == 6) then
-    bubble(HERO1, "Locked.");
+    bubble(HERO1, "Locked.")
 
   elseif (zn == 7) then
-    change_map("cave1", 0, 0, 0, 0);
+    change_map("cave1", 0, 0, 0, 0)
 
   elseif (zn == 8) then
-    chest(0, I_B_SCORCH, 1);
-    refresh();
+    chest(0, I_B_SCORCH, 1)
+    refresh()
 
   elseif (zn == 9) then
-    bubble(255, "I don't have much.");
-    shop(3);
+    bubble(255, "I don't have much.")
+    shop(3)
 
   elseif (zn == 10) then
-    door_in(60, 20, 52, 11, 64, 22);
+    door_in(60, 20, 52, 11, 64, 22)
 
   elseif (zn == 11) then
-    door_out(20, 19);
+    door_out(20, 19)
 
   elseif (zn == 12) then
-    door_in(81, 33, 76, 24, 88, 35);
+    door_in(81, 33, 76, 24, 88, 35)
 
   elseif (zn == 13) then
-    door_out(18, 40);
+    door_out(18, 40)
 
   elseif (zn == 14) then
-    door_in(56, 33, 52, 24, 60, 35);
+    door_in(56, 33, 52, 24, 60, 35)
 
   elseif (zn == 15) then
-    door_out(14, 45);
+    door_out(14, 45)
 
   elseif (zn == 16) then
-    door_in(73, 19, 66, 11, 79, 22);
+    door_in(73, 19, 66, 11, 79, 22)
 
   elseif (zn == 17) then
-    door_out(34, 37);
+    door_out(34, 37)
 
   elseif (zn == 18) then
-    door_in(68, 31, 62, 24, 74, 33);
+    door_in(68, 31, 62, 24, 74, 33)
 
   elseif (zn == 19) then
-    door_out(31, 27);
+    door_out(31, 27)
 
   elseif (zn == 20) then
-    chest(6, I_NLEAF, 1);
+    chest(6, I_NLEAF, 1)
 
   elseif (zn == 21) then
-    book_talk(party[0]);
+    book_talk(party[0])
 
   elseif (zn == 22) then
-    door_in(62, 54, 52, 41, 69, 57);
+    door_in(62, 54, 52, 41, 69, 57)
 
   elseif (zn == 23) then
-    door_out(37, 56);
+    door_out(37, 56)
 
   elseif (zn == 24) then
-    touch_fire(party[0]);
+    touch_fire(party[0])
 
   end
 end
@@ -154,198 +173,119 @@ end
 
 function entity_handler(en)
   if (en == 0) then
-    -- Hero has used the warp stone in Ajantara
-    if (get_progress(P_WARPSTONE) == 1) then
-      if (get_progress(P_EKLAWELCOME) > 0) then
-        -- He is nice to you, since you talked to him at the beginning of the game.
-        bubble(en, "Welcome back.");
-        return;
-      else
-        -- He is rude to you, since you didn't talk to him at the beginning of the game.
-        bubble(en, "Congratulations. You're back in Ekla.");
-        bubble(HERO1, "Well, uh, thanks. I kinda know that by now.");
-        bubble(en, "Well, I've been here since the game started. This is the first time you talked to me. Consider yourself officially greeted.");
-        bubble(HERO1, "Oh, that's nice. So do you have any advice that is still applicable to my quest?");
-        bubble(en, "You bet I do!");
-        set_progress(P_EKLAWELCOME, 1);
-        return;
-      end
-    end
-    if (get_progress(P_EKLAWELCOME) == 0) then
-      bubble(en, "Welcome to the town of Ekla.");
-      bubble(en, "Alright! You make eight. If I welcome enough newcomers to this town, I'll get promoted.");
-      bubble(en, "I might get a job sitting in a house all day saying the same thing over and over to anyone who talks to me.");
-      bubble(en, "I should start practicing.");
-      wait(25);
-      set_progress(P_EKLAWELCOME, 1);
-      if (party[0] == CASANDRA) then
-        thought(HERO1, "Geez! What a loser!");
-        thought(HERO1, "Maybe I should put him out of his misery.");
+    if (get_progress(P_WARPSTONE) == 0) then
+      if (get_progress(P_EKLAWELCOME) == 0) then
+        bubble(en, "I welcome people to Ekla.")
+        set_progress(P_EKLAWELCOME, 1)
+      elseif (get_progress(P_EKLAWELCOME) == 1) then
+        bubble(en, "I welcomed you already. You're in Ekla.")
       end
     else
-      bubble(0, "I like cheese!");
-      return;
+      bubble(en, "Welcome back.")
     end
 
   elseif (en == 1) then
     if (get_progress(P_DARKIMPBOSS) == 0) then
-      if (get_progess(P_EKLACITIZEN) == 0) then
-        bubble(en, "Many monsters have appeared from the portal underground. They have begun spreading into the forests around here and killing off our wild game.");
-        bubble(HERO1, "Do you know where they came from?");
-        bubble(en, "There's a portal down in the underground tunnel that has opened back up. Only Derig is old enough to know how we got it closed the last time.");
-        bubble(HERO1, "So who is Derig?");
-        bubble(en, "Oh, a crazy old man who likes to disappear into the hills and forests for weeks.");
-        bubble(HERO1, "Uh-huh. Well, thanks for your help.");
-        set_progress(P_EKLACITIZEN, 1);
-        return;
-      else
-        -- // TT: This is where we will check if Player talked to Derig yet.
-        bubble(HERO1, "Any sign of that Derig fellow?");
-        bubble(en, "No, not that I know of. You could ask around. Someone might know his whereabouts.");
-        bubble(HERO1, "Alright, thanks.");
-        bubble(en, "Oh, and when you go underground be warned that there are still a great number of beasties roaming around down there.");
-        bubble(en, "Be sure you have some good armor and a strong weapon, and if you don't know any magic, I suggest you learn some.");
-      end
+      bubble(en, "There is a monster blocking the pass to Randen.")
     else
-      if (get_progress(P_PORTALGONE) == 1) then
-        bubble(en, "Now that the portal is closed, the passage should be safe.");
-      else
-        bubble(en, "The tunnel is still dangerous, so be careful.");
-      end
+      bubble(en, "Now the monster is gone.")
     end
 
   elseif (en == 2) then
-    if (get_progress(P_WARPSTONE) == 1) then
-      bubble(2, "How are things going?");
-      return;
-    end
-    if (get_progress(P_UCOIN) == 4) then
-      if (get_treasure(45) == 0) then
-        bubble(2, "Here... you didn't take this before.");
-        chest(45, I_SSTONE, 1);
-      else
-        bubble(2, "Thanks again.");
+    -- You have never spoken to Jen before
+    if (get_progress(P_UCOIN) == 0) then
+      if (get_progress(P_TALKDERIG) == 0) then
+        -- You've never gone to the grotto.
+        bubble(en, "Jen:", "I'm Derig's granddaughter. Go find Derig in the grotto north of here.")
+      elseif (get_progress(P_TALKDERIG) == 1) then
+        -- You entered the grotto, but didn't fall in the pit.
+        bubble(en, "Jen:", "I'm Derig's granddaughter. Go find Derig in the grotto north of here. You've been there once before.")
+      elseif (get_progress(P_TALKDERIG) == 2) then
+        -- You entered grotto and fell in pit (you had NOT spoken to Jen first, though.  Someone helped you get out.
+        bubble(en, "You've already been to the grotto.")
+        bubble(HERO1, "Yes, we fell down a hole and someone pulled us out.")
+        bubble(en, "That is Derig, my grandfather. Go back and look for him.")
       end
-      return;
-    end
-    if (get_progress(P_UCOIN) == 3) then
-      if (get_progress(P_CANCELROD) > 0) then
-        if (get_progress(P_PORTALGONE) > 0) then
-          bubble(2, "Excellent! You've done a very good job. And thanks for bringing back my coin!");
-          bubble(2, "Here, you should have this.");
-          chest(45, I_SSTONE, 1);
-          set_progress(P_UCOIN, 4);
-        else
-          bubble(2, "Thanks for bringing my coin back. Good luck in the tunnel and hopefully that portal will soon be gone.");
-          bubble(2, "Here, you should have this.");
-          chest(45, I_SSTONE, 1);
-          set_progress(P_UCOIN, 4);
-        end
-      else
-        bubble(2, "Please remember to bring back the coin when you're done.",
-                 "Good luck.");
-      end
+      -- Now you've spoken to Jen
+      set_progress(P_UCOIN, 1)
+    -- You have spoken to Jen at least once
     elseif (get_progress(P_UCOIN) == 1) then
-      if (prompt(2, 2, 0, "Change your mind?",
-                          "  yes",
-                          "  no") == 0) then
-        set_progress(P_UCOIN, 2);
-        LOC_old_lady();
+      if (get_progress(P_TALKDERIG) == 0) then
+        bubble(en, "I said to go talk to Derig.")
+      elseif (get_progress(P_TALKDERIG) == 1) then
+        -- You entered the grotto, but didn't fall in the pit.
+        bubble(en, "You must find Derig in the grotto. He's there somewhere.")
+      elseif (get_progress(P_TALKDERIG) == 2) then
+        bubble(en, "Well? Go find Derig in the grotto!")
+      elseif (get_progress(P_TALKDERIG) == 4) then
+         -- Met Derig
+         bubble(en, "Good. Now that you found Derig, here is the Unadium Coin.")
+         set_progress(P_UCOIN, 2)
+         msg("Unadium coin procured", 255, 0)
+      end -- P_TALKDERIG
+    elseif (get_progress(P_UCOIN) == 2) then
+      -- You now have the Unadium coin
+      if (get_progress(P_TALKDERIG) == 4) then
+        if (get_progress(P_CANCELROD) == 0) then
+          -- You do not have the rod
+          bubble(en, "Go get the Rod of Cancellation.")
+        elseif (get_progress(P_CANCELROD) == 1) then
+          -- You have the rod
+          if (get_progress(P_PORTALGONE) == 0) then
+            -- The portal is still there
+            bubble(en, "Get rid of the portal now.")
+          elseif (get_progress(P_PORTALGONE) == 1) then
+            -- The portal is gone
+            bubble(en, "You got rid of the portal! Give my father the coin and rod back and I'll give you a SunStone.")
+          end -- P_PORTALGONE
+        end -- P_CANCELROD
+      end -- P_TALKDERIG == 4
+    elseif (get_progress(P_UCOIN) == 3) then
+      -- Returned Rod of Cancellation to Derig
+      if (get_treasure(45) == 0) then
+        bubble(en, "Thanks for returning the Rod to my grandfather. Here is a Sunstone for you.")
+        chest(45, I_SSTONE, 1)
       else
-        bubble(2, "Then what are you still doing here?");
+        bubble(en, "Thanks again.")
       end
-    elseif (get_progress(P_UCOIN) == 0) then
-
-      if (prompt(2, 2, 0, "Say, have you been through",
-                          "the passage lately?",
-                          "  yes",
-                          "  no") == 0) then
-        if (prompt(2, 2, 0, "Then you saw the portal?",
-                            "  yep",
-                            "  nope") == 0) then
-          bubble(2, "Well, you could do the town a big favour and get rid of it for us.");
-          if (prompt(2, 2, 0, "I can tell you how if you're",
-                              "interested.",
-                              "  sure",
-                              "  sorry") == 0) then
-            set_progress(P_UCOIN, 2);
-            LOC_old_lady();
-          else
-            bubble(2, "Oh. Then I'd appreciate it if you would get out of my house.");
-            set_progress(P_UCOIN, 1);
-          end
-        else
-          bubble(2, "Really? You didn't explore very much of the tunnel then did you?");
-          bubble(2, "Regardless, there is a magical portal in the tunnel. The portal is how all of the monsters got there.");
-          bubble(2, "Anyways, there is a way to get rid of the monsters and put an end to this mess.");
-          if (prompt(2, 2, 0, "Would you be interested in helping",
-                              "out our little town?",
-                              "  sure",
-                              "  sorry") == 0) then
-            set_progress(P_UCOIN, 2);
-            LOC_old_lady();
-          else
-            bubble(2, "Oh. Then I'd appreciate it if you would get out of my house.");
-            set_progress(P_UCOIN, 1);
-          end
-        end
-      else
-        bubble(2, "Well, I guess that's not important. You'll go there eventually, I suppose.");
-        bubble(2, "If you've been around town, then you likely know that the tunnel is full of monsters!");
-        bubble(2, "The monsters are coming through a magical portal that appeared just recently. It's unknown how it got there, but it has to go.");
-        if (prompt(2, 2, 0, "Would you be interested in trying",
-                            "to get rid of this portal?",
-                            "  yes",
-                            "  no") == 0) then
-          set_progress(P_UCOIN, 2);
-          LOC_old_lady();
-        else
-          bubble(2, "Oh. Then I'd appreciate it if you would get out of my house.");
-          set_progress(P_UCOIN, 1);
-        end
-      end
-    end
+    end -- P_UCOIN
 
   elseif (en == 3) then
     if (get_progress(P_DARKIMPBOSS) == 0) then
-      bubble(3, "We're here investigating the recent increase in monsters in the underground passage.");
-      if (party[0] == NOSLOM) then
-        bubble(HERO1, "And what have you discovered?");
-        bubble(3, "Um... that there are more monsters than usual down there.");
-        bubble(HERO1, "Oh... good work then.");
-        bubble(3, "Thank you!");
-        thought(HERO1, "Who hired these guys?");
-      end
-    else
+      bubble(en, "Stock up on weapons, magic, and experience.")
+      bubble(en, "You'll need them against the monster blocking the entrance to Randen.")
+    elseif (get_progress(P_DARKIMPBOSS) == 1) then
       if (get_progress(P_PORTALGONE) == 0) then
-        bubble(3, "So... it was a dark imp that was blocking the underground passage. Interesting.");
-      else
-        bubble(3, "A magical portal you say... that sounds very suspicous indeed!");
+        bubble(en, "The monster blocking Randen is gone, but there are still monsters underground.")
+      elseif (get_progress(P_PORTALGONE) == 1) then
+        bubble(en, "All the monsters are gone from the tunnel!")
       end
     end
 
-  end
-end
+  elseif (en == 4) then
+    if (get_progress(P_TALKDERIG) == 4) then
+      if (get_progress(P_UCOIN) == 1) then
+        bubble(en, "Talk to Jen to get the Unadium coin.")
+      elseif (get_progress(P_UCOIN) == 2) then
+        if (get_progress(P_CANCELROD) == 0) then
+          bubble(en, "Go get the Rod of Cancellation out of the grotto. Use the rune.")
+        elseif (get_progress(P_CANCELROD) == 1) then
+          if (get_progress(P_PORTALGONE) == 0) then
+            bubble(en, "Now that you have the rod, go down and seal the portal.")
+          elseif (get_progress(P_PORTALGONE) == 1) then
+            bubble(en, "You've done it! The portal is gone, and you have returned the Unadium coin and Rod of Cancellation.")
+            set_progress(P_UCOIN, 3)
+            set_progress(P_CANCELROD, 2)
+            set_progress(P_TALKDERIG, 5)
+            msg("Derig takes the Rod of Cancellation and Unadium Coin.")
+            bubble(en, "I'll take these back to the grotto for safe keeping. Thank you.")
+          end
+        end
+      end
+    elseif (get_progress(P_TALKDERIG) == 5) then
+      -- Although TALKDERIG==5, Derig will still be on the screen until you leave Ekla and return
+      bubble(en, "I will take these back to the grotto. Thanks again.")
+    end -- P_TALKDERIG
 
-
-function LOC_old_lady()
-  if (get_progress(P_UCOIN) == 2) then
-    bubble(2, "Great! Take this.");
-    wait(25);
-    set_progress(P_UCOIN, 3);
-    sfx(5);
-    msg("Unadium coin procured", 255, 0);
-    bubble(2, "In the grotto north of town there is a metal rune in the ground.");
-    bubble(2, "If you are carrying anything made from Unadium, you can teleport into the ruins beyond.");
-    bubble(2, "In the ruins you should find a Rod of Cancellation. Use the rod to dispel the portal in the tunnel.");
-    bubble(2, "That will stop any new monsters from coming through.");
-    wait(25);
-    bubble(2, "Oh, and please bring back the coin when you are done.");
-    bubble(2, "There are only seven of them in existence and it's very precious to me.");
-    if (party[0] == AYLA) then
-      thought(HERO1, "Heh, as if!");
-    elseif (party[1] == AYLA) then
-      thought(HERO2, "Heh, as if!");
-    end
   end
 end

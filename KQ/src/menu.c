@@ -207,7 +207,7 @@ void spec_items (void)
    char silist[20][20], spicon[20];
    char sidesc[20][20], siq[20];
 
-   if (progress[P_UCOIN] == 3) {
+   if (progress[P_UCOIN] == 2) {
       strcpy (silist[ii], "Unadium coin");
       strcpy (sidesc[ii], "Use to reach ruins");
       siq[ii] = 1;

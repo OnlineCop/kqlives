@@ -89,14 +89,13 @@ function zone_handler(zn)
         bubble(HERO1, "Hmmm... I guess if I just touch it with the rod...");
         do_fadeout(4);
         set_progress(P_PORTALGONE, 1);
-        set_progress(P_CANCELROD, 2);
         refresh();
         drawmap();
         screen_dump();
         do_fadein(4);
-        bubble(HERO1, "Whoa! The rod is gone too!");
+        bubble(HERO1, "Whoa! The rod melted the portal shut!");
       else
-        bubble(HERO1, "Hmmm... exit only I guess.");
+        bubble(HERO1, "Hmmm... this is very old and has several deep cracks in it.");
       end
     else
       bubble(HERO1, "I wonder where this came from?");
