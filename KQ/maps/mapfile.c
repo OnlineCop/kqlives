@@ -288,9 +288,9 @@ void load_map (void)
          /* Shadow layer */
          if (sh_map[p] >= MAX_SHADOWS)
             sh_map[p] = 0;
-	 /* Background layer */
-	 if (b_map[p]>MAX_TILES) 
-	   b_map[p]=0;
+         /* Background layer */
+         if (b_map[p] > MAX_TILES)
+            b_map[p] = 0;
       }
       destroy_bitmap (pcx_buffer);
    }

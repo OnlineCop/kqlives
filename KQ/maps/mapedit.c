@@ -45,7 +45,6 @@ BITMAP *mesh, *b_mesh, *z_mesh;
 /* Font and mouse images */
 BITMAP *font6, *mpic;
 
-
 /* Gee, could it be an Entity frame? */
 BITMAP *eframes[MAX_EPICS][12];
 
@@ -82,7 +81,7 @@ s_show showing;
 /* Number of entities, index of currently-selected entity */
 int noe = 0, cent = 0;
 
-/* Our undesputed mouse picture.  Wow. */
+/* Our undisputed mouse picture.  Wow. */
 unsigned char mousepic[] = {
    15, 00, 00, 00,
    15, 15, 00, 00,
@@ -92,12 +91,29 @@ unsigned char mousepic[] = {
    00, 00, 00, 15
 };
 
+/* Tileset images */
 char *icon_files[NUM_TILESETS] = {
    "land.pcx", "newtown.pcx", "castle.pcx",
    "Incave.pcx", "village.pcx", "mount.pcx"
 };
+
+/* The map modes (parallax and drawing order) are listed here in
+ * coded format. The layers are listed as 1, 2, 3, E (entity) S (shadow)
+ * and a ) or ( marks which layers use the parallax mult/div.
+ */
+static const char *map_mode_text[] = {
+   "12E3S ",
+   "1E23S ",
+   "1)2E3S",
+   "1E2)3S",
+   "1(2E3S",
+   "12E(3S",
+};
+
 int htiles = (SW - 80) / 16;
 int vtiles = (SH - 48) / 16;
+
+void preview_map(void);
 
 
 /* Welcome to Mapdraw, folks! */
@@ -108,7 +124,10 @@ int main (void)
    startup ();
    while (!stop) {
       process_controls ();
-      draw_map ();
+      if (draw_mode == MAP_PREVIEW)
+        preview_map();
+      else
+        draw_map ();
       draw_menubars ();
       if (!nomouse)
          draw_sprite (double_buffer, mpic, mouse_x, mouse_y);
@@ -129,7 +148,7 @@ END_OF_MAIN ();
  * Report errors and comments through this function
  *
  * \param   msg The message you want sent to the LOG file
-*/
+ */
 void klog (char *msg)
 {
    FILE *ff;
@@ -145,7 +164,7 @@ void klog (char *msg)
 /*! \brief Mouse and keyboard input
  *
  * Mouse and keyboard inputs (sorry, no joystick support)
-*/
+ */
 void process_controls (void)
 {
    int k;
@@ -188,7 +207,7 @@ void process_controls (void)
 
       /* View Layers 1+2+3, plus Entities and Shadows */
       if (k == KEY_C) {
-         draw_mode = MAP_LAYER123;
+         draw_mode = MAP_PREVIEW;
          showing.entities = 1;
          showing.shadows = 1;
          showing.obstacles = 0;
@@ -267,6 +286,7 @@ void process_controls (void)
       /* Copy a selection */
       if (k == KEY_T)
          draw_mode = BLOCK_COPY;
+
       /* Paste the copied selection area */
       if (k == KEY_P)
          draw_mode = BLOCK_PASTE;
@@ -303,9 +323,11 @@ void process_controls (void)
       /* Copy Layers 1, 2, 3 to mini PCX images */
       if (k == KEY_J)
          maptopcx ();
+
       /* Save whole map as a picture */
       if (k == KEY_V)
          visual_map ();
+
       /* Get the last Zone used and set the indicator to that */
       if (k == KEY_L)
          curzone = check_last_zone ();
@@ -710,7 +732,7 @@ void process_controls (void)
  * Confirm that the user wants to exit the map editor
  *
  * \returns 1 for yes, 0 for no
-*/
+ */
 int confirm_exit (void)
 {
    cmessage ("Are you sure you want to exit? (y/n)");
@@ -724,7 +746,7 @@ int confirm_exit (void)
  *
  * \param   cx x-coord of the tile
  * \param   cy y-coord of the tile
-*/
+ */
 void check_tilesel (int cx, int cy)
 {
    int xp, yp;
@@ -745,7 +767,7 @@ void check_tilesel (int cx, int cy)
  *
  * \param   cx x-coord of the mouse
  * \param   cy y-coord of the mouse
-*/
+ */
 void check_mdupdate (int cx, int cy)
 {
    int a;
@@ -1010,10 +1032,151 @@ void visual_map (void)
 }                               /* visual_map () */
 
 
+/*! \brief Draw the layers with parallax
+ *
+ * Draws selected layer and will compensate for parallax.
+ * \author PH
+ * \date 20031205
+ */
+static void draw_layer (short *layer, int pr)
+{
+   int i, j;
+   int i0, j0, i1, j1;
+   int x0, y0;
+   i0 = pr ? gx * gmap.pmult / gmap.pdiv : gx;
+   j0 = pr ? gy * gmap.pmult / gmap.pdiv : gy;
+   i1 = i0 + htiles;
+   j1 = j0 + vtiles;
+   if (i0 < 0)
+      i0 = 0;
+   if (j0 < 0)
+      j0 = 0;
+   if (i1 > gmap.xsize)
+      i1 = gmap.xsize;
+   if (j1 > gmap.ysize)
+      j1 = gmap.ysize;
+   x0 = i0 * 16;
+   y0 = j0 * 16;
+
+   for (j = j0; j < j1; ++j) {
+      for (i = i0; i < i1; ++i) {
+         draw_sprite(double_buffer, icons[layer[i + j * gmap.xsize]],
+                     i * 16 - x0, j * 16 - y0);
+      }
+   }
+}
+
+
+/*! \brief Draw the shadows
+ *
+ * Draws the shadows onto the screen and takes into consideration any layer
+ * effects that need to take place (see map_mode_text[] for details).
+ * \author PH
+ * \date 20031205
+ */
+static void draw_shadow (int pr)
+{
+   int i, j;
+   int i0, j0, i1, j1;
+   int x0, y0;
+   int ss;
+   i0 = pr ? gx * gmap.pmult / gmap.pdiv : gx;
+   j0 = pr ? gy * gmap.pmult / gmap.pdiv : gy;
+   i1 = i0 + htiles;
+   j1 = j0 + vtiles;
+   if (i0 < 0)
+      i0 = 0;
+   if (j0 < 0)
+      j0 = 0;
+   if (i1 > gmap.xsize)
+      i1 = gmap.xsize;
+   if (j1 > gmap.ysize)
+      j1 = gmap.ysize;
+   x0 = gx * 16;
+   y0 = gy * 16;
+   for (j = j0; j < j1; ++j) {
+      for (i = i0; i < i1; ++i) {
+         ss = sh_map[j * gmap.xsize + i];
+         if (ss > 0) {
+            draw_trans_sprite (double_buffer, shadow[ss], i * 16-x0, j * 16-y0);
+         }
+      }
+   }
+}
+
+
+/*! \brief Draw the entities
+ *
+ * Draws the entities onto the screen and takes into consideration any layer
+ * effects that need to take place (see map_mode_text[] for details).
+ * \author PH
+ * \date 20031205
+ */
+static void draw_ents(void) {
+   int d, x0, y0;
+   BITMAP *e;
+   x0 = gx * 16;
+   y0 = gy * 16;
+   for (d = 0; d < noe; d++) {
+      /* Draw only the entities within the view-screen */
+      if ((gent[d].tilex >= gx) && (gent[d].tilex < gx + htiles) &&
+         (gent[d].tiley >= gy) && (gent[d].tiley < gy + vtiles)) {
+            e = eframes[gent[d].chrx][gent[d].facing * 3];
+            /* Draw either a normal sprite or a translucent one */
+            if (gent[d].transl == 0)
+               draw_sprite (double_buffer, e, gent[d].tilex * 16 - x0, gent[d].tiley * 16 - y0);
+            else
+               draw_trans_sprite (double_buffer, e, gent[d].tilex * 16 - x0, gent[d].tiley * 16 - y0);
+      }
+   }
+}
+
+
+/*! \brief Preview map
+ *
+ * Draw the map with all layers on and using parallax/layering
+ * like in the game (see map_mode_text[] for details).
+ * \author PH
+ * \date 20031205
+ */
+void preview_map(void)
+{
+   clear_bitmap(double_buffer);
+   switch (gmap.map_mode) {
+   case 0:
+      draw_layer(map, 0);
+      draw_layer(b_map, 0);
+      draw_ents();
+      draw_layer(f_map, 0);
+      draw_shadow(0);
+      break;
+   case 1:
+      draw_layer(map, 0);
+      draw_ents();
+      draw_layer(b_map, 0);
+      draw_layer(f_map, 0);
+      draw_shadow(0);
+      break;
+   case 2:
+      draw_layer(map, 1);
+      draw_layer(b_map, 0);
+      draw_ents();
+      draw_layer(f_map, 0);
+      draw_shadow(0);
+      break;
+   default:
+      textprintf_centre(double_buffer, font, double_buffer->w / 2,
+                        double_buffer->h / 2, makecol(255, 255, 255),
+                        "Mode %d preview not supported.", gmap.map_mode);
+      break;
+   }
+}
+
+
 /*! \brief Update the screen
  *
- * Update the screen after all controls taken care of
-*/
+ * Update the screen after all controls taken care of.
+ */
 void draw_map (void)
 {
    /* Coordinates inside the view-window */
@@ -1027,7 +1190,6 @@ void draw_map (void)
 
    /* Clear everything with black */
    rectfill (double_buffer, 0, 0, (SW - 81), (SH - 49), 0);
-
    /* The maxx/maxy is used since the map isn't always as large as the
       view-window, we don't want to check/update anything that would be
       out of bounds.
@@ -1216,7 +1378,7 @@ void draw_map (void)
 /*! \brief Draw the menus
  *
  * Process both the menus on the side and bottom of the screen
-*/
+ */
 void draw_menubars (void)
 {
    int p, xp, yp, a;
@@ -1264,8 +1426,8 @@ void draw_menubars (void)
    sprintf (strbuf, "Map #: %d", gmap.map_no);
    print_sfont (0, (SH - 22), strbuf, double_buffer);
 
-   /* The current mode we use (see drawmap() for info) */
-   sprintf (strbuf, "Mode: %d", gmap.map_mode);
+   /* The current mode we use (see drawmap() in the main game for info) */
+   sprintf (strbuf, "Mode: %s", map_mode_text[gmap.map_mode]);
    print_sfont (0, (SH - 16), strbuf, double_buffer);
 
    /* Can the player save the game here? */
@@ -1441,7 +1603,6 @@ void draw_menubars (void)
 
    /* Displays the coordinates of the Block Copy */
    if (draw_mode == BLOCK_COPY && copyx1 != -1 && copyy1 != -1) {
-// <-- HERE
       int rectx1, rectx2, recty1, recty2;
 
       rectx1 = (copyx1 + gx) * 16;
@@ -1499,7 +1660,7 @@ void draw_menubars (void)
 /*! \brief Memory allocation
  *
  * Allocation of memory, etc. for the maps
-*/
+ */
 void bufferize (void)
 {
    free (map);
@@ -1545,7 +1706,7 @@ void bufferize (void)
 /*! \brief Change map tiles
  *
  * Change any map tiles from one icon to another throughout the map
-*/
+ */
 void global_change (void)
 {
    int ld, ft = 0, tt, p;
@@ -1628,7 +1789,7 @@ void global_change (void)
 /*! \brief Clear obstructions on map
  *
  * This goes through the entire map and removes all Obstructions
-*/
+ */
 void clear_obstructs (void)
 {
    int co;
@@ -1643,7 +1804,7 @@ void clear_obstructs (void)
 /*! \brief Clear shadows on the map
  *
  * This goes through the entire map and removes all Shadows
-*/
+ */
 void clear_shadows (void)
 {
    int co;
@@ -1665,7 +1826,7 @@ void clear_shadows (void)
  * \param   max_len Maximum characters to accept
  * \returns 0 if user hits ESC (cancel)
  * \returns 1 if user hits ENTER
-*/
+ */
 int get_line (int gx, int gy, char *buffer, int max_len)
 {
    int index = 0, ch;
@@ -1719,7 +1880,7 @@ int get_line (int gx, int gy, char *buffer, int max_len)
  *   N or ESC do the same thing
  *
  * \returns 1 for Y/ENTER, 0 for N/ESC
-*/
+ */
 int yninput (void)
 {
    int ch, done = 0;
@@ -1739,7 +1900,7 @@ int yninput (void)
 /*! \brief The opposite of shutdown, maybe?
  *
  * Inits everything needed for user input, graphics, etc.
-*/
+ */
 void startup (void)
 {
    int k, kx, ky, a, p, q;
@@ -1863,7 +2024,7 @@ void startup (void)
 /*! \brief Code shutdown and memory deallocation
  *
  * Called at the end of main(), closes everything
-*/
+ */
 void cleanup (void)
 {
    int k, j;
@@ -1896,7 +2057,7 @@ void cleanup (void)
 /*! \brief Wait for ENTER key
  *
  * There's almost no point in explaining this function further :-)
-*/
+ */
 void wait_enter (void)
 {
    int a, done = 0;
@@ -1913,11 +2074,11 @@ void wait_enter (void)
 /*! \brief Handy-dandy help screen
  *
  * This is a simple help screen that displays when F1 is pressed
-*/
+ */
 void show_help (void)
 {
    int this_counter;
-#define NUMBER_OF_ITEMS 55
+   #define NUMBER_OF_ITEMS 55
 
    char *help_keys[NUMBER_OF_ITEMS] = {
       "               THIS IS THE HELP DIALOG               ",
@@ -1997,7 +2158,7 @@ void show_help (void)
  * This displays messages onto the screen; used for warnings, reminders, etc.
  *
  * \param   buff String of text to be printed to the screen
-*/
+ */
 void cmessage (char *buff)
 {
    int cx;
@@ -2016,7 +2177,7 @@ void cmessage (char *buff)
  *
  * \param   tx Target x-coord to paste to
  * \param   ty Target y-coord to paste to
-*/
+ */
 void paste_region_special (int tx, int ty)
 {
    int zx, zy, bf;
@@ -2087,7 +2248,7 @@ void paste_region_special (int tx, int ty)
  *
  * \param   tx Target x-coord
  * \param   ty Target y-coord
-*/
+ */
 void paste_region (int tx, int ty)
 {
    int zx, zy, bf;
@@ -2118,7 +2279,7 @@ void paste_region (int tx, int ty)
 /*! \brief Copy all the layers in a block area
  *
  * Copy all of the layers from one area to another
-*/
+ */
 void copy_region (void)
 {
    /* Area block coords */
@@ -2185,7 +2346,7 @@ void copy_region (void)
 /*! \brief Resize the current map
  *
  * Changes the map's height and width
-*/
+ */
 void resize_map (void)
 {
    /* User input */
@@ -2327,7 +2488,7 @@ void resize_map (void)
 /*! \brief Clear the contents of a map
  *
  * This resets each of the map's layers
-*/
+ */
 void wipe_map (void)
 {
    cmessage ("Do you want to clear the whole map? (y/n)");
@@ -2349,7 +2510,7 @@ void wipe_map (void)
 /*! \brief Set the map's description
  *
  * This is what displays in the game when a new map is entered (ie its name)
-*/
+ */
 void describe_map (void)
 {
    int ld;
@@ -2374,7 +2535,7 @@ void describe_map (void)
 /*! \brief Copy an entire layer into another
  *
  * Copy the contents of one Layer to another
-*/
+ */
 void copy_layer (void)
 {
    int rt, rt2, ff, tt, a, b;
@@ -2432,7 +2593,7 @@ void copy_layer (void)
 /*! \brief Clears a layer from the map
  *
  * Remove an entire Layer from the map
-*/
+ */
 void clear_layer (void)
 {
    int rt, ml, a;
@@ -2474,7 +2635,7 @@ void clear_layer (void)
  * \param   y Where to display the text on the y-coord
  * \param   string A "thinner" version of yarn, made from cotton or wool
  * \param   where The destination, or where it will be drawn to
-*/
+ */
 void print_sfont (int x, int y, char *string, BITMAP * where)
 {
    int i, c;
@@ -2496,7 +2657,7 @@ void print_sfont (int x, int y, char *string, BITMAP * where)
  *
  * This changes the tileset in the menu on the right and then updates
  * the map to show the current tileset
-*/
+ */
 void update_tileset (void)
 {
    int tmapx, tmapy;
@@ -2516,7 +2677,7 @@ void update_tileset (void)
  * Count and display the maximum Zone Attributes on the map
  *
  * \returns the maximum zone number in the map
-*/
+ */
 int check_last_zone (void)
 {
    int a = 0, p;
@@ -2530,7 +2691,7 @@ int check_last_zone (void)
 /*! \brief Gets the index of the tile under the mouse
  *
  * Grab the currently selected map tile and display it in the tileset
-*/
+ */
 void get_tile (void)
 {
    if (showing.last_layer == MAP_LAYER1)

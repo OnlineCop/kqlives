@@ -14,60 +14,59 @@
 #define SH            480
 #define WBUILD          1
 
-#define MAP_LAYER1  1           // map (sea-level)
-#define MAP_LAYER2  2           // background (ground-level)
-#define MAP_LAYER3  4           // foreground (tree-tops, etc.)
-#define MAP_SHADOWS  8          // Entities Attribute
-#define MAP_ZONES  16           // Shadows Attribute
-#define MAP_OBSTACLES  32       // Obstacles Attribute
-#define MAP_ENTITIES  64        // Zones Attribute
-#define MAP_LAYER12  (MAP_LAYER1 | MAP_LAYER2)  // map + background
-#define MAP_LAYER13  (MAP_LAYER1 | MAP_LAYER3)  // map + foreground
-#define MAP_LAYER23  (MAP_LAYER2 | MAP_LAYER3)  // background + foreground
-#define MAP_LAYER123 (MAP_LAYER1 | MAP_LAYER2 | MAP_LAYER3)     // map + background + foreground
-#define BLOCK_COPY  128         // Mode to start copying an area
-#define BLOCK_PASTE  256        // Mode to paste the copied area
-#define GRAB_TILE  512          // Select a tile in the map to draw
+#define MAP_LAYER1  1           /* Map (sea-level) */
+#define MAP_LAYER2  2           /* Background (ground-level) */
+#define MAP_LAYER3  4           /* Foreground (tree-tops, etc.) */
+#define MAP_SHADOWS  8          /* Entities Attribute */
+#define MAP_ZONES  16           /* Shadows Attribute */
+#define MAP_OBSTACLES  32       /* Obstacles Attribute */
+#define MAP_ENTITIES  64        /* Zones Attribute */
+#define MAP_LAYER12  (MAP_LAYER1 | MAP_LAYER2)  /* Map + background */
+#define MAP_LAYER13  (MAP_LAYER1 | MAP_LAYER3)  /* Map + foreground */
+#define MAP_LAYER23  (MAP_LAYER2 | MAP_LAYER3)  /* Background + foreground */
+#define MAP_LAYER123 (MAP_LAYER1 | MAP_LAYER2 | MAP_LAYER3)     /* Map + background + foreground */
+#define BLOCK_COPY  128         /* Mode to start copying an area */
+#define BLOCK_PASTE  256        /* Mode to paste the copied area */
+#define GRAB_TILE  512          /* Select a tile in the map to draw */
+#define MAP_PREVIEW 1024        /* Draw a proper preview with layer ordering and parallax */
 
-#define ICONSET_SIZE    20      // Number of icons shown in the tile map
+#define ICONSET_SIZE    20      /* Number of icons shown in the tile map */
 
 #include "../include/structs.h"
 
 
-
-/*
+#if 0
 typedef struct
 {
-   unsigned char chrx;  // Entity's identity (what s/he looks like)
-   unsigned short x; // x-coord on map
-   unsigned short y; // y-coord on map
-   unsigned short tilex;   // x-coord tile that entity is standing on
-   unsigned short tiley;   // y-coord tile that entity is standing on
-   unsigned char id; // Entity type (fighter, enemy, normal)
-   unsigned char active;   // "Alive/Showing on map" or not
-   unsigned char facing;   // Direction
-   unsigned char moving;   // In the middle of a move
-   unsigned char movcnt;   // How far along the move entity is
-   unsigned char framectr; // Counter for determining animation frame
-   unsigned char movemode; // Stand, wander, script or chasing
-   unsigned char obsmode;  // Determine if affected by obstacles or not
-   unsigned char delay; // Movement delay (between steps)
-   unsigned char delayctr; // Counter for movement delay
-   unsigned char speed; // How hyperactive the entity is
+   unsigned char chrx;     /* Entity's identity (what s/he looks like) */
+   unsigned short x;       /* x-coord on map */
+   unsigned short y;       /* y-coord on map */
+   unsigned short tilex;   /* x-coord tile that entity is standing on */
+   unsigned short tiley;   /* y-coord tile that entity is standing on */
+   unsigned char id;       /* Entity type (fighter, enemy, normal) */
+   unsigned char active;   /* "Alive/Showing on map" or not */
+   unsigned char facing;   /* Direction */
+   unsigned char moving;   /* In the middle of a move */
+   unsigned char movcnt;   /* How far along the move entity is */
+   unsigned char framectr; /* Counter for determining animation frame */
+   unsigned char movemode; /* Stand, wander, script or chasing */
+   unsigned char obsmode;  /* Determine if affected by obstacles or not */
+   unsigned char delay;    /* Movement delay (between steps) */
+   unsigned char delayctr; /* Counter for movement delay */
+   unsigned char speed;    /* How hyperactive the entity is */
    unsigned char scount;
-   unsigned char cmd;   // Move/Wait/Facing command
-   unsigned char sidx;  // Script ID number
+   unsigned char cmd;      /* Move/Wait/Facing command */
+   unsigned char sidx;     /* Script ID number */
    unsigned char extra;
-   unsigned char chasing;  // Entity is following another
-   int cmdnum; // Number of times we need to repeat 'cmd'
+   unsigned char chasing;  /* Entity is following another */
+   int cmdnum;             /* Number of times we need to repeat 'cmd' */
    unsigned char atype;
-   unsigned char snapback; // Snaps back to direction previously facing
-   unsigned char facehero; // Look at player when talked to
-   unsigned char transl;   // Entity is see-through or not
-   char script[60];  // Movement/action script (pacing, etc.)
+   unsigned char snapback; /* Snaps back to direction previously facing */
+   unsigned char facehero; /* Look at player when talked to */
+   unsigned char transl;   /* Entity is see-through or not */
+   char script[60];        /* Movement/action script (pacing, etc.) */
 }
 s_entity;
-
 
 
 typedef struct
@@ -83,22 +82,20 @@ typedef struct
    char map_desc[40];
 }
 ss_map;
-*/
-
+#endif
 
 
 typedef struct
 {
    int entities, shadows, obstacles, zones;
-   int last_layer;              // tracks last-used layer
+   int last_layer;              /* Tracks last-used layer */
 }
 s_show;
 
 
-
 /*
    A requirement for this program is that all icon-files have a blank icon in entry 0
-*/
+ */
 
 /* prototypes */
 void klog (char *);
