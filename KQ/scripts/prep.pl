@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-@kqin = ("../itemdefs.h","../progress.h");
+@kqin = ("../include/itemdefs.h","../include/progress.h");
 @d_s = ();
 @d_v = ();
 $ni = 0;
