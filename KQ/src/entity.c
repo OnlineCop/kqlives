@@ -144,7 +144,7 @@ static void speed_adjust (int i)
  * is #0 (main character) and the party is not automated, then allow
  * for player input.
  *
- * \param i index  of entity
+ * \param i index of entity
 */
 static void process_entity (int i)
 {
