@@ -60,6 +60,12 @@ end
 
 function entity_handler(en)
   local a = get_progress(P_FIGHTONBRIDGE);
+  -- TT comments:
+  -- a ==0 before talking to any worker (and before monster)
+  -- a ==1 talked to workers but you have not tried to leave
+  -- a ==2 tried to leave after a==1 and monster has appeared
+  -- a ==3 you defeated the monster
+  -- a ==4 after a==3 and you left map and returned
 
   if (en >= 2) then
     if (a == 0) then
@@ -76,7 +82,7 @@ function entity_handler(en)
   end
 
   if (en == 0) then
-    if (a == 0) then
+    if (a == 0 or a == 1) then
       bubble(0,"We're on the lookout",
                "for bandits.","","");
     elseif (a == 2) then
@@ -93,7 +99,7 @@ function entity_handler(en)
     end
 
   elseif (en == 1) then
-    if (a == 0) then
+    if (a < 2) then
       if (get_progress(P_LOSERONBRIDGE) == 0) then
         bubble(1,"Those bandits better not show",
                  "their faces around here again!","","");
@@ -112,15 +118,22 @@ function entity_handler(en)
       bubble(1,".....","","","");
     elseif (a == 3) then
       bubble(1,"Wow!","","","");
+    elseif (a == 4) then
+      bubble(1,"The bridge looks like it might",
+               "be done by tomorrow. Why don't",
+               "you go have a rest at the inn?","");
     end
 
   elseif (en == 2) then
-    if (a == 4 or a < 2) then
+    if (a < 2) then
       bubble(2,"This is very hard work!","","","");
+    elseif (a == 4) then
+      bubble(2,"That monster popped up right under",
+               "my nose.  Thanks for everything!","","");
     end
 
   elseif (en == 3) then
-    if (a == 4 or a < 2) then
+    if (a < 2) then
       bubble(3,".....","","","");
       if (get_progress(P_ASLEEPONBRIDGE) == 0) then
         wait(50);
@@ -130,31 +143,40 @@ function entity_handler(en)
         set_ent_facing(3,1);
         set_progress(P_ASLEEPONBRIDGE,1);
       end
+    elseif (a == 4) then
+      bubble(3,"Zzz...","","","");
     end
 
   elseif (en == 4) then
-    if (a == 4 or a < 2) then
-      bubble(4,"I think that other",
-               "guy is asleep.","","");
+    if (a < 2) then
+      bubble(4,"I think that guy up there",
+               "is asleep.","","");
+    elseif (a == 4) then
+      bubble(4,"Lousy, no-good... sleeping",
+               "on the job...","","");
     end
 
   elseif (en == 5) then
-    if (a == 4 or a < 2) then
+    if (a < 2) then
       bubble(5,"I really could use a break.",
                "It's been almost 15 minutes",
                "since the last one!","");
+    elseif (a == 4) then
+      bubble(5,"Now that the bridge is almost",
+               "done, I think I'm due for",
+               "another break.","");
     end
 
   elseif (en == 6) then
-    if (a == 4 or a < 2) then
+    if (a < 2) then
       bubble(6,"I never should have listened",
                "to my mother when she told",
                "me to take up construction.","");
       bubble(6,"I should've been a florist",
                "like my dad.","","");
-      if (a == 0) then
-        set_progress(P_FIGHTONBRIDGE,1);
-      end
+    elseif (a == 4) then
+      bubble(6,"Now you see why I should've",
+               "been a florist...","","");
     end
 
   end
