@@ -18,7 +18,5 @@ mapfile.o: mapfile.c mapdraw.h $(DISK_H)
 mapdata.o: mapdata.c mapdraw.h $(DISK_H)
 mapent.o:  mapent.c  mapdraw.h $(DISK_H)
 
-LDFLAGS  := $(addprefix -l,$(LIBRARY))
-
 mapdump$(EXE_SUFFIX): mapdump.o mapshared.o disk.o
 	$(LINK.o)$^ -o $@ $(LDFLAGS)
