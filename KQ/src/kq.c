@@ -1873,10 +1873,11 @@ int main (void)
                     {
                        stop = system_menu ();
                     }
-                  if (bhelp)
+/*                  if (bhelp)
                     {
                        select_party (NULL, 0, 0);
                     }
+*/                    
 
                   if (alldead)
                     {
