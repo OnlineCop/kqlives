@@ -43,6 +43,7 @@
 
 void parse_setup (void);        /*  kq.c  */
 void config_menu (void);        /*  sgame.c  */
+void show_help (void);
 void set_graphics_mode (void);  /*  kq.c  */
 void sound_init (void);         /*  kq.c  */
 void free_samples (void);       /*  kq.c  */
