@@ -318,9 +318,8 @@ char ctext[39];
 #ifdef KQ_CHEATS
 static void data_dump (void);
 #endif
-BITMAP *alloc_bmp (int, int, char *);
+
 static void allocate_stuff (void);
-static void load_data (void);
 static void load_heroes (void);
 
 
@@ -351,7 +350,7 @@ int view_x1, view_y1, view_x2, view_y2, view_on = 0;
 int in_combat = 0;
 /*! Frame rate stuff */
 int skips = 0, frate, mfrate = 0, show_frate = 0;
-/*! Should we use the joystick \note Not implemented at the moment */
+/*! Should we use the joystick */
 int use_joy = 1;
 #ifdef KQ_CHEATS
 /*! Has the 'cheat' script been loaded? */
@@ -372,50 +371,47 @@ void my_counter (void)
 {
    timer++;
 
-   if (timer >= KQ_FPS)
-     {
-        timer = 0;
-        ksec++;
+   if (timer >= KQ_FPS) {
+      timer = 0;
 
-        if (ksec >= 60)
-          {
-             ksec = 0;
-             kmin++;
-          }
-
-        if (kmin >= 60)
-          {
-             kmin = 0;
-             khr++;
-          }
-
-        mfrate = frate;
-        frate = 0;
-     }
+      mfrate = frate;
+      frate = 0;
+   }
 
    timer_count++;
 }
 
 END_OF_FUNCTION (my_counter);
 
-
-#ifdef ALLEGRO_BEOS
-static inline long long gettime()
+static void time_counter (void)
 {
-  struct timeval tv;
-  gettimeofday(&tv, 0);
-  return (tv.tv_sec * 1000000) + (tv.tv_usec);
+   kmin++;
+   if (kmin >= 60) {
+      kmin = 0;
+      khr++;
+   }
+
 }
 
-int maybe_poll_joystick() {
-  long long lasttime = 0;
-  long long nowtime = gettime();
-  if ((unsigned long long) nowtime > (unsigned long long) lasttime) {
-    lasttime = nowtime + 150000;
-    return poll_joystick();
-  }
-  else
-    return -1;
+END_OF_FUNCTION (time_counter);
+
+#ifdef ALLEGRO_BEOS
+static inline long long gettime ()
+{
+   struct timeval tv;
+   gettimeofday (&tv, 0);
+   return (tv.tv_sec * 1000000) + (tv.tv_usec);
+}
+
+int maybe_poll_joystick ()
+{
+   long long lasttime = 0;
+   long long nowtime = gettime ();
+   if ((unsigned long long) nowtime > (unsigned long long) lasttime) {
+      lasttime = nowtime + 150000;
+      return poll_joystick ();
+   } else
+      return -1;
 }
 
 #else
@@ -437,10 +433,9 @@ void readcontrols (void)
    poll_music ();
 
    /* PH 2002.09.21 in case this is needed (not sure on which platforms it is) */
-   if (keyboard_needs_poll ())
-     {
-        poll_keyboard ();
-     }
+   if (keyboard_needs_poll ()) {
+      poll_keyboard ();
+   }
 
    balt = key[kalt];
    besc = key[kesc];
@@ -469,34 +464,31 @@ void readcontrols (void)
 #endif
 
    /* ML,2002.09.21: Saves sequential screen captures to disk. See scrnshot.c/h for more info. */
-   if (key[KEY_F12])
-     {
-        save_screenshot (screen, "kq");
-        play_effect (SND_TWINKLE, 128);
-        /* Wait for key to be released before continuing */
-        /* PH 2002.09.21 n.b. keyboard not necessarily in polling mode */
-        while (key[KEY_F12])
-          {
-             if (keyboard_needs_poll ())
-                poll_keyboard ();
-          }
-     }
+   if (key[KEY_F12]) {
+      save_screenshot (screen, "kq");
+      play_effect (SND_TWINKLE, 128);
+      /* Wait for key to be released before continuing */
+      /* PH 2002.09.21 n.b. keyboard not necessarily in polling mode */
+      while (key[KEY_F12]) {
+         if (keyboard_needs_poll ())
+            poll_keyboard ();
+      }
+   }
 
-   if (use_joy > 0 && maybe_poll_joystick()==0)
+   if (use_joy > 0 && maybe_poll_joystick () == 0)
+   {
+      stk = &joy[use_joy - 1];
+      left |= stk->stick[0].axis[0].d1;
+      right |= stk->stick[0].axis[0].d2;
+      up |= stk->stick[0].axis[1].d1;
+      down |= stk->stick[0].axis[1].d2;
 
-          {
-             stk = &joy[use_joy - 1];
-             left |= stk->stick[0].axis[0].d1;
-             right |= stk->stick[0].axis[0].d2;
-             up |= stk->stick[0].axis[1].d1;
-             down |= stk->stick[0].axis[1].d2;
+      balt |= stk->button[0].b;
+      bctrl |= stk->button[1].b;
+      benter |= stk->button[2].b;
+      besc |= stk->button[3].b;
 
-             balt |= stk->button[0].b;
-             bctrl |= stk->button[1].b;
-             benter |= stk->button[2].b;
-             besc |= stk->button[3].b;
-
-          }
+   }
 }
 
 
@@ -547,16 +539,13 @@ void calc_viewport (int center)
 
    (void) center;               // ML,2002.09.21: unused variable right now, casting to void to prevent warnings
 
-   if (vfollow && numchrs > 0)
-     {
-        zx = g_ent[0].x;
-        zy = g_ent[0].y;
-     }
-   else
-     {
-        zx = vx;
-        zy = vy;
-     }
+   if (vfollow && numchrs > 0) {
+      zx = g_ent[0].x;
+      zy = g_ent[0].y;
+   } else {
+      zx = vx;
+      zy = vy;
+   }
 
 /*
   if (center)
@@ -578,37 +567,33 @@ void calc_viewport (int center)
 */
    sx = zx - vx;
    sy = zy - vy;
-   if (sx < bl)
-     {
-        vx = zx - bl;
+   if (sx < bl) {
+      vx = zx - bl;
 
-        if (vx < 0)
-           vx = 0;
-     }
+      if (vx < 0)
+         vx = 0;
+   }
 
-   if (sy < bu)
-     {
-        vy = zy - bu;
+   if (sy < bu) {
+      vy = zy - bu;
 
-        if (vy < 0)
-           vy = 0;
-     }
+      if (vy < 0)
+         vy = 0;
+   }
 
-   if (sx > br)
-     {
-        vx = zx - br;
+   if (sx > br) {
+      vx = zx - br;
 
-        if (vx > mx)
-           vx = mx;
-     }
+      if (vx > mx)
+         vx = mx;
+   }
 
-   if (sy > bd)
-     {
-        vy = zy - bd;
+   if (sy > bd) {
+      vy = zy - bd;
 
-        if (vy > my)
-           vy = my;
-     }
+      if (vy > my)
+         vy = my;
+   }
 
    if (vx > mx)
       vx = mx;
@@ -616,7 +601,33 @@ void calc_viewport (int center)
       vy = my;
 }
 
+/*! \brief allocate memory for map
+ *
+ * Allocate memory arrays for the map, shadows, obstacles etc 
+ * according to the size specified in g_map
+ * \author  PH 20031010
+ */
+static void map_alloc (void)
+{
+   int tiles = g_map.xsize * g_map.ysize;
+   free (map_seg);
+   map_seg = (unsigned short *) malloc (tiles * sizeof (short));
 
+   free (b_seg);
+   b_seg = (unsigned short *) malloc (tiles * sizeof (short));
+
+   free (f_seg);
+   f_seg = (unsigned short *) malloc (tiles * sizeof (short));
+
+   free (z_seg);
+   z_seg = (unsigned char *) malloc (tiles);
+
+   free (s_seg);
+   s_seg = (unsigned char *) malloc (tiles);
+
+   free (o_seg);
+   o_seg = (unsigned char *) malloc (tiles);
+}
 
 /*! \brief Free old map data and load a new one
  *
@@ -648,45 +659,24 @@ void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
 
    pf = pack_fopen (kqres (MAP_DIR, strbuf), F_READ_PACKED);
 
-   if (!pf)
-     {
-        clear_bitmap (screen);
-        clear_bitmap (double_buffer);
+   if (!pf) {
+      clear_bitmap (screen);
+      clear_bitmap (double_buffer);
 
-        if (hold_fade == 0)
-           do_transition (TRANS_FADE_IN, 16);
+      if (hold_fade == 0)
+         do_transition (TRANS_FADE_IN, 16);
 
-        g_map.xsize = -1;
-        sprintf (strbuf, "Could not load map %s!", map_name);
-        program_death (strbuf);
-     }
+      g_map.xsize = -1;
+      sprintf (strbuf, "Could not load map %s!", map_name);
+      program_death (strbuf);
+   }
 
    /*pack_fread (&g_map, sizeof (s_map), pf); */
    /*pack_fread (&g_ent[PSIZE], sizeof (s_entity) * 50, pf); */
    load_s_map (&g_map, pf);
    for (i = 0; i < 50; ++i)
       load_s_entity (&g_ent[PSIZE + i], pf);
-
-   free (map_seg);
-   map_seg =
-      (unsigned short *) malloc (g_map.xsize * g_map.ysize * sizeof (short));
-
-   free (b_seg);
-   b_seg =
-      (unsigned short *) malloc (g_map.xsize * g_map.ysize * sizeof (short));
-
-   free (f_seg);
-   f_seg =
-      (unsigned short *) malloc (g_map.xsize * g_map.ysize * sizeof (short));
-
-   free (z_seg);
-   z_seg = (unsigned char *) malloc (g_map.xsize * g_map.ysize);
-
-   free (s_seg);
-   s_seg = (unsigned char *) malloc (g_map.xsize * g_map.ysize);
-
-   free (o_seg);
-   o_seg = (unsigned char *) malloc (g_map.xsize * g_map.ysize);
+   map_alloc ();
    for (i = 0; i < g_map.xsize * g_map.ysize; ++i)
       map_seg[i] = pack_igetw (pf);
    for (i = 0; i < g_map.xsize * g_map.ysize; ++i)
@@ -707,56 +697,52 @@ void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
    /* PH fixme: cc[] were not initialised to zero */
    cc[0] = cc[1] = cc[2] = cc[3] = 0;
 
-   for (i = 0; i < g_map.xsize * g_map.ysize; i++)
-     {
-        if (map_seg[i] > 0)
-           cc[0] = 1;
-        if (b_seg[i] > 0)
-           cc[1] = 1;
-        if (f_seg[i] > 0)
-           cc[2] = 1;
-        if (s_seg[i] > 0)
-           cc[3] = 1;
-     }
+   for (i = 0; i < g_map.xsize * g_map.ysize; i++) {
+      if (map_seg[i] > 0)
+         cc[0] = 1;
+      if (b_seg[i] > 0)
+         cc[1] = 1;
+      if (f_seg[i] > 0)
+         cc[2] = 1;
+      if (s_seg[i] > 0)
+         cc[3] = 1;
+   }
 
    draw_background = cc[0];
    draw_middle = cc[1];
    draw_foreground = cc[2];
    draw_shadow = cc[3];
 
-   for (i = 0; i < numchrs; i++)
-     {
-        /* This allows us to either go to the map's default starting coords
-         * or specify exactly where on the map to go to (like when there
-         * are stairs or a doorway that they should start at).
-         */
-        if (msx == 0 && msy == 0)
-           // Place players at default map starting coords
-           place_ent (i, g_map.stx, g_map.sty);
-        else
-           // Place players at specific coordinates in the map
-           place_ent (i, msx, msy);
+   for (i = 0; i < numchrs; i++) {
+      /* This allows us to either go to the map's default starting coords
+       * or specify exactly where on the map to go to (like when there
+       * are stairs or a doorway that they should start at).
+       */
+      if (msx == 0 && msy == 0)
+         // Place players at default map starting coords
+         place_ent (i, g_map.stx, g_map.sty);
+      else
+         // Place players at specific coordinates in the map
+         place_ent (i, msx, msy);
 
-        lastm[i] = 0;
-        g_ent[i].speed = 4;
-        g_ent[i].obsmode = 1;
-        g_ent[i].moving = 0;
-     }
+      lastm[i] = 0;
+      g_ent[i].speed = 4;
+      g_ent[i].obsmode = 1;
+      g_ent[i].moving = 0;
+   }
 
-   for (i = 0; i < MAX_ENT; i++)
-     {
-        if (g_ent[i].chrx == 38 && g_ent[i].active == 1)
-          {
-             g_ent[i].eid = ID_ENEMY;
-             g_ent[i].speed = rand () % 4 + 1;
-             g_ent[i].obsmode = 1;
-             g_ent[i].moving = 0;
-             g_ent[i].movemode = 3;
-             g_ent[i].chasing = 0;
-             g_ent[i].extra = 50 + rand () % 50;
-             g_ent[i].delay = rand () % 25 + 25;
-          }
-     }
+   for (i = 0; i < MAX_ENT; i++) {
+      if (g_ent[i].chrx == 38 && g_ent[i].active == 1) {
+         g_ent[i].eid = ID_ENEMY;
+         g_ent[i].speed = rand () % 4 + 1;
+         g_ent[i].obsmode = 1;
+         g_ent[i].moving = 0;
+         g_ent[i].movemode = 3;
+         g_ent[i].chasing = 0;
+         g_ent[i].extra = 50 + rand () % 50;
+         g_ent[i].delay = rand () % 25 + 25;
+      }
+   }
 
    pb = load_datafile_object (PCX_DATAFILE, icon_sets[g_map.tileset]);
    pcxb = (BITMAP *) pb->dat;
@@ -776,16 +762,13 @@ void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
    /*PH fixme: was 224, drawmap() draws 16 rows, so should be 16*16=256 */
    my = g_map.ysize * 16 - 256;
 
-   if (mvx == 0 && mvy == 0)
-     {
-        vx = g_map.stx * 16;
-        vy = g_map.sty * 16;
-     }
-   else
-     {
-        vx = mvx * 16;
-        vy = mvy * 16;
-     }
+   if (mvx == 0 && mvy == 0) {
+      vx = g_map.stx * 16;
+      vy = g_map.sty * 16;
+   } else {
+      vx = mvx * 16;
+      vy = mvy * 16;
+   }
 
    calc_viewport (1);
 
@@ -815,12 +798,11 @@ void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
    do_luainit (map_name);
    do_autoexec ();
 
-   if (hold_fade == 0 && numchrs > 0)
-     {
-        drawmap ();
-        blit2screen (xofs, yofs);
-        do_transition (TRANS_FADE_IN, 4);
-     }
+   if (hold_fade == 0 && numchrs > 0) {
+      drawmap ();
+      blit2screen (xofs, yofs);
+      do_transition (TRANS_FADE_IN, 4);
+   }
 
    use_sstone = g_map.use_sstone;
    cansave = g_map.can_save;
@@ -850,31 +832,28 @@ void zone_check (void)
    zx = g_ent[0].x / 16;
    zy = g_ent[0].y / 16;
 
-   if (progress[P_REPULSE] > 0)
-     {
-        if (g_map.map_no == MAP_MAIN)
-           progress[P_REPULSE]--;
-        else
-          {
-             if (progress[P_REPULSE] > 1)
-                progress[P_REPULSE] -= 2;
-             else
-                progress[P_REPULSE] = 0;
-          }
+   if (progress[P_REPULSE] > 0) {
+      if (g_map.map_no == MAP_MAIN)
+         progress[P_REPULSE]--;
+      else {
+         if (progress[P_REPULSE] > 1)
+            progress[P_REPULSE] -= 2;
+         else
+            progress[P_REPULSE] = 0;
+      }
 
-        if (progress[P_REPULSE] < 1)
-           message ("Repulse has worn off!", 255, 0, xofs, yofs);
-     }
+      if (progress[P_REPULSE] < 1)
+         message ("Repulse has worn off!", 255, 0, xofs, yofs);
+   }
 
    stc = z_seg[zy * g_map.xsize + zx];
 
    if (g_map.zero_zone != 0)
       do_zone (stc);
-   else
-     {
-        if (stc > 0)
-           do_zone (stc);
-     }
+   else {
+      if (stc > 0)
+         do_zone (stc);
+   }
 }
 
 
@@ -901,14 +880,13 @@ void warp (int wtx, int wty, int fspeed)
    else
       f = numchrs;
 
-   for (i = 0; i < f; i++)
-     {
-        place_ent (i, wtx, wty);
-        g_ent[i].moving = 0;
-        g_ent[i].movcnt = 0;
-        g_ent[i].framectr = 0;
-        lastm[i] = 0;
-     }
+   for (i = 0; i < f; i++) {
+      place_ent (i, wtx, wty);
+      g_ent[i].moving = 0;
+      g_ent[i].movcnt = 0;
+      g_ent[i].framectr = 0;
+      lastm[i] = 0;
+   }
 
    vx = wtx * 16;
    vy = wty * 16;
@@ -933,24 +911,21 @@ void check_animation (void)
 {
    int i, j;
 
-   for (i = 0; i < MAX_ANIM; i++)
-     {
-        if (adata[i].start != 0)
-          {
-             if (adata[i].delay && adata[i].delay < adelay[i])
-               {
-                  adelay[i] = 0;
+   for (i = 0; i < MAX_ANIM; i++) {
+      if (adata[i].start != 0) {
+         if (adata[i].delay && adata[i].delay < adelay[i]) {
+            adelay[i] = 0;
 
-                  for (j = adata[i].start; j <= adata[i].end; j++)
-                     if (tilex[j] < adata[i].end)
-                        tilex[j]++;
-                     else
-                        tilex[j] = adata[i].start;
-               }
+            for (j = adata[i].start; j <= adata[i].end; j++)
+               if (tilex[j] < adata[i].end)
+                  tilex[j]++;
+               else
+                  tilex[j] = adata[i].start;
+         }
 
-             adelay[i]++;
-          }
-     }
+         adelay[i]++;
+      }
+   }
 }
 
 
@@ -967,28 +942,27 @@ void activate (void)
 
    unpress ();
 
-   switch (g_ent[0].facing)
-     {
-     case 0:
-        ly = 1;
-        cf = 1;
-        break;
+   switch (g_ent[0].facing) {
+   case 0:
+      ly = 1;
+      cf = 1;
+      break;
 
-     case 1:
-        ly = -1;
-        cf = 0;
-        break;
+   case 1:
+      ly = -1;
+      cf = 0;
+      break;
 
-     case 2:
-        lx = -1;
-        cf = 3;
-        break;
+   case 2:
+      lx = -1;
+      cf = 3;
+      break;
 
-     case 3:
-        lx = 1;
-        cf = 2;
-        break;
-     }
+   case 3:
+      lx = 1;
+      cf = 2;
+      break;
+   }
 
    zx = g_ent[0].x / 16;
    zy = g_ent[0].y / 16;
@@ -1004,25 +978,24 @@ void activate (void)
 
    p = entityat (lx, ly, 0);
 
-   if (p >= PSIZE)
-     {
-        tf = g_ent[p - 1].facing;
+   if (p >= PSIZE) {
+      tf = g_ent[p - 1].facing;
 
-        if (g_ent[p - 1].facehero == 0)
-           g_ent[p - 1].facing = cf;
+      if (g_ent[p - 1].facehero == 0)
+         g_ent[p - 1].facing = cf;
 
-        drawmap ();
-        blit2screen (xofs, yofs);
-        mb = g_map.map_no;
+      drawmap ();
+      blit2screen (xofs, yofs);
+      mb = g_map.map_no;
 
-        zx = abs (g_ent[p - 1].x - g_ent[0].x);
-        zy = abs (g_ent[p - 1].y - g_ent[0].y);
+      zx = abs (g_ent[p - 1].x - g_ent[0].x);
+      zy = abs (g_ent[p - 1].y - g_ent[0].y);
 
-        if ((zx <= 16 && zy <= 3) || (zx <= 3 && zy <= 16))
-           do_entity (p - 1);
-        if (g_ent[p - 1].movemode == 0 && g_map.map_no == mb)
-           g_ent[p - 1].facing = tf;
-     }
+      if ((zx <= 16 && zy <= 3) || (zx <= 3 && zy <= 16))
+         do_entity (p - 1);
+      if (g_ent[p - 1].movemode == 0 && g_map.map_no == mb)
+         g_ent[p - 1].facing = tf;
+   }
 }
 
 
@@ -1038,46 +1011,44 @@ void activate (void)
 void unpress (void)
 {
    timer_count = 0;
-   while (timer_count < 20)
-     {
-        readcontrols ();
-        if (!(balt || bctrl || benter || besc || up || down || right || left))
-           break;
-     }
+   while (timer_count < 20) {
+      readcontrols ();
+      if (!(balt || bctrl || benter || besc || up || down || right || left))
+         break;
+   }
    timer_count = 0;
 
 #if 0
-    int cc = 0;
+   int cc = 0;
 
-    timer_count = 0;
+   timer_count = 0;
 
-    while (cc < 8)
-      {
-         cc = 0;
-         readcontrols ();
+   while (cc < 8) {
+      cc = 0;
+      readcontrols ();
 
-         if (up == 0)
-            cc++;
-         if (down == 0)
-            cc++;
-         if (right == 0)
-            cc++;
-         if (left == 0)
-            cc++;
-         if (balt == 0)
-            cc++;
-         if (bctrl == 0)
-            cc++;
-         if (benter == 0)
-            cc++;
-         if (besc == 0)
-            cc++;
+      if (up == 0)
+         cc++;
+      if (down == 0)
+         cc++;
+      if (right == 0)
+         cc++;
+      if (left == 0)
+         cc++;
+      if (balt == 0)
+         cc++;
+      if (bctrl == 0)
+         cc++;
+      if (benter == 0)
+         cc++;
+      if (besc == 0)
+         cc++;
 
-         if (timer_count > 19)
-            cc = 8;
-      }
+      if (timer_count > 19)
+         cc = 8;
+   }
 
-    timer_count = 0;
+   timer_count = 0;
 #endif
 }
 
@@ -1093,15 +1064,13 @@ void wait_enter (void)
 
    unpress ();
 
-   while (!stop)
-     {
-        readcontrols ();
-        if (balt)
-          {
-             unpress ();
-             stop = 1;
-          }
-     }
+   while (!stop) {
+      readcontrols ();
+      if (balt) {
+         unpress ();
+         stop = 1;
+      }
+   }
 
    timer_count = 0;
 }
@@ -1137,12 +1106,14 @@ void klog (char *msg)
 /*! \brief Application start-up code
  *
  * Set up allegro, set up variables, load stuff, blah...
+ * This is called once per game.
 */
 static void startup (void)
 {
-   int p, i;
+   int p, i, q;
    time_t t;
    DATAFILE *pcxb;
+   DATAFILE *pb;
 
    allegro_init ();
 
@@ -1150,13 +1121,14 @@ static void startup (void)
    buffers to allocate
 */
    strbuf = (char *) malloc (4096);
-   map_seg = (unsigned short *) malloc (560);
-   b_seg = (unsigned short *) malloc (560);
-   f_seg = (unsigned short *) malloc (560);
-   z_seg = (unsigned char *) malloc (280);
-   s_seg = (unsigned char *) malloc (280);
-   o_seg = (unsigned char *) malloc (280);
-
+/*    map_seg = (unsigned short *) malloc (560); */
+/*    b_seg = (unsigned short *) malloc (560); */
+/*    f_seg = (unsigned short *) malloc (560); */
+/*    z_seg = (unsigned char *) malloc (280); */
+/*    s_seg = (unsigned char *) malloc (280); */
+/*    o_seg = (unsigned char *) malloc (280); */
+   map_seg = b_seg = f_seg = NULL;
+   s_seg = z_seg = o_seg = NULL;
    progress = (unsigned char *) malloc (2000);
    treasure = (unsigned char *) malloc (1000);
 
@@ -1172,8 +1144,7 @@ static void startup (void)
 
    if (num_joysticks == 0)
       use_joy = 0;
-   else
-     {
+   else {
 /*
     sprintf(strbuf,"%d joysticks detected.",num_joysticks);
     klog(strbuf);
@@ -1183,22 +1154,19 @@ static void startup (void)
       klog(strbuf);
     }
 */
-        use_joy = 0;
+      use_joy = 0;
 
-        if (poll_joystick () == 0)
-          {
-             for (i = num_joysticks - 1; i >= 0; i--)
-                if (joy[i].num_buttons >= 4)
-                   use_joy = i + 1;
-          }
+      if (poll_joystick () == 0) {
+         for (i = num_joysticks - 1; i >= 0; i--)
+            if (joy[i].num_buttons >= 4)
+               use_joy = i + 1;
+      }
 
-        if (use_joy == 0)
-          {
-             klog
-                ("Only joysticks/gamepads with at least 4 buttons can be used.");
-             remove_joystick ();
-          }
-     }
+      if (use_joy == 0) {
+         klog ("Only joysticks/gamepads with at least 4 buttons can be used.");
+         remove_joystick ();
+      }
+   }
 
    srand ((unsigned) time (&t));
    pcxb = load_datafile_object (PCX_DATAFILE, "MISC_PCX");
@@ -1220,26 +1188,21 @@ static void startup (void)
    blit ((BITMAP *) pcxb->dat, b_mp, 0, 24, 0, 0, 10, 8);
    blit ((BITMAP *) pcxb->dat, sfonts[0], 0, 128, 0, 0, 60, 8);
 
-   for (i = 0; i < 8; i++)
-     {
-        for (p = 0; p < 60; p++)
-          {
-             if (sfonts[0]->line[i][p] == 15)
-               {
-                  sfonts[1]->line[i][p] = 22;
-                  sfonts[2]->line[i][p] = 105;
-                  sfonts[3]->line[i][p] = 39;
-                  sfonts[4]->line[i][p] = 8;
-               }
-             else
-               {
-                  sfonts[1]->line[i][p] = sfonts[0]->line[i][p];
-                  sfonts[2]->line[i][p] = sfonts[0]->line[i][p];
-                  sfonts[3]->line[i][p] = sfonts[0]->line[i][p];
-                  sfonts[4]->line[i][p] = sfonts[0]->line[i][p];
-               }
-          }
-     }
+   for (i = 0; i < 8; i++) {
+      for (p = 0; p < 60; p++) {
+         if (sfonts[0]->line[i][p] == 15) {
+            sfonts[1]->line[i][p] = 22;
+            sfonts[2]->line[i][p] = 105;
+            sfonts[3]->line[i][p] = 39;
+            sfonts[4]->line[i][p] = 8;
+         } else {
+            sfonts[1]->line[i][p] = sfonts[0]->line[i][p];
+            sfonts[2]->line[i][p] = sfonts[0]->line[i][p];
+            sfonts[3]->line[i][p] = sfonts[0]->line[i][p];
+            sfonts[4]->line[i][p] = sfonts[0]->line[i][p];
+         }
+      }
+   }
 
    for (p = 0; p < 27; p++)
       blit ((BITMAP *) pcxb->dat, stspics, p * 8 + 40, 0, 0, p * 8, 8, 8);
@@ -1256,11 +1219,10 @@ static void startup (void)
    for (p = 0; p < 8; p++)
       blit ((BITMAP *) pcxb->dat, bub[p], p * 16, 144, 0, 0, 16, 16);
 
-   for (p = 0; p < 3; p++)
-     {
-        blit ((BITMAP *) pcxb->dat, bord[p], p * 8 + 96, 64, 0, 0, 8, 8);
-        blit ((BITMAP *) pcxb->dat, bord[5 + p], p * 8 + 96, 84, 0, 0, 8, 8);
-     }
+   for (p = 0; p < 3; p++) {
+      blit ((BITMAP *) pcxb->dat, bord[p], p * 8 + 96, 64, 0, 0, 8, 8);
+      blit ((BITMAP *) pcxb->dat, bord[5 + p], p * 8 + 96, 84, 0, 0, 8, 8);
+   }
 
    blit ((BITMAP *) pcxb->dat, bord[3], 96, 72, 0, 0, 8, 12);
    blit ((BITMAP *) pcxb->dat, bord[4], 112, 72, 0, 0, 8, 12);
@@ -1275,42 +1237,12 @@ static void startup (void)
 
    if (!pcxb)
       program_death ("Could not load kqfaces.pcx!");
-   for (p = 0; p < 4; p++)
-     {
-        blit ((BITMAP *) pcxb->dat, portrait[p], 0, p * 40, 0, 0, 40, 40);
-        blit ((BITMAP *) pcxb->dat, portrait[p + 4], 40, p * 40, 0, 0, 40, 40);
-     }
+   for (p = 0; p < 4; p++) {
+      blit ((BITMAP *) pcxb->dat, portrait[p], 0, p * 40, 0, 0, 40, 40);
+      blit ((BITMAP *) pcxb->dat, portrait[p + 4], 40, p * 40, 0, 0, 40, 40);
+   }
    unload_datafile_object (pcxb);
 #endif
-   load_data ();
-   init_players ();
-
-   LOCK_VARIABLE (timer);
-   LOCK_VARIABLE (timer_count);
-   LOCK_VARIABLE (ksec);
-   LOCK_VARIABLE (kmin);
-   LOCK_VARIABLE (khr);
-   LOCK_FUNCTION (my_counter);
-
-/*    install_int (my_counter, 10); */
-   install_int_ex (my_counter, BPS_TO_TIMER (KQ_FPS));
-   create_trans_table (&cmap, pal, 128, 128, 128, NULL);
-   color_map = &cmap;
-   load_sgstats ();
-}
-
-
-
-/*! \brief Data-loading process
- *
- * Real descriptive huh?  This loads and sets up the
- * fonts and entity frames and calls the functions to
- * loads items and spells.
-*/
-static void load_data (void)
-{
-   int p, q;
-   DATAFILE *pb;
 
    pb = load_datafile_object (PCX_DATAFILE, "ALLFONTS_PCX");
    blit ((BITMAP *) pb->dat, kfonts, 0, 0, 0, 0, 744, 60);
@@ -1321,7 +1253,101 @@ static void load_data (void)
       for (p = 0; p < MAXEFRAMES; p++)
          blit ((BITMAP *) pb->dat, eframes[q][p], p * 16, q * 16, 0, 0, 16, 16);
    unload_datafile_object (pb);
+   init_players ();
+
+   LOCK_VARIABLE (timer);
+   LOCK_VARIABLE (timer_count);
+   LOCK_VARIABLE (ksec);
+   LOCK_VARIABLE (kmin);
+   LOCK_VARIABLE (khr);
+   LOCK_FUNCTION (my_counter);
+   LOCK_FUNCTION (time_counter);
+
+   install_int_ex (my_counter, BPS_TO_TIMER (KQ_FPS));
+   /* tick every minute */
+   install_int_ex (time_counter, BPM_TO_TIMER (1));
+   create_trans_table (&cmap, pal, 128, 128, 128, NULL);
+   color_map = &cmap;
+   load_sgstats ();
 }
+
+/*! \brief Load initial hero stuff from file
+ *
+ * \author PH
+ * \date 20030320
+ * Loads the hero stats from a file.
+ *
+ */
+void load_heroes (void)
+{
+   PACKFILE *f;
+   DATAFILE *pcxb;
+   int i;
+   /* Hero stats */
+   if ((f = pack_fopen (kqres (DATA_DIR, "hero.kq"), F_READ_PACKED)) == NULL) {
+      program_death ("Cannot open hero data file");
+   }
+   for (i = 0; i < MAXCHRS; ++i) {
+      /*        pack_fread (&players[i].plr, sizeof (s_player), f); */
+      load_s_player (&players[i].plr, f);
+   }
+   pack_fclose (f);
+   /* portraits */
+   pcxb = load_datafile_object (PCX_DATAFILE, "KQFACES_PCX");
+
+   if (!pcxb)
+      program_death ("Could not load kqfaces.pcx!");
+
+   for (i = 0; i < 4; ++i) {
+      blit ((BITMAP *) pcxb->dat, players[i].portrait, 0, i * 40, 0, 0, 40, 40);
+      blit ((BITMAP *) pcxb->dat, players[i + 4].portrait, 40, i * 40, 0, 0,
+            40, 40);
+   }
+
+   unload_datafile_object (pcxb);
+}
+
+
+/*! \brief Initialise all players
+ *
+ * Set up the player characters and load data specific
+ * to them. This happens at the start of every game.
+*/
+void init_players (void)
+{
+   DATAFILE *pb;
+   int i, j;
+
+   for (j = 0; j < MAXCHRS; j++) {
+      for (i = 0; i < 24; i++)
+         party[j].sts[i] = 0;
+
+      for (i = 0; i < 6; i++)
+         party[j].eqp[i] = 0;
+
+      for (i = 0; i < 60; i++)
+         party[j].spells[i] = 0;
+
+      learn_new_spells (j);
+   }
+
+   gp = 0;
+
+   pb = load_datafile_object (PCX_DATAFILE, "USCHRS_PCX");
+
+   if (!pb)
+      program_death ("Could not load character graphics!");
+
+   set_palette (pal);
+
+   for (i = 0; i < MAXCHRS; i++)
+      for (j = 0; j < MAXFRAMES; j++)
+         blit ((BITMAP *) pb->dat, frames[i][j], j * 16, i * 16, 0, 0, 16, 16);
+
+   unload_datafile_object (pb);
+}
+
+
 
 
 #ifdef DEBUGMODE
@@ -1343,11 +1369,10 @@ BITMAP *alloc_bmp (int bx, int by, char *bname)
 
    tmp = create_bitmap (bx, by);
 
-   if (!tmp)
-     {
-        sprintf (strbuf, "Could not allocate %s!.", bname);
-        program_death (strbuf);
-     }
+   if (!tmp) {
+      sprintf (strbuf, "Could not allocate %s!.", bname);
+      program_death (strbuf);
+   }
 
    return tmp;
 }
@@ -1390,26 +1415,22 @@ static void allocate_stuff (void)
    b_repulse = alloc_bmp (16, 166, "b_repulse");
    b_mp = alloc_bmp (10, 8, "b_mp");
 
-   for (p = 0; p < MAXE; p++)
-     {
-        for (i = 0; i < MAXEFRAMES; i++)
-           eframes[p][i] = alloc_bmp (16, 16, "eframes[x][x]");
-     }
+   for (p = 0; p < MAXE; p++) {
+      for (i = 0; i < MAXEFRAMES; i++)
+         eframes[p][i] = alloc_bmp (16, 16, "eframes[x][x]");
+   }
 
-   for (i = 0; i < MAXCHRS; i++)
-     {
-        for (p = 0; p < MAXFRAMES; p++)
-           frames[i][p] = alloc_bmp (16, 16, "frames[x][x]");
-     }
+   for (i = 0; i < MAXCHRS; i++) {
+      for (p = 0; p < MAXFRAMES; p++)
+         frames[i][p] = alloc_bmp (16, 16, "frames[x][x]");
+   }
 
-   for (p = 0; p < MAXCFRAMES; p++)
-     {
-        for (i = 0; i < NUM_FIGHTERS; i++)
-          {
-             cframes[i][p] = alloc_bmp (32, 32, "cframes[x][x]");
-             tcframes[i][p] = alloc_bmp (32, 32, "tcframes[x][x]");
-          }
-     }
+   for (p = 0; p < MAXCFRAMES; p++) {
+      for (i = 0; i < NUM_FIGHTERS; i++) {
+         cframes[i][p] = alloc_bmp (32, 32, "cframes[x][x]");
+         tcframes[i][p] = alloc_bmp (32, 32, "tcframes[x][x]");
+      }
+   }
 
    double_buffer = alloc_bmp (352, 280, "double_buffer");
    back = alloc_bmp (352, 280, "back");
@@ -1421,11 +1442,10 @@ static void allocate_stuff (void)
    for (p = 0; p < 8; p++)
       bub[p] = alloc_bmp (16, 16, "bub[x]");
 
-   for (p = 0; p < 3; p++)
-     {
-        bord[p] = alloc_bmp (8, 8, "bord[x]");
-        bord[p + 5] = alloc_bmp (8, 8, "bord[x]");
-     }
+   for (p = 0; p < 3; p++) {
+      bord[p] = alloc_bmp (8, 8, "bord[x]");
+      bord[p + 5] = alloc_bmp (8, 8, "bord[x]");
+   }
 
    for (p = 3; p < 5; p++)
       bord[p] = alloc_bmp (8, 12, "bord[x]");
@@ -1481,18 +1501,12 @@ static void deallocate_stuff (void)
       for (p = 0; p < MAXCHRS; p++)
          destroy_bitmap (frames[p][i]);
 
-   for (i = 0; i < MAXCFRAMES; i++)
-     {
-        for (p = 0; p < NUM_FIGHTERS; p++)
-          {
-             destroy_bitmap (cframes[p][i]);
-             /* PH: This might stop crashes, not an ideal solution though.
-              * Reason: enemy handling uses tcframes just as a pointer to
-              * a bitmap alloc'd elsewhere, hero handling does not.
-              */
-/*              destroy_bitmap (tcframes[p][i]); */
-          }
-     }
+   for (i = 0; i < MAXCFRAMES; i++) {
+      for (p = 0; p < NUM_FIGHTERS; p++) {
+         destroy_bitmap (cframes[p][i]);
+         destroy_bitmap (tcframes[p][i]);
+      }
+   }
 
    destroy_bitmap (double_buffer);
    destroy_bitmap (back);
@@ -1534,96 +1548,14 @@ static void deallocate_stuff (void)
 /*    if (savedir) */
 /*       free (savedir); */
 
-   if (is_sound)
-     {
-        shutdown_music ();
-        free_samples ();
-     }
+   if (is_sound) {
+      shutdown_music ();
+      free_samples ();
+   }
    deallocate_credits ();
 }
 
 
-/*! \brief Load initial hero stuff from file
- *
- * \author PH
- * \date 20030320
- * Loads the hero stats from a file.
- * \bug Endian-ness will bite your bum here.
- *
- */
-void load_heroes (void)
-{
-   PACKFILE *f;
-   DATAFILE *pcxb;
-   int i;
-   /* Hero stats */
-   if ((f = pack_fopen (kqres (DATA_DIR, "hero.kq"), F_READ_PACKED)) == NULL)
-     {
-        program_death ("Cannot open hero data file");
-     }
-   for (i = 0; i < MAXCHRS; ++i)
-     {
-        /*        pack_fread (&players[i].plr, sizeof (s_player), f); */
-        load_s_player (&players[i].plr, f);
-     }
-   pack_fclose (f);
-   /* portraits */
-   pcxb = load_datafile_object (PCX_DATAFILE, "KQFACES_PCX");
-
-   if (!pcxb)
-      program_death ("Could not load kqfaces.pcx!");
-
-   for (i = 0; i < 4; ++i)
-     {
-        blit ((BITMAP *) pcxb->dat, players[i].portrait, 0, i * 40, 0, 0, 40,
-              40);
-        blit ((BITMAP *) pcxb->dat, players[i + 4].portrait, 40, i * 40, 0, 0,
-              40, 40);
-     }
-
-   unload_datafile_object (pcxb);
-}
-
-
-/*! \brief Initialise all players
- *
- * Set up the player characters and load data specific
- * to them.
-*/
-void init_players (void)
-{
-   DATAFILE *pb;
-   int i, j;
-
-   for (j = 0; j < MAXCHRS; j++)
-     {
-        for (i = 0; i < 24; i++)
-           party[j].sts[i] = 0;
-
-        for (i = 0; i < 6; i++)
-           party[j].eqp[i] = 0;
-
-        for (i = 0; i < 60; i++)
-           party[j].spells[i] = 0;
-
-        learn_new_spells (j);
-     }
-
-   gp = 0;
-
-   pb = load_datafile_object (PCX_DATAFILE, "USCHRS_PCX");
-
-   if (!pb)
-      program_death ("Could not load character graphics!");
-
-   set_palette (pal);
-
-   for (i = 0; i < MAXCHRS; i++)
-      for (j = 0; j < MAXFRAMES; j++)
-         blit ((BITMAP *) pb->dat, frames[i][j], j * 16, i * 16, 0, 0, 16, 16);
-
-   unload_datafile_object (pb);
-}
 
 
 
@@ -1643,36 +1575,32 @@ void kwait (int dtime)
    autoparty = 1;
    timer_count = 0;
 
-   while (cnt < dtime)
-     {
-        poll_music ();
-        while (timer_count > 0)
-          {
-             poll_music ();
-             timer_count--;
-             cnt++;
-             process_entities ();
-             check_animation ();
-          }
+   while (cnt < dtime) {
+      poll_music ();
+      while (timer_count > 0) {
+         poll_music ();
+         timer_count--;
+         cnt++;
+         process_entities ();
+         check_animation ();
+      }
 
-        drawmap ();
-        blit2screen (xofs, yofs);
+      drawmap ();
+      blit2screen (xofs, yofs);
 #ifdef KQ_CHEATS
-        if (key[KEY_W] && key[KEY_ALT])
-          {
-             sprintf (strbuf, "kwait(); cnt = %d, dtime = %d, timer_count = %d",
-                      cnt, dtime, timer_count);
-             klog (strbuf);
-             break;
-          }
+      if (key[KEY_W] && key[KEY_ALT]) {
+         sprintf (strbuf, "kwait(); cnt = %d, dtime = %d, timer_count = %d",
+                  cnt, dtime, timer_count);
+         klog (strbuf);
+         break;
+      }
 #endif
-        if (key[KEY_X] && key[KEY_ALT])
-          {
-             sprintf (strbuf, "kwait(); cnt = %d, dtime = %d, timer_count = %d",
-                      cnt, dtime, timer_count);
-             program_death (strbuf);
-          }
-     }
+      if (key[KEY_X] && key[KEY_ALT]) {
+         sprintf (strbuf, "kwait(); cnt = %d, dtime = %d, timer_count = %d",
+                  cnt, dtime, timer_count);
+         program_death (strbuf);
+      }
+   }
 
    timer_count = 0;
    autoparty = 0;
@@ -1696,34 +1624,30 @@ void wait_for_entity (int est, int efi)
 {
    int e, n;
    autoparty = 1;
-   do
-     {
-        while (timer_count > 0)
-          {
-             timer_count--;
-             process_entities ();
-             check_animation ();
-          }
-        poll_music ();
-        drawmap ();
-        blit2screen (xofs, yofs);
+   do {
+      while (timer_count > 0) {
+         timer_count--;
+         process_entities ();
+         check_animation ();
+      }
+      poll_music ();
+      drawmap ();
+      blit2screen (xofs, yofs);
 
-        if (key[KEY_W] && key[KEY_ALT])
-           break;
+      if (key[KEY_W] && key[KEY_ALT])
+         break;
 
-        if (key[KEY_X] && key[KEY_ALT])
-           program_death (strbuf);
+      if (key[KEY_X] && key[KEY_ALT])
+         program_death (strbuf);
 
-        n = 0;
-        for (e = est; e <= efi; ++e)
-          {
-             if (g_ent[e].active == 1 && g_ent[e].movemode == 2)
-               {
-                  n = 1;
-                  break;
-               }
-          }
-     }
+      n = 0;
+      for (e = est; e <= efi; ++e) {
+         if (g_ent[e].active == 1 && g_ent[e].movemode == 2) {
+            n = 1;
+            break;
+         }
+      }
+   }
    while (n);
    autoparty = 0;
 }
@@ -1736,55 +1660,46 @@ void wait_for_entity (int est, int efi)
 
    if (efi < est)
       return;
-   /\* PH perverse code: *\/
-   ewatch = efi - est + 1;
+ /\*PH perverse code:*\/ewatch = efi - est + 1;
 
-   for (a = est; a < est + ewatch; a++)
-     {
-        if (g_ent[a].active == 1 && g_ent[a].movemode == 2)
-          {
-             wait_ent[a] = 1;
-             ecnt++;
-          }
-        else
-           wait_ent[a] = 0;
-     }
+   for (a = est; a < est + ewatch; a++) {
+      if (g_ent[a].active == 1 && g_ent[a].movemode == 2) {
+         wait_ent[a] = 1;
+         ecnt++;
+      } else
+         wait_ent[a] = 0;
+   }
 
    autoparty = 1;
    timer_count = 0;
 
-   while (ecnt > 0)
-     {
-        poll_music ();
-        while (timer_count > 0)
-          {
-             poll_music ();
-             timer_count--;
-             process_entities ();
-             check_animation ();
+   while (ecnt > 0) {
+      poll_music ();
+      while (timer_count > 0) {
+         poll_music ();
+         timer_count--;
+         process_entities ();
+         check_animation ();
 
-             for (a = est; a < est + ewatch; a++)
-               {
-                  if (wait_ent[a] == 1)
-                    {
-                       if (g_ent[a].movemode == 0)
-                         {
-                            wait_ent[a] = 0;
-                            ecnt--;
-                         }
-                    }
+         for (a = est; a < est + ewatch; a++) {
+            if (wait_ent[a] == 1) {
+               if (g_ent[a].movemode == 0) {
+                  wait_ent[a] = 0;
+                  ecnt--;
                }
-          }
+            }
+         }
+      }
 
-        drawmap ();
-        blit2screen (xofs, yofs);
+      drawmap ();
+      blit2screen (xofs, yofs);
 
-        if (key[KEY_W] && key[KEY_ALT])
-           break;
+      if (key[KEY_W] && key[KEY_ALT])
+         break;
 
-        if (key[KEY_X] && key[KEY_ALT])
-           program_death (strbuf);
-     }
+      if (key[KEY_X] && key[KEY_ALT])
+         program_death (strbuf);
+   }
 
    timer_count = 0;
    autoparty = 0;
@@ -1842,67 +1757,59 @@ int main (void)
    game_on = 1;
    /* Also this can be overridden by settings in config */
    skip_splash = 0;
-   while (game_on)
-     {
-        switch (start_menu (skip_splash))
-          {
-          case 0:
-             break;
-          case 1:
-             change_map ("starting", 0, 0, 0, 0);
-             break;
-          default:
-             /* Someone pressed 'EXIT'  */
-             game_on = 0;
-             break;
-          }
-        /* Only show it once at the start */
-        skip_splash = 1;
-        if (game_on)
-          {
-             stop = 0;
-             timer_count = 0;
-             timer = 0;
-             alldead = 0;
-             while (!stop)
-               {
-                  if (timer_count < 1)
-                    {
-                       check_animation ();
-                       drawmap ();
-                       blit2screen (xofs, yofs);
-                       while (timer_count < 1)
-                         {
-                            yield_timeslice ();
-                         }
-                    }
-                  timer_count--;
-                  poll_music ();
-                  process_entities ();
-
-                  frate++;
-
-                  if (key[kesc])
-                    {
-                       stop = system_menu ();
-                    }
-                  if (bhelp)
-                    {
-                       /* TODO: In-game help system. */
-                    }
-
-
-                  if (alldead)
-                    {
-                       clear (screen);
-                       do_transition (TRANS_FADE_IN, 16);
-                       stop = 1;
-                    }
-
+   while (game_on) {
+      switch (start_menu (skip_splash)) {
+      case 0:
+         break;
+      case 1:
+         change_map ("starting", 0, 0, 0, 0);
+         break;
+      default:
+         /* Someone pressed 'EXIT'  */
+         game_on = 0;
+         break;
+      }
+      /* Only show it once at the start */
+      skip_splash = 1;
+      if (game_on) {
+         stop = 0;
+         timer_count = 0;
+         timer = 0;
+         alldead = 0;
+         while (!stop) {
+            if (timer_count < 1) {
+               check_animation ();
+               drawmap ();
+               blit2screen (xofs, yofs);
+               while (timer_count < 1) {
+                  yield_timeslice ();
                }
-          }
-     }
+            }
+            timer_count--;
+            poll_music ();
+            process_entities ();
 
+            frate++;
+
+            if (key[kesc]) {
+               stop = system_menu ();
+            }
+            if (bhelp) {
+               /* TODO: In-game help system. */
+            }
+
+
+            if (alldead) {
+               clear (screen);
+               do_transition (TRANS_FADE_IN, 16);
+               stop = 1;
+            }
+
+         }
+      }
+   }
+   remove_int (my_counter);
+   remove_int (time_counter);
    deallocate_stuff ();
    return EXIT_SUCCESS;
 }

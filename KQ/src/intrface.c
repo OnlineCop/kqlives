@@ -377,32 +377,23 @@ fields[] =
 {
    {
    "name", 0}
-   ,
-   {
+   , {
    "xp", 1}
-   ,
-   {
+   , {
    "next", 2}
-   ,
-   {
+   , {
    "lvl", 3}
-   ,
-   {
+   , {
    "mrp", 4}
-   ,
-   {
+   , {
    "hp", 5}
-   ,
-   {
+   , {
    "mhp", 6}
-   ,
-   {
+   , {
    "mp", 7}
-   ,
-   {
+   , {
    "mmp", 8}
-   ,
-   {
+   , {
    "id", 9}
 ,};
 
@@ -470,42 +461,41 @@ int KQ_party_setter (lua_State * L)
    lua_rawget (L, 1);
    pl = (s_player *) lua_touserdata (L, -1);
    lua_pop (L, 1);
-   switch (prop)
-     {
-     case 0:
-        strncpy (pl->name, lua_tostring (L, 3), sizeof (pl->name));
-        break;
-     case 1:
-        pl->xp = lua_tonumber (L, 3);
-        break;
-     case 2:
-        pl->next = lua_tonumber (L, 3);
-        break;
-     case 3:
-        pl->lvl = lua_tonumber (L, 3);
-        break;
-     case 4:
-        pl->mrp = lua_tonumber (L, 3);
-        break;
-     case 5:
-        pl->hp = lua_tonumber (L, 3);
-        break;
-     case 6:
-        pl->mhp = lua_tonumber (L, 3);
-        break;
-     case 7:
-        pl->mp = lua_tonumber (L, 3);
-        break;
-     case 8:
-        pl->mmp = lua_tonumber (L, 3);
-        break;
-     case 9:
-        /* id is readonly */
-        break;
-     default:
-        lua_rawset (L, 1);
-        break;
-     }
+   switch (prop) {
+   case 0:
+      strncpy (pl->name, lua_tostring (L, 3), sizeof (pl->name));
+      break;
+   case 1:
+      pl->xp = lua_tonumber (L, 3);
+      break;
+   case 2:
+      pl->next = lua_tonumber (L, 3);
+      break;
+   case 3:
+      pl->lvl = lua_tonumber (L, 3);
+      break;
+   case 4:
+      pl->mrp = lua_tonumber (L, 3);
+      break;
+   case 5:
+      pl->hp = lua_tonumber (L, 3);
+      break;
+   case 6:
+      pl->mhp = lua_tonumber (L, 3);
+      break;
+   case 7:
+      pl->mp = lua_tonumber (L, 3);
+      break;
+   case 8:
+      pl->mmp = lua_tonumber (L, 3);
+      break;
+   case 9:
+      /* id is readonly */
+      break;
+   default:
+      lua_rawset (L, 1);
+      break;
+   }
    return 0;
 }
 
@@ -523,42 +513,41 @@ int KQ_party_getter (lua_State * L)
    lua_rawget (L, 1);
    pl = (s_player *) lua_touserdata (L, -1);
    lua_pop (L, 1);
-   switch (prop)
-     {
-     case 0:
-        lua_pushstring (L, pl->name);
-        break;
-     case 1:
-        lua_pushnumber (L, pl->xp);
-        break;
-     case 2:
-        lua_pushnumber (L, pl->next);
-        break;
-     case 3:
-        lua_pushnumber (L, pl->lvl);
-        break;
-     case 4:
-        lua_pushnumber (L, pl->mrp);
-        break;
-     case 5:
-        lua_pushnumber (L, pl->hp);
-        break;
-     case 6:
-        lua_pushnumber (L, pl->mhp);
-        break;
-     case 7:
-        lua_pushnumber (L, pl->mp);
-        break;
-     case 8:
-        lua_pushnumber (L, pl->mmp);
-        break;
-     case 9:
-        lua_pushnumber (L, pl - party);
-        break;
-     default:
-        lua_rawget (L, 1);
-        break;
-     }
+   switch (prop) {
+   case 0:
+      lua_pushstring (L, pl->name);
+      break;
+   case 1:
+      lua_pushnumber (L, pl->xp);
+      break;
+   case 2:
+      lua_pushnumber (L, pl->next);
+      break;
+   case 3:
+      lua_pushnumber (L, pl->lvl);
+      break;
+   case 4:
+      lua_pushnumber (L, pl->mrp);
+      break;
+   case 5:
+      lua_pushnumber (L, pl->hp);
+      break;
+   case 6:
+      lua_pushnumber (L, pl->mhp);
+      break;
+   case 7:
+      lua_pushnumber (L, pl->mp);
+      break;
+   case 8:
+      lua_pushnumber (L, pl->mmp);
+      break;
+   case 9:
+      lua_pushnumber (L, pl - party);
+      break;
+   default:
+      lua_rawget (L, 1);
+      break;
+   }
    return 1;
 }
 
@@ -577,39 +566,36 @@ static void init_obj (lua_State * L)
 {
    int i = 0;
    int tag = lua_newtag (L);
-   for (i = 0; i < MAXCHRS; ++i)
-     {
-        lua_newtable (L);
-        lua_settag (L, tag);
-        lua_pushstring (L, "_obj");
-        lua_pushuserdata (L, &party[i]);
-        lua_rawset (L, -3);
-        lua_setglobal (L, party[i].name);
-     }
+   for (i = 0; i < MAXCHRS; ++i) {
+      lua_newtable (L);
+      lua_settag (L, tag);
+      lua_pushstring (L, "_obj");
+      lua_pushuserdata (L, &party[i]);
+      lua_rawset (L, -3);
+      lua_setglobal (L, party[i].name);
+   }
    lua_pushcfunction (L, KQ_party_getter);
    lua_settagmethod (L, tag, "gettable");
    lua_pushcfunction (L, KQ_party_setter);
    lua_settagmethod (L, tag, "settable");
    /* party[] array */
    lua_newtable (L);
-   for (i = 0; i < numchrs; ++i)
-     {
-        lua_getglobal (L, party[pidx[i]].name);
-        /* also fill in the entity reference */
-        lua_pushstring (L, "_ent");
-        lua_pushuserdata (L, &g_ent[i]);
-        lua_rawset (L, -3);
-        /* and add to the array */
-        lua_rawseti (L, -2, i);
-     }
+   for (i = 0; i < numchrs; ++i) {
+      lua_getglobal (L, party[pidx[i]].name);
+      /* also fill in the entity reference */
+      lua_pushstring (L, "_ent");
+      lua_pushuserdata (L, &g_ent[i]);
+      lua_rawset (L, -3);
+      /* and add to the array */
+      lua_rawseti (L, -2, i);
+   }
    lua_setglobal (L, "party");
    /* player[] array */
    lua_newtable (L);
-   for (i = 0; i < MAXCHRS; ++i)
-     {
-        lua_getglobal (L, party[i].name);
-        lua_rawseti (L, -2, i);
-     }
+   for (i = 0; i < MAXCHRS; ++i) {
+      lua_getglobal (L, party[i].name);
+      lua_rawseti (L, -2, i);
+   }
    lua_setglobal (L, "player");
    /* entity[] array
     * at the moment, NPCs aren't fully implemented - the
@@ -617,16 +603,14 @@ static void init_obj (lua_State * L)
     * so they can just be an index
     */
    lua_newtable (L);
-   for (i = 0; i < numchrs; ++i)
-     {
-        lua_getglobal (L, party[pidx[i]].name);
-        lua_rawseti (L, -2, i);
-     }
-   for (i = PSIZE; i < noe + PSIZE; ++i)
-     {
-        lua_pushnumber (L, i);
-        lua_rawseti (L, -2, i);
-     }
+   for (i = 0; i < numchrs; ++i) {
+      lua_getglobal (L, party[pidx[i]].name);
+      lua_rawseti (L, -2, i);
+   }
+   for (i = PSIZE; i < noe + PSIZE; ++i) {
+      lua_pushnumber (L, i);
+      lua_rawseti (L, -2, i);
+   }
    lua_setglobal (L, "entity");
 }
 
@@ -1483,12 +1467,11 @@ static int KQ_set_all_equip (lua_State * L)
 
    if (a < 0 || a > MAXCHRS)
       return 0;
-   for (b = 0; b < 6; b++)
-     {
-        c = lua_tonumber (L, b + 2);
-        if (c >= 0)
-           party[a].eqp[b] = c;
-     }
+   for (b = 0; b < 6; b++) {
+      c = lua_tonumber (L, b + 2);
+      if (c >= 0)
+         party[a].eqp[b] = c;
+   }
    return 0;
 }
 
@@ -1565,18 +1548,18 @@ static int KQ_set_tile_all (lua_State * L)
 
 /* PH: not used (yet?), therefore commented out */
 #if 0
-static int KQ_get_tile_all(lua_State * L)
+static int KQ_get_tile_all (lua_State * L)
 {
-   int tx = lua_tonumber(L, 1);
-   int ty = lua_tonumber(L, 2);
+   int tx = lua_tonumber (L, 1);
+   int ty = lua_tonumber (L, 2);
    int offset = tx + ty * g_map.xsize;
 
-   lua_pushnumber(L, map_seg[offset]);
-   lua_pushnumber(L, b_seg[offset]);
-   lua_pushnumber(L, f_seg[offset]);
-   lua_pushnumber(L, z_seg[offset]);
-   lua_pushnumber(L, o_seg[offset]);
-   lua_pushnumber(L, s_seg[offset]);
+   lua_pushnumber (L, map_seg[offset]);
+   lua_pushnumber (L, b_seg[offset]);
+   lua_pushnumber (L, f_seg[offset]);
+   lua_pushnumber (L, z_seg[offset]);
+   lua_pushnumber (L, o_seg[offset]);
+   lua_pushnumber (L, s_seg[offset]);
    return 6;
 }
 #endif
@@ -1608,20 +1591,18 @@ static int KQ_copy_tile_all (lua_State * L)
       hgt, dx, dy);
       klog(strbuf);
     */
-   for (j = 0; j < hgt; ++j)
-     {
-        for (i = 0; i < wid; ++i)
-          {
-             os = sx + i + g_map.xsize * (sy + j);
-             od = dx + i + g_map.xsize * (dy + j);
-             map_seg[od] = map_seg[os];
-             f_seg[od] = f_seg[os];
-             b_seg[od] = b_seg[os];
-             z_seg[od] = z_seg[os];
-             o_seg[od] = o_seg[os];
-             s_seg[od] = s_seg[os];
-          }
-     }
+   for (j = 0; j < hgt; ++j) {
+      for (i = 0; i < wid; ++i) {
+         os = sx + i + g_map.xsize * (sy + j);
+         od = dx + i + g_map.xsize * (dy + j);
+         map_seg[od] = map_seg[os];
+         f_seg[od] = f_seg[os];
+         b_seg[od] = b_seg[os];
+         z_seg[od] = z_seg[os];
+         o_seg[od] = o_seg[os];
+         s_seg[od] = s_seg[os];
+      }
+   }
    return 0;
 }
 
@@ -1859,29 +1840,24 @@ static int KQ_prompt (lua_State * L)
    pbuf[0] = '\0';
    nonblank = 0;
 
-   for (a = 0; a < 4; a++)
-     {
-        txt[a] = (char *) lua_tostring (L, a + 4);
-        if (txt[a] && (strlen (txt[a]) > 0))
-           nonblank = a + 1;
-     }
+   for (a = 0; a < 4; a++) {
+      txt[a] = (char *) lua_tostring (L, a + 4);
+      if (txt[a] && (strlen (txt[a]) > 0))
+         nonblank = a + 1;
+   }
 
-   if (nonblank > nopts)
-     {
-        /* bug: long strings will crash it! */
-        for (a = 0; a < nonblank - nopts; ++a)
-          {
-             if (a != 0)
-                strcat (pbuf, "\n");
-             strcat (pbuf, txt[a]);
-          }
-        lua_pushnumber (L, prompt_ex (b, pbuf, &txt[nonblank - nopts], nopts));
-     }
-   else
-     {
-        /* User asked for all the lines to be options */
-        lua_pushnumber (L, prompt_ex (b, "Choose one", txt, nopts));
-     }
+   if (nonblank > nopts) {
+      /* bug: long strings will crash it! */
+      for (a = 0; a < nonblank - nopts; ++a) {
+         if (a != 0)
+            strcat (pbuf, "\n");
+         strcat (pbuf, txt[a]);
+      }
+      lua_pushnumber (L, prompt_ex (b, pbuf, &txt[nonblank - nopts], nopts));
+   } else {
+      /* User asked for all the lines to be options */
+      lua_pushnumber (L, prompt_ex (b, "Choose one", txt, nopts));
+   }
 
    return 1;
 }
@@ -1938,35 +1914,25 @@ static int KQ_face_each_other (lua_State * L)
    int a = real_entity_num (lua_tonumber (L, 1));
    int b = real_entity_num (lua_tonumber (L, 2));
 
-   if (numchrs == 2)
-     {
-        if (g_ent[a].tilex == g_ent[b].tilex)
-          {
-             if (g_ent[a].tiley > g_ent[b].tiley)
-               {
-                  g_ent[a].facing = FACE_UP;
-                  g_ent[b].facing = FACE_DOWN;
-               }
-             else
-               {
-                  g_ent[a].facing = FACE_DOWN;
-                  g_ent[b].facing = FACE_UP;
-               }
-          }
-        else
-          {
-             if (g_ent[a].tilex > g_ent[b].tilex)
-               {
-                  g_ent[a].facing = FACE_LEFT;
-                  g_ent[b].facing = FACE_RIGHT;
-               }
-             else
-               {
-                  g_ent[a].facing = FACE_RIGHT;
-                  g_ent[b].facing = FACE_LEFT;
-               }
-          }
-     }
+   if (numchrs == 2) {
+      if (g_ent[a].tilex == g_ent[b].tilex) {
+         if (g_ent[a].tiley > g_ent[b].tiley) {
+            g_ent[a].facing = FACE_UP;
+            g_ent[b].facing = FACE_DOWN;
+         } else {
+            g_ent[a].facing = FACE_DOWN;
+            g_ent[b].facing = FACE_UP;
+         }
+      } else {
+         if (g_ent[a].tilex > g_ent[b].tilex) {
+            g_ent[a].facing = FACE_LEFT;
+            g_ent[b].facing = FACE_RIGHT;
+         } else {
+            g_ent[a].facing = FACE_RIGHT;
+            g_ent[b].facing = FACE_LEFT;
+         }
+      }
+   }
    return 0;
 }
 
@@ -1985,14 +1951,13 @@ static int KQ_add_chr (lua_State * L)
 {
    int a = lua_tonumber (L, 1);
 
-   if (numchrs < MAXCHRS)
-     {
-        pidx[numchrs] = a;
-        g_ent[numchrs].active = 1;
-        g_ent[numchrs].eid = a;
-        g_ent[numchrs].chrx = 0;
-        numchrs++;
-     }
+   if (numchrs < MAXCHRS) {
+      pidx[numchrs] = a;
+      g_ent[numchrs].active = 1;
+      g_ent[numchrs].eid = a;
+      g_ent[numchrs].chrx = 0;
+      numchrs++;
+   }
    return 0;
 }
 
@@ -2001,27 +1966,22 @@ static int KQ_remove_chr (lua_State * L)
 {
    int a, b;
 
-   if (numchrs > 0)
-     {
-        a = in_party (lua_tonumber (L, 1));
-        if (a > 0)
-          {
-             a--;
-             pidx[a] = -1;
-             numchrs--;
-             if (a != MAXCHRS - 1)
-               {
-                  for (b = 0; b < MAXCHRS - 1; b++)
-                    {
-                       if (pidx[b] == -1)
-                         {
-                            pidx[b] = pidx[b + 1];
-                            pidx[b + 1] = -1;
-                         }
-                    }
+   if (numchrs > 0) {
+      a = in_party (lua_tonumber (L, 1));
+      if (a > 0) {
+         a--;
+         pidx[a] = -1;
+         numchrs--;
+         if (a != MAXCHRS - 1) {
+            for (b = 0; b < MAXCHRS - 1; b++) {
+               if (pidx[b] == -1) {
+                  pidx[b] = pidx[b + 1];
+                  pidx[b + 1] = -1;
                }
-          }
-     }
+            }
+         }
+      }
+   }
    return 0;
 }
 
@@ -2335,18 +2295,15 @@ static int KQ_door_in (lua_State * L)
    hy2 = hy - 1;
    db = map_seg[hy * g_map.xsize + hx];
    dt = map_seg[hy2 * g_map.xsize + hx];
-   if (g_map.tileset == 1)
-     {
-        set_btile (hx, hy, db + 433);
-        if (dt == 149)
-           set_btile (hx, hy2, 571);
-        else
-           set_btile (hx, hy2, dt + 433);
-     }
-   else
-     {
-        set_btile (hx, hy, db + 3);
-     }
+   if (g_map.tileset == 1) {
+      set_btile (hx, hy, db + 433);
+      if (dt == 149)
+         set_btile (hx, hy2, 571);
+      else
+         set_btile (hx, hy2, dt + 433);
+   } else {
+      set_btile (hx, hy, db + 3);
+   }
    play_effect (25, 128);
    drawmap ();
    blit2screen (xofs, yofs);
@@ -2420,46 +2377,39 @@ static int KQ_chest (lua_State * L)
    if (tno > -1)
       if (treasure[tno] != 0)
          return 0;
-   if (ino == 0)
-     {
-        gp += amt;
-        sprintf (strbuf, "Found %d gp!", amt);
-        play_effect (SND_MONEY, 128);
-        message (strbuf, 255, 0, xofs, yofs);
-        if (tno > -1)
-           treasure[tno] = 1;
-        return 0;
-     }
+   if (ino == 0) {
+      gp += amt;
+      sprintf (strbuf, "Found %d gp!", amt);
+      play_effect (SND_MONEY, 128);
+      message (strbuf, 255, 0, xofs, yofs);
+      if (tno > -1)
+         treasure[tno] = 1;
+      return 0;
+   }
    /* PH TODO: This next bit is not needed because the inventory is shared */
-   if (numchrs == 1)
-     {
-        if (check_inventory (ino, amt) > 0)
-           gd = 1;
-     }
-   else
-     {
-        while (a < numchrs)
-          {
-             if (check_inventory (ino, amt) > 0)
-               {
-                  gd = 1;
-                  a = numchrs;
-               }
-             a++;
-          }
-     }
-   if (gd == 1)
-     {
-        if (amt == 1)
-           sprintf (strbuf, "%s procured!", items[ino].name);
-        else
-           sprintf (strbuf, "%s ^%d procured", items[ino].name, amt);
-        play_effect (SND_UNEQUIP, 128);
-        message (strbuf, items[ino].icon, 0, xofs, yofs);
-        if (tno > -1)
-           treasure[tno] = 1;
-        return 0;
-     }
+   if (numchrs == 1) {
+      if (check_inventory (ino, amt) > 0)
+         gd = 1;
+   } else {
+      while (a < numchrs) {
+         if (check_inventory (ino, amt) > 0) {
+            gd = 1;
+            a = numchrs;
+         }
+         a++;
+      }
+   }
+   if (gd == 1) {
+      if (amt == 1)
+         sprintf (strbuf, "%s procured!", items[ino].name);
+      else
+         sprintf (strbuf, "%s ^%d procured", items[ino].name, amt);
+      play_effect (SND_UNEQUIP, 128);
+      message (strbuf, items[ino].icon, 0, xofs, yofs);
+      if (tno > -1)
+         treasure[tno] = 1;
+      return 0;
+   }
    if (amt == 1)
       sprintf (strbuf, "%s not taken!", items[ino].name);
    else
@@ -2505,53 +2455,44 @@ static int KQ_move_camera (lua_State * L)
    int mcy = lua_tonumber (L, 2);
    int dtime = lua_tonumber (L, 3);
 
-   if (mcx > vx)
-     {
-        xinc = 1;
-        xtot = mcx - vx;
-     }
-   if (mcx < vx)
-     {
-        xinc = -1;
-        xtot = vx - mcx;
-     }
-   if (mcy > vy)
-     {
-        yinc = 1;
-        ytot = mcy - vy;
-     }
-   if (mcy < vy)
-     {
-        yinc = -1;
-        ytot = vy - mcy;
-     }
+   if (mcx > vx) {
+      xinc = 1;
+      xtot = mcx - vx;
+   }
+   if (mcx < vx) {
+      xinc = -1;
+      xtot = vx - mcx;
+   }
+   if (mcy > vy) {
+      yinc = 1;
+      ytot = mcy - vy;
+   }
+   if (mcy < vy) {
+      yinc = -1;
+      ytot = vy - mcy;
+   }
    autoparty = 1;
    timer_count = 0;
-   while (ytot > 0 || xtot > 0)
-     {
-        while (timer_count > 0)
-          {
-             timer_count--;
-             ct2++;
-             if (ct2 > dtime)
-               {
-                  if (xtot > 0)
-                    {
-                       vx += xinc;
-                       xtot--;
-                    }
-                  if (ytot > 0)
-                    {
-                       vy += yinc;
-                       ytot--;
-                    }
-                  ct2 = 0;
-               }
-             check_animation ();
-          }
-        drawmap ();
-        blit2screen (xofs, yofs);
-     }
+   while (ytot > 0 || xtot > 0) {
+      while (timer_count > 0) {
+         timer_count--;
+         ct2++;
+         if (ct2 > dtime) {
+            if (xtot > 0) {
+               vx += xinc;
+               xtot--;
+            }
+            if (ytot > 0) {
+               vy += yinc;
+               ytot--;
+            }
+            ct2 = 0;
+         }
+         check_animation ();
+      }
+      drawmap ();
+      blit2screen (xofs, yofs);
+   }
    timer_count = 0;
    autoparty = 0;
    return 0;
@@ -2571,32 +2512,27 @@ static int KQ_orient_heroes (lua_State * L)
 /*  RB: TODO  */
    if (L != NULL)
       L = L;
-   if (numchrs == 2)
-     {
-        lastm[1] = MOVE_NOT;
-        if (g_ent[0].tilex == g_ent[1].tilex
-            && g_ent[0].tiley == g_ent[1].tiley)
-          {
-             lastm[0] = MOVE_NOT;
-             return 0;
-          }
-        if (g_ent[0].tilex == g_ent[1].tilex)
-          {
-             if (g_ent[0].tiley < g_ent[1].tiley)
-                lastm[0] = MOVE_UP;
-             else
-                lastm[0] = MOVE_DOWN;
-             return 0;
-          }
-        if (g_ent[0].tiley == g_ent[1].tiley)
-          {
-             if (g_ent[0].tilex < g_ent[1].tilex)
-                lastm[0] = MOVE_LEFT;
-             else
-                lastm[0] = MOVE_RIGHT;
-             return 0;
-          }
-     }
+   if (numchrs == 2) {
+      lastm[1] = MOVE_NOT;
+      if (g_ent[0].tilex == g_ent[1].tilex && g_ent[0].tiley == g_ent[1].tiley) {
+         lastm[0] = MOVE_NOT;
+         return 0;
+      }
+      if (g_ent[0].tilex == g_ent[1].tilex) {
+         if (g_ent[0].tiley < g_ent[1].tiley)
+            lastm[0] = MOVE_UP;
+         else
+            lastm[0] = MOVE_DOWN;
+         return 0;
+      }
+      if (g_ent[0].tiley == g_ent[1].tiley) {
+         if (g_ent[0].tilex < g_ent[1].tilex)
+            lastm[0] = MOVE_LEFT;
+         else
+            lastm[0] = MOVE_RIGHT;
+         return 0;
+      }
+   }
    return 0;
 }
 
@@ -2766,46 +2702,38 @@ static int KQ_read_controls (lua_State * L)
       g_keys[z] = 0;
 
    readcontrols ();
-   if (up && a == 1)
-     {
-        unpress ();
-        g_keys[0] = 1;
-     }
-   if (down && b == 1)
-     {
-        unpress ();
-        g_keys[1] = 1;
-     }
-   if (left && c == 1)
-     {
-        unpress ();
-        g_keys[2] = 1;
-     }
-   if (right && d == 1)
-     {
-        unpress ();
-        g_keys[3] = 1;
-     }
-   if (balt && e == 1)
-     {
-        unpress ();
-        g_keys[4] = 1;
-     }
-   if (bctrl && f == 1)
-     {
-        unpress ();
-        g_keys[5] = 1;
-     }
-   if (benter && g == 1)
-     {
-        unpress ();
-        g_keys[6] = 1;
-     }
-   if (besc && h == 1)
-     {
-        unpress ();
-        g_keys[7] = 1;
-     }
+   if (up && a == 1) {
+      unpress ();
+      g_keys[0] = 1;
+   }
+   if (down && b == 1) {
+      unpress ();
+      g_keys[1] = 1;
+   }
+   if (left && c == 1) {
+      unpress ();
+      g_keys[2] = 1;
+   }
+   if (right && d == 1) {
+      unpress ();
+      g_keys[3] = 1;
+   }
+   if (balt && e == 1) {
+      unpress ();
+      g_keys[4] = 1;
+   }
+   if (bctrl && f == 1) {
+      unpress ();
+      g_keys[5] = 1;
+   }
+   if (benter && g == 1) {
+      unpress ();
+      g_keys[6] = 1;
+   }
+   if (besc && h == 1) {
+      unpress ();
+      g_keys[7] = 1;
+   }
    return 0;
 }
 
@@ -2860,22 +2788,21 @@ int KQ_bubble_ex (lua_State * L)
    s_entity *ent;
    const char *msg = lua_tostring (L, 2);
 
-   switch (lua_type (L, 1))
-     {
-     case LUA_TNUMBER:
-        entity = real_entity_num (lua_tonumber (L, 1));
-        break;
-     case LUA_TTABLE:
-        lua_pushstring (L, "_ent");
-        lua_rawget (L, 1);
-        ent = lua_touserdata (L, -1);
-        /* convert from pointer to an index for text_ex */
-        entity = ent ? ent - g_ent : 255;
-        break;
-     default:
-        entity = 255;
-        break;
-     }
+   switch (lua_type (L, 1)) {
+   case LUA_TNUMBER:
+      entity = real_entity_num (lua_tonumber (L, 1));
+      break;
+   case LUA_TTABLE:
+      lua_pushstring (L, "_ent");
+      lua_rawget (L, 1);
+      ent = lua_touserdata (L, -1);
+      /* convert from pointer to an index for text_ex */
+      entity = ent ? ent - g_ent : 255;
+      break;
+   default:
+      entity = 255;
+      break;
+   }
    text_ex (B_TEXT, entity, msg);
    return 0;
 }
@@ -2911,14 +2838,11 @@ int KQ_battle (lua_State * L)
 
 int KQ_istable (lua_State * L)
 {
-   if (lua_istable (L, 1))
-     {
-        lua_pushnumber (L, 1);
-     }
-   else
-     {
-        lua_pushnil (L);
-     }
+   if (lua_istable (L, 1)) {
+      lua_pushnumber (L, 1);
+   } else {
+      lua_pushnil (L);
+   }
    return 1;
 }
 
@@ -2927,31 +2851,25 @@ int KQ_select_team (lua_State * L)
 {
    static int team[MAXCHRS];
    int i, t;
-   for (i = 0; i < MAXCHRS; ++i)
-     {
-        lua_rawgeti (L, 1, i + 1);
-        if (lua_type (L, -1) == LUA_TNIL)
-          {
-             team[i] = -1;
-          }
-        else
-          {
-             team[i] = lua_tonumber (L, -1);
-             lua_pushnil (L);
-             lua_rawseti (L, 1, i + 1);
-          }
-        lua_pop (L, 1);
-     }
+   for (i = 0; i < MAXCHRS; ++i) {
+      lua_rawgeti (L, 1, i + 1);
+      if (lua_type (L, -1) == LUA_TNIL) {
+         team[i] = -1;
+      } else {
+         team[i] = lua_tonumber (L, -1);
+         lua_pushnil (L);
+         lua_rawseti (L, 1, i + 1);
+      }
+      lua_pop (L, 1);
+   }
    select_party (team, MAXCHRS, 2);
    t = 1;
-   for (i = 0; i < MAXCHRS; ++i)
-     {
-        if (team[i] != -1)
-          {
-             lua_pushnumber (L, team[i]);
-             lua_rawseti (L, 1, t++);
-          }
-     }
+   for (i = 0; i < MAXCHRS; ++i) {
+      if (team[i] != -1) {
+         lua_pushnumber (L, team[i]);
+         lua_rawseti (L, 1, t++);
+      }
+   }
    return 1;
 }
 
@@ -2968,33 +2886,29 @@ void do_luainit (char *fname)
    int oldtop;
    char sname[32];
    const struct luaL_reg *rg = lrs;
-   if (theL != NULL)
-     {
-        do_luakill ();
-     }
+   if (theL != NULL) {
+      do_luakill ();
+   }
    theL = lua_open (0);
    if (theL == NULL)
       program_death ("Could not initialise scripting engine");
    fieldsort ();
-   while (rg->name)
-     {
-        lua_register (theL, rg->name, rg->func);
-        ++rg;
-     }
+   while (rg->name) {
+      lua_register (theL, rg->name, rg->func);
+      ++rg;
+   }
    init_obj (theL);
    oldtop = lua_gettop (theL);
-   if (lua_dofile (theL, kqres (SCRIPT_DIR, "global.lob")) != 0)
-     {
-        sprintf (strbuf, "Could not open script: global.lob");
-        program_death (strbuf);
-     }
+   if (lua_dofile (theL, kqres (SCRIPT_DIR, "global.lob")) != 0) {
+      sprintf (strbuf, "Could not open script: global.lob");
+      program_death (strbuf);
+   }
 
    sprintf (sname, "%s.lob", fname);
-   if (lua_dofile (theL, kqres (SCRIPT_DIR, sname)) != 0)
-     {
-        sprintf (strbuf, "Could not open script:%s", fname);
-        program_death (strbuf);
-     }
+   if (lua_dofile (theL, kqres (SCRIPT_DIR, sname)) != 0) {
+      sprintf (strbuf, "Could not open script:%s", fname);
+      program_death (strbuf);
+   }
    lua_getglobal (theL, "zone_handler");
    ref_zone_handler = lua_ref (theL, 1);
    lua_settop (theL, oldtop);
@@ -3014,13 +2928,12 @@ void do_luacheat (void)
    int oldtop;
 
    oldtop = lua_gettop (theL);
-   if (cheat_loaded == 0)
-     {
-        lua_dofile (theL, kqres (SCRIPT_DIR, "cheat.lob"));
-        /* PH FIXME cheat_loaded=1; here surely?? */
-        /* TT: Sure, why not? */
-        cheat_loaded = 1;
-     }
+   if (cheat_loaded == 0) {
+      lua_dofile (theL, kqres (SCRIPT_DIR, "cheat.lob"));
+      /* PH FIXME cheat_loaded=1; here surely?? */
+      /* TT: Sure, why not? */
+      cheat_loaded = 1;
+   }
    lua_getglobal (theL, "cheat");
    lua_call (theL, 0, 0);
    lua_settop (theL, oldtop);
@@ -3038,12 +2951,11 @@ void do_luacheat (void)
  */
 void do_luakill (void)
 {
-   if (theL)
-     {
-        lua_unref (theL, ref_zone_handler);
-        lua_close (theL);
-        theL = NULL;
-     }
+   if (theL) {
+      lua_unref (theL, ref_zone_handler);
+      lua_close (theL);
+      theL = NULL;
+   }
 #ifdef KQ_CHEATS
    cheat_loaded = 0;
 #endif

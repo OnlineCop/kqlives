@@ -67,44 +67,38 @@ int select_player (void)
    if (numchrs == 1)
       return 0;
    ptr = 0;
-   while (!stop)
-     {
-        if (rd == 1)
-          {
-             draw_mainmenu (ptr);
-             blit2screen (xofs, yofs);
-          }
-        rd = 0;
-        readcontrols ();
-        if (up)
-          {
-             unpress ();
-             ptr--;
-             if (ptr < 0)
-                ptr = numchrs - 1;
-             play_effect (SND_CLICK, 128);
-             rd = 1;
-          }
-        if (down)
-          {
-             unpress ();
-             ptr++;
-             if (ptr > numchrs - 1)
-                ptr = 0;
-             play_effect (SND_CLICK, 128);
-             rd = 1;
-          }
-        if (balt)
-          {
-             unpress ();
-             stop = 1;
-          }
-        if (bctrl)
-          {
-             unpress ();
-             return -1;
-          }
-     }
+   while (!stop) {
+      if (rd == 1) {
+         draw_mainmenu (ptr);
+         blit2screen (xofs, yofs);
+      }
+      rd = 0;
+      readcontrols ();
+      if (up) {
+         unpress ();
+         ptr--;
+         if (ptr < 0)
+            ptr = numchrs - 1;
+         play_effect (SND_CLICK, 128);
+         rd = 1;
+      }
+      if (down) {
+         unpress ();
+         ptr++;
+         if (ptr > numchrs - 1)
+            ptr = 0;
+         play_effect (SND_CLICK, 128);
+         rd = 1;
+      }
+      if (balt) {
+         unpress ();
+         stop = 1;
+      }
+      if (bctrl) {
+         unpress ();
+         return -1;
+      }
+   }
    return ptr;
 }
 
@@ -140,99 +134,83 @@ int select_any_player (int csa, int icn, char *msg)
    else
       sa = 0;
    ptr = 0;
-   while (!stop)
-     {
-        if (rd == 1)
-          {
-             drawmap ();
-             if (csa < TGT_ALLY_ALL)
-               {
-                  menubox (double_buffer,
-                           152 - ((strlen (msg) + 1) * 4) + xofs, 8 + yofs,
-                           strlen (msg) + 1, 1, BLUE);
-                  draw_icon (double_buffer, icn,
-                             160 - ((strlen (msg) + 1) * 4) + xofs, 16 + yofs);
-                  print_font (double_buffer,
-                              168 - ((strlen (msg) + 1) * 4) + xofs,
-                              16 + yofs, msg, FNORMAL);
-               }
-             for (k = 0; k < numchrs; k++)
-               {
-                  menubox (double_buffer, 80 + xofs, k * 56 + shy + yofs, 18,
-                           5, BLUE);
-                  draw_playerstat (double_buffer, pidx[k], 88 + xofs,
-                                   k * 56 + shy + 8 + yofs);
-                  if (csa < TGT_ALLY_ALL)
-                    {
-                       if (sa == 0)
-                         {
-                            if (k == ptr)
-                               draw_sprite (double_buffer, menuptr, 72 + xofs,
-                                            k * 56 + shy + 24 + yofs);
-                         }
-                       else
-                          draw_sprite (double_buffer, menuptr, 72 + xofs,
-                                       k * 56 + shy + 24 + yofs);
-                    }
-               }
-             blit2screen (xofs, yofs);
-          }
-        rd = 0;
-        readcontrols ();
-        if (csa < TGT_ALLY_ALL)
-          {
-             if (left)
-               {
-                  unpress ();
-                  if (csa == TGT_ALLY_ONE)
-                    {
-                       if (sa == 0)
-                          sa = 1;
-                       else
-                          sa = 0;
-                    }
-                  rd = 1;
-               }
-             if (right)
-               {
-                  unpress ();
-                  if (csa == TGT_ALLY_ONE)
-                    {
-                       if (sa == 0)
-                          sa = 1;
-                       else
-                          sa = 0;
-                    }
-                  rd = 1;
-               }
-             if (up)
-               {
-                  unpress ();
-                  if (ptr > 0)
-                     ptr--;
-                  play_effect (SND_CLICK, 128);
-                  rd = 1;
-               }
-             if (down)
-               {
-                  unpress ();
-                  if (ptr < numchrs - 1)
-                     ptr++;
-                  play_effect (SND_CLICK, 128);
-                  rd = 1;
-               }
-          }
-        if (balt)
-          {
-             unpress ();
-             stop = 1;
-          }
-        if (bctrl)
-          {
-             unpress ();
-             stop = 2;
-          }
-     }
+   while (!stop) {
+      if (rd == 1) {
+         drawmap ();
+         if (csa < TGT_ALLY_ALL) {
+            menubox (double_buffer,
+                     152 - ((strlen (msg) + 1) * 4) + xofs, 8 + yofs,
+                     strlen (msg) + 1, 1, BLUE);
+            draw_icon (double_buffer, icn,
+                       160 - ((strlen (msg) + 1) * 4) + xofs, 16 + yofs);
+            print_font (double_buffer,
+                        168 - ((strlen (msg) + 1) * 4) + xofs,
+                        16 + yofs, msg, FNORMAL);
+         }
+         for (k = 0; k < numchrs; k++) {
+            menubox (double_buffer, 80 + xofs, k * 56 + shy + yofs, 18,
+                     5, BLUE);
+            draw_playerstat (double_buffer, pidx[k], 88 + xofs,
+                             k * 56 + shy + 8 + yofs);
+            if (csa < TGT_ALLY_ALL) {
+               if (sa == 0) {
+                  if (k == ptr)
+                     draw_sprite (double_buffer, menuptr, 72 + xofs,
+                                  k * 56 + shy + 24 + yofs);
+               } else
+                  draw_sprite (double_buffer, menuptr, 72 + xofs,
+                               k * 56 + shy + 24 + yofs);
+            }
+         }
+         blit2screen (xofs, yofs);
+      }
+      rd = 0;
+      readcontrols ();
+      if (csa < TGT_ALLY_ALL) {
+         if (left) {
+            unpress ();
+            if (csa == TGT_ALLY_ONE) {
+               if (sa == 0)
+                  sa = 1;
+               else
+                  sa = 0;
+            }
+            rd = 1;
+         }
+         if (right) {
+            unpress ();
+            if (csa == TGT_ALLY_ONE) {
+               if (sa == 0)
+                  sa = 1;
+               else
+                  sa = 0;
+            }
+            rd = 1;
+         }
+         if (up) {
+            unpress ();
+            if (ptr > 0)
+               ptr--;
+            play_effect (SND_CLICK, 128);
+            rd = 1;
+         }
+         if (down) {
+            unpress ();
+            if (ptr < numchrs - 1)
+               ptr++;
+            play_effect (SND_CLICK, 128);
+            rd = 1;
+         }
+      }
+      if (balt) {
+         unpress ();
+         stop = 1;
+      }
+      if (bctrl) {
+         unpress ();
+         stop = 2;
+      }
+   }
    if (csa == TGT_ALLY_ALL || stop == 2)
       return -1;
    if (sa == 1)
@@ -265,84 +243,70 @@ int select_hero (int whom, int multi, int csd)
       sa = 1;
    else
       sa = 0;
-   for (a = 0; a < numchrs; a++)
-     {
-        if (fighter[a].sts[S_DEAD] == 0)
-          {
-             tmpd[a] = a;
-             cntr++;
-          }
-        else
-          {
-             if (csd)
-               {
-                  tmpd[a] = a;
-                  cntr++;
-                  ptr = a;      /* default: select a dead char if there is one */
-               }
-          }
-     }
-   while (!stp)
-     {
-        if (rd == 1)
-          {
-             if (multi > TGT_NONE && sa == 1)
-                battle_render (tmpd[ptr] + 1, whom + 1, 1);
-             else
-                battle_render (tmpd[ptr] + 1, whom + 1, 0);
-             blit2screen (0, 0);
-          }
-        readcontrols ();
-        rd = 0;
-        if (balt)
-          {
-             unpress ();
-             stp = 1;
-             rd = 1;
-          }
-        if (bctrl)
-          {
-             unpress ();
-             return -1;
-          }
-        if (left)
-          {
-             unpress ();
-             ptr--;
-             if (ptr < 0)
-                ptr = cntr - 1;
-             rd = 1;
-          }
-        if (right)
-          {
-             unpress ();
-             ptr++;
-             if (ptr >= cntr)
-                ptr = 0;
-             rd = 1;
-          }
-        if (multi == TGT_ALLY_ONE && cntr > 1)
-          {
-             if (up)
-               {
-                  unpress ();
-                  if (sa == 0)
-                     sa = 1;
-                  else
-                     sa = 0;
-                  rd = 1;
-               }
-             if (down)
-               {
-                  unpress ();
-                  if (sa == 0)
-                     sa = 1;
-                  else
-                     sa = 0;
-                  rd = 1;
-               }
-          }
-     }
+   for (a = 0; a < numchrs; a++) {
+      if (fighter[a].sts[S_DEAD] == 0) {
+         tmpd[a] = a;
+         cntr++;
+      } else {
+         if (csd) {
+            tmpd[a] = a;
+            cntr++;
+            ptr = a;            /* default: select a dead char if there is one */
+         }
+      }
+   }
+   while (!stp) {
+      if (rd == 1) {
+         if (multi > TGT_NONE && sa == 1)
+            battle_render (tmpd[ptr] + 1, whom + 1, 1);
+         else
+            battle_render (tmpd[ptr] + 1, whom + 1, 0);
+         blit2screen (0, 0);
+      }
+      readcontrols ();
+      rd = 0;
+      if (balt) {
+         unpress ();
+         stp = 1;
+         rd = 1;
+      }
+      if (bctrl) {
+         unpress ();
+         return -1;
+      }
+      if (left) {
+         unpress ();
+         ptr--;
+         if (ptr < 0)
+            ptr = cntr - 1;
+         rd = 1;
+      }
+      if (right) {
+         unpress ();
+         ptr++;
+         if (ptr >= cntr)
+            ptr = 0;
+         rd = 1;
+      }
+      if (multi == TGT_ALLY_ONE && cntr > 1) {
+         if (up) {
+            unpress ();
+            if (sa == 0)
+               sa = 1;
+            else
+               sa = 0;
+            rd = 1;
+         }
+         if (down) {
+            unpress ();
+            if (sa == 0)
+               sa = 1;
+            else
+               sa = 0;
+            rd = 1;
+         }
+      }
+   }
    if (sa == 0)
       return tmpd[ptr];
    else
@@ -387,70 +351,60 @@ int select_enemy (int whom, int multi)
    ptr = 0;
    stp = 0;
    rd = 1;
-   while (!stp)
-     {
-        if (rd == 1)
-          {
-             if (multi > 0 && sa == 1)
-                battle_render (tmpd[ptr] + 1, whom + 1, 2);
-             else
-                battle_render (tmpd[ptr] + 1, whom + 1, 0);
-          }
-        blit2screen (0, 0);
-        readcontrols ();
-        rd = 0;
-        if (balt)
-          {
-             unpress ();
-             rd = 1;
-             stp = 1;
-          }
-        if (bctrl)
-          {
-             unpress ();
-             return -1;
-          }
-        if (left)
-          {
-             unpress ();
-             ptr--;
-             if (ptr < 0)
-                ptr = cntr - 1;
-             rd = 1;
-          }
-        if (right)
-          {
-             unpress ();
-             ptr++;
-             if (ptr > cntr - 1)
-                ptr = 0;
-             rd = 1;
-          }
-        if (up)
-          {
-             unpress ();
-             if (multi == 1 && cntr > 1)
-               {
-                  if (sa == 0)
-                     sa = 1;
-                  else
-                     sa = 0;
-                  rd = 1;
-               }
-          }
-        if (down)
-          {
-             unpress ();
-             if (multi == 1 && cntr > 1)
-               {
-                  if (sa == 0)
-                     sa = 1;
-                  else
-                     sa = 0;
-                  rd = 1;
-               }
-          }
-     }
+   while (!stp) {
+      if (rd == 1) {
+         if (multi > 0 && sa == 1)
+            battle_render (tmpd[ptr] + 1, whom + 1, 2);
+         else
+            battle_render (tmpd[ptr] + 1, whom + 1, 0);
+      }
+      blit2screen (0, 0);
+      readcontrols ();
+      rd = 0;
+      if (balt) {
+         unpress ();
+         rd = 1;
+         stp = 1;
+      }
+      if (bctrl) {
+         unpress ();
+         return -1;
+      }
+      if (left) {
+         unpress ();
+         ptr--;
+         if (ptr < 0)
+            ptr = cntr - 1;
+         rd = 1;
+      }
+      if (right) {
+         unpress ();
+         ptr++;
+         if (ptr > cntr - 1)
+            ptr = 0;
+         rd = 1;
+      }
+      if (up) {
+         unpress ();
+         if (multi == 1 && cntr > 1) {
+            if (sa == 0)
+               sa = 1;
+            else
+               sa = 0;
+            rd = 1;
+         }
+      }
+      if (down) {
+         unpress ();
+         if (multi == 1 && cntr > 1) {
+            if (sa == 0)
+               sa = 1;
+            else
+               sa = 0;
+            rd = 1;
+         }
+      }
+   }
    if (sa == 0)
       return tmpd[ptr];
    else
@@ -477,32 +431,25 @@ int auto_select_hero (int whom, int csts)
    int a, cntr = 0;
 /*  RB TODO  */
    whom = whom;
-   if (numchrs == 1)
-     {
-        if (can_attack (0))
-           return 0;
-        else
-           return -1;
-     }
-   for (a = 0; a < numchrs; a++)
-     {
-        if (can_attack (a))
-          {
-             if (csts == NO_STS_CHECK)
-               {
-                  tmpd[cntr] = a;
-                  cntr++;
-               }
-             else
-               {
-                  if (fighter[a].sts[csts] == 0)
-                    {
-                       tmpd[cntr] = a;
-                       cntr++;
-                    }
-               }
-          }
-     }
+   if (numchrs == 1) {
+      if (can_attack (0))
+         return 0;
+      else
+         return -1;
+   }
+   for (a = 0; a < numchrs; a++) {
+      if (can_attack (a)) {
+         if (csts == NO_STS_CHECK) {
+            tmpd[cntr] = a;
+            cntr++;
+         } else {
+            if (fighter[a].sts[csts] == 0) {
+               tmpd[cntr] = a;
+               cntr++;
+            }
+         }
+      }
+   }
    if (cntr <= 1)
       return tmpd[0];
    return tmpd[rand () % cntr];
@@ -532,47 +479,36 @@ int auto_select_enemy (int whom, int csts)
 {
    int a, ne = 0;
 
-   for (a = PSIZE; a < PSIZE + numens; a++)
-     {
-        if (fighter[a].sts[S_DEAD] == 0)
-          {
-             if (csts == NO_STS_CHECK)
-               {
+   for (a = PSIZE; a < PSIZE + numens; a++) {
+      if (fighter[a].sts[S_DEAD] == 0) {
+         if (csts == NO_STS_CHECK) {
+            tmpd[ne] = a;
+            ne++;
+         } else {
+            if (csts == CURE_CHECK) {
+               if (fighter[a].hp < fighter[a].mhp * 75 / 100) {
                   tmpd[ne] = a;
                   ne++;
                }
-             else
-               {
-                  if (csts == CURE_CHECK)
-                    {
-                       if (fighter[a].hp < fighter[a].mhp * 75 / 100)
-                         {
-                            tmpd[ne] = a;
-                            ne++;
-                         }
-                    }
-                  else
-                    {
-                       if ((csts == S_BLESS && fighter[a].sts[csts] < 3)
-                           || (csts == S_STRENGTH && fighter[a].sts[csts] < 2)
-                           || (csts != S_BLESS && csts != S_STRENGTH
-                               && fighter[a].sts[csts] == 0))
-                         {
-                            tmpd[ne] = a;
-                            ne++;
-                         }
-                    }
+            } else {
+               if ((csts == S_BLESS && fighter[a].sts[csts] < 3)
+                   || (csts == S_STRENGTH && fighter[a].sts[csts] < 2)
+                   || (csts != S_BLESS && csts != S_STRENGTH
+                       && fighter[a].sts[csts] == 0)) {
+                  tmpd[ne] = a;
+                  ne++;
                }
-          }
-     }
+            }
+         }
+      }
+   }
    if (ne == 0)
       return -1;
-   if (csts != NO_STS_CHECK)
-     {
-        for (a = 0; a < ne; a++)
-           if (tmpd[a] == whom && rand () % 4 != 3)
-              return whom;
-     }
+   if (csts != NO_STS_CHECK) {
+      for (a = 0; a < ne; a++)
+         if (tmpd[a] == whom && rand () % 4 != 3)
+            return whom;
+   }
    if (ne <= 1)
       return tmpd[0];
    return tmpd[rand () % ne];
@@ -621,196 +557,153 @@ int select_party (int *avail, int n_avail, int numchrs_max)
    int mask;
    rd = 1;
    cur = 0;
-   if (avail == NULL)
-     {
-        /* check input parameters */
-        return 0;
-     }
+   if (avail == NULL) {
+      /* check input parameters */
+      return 0;
+   }
    /* Be sure to remove any available characters that are already in the party */
-   for (i = 0; i < n_avail; ++i)
-     {
-        for (j = 0; j < numchrs; ++j)
-           if (avail[i] == pidx[j])
-              avail[i] = -1;
-     }
+   for (i = 0; i < n_avail; ++i) {
+      for (j = 0; j < numchrs; ++j)
+         if (avail[i] == pidx[j])
+            avail[i] = -1;
+   }
 
    menubox (double_buffer, 16 + xofs, 24 + yofs, 34, 12, BLUE);
    print_font (double_buffer, 24 + xofs, 32 + yofs, "Available:", FGOLD);
    print_font (double_buffer, 24 + xofs, 80 + yofs, "In party:", FGOLD);
-   while (running)
-     {
-        if (rd)
-          {
-             /* Draw everything */
-             /* draw the row of available heroes */
-             y = yofs + 40;
-             for (i = 0; i < n_avail; ++i)
-               {
-                  x = xofs + (320 - 32 * n_avail) / 2 + 32 * i;
-                  menubox (double_buffer, x, y, 2, 2,
-                           i == cur ? DARKRED : DARKBLUE);
-                  if (avail[i] >= 0)
-                     draw_sprite (double_buffer, frames[avail[i]][0], x + 8,
-                                  y + 8);
+   while (running) {
+      if (rd) {
+         /* Draw everything */
+         /* draw the row of available heroes */
+         y = yofs + 40;
+         for (i = 0; i < n_avail; ++i) {
+            x = xofs + (320 - 32 * n_avail) / 2 + 32 * i;
+            menubox (double_buffer, x, y, 2, 2, i == cur ? DARKRED : DARKBLUE);
+            if (avail[i] >= 0)
+               draw_sprite (double_buffer, frames[avail[i]][0], x + 8, y + 8);
+         }
+         /* draw the party */
+         x = xofs + (320 - 40 * PSIZE) / 2;
+         y = yofs + 88;
+         for (i = 0; i < PSIZE; ++i) {
+            menubox (double_buffer, x, y, 2, 2,
+                     cur == (MAXCHRS + i) ? DARKRED : DARKBLUE);
+            if (i < numchrs && pidx[i] >= 0)
+               draw_sprite (double_buffer, frames[pidx[i]][0], x + 8, y + 8);
+            x += 40;
+         }
+         /* Draw the 'Exit' button */
+         menubox (double_buffer, x, y, 4, 1,
+                  cur == (PSIZE + MAXCHRS) ? DARKRED : DARKBLUE);
+         print_font (double_buffer, x + 8, y + 8, "Exit", FNORMAL);
+         /* See which hero is selected and draw his/her stats */
+         if (cur < n_avail) {
+            hero = avail[cur];
+         } else if (cur < numchrs + MAXCHRS) {
+            hero = pidx[cur - MAXCHRS];
+         } else
+            hero = -1;
+         menubox (double_buffer, 92, 152, 18, 5, DARKBLUE);
+         if (hero != -1) {
+            draw_playerstat (double_buffer, hero, 100, 160);
+         }
+         /* Show on the screen */
+         blit2screen (xofs, yofs);
+         rd = 0;
+      }
+      oldcur = cur;
+      readcontrols ();
+      if (up) {
+         /* move between the available row and the party row */
+         unpress ();
+         if (cur >= MAXCHRS) {
+            cur = 0;
+         }
+      }
+      if (down) {
+         /* move between the available row and the party row */
+         unpress ();
+         if (cur < MAXCHRS) {
+            cur = MAXCHRS;
+         }
+      }
+      if (left) {
+         /* move between heroes on a row */
+         unpress ();
+         if (cur > MAXCHRS)
+            --cur;
+         else if (cur > 0) {
+            --cur;
+         }
+      }
+      if (right) {
+         /* move between heroes on a row */
+         unpress ();
+         if (cur < (n_avail - 1)) {
+            cur++;
+         } else if (cur >= MAXCHRS && cur <= (numchrs + MAXCHRS))
+            ++cur;
+      }
+      if (bctrl) {
+         unpress ();
+         running = 0;
+      }
+      if (balt) {
+         unpress ();
+         if (cur == 10) {
+            /* selected the exit button */
+            return 1;
+         }
+         if (hero == -1) {
+            /* Selected a space with no hero in it! */
+            play_effect (SND_BAD, 128);
+         } else {
+            mask = 0;
+            /* pick context-sensitive mini-menu */
+            if (cur < n_avail) {
+               /* it's from the available heroes: options are join and lead */
+               if (numchrs < numchrs_max) {
+                  mask |= MM_JOIN;
+                  if (numchrs > 0)
+                     mask |= MM_LEAD;
                }
-             /* draw the party */
-             x = xofs + (320 - 40 * PSIZE) / 2;
-             y = yofs + 88;
-             for (i = 0; i < PSIZE; ++i)
-               {
-                  menubox (double_buffer, x, y, 2, 2,
-                           cur == (MAXCHRS + i) ? DARKRED : DARKBLUE);
-                  if (i < numchrs && pidx[i] >= 0)
-                     draw_sprite (double_buffer, frames[pidx[i]][0], x + 8,
-                                  y + 8);
-                  x += 40;
+               j = mini_menu (mask);
+               if (j == MM_JOIN) {
+                  party_add (hero, 0);
+                  avail[cur] = -1;
+               } else if (j == MM_LEAD) {
+                  party_add (hero, 1);
+                  avail[cur] = -1;
                }
-             /* Draw the 'Exit' button */
-             menubox (double_buffer, x, y, 4, 1,
-                      cur == (PSIZE + MAXCHRS) ? DARKRED : DARKBLUE);
-             print_font (double_buffer, x + 8, y + 8, "Exit", FNORMAL);
-             /* See which hero is selected and draw his/her stats */
-             if (cur < n_avail)
-               {
-                  hero = avail[cur];
+            } else {
+               /* it's from the party: options are lead and leave */
+               if (numchrs > 1) {
+                  mask |= MM_LEAVE;
+                  if (cur > MAXCHRS)
+                     mask |= MM_LEAD;
                }
-             else if (cur < numchrs + MAXCHRS)
-               {
-                  hero = pidx[cur - MAXCHRS];
+               j = mini_menu (mask);
+               if (j == MM_LEAVE) {
+                  party_remove (hero);
+                  /* and put back on the top row */
+                  for (x = 0; x < n_avail; ++x) {
+                     if (avail[x] == -1) {
+                        avail[x] = hero;
+                        break;
+                     }
+                  }
+               } else if (j == MM_LEAD) {
+                  party_newlead (hero);
                }
-             else
-                hero = -1;
-             menubox (double_buffer, 92, 152, 18, 5, DARKBLUE);
-             if (hero != -1)
-               {
-                  draw_playerstat (double_buffer, hero, 100, 160);
-               }
-             /* Show on the screen */
-             blit2screen (xofs, yofs);
-             rd = 0;
-          }
-        oldcur = cur;
-        readcontrols ();
-        if (up)
-          {
-             /* move between the available row and the party row */
-             unpress ();
-             if (cur >= MAXCHRS)
-               {
-                  cur = 0;
-               }
-          }
-        if (down)
-          {
-             /* move between the available row and the party row */
-             unpress ();
-             if (cur < MAXCHRS)
-               {
-                  cur = MAXCHRS;
-               }
-          }
-        if (left)
-          {
-             /* move between heroes on a row */
-             unpress ();
-             if (cur > MAXCHRS)
-                --cur;
-             else if (cur > 0)
-               {
-                  --cur;
-               }
-          }
-        if (right)
-          {
-             /* move between heroes on a row */
-             unpress ();
-             if (cur < (n_avail - 1))
-               {
-                  cur++;
-               }
-             else if (cur >= MAXCHRS && cur <= (numchrs + MAXCHRS))
-                ++cur;
-          }
-        if (bctrl)
-          {
-             unpress ();
-             running = 0;
-          }
-        if (balt)
-          {
-             unpress ();
-             if (cur == 10)
-               {
-                  /* selected the exit button */
-                  return 1;
-               }
-             if (hero == -1)
-               {
-                  /* Selected a space with no hero in it! */
-                  play_effect (SND_BAD, 128);
-               }
-             else
-               {
-                  mask = 0;
-                  /* pick context-sensitive mini-menu */
-                  if (cur < n_avail)
-                    {
-                       /* it's from the available heroes: options are join and lead */
-                       if (numchrs < numchrs_max)
-                         {
-                            mask |= MM_JOIN;
-                            if (numchrs > 0)
-                               mask |= MM_LEAD;
-                         }
-                       j = mini_menu (mask);
-                       if (j == MM_JOIN)
-                         {
-                            party_add (hero, 0);
-                            avail[cur] = -1;
-                         }
-                       else if (j == MM_LEAD)
-                         {
-                            party_add (hero, 1);
-                            avail[cur] = -1;
-                         }
-                    }
-                  else
-                    {
-                       /* it's from the party: options are lead and leave */
-                       if (numchrs > 1)
-                         {
-                            mask |= MM_LEAVE;
-                            if (cur > MAXCHRS)
-                               mask |= MM_LEAD;
-                         }
-                       j = mini_menu (mask);
-                       if (j == MM_LEAVE)
-                         {
-                            party_remove (hero);
-                            /* and put back on the top row */
-                            for (x = 0; x < n_avail; ++x)
-                              {
-                                 if (avail[x] == -1)
-                                   {
-                                      avail[x] = hero;
-                                      break;
-                                   }
-                              }
-                         }
-                       else if (j == MM_LEAD)
-                         {
-                            party_newlead (hero);
-                         }
-                    }
-               }
-             rd = 1;
-          }
-        if (oldcur != cur)
-          {
-             play_effect (SND_CLICK, 128);
-             rd = 1;
-          }
-     }
+            }
+         }
+         rd = 1;
+      }
+      if (oldcur != cur) {
+         play_effect (SND_CLICK, 128);
+         rd = 1;
+      }
+   }
    return 0;
 }
 
@@ -824,145 +717,122 @@ static int mini_menu (int omask)
    cp = 0;
 
    /* If no actions were allowed, or just one, skip the menu */
-   if (omask == MM_JOIN)
-     {
-        message ("Join", 255, 1000, xofs, yofs);
-        return MM_JOIN;
-     }
-   if (omask == MM_LEAVE)
-     {
-        message ("Leave", 255, 1000, xofs, yofs);
-        return MM_LEAVE;
-     }
-   if (omask == MM_LEAD)
-     {
-        message ("Lead", 255, 1000, xofs, yofs);
-        return MM_LEAD;
-     }
-   if (omask == MM_NONE)
-     {
-        message ("No options", 255, 1000, xofs, yofs);
-        return MM_NONE;
-     }
+   if (omask == MM_JOIN) {
+      message ("Join", 255, 1000, xofs, yofs);
+      return MM_JOIN;
+   }
+   if (omask == MM_LEAVE) {
+      message ("Leave", 255, 1000, xofs, yofs);
+      return MM_LEAVE;
+   }
+   if (omask == MM_LEAD) {
+      message ("Lead", 255, 1000, xofs, yofs);
+      return MM_LEAD;
+   }
+   if (omask == MM_NONE) {
+      message ("No options", 255, 1000, xofs, yofs);
+      return MM_NONE;
+   }
 
-   while (1)
-     {
-        if (rd)
-          {
-             menubox (double_buffer, MM_X - 13, MM_Y - 8, 6, 3, DARKBLUE);
-             print_font (double_buffer, MM_X, MM_Y, "Join",
-                         (omask & MM_JOIN) ? FNORMAL : FDARK);
-             print_font (double_buffer, MM_X, MM_Y + 8, "Leave",
-                         (omask & MM_LEAVE) ? FNORMAL : FDARK);
-             print_font (double_buffer, MM_X, MM_Y + 16, "Lead",
-                         (omask & MM_LEAD) ? FNORMAL : FDARK);
-             draw_sprite (double_buffer, menuptr, MM_X - 13, MM_Y + 8 * cp);
-             blit2screen (xofs, yofs);
-             rd = 0;
-          }
-        readcontrols ();
-        if (up)
-          {
-             unpress ();
-             if (cp > 0)
-               {
-                  play_effect (SND_CLICK, 128);
-                  rd = 1;
-                  --cp;
-               }
-          }
+   while (1) {
+      if (rd) {
+         menubox (double_buffer, MM_X - 13, MM_Y - 8, 6, 3, DARKBLUE);
+         print_font (double_buffer, MM_X, MM_Y, "Join",
+                     (omask & MM_JOIN) ? FNORMAL : FDARK);
+         print_font (double_buffer, MM_X, MM_Y + 8, "Leave",
+                     (omask & MM_LEAVE) ? FNORMAL : FDARK);
+         print_font (double_buffer, MM_X, MM_Y + 16, "Lead",
+                     (omask & MM_LEAD) ? FNORMAL : FDARK);
+         draw_sprite (double_buffer, menuptr, MM_X - 13, MM_Y + 8 * cp);
+         blit2screen (xofs, yofs);
+         rd = 0;
+      }
+      readcontrols ();
+      if (up) {
+         unpress ();
+         if (cp > 0) {
+            play_effect (SND_CLICK, 128);
+            rd = 1;
+            --cp;
+         }
+      }
 
-        if (down)
-          {
-             unpress ();
-             if (cp < 2)
-               {
-                  play_effect (SND_CLICK, 128);
-                  rd = 1;
-                  ++cp;
-               }
-          }
-        if (bctrl)
-          {
-             unpress ();
-             return 0;
-          }
-        if (balt)
-          {
-             unpress ();
-             if (omask & (1 << cp))
-                return 1 << cp;
-             else
-               {
-                  play_effect (SND_BAD, 128);
-               }
-          }
-     }
+      if (down) {
+         unpress ();
+         if (cp < 2) {
+            play_effect (SND_CLICK, 128);
+            rd = 1;
+            ++cp;
+         }
+      }
+      if (bctrl) {
+         unpress ();
+         return 0;
+      }
+      if (balt) {
+         unpress ();
+         if (omask & (1 << cp))
+            return 1 << cp;
+         else {
+            play_effect (SND_BAD, 128);
+         }
+      }
+   }
 }
 
 
 static void party_add (int id, int lead)
 {
    s_entity *t;
-   if (numchrs < MAXCHRS)
-     {
-        if (numchrs > 0)
-          {
-             memcpy (&g_ent[numchrs], &g_ent[numchrs - 1], sizeof (*g_ent));
-             lastm[numchrs] = lastm[numchrs - 1] = MOVE_NOT;
-          }
-        if (lead)
-          {
-             t = &g_ent[0];
-             memmove (&pidx[1], &pidx[0], sizeof (*pidx) * numchrs);
-             memmove (&g_ent[1], &g_ent[0], sizeof (*g_ent) * numchrs);
-             pidx[0] = id;
-          }
-        else
-          {
-             t = &g_ent[numchrs];
-             pidx[numchrs] = id;
-          }
-        ++numchrs;
-        t->eid = id;
-        t->active = 1;
-        t->chrx = 0;
-     }
+   if (numchrs < MAXCHRS) {
+      if (numchrs > 0) {
+         memcpy (&g_ent[numchrs], &g_ent[numchrs - 1], sizeof (*g_ent));
+         lastm[numchrs] = lastm[numchrs - 1] = MOVE_NOT;
+      }
+      if (lead) {
+         t = &g_ent[0];
+         memmove (&pidx[1], &pidx[0], sizeof (*pidx) * numchrs);
+         memmove (&g_ent[1], &g_ent[0], sizeof (*g_ent) * numchrs);
+         pidx[0] = id;
+      } else {
+         t = &g_ent[numchrs];
+         pidx[numchrs] = id;
+      }
+      ++numchrs;
+      t->eid = id;
+      t->active = 1;
+      t->chrx = 0;
+   }
 }
 
 static void party_remove (int id)
 {
    int i;
-   for (i = 0; i < numchrs; ++i)
-     {
-        if (pidx[i] == id)
-          {
-             --numchrs;
-             memmove (&pidx[i], &pidx[i + 1], sizeof (*pidx) * (numchrs - i));
-             memmove (&g_ent[i], &g_ent[i + 1],
-                      sizeof (*g_ent) * (numchrs - i));
-             pidx[numchrs] = -1;
-             g_ent[numchrs].active = 0;
-             return;
-          }
-     }
+   for (i = 0; i < numchrs; ++i) {
+      if (pidx[i] == id) {
+         --numchrs;
+         memmove (&pidx[i], &pidx[i + 1], sizeof (*pidx) * (numchrs - i));
+         memmove (&g_ent[i], &g_ent[i + 1], sizeof (*g_ent) * (numchrs - i));
+         pidx[numchrs] = -1;
+         g_ent[numchrs].active = 0;
+         return;
+      }
+   }
 }
 
 
 static void party_newlead (int id)
 {
    int i, t;
-   for (i = 0; i < numchrs; ++i)
-     {
-        if (pidx[i] == id)
-          {
-             t = pidx[0];
-             pidx[0] = pidx[i];
-             pidx[i] = t;
-             t = g_ent[0].eid;
-             g_ent[0].eid = g_ent[i].eid;
-             g_ent[i].eid = t;
-             return;
-          }
-     }
+   for (i = 0; i < numchrs; ++i) {
+      if (pidx[i] == id) {
+         t = pidx[0];
+         pidx[0] = pidx[i];
+         pidx[i] = t;
+         t = g_ent[0].eid;
+         g_ent[0].eid = g_ent[i].eid;
+         g_ent[i].eid = t;
+         return;
+      }
+   }
 }

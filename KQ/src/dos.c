@@ -39,28 +39,27 @@
 const char *kqres (int dir, const char *file)
 {
    static char ans[PATH_MAX];
-   switch (dir)
-     {
-     case DATA_DIR:
-        sprintf (ans, "data/%s", file);
-        break;
-     case MUSIC_DIR:
-        sprintf (ans, "music/%s", file);
-        break;
-     case MAP_DIR:
-        sprintf (ans, "maps/%s", file);
-        break;
-     case SAVE_DIR:
-        sprintf (ans, "saves/%s", file);
-        break;
-     case SETTINGS_DIR:
-        sprintf (ans, "./%s", file);
-        break;
-     case SCRIPT_DIR:
-        sprintf (ans, "scripts/%s", file);
-        break;
-     default:
-        return NULL;
-     }
+   switch (dir) {
+   case DATA_DIR:
+      sprintf (ans, "data/%s", file);
+      break;
+   case MUSIC_DIR:
+      sprintf (ans, "music/%s", file);
+      break;
+   case MAP_DIR:
+      sprintf (ans, "maps/%s", file);
+      break;
+   case SAVE_DIR:
+      sprintf (ans, "saves/%s", file);
+      break;
+   case SETTINGS_DIR:
+      sprintf (ans, "./%s", file);
+      break;
+   case SCRIPT_DIR:
+      sprintf (ans, "scripts/%s", file);
+      break;
+   default:
+      return NULL;
+   }
    return ans;
 }

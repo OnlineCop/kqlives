@@ -46,55 +46,49 @@ static char game_dir[PATH_MAX];
 const char *kqres (int dir, const char *file)
 {
    static char ans[PATH_MAX];
-   if (!init_path)
-     {
-        /* Get home directory; this bit originally written by SH */
-        struct passwd *pwd;
-        char *home = getenv ("HOME");
+   if (!init_path) {
+      /* Get home directory; this bit originally written by SH */
+      struct passwd *pwd;
+      char *home = getenv ("HOME");
 
-        if (home == NULL)
-          {
-             /* Try looking in password file for home dir. */
-             if ((pwd = getpwuid (getuid ())))
-                home = pwd->pw_dir;
-          }
+      if (home == NULL) {
+         /* Try looking in password file for home dir. */
+         if ((pwd = getpwuid (getuid ())))
+            home = pwd->pw_dir;
+      }
 
-        /* Do not get fooled by a corrupted $HOME */
-        if (home != NULL && strlen (home) < PATH_MAX)
-          {
-             sprintf (user_dir, "%s/.kq", home);
-             /* Always try to make the directory, just to be sure. */
-             mkdir (user_dir, 0755);
-          }
-        else
-          {
-             strcpy (user_dir, ".");
-          }
-        /* Now the data directory */
-        /* PH: Should be /usr/local/lib/KQ or something?? I have no idea */
-        strcpy (game_dir, ".");
-        init_path = 1;
-     }
-   switch (dir)
-     {
-     case DATA_DIR:
-        sprintf (ans, "%s/data/%s", game_dir, file);
-        break;
-     case MUSIC_DIR:
-        sprintf (ans, "%s/music/%s", game_dir, file);
-        break;
-     case MAP_DIR:
-        sprintf (ans, "%s/maps/%s", game_dir, file);
-        break;
-     case SAVE_DIR:
-     case SETTINGS_DIR:
-        sprintf (ans, "%s/%s", user_dir, file);
-        break;
-     case SCRIPT_DIR:
-        sprintf (ans, "%s/scripts/%s", game_dir, file);
-        break;
-     default:
-        return NULL;
-     }
+      /* Do not get fooled by a corrupted $HOME */
+      if (home != NULL && strlen (home) < PATH_MAX) {
+         sprintf (user_dir, "%s/.kq", home);
+         /* Always try to make the directory, just to be sure. */
+         mkdir (user_dir, 0755);
+      } else {
+         strcpy (user_dir, ".");
+      }
+      /* Now the data directory */
+      /* PH: Should be /usr/local/lib/KQ or something?? I have no idea */
+      strcpy (game_dir, ".");
+      init_path = 1;
+   }
+   switch (dir) {
+   case DATA_DIR:
+      sprintf (ans, "%s/data/%s", game_dir, file);
+      break;
+   case MUSIC_DIR:
+      sprintf (ans, "%s/music/%s", game_dir, file);
+      break;
+   case MAP_DIR:
+      sprintf (ans, "%s/maps/%s", game_dir, file);
+      break;
+   case SAVE_DIR:
+   case SETTINGS_DIR:
+      sprintf (ans, "%s/%s", user_dir, file);
+      break;
+   case SCRIPT_DIR:
+      sprintf (ans, "%s/scripts/%s", game_dir, file);
+      break;
+   default:
+      return NULL;
+   }
    return ans;
 }

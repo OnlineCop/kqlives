@@ -140,26 +140,21 @@ int load_s_player (s_player * s, PACKFILE * f)
    s->mhp = pack_igetl (f);
    s->mp = pack_igetl (f);
    s->mmp = pack_igetl (f);
-   for (i = 0; i < NUM_STATS; ++i)
-     {
-        s->stats[i] = pack_igetl (f);
-     }
-   for (i = 0; i < 16; ++i)
-     {
-        s->res[i] = pack_getc (f);
-     }
-   for (i = 0; i < 24; ++i)
-     {
-        s->sts[i] = pack_getc (f);
-     }
-   for (i = 0; i < 6; ++i)
-     {
-        s->eqp[i] = pack_getc (f);
-     }
-   for (i = 0; i < 60; ++i)
-     {
-        s->spells[i] = pack_getc (f);
-     }
+   for (i = 0; i < NUM_STATS; ++i) {
+      s->stats[i] = pack_igetl (f);
+   }
+   for (i = 0; i < 16; ++i) {
+      s->res[i] = pack_getc (f);
+   }
+   for (i = 0; i < 24; ++i) {
+      s->sts[i] = pack_getc (f);
+   }
+   for (i = 0; i < 6; ++i) {
+      s->eqp[i] = pack_getc (f);
+   }
+   for (i = 0; i < 60; ++i) {
+      s->spells[i] = pack_getc (f);
+   }
    pack_getc (f);               /* alignment */
    pack_getc (f);               /* alignment */
    return 0;
@@ -180,26 +175,21 @@ int save_s_player (s_player * s, PACKFILE * f)
    pack_iputl (s->mhp, f);
    pack_iputl (s->mp, f);
    pack_iputl (s->mmp, f);
-   for (i = 0; i < NUM_STATS; ++i)
-     {
-        pack_iputl (s->stats[i], f);
-     }
-   for (i = 0; i < 16; ++i)
-     {
-        pack_putc (s->res[i], f);
-     }
-   for (i = 0; i < 24; ++i)
-     {
-        pack_putc (s->sts[i], f);
-     }
-   for (i = 0; i < 6; ++i)
-     {
-        pack_putc (s->eqp[i], f);
-     }
-   for (i = 0; i < 60; ++i)
-     {
-        pack_putc (s->spells[i], f);
-     }
+   for (i = 0; i < NUM_STATS; ++i) {
+      pack_iputl (s->stats[i], f);
+   }
+   for (i = 0; i < 16; ++i) {
+      pack_putc (s->res[i], f);
+   }
+   for (i = 0; i < 24; ++i) {
+      pack_putc (s->sts[i], f);
+   }
+   for (i = 0; i < 6; ++i) {
+      pack_putc (s->eqp[i], f);
+   }
+   for (i = 0; i < 60; ++i) {
+      pack_putc (s->spells[i], f);
+   }
    pack_putc (0, f);            /* alignment */
    pack_putc (0, f);            /* alignment */
    return 0;

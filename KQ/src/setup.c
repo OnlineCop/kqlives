@@ -101,34 +101,33 @@ void parse_setup (void)
 static void parse_allegro_setup (void)
 {
    const char *cfg = kqres (SETTINGS_DIR, "kq.cfg");
-   if (!exists (cfg))
-     {
-        /* config file does not exist. Fall back to setup.cfg */
-        /* Transitional code */
-        parse_jb_setup ();
-        push_config_state ();
-        set_config_file (cfg);
+   if (!exists (cfg)) {
+      /* config file does not exist. Fall back to setup.cfg */
+      /* Transitional code */
+      parse_jb_setup ();
+      push_config_state ();
+      set_config_file (cfg);
 
-        set_config_int (NULL, "skip_intro", skip_intro);
-        set_config_int (NULL, "windowed", windowed);
+      set_config_int (NULL, "skip_intro", skip_intro);
+      set_config_int (NULL, "windowed", windowed);
 
-        set_config_int (NULL, "stretch_view", stretch_view);
-        set_config_int (NULL, "show_frate", show_frate);
-        set_config_int (NULL, "is_sound", is_sound);
-        set_config_int (NULL, "use_joy", use_joy);
-        set_config_int (NULL, "slow_computer", slow_computer);
+      set_config_int (NULL, "stretch_view", stretch_view);
+      set_config_int (NULL, "show_frate", show_frate);
+      set_config_int (NULL, "is_sound", is_sound);
+      set_config_int (NULL, "use_joy", use_joy);
+      set_config_int (NULL, "slow_computer", slow_computer);
 
-        set_config_int (NULL, "kup", kup);
-        set_config_int (NULL, "kdown", kdown);
-        set_config_int (NULL, "kleft", kleft);
-        set_config_int (NULL, "kright", kright);
-        set_config_int (NULL, "kesc", kesc);
-        set_config_int (NULL, "kalt", kalt);
-        set_config_int (NULL, "kctrl", kctrl);
-        set_config_int (NULL, "kenter", kenter);
-        pop_config_state ();
-        return;
-     }
+      set_config_int (NULL, "kup", kup);
+      set_config_int (NULL, "kdown", kdown);
+      set_config_int (NULL, "kleft", kleft);
+      set_config_int (NULL, "kright", kright);
+      set_config_int (NULL, "kesc", kesc);
+      set_config_int (NULL, "kalt", kalt);
+      set_config_int (NULL, "kctrl", kctrl);
+      set_config_int (NULL, "kenter", kenter);
+      pop_config_state ();
+      return;
+   }
    push_config_state ();
    set_config_file (cfg);
 #ifdef KQ_CHEATS
@@ -183,114 +182,95 @@ static void parse_jb_setup (void)
    jbenter = 2;
    jbesc = 3;
    /* PH Why in the world doesn't he use Allegro cfg functions here? */
-   if (!(s = fopen (kqres (SETTINGS_DIR, "setup.cfg"), "r")))
-     {
-        klog ("Could not open saves/setup.cfg - Using defaults.");
-        return;
-     }
+   if (!(s = fopen (kqres (SETTINGS_DIR, "setup.cfg"), "r"))) {
+      klog ("Could not open saves/setup.cfg - Using defaults.");
+      return;
+   }
    fscanf (s, "%s", strbuf);
-   while (!feof (s))
-     {
-        if (strbuf[0] == '#')
-           fgets (strbuf, 254, s);
+   while (!feof (s)) {
+      if (strbuf[0] == '#')
+         fgets (strbuf, 254, s);
 #ifdef KQ_CHEATS
-        if (!strcmp (strbuf, "cheat"))
-          {
-             fscanf (s, "%d", &dab);
-             cheat = dab;
-          }
+      if (!strcmp (strbuf, "cheat")) {
+         fscanf (s, "%d", &dab);
+         cheat = dab;
+      }
 #endif
-        if (!strcmp (strbuf, "debug"))
-          {
-             fscanf (s, "%d", &dab);
-             debugging = dab;
-          }
-        if (!strcmp (strbuf, "intro"))
-          {
-             fscanf (s, "%s", strbuf);
-             if (!strcmp (strbuf, "no"))
-                skip_intro = 1;
-          }
-        if (!strcmp (strbuf, "windowed"))
-          {
-             fscanf (s, "%s", strbuf);
-             if (!strcmp (strbuf, "yes"))
-                windowed = 1;
-          }
-        if (!strcmp (strbuf, "stretch"))
-          {
-             fscanf (s, "%s", strbuf);
-             if (!strcmp (strbuf, "yes"))
-                stretch_view = 1;
-          }
-        if (!strcmp (strbuf, "framerate"))
-          {
-             fscanf (s, "%s", strbuf);
-             if (!strcmp (strbuf, "on"))
-                show_frate = 1;
-          }
-        if (!strcmp (strbuf, "sound"))
-          {
-             fscanf (s, "%s", strbuf);
-             if (!strcmp (strbuf, "off"))
-                is_sound = 0;
-          }
-        if (!strcmp (strbuf, "joystick"))
-          {
-             fscanf (s, "%s", strbuf);
-             if (!strcmp (strbuf, "no"))
-                use_joy = 0;
-          }
-        if (!strcmp (strbuf, "slow_computer"))
-          {
-             fscanf (s, "%s", strbuf);
-             if (!strcmp (strbuf, "yes"))
-                slow_computer = 1;
-          }
-        if (!strcmp (strbuf, "rightkey"))
-          {
-             fscanf (s, "%s", strbuf);
-             kright = atoi (strbuf);
-          }
-        if (!strcmp (strbuf, "leftkey"))
-          {
-             fscanf (s, "%s", strbuf);
-             kleft = atoi (strbuf);
-          }
-        if (!strcmp (strbuf, "upkey"))
-          {
-             fscanf (s, "%s", strbuf);
-             kup = atoi (strbuf);
-          }
-        if (!strcmp (strbuf, "downkey"))
-          {
-             fscanf (s, "%s", strbuf);
-             /* TT: huh?! */
-             // kup = atoi (strbuf);
-             kdown = atoi (strbuf);
-          }
-        if (!strcmp (strbuf, "sysmenukey"))
-          {
-             fscanf (s, "%s", strbuf);
-             kesc = atoi (strbuf);
-          }
-        if (!strcmp (strbuf, "cancelkey"))
-          {
-             fscanf (s, "%s", strbuf);
-             kctrl = atoi (strbuf);
-          }
-        if (!strcmp (strbuf, "confirmkey"))
-          {
-             fscanf (s, "%s", strbuf);
-             kalt = atoi (strbuf);
-          }
-        if (!strcmp (strbuf, "chrmenukey"))
-          {
-             fscanf (s, "%s", strbuf);
-             kenter = atoi (strbuf);
-          }
-        fscanf (s, "%s", strbuf);
-     }
+      if (!strcmp (strbuf, "debug")) {
+         fscanf (s, "%d", &dab);
+         debugging = dab;
+      }
+      if (!strcmp (strbuf, "intro")) {
+         fscanf (s, "%s", strbuf);
+         if (!strcmp (strbuf, "no"))
+            skip_intro = 1;
+      }
+      if (!strcmp (strbuf, "windowed")) {
+         fscanf (s, "%s", strbuf);
+         if (!strcmp (strbuf, "yes"))
+            windowed = 1;
+      }
+      if (!strcmp (strbuf, "stretch")) {
+         fscanf (s, "%s", strbuf);
+         if (!strcmp (strbuf, "yes"))
+            stretch_view = 1;
+      }
+      if (!strcmp (strbuf, "framerate")) {
+         fscanf (s, "%s", strbuf);
+         if (!strcmp (strbuf, "on"))
+            show_frate = 1;
+      }
+      if (!strcmp (strbuf, "sound")) {
+         fscanf (s, "%s", strbuf);
+         if (!strcmp (strbuf, "off"))
+            is_sound = 0;
+      }
+      if (!strcmp (strbuf, "joystick")) {
+         fscanf (s, "%s", strbuf);
+         if (!strcmp (strbuf, "no"))
+            use_joy = 0;
+      }
+      if (!strcmp (strbuf, "slow_computer")) {
+         fscanf (s, "%s", strbuf);
+         if (!strcmp (strbuf, "yes"))
+            slow_computer = 1;
+      }
+      if (!strcmp (strbuf, "rightkey")) {
+         fscanf (s, "%s", strbuf);
+         kright = atoi (strbuf);
+      }
+      if (!strcmp (strbuf, "leftkey")) {
+         fscanf (s, "%s", strbuf);
+         kleft = atoi (strbuf);
+      }
+      if (!strcmp (strbuf, "upkey")) {
+         fscanf (s, "%s", strbuf);
+         kup = atoi (strbuf);
+      }
+      if (!strcmp (strbuf, "downkey")) {
+         fscanf (s, "%s", strbuf);
+         /* TT: huh?! */
+         // kup = atoi (strbuf);
+         kdown = atoi (strbuf);
+      }
+      if (!strcmp (strbuf, "sysmenukey")) {
+         fscanf (s, "%s", strbuf);
+         kesc = atoi (strbuf);
+      }
+      if (!strcmp (strbuf, "cancelkey")) {
+         fscanf (s, "%s", strbuf);
+         kctrl = atoi (strbuf);
+      }
+      if (!strcmp (strbuf, "confirmkey")) {
+         fscanf (s, "%s", strbuf);
+         kalt = atoi (strbuf);
+      }
+      if (!strcmp (strbuf, "chrmenukey")) {
+         fscanf (s, "%s", strbuf);
+         kenter = atoi (strbuf);
+      }
+      fscanf (s, "%s", strbuf);
+   }
    fclose (s);
 }
 
@@ -346,259 +326,241 @@ void config_menu (void)
    unpress ();
    push_config_state ();
    set_config_file (kqres (SETTINGS_DIR, "kq.cfg"));
-   while (!stop)
-     {
-        if (rd)
-          {
-             drawmap ();
-             menubox (double_buffer, 88 + xofs, yofs, 16, 1, BLUE);
-             print_font (double_buffer, 96 + xofs, 8 + yofs,
-                         "KQ Configuration", FGOLD);
-             menubox (double_buffer, 32 + xofs, 24 + yofs, 30, 19, BLUE);
-             citem (32, "Windowed mode:", windowed == 1 ? "YES" : "NO");
-             citem (40, "Stretch Display:", stretch_view == 1 ? "YES" : "NO");
-             citem (48, "Show Frame Rate:", show_frate == 1 ? "YES" : "NO");
-             citem (56, "Wait for Retrace:", wait_retrace == 1 ? "YES" : "NO");
-             citem (72, "Up Key:", keynames[kup]);
-             citem (80, "Down Key:", keynames[kdown]);
-             citem (88, "Left Key:", keynames[kleft]);
-             citem (96, "Right Key:", keynames[kright]);
-             citem (104, "Confirm Key:", keynames[kalt]);
-             citem (112, "Cancel Key:", keynames[kctrl]);
-             citem (120, "Menu Key:", keynames[kenter]);
-             citem (128, "System Menu Key:", keynames[kesc]);
-             citem (144, "Sound System:", is_sound ? "ON" : "OFF");
+   while (!stop) {
+      if (rd) {
+         drawmap ();
+         menubox (double_buffer, 88 + xofs, yofs, 16, 1, BLUE);
+         print_font (double_buffer, 96 + xofs, 8 + yofs,
+                     "KQ Configuration", FGOLD);
+         menubox (double_buffer, 32 + xofs, 24 + yofs, 30, 19, BLUE);
+         citem (32, "Windowed mode:", windowed == 1 ? "YES" : "NO");
+         citem (40, "Stretch Display:", stretch_view == 1 ? "YES" : "NO");
+         citem (48, "Show Frame Rate:", show_frate == 1 ? "YES" : "NO");
+         citem (56, "Wait for Retrace:", wait_retrace == 1 ? "YES" : "NO");
+         citem (72, "Up Key:", keynames[kup]);
+         citem (80, "Down Key:", keynames[kdown]);
+         citem (88, "Left Key:", keynames[kleft]);
+         citem (96, "Right Key:", keynames[kright]);
+         citem (104, "Confirm Key:", keynames[kalt]);
+         citem (112, "Cancel Key:", keynames[kctrl]);
+         citem (120, "Menu Key:", keynames[kenter]);
+         citem (128, "System Menu Key:", keynames[kesc]);
+         citem (144, "Sound System:", is_sound ? "ON" : "OFF");
 
-             if (is_sound == 2)
-               {
-                  sprintf (strbuf, "%3d%%", gsvol * 100 / 250);
-                  citem (152, "Sound Volume:", strbuf);
+         if (is_sound == 2) {
+            sprintf (strbuf, "%3d%%", gsvol * 100 / 250);
+            citem (152, "Sound Volume:", strbuf);
 
-                  sprintf (strbuf, "%3d%%", gmvol * 100 / 250);
-                  citem (160, "Music Volume:", strbuf);
+            sprintf (strbuf, "%3d%%", gmvol * 100 / 250);
+            citem (160, "Music Volume:", strbuf);
+         }
+
+         /* TT: This needs to check for ==0 because 1 means sound init */
+         if (is_sound == 0) {
+            print_font (double_buffer, 48 + xofs, 152 + yofs,
+                        "Sound Volume:", FDARK);
+            print_font (double_buffer, 48 + xofs, 160 + yofs,
+                        "Music Volume:", FDARK);
+         }
+
+         citem (176, "Slow Computer:", slow_computer ? "YES" : "NO");
+
+         /* this affects the VISUAL placement of the arrow */
+         p = ptr;
+         if (ptr > 3)
+            p++;
+         if (ptr > 11)
+            p++;
+         if (ptr > 14)
+            p++;
+         draw_sprite (double_buffer, menuptr, 32 + xofs, p * 8 + 32 + yofs);
+         /* This is the bottom window, where the description goes */
+         menubox (double_buffer, xofs, 216 + yofs, 38, 1, BLUE);
+         print_font (double_buffer, 8 + xofs, 224 + yofs, dc[ptr], FNORMAL);
+         blit2screen (xofs, yofs);
+      }
+      readcontrols ();
+      if (up) {
+         unpress ();
+         // "jump" over unusable options
+         if (ptr == 15 && is_sound == 0)
+            ptr -= 2;
+         ptr--;
+         if (ptr < 0)
+            ptr = 15;
+         play_effect (SND_CLICK, 128);
+         rd = 1;
+      }
+      if (down) {
+         unpress ();
+         // "jump" over unusable options
+         if (ptr == 12 && is_sound == 0)
+            ptr += 2;
+         ptr++;
+         if (ptr > 15)
+            ptr = 0;
+         play_effect (SND_CLICK, 128);
+         rd = 1;
+      }
+      if (balt) {
+         unpress ();
+         switch (ptr) {
+         case 0:
+            text_ex (B_TEXT, 255,
+                     "Changing the display mode to or from windowed view could have serious ramifications. It is advised that you save first.");
+            if (windowed == 0)
+               sprintf (strbuf, "Switch to windowed mode?");
+            else
+               sprintf (strbuf, "Switch to full screen?");
+            p = prompt (255, 2, B_TEXT, strbuf, "  no", "  yes", "");
+            if (p == 1) {
+               if (windowed == 0)
+                  windowed = 1;
+               else
+                  windowed = 0;
+               set_config_int (NULL, "windowed", windowed);
+               set_graphics_mode ();
+            }
+            break;
+         case 1:
+            text_ex (B_TEXT, 255,
+                     "Changing the stretched view option could have serious ramifications. It is advised that you save your game before trying this.");
+            if (stretch_view == 0)
+               sprintf (strbuf, "Try to stretch the display?");
+            else
+               sprintf (strbuf, "Switch to unstretched display?");
+            p = prompt (255, 2, B_TEXT, strbuf, "  no", "  yes", "");
+            if (p == 1) {
+               if (stretch_view == 0)
+                  stretch_view = 1;
+               else
+                  stretch_view = 0;
+               set_config_int (NULL, "stretch_view", stretch_view);
+               set_graphics_mode ();
+            }
+            break;
+         case 2:
+            if (show_frate == 0)
+               show_frate = 1;
+            else
+               show_frate = 0;
+            set_config_int (NULL, "show_frate", show_frate);
+            break;
+         case 3:
+            if (wait_retrace == 0)
+               wait_retrace = 1;
+            else
+               wait_retrace = 0;
+            set_config_int (NULL, "wait_retrace", wait_retrace);
+            break;
+         case 4:
+            while ((temp_key = getakey ()) == 0);
+            kup = temp_key;
+            unpress ();
+            temp_key = 0;
+            set_config_int (NULL, "kup", kup);
+            break;
+         case 5:
+            while ((temp_key = getakey ()) == 0);
+            kdown = temp_key;
+            unpress ();
+            temp_key = 0;
+            set_config_int (NULL, "kdown", kdown);
+            break;
+         case 6:
+            while ((temp_key = getakey ()) == 0);
+            kleft = temp_key;
+            unpress ();
+            temp_key = 0;
+            set_config_int (NULL, "kleft", kleft);
+            break;
+         case 7:
+            while ((temp_key = getakey ()) == 0);
+            kright = temp_key;
+            unpress ();
+            temp_key = 0;
+            set_config_int (NULL, "kright", kright);
+            break;
+         case 8:
+            while ((temp_key = getakey ()) == 0);
+            kalt = temp_key;
+            unpress ();
+            temp_key = 0;
+            set_config_int (NULL, "kalt", kalt);
+            break;
+         case 9:
+            while ((temp_key = getakey ()) == 0);
+            kctrl = temp_key;
+            unpress ();
+            temp_key = 0;
+            set_config_int (NULL, "kctrl", kctrl);
+            break;
+         case 10:
+            while ((temp_key = getakey ()) == 0);
+            kenter = temp_key;
+            unpress ();
+            temp_key = 0;
+            set_config_int (NULL, "kenter", kenter);
+            break;
+         case 11:
+            while ((temp_key = getakey ()) == 0);
+            kesc = temp_key;
+            unpress ();
+            temp_key = 0;
+            set_config_int (NULL, "kesc", kesc);
+            break;
+         case 12:
+            if (is_sound == 2)
+               sound_init ();
+            else {
+               if (is_sound == 0) {
+                  is_sound = 1;
+                  print_font (double_buffer, 92 + 2 + xofs,
+                              204 + yofs, "...please wait...", FNORMAL);
+                  blit2screen (xofs, yofs);
+                  sound_init ();
+                  play_music (g_map.song_file, 0);
                }
+            }
+            set_config_int (NULL, "is_sound", is_sound != 0);
+            break;
+         case 13:
+            if (is_sound == 2) {
+               p = getavalue ("Sound Volume", 0, 25, gsvol / 10, 1);
+               if (p != -1)
+                  gsvol = p * 10;
 
-             /* TT: This needs to check for ==0 because 1 means sound init */
-             if (is_sound == 0)
-               {
-                  print_font (double_buffer, 48 + xofs, 152 + yofs,
-                              "Sound Volume:", FDARK);
-                  print_font (double_buffer, 48 + xofs, 160 + yofs,
-                              "Music Volume:", FDARK);
-               }
+               /* make sure to set it no matter what */
+               set_volume (gsvol, 0);
+               set_config_int (NULL, "gsvol", gsvol);
+            } else              /* Not as daft as it seems, SND_BAD also wobbles the screen */
+               play_effect (SND_BAD, 128);
+            break;
+         case 14:
+            if (is_sound == 2) {
+               p = getavalue ("Music Volume", 0, 25, gmvol / 10, 1);
+               if (p != -1)
+                  gmvol = p * 10;
 
-             citem (176, "Slow Computer:", slow_computer ? "YES" : "NO");
-
-             /* this affects the VISUAL placement of the arrow */
-             p = ptr;
-             if (ptr > 3)
-                p++;
-             if (ptr > 11)
-                p++;
-             if (ptr > 14)
-                p++;
-             draw_sprite (double_buffer, menuptr, 32 + xofs, p * 8 + 32 + yofs);
-             /* This is the bottom window, where the description goes */
-             menubox (double_buffer, xofs, 216 + yofs, 38, 1, BLUE);
-             print_font (double_buffer, 8 + xofs, 224 + yofs, dc[ptr], FNORMAL);
-             blit2screen (xofs, yofs);
-          }
-        readcontrols ();
-        if (up)
-          {
-             unpress ();
-             // "jump" over unusable options
-             if (ptr == 15 && is_sound == 0)
-                ptr -= 2;
-             ptr--;
-             if (ptr < 0)
-                ptr = 15;
-             play_effect (SND_CLICK, 128);
-             rd = 1;
-          }
-        if (down)
-          {
-             unpress ();
-             // "jump" over unusable options
-             if (ptr == 12 && is_sound == 0)
-                ptr += 2;
-             ptr++;
-             if (ptr > 15)
-                ptr = 0;
-             play_effect (SND_CLICK, 128);
-             rd = 1;
-          }
-        if (balt)
-          {
-             unpress ();
-             switch (ptr)
-               {
-               case 0:
-                  text_ex (B_TEXT, 255,
-                           "Changing the display mode to or from windowed view could have serious ramifications. It is advised that you save first.");
-                  if (windowed == 0)
-                     sprintf (strbuf, "Switch to windowed mode?");
-                  else
-                     sprintf (strbuf, "Switch to full screen?");
-                  p = prompt (255, 2, B_TEXT, strbuf, "  no", "  yes", "");
-                  if (p == 1)
-                    {
-                       if (windowed == 0)
-                          windowed = 1;
-                       else
-                          windowed = 0;
-                       set_config_int (NULL, "windowed", windowed);
-                       set_graphics_mode ();
-                    }
-                  break;
-               case 1:
-                  text_ex (B_TEXT, 255,
-                           "Changing the stretched view option could have serious ramifications. It is advised that you save your game before trying this.");
-                  if (stretch_view == 0)
-                     sprintf (strbuf, "Try to stretch the display?");
-                  else
-                     sprintf (strbuf, "Switch to unstretched display?");
-                  p = prompt (255, 2, B_TEXT, strbuf, "  no", "  yes", "");
-                  if (p == 1)
-                    {
-                       if (stretch_view == 0)
-                          stretch_view = 1;
-                       else
-                          stretch_view = 0;
-                       set_config_int (NULL, "stretch_view", stretch_view);
-                       set_graphics_mode ();
-                    }
-                  break;
-               case 2:
-                  if (show_frate == 0)
-                     show_frate = 1;
-                  else
-                     show_frate = 0;
-                  set_config_int (NULL, "show_frate", show_frate);
-                  break;
-               case 3:
-                  if (wait_retrace == 0)
-                     wait_retrace = 1;
-                  else
-                     wait_retrace = 0;
-                  set_config_int (NULL, "wait_retrace", wait_retrace);
-                  break;
-               case 4:
-                  while ((temp_key = getakey ()) == 0);
-                  kup = temp_key;
-                  unpress ();
-                  temp_key = 0;
-                  set_config_int (NULL, "kup", kup);
-                  break;
-               case 5:
-                  while ((temp_key = getakey ()) == 0);
-                  kdown = temp_key;
-                  unpress ();
-                  temp_key = 0;
-                  set_config_int (NULL, "kdown", kdown);
-                  break;
-               case 6:
-                  while ((temp_key = getakey ()) == 0);
-                  kleft = temp_key;
-                  unpress ();
-                  temp_key = 0;
-                  set_config_int (NULL, "kleft", kleft);
-                  break;
-               case 7:
-                  while ((temp_key = getakey ()) == 0);
-                  kright = temp_key;
-                  unpress ();
-                  temp_key = 0;
-                  set_config_int (NULL, "kright", kright);
-                  break;
-               case 8:
-                  while ((temp_key = getakey ()) == 0);
-                  kalt = temp_key;
-                  unpress ();
-                  temp_key = 0;
-                  set_config_int (NULL, "kalt", kalt);
-                  break;
-               case 9:
-                  while ((temp_key = getakey ()) == 0);
-                  kctrl = temp_key;
-                  unpress ();
-                  temp_key = 0;
-                  set_config_int (NULL, "kctrl", kctrl);
-                  break;
-               case 10:
-                  while ((temp_key = getakey ()) == 0);
-                  kenter = temp_key;
-                  unpress ();
-                  temp_key = 0;
-                  set_config_int (NULL, "kenter", kenter);
-                  break;
-               case 11:
-                  while ((temp_key = getakey ()) == 0);
-                  kesc = temp_key;
-                  unpress ();
-                  temp_key = 0;
-                  set_config_int (NULL, "kesc", kesc);
-                  break;
-               case 12:
-                  if (is_sound == 2)
-                     sound_init ();
-                  else
-                    {
-                       if (is_sound == 0)
-                         {
-                            is_sound = 1;
-                            print_font (double_buffer, 92 + 2 + xofs,
-                                        204 + yofs, "...please wait...",
-                                        FNORMAL);
-                            blit2screen (xofs, yofs);
-                            sound_init ();
-                            play_music (g_map.song_file, 0);
-                         }
-                    }
-                  set_config_int (NULL, "is_sound", is_sound != 0);
-                  break;
-               case 13:
-                  if (is_sound == 2)
-                    {
-                       p = getavalue ("Sound Volume", 0, 25, gsvol / 10, 1);
-                       if (p != -1)
-                          gsvol = p * 10;
-
-                       /* make sure to set it no matter what */
-                       set_volume (gsvol, 0);
-                       set_config_int (NULL, "gsvol", gsvol);
-                    }
-                  else          /* Not as daft as it seems, SND_BAD also wobbles the screen */
-                     play_effect (SND_BAD, 128);
-                  break;
-               case 14:
-                  if (is_sound == 2)
-                    {
-                       p = getavalue ("Music Volume", 0, 25, gmvol / 10, 1);
-                       if (p != -1)
-                          gmvol = p * 10;
-
-                       /* make sure to set it no matter what */
-                       set_music_volume (gmvol / 250.0);
-                       set_config_int (NULL, "gmvol", gmvol);
-                    }
-                  else
-                     play_effect (SND_BAD, 128);
-                  break;
-               case 15:
-                  /* TT: toggle slow_computer */
-                  slow_computer = !slow_computer;
-                  set_config_int (NULL, "slow_computer", slow_computer);
-                  break;
-               }
-             rd = 1;
-          }
-        if (bctrl)
-          {
-             unpress ();
-             stop = 1;
-          }
-     }
+               /* make sure to set it no matter what */
+               set_music_volume (gmvol / 250.0);
+               set_config_int (NULL, "gmvol", gmvol);
+            } else
+               play_effect (SND_BAD, 128);
+            break;
+         case 15:
+            /* TT: toggle slow_computer */
+            slow_computer = !slow_computer;
+            set_config_int (NULL, "slow_computer", slow_computer);
+            break;
+         }
+         rd = 1;
+      }
+      if (bctrl) {
+         unpress ();
+         stop = 1;
+      }
+   }
    pop_config_state ();
 }
 
@@ -620,13 +582,12 @@ static int getakey (void)
    print_font (double_buffer, 116 + xofs, 116 + yofs, "Press a key", FNORMAL);
    blit2screen (xofs, yofs);
 
-   while (1)
-     {
-        poll_music ();
-        for (a = 0; a < KEY_MAX; a++)
-           if (key[a] != 0)
-              return a;
-     }
+   while (1) {
+      poll_music ();
+      for (a = 0; a < KEY_MAX; a++)
+         if (key[a] != 0)
+            return a;
+   }
    return 0;
 }
 
@@ -662,64 +623,57 @@ static int getavalue (char *capt, int minu, int maxu, int cv, int sp)
 
    if (maxu == 0)
       return -1;
-   while (!stop)
-     {
-        if (rd == 1)
-          {
-             menubox (double_buffer, 148 - (maxu * 4) + xofs, 100 + yofs,
-                      maxu + 1, 3, DARKBLUE);
-             print_font (double_buffer, 160 - (strlen (capt) * 4) + xofs,
-                         108 + yofs, capt, FGOLD);
-             print_font (double_buffer, 152 - (maxu * 4) + xofs, 116 + yofs,
-                         "<", FNORMAL);
-             print_font (double_buffer, 160 + (maxu * 4) + xofs, 116 + yofs,
-                         ">", FNORMAL);
-             b = 160 - (maxu * 4) + xofs;
-             for (a = 0; a < cv; a++)
-               {
-                  rectfill (double_buffer, a * 8 + b + 1, 117 + yofs,
-                            a * 8 + b + 7, 123 + yofs, 50);
-                  rectfill (double_buffer, a * 8 + b, 116 + yofs,
-                            a * 8 + b + 6, 122 + yofs, 21);
-               }
-             if (sp == 1)
-                sprintf (strbuf, "%d%%", cv * 100 / maxu);
-             else
-                sprintf (strbuf, "%d", cv);
-             print_font (double_buffer, 160 - (strlen (strbuf) * 4) + xofs,
-                         124 + yofs, strbuf, FGOLD);
-             blit2screen (xofs, yofs);
-          }
-        readcontrols ();
-        if (left)
-          {
-             unpress ();
-             cv--;
-             if (cv < minu)
-                cv = minu;
-             rd = 1;
-             IF_VOLUME_ALERT ();
-          }
-        if (right)
-          {
-             unpress ();
-             cv++;
-             if (cv > maxu)
-                cv = maxu;
-             rd = 1;
-             IF_VOLUME_ALERT ();
-          }
-        if (balt)
-          {
-             unpress ();
-             stop = 1;
-          }
-        if (bctrl)
-          {
-             unpress ();
-             return -1;
-          }
-     }
+   while (!stop) {
+      if (rd == 1) {
+         menubox (double_buffer, 148 - (maxu * 4) + xofs, 100 + yofs,
+                  maxu + 1, 3, DARKBLUE);
+         print_font (double_buffer, 160 - (strlen (capt) * 4) + xofs,
+                     108 + yofs, capt, FGOLD);
+         print_font (double_buffer, 152 - (maxu * 4) + xofs, 116 + yofs,
+                     "<", FNORMAL);
+         print_font (double_buffer, 160 + (maxu * 4) + xofs, 116 + yofs,
+                     ">", FNORMAL);
+         b = 160 - (maxu * 4) + xofs;
+         for (a = 0; a < cv; a++) {
+            rectfill (double_buffer, a * 8 + b + 1, 117 + yofs,
+                      a * 8 + b + 7, 123 + yofs, 50);
+            rectfill (double_buffer, a * 8 + b, 116 + yofs,
+                      a * 8 + b + 6, 122 + yofs, 21);
+         }
+         if (sp == 1)
+            sprintf (strbuf, "%d%%", cv * 100 / maxu);
+         else
+            sprintf (strbuf, "%d", cv);
+         print_font (double_buffer, 160 - (strlen (strbuf) * 4) + xofs,
+                     124 + yofs, strbuf, FGOLD);
+         blit2screen (xofs, yofs);
+      }
+      readcontrols ();
+      if (left) {
+         unpress ();
+         cv--;
+         if (cv < minu)
+            cv = minu;
+         rd = 1;
+         IF_VOLUME_ALERT ();
+      }
+      if (right) {
+         unpress ();
+         cv++;
+         if (cv > maxu)
+            cv = maxu;
+         rd = 1;
+         IF_VOLUME_ALERT ();
+      }
+      if (balt) {
+         unpress ();
+         stop = 1;
+      }
+      if (bctrl) {
+         unpress ();
+         return -1;
+      }
+   }
    return cv;
 }
 
@@ -745,11 +699,10 @@ void show_help (void)
    citem (112, "Cancel Key:", keynames[kctrl]);
    citem (120, "Menu Key:", keynames[kenter]);
    citem (128, "System Menu Key:", keynames[kesc]);
-   do
-     {
-        blit2screen (xofs, yofs);
-        readcontrols ();
-     }
+   do {
+      blit2screen (xofs, yofs);
+      readcontrols ();
+   }
    while (!balt);
    unpress ();
 }
@@ -762,20 +715,17 @@ void show_help (void)
 */
 void set_graphics_mode (void)
 {
-   if (stretch_view == 1)
-     {
-        if (windowed == 1)
-           set_gfx_mode (GFX_AUTODETECT_WINDOWED, 640, 480, 0, 0);
-        else
-           set_gfx_mode (GFX_AUTODETECT, 640, 480, 0, 0);
-     }
-   else
-     {
-        if (windowed == 1)
-           set_gfx_mode (GFX_AUTODETECT_WINDOWED, 320, 240, 0, 0);
-        else
-           set_gfx_mode (GFX_AUTODETECT, 320, 240, 0, 0);
-     }
+   if (stretch_view == 1) {
+      if (windowed == 1)
+         set_gfx_mode (GFX_AUTODETECT_WINDOWED, 640, 480, 0, 0);
+      else
+         set_gfx_mode (GFX_AUTODETECT, 640, 480, 0, 0);
+   } else {
+      if (windowed == 1)
+         set_gfx_mode (GFX_AUTODETECT_WINDOWED, 320, 240, 0, 0);
+      else
+         set_gfx_mode (GFX_AUTODETECT, 320, 240, 0, 0);
+   }
 
    set_palette (pal);
 }
@@ -795,29 +745,23 @@ void set_graphics_mode (void)
 */
 void sound_init (void)
 {
-   if (is_sound == 1)
-     {
-        if (install_sound (DIGI_AUTODETECT, MIDI_AUTODETECT, NULL) == -1)
+   if (is_sound == 1) {
+      if (install_sound (DIGI_AUTODETECT, MIDI_AUTODETECT, NULL) == -1)
+      {
+         is_sound = 0;
+      } else {
 
-          {
-             is_sound = 0;
-          }
-        else
-          {
-
-             reserve_voices (8, 0);
-             set_volume_per_voice (2);
-             init_music ();
-             is_sound = load_samples ()? 0 : 2; /* load the wav files */
-          }
-     }
-   else if (is_sound == 2)
-     {
-        shutdown_music ();
-        free_samples ();
-        remove_sound ();
-        is_sound = 0;
-     }
+         reserve_voices (8, 0);
+         set_volume_per_voice (2);
+         init_music ();
+         is_sound = load_samples ()? 0 : 2;     /* load the wav files */
+      }
+   } else if (is_sound == 2) {
+      shutdown_music ();
+      free_samples ();
+      remove_sound ();
+      is_sound = 0;
+   }
 }
 
 
@@ -855,17 +799,14 @@ static int load_samples (void)
    if (is_sound == 0)
       return 1;
 
-   for (index = 0; index < MAX_SAMPLES; index++)
-     {
-        sfx[index] = load_datafile_object (SOUND_DATAFILE, sndfiles[index]);
-        if (sfx[index] == NULL)
-          {
-             sprintf (strbuf, "Error loading .WAV file: %s.\n",
-                      sndfiles[index]);
-             klog (strbuf);
-             return 1;
-          }
-     }
+   for (index = 0; index < MAX_SAMPLES; index++) {
+      sfx[index] = load_datafile_object (SOUND_DATAFILE, sndfiles[index]);
+      if (sfx[index] == NULL) {
+         sprintf (strbuf, "Error loading .WAV file: %s.\n", sndfiles[index]);
+         klog (strbuf);
+         return 1;
+      }
+   }
    return 0;
 }
 
@@ -916,63 +857,56 @@ void play_effect (int efc, int panning)
    else
       samp = NULL;              /* PH not strictly needed but I added it */
 
-   switch (efc)
-     {
-     default:
-        if (is_sound != 0)
-           play_sample (samp, gsvol, panning, 1000, 0);
-        break;
-     case SND_BAD:
-        blit (double_buffer, fx_buffer, 0, 0, 0, 0, 352, 280);
+   switch (efc) {
+   default:
+      if (is_sound != 0)
+         play_sample (samp, gsvol, panning, 1000, 0);
+      break;
+   case SND_BAD:
+      blit (double_buffer, fx_buffer, 0, 0, 0, 0, 352, 280);
 
-        if (is_sound != 0)
-           play_sample (samp, gsvol, panning, 1000, 0);
-        clear_bitmap (double_buffer);
-        blit (fx_buffer, double_buffer, xofs, yofs, xofs, yofs, 320, 240);
+      if (is_sound != 0)
+         play_sample (samp, gsvol, panning, 1000, 0);
+      clear_bitmap (double_buffer);
+      blit (fx_buffer, double_buffer, xofs, yofs, xofs, yofs, 320, 240);
 
-        if (in_combat == 0)
-          {
-             xo = xofs;
-             yo = yofs;
-          }
+      if (in_combat == 0) {
+         xo = xofs;
+         yo = yofs;
+      }
 
-        /*        blit (fx_buffer, double_buffer, xo, yo, xo, yo, 320, 240); */
+      /*        blit (fx_buffer, double_buffer, xo, yo, xo, yo, 320, 240); */
 
-        for (a = 0; a < 8; a++)
-          {
-             blit2screen (xo + bx[a], yo + by[a]);
-             wait (10);
-          }
-        blit (fx_buffer, double_buffer, 0, 0, 0, 0, 352, 280);
-        break;
-     case SND_EXPLODE:
-        blit (double_buffer, fx_buffer, 0, 0, 0, 0, 352, 280);
-        clear_bitmap (double_buffer);
-        get_palette (old);
-        for (a = 0; a < 256; ++a)
-          {
-             s = (old[a].r + old[a].g + old[a].b) > 40 ? 0 : 63;
-             whiteout[a].r = whiteout[a].g = whiteout[a].b = s;
-          }
-        blit (fx_buffer, double_buffer, xofs, yofs, xofs, yofs, 320, 240);
-        if (is_sound)
-          {
-             play_sample (samp, gsvol, panning, 1000, 0);
-          }
-        for (s = 0; s < (int) (sizeof (sc) / sizeof (*sc)); ++s)
-          {
-             if (s == 1)
-                set_palette (whiteout);
-             if (s == 6)
-                set_palette (old);
+      for (a = 0; a < 8; a++) {
+         blit2screen (xo + bx[a], yo + by[a]);
+         wait (10);
+      }
+      blit (fx_buffer, double_buffer, 0, 0, 0, 0, 352, 280);
+      break;
+   case SND_EXPLODE:
+      blit (double_buffer, fx_buffer, 0, 0, 0, 0, 352, 280);
+      clear_bitmap (double_buffer);
+      get_palette (old);
+      for (a = 0; a < 256; ++a) {
+         s = (old[a].r + old[a].g + old[a].b) > 40 ? 0 : 63;
+         whiteout[a].r = whiteout[a].g = whiteout[a].b = s;
+      }
+      blit (fx_buffer, double_buffer, xofs, yofs, xofs, yofs, 320, 240);
+      if (is_sound) {
+         play_sample (samp, gsvol, panning, 1000, 0);
+      }
+      for (s = 0; s < (int) (sizeof (sc) / sizeof (*sc)); ++s) {
+         if (s == 1)
+            set_palette (whiteout);
+         if (s == 6)
+            set_palette (old);
 
-             for (a = 0; a < 8; a++)
-               {
-                  blit2screen (xofs + bx[a] * sc[s], yofs + by[a] * sc[s]);
-                  wait (10);
-               }
-          }
-        blit (fx_buffer, double_buffer, 0, 0, 0, 0, 352, 280);
-        break;
-     }
+         for (a = 0; a < 8; a++) {
+            blit2screen (xofs + bx[a] * sc[s], yofs + by[a] * sc[s]);
+            wait (10);
+         }
+      }
+      blit (fx_buffer, double_buffer, 0, 0, 0, 0, 352, 280);
+      break;
+   }
 }

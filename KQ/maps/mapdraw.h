@@ -14,22 +14,22 @@
 #define SH            480
 #define WBUILD          1
 
-#define MAP_LAYER1  1  // map (sea-level)
-#define MAP_LAYER2  2  // background (ground-level)
-#define MAP_LAYER3  4  // foreground (tree-tops, etc.)
-#define MAP_SHADOWS  8  // Entities Attribute
-#define MAP_ZONES  16  // Shadows Attribute
-#define MAP_OBSTACLES  32  // Obstacles Attribute
-#define MAP_ENTITIES  64  // Zones Attribute
+#define MAP_LAYER1  1           // map (sea-level)
+#define MAP_LAYER2  2           // background (ground-level)
+#define MAP_LAYER3  4           // foreground (tree-tops, etc.)
+#define MAP_SHADOWS  8          // Entities Attribute
+#define MAP_ZONES  16           // Shadows Attribute
+#define MAP_OBSTACLES  32       // Obstacles Attribute
+#define MAP_ENTITIES  64        // Zones Attribute
 #define MAP_LAYER12  (MAP_LAYER1 | MAP_LAYER2)  // map + background
 #define MAP_LAYER13  (MAP_LAYER1 | MAP_LAYER3)  // map + foreground
 #define MAP_LAYER23  (MAP_LAYER2 | MAP_LAYER3)  // background + foreground
-#define MAP_LAYER123 (MAP_LAYER1 | MAP_LAYER2 | MAP_LAYER3)  // map + background + foreground
-#define BLOCK_COPY  128  // Mode to start copying an area
-#define BLOCK_PASTE  256  // Mode to paste the copied area
-#define GRAB_TILE  512  // Select a tile in the map to draw
+#define MAP_LAYER123 (MAP_LAYER1 | MAP_LAYER2 | MAP_LAYER3)     // map + background + foreground
+#define BLOCK_COPY  128         // Mode to start copying an area
+#define BLOCK_PASTE  256        // Mode to paste the copied area
+#define GRAB_TILE  512          // Select a tile in the map to draw
 
-#define ICONSET_SIZE    20 // Number of icons shown in the tile map
+#define ICONSET_SIZE    20      // Number of icons shown in the tile map
 
 #include "../include/structs.h"
 
@@ -84,7 +84,7 @@ ss_map;
 typedef struct
 {
    int entities, shadows, obstacles, zones;
-   int last_layer;   // tracks last-used layer
+   int last_layer;              // tracks last-used layer
 }
 s_show;
 
@@ -136,7 +136,7 @@ void show_help (void);
 int check_last_zone (void);
 void get_tile (void);
 
-void visual_map(void);
+void visual_map (void);
 
 extern unsigned short *map, *b_map, *f_map, *c_map, *cf_map, *cb_map;
 extern unsigned char *z_map, *cz_map, *sh_map, *cs_map, *o_map, *co_map;

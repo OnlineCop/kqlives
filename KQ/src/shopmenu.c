@@ -55,6 +55,11 @@
  *            After long gameplay, shops will sell
  *            quantity of #[2] of items instead of #[1]
  *            (see shop() for details)
+ *
+ * PH: I don't think this is correct. I think
+ * the code says 
+ * that the shop will replenish its stock
+ * to [1], after a time-out of [2] minutes.
 */
 unsigned short shops[NUMSHOPS][SHOPITEMS][3] = {
    {{I_SHIELD1, 6, 10},
@@ -432,106 +437,83 @@ static void draw_sideshot (int itm)
    int cs[13];
 
    menubox (double_buffer, 80 + xofs, 192 + yofs, 18, 4, BLUE);
-   for (a = 0; a < numchrs; a++)
-     {
-        wx = a * 72 + 88 + xofs;
-        wy = 200 + yofs;
-        draw_sprite (double_buffer, frames[pidx[a]][2], wx, wy);
-     }
+   for (a = 0; a < numchrs; a++) {
+      wx = a * 72 + 88 + xofs;
+      wy = 200 + yofs;
+      draw_sprite (double_buffer, frames[pidx[a]][2], wx, wy);
+   }
    if (itm == -1)
       return;
    slot = items[itm].type;
-   for (a = 0; a < numchrs; a++)
-     {
-        wx = a * 72 + 88 + xofs;
-        wy = 200 + yofs;
-        for (j = 0; j < 6; j++)
-           if (party[pidx[a]].eqp[j] == itm)
-              eqp++;
-        if (slot < 6)
-          {
-             if (party[pidx[a]].eqp[slot] > 0)
-               {
-                  for (j = 0; j < 13; j++)
-                     cs[j] =
-                        items[itm].stats[j] -
-                        items[party[pidx[a]].eqp[slot]].stats[j];
+   for (a = 0; a < numchrs; a++) {
+      wx = a * 72 + 88 + xofs;
+      wy = 200 + yofs;
+      for (j = 0; j < 6; j++)
+         if (party[pidx[a]].eqp[j] == itm)
+            eqp++;
+      if (slot < 6) {
+         if (party[pidx[a]].eqp[slot] > 0) {
+            for (j = 0; j < 13; j++)
+               cs[j] =
+                  items[itm].stats[j] -
+                  items[party[pidx[a]].eqp[slot]].stats[j];
+         } else {
+            for (j = 0; j < 13; j++)
+               cs[j] = items[itm].stats[j];
+         }
+         if (slot == 0) {
+            draw_icon (double_buffer, 3, wx + 16, wy);
+            print_font (double_buffer, wx + 16, wy + 8, "%", FNORMAL);
+            for (j = 0; j < 2; j++) {
+               if (cs[j + 8] < 0) {
+                  sprintf (strbuf, "%-4d", cs[j + 8]);
+                  print_font (double_buffer, wx + 24, j * 8 + wy, strbuf, FRED);
                }
-             else
-               {
-                  for (j = 0; j < 13; j++)
-                     cs[j] = items[itm].stats[j];
+               if (cs[j + 8] > 0) {
+                  sprintf (strbuf, "+%-3d", cs[j + 8]);
+                  print_font (double_buffer, wx + 24, j * 8 + wy,
+                              strbuf, FGREEN);
                }
-             if (slot == 0)
-               {
-                  draw_icon (double_buffer, 3, wx + 16, wy);
-                  print_font (double_buffer, wx + 16, wy + 8, "%", FNORMAL);
-                  for (j = 0; j < 2; j++)
-                    {
-                       if (cs[j + 8] < 0)
-                         {
-                            sprintf (strbuf, "%-4d", cs[j + 8]);
-                            print_font (double_buffer, wx + 24, j * 8 + wy,
-                                        strbuf, FRED);
-                         }
-                       if (cs[j + 8] > 0)
-                         {
-                            sprintf (strbuf, "+%-3d", cs[j + 8]);
-                            print_font (double_buffer, wx + 24, j * 8 + wy,
-                                        strbuf, FGREEN);
-                         }
-                       if (cs[j + 8] == 0)
-                          print_font (double_buffer, wx + 24, j * 8 + wy,
-                                      "=", FNORMAL);
-                    }
+               if (cs[j + 8] == 0)
+                  print_font (double_buffer, wx + 24, j * 8 + wy, "=", FNORMAL);
+            }
+         } else {
+            draw_icon (double_buffer, 9, wx + 16, wy);
+            print_font (double_buffer, wx + 16, wy + 8, "%", FNORMAL);
+            draw_icon (double_buffer, 47, wx + 16, wy + 16);
+            for (j = 0; j < 3; j++) {
+               if (cs[j + 10] < 0) {
+                  sprintf (strbuf, "%-4d", cs[j + 10]);
+                  print_font (double_buffer, wx + 24, j * 8 + wy, strbuf, FRED);
                }
-             else
-               {
-                  draw_icon (double_buffer, 9, wx + 16, wy);
-                  print_font (double_buffer, wx + 16, wy + 8, "%", FNORMAL);
-                  draw_icon (double_buffer, 47, wx + 16, wy + 16);
-                  for (j = 0; j < 3; j++)
-                    {
-                       if (cs[j + 10] < 0)
-                         {
-                            sprintf (strbuf, "%-4d", cs[j + 10]);
-                            print_font (double_buffer, wx + 24, j * 8 + wy,
-                                        strbuf, FRED);
-                         }
-                       if (cs[j + 10] > 0)
-                         {
-                            sprintf (strbuf, "+%-3d", cs[j + 10]);
-                            print_font (double_buffer, wx + 24, j * 8 + wy,
-                                        strbuf, FGREEN);
-                         }
-                       if (cs[j + 10] == 0)
-                          print_font (double_buffer, wx + 24, j * 8 + wy,
-                                      "=", FNORMAL);
-                    }
+               if (cs[j + 10] > 0) {
+                  sprintf (strbuf, "+%-3d", cs[j + 10]);
+                  print_font (double_buffer, wx + 24, j * 8 + wy,
+                              strbuf, FGREEN);
                }
-             if (items[itm].eq[pidx[a]] == 0)
-                draw_sprite (double_buffer, noway, wx, wy);
-          }
-        else
-          {
-             if (items[itm].icon == W_SBOOK || items[itm].icon == W_ABOOK)
-               {
-                  for (j = 0; j < 60; j++)
-                     if (party[pidx[a]].spells[j] == items[itm].hnds)
-                        draw_sprite (double_buffer, noway, wx, wy);
-               }
-          }
-     }
+               if (cs[j + 10] == 0)
+                  print_font (double_buffer, wx + 24, j * 8 + wy, "=", FNORMAL);
+            }
+         }
+         if (items[itm].eq[pidx[a]] == 0)
+            draw_sprite (double_buffer, noway, wx, wy);
+      } else {
+         if (items[itm].icon == W_SBOOK || items[itm].icon == W_ABOOK) {
+            for (j = 0; j < 60; j++)
+               if (party[pidx[a]].spells[j] == items[itm].hnds)
+                  draw_sprite (double_buffer, noway, wx, wy);
+         }
+      }
+   }
    for (j = 0; j < MAX_INV; j++)
       if (g_inv[j][0] == itm)
          ownd += g_inv[j][1];   // quantity of this item
    sprintf (strbuf, "Own: %d", ownd);
    print_font (double_buffer, 88 + xofs, 224 + yofs, strbuf, FNORMAL);
-   if (slot < 6)
-     {
-        sprintf (strbuf, "Eqp: %d", eqp);
-        print_font (double_buffer, 160 + xofs, 224 + yofs, strbuf, FNORMAL);
-     }
+   if (slot < 6) {
+      sprintf (strbuf, "Eqp: %d", eqp);
+      print_font (double_buffer, 160 + xofs, 224 + yofs, strbuf, FNORMAL);
+   }
 }
 
 
@@ -565,14 +547,14 @@ int shop (int shop_num)
 
    shop_no = shop_num;
    strcpy (sname, shopn[shop_no]);
-   for (a = 0; a < SHOPITEMS; a++)
-     {
-        if (shops[shop_no][a][2] > 0)
-           if ((khr * 60) + kmin - progress[P_SHOPSTART + shop_no] >
-               shops[shop_no][a][2])
-              shopq[shop_no][a] = shops[shop_no][a][1];
-        shin[a] = shops[shop_no][a][0];
-     }
+   for (a = 0; a < SHOPITEMS; a++) {
+      if (shops[shop_no][a][2] > 0)
+         /* Shops replenish after a certain time? */
+         if ((khr * 60) + kmin - progress[P_SHOPSTART + shop_no] >
+             shops[shop_no][a][2])
+            shopq[shop_no][a] = shops[shop_no][a][1];
+      shin[a] = shops[shop_no][a][0];
+   }
    noi = SHOPITEMS - 1;
    for (a = SHOPITEMS - 1; a >= 0; a--)
       if (shin[a] == 0)
@@ -581,58 +563,52 @@ int shop (int shop_num)
       return 1;
    unpress ();
    play_effect (SND_MENU, 128);
-   while (!stop)
-     {
-        if (rd == 1)
-          {
-             drawmap ();
-             menubox (double_buffer, 152 - (strlen (sname) * 4) + xofs, yofs,
-                      strlen (sname), 1, BLUE);
-             print_font (double_buffer, 160 - (strlen (sname) * 4) + xofs,
-                         8 + yofs, sname, FGOLD);
-             menubox (double_buffer, 32 + xofs, 24 + yofs, 30, 1, BLUE);
-             menubox (double_buffer, ptr * 80 + 32 + xofs, 24 + yofs, 10, 1,
-                      DARKBLUE);
-             print_font (double_buffer, 68 + xofs, 32 + yofs, "Buy", FGOLD);
-             print_font (double_buffer, 144 + xofs, 32 + yofs, "Sell", FGOLD);
-             print_font (double_buffer, 224 + xofs, 32 + yofs, "Exit", FGOLD);
-             draw_sideshot (-1);
-             draw_shopgold ();
-             blit2screen (xofs, yofs);
-          }
-        readcontrols ();
-        rd = 0;
-        if (left && ptr > 0)
-          {
-             unpress ();
-             ptr--;
-             play_effect (SND_CLICK, 128);
-             rd = 1;
-          }
-        if (right && ptr < 2)
-          {
-             unpress ();
-             ptr++;
-             play_effect (SND_CLICK, 128);
-             rd = 1;
-          }
-        if (balt)
-          {
-             unpress ();
-             if (ptr == 0)
-                buy_menu ();
-             if (ptr == 1)
-                sell_menu ();
-             if (ptr == 2)
-                stop = 1;
-             rd = 1;
-          }
-        if (bctrl)
-          {
-             unpress ();
-             stop = 1;
-          }
-     }
+   while (!stop) {
+      if (rd == 1) {
+         drawmap ();
+         menubox (double_buffer, 152 - (strlen (sname) * 4) + xofs, yofs,
+                  strlen (sname), 1, BLUE);
+         print_font (double_buffer, 160 - (strlen (sname) * 4) + xofs,
+                     8 + yofs, sname, FGOLD);
+         menubox (double_buffer, 32 + xofs, 24 + yofs, 30, 1, BLUE);
+         menubox (double_buffer, ptr * 80 + 32 + xofs, 24 + yofs, 10, 1,
+                  DARKBLUE);
+         print_font (double_buffer, 68 + xofs, 32 + yofs, "Buy", FGOLD);
+         print_font (double_buffer, 144 + xofs, 32 + yofs, "Sell", FGOLD);
+         print_font (double_buffer, 224 + xofs, 32 + yofs, "Exit", FGOLD);
+         draw_sideshot (-1);
+         draw_shopgold ();
+         blit2screen (xofs, yofs);
+      }
+      readcontrols ();
+      rd = 0;
+      if (left && ptr > 0) {
+         unpress ();
+         ptr--;
+         play_effect (SND_CLICK, 128);
+         rd = 1;
+      }
+      if (right && ptr < 2) {
+         unpress ();
+         ptr++;
+         play_effect (SND_CLICK, 128);
+         rd = 1;
+      }
+      if (balt) {
+         unpress ();
+         if (ptr == 0)
+            buy_menu ();
+         if (ptr == 1)
+            sell_menu ();
+         if (ptr == 2)
+            stop = 1;
+         rd = 1;
+      }
+      if (bctrl) {
+         unpress ();
+         stop = 1;
+      }
+   }
    progress[P_SHOPSTART + shop_no] = khr * 60 + kmin;
    return 0;
 }
@@ -654,104 +630,91 @@ static void buy_menu (void)
          max_x = shopq[shop_no][a];
    if (max_x > 9)
       max_x = 9;
-   while (!stop)
-     {
-        if (rd == 1)
-          {
-             drawmap ();
-             menubox (double_buffer, 152 - (strlen (sname) * 4) + xofs, yofs,
-                      strlen (sname), 1, BLUE);
-             print_font (double_buffer, 160 - (strlen (sname) * 4) + xofs,
-                         8 + yofs, sname, FGOLD);
-             menubox (double_buffer, xofs, 208 + yofs, 7, 2, BLUE);
-             print_font (double_buffer, 24 + xofs, 220 + yofs, "Buy", FGOLD);
-             menubox (double_buffer, 32 + xofs, 24 + yofs, 30, 16, BLUE);
-             menubox (double_buffer, 32 + xofs, 168 + yofs, 30, 1, BLUE);
-             draw_shopgold ();
-             for (i = 0; i < noi; i++)
-               {
-                  j = shin[i];
-                  max = shopq[shop_no][i];
-                  if (xptr <= max)
-                     max = xptr;
-                  draw_icon (double_buffer, items[j].icon, 48 + xofs,
-                             i * 8 + 32 + yofs);
-                  cost = max * items[j].price;
-                  if (cost > gp)
-                     k = FDARK;
-                  else
-                     k = FNORMAL;
-                  print_font (double_buffer, 56 + xofs, i * 8 + 32 + yofs,
-                              items[j].name, k);
-                  if (max > 1)
-                    {
-                       sprintf (strbuf, "(%d)", max);
-                       print_font (double_buffer, 256 + xofs,
-                                   i * 8 + 32 + yofs, strbuf, k);
-                    }
-                  if (max > 0)
-                    {
-                       sprintf (strbuf, "%d", cost);
-                       print_font (double_buffer,
-                                   248 - (strlen (strbuf) * 8) + xofs,
-                                   i * 8 + 32 + yofs, strbuf, k);
-                    }
-                  else
-                     print_font (double_buffer, 200 + xofs,
-                                 i * 8 + 32 + yofs, "Sold Out!", k);
-               }
-             print_font (double_buffer,
-                         160 - (strlen (items[shin[yptr]].desc) * 4) + xofs,
-                         176 + yofs, items[shin[yptr]].desc, FNORMAL);
-             draw_sideshot (shin[yptr]);
-             draw_sprite (double_buffer, menuptr, 32 + xofs,
-                          yptr * 8 + 32 + yofs);
-             blit2screen (xofs, yofs);
-          }
-        readcontrols ();
-        if (up)
-          {
-             unpress ();
-             yptr--;
-             if (yptr < 0)
-                yptr = noi - 1;
-             play_effect (SND_CLICK, 128);
-          }
-        if (down)
-          {
-             unpress ();
-             yptr++;
-             if (yptr > noi - 1)
-                yptr = 0;
-             play_effect (SND_CLICK, 128);
-          }
-        if (left && xptr > 1)
-          {
-             unpress ();
-             xptr--;
-             play_effect (SND_CLICK, 128);
-          }
-        if (right && xptr < max_x)
-          {
-             unpress ();
-             xptr++;
-             play_effect (SND_CLICK, 128);
-          }
-        if (balt)
-          {
-             unpress ();
-             blit (double_buffer, back, xofs, 192 + yofs, 0, 0, 320, 48);
-             max = shopq[shop_no][yptr];
-             if (xptr <= max)
-                max = xptr;
-             buy_item (max, yptr);
-          }
-        if (bctrl)
-          {
-             unpress ();
-             stop = 1;
-          }
-     }
+   while (!stop) {
+      if (rd == 1) {
+         drawmap ();
+         menubox (double_buffer, 152 - (strlen (sname) * 4) + xofs, yofs,
+                  strlen (sname), 1, BLUE);
+         print_font (double_buffer, 160 - (strlen (sname) * 4) + xofs,
+                     8 + yofs, sname, FGOLD);
+         menubox (double_buffer, xofs, 208 + yofs, 7, 2, BLUE);
+         print_font (double_buffer, 24 + xofs, 220 + yofs, "Buy", FGOLD);
+         menubox (double_buffer, 32 + xofs, 24 + yofs, 30, 16, BLUE);
+         menubox (double_buffer, 32 + xofs, 168 + yofs, 30, 1, BLUE);
+         draw_shopgold ();
+         for (i = 0; i < noi; i++) {
+            j = shin[i];
+            max = shopq[shop_no][i];
+            if (xptr <= max)
+               max = xptr;
+            draw_icon (double_buffer, items[j].icon, 48 + xofs,
+                       i * 8 + 32 + yofs);
+            cost = max * items[j].price;
+            if (cost > gp)
+               k = FDARK;
+            else
+               k = FNORMAL;
+            print_font (double_buffer, 56 + xofs, i * 8 + 32 + yofs,
+                        items[j].name, k);
+            if (max > 1) {
+               sprintf (strbuf, "(%d)", max);
+               print_font (double_buffer, 256 + xofs,
+                           i * 8 + 32 + yofs, strbuf, k);
+            }
+            if (max > 0) {
+               sprintf (strbuf, "%d", cost);
+               print_font (double_buffer,
+                           248 - (strlen (strbuf) * 8) + xofs,
+                           i * 8 + 32 + yofs, strbuf, k);
+            } else
+               print_font (double_buffer, 200 + xofs,
+                           i * 8 + 32 + yofs, "Sold Out!", k);
+         }
+         print_font (double_buffer,
+                     160 - (strlen (items[shin[yptr]].desc) * 4) + xofs,
+                     176 + yofs, items[shin[yptr]].desc, FNORMAL);
+         draw_sideshot (shin[yptr]);
+         draw_sprite (double_buffer, menuptr, 32 + xofs, yptr * 8 + 32 + yofs);
+         blit2screen (xofs, yofs);
+      }
+      readcontrols ();
+      if (up) {
+         unpress ();
+         yptr--;
+         if (yptr < 0)
+            yptr = noi - 1;
+         play_effect (SND_CLICK, 128);
+      }
+      if (down) {
+         unpress ();
+         yptr++;
+         if (yptr > noi - 1)
+            yptr = 0;
+         play_effect (SND_CLICK, 128);
+      }
+      if (left && xptr > 1) {
+         unpress ();
+         xptr--;
+         play_effect (SND_CLICK, 128);
+      }
+      if (right && xptr < max_x) {
+         unpress ();
+         xptr++;
+         play_effect (SND_CLICK, 128);
+      }
+      if (balt) {
+         unpress ();
+         blit (double_buffer, back, xofs, 192 + yofs, 0, 0, 320, 48);
+         max = shopq[shop_no][yptr];
+         if (xptr <= max)
+            max = xptr;
+         buy_item (max, yptr);
+      }
+      if (bctrl) {
+         unpress ();
+         stop = 1;
+      }
+   }
 }
 
 
@@ -771,42 +734,36 @@ static void buy_item (int how_many, int item_no)
 
    l = shin[item_no];
    cost = items[l].price * how_many;
-   if (cost > gp || how_many == 0)
-     {
-        play_effect (SND_BAD, 128);
-        return;
-     }
-   while (!stop)
-     {
-        if (rd == 1)
-          {
-             blit (back, double_buffer, 0, 0, xofs, 192 + yofs, 320, 48);
-             menubox (double_buffer, 32 + xofs, 168 + yofs, 30, 1, DARKBLUE);
-             print_font (double_buffer, 104 + xofs, 176 + yofs,
-                         "Confirm/Cancel", FNORMAL);
-             draw_sideshot (shin[item_no]);
-             blit2screen (xofs, yofs);
-          }
-        readcontrols ();
-        if (balt)
-          {
-             unpress ();
-             stop = 1;
-          }
-        if (bctrl)
-          {
-             unpress ();
-             return;
-          }
-     }
+   if (cost > gp || how_many == 0) {
+      play_effect (SND_BAD, 128);
+      return;
+   }
+   while (!stop) {
+      if (rd == 1) {
+         blit (back, double_buffer, 0, 0, xofs, 192 + yofs, 320, 48);
+         menubox (double_buffer, 32 + xofs, 168 + yofs, 30, 1, DARKBLUE);
+         print_font (double_buffer, 104 + xofs, 176 + yofs,
+                     "Confirm/Cancel", FNORMAL);
+         draw_sideshot (shin[item_no]);
+         blit2screen (xofs, yofs);
+      }
+      readcontrols ();
+      if (balt) {
+         unpress ();
+         stop = 1;
+      }
+      if (bctrl) {
+         unpress ();
+         return;
+      }
+   }
    z = check_inventory (l, how_many);
-   if (z > 0)
-     {
-        gp = gp - cost;
-        shopq[shop_no][item_no] -= how_many;
-        play_effect (SND_MONEY, 128);
-        return;
-     }
+   if (z > 0) {
+      gp = gp - cost;
+      shopq[shop_no][item_no] -= how_many;
+      play_effect (SND_MONEY, 128);
+      return;
+   }
    play_effect (SND_BAD, 128);
    message ("No room!", -1, 0, xofs, yofs);
    return;
@@ -823,123 +780,107 @@ static void sell_menu (void)
 {
    int yptr = 0, stop = 0, z, rd = 1, p, k, sp, pg = 0;
 
-   while (!stop)
-     {
-        if (rd == 1)
-          {
-             drawmap ();
-             menubox (double_buffer, 152 - (strlen (sname) * 4) + xofs, yofs,
-                      strlen (sname), 1, BLUE);
-             print_font (double_buffer, 160 - (strlen (sname) * 4) + xofs,
-                         8 + yofs, sname, FGOLD);
-             menubox (double_buffer, xofs, 208 + yofs, 7, 2, BLUE);
-             print_font (double_buffer, 20 + xofs, 220 + yofs, "Sell", FGOLD);
-             menubox (double_buffer, 32 + xofs, 24 + yofs, 30, 16, BLUE);
-             menubox (double_buffer, 32 + xofs, 168 + yofs, 30, 1, BLUE);
-             draw_shopgold ();
-             for (p = 0; p < 16; p++)
-               {
-                  z = g_inv[pg * 16 + p][0];
-                  if (items[z].price == 0)
-                     k = FDARK;
-                  else
-                     k = FNORMAL;
-                  draw_icon (double_buffer, items[z].icon, 48 + xofs,
-                             p * 8 + 32 + yofs);
-                  print_font (double_buffer, 56 + xofs, p * 8 + 32 + yofs,
-                              items[z].name, k);
-                  // Check if quantity of this item > 1
-                  if (g_inv[pg * 16 + p][1] > 1)
-                    {
-                       // The '^' in this is an 'x' in allfonts.pcx
-                       sprintf (strbuf, "^%d", g_inv[pg * 16 + p][1]);
-                       print_font (double_buffer, 264 + xofs,
-                                   p * 8 + 32 + yofs, strbuf, k);
-                    }
-               }
-             sp = items[g_inv[pg * 16 + yptr][0]].price * 50 / 100;
-             if (items[g_inv[pg * 16 + yptr][0]].price > 0)
-               {
-                  // Check if there is more than one item
-                  if (g_inv[pg * 16 + yptr][1] > 1)
-                    {
-                       sprintf (strbuf, "%d gp for each one.", sp);
-                       print_font (double_buffer,
-                                   160 - (strlen (strbuf) * 4) + xofs,
-                                   176 + yofs, strbuf, FNORMAL);
-                    }
-                  // There is only one of this item
-                  else
-                    {
-                       sprintf (strbuf, "That's worth %d gp.", sp);
-                       print_font (double_buffer,
-                                   160 - (strlen (strbuf) * 4) + xofs,
-                                   176 + yofs, strbuf, FNORMAL);
-                    }
-               }
-             else
-               {
-                  if (g_inv[pg * 16 + yptr][0] > 0)
-                     print_font (double_buffer, 76 + xofs, 192 + yofs,
-                                 "That can not be sold!", FNORMAL);
-               }
-             draw_sprite (double_buffer, menuptr, 32 + xofs,
-                          yptr * 8 + 32 + yofs);
-             draw_sprite (double_buffer, pgb[pg], 278 + xofs, 158 + yofs);
-             blit2screen (xofs, yofs);
-          }
-        readcontrols ();
-        rd = 0;
-        if (down)
-          {
-             unpress ();
-             yptr++;
-             if (yptr > 15)
-                yptr = 0;
-             play_effect (SND_CLICK, 128);
-             rd = 1;
-          }
-        if (up)
-          {
-             unpress ();
-             yptr--;
-             if (yptr < 0)
-                yptr = 15;
-             play_effect (SND_CLICK, 128);
-             rd = 1;
-          }
-        if (left)
-          {
-             unpress ();
-             pg--;
-             if (pg < 0)
-                pg = MAX_INV / 16 - 1;
-             play_effect (SND_CLICK, 128);
-             rd = 1;
-          }
-        if (right)
-          {
-             unpress ();
-             pg++;
-             if (pg > (MAX_INV / 16 - 1))
-                pg = 0;
-             play_effect (SND_CLICK, 128);
-             rd = 1;
-          }
-        if (balt)
-          {
-             unpress ();
-             if (g_inv[pg * 16 + yptr][0] > 0
-                 && items[g_inv[pg * 16 + yptr][0]].price > 0)
-                sell_howmany (yptr, pg);
-             rd = 1;
-          }
-        if (bctrl)
-          {
-             unpress ();
-             stop = 1;
-          }
-     }
+   while (!stop) {
+      if (rd == 1) {
+         drawmap ();
+         menubox (double_buffer, 152 - (strlen (sname) * 4) + xofs, yofs,
+                  strlen (sname), 1, BLUE);
+         print_font (double_buffer, 160 - (strlen (sname) * 4) + xofs,
+                     8 + yofs, sname, FGOLD);
+         menubox (double_buffer, xofs, 208 + yofs, 7, 2, BLUE);
+         print_font (double_buffer, 20 + xofs, 220 + yofs, "Sell", FGOLD);
+         menubox (double_buffer, 32 + xofs, 24 + yofs, 30, 16, BLUE);
+         menubox (double_buffer, 32 + xofs, 168 + yofs, 30, 1, BLUE);
+         draw_shopgold ();
+         for (p = 0; p < 16; p++) {
+            z = g_inv[pg * 16 + p][0];
+            if (items[z].price == 0)
+               k = FDARK;
+            else
+               k = FNORMAL;
+            draw_icon (double_buffer, items[z].icon, 48 + xofs,
+                       p * 8 + 32 + yofs);
+            print_font (double_buffer, 56 + xofs, p * 8 + 32 + yofs,
+                        items[z].name, k);
+            // Check if quantity of this item > 1
+            if (g_inv[pg * 16 + p][1] > 1) {
+               // The '^' in this is an 'x' in allfonts.pcx
+               sprintf (strbuf, "^%d", g_inv[pg * 16 + p][1]);
+               print_font (double_buffer, 264 + xofs,
+                           p * 8 + 32 + yofs, strbuf, k);
+            }
+         }
+         sp = items[g_inv[pg * 16 + yptr][0]].price * 50 / 100;
+         if (items[g_inv[pg * 16 + yptr][0]].price > 0) {
+            // Check if there is more than one item
+            if (g_inv[pg * 16 + yptr][1] > 1) {
+               sprintf (strbuf, "%d gp for each one.", sp);
+               print_font (double_buffer,
+                           160 - (strlen (strbuf) * 4) + xofs,
+                           176 + yofs, strbuf, FNORMAL);
+            }
+            // There is only one of this item
+            else {
+               sprintf (strbuf, "That's worth %d gp.", sp);
+               print_font (double_buffer,
+                           160 - (strlen (strbuf) * 4) + xofs,
+                           176 + yofs, strbuf, FNORMAL);
+            }
+         } else {
+            if (g_inv[pg * 16 + yptr][0] > 0)
+               print_font (double_buffer, 76 + xofs, 192 + yofs,
+                           "That can not be sold!", FNORMAL);
+         }
+         draw_sprite (double_buffer, menuptr, 32 + xofs, yptr * 8 + 32 + yofs);
+         draw_sprite (double_buffer, pgb[pg], 278 + xofs, 158 + yofs);
+         blit2screen (xofs, yofs);
+      }
+      readcontrols ();
+      rd = 0;
+      if (down) {
+         unpress ();
+         yptr++;
+         if (yptr > 15)
+            yptr = 0;
+         play_effect (SND_CLICK, 128);
+         rd = 1;
+      }
+      if (up) {
+         unpress ();
+         yptr--;
+         if (yptr < 0)
+            yptr = 15;
+         play_effect (SND_CLICK, 128);
+         rd = 1;
+      }
+      if (left) {
+         unpress ();
+         pg--;
+         if (pg < 0)
+            pg = MAX_INV / 16 - 1;
+         play_effect (SND_CLICK, 128);
+         rd = 1;
+      }
+      if (right) {
+         unpress ();
+         pg++;
+         if (pg > (MAX_INV / 16 - 1))
+            pg = 0;
+         play_effect (SND_CLICK, 128);
+         rd = 1;
+      }
+      if (balt) {
+         unpress ();
+         if (g_inv[pg * 16 + yptr][0] > 0
+             && items[g_inv[pg * 16 + yptr][0]].price > 0)
+            sell_howmany (yptr, pg);
+         rd = 1;
+      }
+      if (bctrl) {
+         unpress ();
+         stop = 1;
+      }
+   }
 }
 
 
@@ -959,67 +900,59 @@ static void sell_howmany (int itm_no, int pg)
    stop = 0;
    l = g_inv[pg * 16 + itm_no][0];
    prc = items[l].price;
-   if (prc == 0)
-     {
-        play_effect (SND_BAD, 128);
-        return;
-     }
+   if (prc == 0) {
+      play_effect (SND_BAD, 128);
+      return;
+   }
    // Maximum (total) number of items
    maxi = g_inv[pg * 16 + itm_no][1];
-   if (maxi == 1)
-     {
-        menubox (double_buffer, 32 + xofs, 168 + yofs, 30, 1, DARKBLUE);
-        sprintf (strbuf, "Sell for %d gp?", prc * 50 / 100);
-        print_font (double_buffer, 160 - (strlen (strbuf) * 4) + xofs,
-                    176 + yofs, strbuf, FNORMAL);
-        sell_item (pg * 16 + itm_no, 1);
-        stop = 1;
-     }
-   while (!stop)
-     {
-        if (rd == 1)
-          {
-             menubox (double_buffer, 32 + xofs, 168 + yofs, 30, 1, DARKBLUE);
-             print_font (double_buffer, 124 + xofs, 176 + yofs, "How many?",
-                         FNORMAL);
-             menubox (double_buffer, 32 + xofs, itm_no * 8 + 24 + yofs, 30,
-                      1, DARKBLUE);
-             draw_icon (double_buffer, items[l].icon, 48 + xofs,
-                        itm_no * 8 + 32 + yofs);
-             print_font (double_buffer, 56 + xofs, itm_no * 8 + 32 + yofs,
-                         items[l].name, FNORMAL);
-             sprintf (strbuf, "%d of %d", my, maxi);
-             print_font (double_buffer, 280 - (strlen (strbuf) * 8) + xofs,
-                         itm_no * 8 + 32 + yofs, strbuf, FNORMAL);
-             blit2screen (xofs, yofs);
-          }
-        readcontrols ();
-        if (up && my < maxi)
-          {
-             unpress ();
-             my++;
-          }
-        if (down && my > 1)
-          {
-             unpress ();
-             my--;
-          }
-        if (balt)
-          {
-             unpress ();
-             menubox (double_buffer, 32 + xofs, 168 + yofs, 30, 1, DARKBLUE);
-             sprintf (strbuf, "Sell for %d gp?", (prc * 50 / 100) * my);
-             print_font (double_buffer, 160 - (strlen (strbuf) * 4) + xofs,
-                         176 + yofs, strbuf, FNORMAL);
-             sell_item (pg * 16 + itm_no, my);
-             stop = 1;
-          }
-        if (bctrl)
-          {
-             unpress ();
-             stop = 1;
-          }
-     }
+   if (maxi == 1) {
+      menubox (double_buffer, 32 + xofs, 168 + yofs, 30, 1, DARKBLUE);
+      sprintf (strbuf, "Sell for %d gp?", prc * 50 / 100);
+      print_font (double_buffer, 160 - (strlen (strbuf) * 4) + xofs,
+                  176 + yofs, strbuf, FNORMAL);
+      sell_item (pg * 16 + itm_no, 1);
+      stop = 1;
+   }
+   while (!stop) {
+      if (rd == 1) {
+         menubox (double_buffer, 32 + xofs, 168 + yofs, 30, 1, DARKBLUE);
+         print_font (double_buffer, 124 + xofs, 176 + yofs, "How many?",
+                     FNORMAL);
+         menubox (double_buffer, 32 + xofs, itm_no * 8 + 24 + yofs, 30,
+                  1, DARKBLUE);
+         draw_icon (double_buffer, items[l].icon, 48 + xofs,
+                    itm_no * 8 + 32 + yofs);
+         print_font (double_buffer, 56 + xofs, itm_no * 8 + 32 + yofs,
+                     items[l].name, FNORMAL);
+         sprintf (strbuf, "%d of %d", my, maxi);
+         print_font (double_buffer, 280 - (strlen (strbuf) * 8) + xofs,
+                     itm_no * 8 + 32 + yofs, strbuf, FNORMAL);
+         blit2screen (xofs, yofs);
+      }
+      readcontrols ();
+      if (up && my < maxi) {
+         unpress ();
+         my++;
+      }
+      if (down && my > 1) {
+         unpress ();
+         my--;
+      }
+      if (balt) {
+         unpress ();
+         menubox (double_buffer, 32 + xofs, 168 + yofs, 30, 1, DARKBLUE);
+         sprintf (strbuf, "Sell for %d gp?", (prc * 50 / 100) * my);
+         print_font (double_buffer, 160 - (strlen (strbuf) * 4) + xofs,
+                     176 + yofs, strbuf, FNORMAL);
+         sell_item (pg * 16 + itm_no, my);
+         stop = 1;
+      }
+      if (bctrl) {
+         unpress ();
+         stop = 1;
+      }
+   }
 }
 
 
@@ -1042,32 +975,27 @@ static void sell_item (int itno, int ni)
    print_font (double_buffer, 104 + xofs, 200 + yofs, "Confirm/Cancel",
                FNORMAL);
    blit2screen (xofs, yofs);
-   while (!stop)
-     {
-        readcontrols ();
-        if (balt)
-          {
-             unpress ();
-             gp += sp;
-             for (a = 0; a < SHOPITEMS; a++)
-               {
-                  if (l > 0 && shops[shop_no][a][0] == l)
-                    {
-                       shopq[shop_no][a] += ni;
-                       if (shopq[shop_no][a] > shops[shop_no][a][1])
-                          shopq[shop_no][a] = shops[shop_no][a][1];
-                    }
-               }
-             play_effect (SND_MONEY, 128);
-             remove_item (itno, ni);
-             stop = 1;
-          }
-        if (bctrl)
-          {
-             unpress ();
-             stop = 1;
-          }
-     }
+   while (!stop) {
+      readcontrols ();
+      if (balt) {
+         unpress ();
+         gp += sp;
+         for (a = 0; a < SHOPITEMS; a++) {
+            if (l > 0 && shops[shop_no][a][0] == l) {
+               shopq[shop_no][a] += ni;
+               if (shopq[shop_no][a] > shops[shop_no][a][1])
+                  shopq[shop_no][a] = shops[shop_no][a][1];
+            }
+         }
+         play_effect (SND_MONEY, 128);
+         remove_item (itno, ni);
+         stop = 1;
+      }
+      if (bctrl) {
+         unpress ();
+         stop = 1;
+      }
+   }
 }
 
 
@@ -1086,11 +1014,10 @@ void inn (char *iname, int gpc, int pay)
 {
    int a, b, my = 0, stop = 0, gpts;
 
-   if (pay == 0)
-     {
-        do_inn_effects ();
-        return;
-     }
+   if (pay == 0) {
+      do_inn_effects ();
+      return;
+   }
    unpress ();
    drawmap ();
    menubox (double_buffer, 152 - (strlen (iname) * 4) + xofs, yofs,
@@ -1098,20 +1025,18 @@ void inn (char *iname, int gpc, int pay)
    print_font (double_buffer, 160 - (strlen (iname) * 4) + xofs, 8 + yofs,
                iname, FGOLD);
    gpts = gpc;
-   for (a = 0; a < numchrs; a++)
-     {
-        if (party[pidx[a]].sts[S_POISON] != 0)
-           gpts += gpc * 50 / 100;
-        if (party[pidx[a]].sts[S_BLIND] != 0)
-           gpts += gpc * 50 / 100;
-        if (party[pidx[a]].sts[S_MUTE] != 0)
-           gpts += gpc * 50 / 100;
-        if (party[pidx[a]].sts[S_DEAD] != 0)
-          {
-             b = gpc * 50 / 100;
-             gpts += (b * party[pidx[a]].lvl / 5);
-          }
-     }
+   for (a = 0; a < numchrs; a++) {
+      if (party[pidx[a]].sts[S_POISON] != 0)
+         gpts += gpc * 50 / 100;
+      if (party[pidx[a]].sts[S_BLIND] != 0)
+         gpts += gpc * 50 / 100;
+      if (party[pidx[a]].sts[S_MUTE] != 0)
+         gpts += gpc * 50 / 100;
+      if (party[pidx[a]].sts[S_DEAD] != 0) {
+         b = gpc * 50 / 100;
+         gpts += (b * party[pidx[a]].lvl / 5);
+      }
+   }
    sprintf (strbuf, "The cost is %d gp for the night.", gpts);
    menubox (double_buffer, 152 - (strlen (strbuf) * 4) + xofs, 48 + yofs,
             strlen (strbuf), 1, BLUE);
@@ -1122,62 +1047,52 @@ void inn (char *iname, int gpc, int pay)
    sprintf (strbuf, "%d", gp);
    print_font (double_buffer, 312 - (strlen (strbuf) * 8) + xofs, 184 + yofs,
                strbuf, FNORMAL);
-   if (gp >= gpts)
-     {
-        menubox (double_buffer, 52 + xofs, 96 + yofs, 25, 2, BLUE);
-        print_font (double_buffer, 60 + xofs, 108 + yofs,
-                    "Do you wish to stay?", FNORMAL);
-     }
-   else
-     {
-        menubox (double_buffer, 32 + xofs, 96 + yofs, 30, 2, BLUE);
-        print_font (double_buffer, 40 + xofs, 108 + yofs,
-                    "You can't afford to stay here.", FNORMAL);
-        blit2screen (xofs, yofs);
-        wait_enter ();
-        return;
-     }
-   while (!stop)
-     {
-        menubox (double_buffer, 220 + xofs, 96 + yofs, 4, 2, DARKBLUE);
-        print_font (double_buffer, 236 + xofs, 104 + yofs, "yes", FNORMAL);
-        print_font (double_buffer, 236 + xofs, 112 + yofs, "no", FNORMAL);
-        draw_sprite (double_buffer, menuptr, 220 + xofs, my * 8 + 104 + yofs);
-        blit2screen (xofs, yofs);
-        readcontrols ();
-        if (down)
-          {
-             unpress ();
-             if (my == 0)
-                my = 1;
-             else
-                my = 0;
-             play_effect (SND_CLICK, 128);
-          }
-        if (up)
-          {
-             unpress ();
-             if (my == 0)
-                my = 1;
-             else
-                my = 0;
-             play_effect (SND_CLICK, 128);
-          }
-        if (balt)
-          {
-             unpress ();
-             if (my == 0)
-               {
-                  gp -= gpts;
-                  do_inn_effects ();
-                  stop = 1;
-               }
-             else
-               {
-                  stop = 2;
-               }
-          }
-     }
+   if (gp >= gpts) {
+      menubox (double_buffer, 52 + xofs, 96 + yofs, 25, 2, BLUE);
+      print_font (double_buffer, 60 + xofs, 108 + yofs,
+                  "Do you wish to stay?", FNORMAL);
+   } else {
+      menubox (double_buffer, 32 + xofs, 96 + yofs, 30, 2, BLUE);
+      print_font (double_buffer, 40 + xofs, 108 + yofs,
+                  "You can't afford to stay here.", FNORMAL);
+      blit2screen (xofs, yofs);
+      wait_enter ();
+      return;
+   }
+   while (!stop) {
+      menubox (double_buffer, 220 + xofs, 96 + yofs, 4, 2, DARKBLUE);
+      print_font (double_buffer, 236 + xofs, 104 + yofs, "yes", FNORMAL);
+      print_font (double_buffer, 236 + xofs, 112 + yofs, "no", FNORMAL);
+      draw_sprite (double_buffer, menuptr, 220 + xofs, my * 8 + 104 + yofs);
+      blit2screen (xofs, yofs);
+      readcontrols ();
+      if (down) {
+         unpress ();
+         if (my == 0)
+            my = 1;
+         else
+            my = 0;
+         play_effect (SND_CLICK, 128);
+      }
+      if (up) {
+         unpress ();
+         if (my == 0)
+            my = 1;
+         else
+            my = 0;
+         play_effect (SND_CLICK, 128);
+      }
+      if (balt) {
+         unpress ();
+         if (my == 0) {
+            gp -= gpts;
+            do_inn_effects ();
+            stop = 1;
+         } else {
+            stop = 2;
+         }
+      }
+   }
    timer_count = 0;
 }
 
@@ -1192,14 +1107,13 @@ static void do_inn_effects (void)
 {
    int a, b, c;
 
-   for (a = 0; a < numchrs; a++)
-     {
-        c = pidx[a];
-        party[c].hp = party[c].mhp;
-        party[c].mp = party[c].mmp;
-        for (b = 0; b < 8; b++)
-           party[c].sts[b] = 0;
-     }
+   for (a = 0; a < numchrs; a++) {
+      c = pidx[a];
+      party[c].hp = party[c].mhp;
+      party[c].mp = party[c].mmp;
+      for (b = 0; b < 8; b++)
+         party[c].sts[b] = 0;
+   }
    pause_music ();
    play_effect (36, 128);
    do_transition (TRANS_FADE_OUT, 2);

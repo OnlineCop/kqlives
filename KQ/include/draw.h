@@ -103,7 +103,7 @@ void message (char *, int, int, int, int);
 /*  intrface.c, kq.c  */
 void set_view (int, int, int, int, int);
 
-
+BITMAP *copy_bitmap (BITMAP *, BITMAP *);
 
 /*  global variables  */
 extern unsigned char BLUE;

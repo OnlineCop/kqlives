@@ -62,99 +62,81 @@ int save_screenshot (BITMAP * src_bmp, const char *prefix)
    const char *savedir = kqres (SAVE_DIR, ".");
    /* check to make sure the folder exists, but ignore errors if the
     * directory contains '.' because allegro cannot detect it. */
-   if (strchr (savedir, '.') || file_exists (savedir, FA_DIREC, NULL))
-     {
-        /* the name can only be up to SAVE_NAME_SIZE-1 characters */
-        int prefix_len = strlen (prefix);
-        if (prefix_len < SAVE_NAME_SIZE)
-          {
-             struct al_ffblk old_file;  /* structure to store matched files */
-             int last = -1;     /* will store the latest screenshot number */
+   if (strchr (savedir, '.') || file_exists (savedir, FA_DIREC, NULL)) {
+      /* the name can only be up to SAVE_NAME_SIZE-1 characters */
+      int prefix_len = strlen (prefix);
+      if (prefix_len < SAVE_NAME_SIZE) {
+         struct al_ffblk old_file;      /* structure to store matched files */
+         int last = -1;         /* will store the latest screenshot number */
 
-             /* construct the wild card to look like "saves/prefix*.pcx" */
-             sprintf (filename, "%s/%s*.pcx", savedir, prefix);
+         /* construct the wild card to look like "saves/prefix*.pcx" */
+         sprintf (filename, "%s/%s*.pcx", savedir, prefix);
 
-             /* 
-                now, lets look for pre-existing screen shots 
-                this is done, just to find the highest number already used
-              */
-             if (!al_findfirst (filename, &old_file, 255))
-               {
-                  do
-                    {
-                       char buffer[SAVE_NAME_SIZE + 1];
-                       /* always should be 12 characters, ie: shot1234.pcx */
-                       if (strlen (get_filename (old_file.name)) ==
-                           SAVE_NAME_SIZE + 4)
-                         {
-                            /* ie: if the filename found is "c:\kq\saves\shot0001.pcx", convert it to "0001" */
-                            strncpy (buffer,
-                                     get_filename (old_file.name) + prefix_len,
-                                     SAVE_NAME_SIZE - prefix_len);
-                            buffer[SAVE_NAME_SIZE - prefix_len] = 0;
-
-                            /* finally, if the the screenshot number is larger, remember it */
-                            if (atoi (buffer) > last)
-                               last = atoi (buffer);
-                         }
-                    }
-                  while (!al_findnext (&old_file));
-               }
-             al_findclose (&old_file);
-
-             /* check to make sure we haven't reached our limit of saves */
-             if (++last < (int) pow (10, SAVE_NAME_SIZE - prefix_len))
-               {
-                  PALETTE pal;
-                  BITMAP *temp;
-
-                  /* a format variable has to be set up to handle the custom formatting */
-                  char format[50];
-                  sprintf (format, "%%s/%%s%%0%dd.pcx",
+         /* 
+            now, lets look for pre-existing screen shots 
+            this is done, just to find the highest number already used
+          */
+         if (!al_findfirst (filename, &old_file, 255)) {
+            do {
+               char buffer[SAVE_NAME_SIZE + 1];
+               /* always should be 12 characters, ie: shot1234.pcx */
+               if (strlen (get_filename (old_file.name)) == SAVE_NAME_SIZE + 4) {
+                  /* ie: if the filename found is "c:\kq\saves\shot0001.pcx", convert it to "0001" */
+                  strncpy (buffer,
+                           get_filename (old_file.name) + prefix_len,
                            SAVE_NAME_SIZE - prefix_len);
+                  buffer[SAVE_NAME_SIZE - prefix_len] = 0;
 
-                  /* after the next sprintf, we will have something like "shots/kq000001.pcx" */
-                  sprintf (filename, format, savedir, prefix, last);
+                  /* finally, if the the screenshot number is larger, remember it */
+                  if (atoi (buffer) > last)
+                     last = atoi (buffer);
+               }
+            }
+            while (!al_findnext (&old_file));
+         }
+         al_findclose (&old_file);
 
-                  /* if the src_bmp is the screen, then we need to create a sub bitmap just in case */
-                  temp =
-                     (src_bmp == screen) ? create_sub_bitmap (screen, 0, 0,
-                                                              SCREEN_W,
-                                                              SCREEN_H) :
-                     src_bmp;
-                  if (temp)
-                    {
-                       get_palette (pal);
-                       save_bitmap (filename, temp, pal);
-                       if (src_bmp == screen)
-                          destroy_bitmap (temp);
-                    }
-                  else
-                    {
-                       TRACE
-                          ("the bitmap [0x%p] is invalid (or unable to create sub bitmap)\n",
-                           src_bmp);
-                       return SS_BAD_BITMAP;
-                    }
-               }
-             else
-               {
-                  allegro_message ("no more room for screenshot\n");
-                  TRACE ("no more room for screenshot\n");
-                  return SS_OUT_OF_NUMBERS;
-               }
-          }
-        else
-          {
-             TRACE ("the prefix '%s' is too long\n", prefix);
-             return SS_BAD_PREFIX;
-          }
-     }
-   else
-     {
-        TRACE ("save path '%s' does not exist.\n", filename);
-        return SS_BAD_FOLDER;
-     }
+         /* check to make sure we haven't reached our limit of saves */
+         if (++last < (int) pow (10, SAVE_NAME_SIZE - prefix_len)) {
+            PALETTE pal;
+            BITMAP *temp;
+
+            /* a format variable has to be set up to handle the custom formatting */
+            char format[50];
+            sprintf (format, "%%s/%%s%%0%dd.pcx", SAVE_NAME_SIZE - prefix_len);
+
+            /* after the next sprintf, we will have something like "shots/kq000001.pcx" */
+            sprintf (filename, format, savedir, prefix, last);
+
+            /* if the src_bmp is the screen, then we need to create a sub bitmap just in case */
+            temp =
+               (src_bmp == screen) ? create_sub_bitmap (screen, 0, 0,
+                                                        SCREEN_W,
+                                                        SCREEN_H) : src_bmp;
+            if (temp) {
+               get_palette (pal);
+               save_bitmap (filename, temp, pal);
+               if (src_bmp == screen)
+                  destroy_bitmap (temp);
+            } else {
+               TRACE
+                  ("the bitmap [0x%p] is invalid (or unable to create sub bitmap)\n",
+                   src_bmp);
+               return SS_BAD_BITMAP;
+            }
+         } else {
+            allegro_message ("no more room for screenshot\n");
+            TRACE ("no more room for screenshot\n");
+            return SS_OUT_OF_NUMBERS;
+         }
+      } else {
+         TRACE ("the prefix '%s' is too long\n", prefix);
+         return SS_BAD_PREFIX;
+      }
+   } else {
+      TRACE ("save path '%s' does not exist.\n", filename);
+      return SS_BAD_FOLDER;
+   }
 
    return SS_SAVED_OK;
 }

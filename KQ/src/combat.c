@@ -110,13 +110,11 @@ int combat_check (int comx, int comy)
     *           one.
     * PH: done this 20020222
     */
-   for (i = 0; i < NUM_BATTLES; i++)
-     {
-        if (battles[i].mapnum == g_map.map_no && battles[i].zonenum == zn)
-          {
-             return combat (i);
-          }
-     }
+   for (i = 0; i < NUM_BATTLES; i++) {
+      if (battles[i].mapnum == g_map.map_no && battles[i].zonenum == zn) {
+         return combat (i);
+      }
+   }
    return 0;
 }
 
@@ -140,61 +138,53 @@ int combat (int bno)
    int lc;
 
    /* PH: some checking! */
-   if (bno < 0 || bno >= NUM_BATTLES)
-     {
-        sprintf (strbuf, "Combat: battle %d does not exist.", bno);
-        program_death (strbuf);
-     }
+   if (bno < 0 || bno >= NUM_BATTLES) {
+      sprintf (strbuf, "Combat: battle %d does not exist.", bno);
+      program_death (strbuf);
+   }
 
    /* TT: no battles during scripted movements */
-   if (g_ent[0].movemode == 2)
-     {
-        return 0;
-     }
+   if (g_ent[0].movemode == 2) {
+      return 0;
+   }
 
    /*  RB: check if we had had a random encounter  */
-   if (battles[bno].enc > 1)
-     {
-        /* TT: This will skip battles if the player hasn't moved the necessary
-           number of steps AND a random number does not equal zero.
-         */
-        if ((steps < STEPS_NEEDED) || ((rand () % battles[bno].enc) > 0))
-          {
-             return 0;
-          }
-     }
+   if (battles[bno].enc > 1) {
+      /* TT: This will skip battles if the player hasn't moved the necessary
+         number of steps AND a random number does not equal zero.
+       */
+      if ((steps < STEPS_NEEDED) || ((rand () % battles[bno].enc) > 0)) {
+         return 0;
+      }
+   }
 
    /*  RB: had one! choose what we had just found  */
    steps = 0;
    hero_level = party[pidx[0]].lvl;
    encounter = select_encounter (battles[bno].etnum, battles[bno].eidx);
 
-   if (hero_level >= erows[encounter].lvl + 5 && battles[bno].eidx == 99)
-     {
-        lc = (hero_level - erows[encounter].lvl) * 5;
+   if (hero_level >= erows[encounter].lvl + 5 && battles[bno].eidx == 99) {
+      lc = (hero_level - erows[encounter].lvl) * 5;
 
-        /* TT: This will skip battles based on a random number from hero's
-           level minus enemy's level.
-         */
-        if ((rand () % 100) < lc)
-          {
-             return 0;
-          }
-     }
+      /* TT: This will skip battles based on a random number from hero's
+         level minus enemy's level.
+       */
+      if ((rand () % 100) < lc) {
+         return 0;
+      }
+   }
 
-   if (progress[P_REPULSE] > 0)
-     {
-        lc = (hero_level - erows[encounter].lvl) * 20;
-        if (lc < 5)
-           lc = 5;
+   if (progress[P_REPULSE] > 0) {
+      lc = (hero_level - erows[encounter].lvl) * 20;
+      if (lc < 5)
+         lc = 5;
 
-        /* Although Repulse is active, there's still a 1-in-20 chance of
-           battle */
-        if ((rand () % 100) < lc)
-          {
-             return 0;
-          }
-     }
+      /* Although Repulse is active, there's still a 1-in-20 chance of
+         battle */
+      if ((rand () % 100) < lc) {
+         return 0;
+      }
+   }
 
    init_fighters ();
    return do_combat (battles[bno].backimg, battles[bno].bmusic,
@@ -214,68 +204,57 @@ static int do_combat (char *bg, char *mus, int is_rnd)
    int zoom_step;
    in_combat = 1;
    backart = load_datafile_object (PCX_DATAFILE, bg);
-   if (is_rnd)
-     {
-        if ((numchrs == 1) && (pidx[0] == AYLA))
-          {
-             hs = rand () % 100 + 1;
-             ms = rand () % 3 + 1;
-          }
-        else
-          {
-             if (numchrs > 1 && (in_party (AYLA) > 0))
-               {
-                  hs = rand () % 20 + 1;
-                  ms = rand () % 5 + 1;
-               }
-             else
-               {
-                  hs = rand () % 10 + 1;
-                  ms = rand () % 10 + 1;
-               }
-          }
-     }
-   else
-     {
-        hs = 10;
-        ms = 10;
-     }
+   if (is_rnd) {
+      if ((numchrs == 1) && (pidx[0] == AYLA)) {
+         hs = rand () % 100 + 1;
+         ms = rand () % 3 + 1;
+      } else {
+         if (numchrs > 1 && (in_party (AYLA) > 0)) {
+            hs = rand () % 20 + 1;
+            ms = rand () % 5 + 1;
+         } else {
+            hs = rand () % 10 + 1;
+            ms = rand () % 10 + 1;
+         }
+      }
+   } else {
+      hs = 10;
+      ms = 10;
+   }
 
    /*  RB: do the zoom at the beginning of the combat.  */
    pause_music ();
    set_music_volume ((gmvol / 250.0) * 0.75);
    play_music (mus, 0);
    if (stretch_view == 2)
-
-     {
-        do_transition (TRANS_FADE_OUT, 2);
-        clear_bitmap (double_buffer);
-        do_transition (TRANS_FADE_IN, 64);
-     }
+   {
+      do_transition (TRANS_FADE_OUT, 2);
+      clear_bitmap (double_buffer);
+      do_transition (TRANS_FADE_IN, 64);
+   }
 
    else
       for (zoom_step = 0; zoom_step < 9; zoom_step++)
+      {
+         poll_music ();
 
-        {
-           poll_music ();
+         /*  RB FIXME: stretching when 640x480, stretching when 320x240?  */
+         /*            shouldn't one of those be the "common" size, and   */
+         /*            therefore not needing to stretch it?               */
+         /*            320x240 is the double_buffer size...               */
+         if (stretch_view == 1)
+            stretch_blit (double_buffer, screen, zoom_step * 16 + xofs,
+                          zoom_step * 12 + yofs, 320 - (zoom_step * 32),
+                          240 - (zoom_step * 24), 0, 0, 640, 480);
 
-           /*  RB FIXME: stretching when 640x480, stretching when 320x240?  */
-           /*            shouldn't one of those be the "common" size, and   */
-           /*            therefore not needing to stretch it?               */
-           /*            320x240 is the double_buffer size...               */
-           if (stretch_view == 1)
-              stretch_blit (double_buffer, screen, zoom_step * 16 + xofs,
-                            zoom_step * 12 + yofs, 320 - (zoom_step * 32),
-                            240 - (zoom_step * 24), 0, 0, 640, 480);
+         else
+            stretch_blit (double_buffer, screen, zoom_step * 16 + xofs,
+                          zoom_step * 12 + yofs, 320 - (zoom_step * 32),
+                          240 - (zoom_step * 24), 0, 0, 320, 240);
 
-           else
-              stretch_blit (double_buffer, screen, zoom_step * 16 + xofs,
-                            zoom_step * 12 + yofs, 320 - (zoom_step * 32),
-                            240 - (zoom_step * 24), 0, 0, 320, 240);
-
-           /*  RB FIXME: should we vsync here rather than rest?  */
-           wait (100);
-        }
+         /*  RB FIXME: should we vsync here rather than rest?  */
+         wait (100);
+      }
    snap_togrid ();
    roll_initiative ();
    curx = 0;
@@ -310,14 +289,13 @@ static void init_fighters (void)
 {
    int index;
 
-   for (index = 0; index < NUM_FIGHTERS; index++)
-     {
-        deffect[index] = 0;
-        fighter[index].mhp = 0;
-        fighter[index].aux = 0;
-        /* .defend was not initialized; patch supplied by Sam H */
-        fighter[index].defend = 0;
-     }
+   for (index = 0; index < NUM_FIGHTERS; index++) {
+      deffect[index] = 0;
+      fighter[index].mhp = 0;
+      fighter[index].aux = 0;
+      /* .defend was not initialized; patch supplied by Sam H */
+      fighter[index].defend = 0;
+   }
 
    // TT: These two are only called once in the game; should we move them here?
    hero_init ();
@@ -354,23 +332,21 @@ static void snap_togrid (void)
       fighter[index].facing = mf;
 
    hf = 170 - (numchrs * 24);
-   for (index = 0; index < numchrs; index++)
-     {
-        fighter[index].cx = index * 48 + hf;
-        fighter[index].cy = 128;
-     }
+   for (index = 0; index < numchrs; index++) {
+      fighter[index].cx = index * 48 + hf;
+      fighter[index].cy = 128;
+   }
 
    a = fighter[PSIZE].cw + 16;
    mf = 170 - (numens * a / 2);
-   for (index = PSIZE; index < PSIZE + numens; index++)
-     {
-        fighter[index].cx = (index - PSIZE) * a + mf;
+   for (index = PSIZE; index < PSIZE + numens; index++) {
+      fighter[index].cx = (index - PSIZE) * a + mf;
 
-        if (fighter[index].cl < 104)
-           fighter[index].cy = 104 - fighter[index].cl;
-        else
-           fighter[index].cy = 8;
-     }
+      if (fighter[index].cl < 104)
+         fighter[index].cy = 104 - fighter[index].cl;
+      else
+         fighter[index].cy = 8;
+   }
 }
 
 
@@ -386,39 +362,35 @@ static void roll_initiative (void)
 {
    int i, j;
 
-   if (hs == 1 && ms == 1)
-     {
-        hs = 10;
-        ms = 10;
-     }
+   if (hs == 1 && ms == 1) {
+      hs = 10;
+      ms = 10;
+   }
 
-   for (i = 0; i < NUM_FIGHTERS; i++)
-     {
-        fighter[i].csmem = 0;
-        fighter[i].ctmem = 0;
-        cact[i] = 1;
-        j = ROUND_MAX * 66 / 100;
-        if (j < 1)
-           j = 1;
+   for (i = 0; i < NUM_FIGHTERS; i++) {
+      fighter[i].csmem = 0;
+      fighter[i].ctmem = 0;
+      cact[i] = 1;
+      j = ROUND_MAX * 66 / 100;
+      if (j < 1)
+         j = 1;
 
-        bspeed[i] = rand () % j;
-     }
+      bspeed[i] = rand () % j;
+   }
 
-   for (i = 0; i < numchrs; i++)
-     {
-        if (ms == 1)
-           bspeed[i] = ROUND_MAX;
-        else if (hs == 1)
-           bspeed[i] = 0;
-     }
+   for (i = 0; i < numchrs; i++) {
+      if (ms == 1)
+         bspeed[i] = ROUND_MAX;
+      else if (hs == 1)
+         bspeed[i] = 0;
+   }
 
-   for (i = PSIZE; i < PSIZE + numens; i++)
-     {
-        if (hs == 1)
-           bspeed[i] = ROUND_MAX;
-        else if (ms == 1)
-           bspeed[i] = 0;
-     }
+   for (i = PSIZE; i < PSIZE + numens; i++) {
+      if (hs == 1)
+         bspeed[i] = ROUND_MAX;
+      else if (ms == 1)
+         bspeed[i] = 0;
+   }
 
    rcount = 0;
    /* PH: this isn't right because not all members of the fighter[] array
@@ -434,15 +406,13 @@ static void roll_initiative (void)
 /*               cast_imbued_spell (i, fighter[i].imb[j], 1, TGT_CASTER); */
 /*      } */
 /* PH: This should be ok */
-   for (i = 0; i < NUM_FIGHTERS; i++)
-     {
-        if (i < numchrs || (i >= PSIZE && i < (PSIZE + numens)))
-          {
-             for (j = 0; j < 2; j++)
-                if (fighter[i].imb[j] > 0)
-                   cast_imbued_spell (i, fighter[i].imb[j], 1, TGT_CASTER);
-          }
-     }
+   for (i = 0; i < NUM_FIGHTERS; i++) {
+      if (i < numchrs || (i >= PSIZE && i < (PSIZE + numens))) {
+         for (j = 0; j < 2; j++)
+            if (fighter[i].imb[j] > 0)
+               cast_imbued_spell (i, fighter[i].imb[j], 1, TGT_CASTER);
+      }
+   }
 
    battle_render (-1, -1, 0);
    blit2screen (0, 0);
@@ -474,55 +444,47 @@ void battle_render (int plyr, int hl, int sall)
    int b = 0;
    int sz;
 
-   if (plyr > 0)
-     {
-        curx = fighter[plyr - 1].cx;
-        cury = fighter[plyr - 1].cy;
-        curw = fighter[plyr - 1].cw;
-     }
-   else
-     {
-        curx = -1;
-        cury = -1;
-     }
+   if (plyr > 0) {
+      curx = fighter[plyr - 1].cx;
+      cury = fighter[plyr - 1].cy;
+      curw = fighter[plyr - 1].cw;
+   } else {
+      curx = -1;
+      cury = -1;
+   }
 
    clear_bitmap (double_buffer);
    blit ((BITMAP *) backart->dat, double_buffer, 0, 0, 0, 0, 320, 240);
 #ifdef KQ_CHEATS
-   if (debugging > 2)
-     {
-        rectfill (double_buffer, 0, 0, rcount / 2, 9, 15);
-        sprintf (strbuf, "%d", rcount);
-        print_font (double_buffer, 0, 20, strbuf, FNORMAL);
-        sprintf (strbuf, "0: %d - %d", fighter[0].sts[S_POISON],
-                 fighter[0].sts[S_REGEN]);
+   if (debugging > 2) {
+      rectfill (double_buffer, 0, 0, rcount / 2, 9, 15);
+      sprintf (strbuf, "%d", rcount);
+      print_font (double_buffer, 0, 20, strbuf, FNORMAL);
+      sprintf (strbuf, "0: %d - %d", fighter[0].sts[S_POISON],
+               fighter[0].sts[S_REGEN]);
 
-        print_font (double_buffer, 0, 28, strbuf, FNORMAL);
-        sprintf (strbuf, "1: %d - %d", fighter[1].sts[S_POISON],
-                 fighter[1].sts[S_REGEN]);
-        print_font (double_buffer, 0, 36, strbuf, FNORMAL);
-     }
+      print_font (double_buffer, 0, 28, strbuf, FNORMAL);
+      sprintf (strbuf, "1: %d - %d", fighter[1].sts[S_POISON],
+               fighter[1].sts[S_REGEN]);
+      print_font (double_buffer, 0, 36, strbuf, FNORMAL);
+   }
 #endif
-   if ((sall == 0) && (curx > -1) && (cury > -1))
-     {
-        draw_sprite (double_buffer, bptr, curx + (curw / 2) - 8, cury - 8);
-        if (plyr - 1 >= PSIZE)
-          {
-             t = curx + (curw / 2);
-             t -= (strlen (fighter[plyr - 1].name) * 4);
-             z = fighter[plyr - 1].cy - 32;
+   if ((sall == 0) && (curx > -1) && (cury > -1)) {
+      draw_sprite (double_buffer, bptr, curx + (curw / 2) - 8, cury - 8);
+      if (plyr - 1 >= PSIZE) {
+         t = curx + (curw / 2);
+         t -= (strlen (fighter[plyr - 1].name) * 4);
+         z = fighter[plyr - 1].cy - 32;
 
-             if (z < 0)
-                z = fighter[plyr - 1].cy + fighter[plyr - 1].cl;
+         if (z < 0)
+            z = fighter[plyr - 1].cy + fighter[plyr - 1].cl;
 
-             menubox (double_buffer, t - 8, z,
-                      strlen (fighter[plyr - 1].name), 1, BLUE);
-             print_font (double_buffer, t, z + 8, fighter[plyr - 1].name,
-                         FNORMAL);
-          }
+         menubox (double_buffer, t - 8, z,
+                  strlen (fighter[plyr - 1].name), 1, BLUE);
+         print_font (double_buffer, t, z + 8, fighter[plyr - 1].name, FNORMAL);
+      }
 #ifdef KQ_CHEATS
-        if (debugging > 2)
-          {
+      if (debugging > 2) {
 /*
          RB TODO: Check this out.
 
@@ -558,92 +520,84 @@ void battle_render (int plyr, int hl, int sall)
             print_font(double_buffer, 40, t * 8 + 24, strbuf, FNORMAL);
          }
 */
-          }
+      }
 #endif
-     }
+   }
 
-   for (z = 0; z < numchrs; z++)
-     {
-        b = z * 216;
+   for (z = 0; z < numchrs; z++) {
+      b = z * 216;
 
-        if (fighter[z].sts[S_DEAD] == 0)
-          {
-             draw_fighter (z, (sall == 1));
-          }
-        else
-          {
-             fighter[z].aframe = 3;
-             draw_fighter (z, 0);
-          }
+      if (fighter[z].sts[S_DEAD] == 0) {
+         draw_fighter (z, (sall == 1));
+      } else {
+         fighter[z].aframe = 3;
+         draw_fighter (z, 0);
+      }
 
-        menubox (double_buffer, b, 184, 11, 5, BLUE);
-        if (fighter[z].sts[S_DEAD] == 0)
-          {
-             sz = bspeed[z] * 88 / ROUND_MAX;
-             if (sz > 88)
-                sz = 88;
+      menubox (double_buffer, b, 184, 11, 5, BLUE);
+      if (fighter[z].sts[S_DEAD] == 0) {
+         sz = bspeed[z] * 88 / ROUND_MAX;
+         if (sz > 88)
+            sz = 88;
 
-             a = 116;
-             if (fighter[z].sts[S_TIME] == 1)
-                a = 83;
+         a = 116;
+         if (fighter[z].sts[S_TIME] == 1)
+            a = 83;
 
-             if (fighter[z].sts[S_TIME] == 2)
-                a = 36;
+         if (fighter[z].sts[S_TIME] == 2)
+            a = 36;
 
-             a += (sz / 11);
-             hline (double_buffer, b + 8, 229, b + sz + 8, a + 1);
-             hline (double_buffer, b + 8, 230, b + sz + 8, a);
-             hline (double_buffer, b + 8, 231, b + sz + 8, a - 1);
-          }
+         a += (sz / 11);
+         hline (double_buffer, b + 8, 229, b + sz + 8, a + 1);
+         hline (double_buffer, b + 8, 230, b + sz + 8, a);
+         hline (double_buffer, b + 8, 231, b + sz + 8, a - 1);
+      }
 
-        print_font (double_buffer, b + 8, 192, fighter[z].name,
-                    (hl == z + 1) ? FGOLD : FNORMAL);
+      print_font (double_buffer, b + 8, 192, fighter[z].name,
+                  (hl == z + 1) ? FGOLD : FNORMAL);
 
-        sprintf (strbuf, "HP: %3d/%3d", fighter[z].hp, fighter[z].mhp);
-        /*  RB IDEA: If the character has less than 1/5 of his/her max    */
-        /*           health points, it shows the amount with red (the     */
-        /*           character is in danger). I suggest setting that '5'  */
-        /*           as a '#define WARNING_LEVEL 5' or something like     */
-        /*           that, so we can change it easily (maybe we can let   */
-        /*           the player choose when it should be turned red).     */
-        /*  TT TODO: I like this idea; maybe somewhere in the Options     */
-        /*           menu?  I find that when the bar flashes red/yellow   */
-        /*           to warn the player, it's much more eye-pleasing than */
-        /*           just a solid color (and not too hard to implement).  */
+      sprintf (strbuf, "HP: %3d/%3d", fighter[z].hp, fighter[z].mhp);
+      /*  RB IDEA: If the character has less than 1/5 of his/her max    */
+      /*           health points, it shows the amount with red (the     */
+      /*           character is in danger). I suggest setting that '5'  */
+      /*           as a '#define WARNING_LEVEL 5' or something like     */
+      /*           that, so we can change it easily (maybe we can let   */
+      /*           the player choose when it should be turned red).     */
+      /*  TT TODO: I like this idea; maybe somewhere in the Options     */
+      /*           menu?  I find that when the bar flashes red/yellow   */
+      /*           to warn the player, it's much more eye-pleasing than */
+      /*           just a solid color (and not too hard to implement).  */
 
-        print_font (double_buffer, b + 8, 208, strbuf,
-                    (fighter[z].hp < (fighter[z].mhp / 5)) ? FRED : FNORMAL);
+      print_font (double_buffer, b + 8, 208, strbuf,
+                  (fighter[z].hp < (fighter[z].mhp / 5)) ? FRED : FNORMAL);
 
-        hline (double_buffer, b + 8, 216, b + 95, 21);
-        sz = (fighter[z].hp > 0) ? fighter[z].hp * 88 / fighter[z].mhp : 88;
+      hline (double_buffer, b + 8, 216, b + 95, 21);
+      sz = (fighter[z].hp > 0) ? fighter[z].hp * 88 / fighter[z].mhp : 88;
 
-        hline (double_buffer, b + 8, 216, b + 8 + sz, 12);
-        sprintf (strbuf, "MP: %3d/%3d", fighter[z].mp, fighter[z].mmp);
+      hline (double_buffer, b + 8, 216, b + 8 + sz, 12);
+      sprintf (strbuf, "MP: %3d/%3d", fighter[z].mp, fighter[z].mmp);
 
-        /*  RB IDEA: Same suggestion as with health, just above.  */
-        print_font (double_buffer, b + 8, 218, strbuf,
-                    (fighter[z].mp < (fighter[z].mmp / 5)) ? FRED : FNORMAL);
-        hline (double_buffer, b + 8, 226, b + 95, 21);
-        sz = (fighter[z].mp > 0) ? fighter[z].mp * 88 / fighter[z].mmp : 88;
-        hline (double_buffer, b + 8, 226, b + 8 + sz, 12);
-        draw_stsicon (double_buffer, 1, z, 17, b + 8, 200);
-     }
+      /*  RB IDEA: Same suggestion as with health, just above.  */
+      print_font (double_buffer, b + 8, 218, strbuf,
+                  (fighter[z].mp < (fighter[z].mmp / 5)) ? FRED : FNORMAL);
+      hline (double_buffer, b + 8, 226, b + 95, 21);
+      sz = (fighter[z].mp > 0) ? fighter[z].mp * 88 / fighter[z].mmp : 88;
+      hline (double_buffer, b + 8, 226, b + 8 + sz, 12);
+      draw_stsicon (double_buffer, 1, z, 17, b + 8, 200);
+   }
 
-   for (t = PSIZE; t < PSIZE + numens; t++)
-     {
-        if (fighter[t].sts[S_DEAD] == 0)
-          {
-             draw_fighter (t, (sall == 2));
-          }
-     }
+   for (t = PSIZE; t < PSIZE + numens; t++) {
+      if (fighter[t].sts[S_DEAD] == 0) {
+         draw_fighter (t, (sall == 2));
+      }
+   }
 
-   if (dct == 1)
-     {
-        menubox (double_buffer, 152 - (strlen (ctext) * 4), 8, strlen (ctext),
-                 1, BLUE);
-        print_font (double_buffer, 160 - (strlen (ctext) * 4), 16, ctext,
-                    FNORMAL);
-     }
+   if (dct == 1) {
+      menubox (double_buffer, 152 - (strlen (ctext) * 4), 8, strlen (ctext),
+               1, BLUE);
+      print_font (double_buffer, 160 - (strlen (ctext) * 4), 16, ctext,
+                  FNORMAL);
+   }
 }
 
 
@@ -665,140 +619,125 @@ static void do_round (void)
 
    st = 0;
    timer_count = 0;
-   while (combatend == 0)
-     {
-        if (timer_count >= 10)
-          {
-             rcount += BATTLE_INC;
+   while (combatend == 0) {
+      if (timer_count >= 10) {
+         rcount += BATTLE_INC;
 
-             if (rcount >= ROUND_MAX)
-                rcount = 0;
+         if (rcount >= ROUND_MAX)
+            rcount = 0;
 
-             for (index = 0; index < PSIZE + numens; index++)
-               {
-                  if ((index < numchrs) || (index >= PSIZE))
-                    {
-                       if (((fighter[index].sts[S_POISON] - 1) == rcount) &&
-                           (fighter[index].hp > 1))
-                         {
-                            a = rand () % ((fighter[index].mhp / 20) + 1);
+         for (index = 0; index < PSIZE + numens; index++) {
+            if ((index < numchrs) || (index >= PSIZE)) {
+               if (((fighter[index].sts[S_POISON] - 1) == rcount) &&
+                   (fighter[index].hp > 1)) {
+                  a = rand () % ((fighter[index].mhp / 20) + 1);
 
-                            if (a < 2)
-                               a = 2;
+                  if (a < 2)
+                     a = 2;
 
-                            if ((fighter[index].hp - a) < 1)
-                               a = fighter[index].hp - 1;
+                  if ((fighter[index].hp - a) < 1)
+                     a = fighter[index].hp - 1;
 
-                            ta[index] = a;
-                            display_amount (index, FNORMAL, 0);
-                            fighter[index].hp -= a;
-                         }
-
-                       /*  RB: the character is regenerating? when needed, get a  */
-                       /*      random value (never lower than 5), and increase    */
-                       /*      the character's health by that amount.             */
-                       if ((fighter[index].sts[S_REGEN] - 1) == rcount)
-                         {
-                            a = rand () % 5 + (fighter[index].mhp / 10);
-
-                            if (a < 5)
-                               a = 5;
-
-                            ta[index] = a;
-                            display_amount (index, FYELLOW, 0);
-                            adjust_hp (index, a);
-                         }
-
-                       /*  RB: the character has ether actived?  */
-                       cact[index] = 1;
-                       if ((fighter[index].sts[S_ETHER] > 0) && (rcount == 0))
-                          fighter[index].sts[S_ETHER]--;
-
-                       /*  RB: the character is stopped?  */
-                       if (fighter[index].sts[S_STOP] > 0)
-                         {
-                            if (pidx[index] == TEMMIN)
-                               fighter[index].aux = 0;
-
-                            if (rcount == 0)
-                               fighter[index].sts[S_STOP]--;
-
-                            cact[index] = 0;
-                         }
-
-                       /*  RB: the character is sleeping?  */
-                       if (fighter[index].sts[S_SLEEP] > 0)
-                         {
-                            if (pidx[index] == TEMMIN)
-                               fighter[index].aux = 0;
-
-                            if (rcount == 0)
-                               fighter[index].sts[S_SLEEP]--;
-
-                            cact[index] = 0;
-                         }
-
-                       /*  RB: the character is petrified?  */
-                       if (fighter[index].sts[S_STONE] > 0)
-                         {
-                            if (pidx[index] == TEMMIN)
-                               fighter[index].aux = 0;
-
-                            if (rcount == 0)
-                               fighter[index].sts[S_STONE]--;
-
-                            cact[index] = 0;
-                         }
-
-                       if ((fighter[index].sts[S_DEAD] != 0) ||
-                           (fighter[index].mhp <= 0))
-                         {
-                            if (pidx[index] == TEMMIN)
-                               fighter[index].aux = 0;
-
-                            bspeed[index] = 0;
-                            cact[index] = 0;
-                         }
-
-                       if (cact[index] > 0)
-                         {
-                            if (fighter[index].sts[S_TIME] == 0)
-                               bspeed[index] += nspeed[index];
-                            else
-                              {
-                                 if (fighter[index].sts[S_TIME] == 1)
-                                    bspeed[index] += (nspeed[index] / 2 + 1);
-                                 else
-                                    bspeed[index] += (nspeed[index] * 2);
-                              }
-                         }
-                    }
-                  else
-                     cact[index] = 0;
+                  ta[index] = a;
+                  display_amount (index, FNORMAL, 0);
+                  fighter[index].hp -= a;
                }
 
-             readcontrols ();
-             battle_render (0, 0, 0);
-             blit2screen (0, 0);
+               /*  RB: the character is regenerating? when needed, get a  */
+               /*      random value (never lower than 5), and increase    */
+               /*      the character's health by that amount.             */
+               if ((fighter[index].sts[S_REGEN] - 1) == rcount) {
+                  a = rand () % 5 + (fighter[index].mhp / 10);
 
-             for (index = 0; index < (PSIZE + numens); index++)
-               {
-                  if ((bspeed[index] >= ROUND_MAX) && (cact[index] > 0))
-                    {
-                       do_action (index);
-                       fighter[index].ctmem = 0;
-                       fighter[index].csmem = 0;
-                       cact[index] = 1;
-                       bspeed[index] = 0;
-                    }
+                  if (a < 5)
+                     a = 5;
 
-                  if (combatend)
-                     return;
+                  ta[index] = a;
+                  display_amount (index, FYELLOW, 0);
+                  adjust_hp (index, a);
                }
 
-             timer_count = 0;
-          }
-     }
+               /*  RB: the character has ether actived?  */
+               cact[index] = 1;
+               if ((fighter[index].sts[S_ETHER] > 0) && (rcount == 0))
+                  fighter[index].sts[S_ETHER]--;
+
+               /*  RB: the character is stopped?  */
+               if (fighter[index].sts[S_STOP] > 0) {
+                  if (pidx[index] == TEMMIN)
+                     fighter[index].aux = 0;
+
+                  if (rcount == 0)
+                     fighter[index].sts[S_STOP]--;
+
+                  cact[index] = 0;
+               }
+
+               /*  RB: the character is sleeping?  */
+               if (fighter[index].sts[S_SLEEP] > 0) {
+                  if (pidx[index] == TEMMIN)
+                     fighter[index].aux = 0;
+
+                  if (rcount == 0)
+                     fighter[index].sts[S_SLEEP]--;
+
+                  cact[index] = 0;
+               }
+
+               /*  RB: the character is petrified?  */
+               if (fighter[index].sts[S_STONE] > 0) {
+                  if (pidx[index] == TEMMIN)
+                     fighter[index].aux = 0;
+
+                  if (rcount == 0)
+                     fighter[index].sts[S_STONE]--;
+
+                  cact[index] = 0;
+               }
+
+               if ((fighter[index].sts[S_DEAD] != 0) ||
+                   (fighter[index].mhp <= 0)) {
+                  if (pidx[index] == TEMMIN)
+                     fighter[index].aux = 0;
+
+                  bspeed[index] = 0;
+                  cact[index] = 0;
+               }
+
+               if (cact[index] > 0) {
+                  if (fighter[index].sts[S_TIME] == 0)
+                     bspeed[index] += nspeed[index];
+                  else {
+                     if (fighter[index].sts[S_TIME] == 1)
+                        bspeed[index] += (nspeed[index] / 2 + 1);
+                     else
+                        bspeed[index] += (nspeed[index] * 2);
+                  }
+               }
+            } else
+               cact[index] = 0;
+         }
+
+         readcontrols ();
+         battle_render (0, 0, 0);
+         blit2screen (0, 0);
+
+         for (index = 0; index < (PSIZE + numens); index++) {
+            if ((bspeed[index] >= ROUND_MAX) && (cact[index] > 0)) {
+               do_action (index);
+               fighter[index].ctmem = 0;
+               fighter[index].csmem = 0;
+               cact[index] = 1;
+               bspeed[index] = 0;
+            }
+
+            if (combatend)
+               return;
+         }
+
+         timer_count = 0;
+      }
+   }
 }
 
 
@@ -818,33 +757,28 @@ static void do_action (int dude)
       if (fighter[dude].imb[index] > 0)
          cast_imbued_spell (dude, fighter[dude].imb[index], 1, TGT_CASTER);
 
-   if (fighter[dude].sts[S_MALISON] > 0)
-     {
-        if ((rand () % 100) < fighter[dude].sts[S_MALISON] * 5)
-           cact[dude] = 0;
-     }
+   if (fighter[dude].sts[S_MALISON] > 0) {
+      if ((rand () % 100) < fighter[dude].sts[S_MALISON] * 5)
+         cact[dude] = 0;
+   }
 
-   if (fighter[dude].sts[S_CHARM] > 0)
-     {
-        fighter[dude].sts[S_CHARM]--;
+   if (fighter[dude].sts[S_CHARM] > 0) {
+      fighter[dude].sts[S_CHARM]--;
 
-        if (dude < PSIZE)
-           auto_herochooseact (dude);
-        else
-           enemy_charmaction (dude);
-     }
+      if (dude < PSIZE)
+         auto_herochooseact (dude);
+      else
+         enemy_charmaction (dude);
+   }
 
-   if (cact[dude] != 0)
-     {
-        revert_cframes (dude, 0);
-        if (dude < PSIZE)
-          {
-             if (fighter[dude].sts[S_CHARM] == 0)
-                hero_choose_action (dude);
-          }
-        else
-           enemy_chooseaction (dude);
-     }
+   if (cact[dude] != 0) {
+      revert_cframes (dude, 0);
+      if (dude < PSIZE) {
+         if (fighter[dude].sts[S_CHARM] == 0)
+            hero_choose_action (dude);
+      } else
+         enemy_chooseaction (dude);
+   }
 
    cact[dude] = 0;
    if (check_end () == 1)
@@ -857,6 +791,7 @@ static void do_action (int dude)
  * \author Josh Bolduc
  * \date Created ????????
  * \date Updated 20020914 - 16:37 (RB)
+ * \date Updated 20031009 PH (put fr-> instead of fighter[dude]. every time) 
  *
  * Display a single fighter on the screen. Checks for dead and
  * stone, and if the fighter is selected. Also displays 'Vision'
@@ -867,45 +802,43 @@ void draw_fighter (int dude, int dcur)
    int xx;
    int yy;
    int ff;
+   s_fighter *fr = &fighter[dude];
+   xx = fr->cx;
+   yy = fr->cy;
 
-   xx = fighter[dude].cx;
-   yy = fighter[dude].cy;
+   ff = (!fr->aframe) ? fr->facing : fr->aframe;
 
-   ff = (!fighter[dude].aframe) ? fighter[dude].facing : fighter[dude].aframe;
-
-   if (fighter[dude].sts[S_STONE] > 0)
+   if (fr->sts[S_STONE] > 0)
       convert_cframes (dude, 2, 12, 0);
 
-   if (fighter[dude].sts[S_ETHER] > 0)
+   if (fr->sts[S_ETHER] > 0)
       draw_trans_sprite (double_buffer, cframes[dude][ff], xx, yy);
    else
       draw_sprite (double_buffer, cframes[dude][ff], xx, yy);
 
    if (dcur == 1)
-      draw_sprite (double_buffer, bptr, xx + (fighter[dude].cw / 2) - 8,
-                   yy - 8);
+      draw_sprite (double_buffer, bptr, xx + (fr->cw / 2) - 8, yy - 8);
 
-   if ((vspell == 1) && (dude >= PSIZE))
-     {
-        ff = fighter[dude].hp * 30 / fighter[dude].mhp;
-        if ((fighter[dude].hp > 0) && (ff < 1))
-           ff = 1;
+   if ((vspell == 1) && (dude >= PSIZE)) {
+      ff = fr->hp * 30 / fr->mhp;
+      if ((fr->hp > 0) && (ff < 1))
+         ff = 1;
 
-        xx += fighter[dude].cw / 2;
-        rect (double_buffer, xx - 16, yy + fighter[dude].cl + 2,
-              xx + 15, yy + fighter[dude].cl + 5, 0);
-        if (ff > 20)
-           rectfill (double_buffer, xx - 15, yy + fighter[dude].cl + 3,
-                     xx - 15 + ff - 1, yy + fighter[dude].cl + 4, 40);
+      xx += fr->cw / 2;
+      rect (double_buffer, xx - 16, yy + fr->cl + 2,
+            xx + 15, yy + fr->cl + 5, 0);
+      if (ff > 20)
+         rectfill (double_buffer, xx - 15, yy + fr->cl + 3,
+                   xx - 15 + ff - 1, yy + fr->cl + 4, 40);
 
-        if ((ff <= 20) && (ff > 10))
-           rectfill (double_buffer, xx - 15, yy + fighter[dude].cl + 3,
-                     xx - 15 + ff - 1, yy + fighter[dude].cl + 4, 104);
+      if ((ff <= 20) && (ff > 10))
+         rectfill (double_buffer, xx - 15, yy + fr->cl + 3,
+                   xx - 15 + ff - 1, yy + fr->cl + 4, 104);
 
-        if ((ff <= 10) && (ff > 0))
-           rectfill (double_buffer, xx - 15, yy + fighter[dude].cl + 3,
-                     xx - 15 + ff - 1, yy + fighter[dude].cl + 4, 24);
-     }
+      if ((ff <= 10) && (ff > 0))
+         rectfill (double_buffer, xx - 15, yy + fr->cl + 3,
+                   xx - 15 + ff - 1, yy + fr->cl + 4, 24);
+   }
 }
 
 
@@ -931,11 +864,10 @@ static int check_end (void)
       if (fighter[index].sts[S_DEAD] == 0)
          alive++;
 
-   if (alive == 0)
-     {
-        enemies_win ();
-        return 1;
-     }
+   if (alive == 0) {
+      enemies_win ();
+      return 1;
+   }
 
    /*  RB: count the number of enemies alive. If there is none, the  */
    /*      heroes won the battle.                                    */
@@ -944,11 +876,10 @@ static int check_end (void)
       if (fighter[index + PSIZE].sts[S_DEAD] == 0)
          alive++;
 
-   if (alive == 0)
-     {
-        heroes_win ();
-        return 1;
-     }
+   if (alive == 0) {
+      heroes_win ();
+      return 1;
+   }
 
    return 0;
 }
@@ -976,11 +907,10 @@ int fight (int ar, int dr, int sk)
    int f;
    int ares;
 
-   for (a = 0; a < NUM_FIGHTERS; a++)
-     {
-        deffect[a] = 0;
-        ta[a] = 0;
-     }
+   for (a = 0; a < NUM_FIGHTERS; a++) {
+      deffect[a] = 0;
+      ta[a] = 0;
+   }
 
    /*  check the 'sk' variable to see if we are over-riding the  */
    /*  attackers stats with temporary ones... used for skills    */
@@ -994,28 +924,25 @@ int fight (int ar, int dr, int sk)
       fighter[dr].sts[a] = tempd.sts[a];
 
    /*  RB TODO: rest(20) or vsync() before the blit?  */
-   if (ares == 2)
-     {
-        for (f = 0; f < 3; f++)
-          {
-             battle_render (dr + 1, 0, 0);
-             blit2screen (0, 0);
-             wait (20);
-             rectfill (double_buffer, 0, 0, 320, 240, 15);
-             blit2screen (0, 0);
-             wait (20);
-          }
-     }
+   if (ares == 2) {
+      for (f = 0; f < 3; f++) {
+         battle_render (dr + 1, 0, 0);
+         blit2screen (0, 0);
+         wait (20);
+         rectfill (double_buffer, 0, 0, 320, 240, 15);
+         blit2screen (0, 0);
+         wait (20);
+      }
+   }
 
-   if ((pidx[dr] == TEMMIN) && (fighter[dr].aux == 2))
-     {
-        fighter[dr].aux = 1;
-        a = 1 - dr;
-        tx = fighter[dr].cx;
-        ty = fighter[dr].cy;
-        fighter[dr].cx = fighter[a].cx;
-        fighter[dr].cy = fighter[a].cy - 16;
-     }
+   if ((pidx[dr] == TEMMIN) && (fighter[dr].aux == 2)) {
+      fighter[dr].aux = 1;
+      a = 1 - dr;
+      tx = fighter[dr].cx;
+      ty = fighter[dr].cy;
+      fighter[dr].cx = fighter[a].cx;
+      fighter[dr].cy = fighter[a].cy - 16;
+   }
 
    if (ar < PSIZE)
       fighter[ar].aframe = 7;
@@ -1028,38 +955,35 @@ int fight (int ar, int dr, int sk)
    else
       fighter[ar].cy -= 10;
 
-   if ((tx != -1) && (ty != -1))
-     {
-        fighter[dr].cx = tx;
-        fighter[dr].cy = ty;
-     }
+   if ((tx != -1) && (ty != -1)) {
+      fighter[dr].cx = tx;
+      fighter[dr].cy = ty;
+   }
 
    if (ta[dr] != MISS)
       ta[dr] = do_shield_check (dr, ta[dr]);
 
    display_amount (dr, FDECIDE, 0);
-   if (ta[dr] != MISS)
-     {
-        fighter[dr].hp += ta[dr];
-        if ((fighter[ar].imb_s > 0) && ((rand () % 5) == 0))
-           cast_imbued_spell (ar, fighter[ar].imb_s, fighter[ar].imb_a, dr);
+   if (ta[dr] != MISS) {
+      fighter[dr].hp += ta[dr];
+      if ((fighter[ar].imb_s > 0) && ((rand () % 5) == 0))
+         cast_imbued_spell (ar, fighter[ar].imb_s, fighter[ar].imb_a, dr);
 
-        if ((fighter[dr].hp <= 0) && (fighter[dr].sts[S_DEAD] == 0))
-          {
-             fkill (dr);
-             death_animation (dr, 0);
-          }
+      if ((fighter[dr].hp <= 0) && (fighter[dr].sts[S_DEAD] == 0)) {
+         fkill (dr);
+         death_animation (dr, 0);
+      }
 
-        if (fighter[dr].hp > fighter[dr].mhp)
-           fighter[dr].hp = fighter[dr].mhp;
+      if (fighter[dr].hp > fighter[dr].mhp)
+         fighter[dr].hp = fighter[dr].mhp;
 
-        if (fighter[dr].sts[S_SLEEP] > 0)
-           fighter[dr].sts[S_SLEEP] = 0;
+      if (fighter[dr].sts[S_SLEEP] > 0)
+         fighter[dr].sts[S_SLEEP] = 0;
 
-        if ((fighter[dr].sts[S_CHARM] > 0) && (ar == dr))
-           fighter[dr].sts[S_CHARM] = 0;
-        return 1;
-     }
+      if ((fighter[dr].sts[S_CHARM] > 0) && (ar == dr))
+         fighter[dr].sts[S_CHARM] = 0;
+      return 1;
+   }
 
    return 0;
 }
@@ -1089,63 +1013,55 @@ void multi_fight (int ar)
    int ares[NUM_FIGHTERS];
 
    st = nd = deadcount = 0;
-   for (index = 0; index < NUM_FIGHTERS; index++)
-     {
-        deffect[index] = 0;
-        ta[index] = 0;
-        kw[index] = 0;
-     }
+   for (index = 0; index < NUM_FIGHTERS; index++) {
+      deffect[index] = 0;
+      ta[index] = 0;
+      kw[index] = 0;
+   }
 
    // if the attacker is you, target enemies
-   if (ar < PSIZE)
-     {
-        st = PSIZE;
-        nd = numens;
-     }
-
+   if (ar < PSIZE) {
+      st = PSIZE;
+      nd = numens;
+   }
    // if the attacker is enemy, target your party
-   else
-     {
-        st = 0;
-        nd = numchrs;
-     }
+   else {
+      st = 0;
+      nd = numchrs;
+   }
 
-   for (index = st; index < st + nd; index++)
-     {
-        tempd = status_adjust (index);
-        if ((fighter[index].sts[S_DEAD] == 0) && (fighter[index].mhp > 0))
-          {
-             ares[index] = attack_result (ar, index);
-             for (b = 0; b < 24; b++)
-                fighter[index].sts[b] = tempd.sts[b];
-          }
+   for (index = st; index < st + nd; index++) {
+      tempd = status_adjust (index);
+      if ((fighter[index].sts[S_DEAD] == 0) && (fighter[index].mhp > 0)) {
+         ares[index] = attack_result (ar, index);
+         for (b = 0; b < 24; b++)
+            fighter[index].sts[b] = tempd.sts[b];
+      }
 
-        if (ta[index] != MISS)
-          {
-             if (ta[index] != MISS)
-                ta[index] = do_shield_check (index, ta[index]);
+      if (ta[index] != MISS) {
+         if (ta[index] != MISS)
+            ta[index] = do_shield_check (index, ta[index]);
 
-             fighter[index].hp += ta[index];
-             if ((fighter[index].hp <= 0) && (fighter[index].sts[S_DEAD] == 0))
-               {
-                  fighter[index].hp = 0;
-                  kw[index] = 1;
-               }
+         fighter[index].hp += ta[index];
+         if ((fighter[index].hp <= 0) && (fighter[index].sts[S_DEAD] == 0)) {
+            fighter[index].hp = 0;
+            kw[index] = 1;
+         }
 
-             /*  RB: check we always have less health points than the maximun  */
-             if (fighter[index].hp > fighter[index].mhp)
-                fighter[index].hp = fighter[index].mhp;
+         /*  RB: check we always have less health points than the maximun  */
+         if (fighter[index].hp > fighter[index].mhp)
+            fighter[index].hp = fighter[index].mhp;
 
-             /*  RB: if sleeping, a good hit wakes him/her up  */
-             if (fighter[index].sts[S_SLEEP] > 0)
-                fighter[index].sts[S_SLEEP] = 0;
+         /*  RB: if sleeping, a good hit wakes him/her up  */
+         if (fighter[index].sts[S_SLEEP] > 0)
+            fighter[index].sts[S_SLEEP] = 0;
 
-             /*  RB: if charmed, a good hit wakes him/her up  */
-             if ((fighter[index].sts[S_CHARM] > 0) && (ta[index] > 0) &&
-                 (ar == index))
-                fighter[index].sts[S_CHARM] = 0;
-          }
-     }
+         /*  RB: if charmed, a good hit wakes him/her up  */
+         if ((fighter[index].sts[S_CHARM] > 0) && (ta[index] > 0) &&
+             (ar == index))
+            fighter[index].sts[S_CHARM] = 0;
+      }
+   }
 
    if (ar < PSIZE)
       fighter[ar].aframe = 7;
@@ -1159,14 +1075,12 @@ void multi_fight (int ar)
       fighter[ar].cy -= 10;
 
    display_amount (st, FDECIDE, 1);
-   for (index = st; index < st + nd; index++)
-     {
-        if (kw[index] == 1)
-          {
-             fkill (index);
-             deadcount++;
-          }
-     }
+   for (index = st; index < st + nd; index++) {
+      if (kw[index] == 1) {
+         fkill (index);
+         deadcount++;
+      }
+   }
 
    if (deadcount > 0)
       death_animation (st, 1);
@@ -1211,27 +1125,23 @@ static int attack_result (int ar, int dr)
 
    /*  JB: check to see if the attacker is in critical status...  */
    /*      increases chance for a critical hit                    */
-   if (tempa.mhp > 250)
-     {
-        if (tempa.hp <= 50)
-           ar_cs = 1;
-     }
-   else
-     {
-        if (tempa.hp <= (tempa.mhp / 5))
-           ar_cs = 1;
-     }
+   if (tempa.mhp > 250) {
+      if (tempa.hp <= 50)
+         ar_cs = 1;
+   } else {
+      if (tempa.hp <= (tempa.mhp / 5))
+         ar_cs = 1;
+   }
 
    /*  JB: check to see if the defender is 'defending'  */
    if (tempd.defend == 1)
       dr_def = (dr_def * 15) / 10;
 
    /*  JB: if the attacker is empowered by trueshot  */
-   if (tempa.sts[S_TRUESHOT] > 0)
-     {
-        fighter[ar].sts[S_TRUESHOT] = 0;
-        dr_evd = 0;
-     }
+   if (tempa.sts[S_TRUESHOT] > 0) {
+      fighter[ar].sts[S_TRUESHOT] = 0;
+      dr_evd = 0;
+   }
 
    ar_att += (tempa.stats[tempa.bstat] * tempa.bonus / 100);
    if (ar_att < DMG_RND_MIN * 5)
@@ -1255,74 +1165,67 @@ static int attack_result (int ar, int dr)
    if (tempd.sts[S_ETHER] > 0)
       mult = 0;
 
-   if (mult > 0)
-     {
-        if (tempd.crit == 1)
-          {
-             cfch = 1;
-             if (ar_cs == 1)
-                cfch = 2;
-             /* PH I _think_ this makes Sensar 2* as likely to make a critical hit */
-             if (pidx[ar] == SENSAR)
-                cfch = cfch * 2;
+   if (mult > 0) {
+      if (tempd.crit == 1) {
+         cfch = 1;
+         if (ar_cs == 1)
+            cfch = 2;
+         /* PH I _think_ this makes Sensar 2* as likely to make a critical hit */
+         if (pidx[ar] == SENSAR)
+            cfch = cfch * 2;
 
-             cfch = (20 - cfch);
-             if (rand () % 20 >= cfch)
-               {
-                  crit_hit = 1;
-                  /* PH the original is correct; it's inefficient to convert
-                     to double and back to int.
-                     TT: So why don't we simply do:
+         cfch = (20 - cfch);
+         if (rand () % 20 >= cfch) {
+            crit_hit = 1;
+            /* PH the original is correct; it's inefficient to convert
+               to double and back to int.
+               TT: So why don't we simply do:
 
-                     base = base * 3 / 2;
+               base = base * 3 / 2;
 
-                   */
+             */
 /*                   base *= 1.5; */
 /* #if 0 */
-                  base = base * 15 / 10;
+            base = base * 15 / 10;
 /* #endif */
-               }
-          }
+         }
+      }
 
-        /*  JB: if affected by a NAUSEA/MALISON spell, the defender  */
-        /*      takes more damage than normal                        */
-        if (tempd.sts[S_MALISON] > 0)
-           base *= 5 / 4;
+      /*  JB: if affected by a NAUSEA/MALISON spell, the defender  */
+      /*      takes more damage than normal                        */
+      if (tempd.sts[S_MALISON] > 0)
+         base *= 5 / 4;
 
-        /*  JB: check for elemental/status weapons  */
-        if (base < 1)
-           base = 1;
+      /*  JB: check for elemental/status weapons  */
+      if (base < 1)
+         base = 1;
 
-        c = ar_welem - 1;
-        if ((c >= R_EARTH) && (c <= R_ICE))
-           base = res_adjust (dr, c, base);
+      c = ar_welem - 1;
+      if ((c >= R_EARTH) && (c <= R_ICE))
+         base = res_adjust (dr, c, base);
 
-        if ((c >= R_POISON) && (c <= R_SLEEP))
-          {
-             if ((res_throw (dr, c) == 0) && (fighter[dr].sts[c - 8] == 0))
-               {
-                  if (non_dmg_save (dr, 50) == 0)
-                    {
-                       if ((c == R_POISON) || (c == R_PETRIFY)
-                           || (c == R_SILENCE))
-                          tempd.sts[c - 8] = 1;
-                       else
-                          tempd.sts[c - 8] = rand () % 3 + 2;
-                    }
-               }
-          }
-     }
+      if ((c >= R_POISON) && (c <= R_SLEEP)) {
+         if ((res_throw (dr, c) == 0) && (fighter[dr].sts[c - 8] == 0)) {
+            if (non_dmg_save (dr, 50) == 0) {
+               if ((c == R_POISON) || (c == R_PETRIFY)
+                   || (c == R_SILENCE))
+                  tempd.sts[c - 8] = 1;
+               else
+                  tempd.sts[c - 8] = rand () % 3 + 2;
+            }
+         }
+      }
+   }
 
    /*  JB: Apply the damage multiplier  */
    /*  RB FIXME: check if the changes I made here didn't break something  */
    dmg = mult * base;
    if (dmg == 0)
       dmg = MISS;
-   else
-     {
-        ta[dr] = 0 - dmg;
-        return ((crit_hit == 1) ? 2 : 1);
-     }
+   else {
+      ta[dr] = 0 - dmg;
+      return ((crit_hit == 1) ? 2 : 1);
+   }
 
    ta[dr] = dmg;
    return 0;
@@ -1388,20 +1291,18 @@ static void heroes_win (void)
    battle_render (0, 0, 0);
    blit2screen (0, 0);
    wait (250);
-   for (index = 0; index < numchrs; index++)
-     {
-        if ((fighter[index].sts[S_STONE] == 0)
-            && (fighter[index].sts[S_DEAD] == 0))
-           nc++;
+   for (index = 0; index < numchrs; index++) {
+      if ((fighter[index].sts[S_STONE] == 0)
+          && (fighter[index].sts[S_DEAD] == 0))
+         nc++;
 
-        ta[index] = 0;
-     }
+      ta[index] = 0;
+   }
 
-   for (index = PSIZE; index < PSIZE + numens; index++)
-     {
-        txp += fighter[index].xp;
-        tgp += fighter[index].gp;
-     }
+   for (index = PSIZE; index < PSIZE + numens; index++) {
+      txp += fighter[index].xp;
+      tgp += fighter[index].gp;
+   }
 
    /*  JB: nc should never be zero if we won, but whatever  */
    if (nc > 0)
@@ -1418,100 +1319,88 @@ static void heroes_win (void)
    print_font (double_buffer, 160 - (strlen (strbuf) * 4), 16, strbuf, FNORMAL);
    blit2screen (0, 0);
    blit (double_buffer, back, 0, 0, 0, 0, 352, 280);
-   for (index = 0; index < numens; index++)
-     {
-        /* PH bug: (?) should fitm be reset to zero at the start of this loop?
-         * If you defeat 2 enemies,
-         * you should (possibly) get 2 items, right/
-         */
-        if ((rand () % 100) < fighter[index + PSIZE].dip)
-          {
-             if (fighter[index + PSIZE].ditmc > 0)
-                fitm = fighter[index + PSIZE].ditmc;
+   for (index = 0; index < numens; index++) {
+      /* PH bug: (?) should fitm be reset to zero at the start of this loop?
+       * If you defeat 2 enemies,
+       * you should (possibly) get 2 items, right/
+       */
+      if ((rand () % 100) < fighter[index + PSIZE].dip) {
+         if (fighter[index + PSIZE].ditmc > 0)
+            fitm = fighter[index + PSIZE].ditmc;
 
-             if (fighter[index + PSIZE].ditmr > 0)
-               {
-                  if ((rand () % 100) < 5)
-                     fitm = fighter[index + PSIZE].ditmr;
-               }
+         if (fighter[index + PSIZE].ditmr > 0) {
+            if ((rand () % 100) < 5)
+               fitm = fighter[index + PSIZE].ditmr;
+         }
 
-             if (fitm > 0)
-               {
-                  if (check_inventory (fitm, 1) != 0)
-                    {
-                       sprintf (strbuf, "%s found!", items[fitm].name);
-                       menubox (double_buffer, 148 - (strlen (strbuf) * 4),
-                                nr * 24 + 48, strlen (strbuf) + 1, 1, BLUE);
-                       draw_icon (double_buffer, items[fitm].icon,
-                                  156 - (strlen (strbuf) * 4), nr * 24 + 56);
-                       print_font (double_buffer, 164 - (strlen (strbuf) * 4),
-                                   nr * 24 + 56, strbuf, FNORMAL);
-                       nr++;
-                    }
-               }
-          }
-     }
+         if (fitm > 0) {
+            if (check_inventory (fitm, 1) != 0) {
+               sprintf (strbuf, "%s found!", items[fitm].name);
+               menubox (double_buffer, 148 - (strlen (strbuf) * 4),
+                        nr * 24 + 48, strlen (strbuf) + 1, 1, BLUE);
+               draw_icon (double_buffer, items[fitm].icon,
+                          156 - (strlen (strbuf) * 4), nr * 24 + 56);
+               print_font (double_buffer, 164 - (strlen (strbuf) * 4),
+                           nr * 24 + 56, strbuf, FNORMAL);
+               nr++;
+            }
+         }
+      }
+   }
 
-   if (nr > 0)
-     {
-        blit2screen (0, 0);
-        wait_enter ();
-        blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
-     }
+   if (nr > 0) {
+      blit2screen (0, 0);
+      wait_enter ();
+      blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
+   }
 
    nr = 0;
-   for (c = 0; c < numchrs; c++)
-     {
-        if ((party[pidx[c]].sts[S_STONE] == 0)
-            && (party[pidx[c]].sts[S_DEAD] == 0))
-          {
-             b = c * 160;
-             player2fighter (pidx[c], &t1);
-             if (give_xp (pidx[c], txp, 0) == 1)
-               {
-                  menubox (double_buffer, b, 40, 18, 9, BLUE);
-                  player2fighter (pidx[c], &t2);
-                  print_font (double_buffer, b + 8, 48, "Level up!", FGOLD);
-                  print_font (double_buffer, b + 8, 56, "Max HP", FNORMAL);
-                  print_font (double_buffer, b + 8, 64, "Max MP", FNORMAL);
-                  print_font (double_buffer, b + 8, 72, "Strength", FNORMAL);
-                  print_font (double_buffer, b + 8, 80, "Agility", FNORMAL);
-                  print_font (double_buffer, b + 8, 88, "Vitality", FNORMAL);
-                  print_font (double_buffer, b + 8, 96, "Intellect", FNORMAL);
-                  print_font (double_buffer, b + 8, 104, "Sagacity", FNORMAL);
-                  sprintf (strbuf, "%3d>", t1.mhp);
-                  print_font (double_buffer, b + 96, 56, strbuf, FNORMAL);
-                  sprintf (strbuf, "%3d", t2.mhp);
-                  print_font (double_buffer, b + 128, 56, strbuf, FGREEN);
-                  sprintf (strbuf, "%3d>", t1.mmp);
-                  print_font (double_buffer, b + 96, 64, strbuf, FNORMAL);
-                  sprintf (strbuf, "%3d", t2.mmp);
-                  print_font (double_buffer, b + 128, 64, strbuf, FGREEN);
+   for (c = 0; c < numchrs; c++) {
+      if ((party[pidx[c]].sts[S_STONE] == 0)
+          && (party[pidx[c]].sts[S_DEAD] == 0)) {
+         b = c * 160;
+         player2fighter (pidx[c], &t1);
+         if (give_xp (pidx[c], txp, 0) == 1) {
+            menubox (double_buffer, b, 40, 18, 9, BLUE);
+            player2fighter (pidx[c], &t2);
+            print_font (double_buffer, b + 8, 48, "Level up!", FGOLD);
+            print_font (double_buffer, b + 8, 56, "Max HP", FNORMAL);
+            print_font (double_buffer, b + 8, 64, "Max MP", FNORMAL);
+            print_font (double_buffer, b + 8, 72, "Strength", FNORMAL);
+            print_font (double_buffer, b + 8, 80, "Agility", FNORMAL);
+            print_font (double_buffer, b + 8, 88, "Vitality", FNORMAL);
+            print_font (double_buffer, b + 8, 96, "Intellect", FNORMAL);
+            print_font (double_buffer, b + 8, 104, "Sagacity", FNORMAL);
+            sprintf (strbuf, "%3d>", t1.mhp);
+            print_font (double_buffer, b + 96, 56, strbuf, FNORMAL);
+            sprintf (strbuf, "%3d", t2.mhp);
+            print_font (double_buffer, b + 128, 56, strbuf, FGREEN);
+            sprintf (strbuf, "%3d>", t1.mmp);
+            print_font (double_buffer, b + 96, 64, strbuf, FNORMAL);
+            sprintf (strbuf, "%3d", t2.mmp);
+            print_font (double_buffer, b + 128, 64, strbuf, FGREEN);
 
-                  for (z = 0; z < 5; z++)
-                    {
-                       sprintf (strbuf, "%3d>", t1.stats[z]);
-                       print_font (double_buffer, b + 96, z * 8 + 72, strbuf,
-                                   FNORMAL);
-                       sprintf (strbuf, "%3d", t2.stats[z]);
-                       if (t2.stats[z] > t1.stats[z])
-                          print_font (double_buffer, b + 128, z * 8 + 72,
-                                      strbuf, FGREEN);
-                       else
-                          print_font (double_buffer, b + 128, z * 8 + 72,
-                                      strbuf, FNORMAL);
-                    }
+            for (z = 0; z < 5; z++) {
+               sprintf (strbuf, "%3d>", t1.stats[z]);
+               print_font (double_buffer, b + 96, z * 8 + 72, strbuf, FNORMAL);
+               sprintf (strbuf, "%3d", t2.stats[z]);
+               if (t2.stats[z] > t1.stats[z])
+                  print_font (double_buffer, b + 128, z * 8 + 72,
+                              strbuf, FGREEN);
+               else
+                  print_font (double_buffer, b + 128, z * 8 + 72,
+                              strbuf, FNORMAL);
+            }
 
-                  nr++;
-               }
-             else
-                menubox (double_buffer, b, 104, 18, 1, BLUE);
+            nr++;
+         } else
+            menubox (double_buffer, b, 104, 18, 1, BLUE);
 
-             sprintf (strbuf, "Next level %7d", party[pidx[c]].next -
-                      party[pidx[c]].xp);
-             print_font (double_buffer, b + 8, 112, strbuf, FGOLD);
-          }
-     }
+         sprintf (strbuf, "Next level %7d", party[pidx[c]].next -
+                  party[pidx[c]].xp);
+         print_font (double_buffer, b + 8, 112, strbuf, FGOLD);
+      }
+   }
 
    blit2screen (0, 0);
    for (c = 0; c < numchrs; c++)
@@ -1540,11 +1429,10 @@ void fkill (int victim)
    /* PH Combat cheat - when a hero dies s/he is mysteriously boosted back   */
    /* to full HP */
 #ifdef KQ_CHEATS
-   if (cheat && victim < 2)
-     {
-        fighter[victim].hp = fighter[victim].mhp;
-        return;
-     }
+   if (cheat && victim < 2) {
+      fighter[victim].hp = fighter[victim].mhp;
+      return;
+   }
 #endif
    for (index = 0; index < 24; index++)
       fighter[victim].sts[index] = 0;

@@ -64,11 +64,10 @@ void allocate_credits (void)
 {
    unsigned int tlen = 0;
    int i;
-   for (cc = credits; *cc; ++cc)
-     {
-        if (strlen (*cc) > tlen)
-           tlen = strlen (*cc);
-     }
+   for (cc = credits; *cc; ++cc) {
+      if (strlen (*cc) > tlen)
+         tlen = strlen (*cc);
+   }
    wk = create_bitmap (8 * tlen, 64);
    for (i = 0; i < 32; ++i)
       etab[i] = i * i * (3 * 32 - 2 * i) / 32 / 32;
@@ -91,37 +90,33 @@ void display_credits (void)
 {
    int i, x0, e;
    static int last_e = 999;
-   if (wk == NULL)
-     {
-        allocate_credits ();
-     }
-   if (ticks > 640)
-     {
-        clear_bitmap (wk);
-        print_font (wk, (wk->w - 8 * strlen (*cc)) / 2, 42, *cc, FNORMAL);
-        if (*(++cc) == NULL)
-           cc = credits;
-        print_font (wk, (wk->w - 8 * strlen (*cc)) / 2, 10, *cc, FNORMAL);
-        ticks = 0;
-     }
+   if (wk == NULL) {
+      allocate_credits ();
+   }
+   if (ticks > 640) {
+      clear_bitmap (wk);
+      print_font (wk, (wk->w - 8 * strlen (*cc)) / 2, 42, *cc, FNORMAL);
+      if (*(++cc) == NULL)
+         cc = credits;
+      print_font (wk, (wk->w - 8 * strlen (*cc)) / 2, 10, *cc, FNORMAL);
+      ticks = 0;
+   }
    e = 320 - ticks;
-   if (e != last_e)
-     {
-        x0 = (320 - wk->w) / 2;
-        for (i = 0; i < wk->w; ++i)
-          {
-             blit (wk, double_buffer, i, ease (i + e), i + x0, 185, 1, 32);
-          }
-        print_font (double_buffer, (320 - 8 * strlen (pressf1)) / 2, 210,
-                    pressf1, FNORMAL);
+   if (e != last_e) {
+      x0 = (320 - wk->w) / 2;
+      for (i = 0; i < wk->w; ++i) {
+         blit (wk, double_buffer, i, ease (i + e), i + x0, 185, 1, 32);
+      }
+      print_font (double_buffer, (320 - 8 * strlen (pressf1)) / 2, 210,
+                  pressf1, FNORMAL);
 #ifdef KQ_CHEATS
 /*
  Put an un-ignorable cheat message; this should stop
  PH releasing versions with cheat mode compiled in ;)
 */
-        print_font (double_buffer, 80, 40,
-                    cheat ? "*CHEAT MODE ON*" : "*CHEAT MODE OFF*", FGOLD);
+      print_font (double_buffer, 80, 40,
+                  cheat ? "*CHEAT MODE ON*" : "*CHEAT MODE OFF*", FGOLD);
 #endif
-        last_e = e;
-     }
+      last_e = e;
+   }
 }

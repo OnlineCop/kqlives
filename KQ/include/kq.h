@@ -346,7 +346,9 @@ typedef struct
    unsigned char atrack[8];
    int csmem;
    int ctmem;
-   int cwt;
+   int cwt;                     /*!< \brief Current weapon type 
+                                   * The shape of the currently held weapon (sword, dagger, axe etc) \sa hero_init()
+                                 */
    int welem;                   /*!< \brief Weapon elemental power */
    int unl;
    int aux;
