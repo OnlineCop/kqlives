@@ -221,7 +221,7 @@ end
 
 function zone_handler(zn)
 
-  -- Combat can be anywhere that other zones don't populate
+  -- Combat can be anywhere that other zones do not populate
   if (zn == 0) then
     combat(54);
 
@@ -661,7 +661,7 @@ function entity_handler(en)
         wait_for_entity(HERO1, HERO1);
         bubble(HERO1, "I hope that this Binderak guy hasn't gotten a hold of the others.");
         bubble(HERO1, "I don't even want to think about that!");
-        set_ent_facing(HERO1,0);
+        set_ent_facing(HERO1, 0);
         drawmap();
         screen_dump();
         bubble(HERO1, "Heh... I should probably stop talking to myself too.");
