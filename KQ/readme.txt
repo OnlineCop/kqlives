@@ -9,14 +9,11 @@ The majority of KQ was developed by JB, until he abandoned it in
 Autumn 2002. Due to the wonders of open source, it was rescued by a
 team from the Allegro community (http://www.allegro.cc/), including
 Peter, 23yrold3yrold, ReyBrujo, Dudaskank, Konforce and Mr Troy, later to
-be joined by Team Terradactyl and MasterGoodbytes.
-
-26/01/03: Interim Windows binary release
-01/11/02: New Opal cave designed by CB
-01/10/02: Many bug-fixes, code documents with Doxygen
-22/09/02: KQ uses DUMB (http://dumb.sourceforge.net/) for music.
-15/09/02: New Windows/DOS/Unix build system
-03/09/02: KQ moves to Sourceforge (http://kqlives.sourceforge.net/)
+be joined by Team Terradactyl, Steven Fullmer and MasterGoodbytes.
+Thanks also are due to:
+Sam Hocevar for several fixes and for being the Debian package maintainer
+Edge for porting KQ to BeOS, and (with Caz Jones) fixing the joystick code 
+on that platform.
 
 Without further ado, over to JB: (some of his comments about directory
 structure are now out of date)
