@@ -8,14 +8,16 @@ function autoexec()
 end
 
 -- show the status of a chest
+-- TT: changed cave5's treasures to layer 2 so
+--     they could be updated with correct tiles
 function showch(x, y, tr)
-local ch
-if (get_treasure(tr)==1) then
- ch=41;
-else
- ch=40;
-end
-set_mtile(x,y,ch);
+  local ch
+  if (get_treasure(tr)==1) then
+    ch=41;
+  else
+    ch=40;
+  end
+  set_mtile(x,y,ch);
 end
 
 function refresh()
@@ -44,8 +46,9 @@ function refresh()
   showch(91,61,92);
   showch(60,78,93);
   showch(63,78,94);
-  showch(93,100,95);
-  showch(95,98,96);
+  showch(95,102,95);
+-- TT: This chest is invalid
+--  showch(95,98,96);
 end
 
 function postexec()
@@ -72,9 +75,13 @@ function destroy1()
   if (has_dynamite()) then
     hero_escape("L3D2L10D2");
     sfx(42);
-    oneliner(HERO1, {"Great dynamite!", "Ohh gosh!", "This is risky!",
-                     "If only my master could see me!", "This could be fun!",
-                     "Good. On to the next.", "So much for stealth!",
+    oneliner(HERO1, {"Great dynamite!",
+                     "Ohh gosh!",
+                     "This is risky!",
+                     "If only my master could see me!",
+                     "This could be fun!",
+                     "Good. On to the next.",
+                     "So much for stealth!",
                      "Crude, but effective..."});
     set_progress(P_BOMB1, 1);
     refresh();
@@ -88,9 +95,13 @@ function destroy2()
     sfx(42);
     if (get_numchrs()>1) then
       bubble(HERO2, "I think you might", "have overdone it!", "","");
-      oneliner(HERO1, {"Good, wasn't it?", "It scared me too.",
-                       "I'm afraid I have.", "Do you think so?", "Shut up!",
-                       "No way!", "I'd prefer a different way.",
+      oneliner(HERO1, {"Good, wasn't it?",
+                       "It scared me too.",
+                       "I'm afraid I have.",
+                       "Do you think so?",
+                       "Shut up!",
+                       "No way!",
+                       "I'd prefer a different way.",
                        "Let us see."});
     else
       bubble(HERO1, "Argh. I think", "I used too much!","","");
@@ -105,10 +116,14 @@ function destroy3()
   if (has_dynamite()) then
     hero_escape("R1U2R5U10");
     sfx(42);
-    oneliner(HERO1, {"I'm enjoying this!", "I wish I were home.",
-                     "This is very wasteful.", "My training didn't cover this.",
-                     "If only life was so simple...", "Satisfactory.",
-                     "Too noisy!", "Hmm."});
+    oneliner(HERO1, {"I'm enjoying this!",
+                     "I wish I were home.",
+                     "This is very wasteful.",
+                     "My training didn't cover this.",
+                     "If only life was so simple...",
+                     "Satisfactory.",
+                     "Too noisy!",
+                     "Hmm."});
     set_progress(P_BOMB3,1);
     refresh();
   end
@@ -121,10 +136,14 @@ function destroy4a()
   if ((p==0 or p==2) and has_dynamite()) then
     hero_escape("L7D2L4D4L2");
     sfx(42);
-    oneliner(HERO1, {"I must have utterly destroyed it", "I wish I'd never seen this dreadful cave",
-                     "I don't like this one bit", "Perhaps I will become the first Master of Dynamite!",
-                     "I don't even care if this is necessary or not", "Another goal attained",
-		     "This is almost painful", "As one sows, so shall he reap..."});
+    oneliner(HERO1, {"I must have utterly destroyed it.",
+                     "I wish I'd never seen this dreadful cave.",
+                     "I don't like this one bit.",
+                     "Perhaps I will become the first Master of Dynamite!",
+                     "I don't even care if this is necessary or not.",
+                     "Another goal attained.",
+		             "This is almost painful",
+		             "As one sows, so shall he reap..."});
     set_progress(P_BOMB4, p+1);
   elseif (p==1) then
     -- already destroyed this side
@@ -134,31 +153,39 @@ function destroy4a()
 end
 
 function destroy4b()
--- double pillar (right)
-local p=get_progress(P_BOMB4);
-if ((p==0 or p==1) and has_dynamite()) then
- hero_escape("R5D4R7D1R5");
- sfx(42);
- oneliner(HERO1, {"Another great hit!", "Ow. This is so dusty", 
-                  "This is totally unsafe", "I wonder if I will be able to make use of these skills",
-                  "I should have just blown the whole mountain up", "No collateral damage here",
-		  "This can't be good for my health", "I feel the need to reflect upon my actions"});
- set_progress(P_BOMB4, p+2);
-elseif (p==2) then
- -- already destroyed this side
- bubble(HERO1, "I weakened it, but it might need another hit to destroy it.");
-end
-refresh();
+  -- double pillar (right)
+  local p=get_progress(P_BOMB4);
+  if ((p==0 or p==1) and has_dynamite()) then
+    hero_escape("R5D4R7D1R5");
+    sfx(42);
+    oneliner(HERO1, {"Another great hit!",
+                     "Ow. This is so dusty.", 
+                     "This is totally unsafe.",
+                     "I wonder if I will be able to make use of these skills?",
+                     "I should have just blown the whole mountain up.",
+                     "No collateral damage here.",
+  		             "This can't be good for my health.",
+  		             "I feel the need to reflect upon my actions."});
+    set_progress(P_BOMB4, p+2);
+  elseif (p==2) then
+    -- already destroyed this side
+    bubble(HERO1, "I weakened it, but it might need another hit to destroy it.");
+  end
+  refresh();
 end
 
 function destroy5()
   if (has_dynamite()) then
-    hero_escape("D1R2L2W9R20");
+    hero_escape("D1R2L2W19R20");
     sfx(42);
-    oneliner(HERO1, {"I'm getting the hang of this!", "I hope there's no more!",
-                     "This will weaken the ceiling!", "I'm not cut out for this.",
-                     "That was pathetic!", "Mission accomplished!",
-                     "My ears are ringing!", "So much destruction..."});
+    oneliner(HERO1, {"I'm getting the hang of this!",
+                     "I hope there's no more!",
+                     "This will weaken the ceiling!",
+                     "I'm not cut out for this.",
+                     "That was pathetic!",
+                     "Mission accomplished!",
+                     "My ears are ringing!",
+                     "So much destruction..."});
     set_progress(P_BOMB5, 1);
     refresh();
   end
@@ -204,8 +231,8 @@ function hero_escape(script)
 end
 
 function opaldragon()
-local spd;
-if (get_progress(P_OPALDRAGONOUT)==0) then
+  local spd;
+  if (get_progress(P_OPALDRAGONOUT)==0) then
     bubble(HERO1, "Ohhh!");
     bubble(HERO1, "The legend was true!");
     spd=get_ent_speed(HERO1);
@@ -216,78 +243,78 @@ if (get_progress(P_OPALDRAGONOUT)==0) then
     combat(58);
     set_progress(P_OPALDRAGONOUT,1);
     refresh();
-end
+  end
 end
 
 function zone_handler(zn)
-if (zn==0) then
- combat(57);
-elseif (zn==1) then 
- destroy1();
-elseif (zn==2) then
- destroy2();
-elseif (zn==3) then
- destroy3();
-elseif (zn==4) then
- destroy4a();
-elseif (zn==5) then
- destroy4b();
-elseif (zn==6) then
- destroy5();
-elseif (zn==9) then
- change_map("pass", 78,39,0,0);
-elseif (zn==10) then
- change_map("pass", 106,36,0,0);
-elseif (zn==12) then
- change_map("pass", 83,28,0,0);
-elseif (zn==14) then
- set_save(0);
- warp(35,10,10);--long room south
-elseif (zn==15) then
- warp(35,4,10);--long room north
-elseif (zn==8) then
- set_save(1);
- warp(119,132,10);--save point north
-elseif (zn==7) then
- set_save(1);
- warp(119,139,10);--save point south
-elseif (zn==13) then
- set_save(0);
- warp(35,24,10);--behind pillar
-elseif (zn==11) then
- sfx(26); 
- warp(112,49,10);--dragon
- opaldragon();
-elseif (zn==16) then
- chest(90, I_PCURING,1);
- refresh();
-elseif (zn==17) then
- chest(91, I_B_VISION,1);
- refresh();
-elseif (zn==18) then
- chest(92, I_WATERRING,1);
- refresh();
-elseif (zn==19) then
- chest(93, I_KBREW,1);
- refresh();
-elseif (zn==20) then
- chest(94, 0,1000);
- refresh();
-elseif (zn==21) then
- chest(95, I_VITSEED,2);
- refresh();
-elseif (zn==22) then
- if (get_progress(P_OPALARMOUR)==0) then
-  set_progress(P_OPALARMOUR,1)
-  sfx(5);	
-  msg("Opal Armour procured!",255,0);
-  refresh();
- end;
-elseif(zn==23) then
- combat(59);
--- // clear the zone so it doesn't repeat the combat
- set_zone(get_ent_tilex(HERO1),get_ent_tiley(HERO1),0);
-end
+  if (zn==0) then
+    combat(57);
+  elseif (zn==1) then 
+    destroy1();
+  elseif (zn==2) then
+    destroy2();
+  elseif (zn==3) then
+    destroy3();
+  elseif (zn==4) then
+    destroy4a();
+  elseif (zn==5) then
+    destroy4b();
+  elseif (zn==6) then
+    destroy5();
+  elseif (zn==7) then
+    set_save(1);
+    warp(119,139,10);--save point south
+  elseif (zn==8) then
+    set_save(1);
+    warp(119,132,10);--save point north
+  elseif (zn==9) then
+    change_map("pass", 78,39,0,0);
+  elseif (zn==10) then
+    change_map("pass", 106,36,0,0);
+  elseif (zn==11) then
+    sfx(26); 
+    warp(112,49,10);--dragon
+    opaldragon();
+  elseif (zn==12) then
+    change_map("pass", 83,28,0,0);
+  elseif (zn==13) then
+    set_save(0);
+    warp(35,24,10);--behind pillar
+  elseif (zn==14) then
+    set_save(0);
+    warp(35,10,10);--long room south
+  elseif (zn==15) then
+    warp(35,4,10);--long room north
+  elseif (zn==16) then
+    chest(90, I_PCURING,1);
+    refresh();
+  elseif (zn==17) then
+    chest(91, I_B_VISION,1);
+    refresh();
+  elseif (zn==18) then
+    chest(92, I_WATERRING,1);
+    refresh();
+  elseif (zn==19) then
+    chest(93, I_KBREW,1);
+    refresh();
+  elseif (zn==20) then
+    chest(94, 0,1000);
+    refresh();
+  elseif (zn==21) then
+    chest(95, I_VITSEED,2);
+    refresh();
+  elseif (zn==22) then
+    if (get_progress(P_OPALARMOUR)==0) then
+      set_progress(P_OPALARMOUR,1)
+      sfx(5);	
+      msg("Opal Armour procured!",255,0);
+      refresh();
+    end;
+  elseif(zn==23) then
+    combat(59);
+    -- // clear the zone so it doesn't repeat the combat
+    set_zone(get_ent_tilex(HERO1),get_ent_tiley(HERO1),0);
+  end
 end
 
 function entity_handler(en)
