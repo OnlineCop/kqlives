@@ -814,6 +814,7 @@ int select_party (int *avail, int n_avail, int numchrs_max)
    return 0;
 }
 
+
 #define MM_X 162
 #define MM_Y 180
 static int mini_menu (int omask)
@@ -899,6 +900,7 @@ static int mini_menu (int omask)
      }
 }
 
+
 static void party_add (int id, int lead)
 {
    s_entity *t;
@@ -945,6 +947,8 @@ static void party_remove (int id)
           }
      }
 }
+
+
 static void party_newlead (int id)
 {
    int i, t;

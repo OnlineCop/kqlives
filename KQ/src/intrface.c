@@ -1561,17 +1561,17 @@ static int KQ_set_tile_all (lua_State * L)
 
 /* PH: not used (yet?), therefore commented out */
 /* static int KQ_get_tile_all(lua_State* L) { */
-/* 	 int tx=lua_tonumber(L, 1); */
-/* 	 int ty=lua_tonumber(L, 2); */
-/* 	 int offset=tx+ty*g_map.xsize; */
+/*   int tx=lua_tonumber(L, 1); */
+/*   int ty=lua_tonumber(L, 2); */
+/*   int offset=tx+ty*g_map.xsize; */
 
-/* 	 lua_pushnumber(L, map_seg[offset]); */
-/* 	 lua_pushnumber(L, b_seg[offset]); */
-/* 	 lua_pushnumber(L, f_seg[offset]); */
-/* 	 lua_pushnumber(L, z_seg[offset]); */
-/* 	 lua_pushnumber(L, o_seg[offset]); */
-/* 	 lua_pushnumber(L, s_seg[offset]); */
-/* 	 return 6; */
+/*   lua_pushnumber(L, map_seg[offset]); */
+/*   lua_pushnumber(L, b_seg[offset]); */
+/*   lua_pushnumber(L, f_seg[offset]); */
+/*   lua_pushnumber(L, z_seg[offset]); */
+/*   lua_pushnumber(L, o_seg[offset]); */
+/*   lua_pushnumber(L, s_seg[offset]); */
+/*   return 6; */
 /* } */
 
 
@@ -2926,6 +2926,7 @@ int KQ_istable (lua_State * L)
    return 1;
 }
 
+
 int KQ_select_team (lua_State * L)
 {
    static int team[8];
@@ -2957,6 +2958,7 @@ int KQ_select_team (lua_State * L)
      }
    return 1;
 }
+
 
 /*! \brief Initialise scripting engine
  *
