@@ -61,8 +61,12 @@ static void enemy_attack (int);
  * the enemy types and then loads each one in.  It also calls a helper
  * function or two to complete the process.
  *
- * \param en
- * \param etid
+ * The encounter table consists of several 'sub-tables', grouped by
+ * encounter number. Each row is one possible battle.
+ *
+ * \param en Encounter number in the Encounter table.
+ * \param etid If =99, select a random row with that encounter number,
+ * otherwise select row etid.
  * \returns number of random encounter
 */
 int select_encounter (int en, int etid)

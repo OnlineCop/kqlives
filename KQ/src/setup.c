@@ -519,7 +519,6 @@ void config_menu (void)
                        p = getavalue ("Sound Volume", 0, 25, gsvol / 10, 1);
                        if (p != -1)
                           gsvol = p * 10;
-
                        /* make sure to set it no matter what */
                        set_volume (gsvol, 0);
                     }

@@ -659,7 +659,7 @@ void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
         /* This allows us to either go to the map's default starting coords
          * or specify exactly where on the map to go to (like when there
          * are stairs or a doorway that they should start at).
-        */
+         */
         if (msx == 0 && msy == 0)
            // Place players at default map starting coords
            place_ent (i, g_map.stx, g_map.sty);
@@ -1309,7 +1309,7 @@ static void allocate_stuff (void)
      }
 
    for (p = 3; p < 5; p++)
-     bord[p] = alloc_bmp (8,12, "bord[x]");
+      bord[p] = alloc_bmp (8, 12, "bord[x]");
 // } TT add
 
    for (p = 0; p < 8; p++)

@@ -29,33 +29,33 @@
 
 typedef struct
 {
-   unsigned char chrx;  // Entity's identity (what s/he looks like)
-   unsigned short x; // x-coord on map
-   unsigned short y; // y-coord on map
-   unsigned short tilex;   // x-coord tile that entity is standing on
-   unsigned short tiley;   // y-coord tile that entity is standing on
-   unsigned char eid;   // Entity type (fighter, enemy, normal)
-   unsigned char active;   // "Alive" or not
-   unsigned char facing;   // Direction
-   unsigned char moving;   // In the middle of a move
-   unsigned char movcnt;   // How far along the move entity is
-   unsigned char framectr; // Counter for determining animation frame
-   unsigned char movemode; // Stand, wander, script or chasing
-   unsigned char obsmode;  // Determine if affected by obstacles or not
-   unsigned char delay; // Movement delay (between steps)
-   unsigned char delayctr; // Counter for movement delay
-   unsigned char speed; // How hyperactive the entity is
+   unsigned char chrx;          // Entity's identity (what s/he looks like)
+   unsigned short x;            // x-coord on map
+   unsigned short y;            // y-coord on map
+   unsigned short tilex;        // x-coord tile that entity is standing on
+   unsigned short tiley;        // y-coord tile that entity is standing on
+   unsigned char eid;           // Entity type (fighter, enemy, normal)
+   unsigned char active;        // "Alive" or not
+   unsigned char facing;        // Direction
+   unsigned char moving;        // In the middle of a move
+   unsigned char movcnt;        // How far along the move entity is
+   unsigned char framectr;      // Counter for determining animation frame
+   unsigned char movemode;      // Stand, wander, script or chasing
+   unsigned char obsmode;       // Determine if affected by obstacles or not
+   unsigned char delay;         // Movement delay (between steps)
+   unsigned char delayctr;      // Counter for movement delay
+   unsigned char speed;         // How hyperactive the entity is
    unsigned char scount;
-   unsigned char cmd;   // Move/Wait/Facing command
-   unsigned char sidx;  // Script ID number
+   unsigned char cmd;           // Move/Wait/Facing command
+   unsigned char sidx;          // Script ID number
    unsigned char extra;
-   unsigned char chasing;  // Entity is following another
-   int cmdnum; // Number of times we need to repeat 'cmd'
+   unsigned char chasing;       // Entity is following another
+   int cmdnum;                  // Number of times we need to repeat 'cmd'
    unsigned char atype;
-   unsigned char snapback; // Snaps back to direction previously facing
-   unsigned char facehero; // Look at player when talked to
-   unsigned char transl;   // Entity is see-through or not
-   char script[60];  // Movement/action script (pacing, etc.)
+   unsigned char snapback;      // Snaps back to direction previously facing
+   unsigned char facehero;      // Look at player when talked to
+   unsigned char transl;        // Entity is see-through or not
+   char script[60];             // Movement/action script (pacing, etc.)
 }
 s_entity;
 

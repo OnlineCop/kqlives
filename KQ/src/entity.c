@@ -642,33 +642,31 @@ int entityat (int ox, int oy, int who)
 
    for (i = 0; i < MAX_ENT; i++)
      {
-        if (g_ent[i].active)
+        if (g_ent[i].active && ox == g_ent[i].tilex && oy == g_ent[i].tiley)
           {
-             if (ox == g_ent[i].tilex && oy == g_ent[i].tiley)
+             if (who >= PSIZE)
                {
-                  if (who >= PSIZE)
+                  if (g_ent[who].eid == ID_ENEMY && i < PSIZE)
                     {
-                       if (g_ent[who].eid == ID_ENEMY && i < PSIZE)
-                         {
-                            if (combat_check (ox, oy) == 1)
-                               g_ent[who].active = 0;
-                            return 0;
-                         }
-                       return i + 1;
+                       if (combat_check (ox, oy) == 1)
+                          g_ent[who].active = 0;
+                       return 0;
                     }
-                  else
+                  return i + 1;
+               }
+             else
+               {
+                  if (g_ent[i].eid == ID_ENEMY)
                     {
-                       if (g_ent[i].eid == ID_ENEMY)
-                         {
-                            if (combat_check (ox, oy) == 1)
-                               g_ent[i].active = 0;
-                            return 0;
-                         }
-                       if (i >= PSIZE)
-                          return i + 1;
+                       if (combat_check (ox, oy) == 1)
+                          g_ent[i].active = 0;
+                       return 0;
                     }
+                  if (i >= PSIZE)
+                     return i + 1;
                }
           }
+
      }
    return 0;
 }

@@ -126,11 +126,11 @@ typedef struct
 {
    unsigned char mapnum;        /*!< Map where this battle occurs */
    unsigned char zonenum;       /*!< Zone that triggers this battle */
-   unsigned char enc;
-   unsigned char etnum;
-   unsigned char eidx;
-   char bmusic[16];
-   char backimg[20];
+   unsigned char enc;           /*!< For random encounters, a 1 in enc chance there will not be combat */
+   unsigned char etnum;         /*!< Select rows in the encounter table */
+   unsigned char eidx;          /*!< Select a specific row, or 99 to pick a random one */
+   char bmusic[16];             /*!< music file to play */
+   char backimg[20];            /*!< Background image */
 }
 s_encounter;
 
