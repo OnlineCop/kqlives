@@ -137,7 +137,11 @@ function zone_handler(zn)
 
   elseif (zn == 7) then
     set_ent_speed(10, 5);
-    set_ent_script(10, "R1D4L3D8R1");
+    if (get_numchrs() == 1) then
+      set_ent_script(10, "R1D4L3D8R1");
+    else
+      set_ent_script(10, "R1D4L3D8F3");
+    end
     set_ent_script(11, "L2D1L2");
     set_ent_script(12, "U1L5");
     wait_for_entity(10, 12);
@@ -258,7 +262,7 @@ function entity_handler(en)
     set_ent_facing(en, 1);
     bubble(en, "Yes sir!");
     set_ent_facing(en, 0);
-    bubble(en, "I'll go back to Randen with the mayor. Why don't you meet me there after?");
+    bubble(en, "I'll go back to Randen with the mayor. Why don't you meet me there afterwards?");
     bubble(HERO1, "Sure.");
 
     set_ftile(41, 14, 0);

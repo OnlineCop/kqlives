@@ -667,12 +667,12 @@ int start_menu (int c)
          masked_blit ((BITMAP *) bg->dat, double_buffer, 0, 148, 0, 172, 320,
                       52);
 #endif
-         menubox (double_buffer, 120, 116, 10, 4, BLUE);
-         print_font (double_buffer, 136, 124, "Continue", FNORMAL);
-         print_font (double_buffer, 136, 132, "New Game", FNORMAL);
-         print_font (double_buffer, 144, 140, "Config", FNORMAL);
-         print_font (double_buffer, 152, 148, "Exit", FNORMAL);
-         draw_sprite (double_buffer, menuptr, 120, ptr * 8 + 124);
+         menubox (double_buffer, 112, 116, 10, 4, BLUE);
+         print_font (double_buffer, 128, 124, "Continue", FNORMAL);
+         print_font (double_buffer, 128, 132, "New Game", FNORMAL);
+         print_font (double_buffer, 136, 140, "Config", FNORMAL);
+         print_font (double_buffer, 144, 148, "Exit", FNORMAL);
+         draw_sprite (double_buffer, menuptr, 112, ptr * 8 + 124);
          rd = 0;
       }
       display_credits ();

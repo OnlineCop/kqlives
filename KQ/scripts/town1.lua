@@ -58,6 +58,9 @@ function autoexec()
     set_ent_facing(2, FACE_DOWN)
     set_ent_facing(4, FACE_DOWN)
     set_ent_facing(HERO1, 1)
+    if (get_progress(P_TALKDERIG) == 3) then
+      set_desc(0);
+    end
   end
   refresh()
 end
@@ -291,3 +294,4 @@ function entity_handler(en)
 
   end
 end
+
