@@ -468,15 +468,17 @@ static void draw_sideshot (int itm)
             for (j = 0; j < 2; j++) {
                if (cs[j + 8] < 0) {
                   sprintf (strbuf, "%-4d", cs[j + 8]);
-                  print_font (double_buffer, wx + 24, j * 8 + wy, strbuf, FRED);
+                  print_font (double_buffer, wx + 24, j * 8 + wy, strbuf,
+                              FRED);
                }
                if (cs[j + 8] > 0) {
                   sprintf (strbuf, "+%-3d", cs[j + 8]);
-                  print_font (double_buffer, wx + 24, j * 8 + wy,
-                              strbuf, FGREEN);
+                  print_font (double_buffer, wx + 24, j * 8 + wy, strbuf,
+                              FGREEN);
                }
                if (cs[j + 8] == 0)
-                  print_font (double_buffer, wx + 24, j * 8 + wy, "=", FNORMAL);
+                  print_font (double_buffer, wx + 24, j * 8 + wy, "=",
+                              FNORMAL);
             }
          } else {
             draw_icon (double_buffer, 9, wx + 16, wy);
@@ -485,15 +487,17 @@ static void draw_sideshot (int itm)
             for (j = 0; j < 3; j++) {
                if (cs[j + 10] < 0) {
                   sprintf (strbuf, "%-4d", cs[j + 10]);
-                  print_font (double_buffer, wx + 24, j * 8 + wy, strbuf, FRED);
+                  print_font (double_buffer, wx + 24, j * 8 + wy, strbuf,
+                              FRED);
                }
                if (cs[j + 10] > 0) {
                   sprintf (strbuf, "+%-3d", cs[j + 10]);
-                  print_font (double_buffer, wx + 24, j * 8 + wy,
-                              strbuf, FGREEN);
+                  print_font (double_buffer, wx + 24, j * 8 + wy, strbuf,
+                              FGREEN);
                }
                if (cs[j + 10] == 0)
-                  print_font (double_buffer, wx + 24, j * 8 + wy, "=", FNORMAL);
+                  print_font (double_buffer, wx + 24, j * 8 + wy, "=",
+                              FNORMAL);
             }
          }
          if (items[itm].eq[pidx[a]] == 0)
@@ -659,17 +663,16 @@ static void buy_menu (void)
                         items[j].name, k);
             if (max > 1) {
                sprintf (strbuf, "(%d)", max);
-               print_font (double_buffer, 256 + xofs,
-                           i * 8 + 32 + yofs, strbuf, k);
+               print_font (double_buffer, 256 + xofs, i * 8 + 32 + yofs,
+                           strbuf, k);
             }
             if (max > 0) {
                sprintf (strbuf, "%d", cost);
-               print_font (double_buffer,
-                           248 - (strlen (strbuf) * 8) + xofs,
+               print_font (double_buffer, 248 - (strlen (strbuf) * 8) + xofs,
                            i * 8 + 32 + yofs, strbuf, k);
             } else
-               print_font (double_buffer, 200 + xofs,
-                           i * 8 + 32 + yofs, "Sold Out!", k);
+               print_font (double_buffer, 200 + xofs, i * 8 + 32 + yofs,
+                           "Sold Out!", k);
          }
          print_font (double_buffer,
                      160 - (strlen (items[shin[yptr]].desc) * 4) + xofs,
@@ -743,8 +746,8 @@ static void buy_item (int how_many, int item_no)
       if (rd == 1) {
          blit (back, double_buffer, 0, 0, xofs, 192 + yofs, 320, 48);
          menubox (double_buffer, 32 + xofs, 168 + yofs, 30, 1, DARKBLUE);
-         print_font (double_buffer, 104 + xofs, 176 + yofs,
-                     "Confirm/Cancel", FNORMAL);
+         print_font (double_buffer, 104 + xofs, 176 + yofs, "Confirm/Cancel",
+                     FNORMAL);
          draw_sideshot (shin[item_no]);
          blit2screen (xofs, yofs);
       }
@@ -807,8 +810,8 @@ static void sell_menu (void)
             if (g_inv[pg * 16 + p][1] > 1) {
                // The '^' in this is an 'x' in allfonts.pcx
                sprintf (strbuf, "^%d", g_inv[pg * 16 + p][1]);
-               print_font (double_buffer, 264 + xofs,
-                           p * 8 + 32 + yofs, strbuf, k);
+               print_font (double_buffer, 264 + xofs, p * 8 + 32 + yofs,
+                           strbuf, k);
             }
          }
          sp = items[g_inv[pg * 16 + yptr][0]].price * 50 / 100;
@@ -816,14 +819,12 @@ static void sell_menu (void)
             if (g_inv[pg * 16 + yptr][1] > 1) {
                // Check if there is more than one item
                sprintf (strbuf, "%d gp for each one.", sp);
-               print_font (double_buffer,
-                           160 - (strlen (strbuf) * 4) + xofs,
+               print_font (double_buffer, 160 - (strlen (strbuf) * 4) + xofs,
                            176 + yofs, strbuf, FNORMAL);
             } else {
                // There is only one of this item
                sprintf (strbuf, "That's worth %d gp.", sp);
-               print_font (double_buffer,
-                           160 - (strlen (strbuf) * 4) + xofs,
+               print_font (double_buffer, 160 - (strlen (strbuf) * 4) + xofs,
                            176 + yofs, strbuf, FNORMAL);
             }
          } else {
@@ -919,8 +920,8 @@ static void sell_howmany (int itm_no, int pg)
          menubox (double_buffer, 32 + xofs, 168 + yofs, 30, 1, DARKBLUE);
          print_font (double_buffer, 124 + xofs, 176 + yofs, "How many?",
                      FNORMAL);
-         menubox (double_buffer, 32 + xofs, itm_no * 8 + 24 + yofs, 30,
-                  1, DARKBLUE);
+         menubox (double_buffer, 32 + xofs, itm_no * 8 + 24 + yofs, 30, 1,
+                  DARKBLUE);
          draw_icon (double_buffer, items[l].icon, 48 + xofs,
                     itm_no * 8 + 32 + yofs);
          print_font (double_buffer, 56 + xofs, itm_no * 8 + 32 + yofs,
@@ -1049,8 +1050,8 @@ void inn (char *iname, int gpc, int pay)
                strbuf, FNORMAL);
    if (gp >= gpts) {
       menubox (double_buffer, 52 + xofs, 96 + yofs, 25, 2, BLUE);
-      print_font (double_buffer, 60 + xofs, 108 + yofs,
-                  "Do you wish to stay?", FNORMAL);
+      print_font (double_buffer, 60 + xofs, 108 + yofs, "Do you wish to stay?",
+                  FNORMAL);
    } else {
       menubox (double_buffer, 32 + xofs, 96 + yofs, 30, 2, BLUE);
       print_font (double_buffer, 40 + xofs, 108 + yofs,

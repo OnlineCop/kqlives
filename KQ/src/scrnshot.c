@@ -82,8 +82,7 @@ int save_screenshot (BITMAP * src_bmp, const char *prefix)
                /* always should be 12 characters, ie: shot1234.pcx */
                if (strlen (get_filename (old_file.name)) == SAVE_NAME_SIZE + 4) {
                   /* ie: if the filename found is "c:\kq\saves\shot0001.pcx", convert it to "0001" */
-                  strncpy (buffer,
-                           get_filename (old_file.name) + prefix_len,
+                  strncpy (buffer, get_filename (old_file.name) + prefix_len,
                            SAVE_NAME_SIZE - prefix_len);
                   buffer[SAVE_NAME_SIZE - prefix_len] = 0;
 
@@ -110,8 +109,7 @@ int save_screenshot (BITMAP * src_bmp, const char *prefix)
 
             /* if the src_bmp is the screen, then we need to create a sub bitmap just in case */
             temp =
-               (src_bmp == screen) ? create_sub_bitmap (screen, 0, 0,
-                                                        SCREEN_W,
+               (src_bmp == screen) ? create_sub_bitmap (screen, 0, 0, SCREEN_W,
                                                         SCREEN_H) : src_bmp;
             if (temp) {
                get_palette (pal);

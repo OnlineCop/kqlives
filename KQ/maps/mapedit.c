@@ -55,7 +55,7 @@ char map_fname[16] = "";
 char *strbuf;
 
 /* window_x and window_y are view-window coords
-   x and y are everything else
+ * x and y are everything else
  */
 short window_x = 0, window_y = 0, x = 0, y = 0;
 
@@ -112,19 +112,25 @@ int main (int argc, char *argv[])
 
    startup ();
    if (argc > 1) {
-      load_map(argv[1]);
+      load_map (argv[1]);
    }
 
    while (!stop) {
       process_controls ();
       if (draw_mode == MAP_PREVIEW)
-        preview_map();
+         preview_map ();
       else
-        draw_map ();
+         draw_map ();
       draw_menubars ();
-      if (!nomouse)
-         draw_sprite (double_buffer, mouse_pic, mouse_x, mouse_y);
+      if (!nomouse) {
+//         draw_sprite (double_buffer, mouse_pic, mouse_x, mouse_y);
+         show_mouse(double_buffer);
+      }
       blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+      scare_mouse ();
+      show_mouse (screen);
+      unscare_mouse ();
+
       if (key[KEY_Q])
          stop = confirm_exit ();
       yield_timeslice ();
@@ -765,8 +771,8 @@ void draw_map (void)
          w = ((window_y + dy) * gmap.xsize) + window_x + dx;
 
          /* Clears Layer 1 background and then draws */
-         if ((draw_mode & MAP_LAYER1) ||
-             (draw_mode == BLOCK_COPY) || (draw_mode == BLOCK_PASTE)) {
+         if ((draw_mode & MAP_LAYER1) || (draw_mode == BLOCK_COPY)
+             || (draw_mode == BLOCK_PASTE)) {
             if (draw_mode == MAP_LAYER1)
                rectfill (double_buffer, dx * 16, dy * 16, dx * 16 + 15,
                          dy * 16 + 15, 0);
@@ -776,18 +782,17 @@ void draw_map (void)
          /* This draws Layer 1 only if it was what was showing when
             the user toggled the Attribute.
           */
-         if ((draw_mode == MAP_ENTITIES) ||
-             (draw_mode == MAP_SHADOWS) ||
-             (draw_mode == MAP_OBSTACLES) ||
-             (draw_mode == MAP_ZONES) || (draw_mode == GRAB_TILE)) {
+         if ((draw_mode == MAP_ENTITIES) || (draw_mode == MAP_SHADOWS)
+             || (draw_mode == MAP_OBSTACLES) || (draw_mode == MAP_ZONES)
+             || (draw_mode == GRAB_TILE)) {
             if (showing.last_layer & MAP_LAYER1)
-               blit (icons[map[w]], double_buffer, 0, 0, dx * 16,
-                     dy * 16, 16, 16);
+               blit (icons[map[w]], double_buffer, 0, 0, dx * 16, dy * 16, 16,
+                     16);
          }
 
          /* Clears Layer 2 background and then draws */
-         if ((draw_mode & MAP_LAYER2) ||
-             (draw_mode == BLOCK_COPY) || (draw_mode == BLOCK_PASTE)) {
+         if ((draw_mode & MAP_LAYER2) || (draw_mode == BLOCK_COPY)
+             || (draw_mode == BLOCK_PASTE)) {
             if (draw_mode == MAP_LAYER2)
                rectfill (double_buffer, dx * 16, dy * 16, dx * 16 + 15,
                          dy * 16 + 15, 0);
@@ -797,17 +802,16 @@ void draw_map (void)
          /* This draws Layer 2 only if it was what was showing when
             the user toggled the Attribute.
           */
-         if ((draw_mode == MAP_ENTITIES) ||
-             (draw_mode == MAP_SHADOWS) ||
-             (draw_mode == MAP_OBSTACLES) ||
-             (draw_mode == MAP_ZONES) || (draw_mode == GRAB_TILE)) {
+         if ((draw_mode == MAP_ENTITIES) || (draw_mode == MAP_SHADOWS)
+             || (draw_mode == MAP_OBSTACLES) || (draw_mode == MAP_ZONES)
+             || (draw_mode == GRAB_TILE)) {
             if (showing.last_layer & MAP_LAYER2)
                draw_sprite (double_buffer, icons[b_map[w]], dx * 16, dy * 16);
          }
 
          /* Clears Layer 3 background and then draws */
-         if ((draw_mode & MAP_LAYER3) ||
-             (draw_mode == BLOCK_COPY) || (draw_mode == BLOCK_PASTE)) {
+         if ((draw_mode & MAP_LAYER3) || (draw_mode == BLOCK_COPY)
+             || (draw_mode == BLOCK_PASTE)) {
             if (draw_mode == MAP_LAYER3)
                rectfill (double_buffer, dx * 16, dy * 16, dx * 16 + 15,
                          dy * 16 + 15, 0);
@@ -817,10 +821,9 @@ void draw_map (void)
          /* This draws Layer 3 only if it was what was showing when
             the user toggled the Attribute.
           */
-         if ((draw_mode == MAP_ENTITIES) ||
-             (draw_mode == MAP_SHADOWS) ||
-             (draw_mode == MAP_OBSTACLES) ||
-             (draw_mode == MAP_ZONES) || (draw_mode == GRAB_TILE)) {
+         if ((draw_mode == MAP_ENTITIES) || (draw_mode == MAP_SHADOWS)
+             || (draw_mode == MAP_OBSTACLES) || (draw_mode == MAP_ZONES)
+             || (draw_mode == GRAB_TILE)) {
             if (showing.last_layer & MAP_LAYER3)
                draw_sprite (double_buffer, icons[f_map[w]], dx * 16, dy * 16);
          }
@@ -828,8 +831,8 @@ void draw_map (void)
          /* Draw the Shadows */
          if (showing.shadows == 1)
             if (sh_map[w] > 0)
-               draw_trans_sprite (double_buffer, shadow[sh_map[w]],
-                                  dx * 16, dy * 16);
+               draw_trans_sprite (double_buffer, shadow[sh_map[w]], dx * 16,
+                                  dy * 16);
 
          /* Draw the Obstacles */
          if (showing.obstacles == 1) {
@@ -866,18 +869,17 @@ void draw_map (void)
          if (showing.zones == 1 && z_map[w] > 0) {
             if (z_map[w] < 10) {
                /* Center single-digit number vert+horiz */
-               textprintf (double_buffer, font, dx * 16 + 4,
-                           dy * 16 + 4, makecol (255, 255, 255), "%d",
-                           z_map[w]);
+               textprintf (double_buffer, font, dx * 16 + 4, dy * 16 + 4,
+                           makecol (255, 255, 255), "%d", z_map[w]);
             }
 
             else if (z_map[w] < 100) {
                /* Center double-digit number vert */
-               textprintf (double_buffer, font, dx * 16,
-                           dy * 16 + 4, makecol (255, 255, 255), "%d",
+               textprintf (double_buffer, font, dx * 16, dy * 16 + 4,
+                           makecol (255, 255, 255), "%d",
                            (int) (z_map[w] / 10));
-               textprintf (double_buffer, font, dx * 16 + 8,
-                           dy * 16 + 4, makecol (255, 255, 255), "%d",
+               textprintf (double_buffer, font, dx * 16 + 8, dy * 16 + 4,
+                           makecol (255, 255, 255), "%d",
                            (int) (z_map[w] % 10));
             }
 
@@ -885,11 +887,11 @@ void draw_map (void)
                /* Print 100's digit in top-right corner of square;
                   10's and 1's digits on bottom of square
                 */
-               textprintf (double_buffer, font, dx * 16 + 8,
-                           dy * 16, makecol (255, 255, 255), "%d",
+               textprintf (double_buffer, font, dx * 16 + 8, dy * 16,
+                           makecol (255, 255, 255), "%d",
                            (int) (z_map[w] / 100));
-               textprintf (double_buffer, font, dx * 16,
-                           dy * 16 + 8, makecol (255, 255, 255), "%02d",
+               textprintf (double_buffer, font, dx * 16, dy * 16 + 8,
+                           makecol (255, 255, 255), "%02d",
                            (int) (z_map[w] % 100));
             }
          }                      /* if (showing.zones == 1 && z_map[w] > 0) */
@@ -900,19 +902,20 @@ void draw_map (void)
    if (showing.entities == 1) {
       for (d = 0; d < number_of_ents; d++) {
          /* Draw only the entities within the view-screen */
-         if ((gent[d].tilex >= window_x) && (gent[d].tilex < window_x + htiles) &&
-             (gent[d].tiley >= window_y) && (gent[d].tiley < window_y + vtiles)) {
+         if ((gent[d].tilex >= window_x) && (gent[d].tilex < window_x + htiles)
+             && (gent[d].tiley >= window_y)
+             && (gent[d].tiley < window_y + vtiles)) {
             /* Draw either a normal sprite or a translucent one */
             if (gent[d].transl == 0)
-               draw_sprite
-                  (double_buffer,
-                   eframes[gent[d].chrx][gent[d].facing * 3],
-                   (gent[d].tilex - window_x) * 16, (gent[d].tiley - window_y) * 16);
+               draw_sprite (double_buffer,
+                            eframes[gent[d].chrx][gent[d].facing * 3],
+                            (gent[d].tilex - window_x) * 16,
+                            (gent[d].tiley - window_y) * 16);
             else
-               draw_trans_sprite
-                  (double_buffer,
-                   eframes[gent[d].chrx][gent[d].facing * 3],
-                   (gent[d].tilex - window_x) * 16, (gent[d].tiley - window_y) * 16);
+               draw_trans_sprite (double_buffer,
+                                  eframes[gent[d].chrx][gent[d].facing * 3],
+                                  (gent[d].tilex - window_x) * 16,
+                                  (gent[d].tiley - window_y) * 16);
          }
       }
    }                            /* if (showing.entities == 1) */
@@ -1044,25 +1047,24 @@ void draw_menubars (void)
    /* Display the tileset in the right menu */
    if (icon_set != 999) {
       for (p = 0; p < (ICONSET_SIZE / 2); p++) {
-         blit (icons[icon_set * ICONSET_SIZE + p],
-               double_buffer, 0, 0, (SW - 64), p * 16, 16, 16);
-         blit (icons[(icon_set * ICONSET_SIZE) + p +
-                     (ICONSET_SIZE / 2)],
+         blit (icons[icon_set * ICONSET_SIZE + p], double_buffer, 0, 0,
+               (SW - 64), p * 16, 16, 16);
+         blit (icons[(icon_set * ICONSET_SIZE) + p + (ICONSET_SIZE / 2)],
                double_buffer, 0, 0, (SW - 48), p * 16, 16, 16);
       }
    }
 
    /* Show which icon the user selected with a rectangle */
-   if (curtile >= icon_set * ICONSET_SIZE &&
-       curtile < (icon_set * ICONSET_SIZE) + (ICONSET_SIZE)) {
+   if (curtile >= icon_set * ICONSET_SIZE
+       && curtile < (icon_set * ICONSET_SIZE) + (ICONSET_SIZE)) {
       xp = curtile - (icon_set * ICONSET_SIZE);
       yp = xp;
       xp = xp / (ICONSET_SIZE / 2);
       yp = yp - (xp * (ICONSET_SIZE / 2));
 
       /* This draws the rectangle around the selected icon */
-      rect (double_buffer, xp * 16 + (SW - 64), yp * 16,
-            xp * 16 + (SW - 49), yp * 16 + 15, 255);
+      rect (double_buffer, xp * 16 + (SW - 64), yp * 16, xp * 16 + (SW - 49),
+            yp * 16 + 15, 255);
    }
 
    /* Clear everything under the tileset */
@@ -1168,8 +1170,8 @@ void draw_menubars (void)
    if (draw_mode == MAP_ENTITIES) {
       sprintf (strbuf, "%d", current_ent);
       print_sfont ((SW - 14), (SH - 38), strbuf, double_buffer);
-      blit (eframes[current_ent][0], double_buffer, 0, 0, (SW - 16),
-            (SH - 32), 16, 16);
+      blit (eframes[current_ent][0], double_buffer, 0, 0, (SW - 16), (SH - 32),
+            16, 16);
       sprintf (strbuf, "%d", number_of_ents);
       print_sfont ((SW - 14), (SH - 12), strbuf, double_buffer);
    }
@@ -1427,8 +1429,8 @@ static void draw_layer (short *layer, int parallax)
    /* ...And draw the tilemap */
    for (j = layer_y1; j < layer_y2; ++j) {
       for (layer_x = layer_x1; layer_x < layer_x2; ++layer_x) {
-         draw_sprite(double_buffer, icons[layer[layer_x + j * gmap.xsize]],
-                     layer_x * 16 - x0, j * 16 - y0);
+         draw_sprite (double_buffer, icons[layer[layer_x + j * gmap.xsize]],
+                      layer_x * 16 - x0, j * 16 - y0);
       }
    }
 }                               /* draw_layer () */
@@ -1477,8 +1479,8 @@ static void draw_shadow (int parallax)
       for (layer_x = layer_x1; layer_x < layer_x2; ++layer_x) {
          ss = sh_map[j * gmap.xsize + layer_x];
          if (ss > 0) {
-            draw_trans_sprite (double_buffer, shadow[ss],
-                               layer_x * 16 - x0, j * 16 - y0);
+            draw_trans_sprite (double_buffer, shadow[ss], layer_x * 16 - x0,
+                               j * 16 - y0);
          }
       }
    }
@@ -1494,33 +1496,33 @@ static void draw_shadow (int parallax)
  */
 void preview_map (void)
 {
-   clear_bitmap(double_buffer);
+   clear_bitmap (double_buffer);
    switch (gmap.map_mode) {
    case 0:
-      draw_layer((short int*)map, 0);
-      draw_layer((short int*)b_map, 0);
-      draw_ents();
-      draw_layer((short int*)f_map, 0);
-      draw_shadow(0);
+      draw_layer ((short int *) map, 0);
+      draw_layer ((short int *) b_map, 0);
+      draw_ents ();
+      draw_layer ((short int *) f_map, 0);
+      draw_shadow (0);
       break;
    case 1:
-      draw_layer((short int*)map, 0);
-      draw_ents();
-      draw_layer((short int*)b_map, 0);
-      draw_layer((short int*)f_map, 0);
-      draw_shadow(0);
+      draw_layer ((short int *) map, 0);
+      draw_ents ();
+      draw_layer ((short int *) b_map, 0);
+      draw_layer ((short int *) f_map, 0);
+      draw_shadow (0);
       break;
    case 2:
-      draw_layer((short int*)map, 1);
-      draw_layer((short int*)b_map, 0);
-      draw_ents();
-      draw_layer((short int*)f_map, 0);
-      draw_shadow(0);
+      draw_layer ((short int *) map, 1);
+      draw_layer ((short int *) b_map, 0);
+      draw_ents ();
+      draw_layer ((short int *) f_map, 0);
+      draw_shadow (0);
       break;
    default:
-      textprintf_centre(double_buffer, font, double_buffer->w / 2,
-                        double_buffer->h / 2, makecol(255, 255, 255),
-                        "Mode %d preview not supported.", gmap.map_mode);
+      textprintf_centre (double_buffer, font, double_buffer->w / 2,
+                         double_buffer->h / 2, makecol (255, 255, 255),
+                         "Mode %d preview not supported.", gmap.map_mode);
       break;
    }
 }                               /* preview_map () */
@@ -1542,13 +1544,13 @@ void paste_region (int tx, int ty)
    for (zy = 0; zy <= cbh; zy++) {
       for (zx = 0; zx <= cbw; zx++) {
          if (ty + zy < gmap.ysize && tx + zx < gmap.xsize) {
-         /* TT: Changed from:
-            bf = c_map[zy * gmap.xsize + zx];
-            map[(ty + zy) * gmap.xsize + tx + zx] = bf;
-            .
-            .
-            .
-          */
+            /* TT: Changed from:
+               bf = c_map[zy * gmap.xsize + zx];
+               map[(ty + zy) * gmap.xsize + tx + zx] = bf;
+               .
+               .
+               .
+             */
 
             map[(ty + zy) * gmap.xsize + tx + zx] =
                c_map[zy * gmap.xsize + zx];
@@ -1805,12 +1807,10 @@ void process_controls (void)
 
       /* Get the tile under the mouse curser */
       if (k == KEY_G) {
-         if ((draw_mode != MAP_LAYER1) &&
-             (draw_mode != MAP_LAYER2) &&
-             (draw_mode != MAP_LAYER3) &&
-             (showing.last_layer != MAP_LAYER1) &&
-             (showing.last_layer != MAP_LAYER2) &&
-             (showing.last_layer != MAP_LAYER3))
+         if ((draw_mode != MAP_LAYER1) && (draw_mode != MAP_LAYER2)
+             && (draw_mode != MAP_LAYER3) && (showing.last_layer != MAP_LAYER1)
+             && (showing.last_layer != MAP_LAYER2)
+             && (showing.last_layer != MAP_LAYER3))
 
             /* The default view mode */
             showing.last_layer = MAP_LAYER1;
@@ -2046,7 +2046,7 @@ void process_controls (void)
          window_x = 0;
          window_y = 0;
       }
-   }  /* if (keypressed ()) */
+   }                            // if (keypressed ())
 
    /* These prevent the user from moving past the map's edge */
    if (window_x > gmap.xsize - htiles)
@@ -2115,10 +2115,10 @@ void process_controls (void)
       }
 
       /* Draw to the map */
-      if ((draw_mode == MAP_LAYER1) || (draw_mode == MAP_LAYER2) ||
-          (draw_mode == MAP_LAYER3) || (draw_mode == MAP_OBSTACLES) ||
-          (draw_mode == MAP_ZONES) || (draw_mode == MAP_ENTITIES) ||
-          (draw_mode == MAP_SHADOWS))
+      if ((draw_mode == MAP_LAYER1) || (draw_mode == MAP_LAYER2)
+          || (draw_mode == MAP_LAYER3) || (draw_mode == MAP_OBSTACLES)
+          || (draw_mode == MAP_ZONES) || (draw_mode == MAP_ENTITIES)
+          || (draw_mode == MAP_SHADOWS))
          dmode = 1;
 
       /* Changes to the map only happen when (dmode == 1) */
@@ -2152,7 +2152,8 @@ void process_controls (void)
 
          /* Add an Entity to the map */
          if (draw_mode == MAP_ENTITIES)
-            place_entity ((mouse_x / 16) + window_x, (mouse_y / 16) + window_y);
+            place_entity ((mouse_x / 16) + window_x,
+                          (mouse_y / 16) + window_y);
 
          /* Add a Shadow to the map */
          if (draw_mode == MAP_SHADOWS)
@@ -2201,10 +2202,10 @@ void process_controls (void)
          paste_region_special (window_x + x, window_y + y);
 
       /* Draw to the map */
-      if (((draw_mode == MAP_LAYER1) || (draw_mode == MAP_LAYER2) ||
-           (draw_mode == MAP_LAYER3) || (draw_mode == MAP_OBSTACLES) ||
-           (draw_mode == MAP_ZONES) || (draw_mode == MAP_ENTITIES) ||
-           (draw_mode == MAP_SHADOWS)) && (dmode == 0))
+      if (((draw_mode == MAP_LAYER1) || (draw_mode == MAP_LAYER2)
+           || (draw_mode == MAP_LAYER3) || (draw_mode == MAP_OBSTACLES)
+           || (draw_mode == MAP_ZONES) || (draw_mode == MAP_ENTITIES)
+           || (draw_mode == MAP_SHADOWS)) && (dmode == 0))
          dmode = 1;
 
       /* Grab the tile and set the mode to a drawing mode */
@@ -2318,18 +2319,12 @@ void resize_map (void)
    /* Pre-copy the map info */
    for (zy = 0; zy < gmap.ysize; zy++) {
       for (zx = 0; zx < gmap.xsize; zx++) {
-         c_map[zy * gmap.xsize + zx] =
-            map[zy * gmap.xsize + zx];
-         cb_map[zy * gmap.xsize + zx] =
-            b_map[zy * gmap.xsize + zx];
-         cf_map[zy * gmap.xsize + zx] =
-            f_map[zy * gmap.xsize + zx];
-         cz_map[zy * gmap.xsize + zx] =
-            z_map[zy * gmap.xsize + zx];
-         csh_map[zy * gmap.xsize + zx] =
-            sh_map[zy * gmap.xsize + zx];
-         co_map[zy * gmap.xsize + zx] =
-            o_map[zy * gmap.xsize + zx];
+         c_map[zy * gmap.xsize + zx] = map[zy * gmap.xsize + zx];
+         cb_map[zy * gmap.xsize + zx] = b_map[zy * gmap.xsize + zx];
+         cf_map[zy * gmap.xsize + zx] = f_map[zy * gmap.xsize + zx];
+         cz_map[zy * gmap.xsize + zx] = z_map[zy * gmap.xsize + zx];
+         csh_map[zy * gmap.xsize + zx] = sh_map[zy * gmap.xsize + zx];
+         co_map[zy * gmap.xsize + zx] = o_map[zy * gmap.xsize + zx];
       }
    }
 
@@ -2363,18 +2358,12 @@ void resize_map (void)
    for (zy = 0; zy < oldh; zy++) {
       for (zx = 0; zx < oldw; zx++) {
          if (zy < gmap.ysize && zx < gmap.xsize) {
-            map[zy * gmap.xsize + zx] =
-               c_map[zy * oldw + zx];
-            b_map[zy * gmap.xsize + zx] =
-               cb_map[zy * oldw + zx];
-            f_map[zy * gmap.xsize + zx] =
-               cf_map[zy * oldw + zx];
-            z_map[zy * gmap.xsize + zx] =
-               cz_map[zy * oldw + zx];
-            sh_map[zy * gmap.xsize + zx] =
-               csh_map[zy * oldw + zx];
-            o_map[zy * gmap.xsize + zx] =
-               co_map[zy * oldw + zx];
+            map[zy * gmap.xsize + zx] = c_map[zy * oldw + zx];
+            b_map[zy * gmap.xsize + zx] = cb_map[zy * oldw + zx];
+            f_map[zy * gmap.xsize + zx] = cf_map[zy * oldw + zx];
+            z_map[zy * gmap.xsize + zx] = cz_map[zy * oldw + zx];
+            sh_map[zy * gmap.xsize + zx] = csh_map[zy * oldw + zx];
+            o_map[zy * gmap.xsize + zx] = co_map[zy * oldw + zx];
          }
       }
    }
@@ -2472,8 +2461,8 @@ void show_help (void)
       "                [PRESS ESC OR ENTER]                 "
    };
 
-   rectfill (screen, (19 * 6) - 5, 30, (54 * 8) + 5,
-             NUMBER_OF_ITEMS * 7 + 40, 0);
+   rectfill (screen, (19 * 6) - 5, 30, (54 * 8) + 5, NUMBER_OF_ITEMS * 7 + 40,
+             0);
    rect (screen, (19 * 6) - 3, 32, (54 * 8) + 3, (NUMBER_OF_ITEMS * 7) + 38,
          255);
 
@@ -2544,8 +2533,8 @@ void startup (void)
    max_sets = (pcx_buffer->h / 16);
    for (p = 0; p < max_sets - 1; p++)
       for (q = 0; q < ICONSET_SIZE; q++)
-         blit (pcx_buffer, icons[p * ICONSET_SIZE + q], q * 16, p * 16,
-               0, 0, 16, 16);
+         blit (pcx_buffer, icons[p * ICONSET_SIZE + q], q * 16, p * 16, 0, 0,
+               16, 16);
    icon_set = 0;
    destroy_bitmap (pcx_buffer);
    bufferize ();
@@ -2639,14 +2628,20 @@ void visual_map (void)
             if (z_map[w] > 0 && z_map[w] < MAX_ZONES) {
                if (z_map[w] < 10) {
                   /* The zone's number is single-digit */
-                  textprintf (bmp, font, i * 16 + 4, j * 16 + 4, makecol (255, 255, 255), "%d", z_map[w]);
+                  textprintf (bmp, font, i * 16 + 4, j * 16 + 4,
+                              makecol (255, 255, 255), "%d", z_map[w]);
                } else if (z_map[w] < 100) {
                   /* The zone's number is double-digit */
-                  textprintf (bmp, font, i * 16, j * 16 + 4, makecol (255, 255, 255), "%d", z_map[w]);
+                  textprintf (bmp, font, i * 16, j * 16 + 4,
+                              makecol (255, 255, 255), "%d", z_map[w]);
                } else if (i < 1000) {
                   /* The zone's number is triple-digit */
-                  textprintf (bmp, font, i * 16 + 4, j * 16, makecol (255, 255, 255), "%d", (int) (z_map[w] / 100));
-                  textprintf (bmp, font, i * 16, j * 16 + 8, makecol (255, 255, 255), "%02d", (int) (z_map[w] % 100));
+                  textprintf (bmp, font, i * 16 + 4, j * 16,
+                              makecol (255, 255, 255), "%d",
+                              (int) (z_map[w] / 100));
+                  textprintf (bmp, font, i * 16, j * 16 + 8,
+                              makecol (255, 255, 255), "%02d",
+                              (int) (z_map[w] % 100));
                }
             }
          }
@@ -2720,4 +2715,3 @@ int yninput (void)
    }
    return done - 1;
 }                               /* yninput () */
-

@@ -138,8 +138,8 @@ void play_music (const char *music_name, long position)
       if (mod_song[current_music_player]) {
          /* ML: we should (?) adjust the buffer size after everything is running smooth */
          mod_player[current_music_player] =
-            al_start_duh (mod_song[current_music_player], 2, position,
-                          1.0, 4096 * 4, 44100);
+            al_start_duh (mod_song[current_music_player], 2, position, 1.0,
+                          4096 * 4, 44100);
       } else {
          TRACE ("Could not load %s!\n", filename);
       }

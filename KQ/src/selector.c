@@ -139,18 +139,16 @@ int select_any_player (int csa, int icn, char *msg)
       if (rd == 1) {
          drawmap ();
          if (csa < TGT_ALLY_ALL) {
-            menubox (double_buffer,
-                     152 - ((strlen (msg) + 1) * 4) + xofs, 8 + yofs,
-                     strlen (msg) + 1, 1, BLUE);
+            menubox (double_buffer, 152 - ((strlen (msg) + 1) * 4) + xofs,
+                     8 + yofs, strlen (msg) + 1, 1, BLUE);
             draw_icon (double_buffer, icn,
                        160 - ((strlen (msg) + 1) * 4) + xofs, 16 + yofs);
-            print_font (double_buffer,
-                        168 - ((strlen (msg) + 1) * 4) + xofs,
+            print_font (double_buffer, 168 - ((strlen (msg) + 1) * 4) + xofs,
                         16 + yofs, msg, FNORMAL);
          }
          for (k = 0; k < numchrs; k++) {
-            menubox (double_buffer, 80 + xofs, k * 56 + shy + yofs, 18,
-                     5, BLUE);
+            menubox (double_buffer, 80 + xofs, k * 56 + shy + yofs, 18, 5,
+                     BLUE);
             draw_playerstat (double_buffer, pidx[k], 88 + xofs,
                              k * 56 + shy + 8 + yofs);
             if (csa < TGT_ALLY_ALL) {

@@ -46,25 +46,26 @@ void prompt_load_map (void)
    /* If the line was blank, simply reload the current map */
    if (strlen (fname) < 1) {
       strcpy (fname, map_fname);
-      if (exists(fname))
+      if (exists (fname))
          sprintf (strbuf, "Reload %s? (y/n)", fname);
       else {
          error_load (fname);
          return;
       }
-   } else
-      if (exists(fname))
+   } else {
+      if (exists (fname))
          sprintf (strbuf, "Load %s? (y/n)", fname);
       else {
          error_load (fname);
          return;
       }
+   }
 
    print_sfont (6, 6, strbuf, screen);
 
    if (yninput ()) {
       load_map (fname);
-   }  /* if (yninput ()) */
+   }                            // if (yninput ())
 
    return;
 }                               /* prompt_load_map () */
@@ -116,8 +117,8 @@ void load_map (char *fname)
    max_sets = (pcx_buffer->h / 16);
    for (p = 0; p < max_sets; p++) {
       for (q = 0; q < ICONSET_SIZE; q++) {
-         blit (pcx_buffer, icons[p * ICONSET_SIZE + q], q * 16,
-               p * 16, 0, 0, 16, 16);
+         blit (pcx_buffer, icons[p * ICONSET_SIZE + q], q * 16, p * 16, 0, 0,
+               16, 16);
       }
    }
    icon_set = 0;
@@ -173,7 +174,7 @@ void make_mapfrompcx (void)
 {
    char fname[16];
    char imp[16];
-   int  ld;
+   int ld;
    int w, h, ax, ay;
    BITMAP *pb;
    short *tm;
@@ -201,15 +202,18 @@ void make_mapfrompcx (void)
          rectfill (screen, 0, 0, 319, 27, 0);
          rect (screen, 2, 2, 317, 25, 255);
          print_sfont (6, 6, "Put to (B)ack (M)id (F)ore?", screen);
-         if (get_line(6, 16, imp, sizeof(imp)) > 0) {
+         if (get_line (6, 16, imp, sizeof (imp)) > 0) {
             switch (*imp) {
-            case 'm': case 'M':
+            case 'm':
+            case 'M':
                tm = b_map;
                break;
-            case 'b': case 'B':
+            case 'b':
+            case 'B':
                tm = map;
                break;
-            case 'f': case 'F':
+            case 'f':
+            case 'F':
                tm = f_map;
                break;
             }
@@ -229,7 +233,7 @@ void make_mapfrompcx (void)
 
       for (ay = 0; ay < h; ay++) {
          for (ax = 0; ax < w; ax++) {
-               tm[ay * gmap.xsize + ax] = pb->line[ay][ax];
+            tm[ay * gmap.xsize + ax] = pb->line[ay][ax];
          }
       }
       destroy_bitmap (pb);
@@ -280,7 +284,7 @@ void new_map (void)
    int new_height = 0, new_width = 0, new_tileset = 0;
    int p, q;
 
-   cmessage("Do you want to create a new map?");
+   cmessage ("Do you want to create a new map?");
    if (!yninput ())
       return;
 
@@ -330,9 +334,9 @@ void new_map (void)
       rectfill (screen, 3, 3, 316, 42, 0);
       print_sfont (6, 6, "New map", screen);
 
-      sprintf(strbuf, "Width: %d", new_width);
+      sprintf (strbuf, "Width: %d", new_width);
       print_sfont (6, 18, strbuf, screen);
-      sprintf(strbuf, "Height: %d", new_height);
+      sprintf (strbuf, "Height: %d", new_height);
       print_sfont (6, 26, strbuf, screen);
 
       rectfill (screen, 3, 33, 316, 39, 0);
@@ -384,8 +388,8 @@ void new_map (void)
    max_sets = (pcx_buffer->h / 16);
    for (p = 0; p < max_sets; p++)
       for (q = 0; q < ICONSET_SIZE; q++)
-         blit (pcx_buffer, icons[p * ICONSET_SIZE + q], q * 16, p * 16,
-               0, 0, 16, 16);
+         blit (pcx_buffer, icons[p * ICONSET_SIZE + q], q * 16, p * 16, 0, 0,
+               16, 16);
    icon_set = 0;
    destroy_bitmap (pcx_buffer);
    init_entities ();

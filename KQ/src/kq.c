@@ -46,14 +46,14 @@
 #include <string.h>
 
 #if 0
- #if defined(HAVE_GETPWUID)
- #include <unistd.h>
- #include <sys/stat.h>
- #include <sys/types.h>
- #include <pwd.h>
- #elif defined(HAVE_LOADLIBRARY)
- #include <direct.h>
- #endif
+#if defined(HAVE_GETPWUID)
+#include <unistd.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <pwd.h>
+#elif defined(HAVE_LOADLIBRARY)
+#include <direct.h>
+#endif
 #endif
 
 #include <allegro.h>
@@ -82,7 +82,7 @@
 char curmap[16];
 /*! Names of the tile sets (in the datafile) */
 char icon_sets[7][16] = { "LAND_PCX", "NEWTOWN_PCX", "CASTLE_PCX",
-			  "INCAVE_PCX", "VILLAGE_PCX", "MOUNT_PCX", "SHRINE_BMP"
+   "INCAVE_PCX", "VILLAGE_PCX", "MOUNT_PCX", "SHRINE_BMP"
 };
 
 
@@ -105,16 +105,12 @@ int vx, vy, mx, my;
 int steps = 0, lastm[PSIZE];
 
 /*! 23: various global bitmaps */
-BITMAP *double_buffer, *fx_buffer, *map_icons[MAX_TILES],
-   *back, *tc, *tc2, *bub[8], *b_shield, *b_shell, *b_repulse, *b_mp,
+BITMAP *double_buffer, *fx_buffer, *map_icons[MAX_TILES], *back, *tc, *tc2,
+   *bub[8], *b_shield, *b_shell, *b_repulse, *b_mp,
    *cframes[NUM_FIGHTERS][MAXCFRAMES], *tcframes[NUM_FIGHTERS][MAXCFRAMES],
-   *frames[MAXCHRS][MAXFRAMES],
-   *eframes[MAXE][MAXEFRAMES], *pgb[9], *sfonts[5], *bord[8],
-   *menuptr, *mptr, *sptr, *stspics, *sicons, *bptr,
+   *frames[MAXCHRS][MAXFRAMES], *eframes[MAXE][MAXEFRAMES], *pgb[9],
+   *sfonts[5], *bord[8], *menuptr, *mptr, *sptr, *stspics, *sicons, *bptr,
    *missbmp, *noway, *upptr, *dnptr, *shadow[MAX_SHADOWS], *kfonts;
-#if 0
-   *shadow[MAX_SHADOWS], *kfonts, *portrait[MAXCHRS];
-#endif
 
 /*! Layers in the map */
 unsigned short *map_seg = NULL, *b_seg = NULL, *f_seg = NULL;
@@ -141,13 +137,14 @@ s_anim tanim[7][MAX_ANIM] = {
    /* castle.pcx */
    {{57, 58, 50}, {62, 63, 25}, {205, 206, 50}, {250, 253, 25}, {0, 0, 0}},
    /* incave.pcx */
-   {{30, 35, 30}, {176, 179, 25}, {323, 328, 40}, {380, 385, 40}, {360, 365, 30}},
+   {{30, 35, 30}, {176, 179, 25}, {323, 328, 40}, {380, 385, 40},
+    {360, 365, 30}},
    /* village.pcx */
    {{38, 39, 25}, {80, 83, 25}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}},
    /* mount.pcx */
    {{58, 59, 50}, {40, 42, 50}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}},
    /* shrine.bmp */
-   { {0,0,0}, {0,0,0},{0,0,0},{0,0,0},{0,0,0}}
+   {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}}
 };
 
 /*! Tile animation specifiers for the current tileset */
@@ -213,91 +210,6 @@ s_player party[MAXCHRS];
  * all shot past the 80-character mark by quite a ways :)
  */
 s_heroinfo players[MAXCHRS];
-
-#if 0
-s_player players[MAXCHRS] = {
-   {
-    "Sensar", 0, 70, 1, 100, 40, 40, 0, 0,
-    {800, 500, 700, 300, 300, 4000, 9000, 9000, 0, 7500, 0, 100, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-     0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-    },
-   {
-    "Sarina", 0, 70, 1, 100, 36, 36, 4, 4,
-    {600, 600, 600, 400, 400, 6000, 9000, 9000, 0, 6000, 0, 100, 0},
-    {0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-     0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-    },
-   {
-    "Corin", 0, 70, 1, 100, 25, 25, 15, 15,
-    {400, 400, 500, 800, 400, 4500, 12000, 9000, 0, 5000, 0, 100, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-     0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-    },
-   {
-    "Ajathar", 0, 70, 1, 100, 30, 30, 8, 8,
-    {600, 500, 500, 400, 800, 5000, 9000, 11000, 0, 5000, 0, 100, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-     0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-    },
-   {
-    "Casandra", 0, 70, 1, 100, 24, 24, 16, 16,
-    {300, 600, 400, 800, 600, 5500, 10000, 10000, 0, 5000, 0, 100, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 8, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-     0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-    },
-   {
-    "Temmin", 0, 70, 1, 100, 35, 35, 5, 5,
-    {700, 500, 800, 300, 500, 5500, 8000, 10000, 0, 6000, 0, 100, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-     0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-    },
-   {
-    "Ayla", 0, 70, 1, 100, 32, 32, 8, 8,
-    {500, 800, 500, 600, 400, 7000, 10000, 8000, 0, 5000, 0, 100, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-     0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-    },
-   {
-    "Noslom", 0, 70, 1, 65, 22, 22, 18, 18,
-    {300, 600, 300, 700, 700, 5500, 10000, 10000, 0, 5000, 0, 100, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-     0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-    }
-};
-#endif
 
 
 
@@ -369,6 +281,7 @@ int in_combat = 0;
 int skips = 0, frate, mfrate = 0, show_frate = 0;
 /*! Should we use the joystick */
 int use_joy = 1;
+
 #ifdef KQ_CHEATS
 /*! Has the 'cheat' script been loaded? */
 int cheat_loaded = 0;
@@ -698,8 +611,8 @@ void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
       program_death (strbuf);
    }
 
-   /*pack_fread (&g_map, sizeof (s_map), pf); */
-   /*pack_fread (&g_ent[PSIZE], sizeof (s_entity) * 50, pf); */
+   /* pack_fread (&g_map, sizeof (s_map), pf); */
+   /* pack_fread (&g_ent[PSIZE], sizeof (s_entity) * 50, pf); */
    load_s_map (&g_map, pf);
    for (i = 0; i < 50; ++i)
       load_s_entity (&g_ent[PSIZE + i], pf);
@@ -711,11 +624,6 @@ void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
    for (i = 0; i < g_map.xsize * g_map.ysize; ++i)
       f_seg[i] = pack_igetw (pf);
 
-#if 0
-   pack_fread (map_seg, (g_map.xsize * g_map.ysize * 2), pf);
-   pack_fread (b_seg, (g_map.xsize * g_map.ysize * 2), pf);
-   pack_fread (f_seg, (g_map.xsize * g_map.ysize * 2), pf);
-#endif
    pack_fread (z_seg, (g_map.xsize * g_map.ysize), pf);
    pack_fread (s_seg, (g_map.xsize * g_map.ysize), pf);
    pack_fread (o_seg, (g_map.xsize * g_map.ysize), pf);
@@ -776,8 +684,8 @@ void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
 
    for (o = 0; o < pcxb->h / 16; o++)
       for (i = 0; i < pcxb->w / 16; i++)
-         blit ((BITMAP *) pb->dat,
-               map_icons[o * (pcxb->w / 16) + i], i * 16, o * 16, 0, 0, 16, 16);
+         blit ((BITMAP *) pb->dat, map_icons[o * (pcxb->w / 16) + i], i * 16,
+               o * 16, 0, 0, 16, 16);
 
    unload_datafile_object (pb);
 
@@ -1044,39 +952,6 @@ void unpress (void)
          break;
    }
    timer_count = 0;
-
-#if 0
-   int cc = 0;
-
-   timer_count = 0;
-
-   while (cc < 8) {
-      cc = 0;
-      readcontrols ();
-
-      if (up == 0)
-         cc++;
-      if (down == 0)
-         cc++;
-      if (right == 0)
-         cc++;
-      if (left == 0)
-         cc++;
-      if (balt == 0)
-         cc++;
-      if (bctrl == 0)
-         cc++;
-      if (benter == 0)
-         cc++;
-      if (besc == 0)
-         cc++;
-
-      if (timer_count > 19)
-         cc = 8;
-   }
-
-   timer_count = 0;
-#endif
 }
 
 
@@ -1144,17 +1019,8 @@ static void startup (void)
 
    allegro_init ();
 
-/* Buffers to allocate */
+   /* Buffers to allocate */
    strbuf = (char *) malloc (4096);
-
-#if 0
-   map_seg = (unsigned short *) malloc (560);
-   b_seg = (unsigned short *) malloc (560);
-   f_seg = (unsigned short *) malloc (560);
-   z_seg = (unsigned char *) malloc (280);
-   s_seg = (unsigned char *) malloc (280);
-   o_seg = (unsigned char *) malloc (280);
-#endif
 
    map_seg = b_seg = f_seg = NULL;
    s_seg = z_seg = o_seg = NULL;
@@ -1166,8 +1032,9 @@ static void startup (void)
    install_timer ();
    /* KQ uses digi sound but it doesn't use MIDI */
    //   reserve_voices (8, 0);
-   sound_avail=install_sound (DIGI_AUTODETECT, MIDI_NONE, NULL)<0 ? 0:1;
-   if (!sound_avail) TRACE("Error with sound: %s\n", allegro_error);
+   sound_avail = install_sound (DIGI_AUTODETECT, MIDI_NONE, NULL) < 0 ? 0 : 1;
+   if (!sound_avail)
+      TRACE ("Error with sound: %s\n", allegro_error);
    parse_setup ();
    sound_init ();
    set_graphics_mode ();
@@ -1179,13 +1046,13 @@ static void startup (void)
       use_joy = 0;
    else {
 #if 0
-    sprintf(strbuf, "%d joysticks detected.", num_joysticks);
-    klog(strbuf);
-    for (i = 0; i < num_joysticks; i++) {
-      sprintf(strbuf, "joystick %d: %d sticks, %d buttons", i,
-              joy[i].num_sticks, joy[i].num_buttons);
-      klog(strbuf);
-    }
+      sprintf (strbuf, "%d joysticks detected.", num_joysticks);
+      klog (strbuf);
+      for (i = 0; i < num_joysticks; i++) {
+         sprintf (strbuf, "joystick %d: %d sticks, %d buttons", i,
+                  joy[i].num_sticks, joy[i].num_buttons);
+         klog (strbuf);
+      }
 #endif
       use_joy = 0;
 
@@ -1265,18 +1132,6 @@ static void startup (void)
 
    unload_datafile_object (pcxb);
    load_heroes ();
-#if 0
-   pcxb = load_datafile_object (PCX_DATAFILE, "KQFACES_PCX");
-
-   if (!pcxb)
-      program_death ("Could not load kqfaces.pcx!");
-
-   for (p = 0; p < 4; p++) {
-      blit ((BITMAP *) pcxb->dat, portrait[p], 0, p * 40, 0, 0, 40, 40);
-      blit ((BITMAP *) pcxb->dat, portrait[p + 4], 40, p * 40, 0, 0, 40, 40);
-   }
-   unload_datafile_object (pcxb);
-#endif
 
    pb = load_datafile_object (PCX_DATAFILE, "ALLFONTS_PCX");
    blit ((BITMAP *) pb->dat, kfonts, 0, 0, 0, 0, 744, 60);
@@ -1285,7 +1140,8 @@ static void startup (void)
    pb = load_datafile_object (PCX_DATAFILE, "ENTITIES_PCX");
    for (q = 0; q < MAXE; q++)
       for (p = 0; p < MAXEFRAMES; p++)
-         blit ((BITMAP *) pb->dat, eframes[q][p], p * 16, q * 16, 0, 0, 16, 16);
+         blit ((BITMAP *) pb->dat, eframes[q][p], p * 16, q * 16, 0, 0, 16,
+               16);
    unload_datafile_object (pb);
    init_players ();
 
@@ -1335,7 +1191,8 @@ void load_heroes (void)
       program_death ("Could not load kqfaces.pcx!");
 
    for (i = 0; i < 4; ++i) {
-      blit ((BITMAP *) pcxb->dat, players[i].portrait, 0, i * 40, 0, 0, 40, 40);
+      blit ((BITMAP *) pcxb->dat, players[i].portrait, 0, i * 40, 0, 0, 40,
+            40);
       blit ((BITMAP *) pcxb->dat, players[i + 4].portrait, 40, i * 40, 0, 0,
             40, 40);
    }
@@ -1688,61 +1545,6 @@ void wait_for_entity (int est, int efi)
    while (n);
    autoparty = 0;
 }
-
-
-
-#if 0
-void wait_for_entity (int est, int efi)
-{
-   int ewatch, ecnt = 0, wait_ent[50], a;
-
-   if (efi < est)
-      return;
- /\*PH perverse code:*\/ewatch = efi - est + 1;
-
-   for (a = est; a < est + ewatch; a++) {
-      if (g_ent[a].active == 1 && g_ent[a].movemode == 2) {
-         wait_ent[a] = 1;
-         ecnt++;
-      } else
-         wait_ent[a] = 0;
-   }
-
-   autoparty = 1;
-   timer_count = 0;
-
-   while (ecnt > 0) {
-      poll_music ();
-      while (timer_count > 0) {
-         poll_music ();
-         timer_count--;
-         process_entities ();
-         check_animation ();
-
-         for (a = est; a < est + ewatch; a++) {
-            if (wait_ent[a] == 1) {
-               if (g_ent[a].movemode == 0) {
-                  wait_ent[a] = 0;
-                  ecnt--;
-               }
-            }
-         }
-      }
-
-      drawmap ();
-      blit2screen (xofs, yofs);
-
-      if (key[KEY_W] && key[KEY_ALT])
-         break;
-
-      if (key[KEY_X] && key[KEY_ALT])
-         program_death (strbuf);
-   }
-
-   timer_count = 0;
-   autoparty = 0;
-}
-#endif
 
 
 

@@ -52,8 +52,7 @@
 #include "timing.h"
 
 /* Text names of hero skills */
-char sk_names[MAXCHRS][7] =
-{
+char sk_names[MAXCHRS][7] = {
    "Rage", "Sweep", "Infuse", "Prayer", "Boost", "Cover", "Steal", "Sense"
 };
 
@@ -121,13 +120,15 @@ void hero_init (void)
                   cframes[i][6]->line[n][p] = items[party[z].eqp[0]].kol;
                else {
                   if (cframes[i][6]->line[n][p] == 175)
-                     cframes[i][6]->line[n][p] = items[party[z].eqp[0]].kol + 4;
+                     cframes[i][6]->line[n][p] =
+                        items[party[z].eqp[0]].kol + 4;
                }
                if (cframes[i][7]->line[n][p] == 168)
                   cframes[i][7]->line[n][p] = items[party[z].eqp[0]].kol;
                else {
                   if (cframes[i][7]->line[n][p] == 175)
-                     cframes[i][7]->line[n][p] = items[party[z].eqp[0]].kol + 4;
+                     cframes[i][7]->line[n][p] =
+                        items[party[z].eqp[0]].kol + 4;
                }
             }
          }
@@ -173,7 +174,7 @@ void hero_choose_action (int who)
          my++;
 #if 0
 
-         strcpy(ca[my],"Combo");
+         strcpy (ca[my], "Combo");
          chi[my] = C_COMBO;
          my++;
 #endif
@@ -472,11 +473,11 @@ static int combat_item_menu (int whom)
             z = select_enemy (whom, items[g_inv[pptr * 16 + ptr][0]].tgt - 4);
          else {
             if (g_inv[pptr * 16 + ptr][0] == I_LTONIC)
-               z = select_hero (whom,
-                                items[g_inv[pptr * 16 + ptr][0]].tgt - 1, 1);
+               z = select_hero (whom, items[g_inv[pptr * 16 + ptr][0]].tgt - 1,
+                                1);
             else
-               z = select_hero (whom,
-                                items[g_inv[pptr * 16 + ptr][0]].tgt - 1, 0);
+               z = select_hero (whom, items[g_inv[pptr * 16 + ptr][0]].tgt - 1,
+                                0);
          }
          if (z > -1) {
             if (combat_item (0, g_inv[pptr * 16 + ptr][0], z) == 1) {
@@ -871,13 +872,14 @@ static void combat_draw_spell_menu (int c, int ptr, int pg)
       if (z > 0) {
          draw_icon (double_buffer, magic[z].icon, 96, j * 8 + 32);
          if (combat_castable (c, pg * 12 + j) == 1)
-            print_font (double_buffer, 104, j * 8 + 32, magic[z].name, FNORMAL);
+            print_font (double_buffer, 104, j * 8 + 32, magic[z].name,
+                        FNORMAL);
          else
             print_font (double_buffer, 104, j * 8 + 32, magic[z].name, FDARK);
          b = mp_needed (c, z);
          sprintf (strbuf, "%d", b);
-         print_font (double_buffer, 222 - (strlen (strbuf) * 8),
-                     j * 8 + 32, strbuf, FNORMAL);
+         print_font (double_buffer, 222 - (strlen (strbuf) * 8), j * 8 + 32,
+                     strbuf, FNORMAL);
          draw_sprite (double_buffer, b_mp, 222, j * 8 + 32);
       }
    }

@@ -95,8 +95,8 @@ static void draw_itemmenu (int ptr, int pg, int sl)
          ck = FDARK;
       if (j == I_SSTONE && use_sstone == 0)
          ck = FDARK;
-      print_font (double_buffer, 96 + xofs, k * 8 + 68 + yofs,
-                  items[j].name, ck);
+      print_font (double_buffer, 96 + xofs, k * 8 + 68 + yofs, items[j].name,
+                  ck);
       if (z > 1) {
          sprintf (strbuf, "^%d", z);
          print_font (double_buffer, 224 + xofs, k * 8 + 68 + yofs, strbuf, ck);

@@ -62,8 +62,8 @@ static int obstruction (int, int, int, int);
 static void parsems (int);
 static void getcommand (int);
 static void entscript (int);
-static void target(int);
-static void chase(int);
+static void target (int);
+static void chase (int);
 
 
 
@@ -133,6 +133,7 @@ static void speed_adjust (int i)
       process_entity (i);
       break;
    }
+   /* TT: This is to see if the player is "running" */
    if (key[kctrl] && i < PSIZE)
       process_entity (i);
 }
@@ -175,7 +176,7 @@ static void process_entity (int i)
             target (i);
             break;
          }
-      } else { /* if (.moving==0) */
+      } else {                  /* if (.moving==0) */
          if (g_ent[i].moving == MOVE_DOWN) {
             g_ent[i].y++;
             g_ent[i].movcnt--;
@@ -847,15 +848,16 @@ void count_entities (void)
  * \author PH
  * \date 20040310
  */
-static void target (int e) {
+static void target (int e)
+{
    int dx, dy, ax, ay;
    s_entity *ent = &g_ent[e];
    ax = dx = ent->target_x - ent->tilex;
    ay = dy = ent->target_y - ent->tiley;
    if (ax < 0)
-      ax =- ax;
+      ax = -ax;
    if (ay < 0)
-      ay =- ay;
+      ay = -ay;
    if (ax < ay) {
       /* Try to move horizontally */
       if (dx < 0)
@@ -868,8 +870,8 @@ static void target (int e) {
             moveup (e);
          if (dy > 0)
             movedown (e);
-       }
-    } else {
+      }
+   } else {
       /* Try to move vertically */
       if (dy < 0)
          moveup (e);
@@ -899,10 +901,10 @@ static void target (int e) {
  *
  * \param i index of entity
  */
-static void chase (int i) {
+static void chase (int i)
+{
    if (g_ent[i].chasing == 0) {
-      if (entity_near (i, 0, 3) == 1
-          && rand () % 100 <= g_ent[i].extra) {
+      if (entity_near (i, 0, 3) == 1 && rand () % 100 <= g_ent[i].extra) {
          g_ent[i].chasing = 1;
          if (g_ent[i].speed < 7)
             g_ent[i].speed++;

@@ -106,8 +106,8 @@ static void draw_equipmenu (int c, int sel)
    for (k = 0; k < 6; k++) {
       j = party[l].eqp[k];
       draw_icon (double_buffer, items[j].icon, 84 + xofs, k * 8 + 36 + yofs);
-      print_font (double_buffer, 92 + xofs, k * 8 + 36 + yofs,
-                  items[j].name, FNORMAL);
+      print_font (double_buffer, 92 + xofs, k * 8 + 36 + yofs, items[j].name,
+                  FNORMAL);
    }
 }
 
@@ -142,12 +142,12 @@ static void draw_equippable (int c, int slot, int pptr)
       // z == number of items
       z = g_inv[t_inv[pptr + k]][1];
       draw_icon (double_buffer, items[j].icon, 28 + xofs, k * 8 + 100 + yofs);
-      print_font (double_buffer, 36 + xofs, k * 8 + 100 + yofs,
-                  items[j].name, FNORMAL);
+      print_font (double_buffer, 36 + xofs, k * 8 + 100 + yofs, items[j].name,
+                  FNORMAL);
       if (z > 1) {
          sprintf (strbuf, "^%d", z);
-         print_font (double_buffer, 164 + xofs, k * 8 + 100 + yofs,
-                     strbuf, FNORMAL);
+         print_font (double_buffer, 164 + xofs, k * 8 + 100 + yofs, strbuf,
+                     FNORMAL);
       }
    }
    if (pptr > 0)
@@ -395,7 +395,8 @@ static void choose_equipment (int c, int slot)
             return;
          }
          draw_equippreview (c, slot, g_inv[t_inv[pptr + yptr]][0]);
-         draw_sprite (double_buffer, menuptr, 12 + xofs, yptr * 8 + 100 + yofs);
+         draw_sprite (double_buffer, menuptr, 12 + xofs,
+                      yptr * 8 + 100 + yofs);
          blit2screen (xofs, yofs);
          if (tot < 16) {
             sm = 0;

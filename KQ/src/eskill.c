@@ -148,7 +148,8 @@ void combat_skill (int who)
       if (rand () % 4 < 2) {
          draw_spellsprite (0, 1, 11, 1);
          /*  dudaskank suggest replacing 999 with SEL_ALL_ENEMIES  */
-         special_damage_oneall_enemies (who, 25, R_THUNDER, SEL_ALL_ENEMIES, 1);
+         special_damage_oneall_enemies (who, 25, R_THUNDER, SEL_ALL_ENEMIES,
+                                        1);
          fighter[who].atrack[fighter[who].csmem] = 2;
          return;
       }

@@ -85,8 +85,8 @@ typedef struct
    unsigned char facehero;      //!< Look at player when talked to
    unsigned char transl;        //!< Entity is see-through or not
    char script[60];             //!< Movement/action script (pacing, etc.)
-  unsigned short target_x;      //!< x-coord the ent is moving to
-  unsigned short target_y;     //!< y-coord the ent is moving to
+   unsigned short target_x;     //!< x-coord the ent is moving to
+   unsigned short target_y;     //!< y-coord the ent is moving to
 }
 s_entity;
 
@@ -113,9 +113,10 @@ s_anim;
  * \author PH
  * \date 20031222
  */
-typedef struct {
-  char icon_set[16];
-  s_anim tanim[MAX_ANIM];
+typedef struct
+{
+   char icon_set[16];
+   s_anim tanim[MAX_ANIM];
 } s_tileset;
 
 #endif/*__STRUCTS_H__*/

@@ -229,7 +229,8 @@ int save_s_player (s_player * s, PACKFILE * f)
 
 
 
-int load_s_tileset (s_tileset *s, PACKFILE *f) {
+int load_s_tileset (s_tileset * s, PACKFILE * f)
+{
    int i;
    pack_fread (s->icon_set, sizeof (s->icon_set), f);
    for (i = 0; i < MAX_ANIM; ++i) {
@@ -242,13 +243,14 @@ int load_s_tileset (s_tileset *s, PACKFILE *f) {
 
 
 
-int save_s_tileset (s_tileset *s, PACKFILE *f){
+int save_s_tileset (s_tileset * s, PACKFILE * f)
+{
    int i;
-   pack_fwrite(s->icon_set, sizeof (s->icon_set), f);
+   pack_fwrite (s->icon_set, sizeof (s->icon_set), f);
    for (i = 0; i < MAX_ANIM; ++i) {
       pack_iputw (s->tanim[i].start, f);
       pack_iputw (s->tanim[i].end, f);
       pack_iputw (s->tanim[i].delay, f);
    }
    return 0;
-} 
+}

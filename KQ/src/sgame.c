@@ -181,13 +181,14 @@ static void show_sgstats (int saving)
                rectfill (double_buffer, hx + 33, hy + 9, hx + 65, hy + 15, 2);
                rectfill (double_buffer, hx + 32, hy + 8, hx + 64, hy + 14, 35);
                rectfill (double_buffer, hx + 33, hy + 17, hx + 65, hy + 23, 2);
-               rectfill (double_buffer, hx + 32, hy + 16, hx + 64, hy + 22, 19);
+               rectfill (double_buffer, hx + 32, hy + 16, hx + 64, hy + 22,
+                         19);
                b = shp[sg][a] * 32 / 100;
-               rectfill (double_buffer, hx + 32, hy + 9, hx + 32 + b,
-                         hy + 13, 41);
+               rectfill (double_buffer, hx + 32, hy + 9, hx + 32 + b, hy + 13,
+                         41);
                b = smp[sg][a] * 32 / 100;
-               rectfill (double_buffer, hx + 32, hy + 17, hx + 32 + b,
-                         hy + 21, 25);
+               rectfill (double_buffer, hx + 32, hy + 17, hx + 32 + b, hy + 21,
+                         25);
             }
             sprintf (strbuf, "T %d:%02d", shr[sg], smin[sg]);
             print_font (double_buffer, 236, sg * 48 + 12, strbuf, FNORMAL);
@@ -591,8 +592,7 @@ int start_menu (int c)
    DATAFILE *bg;
    BITMAP *staff, *dudes, *tdudes;
 #ifdef KQ_CHEATS
-   if (debugging == 0)
-   {
+   if (debugging == 0) {
 #endif
       play_music ("oxford.s3m", 0);
       if (c == 0) {
@@ -609,9 +609,8 @@ int start_menu (int c)
          //do_transition (TRANS_FADE_IN, 1);
          wait (1000);
          for (a = 0; a < 42; a++) {
-            stretch_blit (staff, double_buffer, 0, 0, 72, 226,
-                          124 - (a * 32), 22 - (a * 96), 72 + (a * 64),
-                          226 + (a * 192));
+            stretch_blit (staff, double_buffer, 0, 0, 72, 226, 124 - (a * 32),
+                          22 - (a * 96), 72 + (a * 64), 226 + (a * 192));
             blit2screen (0, 0);
             wait (100);
          }
@@ -642,11 +641,11 @@ int start_menu (int c)
       bg = load_datafile_object (PCX_DATAFILE, "TITLE_PCX");
       for (a = 0; a < 16; a++) {
          clear_to_color (double_buffer, 15 - a);
-         masked_blit ((BITMAP *) bg->dat, double_buffer, 0, 0, 0,
-                      60 - (a * 4), 320, 124);
+         masked_blit ((BITMAP *) bg->dat, double_buffer, 0, 0, 0, 60 - (a * 4),
+                      320, 124);
 #if 0
-         masked_blit ((BITMAP *) bg->dat, double_buffer, 0, 148, 0, 172,
-                      320, 52);
+         masked_blit ((BITMAP *) bg->dat, double_buffer, 0, 148, 0, 172, 320,
+                      52);
 #endif
          blit2screen (0, 0);
          wait (a == 0 ? 500 : 100);
@@ -665,8 +664,8 @@ int start_menu (int c)
          clear_bitmap (double_buffer);
          masked_blit ((BITMAP *) bg->dat, double_buffer, 0, 0, 0, 0, 320, 124);
 #if 0
-         masked_blit ((BITMAP *) bg->dat, double_buffer, 0, 148, 0, 172,
-                      320, 52);
+         masked_blit ((BITMAP *) bg->dat, double_buffer, 0, 148, 0, 172, 320,
+                      52);
 #endif
          menubox (double_buffer, 120, 116, 10, 4, BLUE);
          print_font (double_buffer, 136, 124, "Continue", FNORMAL);
@@ -770,10 +769,10 @@ int system_menu (void)
          print_font (double_buffer, 16 + xofs, 8 + yofs, "Save", FNORMAL);
       else {
 #ifdef KQ_CHEATS
-	if (cheat)
-	  print_font (double_buffer, 16 + xofs, 8 + yofs,  "[Save]", FNORMAL);
-	else
-	  print_font (double_buffer, 16 + xofs, 8 + yofs, "Save", FDARK);
+         if (cheat)
+            print_font (double_buffer, 16 + xofs, 8 + yofs, "[Save]", FNORMAL);
+         else
+            print_font (double_buffer, 16 + xofs, 8 + yofs, "Save", FDARK);
 #else
          print_font (double_buffer, 16 + xofs, 8 + yofs, "Save", FDARK);
 #endif /* KQ_CHEATS */
@@ -802,7 +801,7 @@ int system_menu (void)
          unpress ();
          if (ptr == 0) {
 #ifdef KQ_CHEATS
-	   if (cansave==1 || cheat) {
+            if (cansave == 1 || cheat) {
 #else
             if (cansave == 1) {
 #endif /* KQ_CHEATS */

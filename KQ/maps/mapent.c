@@ -84,14 +84,17 @@ void draw_ents (void)
 
    for (d = 0; d < number_of_ents; d++) {
       /* Draw only the entities within the view-screen */
-      if ((gent[d].tilex >= window_x) && (gent[d].tilex < window_x + htiles) &&
-         (gent[d].tiley >= window_y) && (gent[d].tiley < window_y + vtiles)) {
-            ent = eframes[gent[d].chrx][gent[d].facing * 3];
-            /* Draw either a normal sprite or a translucent one */
-            if (gent[d].transl == 0)
-               draw_sprite (double_buffer, ent, gent[d].tilex * 16 - x0, gent[d].tiley * 16 - y0);
-            else
-               draw_trans_sprite (double_buffer, ent, gent[d].tilex * 16 - x0, gent[d].tiley * 16 - y0);
+      if ((gent[d].tilex >= window_x) && (gent[d].tilex < window_x + htiles)
+          && (gent[d].tiley >= window_y)
+          && (gent[d].tiley < window_y + vtiles)) {
+         ent = eframes[gent[d].chrx][gent[d].facing * 3];
+         /* Draw either a normal sprite or a translucent one */
+         if (gent[d].transl == 0)
+            draw_sprite (double_buffer, ent, gent[d].tilex * 16 - x0,
+                         gent[d].tiley * 16 - y0);
+         else
+            draw_trans_sprite (double_buffer, ent, gent[d].tilex * 16 - x0,
+                               gent[d].tiley * 16 - y0);
       }
    }
 }                               /* draw_ents () */
@@ -340,19 +343,19 @@ void place_entity (int ex, int ey)
    }
 
    /* Set its personality/attributes/stats */
-   gent[number_of_ents].chrx = current_ent;       /* What it looks like */
-   gent[number_of_ents].tilex = ex;        /* which tile it's standing on */
-   gent[number_of_ents].tiley = ey;        /* ..same.. */
-   gent[number_of_ents].x = ex * 16;       /* Will be the same as tilex unless moving */
-   gent[number_of_ents].y = ey * 16;       /* ..same.. */
-   gent[number_of_ents].active = 1;        /* Showing on map or not */
-   gent[number_of_ents].eid = 255;         /* */
-   gent[number_of_ents].movemode = 0;      /* 0=stand, 1=wander, 2=script, 3=chase */
-   gent[number_of_ents].delay = 50;        /* Length of time between commands */
-   gent[number_of_ents].speed = 3;         /* Walking speed */
-   gent[number_of_ents].obsmode = 1;       /* 0=not obstacle, 1=obstacle */
-   gent[number_of_ents].facing = 0;        /* 0=S, 1=N, 2=W, 3=E */
-   strcpy (gent[number_of_ents].script, "");       /* Pre-defined movement (pace, dance...) */
+   gent[number_of_ents].chrx = current_ent;     /* What it looks like */
+   gent[number_of_ents].tilex = ex;     /* which tile it's standing on */
+   gent[number_of_ents].tiley = ey;     /* ..same.. */
+   gent[number_of_ents].x = ex * 16;    /* Will be the same as tilex unless moving */
+   gent[number_of_ents].y = ey * 16;    /* ..same.. */
+   gent[number_of_ents].active = 1;     /* Showing on map or not */
+   gent[number_of_ents].eid = 255;      /* */
+   gent[number_of_ents].movemode = 0;   /* 0=stand, 1=wander, 2=script, 3=chase */
+   gent[number_of_ents].delay = 50;     /* Length of time between commands */
+   gent[number_of_ents].speed = 3;      /* Walking speed */
+   gent[number_of_ents].obsmode = 1;    /* 0=not obstacle, 1=obstacle */
+   gent[number_of_ents].facing = 0;     /* 0=S, 1=N, 2=W, 3=E */
+   strcpy (gent[number_of_ents].script, "");    /* Pre-defined movement (pace, dance...) */
    number_of_ents++;
 }                               /* place_entity () */
 

@@ -260,8 +260,6 @@ static void parse_jb_setup (void)
       }
       if (!strcmp (strbuf, "downkey")) {
          fscanf (s, "%s", strbuf);
-         /* TT: huh?! */
-         // kup = atoi (strbuf);
          kdown = atoi (strbuf);
       }
       if (!strcmp (strbuf, "sysmenukey")) {
@@ -343,8 +341,8 @@ void config_menu (void)
       if (rd) {
          drawmap ();
          menubox (double_buffer, 88 + xofs, yofs, 16, 1, BLUE);
-         print_font (double_buffer, 96 + xofs, 8 + yofs,
-                     "KQ Configuration", FGOLD);
+         print_font (double_buffer, 96 + xofs, 8 + yofs, "KQ Configuration",
+                     FGOLD);
          menubox (double_buffer, 32 + xofs, 24 + yofs, 30, 19, BLUE);
          citem (32, "Windowed mode:", windowed == 1 ? "YES" : "NO");
          citem (40, "Stretch Display:", stretch_view == 1 ? "YES" : "NO");
@@ -370,10 +368,10 @@ void config_menu (void)
 
          /* TT: This needs to check for ==0 because 1 means sound init */
          if (is_sound == 0) {
-            print_font (double_buffer, 48 + xofs, 152 + yofs,
-                        "Sound Volume:", FDARK);
-            print_font (double_buffer, 48 + xofs, 160 + yofs,
-                        "Music Volume:", FDARK);
+            print_font (double_buffer, 48 + xofs, 152 + yofs, "Sound Volume:",
+                        FDARK);
+            print_font (double_buffer, 48 + xofs, 160 + yofs, "Music Volume:",
+                        FDARK);
          }
 
          citem (176, "Slow Computer:", slow_computer ? "YES" : "NO");
@@ -528,8 +526,8 @@ void config_menu (void)
             else {
                if (is_sound == 0) {
                   is_sound = 1;
-                  print_font (double_buffer, 92 + 2 + xofs,
-                              204 + yofs, "...please wait...", FNORMAL);
+                  print_font (double_buffer, 92 + 2 + xofs, 204 + yofs,
+                              "...please wait...", FNORMAL);
                   blit2screen (xofs, yofs);
                   sound_init ();
                   play_music (g_map.song_file, 0);
@@ -637,20 +635,20 @@ static int getavalue (char *capt, int minu, int maxu, int cv, int sp)
       return -1;
    while (!stop) {
       if (rd == 1) {
-         menubox (double_buffer, 148 - (maxu * 4) + xofs, 100 + yofs,
-                  maxu + 1, 3, DARKBLUE);
+         menubox (double_buffer, 148 - (maxu * 4) + xofs, 100 + yofs, maxu + 1,
+                  3, DARKBLUE);
          print_font (double_buffer, 160 - (strlen (capt) * 4) + xofs,
                      108 + yofs, capt, FGOLD);
-         print_font (double_buffer, 152 - (maxu * 4) + xofs, 116 + yofs,
-                     "<", FNORMAL);
-         print_font (double_buffer, 160 + (maxu * 4) + xofs, 116 + yofs,
-                     ">", FNORMAL);
+         print_font (double_buffer, 152 - (maxu * 4) + xofs, 116 + yofs, "<",
+                     FNORMAL);
+         print_font (double_buffer, 160 + (maxu * 4) + xofs, 116 + yofs, ">",
+                     FNORMAL);
          b = 160 - (maxu * 4) + xofs;
          for (a = 0; a < cv; a++) {
-            rectfill (double_buffer, a * 8 + b + 1, 117 + yofs,
-                      a * 8 + b + 7, 123 + yofs, 50);
-            rectfill (double_buffer, a * 8 + b, 116 + yofs,
-                      a * 8 + b + 6, 122 + yofs, 21);
+            rectfill (double_buffer, a * 8 + b + 1, 117 + yofs, a * 8 + b + 7,
+                      123 + yofs, 50);
+            rectfill (double_buffer, a * 8 + b, 116 + yofs, a * 8 + b + 6,
+                      122 + yofs, 21);
          }
          if (sp == 1)
             sprintf (strbuf, "%d%%", cv * 100 / maxu);
@@ -759,21 +757,21 @@ void set_graphics_mode (void)
  */
 void sound_init (void)
 {
-  if (!sound_avail) {
-    is_sound=0;
-    return;
-  }
-  switch (is_sound) {
-  case 1:
-     /*set_volume_per_voice (2);*/
-     init_music ();
-     is_sound = load_samples ()? 0 : 2;     /* load the wav files */
-     break;
-  case 2:
-    free_samples ();
-    is_sound = 0;
-    break;
-  }
+   if (!sound_avail) {
+      is_sound = 0;
+      return;
+   }
+   switch (is_sound) {
+   case 1:
+      /* set_volume_per_voice (2); */
+      init_music ();
+      is_sound = load_samples ()? 0 : 2;        /* load the wav files */
+      break;
+   case 2:
+      free_samples ();
+      is_sound = 0;
+      break;
+   }
 }
 
 
@@ -871,12 +869,14 @@ void play_effect (int efc, int panning)
 
    switch (efc) {
    default:
-     if (samp) play_sample (samp, gsvol, panning, 1000, 0);
+      if (samp)
+         play_sample (samp, gsvol, panning, 1000, 0);
       break;
    case SND_BAD:
       blit (double_buffer, fx_buffer, 0, 0, 0, 0, 352, 280);
 
-      if (samp) play_sample (samp, gsvol, panning, 1000, 0);
+      if (samp)
+         play_sample (samp, gsvol, panning, 1000, 0);
       clear_bitmap (double_buffer);
       blit (fx_buffer, double_buffer, xofs, yofs, xofs, yofs, 320, 240);
 

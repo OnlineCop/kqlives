@@ -132,7 +132,6 @@ int combat_check (int comx, int comy)
 int combat (int bno)
 {
    int hero_level;
-   /* ML 2002-09-22: not needed right now int saved_song; */
    int encounter;
    int lc;
 
@@ -150,7 +149,7 @@ int combat (int bno)
    /*  RB: check if we had had a random encounter  */
    if (battles[bno].enc > 1) {
       /* TT: This will skip battles if the player hasn't moved the necessary
-         number of steps AND a random number does not equal zero.
+       *     number of steps AND a random number does not equal zero.
        */
       if ((steps < STEPS_NEEDED) || ((rand () % battles[bno].enc) > 0)) {
          return 0;
@@ -166,7 +165,7 @@ int combat (int bno)
       lc = (hero_level - erows[encounter].lvl) * 5;
 
       /* TT: This will skip battles based on a random number from hero's
-         level minus enemy's level.
+       *     level minus enemy's level.
        */
       if ((rand () % 100) < lc) {
          return 0;
@@ -231,6 +230,11 @@ static int do_combat (char *bg, char *mus, int is_rnd)
       clear_bitmap (double_buffer);
       do_transition (TRANS_FADE_IN, 64);
    } else
+      /* TT TODO:
+       * Change this so when we zoom into the battle, it won't just zoom into the middle
+       * of the screen.  Instead, it's going to zoom into the location where the player
+       * is, so if he's on the side of the map somewhere...
+       */
       for (zoom_step = 0; zoom_step < 9; zoom_step++) {
          poll_music ();
 
@@ -293,7 +297,9 @@ static void init_fighters (void)
       fighter[index].defend = 0;
    }
 
-   // TT: These two are only called once in the game; should we move them here?
+   /* TT: These two are only called once in the game.
+    *     Should we move them here?
+    */
    hero_init ();
    enemy_init ();
    for (index = 0; index < (PSIZE + numens); index++)
@@ -436,15 +442,15 @@ static void roll_initiative (void)
 void battle_render (int plyr, int hl, int sall)
 {
    int a = 0;
-   int z;
-   int t;
    int b = 0;
    int sz;
+   int t;
+   int z;
 
    if (plyr > 0) {
+      curw = fighter[plyr - 1].cw;
       curx = fighter[plyr - 1].cx;
       cury = fighter[plyr - 1].cy;
-      curw = fighter[plyr - 1].cw;
    } else {
       curx = -1;
       cury = -1;
@@ -476,44 +482,44 @@ void battle_render (int plyr, int hl, int sall)
          if (z < 0)
             z = fighter[plyr - 1].cy + fighter[plyr - 1].cl;
 
-         menubox (double_buffer, t - 8, z,
-                  strlen (fighter[plyr - 1].name), 1, BLUE);
+         menubox (double_buffer, t - 8, z, strlen (fighter[plyr - 1].name), 1,
+                  BLUE);
          print_font (double_buffer, t, z + 8, fighter[plyr - 1].name, FNORMAL);
       }
 #ifdef KQ_CHEATS
       if (debugging > 2) {
          /*  RB TODO: Check this out.  */
 
-         sprintf(strbuf, "HP:%d (%d)", fighter[plyr-1].hp, fighter[plyr-1].mhp);
-         print_font(double_buffer, 0,   8, strbuf, FNORMAL);
-         sprintf(strbuf, "MP:%d (%d)", fighter[plyr-1].mp, fighter[plyr-1].mmp);
-         print_font(double_buffer, 0,  16, strbuf, FNORMAL);
-         print_font(double_buffer, 0,  24, "Str" , FNORMAL);
-         print_font(double_buffer, 0,  32, "Agi" , FNORMAL);
-         print_font(double_buffer, 0,  40, "Vit" , FNORMAL);
-         print_font(double_buffer, 0,  48, "Int" , FNORMAL);
-         print_font(double_buffer, 0,  56, "Sag" , FNORMAL);
-         print_font(double_buffer, 0,  64, "Spd" , FNORMAL);
-         print_font(double_buffer, 0,  72, "Aura", FNORMAL);
-         print_font(double_buffer, 0,  80, "Spir", FNORMAL);
-         print_font(double_buffer, 0,  88, "Att" , FNORMAL);
-         print_font(double_buffer, 0,  96, "Hit%", FNORMAL);
-         print_font(double_buffer, 0, 104, "Def" , FNORMAL);
-         print_font(double_buffer, 0, 112, "Evd%", FNORMAL);
-         print_font(double_buffer, 0, 120, "Mdef", FNORMAL);
-         sprintf(strbuf, "%d, %d, %d, %d", fighter[plyr - 1].cwt,
-                                           fighter[plyr - 1].welem,
-                                           fighter[plyr - 1].unl,
-                                           fighter[plyr - 1].crit);
-         print_font(double_buffer, 0, 128, strbuf, FNORMAL);
-         sprintf(strbuf, "i -> %d,%d,%d,%d", fighter[plyr - 1].imb_s,
-                                             fighter[plyr - 1].imb_a,
-                                             fighter[plyr - 1].imb[0],
-                                             fighter[plyr - 1].imb[1]);
-         print_font(double_buffer, 0, 136, strbuf, FNORMAL);
+         sprintf (strbuf, "HP:%d (%d)", fighter[plyr - 1].hp,
+                  fighter[plyr - 1].mhp);
+         print_font (double_buffer, 0, 8, strbuf, FNORMAL);
+         sprintf (strbuf, "MP:%d (%d)", fighter[plyr - 1].mp,
+                  fighter[plyr - 1].mmp);
+         print_font (double_buffer, 0, 16, strbuf, FNORMAL);
+         print_font (double_buffer, 0, 24, "Str", FNORMAL);
+         print_font (double_buffer, 0, 32, "Agi", FNORMAL);
+         print_font (double_buffer, 0, 40, "Vit", FNORMAL);
+         print_font (double_buffer, 0, 48, "Int", FNORMAL);
+         print_font (double_buffer, 0, 56, "Sag", FNORMAL);
+         print_font (double_buffer, 0, 64, "Spd", FNORMAL);
+         print_font (double_buffer, 0, 72, "Aura", FNORMAL);
+         print_font (double_buffer, 0, 80, "Spir", FNORMAL);
+         print_font (double_buffer, 0, 88, "Att", FNORMAL);
+         print_font (double_buffer, 0, 96, "Hit%", FNORMAL);
+         print_font (double_buffer, 0, 104, "Def", FNORMAL);
+         print_font (double_buffer, 0, 112, "Evd%", FNORMAL);
+         print_font (double_buffer, 0, 120, "Mdef", FNORMAL);
+         sprintf (strbuf, "%d, %d, %d, %d", fighter[plyr - 1].cwt,
+                  fighter[plyr - 1].welem, fighter[plyr - 1].unl,
+                  fighter[plyr - 1].crit);
+         print_font (double_buffer, 0, 128, strbuf, FNORMAL);
+         sprintf (strbuf, "i -> %d,%d,%d,%d", fighter[plyr - 1].imb_s,
+                  fighter[plyr - 1].imb_a, fighter[plyr - 1].imb[0],
+                  fighter[plyr - 1].imb[1]);
+         print_font (double_buffer, 0, 136, strbuf, FNORMAL);
          for (t = 0; t < 13; t++) {
-            sprintf(strbuf, "%d", fighter[plyr - 1].stats[t]);
-            print_font(double_buffer, 40, t * 8 + 24, strbuf, FNORMAL);
+            sprintf (strbuf, "%d", fighter[plyr - 1].stats[t]);
+            print_font (double_buffer, 40, t * 8 + 24, strbuf, FNORMAL);
          }
       }
 #endif
@@ -588,8 +594,8 @@ void battle_render (int plyr, int hl, int sall)
    }
 
    if (dct == 1) {
-      menubox (double_buffer, 152 - (strlen (ctext) * 4), 8, strlen (ctext),
-               1, BLUE);
+      menubox (double_buffer, 152 - (strlen (ctext) * 4), 8, strlen (ctext), 1,
+               BLUE);
       print_font (double_buffer, 160 - (strlen (ctext) * 4), 16, ctext,
                   FNORMAL);
    }
@@ -623,8 +629,8 @@ static void do_round (void)
 
          for (index = 0; index < PSIZE + numens; index++) {
             if ((index < numchrs) || (index >= PSIZE)) {
-               if (((fighter[index].sts[S_POISON] - 1) == rcount) &&
-                   (fighter[index].hp > 1)) {
+               if (((fighter[index].sts[S_POISON] - 1) == rcount)
+                   && (fighter[index].hp > 1)) {
                   a = rand () % ((fighter[index].mhp / 20) + 1);
 
                   if (a < 2)
@@ -690,8 +696,8 @@ static void do_round (void)
                   cact[index] = 0;
                }
 
-               if ((fighter[index].sts[S_DEAD] != 0) ||
-                   (fighter[index].mhp <= 0)) {
+               if ((fighter[index].sts[S_DEAD] != 0)
+                   || (fighter[index].mhp <= 0)) {
                   if (pidx[index] == TEMMIN)
                      fighter[index].aux = 0;
 
@@ -786,7 +792,7 @@ static void do_action (int dude)
  * \author Josh Bolduc
  * \date Created ????????
  * \date Updated 20020914 - 16:37 (RB)
- * \date Updated 20031009 PH (put fr-> instead of fighter[dude]. every time) 
+ * \date Updated 20031009 PH (put fr-> instead of fighter[dude]. every time)
  *
  * Display a single fighter on the screen. Checks for dead and
  * stone, and if the fighter is selected. Also displays 'Vision'
@@ -820,19 +826,19 @@ void draw_fighter (int dude, int dcur)
          ff = 1;
 
       xx += fr->cw / 2;
-      rect (double_buffer, xx - 16, yy + fr->cl + 2,
-            xx + 15, yy + fr->cl + 5, 0);
+      rect (double_buffer, xx - 16, yy + fr->cl + 2, xx + 15, yy + fr->cl + 5,
+            0);
       if (ff > 20)
-         rectfill (double_buffer, xx - 15, yy + fr->cl + 3,
-                   xx - 15 + ff - 1, yy + fr->cl + 4, 40);
+         rectfill (double_buffer, xx - 15, yy + fr->cl + 3, xx - 15 + ff - 1,
+                   yy + fr->cl + 4, 40);
 
       if ((ff <= 20) && (ff > 10))
-         rectfill (double_buffer, xx - 15, yy + fr->cl + 3,
-                   xx - 15 + ff - 1, yy + fr->cl + 4, 104);
+         rectfill (double_buffer, xx - 15, yy + fr->cl + 3, xx - 15 + ff - 1,
+                   yy + fr->cl + 4, 104);
 
       if ((ff <= 10) && (ff > 0))
-         rectfill (double_buffer, xx - 15, yy + fr->cl + 3,
-                   xx - 15 + ff - 1, yy + fr->cl + 4, 24);
+         rectfill (double_buffer, xx - 15, yy + fr->cl + 3, xx - 15 + ff - 1,
+                   yy + fr->cl + 4, 24);
    }
 }
 
@@ -1052,8 +1058,8 @@ void multi_fight (int ar)
             fighter[index].sts[S_SLEEP] = 0;
 
          /*  RB: if charmed, a good hit wakes him/her up  */
-         if ((fighter[index].sts[S_CHARM] > 0) && (ta[index] > 0) &&
-             (ar == index))
+         if ((fighter[index].sts[S_CHARM] > 0) && (ta[index] > 0)
+             && (ar == index))
             fighter[index].sts[S_CHARM] = 0;
       }
    }
@@ -1172,24 +1178,17 @@ static int attack_result (int ar, int dr)
          cfch = (20 - cfch);
          if (rand () % 20 >= cfch) {
             crit_hit = 1;
-            /* PH the original is correct; it's inefficient to convert
-               to double and back to int.
-               TT: So why don't we simply do:
-
-               base = base * 3 / 2;
-
+            /* TT: Changed following line from:
+             * base = base * 15 / 10;
              */
-/*                   base *= 1.5; */
-/* #if 0 */
-            base = base * 15 / 10;
-/* #endif */
+            base = ((int) base * 3) / 2;
          }
       }
 
       /*  JB: if affected by a NAUSEA/MALISON spell, the defender  */
       /*      takes more damage than normal                        */
       if (tempd.sts[S_MALISON] > 0)
-         base *= 5 / 4;
+         base *= (int) 5 / 4;
 
       /*  JB: check for elemental/status weapons  */
       if (base < 1)
@@ -1214,6 +1213,10 @@ static int attack_result (int ar, int dr)
 
    /*  JB: Apply the damage multiplier  */
    /*  RB FIXME: check if the changes I made here didn't break something  */
+   /* TT TODO:
+    * If magic, attacks, etc. are zero, they should return as a miss.
+    * For some reason, this isn't properly being reported.
+    */
    dmg = mult * base;
    if (dmg == 0)
       dmg = MISS;
@@ -1244,9 +1247,10 @@ static void enemies_win (void)
    blit2screen (0, 0);
    wait (1000);
    sprintf (strbuf, "%s was defeated!", party[pidx[0]].name);
-   menubox (double_buffer, 152 - (strlen (strbuf) * 4), 48, strlen (strbuf),
-            1, BLUE);
-   print_font (double_buffer, 160 - (strlen (strbuf) * 4), 56, strbuf, FNORMAL);
+   menubox (double_buffer, 152 - (strlen (strbuf) * 4), 48, strlen (strbuf), 1,
+            BLUE);
+   print_font (double_buffer, 160 - (strlen (strbuf) * 4), 56, strbuf,
+               FNORMAL);
    blit2screen (0, 0);
    wait_enter ();
    do_transition (TRANS_FADE_OUT, 4);
@@ -1311,7 +1315,8 @@ static void heroes_win (void)
 
    menubox (double_buffer, 152 - (strlen (strbuf) * 4), 8, strlen (strbuf), 1,
             BLUE);
-   print_font (double_buffer, 160 - (strlen (strbuf) * 4), 16, strbuf, FNORMAL);
+   print_font (double_buffer, 160 - (strlen (strbuf) * 4), 16, strbuf,
+               FNORMAL);
    blit2screen (0, 0);
    blit (double_buffer, back, 0, 0, 0, 0, 352, 280);
    for (index = 0; index < numens; index++) {
@@ -1380,19 +1385,19 @@ static void heroes_win (void)
                print_font (double_buffer, b + 96, z * 8 + 72, strbuf, FNORMAL);
                sprintf (strbuf, "%3d", t2.stats[z]);
                if (t2.stats[z] > t1.stats[z])
-                  print_font (double_buffer, b + 128, z * 8 + 72,
-                              strbuf, FGREEN);
+                  print_font (double_buffer, b + 128, z * 8 + 72, strbuf,
+                              FGREEN);
                else
-                  print_font (double_buffer, b + 128, z * 8 + 72,
-                              strbuf, FNORMAL);
+                  print_font (double_buffer, b + 128, z * 8 + 72, strbuf,
+                              FNORMAL);
             }
 
             nr++;
          } else
             menubox (double_buffer, b, 104, 18, 1, BLUE);
 
-         sprintf (strbuf, "Next level %7d", party[pidx[c]].next -
-                  party[pidx[c]].xp);
+         sprintf (strbuf, "Next level %7d",
+                  party[pidx[c]].next - party[pidx[c]].xp);
          print_font (double_buffer, b + 8, 112, strbuf, FGOLD);
       }
    }

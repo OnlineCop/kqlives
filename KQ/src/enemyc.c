@@ -45,9 +45,6 @@ int cf[NUM_FIGHTERS];
 
 
 /*  internal prototypes  */
-#if 0
-static void load_enemyframes (int, int, int);
-#endif
 static int enemy_cancast (int, int);
 static void enemy_curecheck (int);
 static void enemy_spellcheck (int, int);
@@ -120,11 +117,7 @@ int select_encounter (int en, int etid)
 
 
 
-#if 0
-/*! \brief Load from file
- *
- * Load enemy data from files.
- * The format of allstat.mon is a space-separated sequence of rows.
+/* The format of allstat.mon is a space-separated sequence of rows.
  * Within a row, the column order is:
  * 
  * -# Name
@@ -156,124 +149,13 @@ int select_encounter (int en, int etid)
  * -# bonus (bstat set to 0)
  * -# cwt (current weapon type)
  * -# welem Weapon elemental power
- * -# unl (?)
+ * -# unl Undead Level (defense against Undead attacks)
  * -# crit (?)
  * -# imb_s Item for imbued spell
  * -# imb_a New value for SAG and INT when casting imbued.
  * -# imb[0] (?)
  * -# imb[1] (?)
  */
-void enemy_init (void)
-{
-   FILE *edat;
-   int i, p, j, a, tmp, lx, ly;
-
-   sprintf (strbuf, "%s/allstat.mon", DATA_DIR);
-   edat = fopen (strbuf, "r");
-   if (!edat)
-      program_death ("Could not load 1st enemy datafile!");
-   for (i = 0; i < numens; i++) {
-      j = i + PSIZE;
-      fseek (edat, 0, SEEK_SET);
-      for (a = 0; a < cf[i]; a++)
-         fgets (strbuf, 254, edat);
-      fscanf (edat, "%s", fighter[j].name);
-      fscanf (edat, "%d", &tmp);
-      fscanf (edat, "%d", &tmp);
-      lx = tmp;
-      fscanf (edat, "%d", &tmp);
-      ly = tmp;
-      fscanf (edat, "%d", &tmp);
-      fighter[j].cw = tmp;
-      fscanf (edat, "%d", &tmp);
-      fighter[j].cl = tmp;
-      fscanf (edat, "%d", &tmp);
-      fighter[j].xp = tmp;
-      fscanf (edat, "%d", &tmp);
-      fighter[j].gp = tmp;
-      fscanf (edat, "%d", &tmp);
-      fighter[j].lvl = tmp;
-      fscanf (edat, "%d", &tmp);
-      fighter[j].mhp = tmp;
-      fscanf (edat, "%d", &tmp);
-      fighter[j].mmp = tmp;
-      fscanf (edat, "%d", &tmp);
-      fighter[j].dip = tmp;
-      fscanf (edat, "%d", &tmp);
-      fighter[j].ditmc = tmp;
-      fscanf (edat, "%d", &tmp);
-      fighter[j].ditmr = tmp;
-      fscanf (edat, "%d", &tmp);
-      fighter[j].sitmc = tmp;
-      fscanf (edat, "%d", &tmp);
-      fighter[j].sitmr = tmp;
-      fscanf (edat, "%d", &tmp);
-      fighter[j].stats[A_STR] = tmp;
-      fighter[j].stats[A_AGI] = 0;
-      fighter[j].stats[A_VIT] = 0;
-      fscanf (edat, "%d", &tmp);
-      fighter[j].stats[A_INT] = tmp;
-      fighter[j].stats[A_SAG] = tmp;
-      for (p = 5; p < 13; p++) {
-         fscanf (edat, "%d", &tmp);
-         fighter[j].stats[p] = tmp;
-      }
-      fscanf (edat, "%d", &tmp);
-      fighter[j].bonus = tmp;
-      fighter[j].bstat = 0;
-      fscanf (edat, "%d", &tmp);
-      fighter[j].cwt = tmp;
-      fscanf (edat, "%d", &tmp);
-      fighter[j].welem = tmp;
-      fscanf (edat, "%d", &tmp);
-      fighter[j].unl = tmp;
-      fscanf (edat, "%d", &tmp);
-      fighter[j].crit = tmp;
-      fscanf (edat, "%d", &tmp);
-      fighter[j].imb_s = tmp;
-      fscanf (edat, "%d", &tmp);
-      fighter[j].imb_a = tmp;
-      load_enemyframes (j, lx, ly);
-      for (p = 0; p < 2; p++) {
-         fscanf (edat, "%d", &tmp);
-         fighter[j].imb[p] = tmp;
-      }
-   }
-   fclose(edat);
-   sprintf (strbuf, "%s/resabil.mon", DATA_DIR);
-   edat = fopen (strbuf, "r");
-   if (!edat)
-      program_death ("Could not load 2nd enemy datafile!");
-   for (i = 0; i < numens; i++) {
-      j = i + PSIZE;
-      fseek (edat, 0, SEEK_SET);
-      for (a = 0; a < cf[i]; a++)
-         fgets (strbuf, 254, edat);
-      fscanf (edat, "%s", fighter[j].name);
-      fscanf (edat, "%d", &tmp);
-      for (p = 0; p < 16; p++) {
-         fscanf (edat, "%d", &tmp);
-         fighter[j].res[p] = tmp;
-      }
-      for (p = 0; p < 8; p++) {
-         fscanf (edat, "%d", &tmp);
-         fighter[j].ai[p] = tmp;
-      }
-      for (p = 0; p < 8; p++) {
-         fscanf (edat, "%d", &tmp);
-         fighter[j].aip[p] = tmp;
-         fighter[j].atrack[p] = 0;
-      }
-      fighter[j].hp = fighter[j].mhp;
-      fighter[j].mp = fighter[j].mmp;
-      for (p = 0; p < 24; p++)
-         fighter[j].sts[p] = 0;
-      fighter[j].aux = 0;
-      fighter[j].mrp = 100;
-   }
-   fclose (edat);
-}
-#endif
 
 
 
@@ -300,80 +182,106 @@ void load_enemies (void)
       /* Already done the loading */
       return;
    }
-#if 0
-   klog ("Loading enemies from disk");
-#endif
-   enemy_pcx = load_datafile_object (PCX_DATAFILE, "ENEMY2_PCX");
+   enemy_pcx = load_datafile_object (PCX_DATAFILE, "ENEMY_PCX");
    if (enemy_pcx == NULL) {
-      program_death ("Could not load enemy sprites from datafile");
+      program_death ("Could not load enemy sprites from datafile!");
    }
    edat = fopen (kqres (DATA_DIR, "allstat.mon"), "r");
    if (!edat)
       program_death ("Could not load 1st enemy datafile!");
    enemies_n = 0;
    enemies_cap = 128;
-   enemies = malloc (sizeof (s_fighter *) * enemies_cap);
+   enemies = (s_fighter **) malloc (sizeof (s_fighter *) * enemies_cap);
+   // Loop through for every monster in allstat.mon
    while (fscanf (edat, "%s", strbuf) != EOF) {
       if (enemies_n >= enemies_cap) {
          enemies_cap *= 2;
-         enemies = realloc (enemies, sizeof (s_fighter *) * enemies_cap);
+         enemies =
+            (s_fighter **) realloc (enemies,
+                                    sizeof (s_fighter *) * enemies_cap);
       }
-      f = enemies[enemies_n++] = malloc (sizeof (s_fighter));
+      f = enemies[enemies_n++] = (s_fighter *) malloc (sizeof (s_fighter));
       memset (f, 0, sizeof (s_fighter));
+      // Enemy name
       strncpy (f->name, strbuf, sizeof (f->name));
+      // Index number (ignored; automatically generated)
       fscanf (edat, "%d", &tmp);
+      // x-coord of image in datafile
       fscanf (edat, "%d", &tmp);
       lx = tmp;
+      // y-coord of image in datafile
       fscanf (edat, "%d", &tmp);
       ly = tmp;
+      // Image width
       fscanf (edat, "%d", &tmp);
       f->cw = tmp;
+      // Image length (height)
       fscanf (edat, "%d", &tmp);
       f->cl = tmp;
+      // Experience points earned
       fscanf (edat, "%d", &tmp);
       f->xp = tmp;
+      // Gold received
       fscanf (edat, "%d", &tmp);
       f->gp = tmp;
+      // Level
       fscanf (edat, "%d", &tmp);
       f->lvl = tmp;
+      // Max HP
       fscanf (edat, "%d", &tmp);
       f->mhp = tmp;
+      // Max MP
       fscanf (edat, "%d", &tmp);
       f->mmp = tmp;
+      // Defeat Item Probability: chance of finding any items after defeat
       fscanf (edat, "%d", &tmp);
       f->dip = tmp;
+      // Defeat Item Common: item found commonly of the time
       fscanf (edat, "%d", &tmp);
       f->ditmc = tmp;
+      // Defeat Item Rare: item found rarely
       fscanf (edat, "%d", &tmp);
       f->ditmr = tmp;
+      // Steal Item Common: item found commonly from stealing
       fscanf (edat, "%d", &tmp);
       f->sitmc = tmp;
+      // Steal Item Rare: item found rarely when stealing
       fscanf (edat, "%d", &tmp);
       f->sitmr = tmp;
+      // Enemy's strength (agility & vitality set to zero)
       fscanf (edat, "%d", &tmp);
       f->stats[A_STR] = tmp;
       f->stats[A_AGI] = 0;
       f->stats[A_VIT] = 0;
+      // Intelligence & Sagacity (both the same)
       fscanf (edat, "%d", &tmp);
       f->stats[A_INT] = tmp;
       f->stats[A_SAG] = tmp;
+      // Defense against: Speed, Spirit, Attack, Hit, Defence, Evade, Magic (in that order)
       for (p = 5; p < 13; p++) {
          fscanf (edat, "%d", &tmp);
          f->stats[p] = tmp;
       }
+      // Bonus
       fscanf (edat, "%d", &tmp);
       f->bonus = tmp;
       f->bstat = 0;
+      // Current weapon type
       fscanf (edat, "%d", &tmp);
       f->cwt = tmp;
+      // Weapon elemental type
       fscanf (edat, "%d", &tmp);
       f->welem = tmp;
+      // Undead Level (defense against Undead attacks)
       fscanf (edat, "%d", &tmp);
       f->unl = tmp;
+      // Critical attacks
       fscanf (edat, "%d", &tmp);
       f->crit = tmp;
+      // Temp Sag & Int for Imbued
       fscanf (edat, "%d", &tmp);
       f->imb_s = tmp;
+      // Imbued stat type (Spd, Spi, Att, Hit, Def, Evd, Mag)
       fscanf (edat, "%d", &tmp);
       f->imb_a = tmp;
 #if 0
@@ -529,7 +437,8 @@ void enemy_init (void)
             destroy_bitmap (cframes[i + PSIZE][p]);
          /* and create a new one */
          cframes[i + PSIZE][p] = create_bitmap (f->img->w, f->img->h);
-         blit (f->img, cframes[i + PSIZE][p], 0, 0, 0, 0, f->img->w, f->img->h);
+         blit (f->img, cframes[i + PSIZE][p], 0, 0, 0, 0, f->img->w,
+               f->img->h);
          tcframes[i + PSIZE][p] = copy_bitmap (tcframes[i + PSIZE][p], f->img);
       }
    }
@@ -552,7 +461,7 @@ static void load_enemyframes (int who, int locx, int locy)
    int p;
    DATAFILE *pcx;
 
-   pcx = load_datafile_object (PCX_DATAFILE, "ENEMY2_PCX");
+   pcx = load_datafile_object (PCX_DATAFILE, "ENEMY_PCX");
    for (p = 0; p < MAXCFRAMES; p++) {
       destroy_bitmap (cframes[who][p]);
       destroy_bitmap (tcframes[who][p]);
@@ -587,6 +496,7 @@ void enemy_chooseaction (int who)
       cact[who] = 0;
       return;
    }
+
    for (a = 0; a < 8; a++)
       if (fighter[who].atrack[a] > 0)
          fighter[who].atrack[a]--;
@@ -598,6 +508,7 @@ void enemy_chooseaction (int who)
       if (cact[who] == 0)
          return;
    }
+
    ap = rand () % 100;
    for (a = 0; a < 8; a++) {
       if (ap < fighter[who].aip[a]) {
@@ -638,8 +549,10 @@ static int enemy_cancast (int wh, int sp)
 {
    int a, z = 0;
 
+   /* Enemy is mute; cannot cast the spell */
    if (fighter[wh].sts[S_MUTE] != 0)
       return 0;
+
    for (a = 0; a < 8; a++)
       if (fighter[wh].ai[a] == sp)
          z++;
@@ -778,8 +691,7 @@ static void enemy_spellcheck (int w, int ws)
          case M_DIVINEGUARD:
             aux = 0;
             for (z = PSIZE; z < PSIZE + numens; z++)
-               if (fighter[z].sts[S_DEAD] == 0
-                   && fighter[z].sts[S_SHIELD] == 0
+               if (fighter[z].sts[S_DEAD] == 0 && fighter[z].sts[S_SHIELD] == 0
                    && fighter[z].sts[S_RESIST] == 0)
                   aux++;
             if (aux > 0)
@@ -856,6 +768,7 @@ static void enemy_skillcheck (int w, int ws)
    int sk;
 
    sk = fighter[w].ai[ws] - 100;
+
    if (sk >= 1 && sk <= 153) {
       if (sk == 5) {
          if (numchrs == 1)

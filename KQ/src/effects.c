@@ -121,16 +121,15 @@ void display_amount (int tgt, int cl, int aflag)
                sz = strlen (strbuf) * 3;
                k = cl;
                if (cl == FDECIDE) {
-                  if (ta[g] > 0)
-                     k = FYELLOW;
-                  else
-                     k = FNORMAL;
+                  k = (ta[g] > 0 ? FYELLOW : FNORMAL);
                }
                draw_fighter (g, 0);
+
                if (p == 0)
                   z = dy - c;
                else
                   z = dy - 9 + c;
+
                if (ta[g] == MISS)
                   draw_sprite (double_buffer, missbmp, dx - 10, z);
                else
@@ -160,10 +159,14 @@ void display_amount (int tgt, int cl, int aflag)
  */
 int is_active (int guy)
 {
+   return (fighter[guy].sts[S_DEAD] == deadeffect ? 1 : 0);
+
+/* TT REMOVE:
    if (fighter[guy].sts[S_DEAD] == deadeffect)
       return 1;
    else
       return 0;
+ */
 }
 
 
@@ -229,8 +232,8 @@ void draw_spellsprite (int tgt, int aflag, int ef, int shows)
             draw_fighter (g, 0);
             if (shows == 1 && fighter[g].sts[S_RESIST] > 0)
                draw_trans_sprite (double_buffer, b_shell,
-                                  fighter[g].cx + (fighter[g].cw / 2) -
-                                  24, fighter[g].cy + (fighter[g].cl / 2) - 24);
+                                  fighter[g].cx + (fighter[g].cw / 2) - 24,
+                                  fighter[g].cy + (fighter[g].cl / 2) - 24);
             masked_blit ((BITMAP *) pb->dat, double_buffer, 0,
                          eff[ef].ysize * a, dx, dy, eff[ef].xsize,
                          eff[ef].ysize);
@@ -283,20 +286,20 @@ void draw_hugesprite (int tgt, int hx, int hy, int ef, int shows)
    play_effect (eff[ef].snd, 128);
    for (a = 0; a < eff[ef].numf; a++) {
       if (eff[ef].orient == 0)
-         masked_blit ((BITMAP *) pb->dat, double_buffer, 0,
-                      eff[ef].ysize * a, hx, hy, eff[ef].xsize, eff[ef].ysize);
+         masked_blit ((BITMAP *) pb->dat, double_buffer, 0, eff[ef].ysize * a,
+                      hx, hy, eff[ef].xsize, eff[ef].ysize);
       for (g = f; g < f + n; g++) {
          if (is_active (g) == 1) {
             if (shows == 1 && fighter[g].sts[S_RESIST] > 0)
                draw_trans_sprite (double_buffer, b_shell,
-                                  fighter[g].cx + (fighter[g].cw / 2) -
-                                  24, fighter[g].cy + (fighter[g].cl / 2) - 24);
+                                  fighter[g].cx + (fighter[g].cw / 2) - 24,
+                                  fighter[g].cy + (fighter[g].cl / 2) - 24);
             draw_fighter (g, 0);
          }
       }
       if (eff[ef].orient == 1)
-         masked_blit ((BITMAP *) pb->dat, double_buffer, 0,
-                      eff[ef].ysize * a, hx, hy, eff[ef].xsize, eff[ef].ysize);
+         masked_blit ((BITMAP *) pb->dat, double_buffer, 0, eff[ef].ysize * a,
+                      hx, hy, eff[ef].xsize, eff[ef].ysize);
       blit2screen (0, 0);
       wait (eff[ef].delay);
       blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
@@ -357,8 +360,8 @@ void draw_attacksprite (int tgt, int aflag, int ef, int shows)
             draw_fighter (g, 0);
             if (shows == 1 && fighter[g].sts[S_SHIELD] > 0)
                draw_trans_sprite (double_buffer, b_shield,
-                                  fighter[g].cx + (fighter[g].cw / 2) -
-                                  24, fighter[g].cy + (fighter[g].cl / 2) - 24);
+                                  fighter[g].cx + (fighter[g].cw / 2) - 24,
+                                  fighter[g].cy + (fighter[g].cl / 2) - 24);
             masked_blit ((BITMAP *) pb->dat, double_buffer, 0,
                          eff[ef].ysize * a, dx, dy, eff[ef].xsize,
                          eff[ef].ysize);

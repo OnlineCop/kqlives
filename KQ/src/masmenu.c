@@ -157,12 +157,12 @@ int learn_new_spells (int who)
             if (in_combat == 1) {
                sprintf (strbuf, "%s learned!", magic[a].name);
                blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
-               menubox (double_buffer, 148 - (strlen (strbuf) * 4),
-                        152, strlen (strbuf) + 1, 1, BLUE);
+               menubox (double_buffer, 148 - (strlen (strbuf) * 4), 152,
+                        strlen (strbuf) + 1, 1, BLUE);
                draw_icon (double_buffer, magic[a].icon,
                           156 - (strlen (strbuf) * 4), 160);
-               print_font (double_buffer, 164 - (strlen (strbuf) * 4),
-                           160, strbuf, FNORMAL);
+               print_font (double_buffer, 164 - (strlen (strbuf) * 4), 160,
+                           strbuf, FNORMAL);
                blit2screen (0, 0);
                wait_enter ();
                g++;
@@ -228,8 +228,9 @@ static void camp_draw_spell_menu (int c, int pg, int ptr)
  */
 void camp_spell_menu (int c)
 {
-   int stop = 0, pg[2] = { 0, 0 }, ptr[2] = { 0, 0 }, a, b = 0;
-   int rd = 1, smove = 0, tsn;
+   int a, b = 0, rd = 1, smove = 0, stop = 0, tsn;
+   int pg[2] = { 0, 0 };
+   int ptr[2] = { 0, 0 };
 
    if (party[pidx[c]].sts[S_MUTE] > 0) {
       play_effect (SND_BAD, 128);

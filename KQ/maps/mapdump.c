@@ -91,8 +91,8 @@ void load_map_batch (const char *fname)
    max_sets = (pcx_buffer->h / 16);
    for (p = 0; p < max_sets; p++) {
       for (q = 0; q < ICONSET_SIZE; q++) {
-         blit (pcx_buffer, icons[p * ICONSET_SIZE + q], q * 16,
-               p * 16, 0, 0, 16, 16);
+         blit (pcx_buffer, icons[p * ICONSET_SIZE + q], q * 16, p * 16, 0, 0,
+               16, 16);
       }
    }
 
@@ -140,14 +140,20 @@ void visual_map_ex (const char *op)
             if (z_map[w] > 0 && z_map[w] < MAX_ZONES) {
                if (z_map[w] < 10) {
                   /* The zone's number is single-digit */
-                  textprintf (bmp, font, i * 16 + 4, j * 16 + 4, makecol (255, 255, 255), "%d", z_map[w]);
+                  textprintf (bmp, font, i * 16 + 4, j * 16 + 4,
+                              makecol (255, 255, 255), "%d", z_map[w]);
                } else if (z_map[w] < 100) {
                   /* The zone's number is double-digit */
-                  textprintf (bmp, font, i * 16, j * 16 + 4, makecol (255, 255, 255), "%d", z_map[w]);
+                  textprintf (bmp, font, i * 16, j * 16 + 4,
+                              makecol (255, 255, 255), "%d", z_map[w]);
                } else if (i < 1000) {
                   /* The zone's number is triple-digit */
-                  textprintf (bmp, font, i * 16 + 4, j * 16, makecol (255, 255, 255), "%d", (int) (z_map[w] / 100));
-                  textprintf (bmp, font, i * 16, j * 16 + 8, makecol (255, 255, 255), "%02d", (int) (z_map[w] % 100));
+                  textprintf (bmp, font, i * 16 + 4, j * 16,
+                              makecol (255, 255, 255), "%d",
+                              (int) (z_map[w] / 100));
+                  textprintf (bmp, font, i * 16, j * 16 + 8,
+                              makecol (255, 255, 255), "%02d",
+                              (int) (z_map[w] % 100));
                }
             }
          }
@@ -160,13 +166,17 @@ void visual_map_ex (const char *op)
 }                               /* visual_map () */
 
 
-int main (int argc, char *argv[]) {
+int main (int argc, char *argv[])
+{
+   // Make sure that we have some sort of input; exit with error if not
+   if (argc < 2) {
+      return 1;
+   }
+
    char fn[PATH_MAX];
    int k;
    COLOR_MAP cmap;
-   allegro_init();
-// TT: Removed to prevent flickering; no window to pop up & destroy
-//   set_gfx_mode(GFX_AUTODETECT_WINDOWED, 320, 200,0,0);
+   allegro_init ();
    create_trans_table (&cmap, pal, 128, 128, 128, NULL);
    color_map = &cmap;
    for (k = 0; k < MAX_TILES; k++) {
@@ -181,16 +191,16 @@ int main (int argc, char *argv[]) {
    }
    destroy_bitmap (pcx_buffer);
    while (--argc > 0) {
-      replace_extension(fn, argv[argc], "pcx", sizeof(fn));
-      load_map_batch(argv[argc]);
-      set_palette(pal);
-      visual_map_ex(fn);
-      TRACE("%s mode %d\n", argv[argc], gmap.map_mode);
+      replace_extension (fn, argv[argc], "pcx", sizeof (fn));
+      load_map_batch (argv[argc]);
+      set_palette (pal);
+      visual_map_ex (fn);
+      TRACE ("%s mode %d\n", argv[argc], gmap.map_mode);
    }
-// TT: Same as above
-//   set_gfx_mode(GFX_TEXT, 0,0,0,0);
    return 0;
-} END_OF_MAIN();
+}                               /* main () */
+
+END_OF_MAIN ();
 
 
 

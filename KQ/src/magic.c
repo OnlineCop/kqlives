@@ -805,7 +805,8 @@ static void beffect_all_enemies (int cs, int sn)
    case M_SLOW:
       for (a = st; a < st + nt; a++) {
          if (res_throw (a, magic[sn].elem) == 0
-             && non_dmg_save (a, sp_hit) == 0 && fighter[a].sts[S_STONE] == 0) {
+             && non_dmg_save (a, sp_hit) == 0
+             && fighter[a].sts[S_STONE] == 0) {
             if (fighter[a].sts[S_TIME] == 2)
                fighter[a].sts[S_TIME] = 0;
             else {
@@ -828,8 +829,7 @@ static void beffect_all_enemies (int cs, int sn)
       break;
    case M_MALISON:
       for (a = st; a < st + nt; a++) {
-         if (non_dmg_save (a, sp_hit) == 0
-             && fighter[a].sts[S_MALISON] == 0
+         if (non_dmg_save (a, sp_hit) == 0 && fighter[a].sts[S_MALISON] == 0
              && fighter[a].sts[S_STONE] == 0) {
             fighter[a].sts[S_MALISON] = 2;
             ta[a] = NODISPLAY;
@@ -840,8 +840,8 @@ static void beffect_all_enemies (int cs, int sn)
    case M_SLEEPALL:
       for (a = st; a < st + nt; a++) {
          if (res_throw (a, magic[sn].elem) == 0
-             && non_dmg_save (a, sp_hit) == 0
-             && fighter[a].sts[S_SLEEP] == 0 && fighter[a].sts[S_STONE] == 0) {
+             && non_dmg_save (a, sp_hit) == 0 && fighter[a].sts[S_SLEEP] == 0
+             && fighter[a].sts[S_STONE] == 0) {
             fighter[a].sts[S_SLEEP] = rand () % 2 + 4;
             ta[a] = NODISPLAY;
          } else
@@ -911,59 +911,67 @@ static void damage_oneall_enemies (int cs, int tgt, int sn)
  * Essentially, this is only used for things where the user's magic power
  * doesn't affect the power of the effect.
  *
- * \param   cs Caster
- * \param   sp_dmg Damage that a spell does
- * \param   rt Rune used
- * \param   tgt Target
- * \param   split Total damage, split among targets
+ * \param   caster_index: Caster
+ * \param   spell_dmg: Damage that a spell does
+ * \param   rune_type: Rune used
+ * \param   target_index: Target
+ * \param   split: Total damage, split among targets
  */
-void special_damage_oneall_enemies (int cs, int sp_dmg, int rt, int tgt,
-                                    int split)
+void special_damage_oneall_enemies (int caster_index, int spell_dmg,
+                                    int rune_type, int target_index, int split)
 {
-   int nt, st, a, b = 0, nn = 0, ne = 0, ad = 1;
+   int a, b = 0, average_damage = 1, first_target, last_target,
+      multiple_targets = 0, number_of_enemies = 0;
 
-   if (tgt == SEL_ALL_ENEMIES) {
-      if (cs < PSIZE) {
-         st = PSIZE;
-         nt = numens;
+   if (target_index == SEL_ALL_ENEMIES) {
+      if (caster_index < PSIZE) {
+         /* Enemies are the monsters; you are attacking */
+         first_target = PSIZE;
+         last_target = numens;
          for (a = PSIZE; a < PSIZE + numens; a++)
             if (fighter[a].sts[S_DEAD] == 0)
-               ne++;
+               number_of_enemies++;
       } else {
-         st = 0;
-         nt = numchrs;
+         /* Enemies are your party members; monsters are attacking */
+         first_target = 0;
+         last_target = numchrs;
          for (a = 0; a < numchrs; a++)
             if (fighter[a].sts[S_DEAD] == 0)
-               ne++;
+               number_of_enemies++;
       }
-      nn = 1;
+      multiple_targets = 1;
    } else {
-      st = tgt;
-      ne = 1;
-      nt = 1;
+      first_target = target_index;
+      number_of_enemies = 1;
+      last_target = 1;
    }
-   if (ne == 0)
+
+   if (number_of_enemies == 0)
       return;
-   if (sp_dmg < DMG_RND_MIN * 5)
-      ad = rand () % DMG_RND_MIN + sp_dmg;
+
+   if (spell_dmg < DMG_RND_MIN * 5)
+      average_damage = rand () % DMG_RND_MIN + spell_dmg;
    else
-      ad = rand () % (sp_dmg / 5) + sp_dmg;
-   if (ne > 1 && split == 0)
-      ad = ad / ne;
-   for (a = st; a < st + nt; a++) {
+      average_damage = rand () % (spell_dmg / 5) + spell_dmg;
+
+   if (number_of_enemies > 1 && split == 0)
+      average_damage = average_damage / number_of_enemies;
+
+   for (a = first_target; a < first_target + last_target; a++) {
       if (fighter[a].sts[S_DEAD] == 0 && fighter[a].mhp > 0) {
          tempd = status_adjust (a);
-         b = do_shell_check (a, ad);
+         b = do_shell_check (a, average_damage);
          b -= tempd.stats[A_MAG];
          if (b < 0)
             b = 0;
-         b = res_adjust (a, rt, b);
-         if (fighter[a].sts[S_STONE] > 0 && rt != R_BLACK && rt != R_WHITE
-             && rt != R_EARTH && rt != R_WATER)
+         b = res_adjust (a, rune_type, b);
+         if (fighter[a].sts[S_STONE] > 0 && rune_type != R_BLACK
+             && rune_type != R_WHITE && rune_type != R_EARTH
+             && rune_type != R_WATER)
             b = b / 10;
          ta[a] = 0 - b;
-         if (b < 0 && rt == R_POISON) {
-            if (!res_throw (a, rt) && !non_dmg_save (a, 75))
+         if (b < 0 && rune_type == R_POISON) {
+            if (!res_throw (a, rune_type) && !non_dmg_save (a, 75))
                set_timed_sts_effect (a, S_POISON);
          }
          if (ta[a] != 0)
@@ -971,12 +979,12 @@ void special_damage_oneall_enemies (int cs, int sp_dmg, int rt, int tgt,
       } else
          ta[a] = 0;
    }
-   display_amount (st, FDECIDE, nn);
-   for (a = st; a < st + nt; a++)
+   display_amount (first_target, FDECIDE, multiple_targets);
+   for (a = first_target; a < first_target + last_target; a++)
       if (ta[a] != MISS)
          adjust_hp (a, ta[a]);
    b = 0;
-   for (a = st; a < st + nt; a++) {
+   for (a = first_target; a < first_target + last_target; a++) {
       if (fighter[a].sts[S_DEAD] == 0 && fighter[a].hp <= 0) {
          fkill (a);
          ta[a] = 1;
@@ -985,7 +993,7 @@ void special_damage_oneall_enemies (int cs, int sp_dmg, int rt, int tgt,
          ta[a] = 0;
    }
    if (b > 0)
-      death_animation (st, nn);
+      death_animation (first_target, multiple_targets);
 }
 
 

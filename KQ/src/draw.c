@@ -221,8 +221,8 @@ void revert_cframes (int who, int aflag)
 
    while (a < a1) {
       for (p = 0; p < MAXCFRAMES; p++) {
-         blit (tcframes[a][p], cframes[a][p], 0, 0, 0, 0,
-               fighter[a].cw, fighter[a].cl);
+         blit (tcframes[a][p], cframes[a][p], 0, 0, 0, 0, fighter[a].cw,
+               fighter[a].cl);
       }
       ++a;
    }
@@ -300,10 +300,6 @@ static void drawchar (int xw, int yw)
    int spec = 0;
    BITMAP *spr = NULL;
 
-   /* TT: this draws player 2 over player 1
-    *  for (i = 0; i < PSIZE + noe; i++)
-    * try the 2nd line instead...
-    */
    for (i = PSIZE + noe - 1; i >= 0; i--) {
       spec = 0;
       fid = g_ent[i].eid;
@@ -361,11 +357,11 @@ static void drawchar (int xw, int yw)
              && g_ent[i].tilex <= view_x2 && g_ent[i].tiley >= view_y1
              && g_ent[i].tiley <= view_y2) {
             if (dx >= -16 && dx <= 336 && dy >= -16 && dy <= 256) {
-               if (g_ent[i].eid >= ID_ENEMY) {
-                  spr = eframes[g_ent[i].chrx][fr];
-               } else {
-                  spr = frames[g_ent[i].eid][fr];
-               }
+// TT: EDIT
+               spr =
+                  (g_ent[i].eid >=
+                   ID_ENEMY) ? eframes[g_ent[i].chrx][fr] : frames[g_ent[i].
+                                                                   eid][fr];
 
                if (g_ent[i].transl == 0)
                   draw_sprite (double_buffer, spr, dx, dy);
@@ -399,11 +395,20 @@ int is_forestsquare (int fx, int fy)
    if (g_map.map_no != MAP_MAIN)
       return 0;
    f = map_seg[(fy * g_map.xsize) + fx];
-   if (f == 63 || f == 65 || f == 66 || f == 67 || f == 71 || f == 72
-       || f == 73 || f == 74)
+// TT: EDIT
+   switch (f) {
+   case 63:
+   case 65:
+   case 66:
+   case 67:
+   case 71:
+   case 72:
+   case 73:
+   case 74:
       return 1;
-   else
+   default:
       return 0;
+   }
 }
 
 
@@ -496,11 +501,11 @@ static void draw_backlayer (void)
    yofs = 16 - (dy & 15);
    for (dy = 0; dy < 16; dy++) {
       for (dx = 0; dx < 21; dx++) {
-         if (ytc + dy >= view_y1 && xtc + dx >= view_x1
-             && ytc + dy <= view_y2 && xtc + dx <= view_x2) {
+         if (ytc + dy >= view_y1 && xtc + dx >= view_x1 && ytc + dy <= view_y2
+             && xtc + dx <= view_x2) {
             pix = map_seg[((ytc + dy) * g_map.xsize) + xtc + dx];
-            blit (map_icons[tilex[pix]], double_buffer, 0, 0,
-                  dx * 16 + xofs, dy * 16 + yofs, 16, 16);
+            blit (map_icons[tilex[pix]], double_buffer, 0, 0, dx * 16 + xofs,
+                  dy * 16 + yofs, 16, 16);
          } else
             blit (map_icons[0], double_buffer, 0, 0, dx * 16 + xofs,
                   dy * 16 + yofs, 16, 16);
@@ -542,11 +547,11 @@ static void draw_midlayer (void)
    yofs = 16 - (dy & 15);
    for (dy = 0; dy < 16; dy++) {
       for (dx = 0; dx < 21; dx++) {
-         if (ytc + dy >= view_y1 && xtc + dx >= view_x1
-             && ytc + dy <= view_y2 && xtc + dx <= view_x2) {
+         if (ytc + dy >= view_y1 && xtc + dx >= view_x1 && ytc + dy <= view_y2
+             && xtc + dx <= view_x2) {
             pix = b_seg[((ytc + dy) * g_map.xsize) + xtc + dx];
-            draw_sprite (double_buffer, map_icons[tilex[pix]],
-                         dx * 16 + xofs, dy * 16 + yofs);
+            draw_sprite (double_buffer, map_icons[tilex[pix]], dx * 16 + xofs,
+                         dy * 16 + yofs);
          }
       }
    }
@@ -586,11 +591,11 @@ static void draw_forelayer (void)
    yofs = 16 - (dy & 15);
    for (dy = 0; dy < 16; dy++) {
       for (dx = 0; dx < 21; dx++) {
-         if (ytc + dy >= view_y1 && xtc + dx >= view_x1
-             && ytc + dy <= view_y2 && xtc + dx <= view_x2) {
+         if (ytc + dy >= view_y1 && xtc + dx >= view_x1 && ytc + dy <= view_y2
+             && xtc + dx <= view_x2) {
             pix = f_seg[((ytc + dy) * g_map.xsize) + xtc + dx];
-            draw_sprite (double_buffer, map_icons[tilex[pix]],
-                         dx * 16 + xofs, dy * 16 + yofs);
+            draw_sprite (double_buffer, map_icons[tilex[pix]], dx * 16 + xofs,
+                         dy * 16 + yofs);
          }
       }
    }
@@ -622,12 +627,12 @@ static void draw_shadows (void)
    yofs = 16 - (vy & 15);
    for (dy = 0; dy < 16; dy++) {
       for (dx = 0; dx < 21; dx++) {
-         if (ytc + dy >= view_y1 && xtc + dx >= view_x1
-             && ytc + dy <= view_y2 && xtc + dx <= view_x2) {
+         if (ytc + dy >= view_y1 && xtc + dx >= view_x1 && ytc + dy <= view_y2
+             && xtc + dx <= view_x2) {
             pix = s_seg[((ytc + dy) * g_map.xsize) + xtc + dx];
             if (pix > 0)
-               draw_trans_sprite (double_buffer, shadow[pix],
-                                  dx * 16 + xofs, dy * 16 + yofs);
+               draw_trans_sprite (double_buffer, shadow[pix], dx * 16 + xofs,
+                                  dy * 16 + yofs);
          }
       }
    }
@@ -836,7 +841,7 @@ void print_num (BITMAP * where, int sx, int sy, char *msg, int cl)
  */
 static void set_textpos (int who)
 {
-   if (who < MAX_ENT && who>=0) {
+   if (who < MAX_ENT && who >= 0) {
       gbx = (g_ent[who].tilex * 16) - vx;
       gby = (g_ent[who].tiley * 16) - vy;
       gbbx = gbx - (gbbw * 4);
@@ -865,23 +870,9 @@ static void set_textpos (int who)
       if (gbby > gby) {
          gby += 20;
          gbt = (gbx < 152 ? 3 : 2);
-// TT: edit
-#if 0
-         if (gbx < 152)
-            gbt = 3;
-         else
-            gbt = 2;
-#endif
       } else {
          gby -= 20;
          gbt = (gbx < 152 ? 1 : 0);
-// TT: edit
-#if 0
-         if (gbx < 152)
-            gbt = 1;
-         else
-            gbt = 0;
-#endif
       }
       if (gbx < gbbx + 8)
          gbx = gbbx + 8;
@@ -916,8 +907,8 @@ static void draw_textbox (int bstyle)
    wid = gbbw * 8 + 16;
    hgt = gbbh * 12 + 16;
 
-   draw_kq_box (double_buffer, gbbx + xofs, gbby + yofs,
-                gbbx + xofs + wid, gbby + yofs + hgt, BLUE, bstyle);
+   draw_kq_box (double_buffer, gbbx + xofs, gbby + yofs, gbbx + xofs + wid,
+                gbby + yofs + hgt, BLUE, bstyle);
    if (gbt != -1) {
       /* select the correct stem-thingy that comes out of the speech bubble */
       stem = bub[gbt + (bstyle == B_THOUGHT ? 4 : 0)];
@@ -926,8 +917,8 @@ static void draw_textbox (int bstyle)
    }
 
    for (a = 0; a < gbbh; a++) {
-      print_font (double_buffer, gbbx + 8 + xofs,
-                  a * 12 + gbby + 8 + yofs, msgbuf[a], FBIG);
+      print_font (double_buffer, gbbx + 8 + xofs, a * 12 + gbby + 8 + yofs,
+                  msgbuf[a], FBIG);
    }
 }
 
@@ -1136,7 +1127,7 @@ static void generic_text (int who, int box_style)
             gbbw = len;
       }
    }
-   set_textpos (box_style==B_MESSAGE ? -1 : who);
+   set_textpos (box_style == B_MESSAGE ? -1 : who);
    if (gbbw == -1 || gbbh == -1)
       return;
    unpress ();
@@ -1271,8 +1262,7 @@ int prompt_ex (int who, const char *ptext, char *opt[], int n_opt)
                   print_font (double_buffer, winx + 8, winy + i * 12,
                               opt[i + topopt], FBIG);
                }
-               draw_sprite (double_buffer, menuptr,
-                            winx + 8 - menuptr->w,
+               draw_sprite (double_buffer, menuptr, winx + 8 - menuptr->w,
                             (curopt - topopt) * 12 + winy + 4);
                /* Draw the 'up' and 'down' markers if there are more options than will fit in the window */
                if (topopt > 0)
@@ -1414,49 +1404,53 @@ void message (char *m, int icn, int delay, int x_m, int y_m)
    char msg[1024];
    const char *s;
    int i, num_lines, max_len, len;
+
    /* Do the $0 replacement stuff */
-   memset(msg, 0, sizeof(msg));
-   strncpy (msg, parse_string (m),sizeof(msg)-1);
-   s=msg;
+   memset (msg, 0, sizeof (msg));
+   strncpy (msg, parse_string (m), sizeof (msg) - 1);
+   s = msg;
+
    /* Save a copy of the screen */
    blit (double_buffer, back, x_m, y_m, 0, 0, 352, 280);
+
    /* Loop for each box full of text... */
-   while (s!=NULL) {
-     s=relay(s);
-     /* Calculate the box size */
-     num_lines=max_len=0;
-     for (i=0; i<MSG_ROWS; ++i) {
-       len=strlen(msgbuf[i]);
-       if (len>0) {
-	 if (max_len<len) max_len=len;
-	 ++num_lines;
-       }
-     }
-     /* Draw the box and maybe the icon */
-     if (icn==255) {
-       /* No icon */
-       menubox (double_buffer, 152 - (max_len * 4) + x_m, 108 + y_m,
-		max_len, num_lines, DARKBLUE);
-     }
-     else {
-       /* There is an icon; make the box a little bit bigger to the left */
-       menubox (double_buffer, 144 - (max_len * 4) + x_m, 108 + y_m,
-		max_len+1, num_lines, DARKBLUE); 
-       draw_icon (double_buffer, icn, 152 - (max_len * 4) + x_m, 116 +y_m);
-     }
-     /* Draw the text */
-     for (i=0; i<num_lines; ++i) {
-       print_font (double_buffer, 160 - (max_len * 4) + x_m, 116 + 8*i+y_m,
-		   msgbuf[i], FNORMAL);
-     }
-     /* Show it */
-     blit2screen (x_m, y_m);
-     /* Wait for delay time/key press */
-     if (delay == 0)
-       wait_enter ();
-     else
-       wait (delay);
-     blit (back, double_buffer, 0, 0, x_m, y_m, 352, 280);
+   while (s != NULL) {
+      s = relay (s);
+      /* Calculate the box size */
+      num_lines = max_len = 0;
+      for (i = 0; i < MSG_ROWS; ++i) {
+         len = strlen (msgbuf[i]);
+         if (len > 0) {
+            if (max_len < len)
+               max_len = len;
+            ++num_lines;
+         }
+      }
+      /* Draw the box and maybe the icon */
+      if (icn == 255) {
+         /* No icon */
+         menubox (double_buffer, 152 - (max_len * 4) + x_m, 108 + y_m, max_len,
+                  num_lines, DARKBLUE);
+      } else {
+         /* There is an icon; make the box a little bit bigger to the left */
+         menubox (double_buffer, 144 - (max_len * 4) + x_m, 108 + y_m,
+                  max_len + 1, num_lines, DARKBLUE);
+         draw_icon (double_buffer, icn, 152 - (max_len * 4) + x_m, 116 + y_m);
+      }
+
+      /* Draw the text */
+      for (i = 0; i < num_lines; ++i) {
+         print_font (double_buffer, 160 - (max_len * 4) + x_m,
+                     116 + 8 * i + y_m, msgbuf[i], FNORMAL);
+      }
+      /* Show it */
+      blit2screen (x_m, y_m);
+      /* Wait for delay time or key press */
+      if (delay == 0)
+         wait_enter ();
+      else
+         wait (delay);
+      blit (back, double_buffer, 0, 0, x_m, y_m, 352, 280);
    }
 }
 
