@@ -19,7 +19,7 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-/*! \file 
+/*! \file
  * \brief Combat mode
  *
  * This is the main file where combat is initiated.
@@ -84,18 +84,18 @@ static void init_fighters (void);
 
 
 
-/*! \brief Does current location call for combat?                           
-*
-* This function checks the zone at the specified co-ordinates
-* and calls combat based on the map and zone.
-*
-* PH: it seems that this is rarely used (?) - only called by 
-* entityat().
-*
-* \param comx x-coord of player
-* \param comy y-coord of player
-* \returns Outcome of combat() or 0 if no combat
-*                                                                         
+/*! \brief Does current location call for combat?
+ *
+ * This function checks the zone at the specified co-ordinates
+ * and calls combat based on the map and zone.
+ *
+ * PH: it seems that this is rarely used (?) - only called by
+ * entityat().                                               
+ *
+ * \param   comx x-coord of player
+ * \param   comy y-coord of player
+ * \returns outcome of combat() or 0 if no combat
+ *
 */
 int combat_check (int comx, int comy)
 {
@@ -104,11 +104,11 @@ int combat_check (int comx, int comy)
 
    zn = z_seg[comy * g_map.xsize + comx];
 
-   /*  RB TODO: adding a break will make this a bit faster, plus  
-    *           calling combat with the FIRST zone, not the LAST  
-    *           one.                                              
-    * PH: done this 20020222 
-    */
+   /*  RB TODO: adding a break will make this a bit faster, plus
+    *           calling combat with the FIRST zone, not the LAST
+    *           one.
+    * PH: done this 20020222
+   */
    for (i = 0; i < NUM_BATTLES; i++)
      {
         if (battles[i].mapnum == g_map.map_no && battles[i].zonenum == zn)
@@ -121,15 +121,15 @@ int combat_check (int comx, int comy)
 
 
 
-/*! \brief Main combat function                                              
-*
-*   The big one... I say that because the game is mostly combat    
-*            :p  First, check to see if a random encounter has occured.     
-*            The check is skipped if it's a scripted battle. Then call all  
-*            the helper and setup functions and start the combat by calling 
-*            do_round.                                                      
-* \param bno combat identifier (index into battles[])
-* \returns 0 if no combat, 1 otherwise
+/*! \brief Main combat function
+ *
+ * The big one... I say that because the game is mostly combat :p
+ * First, check to see if a random encounter has occured. The check is skipped
+ * if it's a scripted battle.  Then call all the helper and setup functions
+ * and start the combat by calling do_round.
+ *
+ * \param   bno combat identifier (index into battles[])
+ * \returns 0 if no combat, 1 otherwise
 */
 int combat (int bno)
 {
@@ -304,12 +304,11 @@ int combat (int bno)
 
 
 /*! \brief Initiate fighter structs and initial vars
+ * \author Josh Bolduc
+ * \created ????????
+ * \updated
  *
- *  Author  : Josh Bolduc
- *  Created : ???????? - ??:??
- *  Updated : Never.
- *  Purpose : Pre-combat setup of fighter structures and initial vars.
- *  Returns : Nothing
+ * Pre-combat setup of fighter structures and initial vars.
 */
 static void init_fighters (void)
 {
@@ -331,13 +330,12 @@ static void init_fighters (void)
 
 
 
-/*! \brief fighter on-screen locations in battle
+/*! \brief Fighter on-screen locations in battle
+ * \author Josh Bolduc
+ * \created ????????
+ * \updated
  *
- *  Author  : Josh Bolduc
- *  Created : ???????? - ??:??
- *  Updated : Never.
- *  Purpose : Calculate where the fighters should be drawn.
- *  Returns : Nothing
+ * Calculate where the fighters should be drawn.
 */
 static void snap_togrid (void)
 {
@@ -380,12 +378,11 @@ static void snap_togrid (void)
 
 
 /*! \brief Choose who attacks first, speeds, etc.
+ * \author Josh Bolduc
+ * \created ????????
+ * \updated
  *
- *  Author  : Josh Bolduc
- *  Created : ???????? - ??:??
- *  Updated : Never.
- *  Purpose : Set up surprise vars, speeds, act vars, etc.
- *  Returns : Nothing
+ * Set up surprise vars, speeds, act vars, etc.
 */
 static void roll_initiative (void)
 {
@@ -445,14 +442,16 @@ static void roll_initiative (void)
 
 
 
-/*! \brief draw the battle screen
+/*! \brief Draw the battle screen
+ * \author Josh Bolduc
+ * \created ????????
+ * \updated 20020914 - 16:16 (RB)
  *
- *  Author  : Josh Bolduc
- *  Created : ???????? - ??:??
- *  Updated : 20020914 - 16:16 (RB)
- *  Purpose : Draw the battle screen.
- *  Returns : Nothing
- * \param plyr player
+ * Draw the battle screen.
+ *
+ * \param   plyr Player
+ * \param   hl Highlighted
+ * \param   sall Select all
 */
 void battle_render (int plyr, int hl, int sall)
 {
@@ -678,14 +677,14 @@ void battle_render (int plyr, int hl, int sall)
 
 
 
-/*
- *  Author  : Josh Bolduc
- *  Created : ???????? - ??:??
- *  Updated : 20020914 - 16:16 (RB)
- *  Purpose : This function controls the battle gauges and calls for action
- *            when necessary. This is also where things like poison, sleep,
- *            and what-not are checked.
- *  Returns : Nothing
+/*! \brief Battle gauge, action controls
+ * \author Josh Bolduc
+ * \created ????????
+ * \updated 20020914 - 16:16 (RB)
+ *
+ * This function controls the battle gauges and calls for action
+ * when necessary. This is also where things like poison, sleep,
+ * and what-not are checked.
 */
 static void do_round (void)
 {
@@ -840,13 +839,13 @@ static void do_round (void)
 
 
 
-/*                                                                           */
-/*  Author  : Josh Bolduc                                                    */
-/*  Created : ???????? - ??:??                                               */
-/*  Updated : Never.                                                         */
-/*  Purpose : Choose a fighter action.                                       */
-/*  Returns : Nothing                                                        */
-/*                                                                           */
+/*! \brief Choose an action
+ * \author Josh Bolduc
+ * \created ????????
+ * \updated
+ *
+ * Choose a fighter action.
+*/
 static void do_action (int dude)
 {
    int index;
@@ -890,14 +889,14 @@ static void do_action (int dude)
 
 
 
-/*
- *  Author  : Josh Bolduc
- *  Created : ???????? - ??:??
- *  Updated : 20020914 - 16:37 (RB)
- *  Purpose : Display a single fighter on the screen. Checks for dead and
- *            stone, and if the fighter is selected. Also displays 'Vision'
- *            spell information.
- *  Returns : Nothing
+/*! \brief Display one fighter on the screen
+ * \author Josh Bolduc
+ * \created ????????
+ * \updated 20020914 - 16:37 (RB)
+ *
+ * Display a single fighter on the screen. Checks for dead and
+ * stone, and if the fighter is selected. Also displays 'Vision'
+ * spell information.
 */
 void draw_fighter (int dude, int dcur)
 {
@@ -953,12 +952,14 @@ void draw_fighter (int dude, int dcur)
 
 
 
-/*
- *  Author  : Josh Bolduc
- *  Created : ???????? - ??:??
- *  Updated : Never.
- *  Purpose : Just check to see if all the enemies or heroes are dead.
- *  Returns : 1 if the battle ended (either the heroes or the enemies won);
+/*! \brief Check if all heroes/enemies dead.
+ * \author Josh Bolduc
+ * \created ????????
+ * \updated
+ *
+ * Just check to see if all the enemies or heroes are dead.
+ *
+ * \returns 1 if the battle ended (either the heroes or the enemies won);
  *            0 otherwise.
 */
 static int check_end (void)
@@ -996,15 +997,17 @@ static int check_end (void)
 
 
 
-/*
- *  Author  : Josh Bolduc
- *  Created : ???????? - ??:??
- *  Updated : Never.
- *  Purpose : I don't really need to describe this :p
- * \param ar Attacker ID
- * \param dr Defender ID
- * \param sk if non-zero, override the attacker's stats.
- *  \return 1 or 0 (TODO: check what each means)
+/*! \brief Main fighting routine
+ * \author Josh Bolduc
+ * \created ????????
+ * \updated
+ *
+ * I don't really need to describe this :p
+ *
+ * \param   ar Attacker ID
+ * \param   dr Defender ID
+ * \param   sk if non-zero, override the attacker's stats.
+ * \returns 1 if damage done, 0 otherwise
 */
 int fight (int ar, int dr, int sk)
 {
@@ -1110,16 +1113,16 @@ int fight (int ar, int dr, int sk)
 
 
 /*! \brief Attack all enemies at once
+ * \author Josh Bolduc
+ * \created ????????
+ * \updated
  *
- *  Author  : Josh Bolduc
- *  Created : ???????? - ??:??
- *  Updated : Never.
- *  Purpose : This is different than fight in that all enemies are attacked
- *            simultaneously, once. As a note, the attackers stats are
- *            always over-ridden in this function. As well, critical hits
- *            are possible, but the screen doesn't flash.
- *  Returns : 1 or 0 (TODO: check what each means)
- * \param ar attacker
+ * This is different than fight in that all enemies are attacked
+ * simultaneously, once. As a note, the attackers stats are
+ * always over-ridden in this function. As well, critical hits
+ * are possible, but the screen doesn't flash.
+ *
+ * \param   ar Attacker
 */
 void multi_fight (int ar)
 {
@@ -1223,16 +1226,17 @@ void multi_fight (int ar)
 
 
 /*! \brief Attack all enemies at once
+ * \author Josh Bolduc
+ * \created ????????
+ * \updated
  *
- *  Author  : Josh Bolduc
- *  Created : ???????? - ??:??
- *  Updated : Never.
- *  Purpose : This does the actual attack calculation. The damage done to
- *            the target is kept in the ta[] array.
- *  Returns : 0 (attack was a miss), 1 (attack was successful) or 2 (attack
- *            was a critical hit).
- * \param ar attacker
- * \param dr defender
+ * This does the actual attack calculation. The damage done to
+ * the target is kept in the ta[] array.
+ *
+ * \param   ar Attacker
+ * \param   dr Defender
+ * \returns 0 if attack was a miss, 1 if attack was successful,
+ *          or 2 if attack was a critical hit).
 */
 static int attack_result (int ar, int dr)
 {
@@ -1370,14 +1374,13 @@ static int attack_result (int ar, int dr)
 
 
 
-/*! \brief enemies defeated the player
+/*! \brief Enemies defeated the player
+ * \author Josh Bolduc
+ * \created ????????
+ * \updated
  *
- *  Author  : Josh Bolduc
- *  Created : ???????? - ??:??
- *  Updated : Never.
- *  Purpose : Play some sad music and set the dead flag so that the game
- *            will return to the main menu.
- *  Returns : Nothing.
+ * Play some sad music and set the dead flag so that the game
+ * will return to the main menu.
 */
 static void enemies_win (void)
 {
@@ -1398,13 +1401,12 @@ static void enemies_win (void)
 
 
 
-/*! \brief player defeated the enemies
+/*! \brief Player defeated the enemies
+ * \author Josh Bolduc
+ * \created ????????
+ * \updated
  *
- *  Author  : Josh Bolduc
- *  Created : ???????? - ??:??
- *  Updated : Never.
- *  Purpose : Distribute the booty!
- *  Returns : Nothing.
+ * Distribute the booty!
 */
 static void heroes_win (void)
 {
@@ -1462,7 +1464,7 @@ static void heroes_win (void)
    blit (double_buffer, back, 0, 0, 0, 0, 352, 280);
    for (index = 0; index < numens; index++)
      {
-        /* PH bug: (?) should fitm be reset to zero at the start of this loop? 
+        /* PH bug: (?) should fitm be reset to zero at the start of this loop?
          * If you defeat 2 enemies,
          * you should (possibly) get 2 items, right/
          */
@@ -1572,14 +1574,14 @@ static void heroes_win (void)
 
 
 
-/*! \brief kill a fighter
+/*! \brief Kill a fighter
+ * \author Josh Bolduc
+ * \created ????????
+ * \updated 20020917 (PH) -- added cheat mode
  *
- *  Author  : Josh Bolduc
- *  Created : ???????? - ??:??
- *  Updated : PH 17-sep-2002 added cheat mode
- *  Purpose : Do what it takes to put a fighter out of commission.
- *  Returns : Nothing.
- * \param victim the one who will die
+ * Do what it takes to put a fighter out of commission.
+ *
+ * \param   victim The one who will die
 */
 void fkill (int victim)
 {

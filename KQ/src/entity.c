@@ -24,7 +24,7 @@
  *
  * \author JB
  * \date ??????
- */
+*/
 
 #include <stdio.h>
 #include <string.h>
@@ -65,7 +65,7 @@ static void entscript (int);
 
 
 
-/*! \brief main entity routine
+/*! \brief Main entity routine
  *
  * The main routine that loops through the entity list and processes each
  * one.
@@ -79,11 +79,13 @@ void process_entities (void)
          speed_adjust (i);
 }
 
-/*! \brief adjust movement speed
+
+
+/*! \brief Adjust movement speed
  *
  * This has to adjust for each entity's speed.
  *
- * \param i index of entity
+ * \param   i Index of entity
 */
 static void speed_adjust (int i)
 {
@@ -138,13 +140,15 @@ static void speed_adjust (int i)
       process_entity (i);
 }
 
-/*! \brief actions for one entity
+
+
+/*! \brief Actions for one entity
  *
  * Process an individual active entity.  If the entity in question
  * is #0 (main character) and the party is not automated, then allow
  * for player input.
  *
- * \param i index of entity
+ * \param   i Index of entity
 */
 static void process_entity (int i)
 {
@@ -278,17 +282,19 @@ static void process_entity (int i)
      }
 }
 
-/*! \brief check proximity
+
+
+/*! \brief Check proximity
  *
  * Check to see if the target is within rad squares.
  * Test area is a square box rather than a circle
  * target entity needs to be within the view area
- * to be visible 
+ * to be visible
  * (PH) this implementation is really odd :?
  *
- * \param eno entity under consideration
- * \param tgt entity to test
- * \param rad radius to test within
+ * \param   eno Entity under consideration
+ * \param   tgt Entity to test
+ * \param   rad Radius to test within
  * \returns 1 if near, 0 otherwise
 */
 static int entity_near (int eno, int tgt, int rad)
@@ -307,13 +313,15 @@ static int entity_near (int eno, int tgt, int rad)
    return 0;
 }
 
-/*! \brief handle party following
+
+
+/*! \brief Handle party following
  *
  * This is used to co-ordinate the following of party
  * members after the first.
- * Basically it's an implementation of a  queue
+ * Basically it's an implementation of a queue
  *
- * \param lm last moved direction
+ * \param   lm Last moved direction
 */
 static void lastm_check (int lm)
 {
@@ -324,10 +332,11 @@ static void lastm_check (int lm)
    lastm[0] = lm;
 }
 
-/*! \brief party following leader
+
+
+/*! \brief Party following leader
  *
- * This makes any characters (after the first) follow
- * the leader.
+ * This makes any characters (after the first) follow the leader.
 */
 static void follow (void)
 {
@@ -372,12 +381,14 @@ static void follow (void)
      }
 }
 
-/*! \brief move randomly
+
+
+/*! \brief Move randomly
  *
  * Choose a random direction for the entity to walk in and set up the
  * vars to do so.
  *
- * \param i index of entity to move
+ * \param   i Index of entity to move
 */
 static void wander (int i)
 {
@@ -404,12 +415,14 @@ static void wander (int i)
      }
 }
 
-/*! \brief process movement for player
+
+
+/*! \brief Process movement for player
  *
  * This is the replacement for process_controls that used to be in kq.c
  * I realized that all the work in process_controls was already being
  * done in process_entity... I just had to make this exception for the
- * player controlled dude. 
+ * player-controlled dude.
 */
 static void player_move (void)
 {
@@ -468,11 +481,13 @@ static void player_move (void)
      }
 }
 
-/*! \brief movement upwards
+
+
+/*! \brief Movement upwards
  *
  * Set up the entity vars to move upwards (if possible).
- * 
- * \param i index of entity to move
+ *
+ * \param   i Index of entity to move
 */
 static void moveup (int i)
 {
@@ -494,10 +509,13 @@ static void moveup (int i)
    emoved = 1;
 }
 
-/*! \brief movement downwards
+
+
+/*! \brief Movement downwards
  *
  * Set up the entity vars to move down (if possible).
- * \param i index of entity to move
+ *
+ * \param   i Index of entity to move
 */
 static void movedown (int i)
 {
@@ -519,10 +537,13 @@ static void movedown (int i)
    emoved = 1;
 }
 
-/*! \brief movement rightwards
+
+
+/*! \brief Movement rightwards
  *
- *  Set up the entity vars to move right (if possible).
- * \param i index of entity to move
+ * Set up the entity vars to move right (if possible).
+ *
+ * \param   i Index of entity to move
 */
 static void moveright (int i)
 {
@@ -544,11 +565,13 @@ static void moveright (int i)
    emoved = 1;
 }
 
+
+
 /*! \brief Movement leftwards
  *
- *   Set up the entity vars to move left (if possible).
- * 
- * \param i index of entity to move
+ * Set up the entity vars to move left (if possible).
+ *
+ * \param   i Index of entity to move
 */
 static void moveleft (int i)
 {
@@ -572,12 +595,12 @@ static void moveleft (int i)
 
 /*! \brief Check for obstruction
  *
- * Check for any map based obstructions in the specified co-ordinates.
- * 
- * \param ox original position
- * \param oy original position
- * \param mx amount to move
- * \param my amount to move
+ * Check for any map-based obstructions in the specified co-ordinates.
+ *
+ * \param   ox Original x-coord position
+ * \param   oy Original y-coord position
+ * \param   mx Amount to move
+ * \param   my Amount to move
  * \returns 1 if path is obstructed, 0 otherwise
 */
 static int obstruction (int ox, int oy, int mx, int my)
@@ -623,18 +646,19 @@ static int obstruction (int ox, int oy, int mx, int my)
    return 0;
 }
 
+
+
 /*! \brief Check entites at location
  *
  * Check for any entities in the specified co-ordinates.
  * Runs combat routines if a character and an enemy meet,
- * and de-activate the enemy if it was defeated
- * 
- * \param ox x-coord to check
- * \param oy y-coord to check
- * \param who id of entity doing the checking
- * \returns index of entity found+1 or 0 if none found
+ * and de-activate the enemy if it was defeated.
  *
  * \sa combat_check()
+ * \param   ox x-coord to check
+ * \param   oy y-coord to check
+ * \param   who Id of entity doing the checking
+ * \returns index of entity found+1 or 0 if none found
 */
 int entityat (int ox, int oy, int who)
 {
@@ -671,12 +695,14 @@ int entityat (int ox, int oy, int who)
    return 0;
 }
 
-/*! \brief Read an int from a script 
+
+
+/*! \brief Read an int from a script
  *
- * This parses the movement script for a value that relates 
+ * This parses the movement script for a value that relates
  * to a command.  This is from Verge1.
  *
- * \param n entity to process
+ * \param   n Entity to process
 */
 static void parsems (int n)
 {
@@ -696,10 +722,13 @@ static void parsems (int n)
    g_ent[n].cmdnum = atoi (tok);
 }
 
+
+
 /*! \brief Read a command and parameter from a script
  *
  * This processes entity commands from the movement script.
  * This is from Verge1.
+ *
  * Script commands are:
  * - U,R,D,L + param:  move up, right, down, left by param spaces
  * - W+param: wait param frames
@@ -707,8 +736,8 @@ static void parsems (int n)
  * - X+param: move to x-coord param
  * - Y+param: move to y-coord param
  * - F+param: face direction param
- * 
- * \param n entity to process
+ *
+ * \param   n Entity to process
 */
 static void getcommand (int n)
 {
@@ -766,11 +795,13 @@ static void getcommand (int n)
      }
 }
 
-/*! \brief run script
+
+
+/*! \brief Run script
  *
  * This executes script commands.  This is from Verge1.
  *
- * \param n entity to process
+ * \param   n Entity to process
 */
 static void entscript (int n)
 {
@@ -832,13 +863,15 @@ static void entscript (int n)
       g_ent[n].cmd = 0;
 }
 
-/*! \brief initialise script
+
+
+/*! \brief Initialise script
  *
  * This is used to set up an entity with a movement script so that
  * it can be automatically controlled.
  *
- * \param n entity to process
- * \param movestring the script
+ * \param   n Entity to process
+ * \param   movestring The script
 */
 void set_script (int n, char *movestring)
 {
@@ -852,13 +885,15 @@ void set_script (int n, char *movestring)
    strncpy (g_ent[n].script, movestring, sizeof (g_ent[n].script));
 }
 
-/*! \brief set position
+
+
+/*! \brief Set position
  *
  * Position an entity manually.
  *
- * \param en entity to position
- * \param ex x-coord
- * \param ey y-coord
+ * \param   en Entity to position
+ * \param   ex x-coord
+ * \param   ey y-coord
 */
 void place_ent (int en, int ex, int ey)
 {
@@ -868,7 +903,9 @@ void place_ent (int en, int ex, int ey)
    g_ent[en].y = g_ent[en].tiley * 16;
 }
 
-/*! \brief count active entities
+
+
+/*! \brief Count active entities
  *
  * Force calculation of the 'noe' variable.
 */

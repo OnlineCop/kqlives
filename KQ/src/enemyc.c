@@ -24,7 +24,7 @@
  *
  * \author JB
  * \date ??????
- */
+*/
 
 #include <stdio.h>
 
@@ -45,9 +45,9 @@ int cf[NUM_FIGHTERS];
 /*  internal prototypes  */
 static void load_enemyframes (int, int, int);
 static int enemy_cancast (int, int);
-static void enemy_curecheck (int, int);
+static void enemy_curecheck (int);
 static void enemy_spellcheck (int, int);
-static int enemy_stscheck (int, int, int);
+static int enemy_stscheck (int, int);
 static void enemy_skillcheck (int, int);
 static int spell_setup (int, int);
 static int skill_setup (int, int);
@@ -64,9 +64,9 @@ static void enemy_attack (int);
  * The encounter table consists of several 'sub-tables', grouped by
  * encounter number. Each row is one possible battle.
  *
- * \param en Encounter number in the Encounter table.
- * \param etid If =99, select a random row with that encounter number,
- * otherwise select row etid.
+ * \param   en Encounter number in the Encounter table.
+ * \param   etid If =99, select a random row with that encounter number,
+ *          otherwise select row etid.
  * \returns number of random encounter
 */
 int select_encounter (int en, int etid)
@@ -124,10 +124,12 @@ int select_encounter (int en, int etid)
    return entry;
 }
 
-/*! \brief load from file
+
+
+/*! \brief Load from file
  *
  * Load enemy data from files.
- * The format of allstat.mon is a space separated sequence of rows.
+ * The format of allstat.mon is a space-separated sequence of rows.
  * Within a row, the column order is:
  * 
  * -# Name
@@ -283,13 +285,15 @@ void enemy_init (void)
    fclose (edat);
 }
 
-/*! \brief copy frames from main bitmap
+
+
+/*! \brief Copy frames from main bitmap
  *
  * Extract the appropriate frames from the enemy pcx file.
  *
- * \param who
- * \param locx
- * \param locy
+ * \param   who Enemy id
+ * \param   locx x-coord of frame
+ * \param   locy y-coord of frame
 */
 static void load_enemyframes (int who, int locx, int locy)
 {
@@ -311,12 +315,14 @@ static void load_enemyframes (int who, int locx, int locy)
    unload_datafile_object (pcx);
 }
 
+
+
 /*! \brief Choose action for enemy
  *
  * There is the beginning of some intelligence to this... however, the
  * magic checking and skill checking functions aren't very smart yet :)
  *
- * \param who
+ * \param   who Target action will be performed on
 */
 void enemy_chooseaction (int who)
 {
@@ -337,7 +343,7 @@ void enemy_chooseaction (int who)
    if (fighter[who].hp < fighter[who].mhp * 2 / 3 && rand () % 100 < 50
        && fighter[who].sts[S_MUTE] == 0)
      {
-        enemy_curecheck (who, 0);
+        enemy_curecheck (who);
         if (cact[who] == 0)
            return;
      }
@@ -369,14 +375,17 @@ void enemy_chooseaction (int who)
    cact[who] = 0;
 }
 
-/*! \brief check if enemy can cast this spell
-**
-* This function is fairly specific in that it will only
-*  return true (1) if the enemy has the spell in it's list
-*  of spells, is not mute and has enough mp to cast the spell.
-* \param wh
-* \param sp
-* \returns 1 if spell can be cast
+
+
+/*! \brief Check if enemy can cast this spell
+ *
+ * This function is fairly specific in that it will only
+ * return true (1) if the enemy has the spell in its list
+ * of spells, is not mute, and has enough mp to cast the spell.
+ *
+ * \param   wh Which enemy
+ * \param   sp Spell to cast
+ * \returns 1 if spell can be cast, 0 otherwise
 */
 static int enemy_cancast (int wh, int sp)
 {
@@ -394,20 +403,18 @@ static int enemy_cancast (int wh, int sp)
    return 1;
 }
 
-/*! \brief use cure spell
- *
+
+
+/*! \brief Use cure spell
  *
  * If the caster has a cure/drain spell, use it to cure itself.
  *
- * \param w
- * \param t (unused)
+ * \param   w Caster
 */
-static void enemy_curecheck (int w, int t)
+static void enemy_curecheck (int w)
 {
    int a;
 
-   /*  RB TODO: Find a better way for unused parameters  */
-   t = t;
    a = -1;
    if (enemy_cancast (w, M_DRAIN) == 1)
       a = M_DRAIN;
@@ -428,12 +435,15 @@ static void enemy_curecheck (int w, int t)
      }
 }
 
-/*! \brief check selected spell
+
+
+/*! \brief Check selected spell
  *
  * This function looks at the enemy's selected spell and tries to
  * determine whether to bother casting it or not.
- * \param w
- * \param ws
+ *
+ * \param   w Caster
+ * \param   ws Target
 */
 static void enemy_spellcheck (int w, int ws)
 {
@@ -448,7 +458,7 @@ static void enemy_spellcheck (int w, int ws)
                {
                case M_SHIELD:
                case M_SHIELDALL:
-                  yes = enemy_stscheck (w, S_SHIELD, PSIZE);
+                  yes = enemy_stscheck (S_SHIELD, PSIZE);
                   break;
                case M_HOLYMIGHT:
                   aux = 0;
@@ -469,13 +479,13 @@ static void enemy_spellcheck (int w, int ws)
                      yes = 1;
                   break;
                case M_TRUEAIM:
-                  yes = enemy_stscheck (w, S_TRUESHOT, PSIZE);
+                  yes = enemy_stscheck (S_TRUESHOT, PSIZE);
                   break;
                case M_REGENERATE:
-                  yes = enemy_stscheck (w, S_REGEN, PSIZE);
+                  yes = enemy_stscheck (S_REGEN, PSIZE);
                   break;
                case M_THROUGH:
-                  yes = enemy_stscheck (w, S_ETHER, PSIZE);
+                  yes = enemy_stscheck (S_ETHER, PSIZE);
                   break;
                case M_HASTEN:
                case M_QUICKEN:
@@ -489,7 +499,7 @@ static void enemy_spellcheck (int w, int ws)
                   break;
                case M_SHELL:
                case M_WALL:
-                  yes = enemy_stscheck (w, S_RESIST, PSIZE);
+                  yes = enemy_stscheck (S_RESIST, PSIZE);
                   break;
                case M_ABSORB:
                   if (fighter[w].hp < fighter[w].mhp / 2)
@@ -502,11 +512,11 @@ static void enemy_spellcheck (int w, int ws)
                case M_STONE:
                case M_SILENCE:
                case M_SLEEP:
-                  yes = enemy_stscheck (w, magic[cs].elem - 8, 0);
+                  yes = enemy_stscheck (magic[cs].elem - 8, 0);
                   break;
                case M_NAUSEA:
                case M_MALISON:
-                  yes = enemy_stscheck (w, S_MALISON, 0);
+                  yes = enemy_stscheck (S_MALISON, 0);
                   break;
                case M_SLOW:
                   aux = 0;
@@ -564,21 +574,20 @@ static void enemy_spellcheck (int w, int ws)
      }
 }
 
-/*! \brief check status
+
+
+/*! \brief Check status
  *
  * Checks a passed status condition to see if anybody is affected by it and
  * determines whether it should be cast or not
  *
- * \param who (unused)
- * \param ws
- * \param s
+ * \param   ws Which stat to consider
+ * \param   s Starting target for multiple targets
 */
-static int enemy_stscheck (int who, int ws, int s)
+static int enemy_stscheck (int ws, int s)
 {
    int z, a = 0;
 
-   /*  RB TODO: find a better way for this  */
-   who = who;
    if (s == PSIZE)
      {
         for (z = PSIZE; z < PSIZE + numens; z++)
@@ -598,11 +607,14 @@ static int enemy_stscheck (int who, int ws, int s)
    return 0;
 }
 
-/*! \brief check skills
+
+
+/*! \brief Check skills
  *
  * Very simple... see if the skill that was selected can be used.
- * \param w enemy index
- * \param ws enemy skill index
+ *
+ * \param   w Enemy index
+ * \param   ws Enemy skill index
 */
 static void enemy_skillcheck (int w, int ws)
 {
@@ -629,15 +641,16 @@ static void enemy_skillcheck (int w, int ws)
      }
 }
 
-/*! \brief action for confused enemy
+
+
+/*! \brief Action for confused enemy
  *
  * Enemy actions are chosen differently if they are confused.  Confused
  * fighters either attack the enemy, an ally, or do nothing.  Confused
  * fighters never use spells or items.
  *
- * \param who
- *
  * \sa auto_herochooseact()
+ * \param   who Target
 */
 void enemy_charmaction (int who)
 {
@@ -669,13 +682,16 @@ void enemy_charmaction (int who)
    enemy_attack (who);
 }
 
-/*! \brief helper for casting
+
+
+/*! \brief Helper for casting
  *
  * This is just a helper function for setting up the casting of a spell
  * by an enemy.
- * \param whom
- * \param z
- * \returns
+ *
+ * \param   whom Caster
+ * \param   z Which spell will be cast
+ * \returns 0 if spell ineffective, 1 otherwise
 */
 static int spell_setup (int whom, int z)
 {
@@ -756,13 +772,15 @@ static int spell_setup (int whom, int z)
       return 1;
 }
 
-/*! \brief set up skill targets
+
+
+/*! \brief Set up skill targets
  *
  * This is just for aiding in skill setup... choosing skill targets.
  *
- * \param whom
- * \param sn
- * \returns 
+ * \param   whom Caster
+ * \param   sn Which skill
+ * \returns 1 for success, 0 otherwise
 */
 static int skill_setup (int whom, int sn)
 {
@@ -785,15 +803,17 @@ static int skill_setup (int whom, int sn)
    return 0;
 }
 
-/*! \brief melee attack
+
+
+/*! \brief Melee attack
  *
- *   Do an enemy melee attack.  Enemies only defend if they are in critical
- *   status.  This could use a little more smarts, so that more intelligent
+ * Do an enemy melee attack.  Enemies only defend if they are in critical
+ * status.  This could use a little more smarts, so that more-intelligent
  * enemies would know to hit spellcasters or injured heroes first, and so
- * that berserk type enemies don't defend.  The hero selection is done in
+ * that berserk-type enemies don't defend.  The hero selection is done in
  * a different function, but it all starts here.
  *
- * \param whom
+ * \param   whom Target
 */
 static void enemy_attack (int whom)
 {
@@ -846,15 +866,13 @@ static void enemy_attack (int whom)
 
 
 #if 0
-/*
-   RB: unused until now
-*/
-
-/*! \brief escape battle
+/* RB: unused until now */
+/*! \brief Escape battle
  *
  * Hmmm... this could use a little work :)
- * \param whom
- * \warning RB unused until now
+ *
+ * \param   whom Which enemy is going to run
+ * \warning RB Unused until now
 */
 void enemy_run (int whom)
 {

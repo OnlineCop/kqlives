@@ -18,8 +18,12 @@
    the Free Software Foundation,
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
+
 /*! \file
  * \brief Main file for KQ
+ *
+ * \author JB
+ * \date ????????
  *
  * This file includes the main() function,
  * most of the global variables, and some other stuff,
@@ -30,10 +34,7 @@
  * globals, but I tried to lay them out as attractivly as possible until we
  * figure out what all of them are for. Plus I tried to keep everything below
  * 80 characters a line, and labels what few variables struck me as obvious
- *
- * \author JB
- * \date ????????
- */
+*/
 
 #include <stdio.h>
 #include <time.h>
@@ -68,10 +69,10 @@ char icon_sets[6][16] = { "LAND_PCX", "NEWTOWN_PCX", "CASTLE_PCX",
 
 /*! \brief Which keys are pressed.
  *
- *   23: apparently flags for determining keypresses and player movement. Seems
- * to use some kind of homebrew Hungarian notation; I assume 'b' means bool.
- * Most if not all of these are updated in readcontrols() below ....
- */
+ * \note 23: apparently flags for determining keypresses and player movement.
+ * Seems to use some kind of homebrew Hungarian notation; I assume 'b' means
+ * bool.  Most if not all of these are updated in readcontrols() below ....
+*/
 int right, left, up, down, besc, balt, bctrl, benter;
 /*!  Scan codes for the keys */
 int kright, kleft, kup, kdown, kesc, kenter, kalt, kctrl;
@@ -146,7 +147,7 @@ unsigned char vfollow = 1;
 unsigned char use_sstone = 0;
 /*! Version number (used for version control in sgame.c) */
 unsigned char kq_version = 91;
-/*! If non-zero, don't do fade effects. The only place this is 
+/*! If non-zero, don't do fade effects. The only place this is
  * set is in scripts. */
 unsigned char hold_fade = 0;
 /*! True if player can save at this point */
@@ -167,9 +168,9 @@ s_player party[MAXCHRS];
 
 /*! Initial character data
  *
- * 23: Self explanatory. This would all correspond to the s_player structure.
- * I had to invent my own little (somewhat ugly) layout since it all shot past
- * the 80-character mark by quite a ways :)
+ * \note 23: Self explanatory. This would all correspond to the s_player
+ * structure. I had to invent my own little (somewhat ugly) layout since it
+ * all shot past the 80-character mark by quite a ways :)
 */
 s_player players[MAXCHRS] = {
    {
@@ -253,6 +254,7 @@ s_player players[MAXCHRS] = {
      0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
     }
 };
+
 /*! Table to manage stats for the level up process (see level_up()) */
 unsigned short lup[MAXCHRS][20] = {
    {10, 70, 9, 2, 190, 90, 150, 60, 70, 15, 20, 20, 50, 50, 0, 10, 0},
@@ -290,9 +292,10 @@ static void load_data (void);
 
 
 
-/*! 23: for keeping time. timer_counter is the game timer the main game loop uses
- *  for logic (see int main()) and the rest track your playtime in hours, minutes
- * and seconds. They're all used in the my_counter() timer function just below
+/*! \note 23: for keeping time. timer_counter is the game timer the main game
+ * loop uses for logic (see int main()) and the rest track your playtime in
+ * hours, minutes and seconds. They're all used in the my_counter() timer
+ * function just below
 */
 volatile int timer = 0, ksec = 0, kmin = 0, khr = 0, timer_count = 0;
 
@@ -323,7 +326,7 @@ int cheat_loaded = 0;
 int cheat = 0;
 #endif
 
-/* These are unused: 
+/* These are unused:
  * int warx = 0, wary = 0;
 */
 
@@ -331,7 +334,7 @@ int cheat = 0;
 
 /*! \brief Allegro timer callback
  *
- *  New interrupt handler set to keep game time.
+ * New interrupt handler set to keep game time.
 */
 void my_counter (void)
 {
@@ -367,7 +370,7 @@ END_OF_FUNCTION (my_counter);
 
 /*! \brief Handle user input.
  *
- *  Updates all of the game controls according to user input.
+ * Updates all of the game controls according to user input.
 */
 void readcontrols (void)
 {
@@ -448,14 +451,15 @@ void readcontrols (void)
 }
 
 
+
 #ifdef KQ_CHEATS
 /*! \brief Write debug data to disk
  *
  * Writes out the treasure and progress arrays
- * in text format to "treasure.log" and 
+ * in text format to "treasure.log" and
  * "progress.log" respectively. This happens in
  * response to user hitting f11.
- */
+*/
 void data_dump (void)
 {
    FILE *ff;
@@ -463,15 +467,15 @@ void data_dump (void)
 
    ff = fopen ("treasure.log", "w");
    if (!ff)
-      program_death ("could not open treasure.log!");
+      program_death ("Could not open treasure.log!");
    for (a = 0; a < 200; a++)
       fprintf (ff, "%d = %d\n", a, treasure[a]);
    fclose (ff);
 
    ff = fopen ("progress.log", "w");
    if (!ff)
-      program_death ("could not open progress.log!");
-   /* PH FIXME (wrong filename!)  program_death ("could not open treasure.log!"); */
+      program_death ("Could not open progress.log!");
+   /* PH FIXME (wrong filename!)  program_death ("Could not open treasure.log!"); */
    for (a = 0; a < 200; a++)
       fprintf (ff, "%d = %d\n", a, progress[a]);
    fclose (ff);
@@ -486,6 +490,7 @@ void data_dump (void)
  * in the center of the screen a bit without causing it to
  * scroll.  The centre parameter is mostly used for warps and
  * such, so that the players start in the centre of the screen.
+ *
  * \param centre Unused variable
 */
 void calc_viewport (int centre)
@@ -568,15 +573,15 @@ void calc_viewport (int centre)
  * This loads a new map and performs all of the functions
  * that accompany the loading of a new map.
  *
- * \param map_name Base name of map (xxx -> maps/xxx.map)
- * \param msx New x-coord for player. Pass 0 for msx and msy 
- *            to use the 'default' position stored in the 
- *            map file (s_map::stx and s_map::sty)
- * \param msy New y-coord for player
- * \param mvx New x-coord for camera. Pass 0 for mvx and mvy 
- *            to use the default (also s_map::stx and
- *            s_map::sty)
- * \param mvy New y-coord for camera
+ * \param   map_name Base name of map (xxx -> maps/xxx.map)
+ * \param   msx New x-coord for player. Pass 0 for msx and msy
+ *              to use the 'default' position stored in the
+ *              map file (s_map::stx and s_map::sty)
+ * \param   msy New y-coord for player
+ * \param   mvx New x-coord for camera. Pass 0 for mvx and mvy
+ *              to use the default (also s_map::stx and
+ *              s_map::sty)
+ * \param   mvy New y-coord for camera
 */
 void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
 {
@@ -601,7 +606,7 @@ void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
            do_transition (TRANS_FADE_IN, 16);
 
         g_map.xsize = -1;
-        sprintf (strbuf, "Could not load %s!", map_name);
+        sprintf (strbuf, "Could not load map %s!", map_name);
         program_death (strbuf);
      }
 
@@ -659,7 +664,7 @@ void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
         /* This allows us to either go to the map's default starting coords
          * or specify exactly where on the map to go to (like when there
          * are stairs or a doorway that they should start at).
-         */
+        */
         if (msx == 0 && msy == 0)
            // Place players at default map starting coords
            place_ent (i, g_map.stx, g_map.sty);
@@ -813,6 +818,7 @@ void zone_check (void)
  * Fade out... change co-ordinates... fade in.
  * The wtx/wty co-ordinates indicate where to put the player.
  * The wvx/wvy co-ordinates indicate where to put the camera.
+ *
  * \param wtx New x-coord
  * \param wty New y-coord
  * \param fspeed Speed of fading (See do_transition())
@@ -883,7 +889,7 @@ void check_animation (void)
 
 
 
-/*! \brief Alt key handler 
+/*! \brief Alt key handler
  *
  * This function is called when the player presses the 'alt' key.
  * Things that can be activated are entities and zones that are
@@ -955,10 +961,11 @@ void activate (void)
 
 
 
-/*! \brief wait for key release 
+/*! \brief Wait for key release
  *
  * This is used to wait and make sure that the user has
  * released a key before moving on.
+ *
  * \note Waits at most 20 'ticks'
 */
 void unpress (void)
@@ -998,9 +1005,9 @@ void unpress (void)
 
 
 
-/*! \brief Wait for ALT 
+/*! \brief Wait for ALT
  *
- *   Simply wait for the 'alt' key to be pressed.
+ * Simply wait for the 'alt' key to be pressed.
 */
 void wait_enter (void)
 {
@@ -1027,6 +1034,7 @@ void wait_enter (void)
  *
  * This is for logging events within the program.  Very
  * useful for debugging and tracing.
+ *
  * \param msg String to add to log file
 */
 void klog (char *msg)
@@ -1036,7 +1044,7 @@ void klog (char *msg)
    ff = fopen ("game.log", "a");
 
    if (!ff)
-      program_death ("could not open log!");
+      program_death ("Could not open log!");
 
    fprintf (ff, "%s\n", msg);
    fclose (ff);
@@ -1044,9 +1052,9 @@ void klog (char *msg)
 
 
 
-/*! \brief Application start-up code 
+/*! \brief Application start-up code
  *
- *   Set up allegro, set up variables, load stuff, blah...
+ * Set up allegro, set up variables, load stuff, blah...
 */
 static void startup (void)
 {
@@ -1209,9 +1217,9 @@ static void startup (void)
 
 
 
-/*! \brief data loading process 
+/*! \brief Data-loading process
  *
- *   Real descriptive huh?  This loads and sets up the
+ * Real descriptive huh?  This loads and sets up the
  * fonts and entity frames and calls the functions to
  * loads items and spells.
 */
@@ -1230,6 +1238,8 @@ static void load_data (void)
          blit ((BITMAP *) pb->dat, eframes[q][p], p * 16, q * 16, 0, 0, 16, 16);
    unload_datafile_object (pb);
 }
+
+
 
 /*! \brief Create bitmaps
  *
@@ -1309,7 +1319,7 @@ static void allocate_stuff (void)
      }
 
    for (p = 3; p < 5; p++)
-      bord[p] = alloc_bmp (8, 12, "bord[x]");
+     bord[p] = alloc_bmp (8,12, "bord[x]");
 // } TT add
 
    for (p = 0; p < 8; p++)
@@ -1320,15 +1330,18 @@ static void allocate_stuff (void)
 }
 
 
+
 /*! \brief Create bitmap
  *
- * This function allocates a bitmap and kills the 
- * program if it fails. The name you supply is 
+ * This function allocates a bitmap and kills the
+ * program if it fails. The name you supply is
  * shown if this happens.
- * \param bx Width
- * \param by Height
- * \param bname Name of bitmap 
- */
+ *
+ * \param   bx Width
+ * \param   by Height
+ * \param   bname Name of bitmap
+ * \returns the pointer to the created bitmap
+*/
 static BITMAP *alloc_bmp (int bx, int by, char *bname)
 {
    BITMAP *tmp;
@@ -1443,7 +1456,7 @@ static void deallocate_stuff (void)
 
 
 
-/*! \brief Initialise all players 
+/*! \brief Initialise all players
  *
  * Set up the player characters and load data specific
  * to them.
@@ -1485,11 +1498,12 @@ void init_players (void)
 
 /*! \brief Pause for a time
  *
- *   Why not just use rest() you ask?  Well, this function
+ * Why not just use rest() you ask?  Well, this function
  * kills time, but it also processes entities.  This function
  * is basically used to run entity scripts and for automatic
  * party movement.
- * \param dtime Time in frames
+ *
+ * \param   dtime Time in frames
 */
 void kwait (int dtime)
 {
@@ -1542,8 +1556,9 @@ void kwait (int dtime)
  * to finish scripted movement rather than waiting for
  * a specific amount of time to pass.
  * Specify a range of entities to wait for.
- * \param est First entity
- * \param efi Last entity 
+ *
+ * \param   est First entity
+ * \param   efi Last entity
 */
 void wait_for_entity (int est, int efi)
 {
@@ -1609,8 +1624,9 @@ void wait_for_entity (int est, int efi)
 
 /*! \brief End program due to fatal error
  *
- *   Kill the program and spit out a message.
- * \param message Text to put into log
+ * Kill the program and spit out a message.
+ *
+ * \param   message Text to put into log
 */
 void program_death (char *message)
 {
@@ -1619,13 +1635,15 @@ void program_death (char *message)
    exit (-1);
 }
 
-/*! \brief Is this character in the party? 
+
+
+/*! \brief Is this character in the party?
  *
- * Determine if a given character is currently
- * in play.
- * \param pn Character to ask about
+ * Determine if a given character is currently in play.
+ *
+ * \param   pn Character to ask about
  * \returns Where it is in the party list (1 or 2), or 0 if not
- */
+*/
 int in_party (int pn)
 {
    int a;
@@ -1691,7 +1709,9 @@ int main (void)
 
 END_OF_MAIN ();
 
-/*! \page treasure A Note on Treasure 
+
+
+/*! \page treasure A Note on Treasure
  *
  * The treasure chests are allocated in this way:
  * - 0: town1
@@ -1727,8 +1747,8 @@ END_OF_MAIN ();
  * - 80: grotto
  * - 81: town4
  * - 82..83: pass
- * - 
+ * -
  * - 90..96: cave5
- * 
+ *
  * The names given are the base names of the maps/lua scripts
- */
+*/

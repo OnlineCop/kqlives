@@ -53,10 +53,15 @@ static void geffect_all_allies (int, int);
 
 
 
-/*
-   This function just calls the right magic routine based on the spell's
-   type and target.  This function also displays the caster and spell
-   effects.
+/*! \brief Call spells for combat
+ *
+ * This function just calls the right magic routine based on the spell's
+ * type and target.  This function also displays the caster and spell
+ * effects.
+ *
+ * \param   whom Index of caster
+ * \param   is_item 0 if regular spell, 1 if item (no MP used)
+ * \returns 1 if spell cast/used successfully, 0 otherwise
 */
 int combat_spell (int whom, int is_item)
 {
@@ -217,8 +222,15 @@ int combat_spell (int whom, int is_item)
    return 1;
 }
 
-/*
-   generic function called from camp or combat to cast a spell
+
+
+/*! \brief Cast a spell
+ *
+ * Generic function called from camp or combat to cast a spell
+ *
+ * \param   whom Index of caster
+ * \param   is_item 0 if regular spell, 1 if item (no MP used)
+ * \returns 1 if spell cast/used successfully, 0 otherwise
 */
 int cast_spell (int whom, int is_item)
 {
@@ -306,8 +318,16 @@ int cast_spell (int whom, int is_item)
    return 1;
 }
 
-/*
-   This is used to invoke items inbued with a spell
+
+
+/*! \brief Use imbued item like spell
+ *
+ * This is used to invoke items inbued with a spell
+ *
+ * \param   w Attacker
+ * \param   i Item for imbued spell
+ * \param   d Value for SAG and INT when casting imbued
+ * \param   t Target (defender)
 */
 void cast_imbued_spell (int w, int i, int d, int t)
 {
@@ -332,8 +352,14 @@ void cast_imbued_spell (int w, int i, int d, int t)
       fighter[w].stats[A_INT + a] = ts[a];
 }
 
-/*
-   Special spells like warp and vision.
+
+
+/*! \brief Special spell handling
+ *
+ * Special spells like warp and vision.
+ *
+ * \param   cs Index of caster
+ * \param   sn Index of spell
 */
 static void special_spells (int cs, int sn)
 {
@@ -377,8 +403,15 @@ static void special_spells (int cs, int sn)
      }
 }
 
-/*
-   This function only handles healing spells (one or all allied targets).
+
+
+/*! \brief Healing spell handler
+ *
+ * This function only handles healing spells (one or all allied targets).
+ *
+ * \param   cs Caster
+ * \param   tgt Target
+ * \param   sn Spell number
 */
 static void cure_oneall_allies (int cs, int tgt, int sn)
 {
@@ -441,23 +474,30 @@ static void cure_oneall_allies (int cs, int tgt, int sn)
      }
 }
 
-/*
-   This is for a special category of spells which are beneficial, but
-   not really effect spells or curative spells.
+
+
+/*! \brief Heal only one ally
+ *
+ * This is for a special category of spells which are beneficial, but
+ * not really effect spells or curative spells.
+ *
+ * \param   cs Caster
+ * \param   tgt Target
+ * \param   sn Spell number
 */
 static void heal_one_ally (int cs, int tgt, int sn)
 {
    int a, b = 0;
 
 /*  DS: Because these lines, sometimes when you cast restore or others */
-/*      spells, the spell don't work correctly. In cast_spell() this   */
-/*      is tested, so don't need to test again.                        */
+/*      spells, the spell don't work correctly. In cast_spell() this */
+/*      is tested, so don't need to test again. */
 /*   if (rand () % 100 + 1 > fighter[cs].stats[A_AUR + magic[sn].stat]) */
 /*     { */
 /* 	ta[tgt] = MISS; */
 /* 	return; */
 /*     } */
-/*  DS: Now the 'cs' argument isn't used, so I'm doing this:           */
+/*  DS: Now the 'cs' argument isn't used, so I'm doing this: */
    cs = cs;
    switch (sn)
      {
@@ -500,14 +540,21 @@ static void heal_one_ally (int cs, int tgt, int sn)
      }
 }
 
-/*
-   These are 'good' effect spells that affect a single allied target.
+
+
+/*! \brief Good effects on one ally
+ *
+ * These are 'good' effect spells that affect a single allied target.
+ *
+ * \param   cs Caster
+ * \param   tgt Target
+ * \param   sn Spell number
 */
 static void geffect_one_ally (int cs, int tgt, int sn)
 {
 /*  DS: The same problem of heal_one_ally(), this have been tested in */
 /*      cast_spell(), because the hit% of all magics with good effect */
-/*      are 0                                                         */
+/*      are 0 */
 /*    if (rand () % 100 + 1 > fighter[cs].stats[A_AUR + magic[sn].stat] */
 /*        || fighter[tgt].sts[S_STONE] > 0) */
 /*      { */
@@ -574,8 +621,14 @@ static void geffect_one_ally (int cs, int tgt, int sn)
      }
 }
 
-/*
-   These are 'good' effect spells that affect all allied targets.
+
+
+/*! \brief Good effects on all allies
+ *
+ * These are 'good' effect spells that affect all allied targets.
+ *
+ * \param   cs Caster
+ * \param   sn Spell Number
 */
 static void geffect_all_allies (int cs, int sn)
 {
@@ -662,8 +715,15 @@ static void geffect_all_allies (int cs, int sn)
      }
 }
 
-/*
-   This function handles 'bad' effect spells that have a single target.
+
+
+/*! \brief Bad effects on one target
+ *
+ * This function handles 'bad' effect spells that have a single target.
+ *
+ * \param   cs Caster
+ * \param   tgt Target
+ * \param   sn Spell number
 */
 static void beffect_one_enemy (int cs, int tgt, int sn)
 {
@@ -819,8 +879,14 @@ static void beffect_one_enemy (int cs, int tgt, int sn)
      }
 }
 
-/*
-   These are 'bad' effect spells that affect all enemy targets.
+
+
+/*! \brief Bad effects on all targets
+ *
+ * These are 'bad' effect spells that affect all enemy targets.
+ *
+ * \param   cs Caster
+ * \param   sn Spell number
 */
 static void beffect_all_enemies (int cs, int sn)
 {
@@ -902,8 +968,14 @@ static void beffect_all_enemies (int cs, int sn)
      }
 }
 
-/*
-   These are damage spells that affect the entire enemy party.
+
+
+/*! \brief Damage effects on all targets
+ *
+ * These are damage spells that affect the entire enemy party.
+ *
+ * \param   cs Caster
+ * \param   sn Spell number
 */
 static void damage_all_enemies (int cs, int sn)
 {
@@ -922,6 +994,16 @@ static void damage_all_enemies (int cs, int sn)
    spell_damage (cs, sn, st, nt);
 }
 
+
+
+/*! \brief Damage effects on one or all enemies
+ *
+ * These are damage spells that affect the one or all of the enemy's party.
+ *
+ * \param   cs Caster
+ * \param   tgt Traget
+ * \param   sn Spell number
+*/
 static void damage_oneall_enemies (int cs, int tgt, int sn)
 {
    int nt, st;
@@ -947,10 +1029,19 @@ static void damage_oneall_enemies (int cs, int tgt, int sn)
    spell_damage (cs, sn, st, nt);
 }
 
-/*
-   This is for skills and items that cause damage, but don't duplicate spells.
-   Essentially, this is only used for things where the user's magic power
-   doesn't affect the power of the effect.
+
+
+/*! \brief Special damage on one or all enemies
+ *
+ * This is for skills and items that cause damage, but don't duplicate spells.
+ * Essentially, this is only used for things where the user's magic power
+ * doesn't affect the power of the effect.
+ *
+ * \param   cs Caster
+ * \param   sp_dmg Damage that a spell does
+ * \param   rt Rune used
+ * \param   tgt Target
+ * \param   split Total damage, split among targets
 */
 void special_damage_oneall_enemies (int cs, int sp_dmg, int rt, int tgt,
                                     int split)
@@ -1036,9 +1127,17 @@ void special_damage_oneall_enemies (int cs, int sp_dmg, int rt, int tgt,
       death_animation (st, nn);
 }
 
-/*
-   This function does all of the damage calculating for damage
-   spells, and fills the ta[] array with the damage amounts.
+
+
+/*! \brief Damage done from spells
+ *
+ * This function does all of the damage calculating for damage
+ * spells, and fills the ta[] array with the damage amounts.
+ *
+ * \param   cs Caster
+ * \param   sn Spell number
+ * \param   st Starting target
+ * \param   nt Ending target
 */
 static void spell_damage (int cs, int sn, int st, int nt)
 {
@@ -1106,10 +1205,18 @@ static void spell_damage (int cs, int sn, int st, int nt)
      }
 }
 
-/*
-   This adjusts the passed damage amount based on the target's
-   resistance to the passed element.  The adjusted value is
-   then returned.
+
+
+/*! \brief Adjust the resistance to elements
+ *
+ * This adjusts the passed damage amount based on the target's
+ * resistance to the passed element.  The adjusted value is
+ * then returned.
+ *
+ * \param   tgt Target
+ * \param   rs Rune/element
+ * \param   amt Amount of resistence to given rune
+ * \returns difference of resistance to damage given by rune
 */
 int res_adjust (int tgt, int rs, int amt)
 {
@@ -1132,9 +1239,16 @@ int res_adjust (int tgt, int rs, int amt)
    return ad;
 }
 
-/*
-   This is a simple yes or no answer to an elemental/special
-   resistance check.
+
+
+/*! \brief See if resistance is effective
+ *
+ * This is a simple yes or no answer to an elemental/special
+ * resistance check.
+ *
+ * \param   tgt Target
+ * \param   rs Rune/spell used
+ * \returns 0 if not resistant, 1 otherwise
 */
 int res_throw (int tgt, int rs)
 {
@@ -1152,16 +1266,22 @@ int res_throw (int tgt, int rs)
    return 0;
 }
 
-/*
-   This used to be fancier... but now this is basically used
-   to test for status changes or other junk.
+
+
+/*! \brief Status changes
+ *
+ * This used to be fancier... but now this is basically used
+ * to test for status changes or other junk.
+ *
+ * \param   tgt Target
+ * \param   per Damage percent inflicted (?)
+ * \returns 0 if damage taken, 1 otherwise (or vise-versa?)
 */
 int non_dmg_save (int tgt, int per)
 {
 /*  RB TODO:  */
    tgt = tgt;
    if (per == 0)
-
       return 1;
    if (rand () % 100 < per)
       return 0;
@@ -1169,9 +1289,16 @@ int non_dmg_save (int tgt, int per)
       return 1;
 }
 
-/*
-   This returns the amount of mp needed to cast a spell.  This
-   function was created to allow for different mp consumption rates.
+
+
+/*! \brief Returns MP needed for a spell
+ *
+ * This returns the amount of mp needed to cast a spell.  This
+ * function was created to allow for different mp consumption rates.
+ *
+ * \param   who Index of caster
+ * \param   sn Spell number
+ * \returns needed MP or 0 if insufficient MP
 */
 int mp_needed (int who, int sn)
 {
@@ -1187,8 +1314,14 @@ int mp_needed (int who, int sn)
       return 0;
 }
 
-/*
-   I put this is just to make things nice and neat.
+
+
+/*! \brief Adjust character's HP
+ *
+ * I put this is just to make things nice and neat.
+ *
+ * \param who Index of character
+ * \param amt Amount to adjust
 */
 void adjust_hp (int who, int amt)
 {
@@ -1199,8 +1332,14 @@ void adjust_hp (int who, int amt)
       fighter[who].hp = 0;
 }
 
-/*
-   I put this is just to make things nice and neat.
+
+
+/*! \brief Adjust character's MP
+ *
+ * I put this is just to make things nice and neat.
+ *
+ * \param who Index of character
+ * \param amt Amount to adjust
 */
 void adjust_mp (int who, int amt)
 {
@@ -1211,11 +1350,15 @@ void adjust_mp (int who, int amt)
       fighter[who].mp = 0;
 }
 
-/*
-   This adjusts a fighter's stats by applying the effects
-   of status-affecting spells.
+
+
+/*! \brief Adjusts stats with spells
+ *
+ * This adjusts a fighter's stats by applying the effects of
+ * status-affecting spells.
+ *
+ * \returns a struct by value (PH: a good thing???)
 */
-/* PH This returns a struct by value; a good thing??? */
 s_fighter status_adjust (int w)
 {
    s_fighter tf;
@@ -1275,6 +1418,16 @@ s_fighter status_adjust (int w)
    return tf;
 }
 
+
+
+/*! \brief Check if character is protected by shell.
+ *
+ * This just checks to see if the target has a shell protecting him/her.
+ *
+ * \param   tgt Target
+ * \param   amt Amount of damage to ricochet off shield
+ * \returns the amount of damage that gets through to target
+*/
 int do_shell_check (int tgt, int amt)
 {
    int a = 0;
@@ -1288,6 +1441,16 @@ int do_shell_check (int tgt, int amt)
    return a;
 }
 
+
+
+/*! \brief Check if character is protected by shield.
+ *
+ * This just checks to see if the target has a shield protecting him/her.
+ *
+ * \param   tgt Target
+ * \param   amt Amount of damage to ricochet off shield
+ * \returns the amount of damage that gets through to target
+*/
 int do_shield_check (int tgt, int amt)
 {
    int a = 0;
@@ -1301,9 +1464,15 @@ int do_shield_check (int tgt, int amt)
    return a;
 }
 
-/*
-   This is used to set things like poison and regen
-   which activate based on the combat timer.
+
+
+/*! \brief Set counter for effects
+ *
+ * This is used to set things like poison and regen
+ * which activate based on the combat timer.
+ *
+ * \param   who Index of character affected
+ * \param   ss Which stat is being affected
 */
 static void set_timed_sts_effect (int who, int ss)
 {

@@ -59,10 +59,10 @@ static void sort_inventory (void);
 /*! \brief Display menu
  *
  * This displays the party's list of items.
- * \param ptr
- * \param pg Page number
- * \param sl If 1, selecting an action,
- *           otherwise selecting an item to use/drop
+ *
+ * \param   ptr Location of the cursor
+ * \param   pg Item menu page number
+ * \param   sl 1 if selecting an action, 0 if selecting an item to use/drop
 */
 static void draw_itemmenu (int ptr, int pg, int sl)
 {
@@ -88,7 +88,9 @@ static void draw_itemmenu (int ptr, int pg, int sl)
    menubox (double_buffer, 72 + xofs, 60 + yofs, 20, 16, BLUE);
    for (k = 0; k < 16; k++)
      {
+        // j == item index #
         j = g_inv[pg * 16 + k][0];
+        // z == quantity of item
         z = g_inv[pg * 16 + k][1];
         draw_icon (double_buffer, items[j].icon, 88 + xofs, k * 8 + 68 + yofs);
         if (items[j].use >= USE_ANY_ONCE && items[j].use <= USE_CAMP_INF)
@@ -117,9 +119,12 @@ static void draw_itemmenu (int ptr, int pg, int sl)
    draw_sprite (double_buffer, pgb[pg], 238 + xofs, 194 + yofs);
 }
 
-/*
-   This screen displays the list of items that the character
-   has, and then waits for the player to select one.
+
+
+/*! \brief Process the item menu
+ *
+ * This screen displays the list of items that the character has, then
+ * waits for the player to select one.
 */
 void camp_item_menu (void)
 {
@@ -215,6 +220,7 @@ void camp_item_menu (void)
                             if (item_act == 2)
                               {
                                  if (confirm_drop () == 1)
+                                    // Drop ALL of the selected items
                                     remove_item (pptr * 16 + ptr,
                                                  g_inv[pptr * 16 + ptr][1]);
                               }
@@ -235,8 +241,11 @@ void camp_item_menu (void)
      }
 }
 
-/*
-   Sort list of items in inventory.
+
+
+/*! \brief Sort the items in inventory
+ *
+ * This runs through all the items in your inventory and sorts them.
 */
 static void sort_items (void)
 {
@@ -246,7 +255,9 @@ static void sort_items (void)
    join_items ();
    for (a = 0; a < MAX_INV; a++)
      {
+        // Temporary item index #
         t_inv[a][0] = g_inv[a][0];
+        // Temporary item quantity
         t_inv[a][1] = g_inv[a][1];
         g_inv[a][0] = 0;
         g_inv[a][1] = 0;
@@ -257,7 +268,9 @@ static void sort_items (void)
           {
              if (t_inv[b][0] > 0 && items[t_inv[b][0]].type == tt[a])
                {
+                  // Re-assign group's inventory items
                   g_inv[c][0] = t_inv[b][0];
+                  // ...and item quantities
                   g_inv[c][1] = t_inv[b][1];
                   t_inv[b][0] = 0;
                   t_inv[b][1] = 0;
@@ -267,8 +280,11 @@ static void sort_items (void)
      }
 }
 
-/*
-   Join like items into groups of nine or less.
+
+
+/*! \brief Combine items quantities
+ *
+ * Join like items into groups of nine or less.
 */
 static void join_items (void)
 {
@@ -279,19 +295,25 @@ static void join_items (void)
       t_inv[a] = 0;
    for (a = 0; a < MAX_INV; a++)
      {
+        /* foreach instance of item, put the quantity into a temp
+         * inventory then remove that item from the real inventory
+        */
         t_inv[g_inv[a][0]] += g_inv[a][1];
         g_inv[a][0] = 0;
         g_inv[a][1] = 0;
      }
    for (a = 1; a < NUM_ITEMS; a++)
      {
+        // While there is something in the temp inventory
         while (t_inv[a] > 0)
           {
+             // Portion out 9 items per slot
              if (t_inv[a] > 9)
                {
                   check_inventory (a, 9);
                   t_inv[a] -= 9;
                }
+             // Portion out remaining items into another slot
              else
                {
                   check_inventory (a, t_inv[a]);
@@ -301,9 +323,13 @@ static void join_items (void)
      }
 }
 
-/*
-   Make sure the player really wants to drop the item
-   specified.
+
+
+/*! \brief Confirm before dropping item
+ *
+ * Make sure the player really wants to drop the item specified.
+ *
+ * \returns 1 if confirm, 0 if cancel
 */
 static int confirm_drop (void)
 {
@@ -330,8 +356,13 @@ static int confirm_drop (void)
    return stop - 1;
 }
 
-/*
-   Do target selection for using an item and then use it.
+
+
+/*! \brief Use item on selected target
+ *
+ * Do target selection for using an item and then use it.
+ *
+ * \param   pp Item index
 */
 static void camp_item_targetting (int pp)
 {
@@ -372,50 +403,67 @@ static void camp_item_targetting (int pp)
      }
 }
 
-/*
-   This is a handy function, which checks to see if a
-   specified quantity of a specified item can be stored
-   in the group inventory.
-   A return value of 0 means it was not possible.
-   A return value of 1 means it was possible, but that we
-    added to an item slot that already had some of that item.
-   A return value of 2 means that we put the item in
-    a brand new slot.
+
+
+/*! \brief Check if we can add item quantity to inventory
+ *
+ * This is a handy function, which checks to see if a certain quantity of a
+ * specified item can be stored in the inventory.
+ *
+ * \param   ii Item index
+ * \param   qq Item quantity
+ * \returns 0 if it was not possible
+ * \returns 1 if it was possible, but that we added to an item slot that
+ *            already had some of that item
+ * \returns 2 if we put the item in a brand-new slot
 */
 int check_inventory (int ii, int qq)
 {
+   // v == "last empty inventory slot"
+   // d == "last inventory slot that will fit all of qq into it"
    int n, v = MAX_INV, d = MAX_INV;
 
    for (n = MAX_INV - 1; n >= 0; n--)
      {
+        // There is nothing in this item slot in our inventory
         if (g_inv[n][0] == 0)
            v = n;
+        /* Check if this item index == ii, and if it is,
+         * check if there is enough room in that slot to fit all of qq.
+        */
         if (g_inv[n][0] == ii && g_inv[n][1] <= 9 - qq)
            d = n;
      }
+   // Inventory is full!
    if (v == MAX_INV && d == MAX_INV)
       return 0;
+   // All of qq can fit in this slot, so add them in
    if (d < MAX_INV)
      {
+        // This is redundant, but it is a good error-check
         g_inv[d][0] = ii;
+        // Add qq to this item's quantity
         g_inv[d][1] += qq;
         return 1;
      }
+   // Add item to new slot
    g_inv[v][0] = ii;
+   // Fill in item's quantity too
    g_inv[v][1] += qq;
    return 2;
 }
 
+
+
 /*! \brief Use up an item, if we have any
- *
- * Go through the inventory; if there is one or more of 
- * an item, remove it.
  * \author PH
  * \date 20030102
- * \param item_id the identifier (I_* constant) of the
- * item.
+ *
+ * Go through the inventory; if there is one or more of an item, remove it.
+ *
+ * \param   item_id The identifier (I_* constant) of the item.
  * \returns 1 if we had it, 0 otherwise
- */
+*/
 int useup_item (int item_id)
 {
    int i;
@@ -430,24 +478,37 @@ int useup_item (int item_id)
    return 0;
 }
 
-/*
-   Remove an item from inventory and re-sort the list.
+
+/*! \brief Remove item from inventory
+ *
+ * Remove an item from inventory and re-sort the list.
+ *
+ * \param   ii Index of item to remove
+ * \param   qi Quantity of item
 */
 void remove_item (int ii, int qi)
 {
+   // Remove a certain quantity (qi) of this item
    g_inv[ii][1] -= qi;
+
+   // Check to see if that was the last one in the slot
    if (g_inv[ii][1] < 1)
      {
         g_inv[ii][0] = 0;
         g_inv[ii][1] = 0;
+        // We don't have to sort if it's the last slot
         if (ii == MAX_INV - 1)
            return;
+        // ...But we will if it's not
         sort_inventory ();
      }
 }
 
-/*
-   Simply re-arrange the group inventory to remove blank rows.
+
+
+/*! \brief Re-arrange the items in our inventory
+ *
+ * This simply re-arranges the group inventory to remove blank rows.
 */
 static void sort_inventory (void)
 {
@@ -455,20 +516,28 @@ static void sort_inventory (void)
 
    for (a = 0; a < MAX_INV - 1; a++)
      {
+        // This slot is empty
         if (g_inv[a][0] == 0)
           {
              b = a + 1;
              stop = 0;
              while (!stop)
                {
+                  // Check if there is something in the next slot
                   if (g_inv[b][0] > 0)
                     {
+                       // Move the item in the next slot into this one
                        g_inv[a][0] = g_inv[b][0];
+                       // Move its quantity as well
                        g_inv[a][1] = g_inv[b][1];
+                       // Clear the next slot of items now
                        g_inv[b][0] = 0;
+                       // Clear if quantity as well
                        g_inv[b][1] = 0;
+                       // Break out of the "check the slot ahead" loop
                        stop = 1;
                     }
+                  // Since there's not, continue searching
                   else
                      b++;
                   if (b > MAX_INV - 1)
@@ -478,8 +547,18 @@ static void sort_inventory (void)
      }
 }
 
-/*
-   Perform item effects.  This is kind of clunky, but it works.
+
+
+/*! \brief Perform item effects
+ *
+ * Perform item effects.  This is kind of clunky, but it works.
+ *
+ * \param   sa Index of attacker
+ * \param   t  Index of item to use
+ * \param   ti Index of target(s)
+ * \returns 0 if ineffective (cannot use item)
+ * \returns 1 if success (1 target)
+ * \returns 2 if success (multiple targets)
 */
 int item_effects (int sa, int t, int ti)
 {

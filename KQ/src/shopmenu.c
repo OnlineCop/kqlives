@@ -18,12 +18,13 @@
    the Free Software Foundation,
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
+
 /*! \file
  * \brief Handles shops
  *
  * \author JB
- * \date ??????
- */
+ * \date ????????
+*/
 
 #include <stdio.h>
 #include <string.h>
@@ -39,6 +40,7 @@
 #include "fade.h"
 #include "music.h"
 #include "timing.h"
+
 
 /* TT add: */
 /*! \brief Items in shop
@@ -421,7 +423,8 @@ static void do_inn_effects (void);
  * This displays the characters and whether or not they are
  * able to use/equip what is being looked at, and how it would
  * improve their stats (if applicable).
- * \param itm Item being looked at.
+ *
+ * \param   itm Item being looked at.
 */
 static void draw_sideshot (int itm)
 {
@@ -521,7 +524,7 @@ static void draw_sideshot (int itm)
      }
    for (j = 0; j < MAX_INV; j++)
       if (g_inv[j][0] == itm)
-         ownd += g_inv[j][1];
+         ownd += g_inv[j][1]; // quantity of this item
    sprintf (strbuf, "Own: %d", ownd);
    print_font (double_buffer, 88 + xofs, 224 + yofs, strbuf, FNORMAL);
    if (slot < 6)
@@ -530,6 +533,8 @@ static void draw_sideshot (int itm)
         print_font (double_buffer, 160 + xofs, 224 + yofs, strbuf, FNORMAL);
      }
 }
+
+
 
 /*! \brief Display amount of gold
  *
@@ -544,11 +549,15 @@ void draw_shopgold (void)
                strbuf, FNORMAL);
 }
 
+
+
 /*! \brief Main entry point to shop functions
  *
  * The initial shop dialog.  This function calculates item quantities
  * and then just asks if we're buying or selling.
- * \param shop_num Index of this shop
+ *
+ * \param   shop_num Index of this shop
+ * \returns 1 if shop has no items, 0 otherwise
 */
 int shop (int shop_num)
 {
@@ -627,6 +636,8 @@ int shop (int shop_num)
    progress[P_SHOPSTART + shop_no] = khr * 60 + kmin;
    return 0;
 }
+
+
 
 /*! \brief Show items to buy
  *
@@ -743,13 +754,16 @@ static void buy_menu (void)
      }
 }
 
+
+
 /*! \brief Actually purchase the item
  *
  * This is used after selecting an item, from the above
- * menu, to determine who to give it to.  Then it gives it
- * to them and deducts the cash.
- * \param how_many Quantity
- * \param item_no Index of item
+ * menu, to determine who to give it to.  Then it gives
+ * it to them and deducts the cash.
+ *
+ * \param   how_many Quantity
+ * \param   item_no Index of item
 */
 static void buy_item (int how_many, int item_no)
 {
@@ -798,6 +812,8 @@ static void buy_item (int how_many, int item_no)
    return;
 }
 
+
+
 /*! \brief Show items that can be sold
  *
  * Display a list of items that are in inventory and ask which
@@ -832,8 +848,10 @@ static void sell_menu (void)
                              p * 8 + 32 + yofs);
                   print_font (double_buffer, 56 + xofs, p * 8 + 32 + yofs,
                               items[z].name, k);
+                  // Check if quantity of this item > 1
                   if (g_inv[pg * 16 + p][1] > 1)
                     {
+                       // The '^' in this is an 'x' in allfonts.pcx
                        sprintf (strbuf, "^%d", g_inv[pg * 16 + p][1]);
                        print_font (double_buffer, 264 + xofs,
                                    p * 8 + 32 + yofs, strbuf, k);
@@ -842,6 +860,7 @@ static void sell_menu (void)
              sp = items[g_inv[pg * 16 + yptr][0]].price * 50 / 100;
              if (items[g_inv[pg * 16 + yptr][0]].price > 0)
                {
+                  // Check if there is more than one item
                   if (g_inv[pg * 16 + yptr][1] > 1)
                     {
                        sprintf (strbuf, "%d gp for each one.", sp);
@@ -849,6 +868,7 @@ static void sell_menu (void)
                                    160 - (strlen (strbuf) * 4) + xofs,
                                    176 + yofs, strbuf, FNORMAL);
                     }
+                  // There is only one of this item
                   else
                     {
                        sprintf (strbuf, "That's worth %d gp.", sp);
@@ -922,12 +942,15 @@ static void sell_menu (void)
      }
 }
 
+
+
 /*! \brief Ask player the quantity to sell
  *
  * Inquire as to what quantity of the current item, the
  * character wishes to sell.
- * \param itm_no Index of item in inventory
- * \param pg Page of the inventory
+ *
+ * \param   itm_no Index of item in inventory
+ * \param   pg Page of the inventory
 */
 static void sell_howmany (int itm_no, int pg)
 {
@@ -941,6 +964,7 @@ static void sell_howmany (int itm_no, int pg)
         play_effect (SND_BAD, 128);
         return;
      }
+   // Maximum (total) number of items
    maxi = g_inv[pg * 16 + itm_no][1];
    if (maxi == 1)
      {
@@ -998,12 +1022,15 @@ static void sell_howmany (int itm_no, int pg)
      }
 }
 
+
+
 /*! \brief Actually sell item
  *
  * Confirm the price of the sale with the player, and then
  * complete the transaction.
- * \param itno Index of item
- * \param ni Quantity being sold
+ *
+ * \param   itno Index of item
+ * \param   ni Quantity being sold
 */
 static void sell_item (int itno, int ni)
 {
@@ -1043,14 +1070,17 @@ static void sell_item (int itno, int ni)
      }
 }
 
+
+
 /*! \brief Handle Inn functions
  *
  * This is simply used for staying at the inn.  Remember
  * it costs more money to stay if your characters require
  * healing or resurrection.
- * \param iname Name of Inn
- * \param gpc Gold per character (base price)
- * \param pay If ==0, staying is free.
+ *
+ * \param   iname Name of Inn
+ * \param   gpc Gold per character (base price)
+ * \param   pay If 0, staying is free.
 */
 void inn (char *iname, int gpc, int pay)
 {
@@ -1150,6 +1180,8 @@ void inn (char *iname, int gpc, int pay)
      }
    timer_count = 0;
 }
+
+
 
 /*! \brief Restore characters according to Inn effects.
  *

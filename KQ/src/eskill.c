@@ -39,11 +39,14 @@
 
 /* \file 
  * \brief Enemy skills 
- */
+*/
 
-/*
-   Just a function to process each enemy skill by
-   index number.
+
+/*! \brief Process each enemy skill
+ *
+ * Just a function to process each enemy skill by index number.
+ *
+ * \param   who Index of attacker
 */
 void combat_skill (int who)
 {

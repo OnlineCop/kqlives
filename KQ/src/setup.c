@@ -18,6 +18,7 @@
    the Free Software Foundation,
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
+
 /*! \file
  * \brief Setup and menu code
  *
@@ -214,7 +215,9 @@ void parse_setup (void)
    fclose (s);
 }
 
-/*! \brief Display configuration menu 
+
+
+/*! \brief Display configuration menu
  *
  * This is the config menu that is called from the system
  * menu.  Here you can adjust the music or sound volume, or
@@ -519,6 +522,7 @@ void config_menu (void)
                        p = getavalue ("Sound Volume", 0, 25, gsvol / 10, 1);
                        if (p != -1)
                           gsvol = p * 10;
+
                        /* make sure to set it no matter what */
                        set_volume (gsvol, 0);
                     }
@@ -553,6 +557,14 @@ void config_menu (void)
      }
 }
 
+
+
+/*! \brief Process keypresses when mapping new keys
+ *
+ * This grabs whatever key is being pressed and returns it to the caller.
+ *
+ * \returns the key being pressed, 0 if error (or cancel?)
+*/
 static int getakey (void)
 {
    int a;
@@ -571,7 +583,9 @@ static int getakey (void)
 }
 
 
-/*! \brief play sound effects / music if adjusting it */
+
+/*! \brief Play sound effects / music if adjusting it */
+/* TT: looks like a hack to me! :-) */
 #define IF_VOLUME_ALERT() \
    if (!strcmp (capt, "Sound Volume")){\
    set_volume (cv * 10, 0);\
@@ -580,18 +594,19 @@ static int getakey (void)
 else if (!strcmp (capt, "Music Volume"))\
 set_music_volume (cv / 25.5);
 
+
+
 /*! \brief Get value for option
  *
- * Display a bar and allow the user to adjust
- * between fixed limits
+ * Display a bar and allow the user to adjust between fixed limits
  *
- * \param capt Caption
- * \param minu Minimum value of option
- * \param maxu Maximum vlaue of option
- * \param cv Current value (initial value)
- * \param sp Show percent. If sp==1, show as a percentage of maxu
- * \returns New value for option
- */
+ * \param   capt Caption
+ * \param   minu Minimum value of option
+ * \param   maxu Maximum vlaue of option
+ * \param   cv Current value (initial value)
+ * \param   sp Show percent. If sp==1, show as a percentage of maxu
+ * \returns the new value for option
+*/
 static int getavalue (char *capt, int minu, int maxu, int cv, int sp)
 {
    int stop = 0, a, b, rd = 1;
@@ -660,11 +675,12 @@ static int getavalue (char *capt, int minu, int maxu, int cv, int sp)
 }
 
 
+
 /*! \brief Set mode
  *
- * Set the graphics mode, taking into account
- * the Windowed and Stretched settings
- */
+ * Set the graphics mode, taking into account the Windowed and Stretched
+ * settings
+*/
 void set_graphics_mode (void)
 {
    if (stretch_view == 1)
@@ -687,15 +703,16 @@ void set_graphics_mode (void)
 
 
 
-/*! \brief Initialise sound system
- *
- *  \author JB
- *  \date ????????
- *  \remark On entry is_sound=1 to initialise, on exit is_sound=0 (failure) or 2 (success)   
- *                   is_sound=2 to shutdown, on exit is_sound=0 
- *  \remark 20020914 - 05:28 RB : Updated
- *   20020922 - ML : updated to use DUMB
- *   20020922 - ML : Changed to only reserving 8 voices. (32 seemed over-kill?) 
+/*! \brief Initialize sound system
+ * \author JB
+ * \date ????????
+ * \remark On entry is_sound=1 to initialise,
+ *         on exit is_sound=0 (failure) or 2 (success),
+ *         is_sound=2 to shutdown,
+ *         on exit is_sound=0
+ * \remark 20020914 - 05:28 RB : Updated
+ *  20020922 - ML : updated to use DUMB
+ *  20020922 - ML : Changed to only reserving 8 voices. (32 seemed over-kill?)
 */
 void sound_init (void)
 {
@@ -727,16 +744,17 @@ void sound_init (void)
 
 
 /*! \brief Load sample files
+ * \author JB
+ * \date ????????
  *
-*  Load the list of samples from the data file.
-*  \author JB
-*  \date  ???????? - ??:??
-*  \remark Updated : 20020914 - 05:20 (RB)
-*  \remark ML 2002-09-22: altered this so it returns an error on failure 
-*  \returns  0 on success, non-zero on failure.
-*  \todo RB FIXME: This must be generated from the kqsnd.h header,  
-*            not hardcoded, to make it easier to maintain.    
-*            (a perl script?).                                
+ * Load the list of samples from the data file.
+ *
+ * \todo RB FIXME: This must be generated from the kqsnd.h header,
+ *          not hardcoded, to make it easier to maintain (a perl script?).
+ * \remark Updated : 20020914 - 05:20 (RB)
+ * \remark ML 2002-09-22: altered this so it returns an error on failure
+ *
+ * \returns 0 on success, 1 on failure.
 */
 static int load_samples (void)
 {
@@ -775,10 +793,10 @@ static int load_samples (void)
 
 
 /*! \brief Release memory used by samples
+ * \author  : Josh Bolduc
+ * \date ????????
  *
- *  Duh.                                                           
- *  \author  : Josh Bolduc                                                    
- *  \date ???????? - ??:??                                               
+ *  Duh.
 */
 void free_samples (void)
 {
@@ -792,14 +810,16 @@ void free_samples (void)
 }
 
 
+
 /*! \brief Play sample effect
  *
  * Play an effect... if possible/necessary.  If the effect to
  * be played is the 'bad-move' effect, than do something visually
  * so that even if sound is off you know you did something bad :)
  * PH added explode effect.
- * \param efc Effect to play (index in sfx[])
- * \param panning Left/right pan - see Allegro's play_sample()
+ *
+ * \param   efc Effect to play (index in sfx[])
+ * \param   panning Left/right pan - see Allegro's play_sample()
 */
 void play_effect (int efc, int panning)
 {

@@ -19,37 +19,40 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-/*! \file  
+/*! \file
  * \brief Timing handler functions
- *
- * Looks after keeping the music playing whilst the game is 'paused'
  * \author ML
  * \date 20102002
+ *
+ * Looks after keeping the music playing whilst the game is 'paused'
  */
 #include <allegro.h>
 #include "kq.h"
 #include "timing.h"
 
 #include "music.h"
-/*! \brief poll the music system
+
+
+
+/*! \brief Poll the music system
  *
- * call poll_music() to ensure that music 
- * plays
- * \remark PH does this  need locking
- *         with LOCK_FUNCTION like a timer function
- *         does?
- */
+ * call poll_music() to ensure that music plays
+ * \remark PH does this need locking with LOCK_FUNCTION
+ *            like a timer function does?
+*/
 static void _kq_rest_callback (void)
 {
    poll_music ();
 }
 
+
+
 /*! \brief Pause the game for a period of time
  *
- * Calls _kq_rest_callback() continuously to
- * ensure all actions are running
- * \param ms time to pause in milliseconds
- */
+ * Calls _kq_rest_callback() continuously to ensure all actions are running
+ *
+ * \param   ms Time to pause in milliseconds
+*/
 void wait (long ms)
 {
    rest_callback (ms, _kq_rest_callback);

@@ -18,12 +18,13 @@
    the Free Software Foundation,
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
-/**\file
+
+/*! \file
  * \brief Various hero and enemy selectors
  *
- *\author Josh Bolduc
- *\date ????????
- */
+ * \author Josh Bolduc
+ * \date ????????
+*/
 #include <stdio.h>
 #include <string.h>
 
@@ -44,12 +45,14 @@ static int can_attack (int);
 /*  internal variables  */
 static int tmpd[NUM_FIGHTERS];
 
-/**\brief Select player from main menu
+
+
+/*! \brief Select player from main menu
  *
  * This is used to select a player from the main menu.
  * Used in menu.c
  *
- * \returns  Index of player (0..numchrs-1) or -1 if cancelled
+ * \returns Index of player (0..numchrs-1) or -1 if cancelled
 */
 int select_player (void)
 {
@@ -99,23 +102,27 @@ int select_player (void)
    return ptr;
 }
 
-/**\brief Select player or players
+
+
+/*! \brief Select player or players
  *
- *        This is used to select a recipient or recipients for
- *            items/spells.
- *            Used in itemmenu.c and masmenu.c
+ * This is used to select a recipient or recipients for items/spells.
+ * Used in itemmenu.c and masmenu.c
+ *
+ * \todo PH Should use TGT_* constants (in kq.h) to compare to csa
+ *          for an example, see camp_item_targetting() in itemmenu.c
+ * \todo PH This seems awfully complicated for what it does. Is there
+ *          any visual clue as to whether you can select all or not?
+ *          Should there be?
+ *
+ * \sa draw_icon()
+ * \sa camp_item_targetting()
+ *
  * \param   csa mode (target one, one/all or all)
  * \param   icn icon to draw (see also draw_icon() in draw.c)
  * \param   msg prompt message
- * \returns  Index of player (0..numchrs-1) or -1 if cancelled
- *           or SEL_ALL_ALLIES if 'all' was selected (by pressing L or R)
- * \todo PH Should use TGT_* constants (in kq.h) to compare to csa
- * for an example, see camp_item_targetting() in itemmenu.c
- * \todo PH  This seems awfully complicated for what it does. Is there
- * any visual clue as to whether you can select all or not?
- * Should there be?
- * \sa draw_icon()
- * \sa camp_item_targetting()
+ * \returns Index of player (0..numchrs-1) or -1 if cancelled
+ *          or SEL_ALL_ALLIES if 'all' was selected (by pressing L or R)
 */
 int select_any_player (int csa, int icn, char *msg)
 {
@@ -228,19 +235,21 @@ int select_any_player (int csa, int icn, char *msg)
       return ptr;
 }
 
-/**\brief select a hero or heroes
- *
- *   This is used for selecting an allied target.
- *          The multi parameter works the same here as it does
- *           for select_target above.
- *           Used in heroc.c
- * \param   whom =person that is doing the action ??
- * \param    multi =mode (target one, one/all or all)
- * \param    csd = non-zero allows you to select a dead character
- * \returns  Index of player (0..numchrs-1) or -1 if cancelled
- *           or SEL_ALL_ALLIES if 'all' was selected (by pressing U or D)
 
- * \todo PH  tmpd should be a local var?
+
+/* \brief Select a hero or heroes
+ *
+ * This is used for selecting an allied target.
+ * The multi parameter works the same here as it does for select_target above.
+ * Used in heroc.c
+ *
+ * \todo PH tmpd should be a local var?
+ *
+ * \param   whom ==person that is doing the action ??
+ * \param   multi ==mode (target one, one/all or all)
+ * \param   csd ==non-zero allows you to select a dead character
+ * \returns Index of player (0..numchrs-1) or -1 if cancelled
+ *          or SEL_ALL_ALLIES if 'all' was selected (by pressing U or D)
 */
 int select_hero (int whom, int multi, int csd)
 {
@@ -334,26 +343,29 @@ int select_hero (int whom, int multi, int csd)
       return SEL_ALL_ALLIES;
 }
 
-/*                                                                           */
-/*  Author  : Josh Bolduc                                                    */
-/*  Created : ???????? - ??:??                                               */
-/*  Updated :                                                                */
-/*  Purpose : Choose a target.  This is used for all combat enemy            */
-/*          : target selection, whether selected one or all enemies          */
-/*          : this is the function to use.                                   */
-/*          : The multi parameter specifies what we can select:              */
-/*          : 0 indicates that we can select one target only.                */
-/*          : 1 indicates that we can select one target or all.              */
-/*          : 2 indicates that we can only select all enemies                */
-/*          : Used in  heroc.c hskill.c                                      */
-/*  Params  : whom=person that is doing the action ??                        */
-/*          : multi=mode (target one, one/all or all)                        */
-/*  Returns : Index of enemy (PSIZE..PSIZE+numens-1) or -1 if cancelled      */
-/*          : or SEL_ALL_ENEMIES if 'all' was selected (by pressing U or D)  */
 
-/* PH FIXME Should use TGT_* constants (in kq.h) to compare to multi */
-/* PH TODO tmpd should be a local var? */
-/*
+
+/*! \brief  Choose a target
+ * \author  Josh Bolduc
+ * \created ????????
+ * \updated ????????
+ *
+ * Choose a target.  This is used for all combat enemy target selection,
+ * whether selected one or all enemies this is the function to use.
+ *
+ * Multi specifies what we can select:
+ *   0 indicates that we can select one target only.
+ *   1 indicates that we can select one target or all.
+ *   2 indicates that we can only select all enemies.
+ * Used in: heroc.c hskill.c
+ *
+ * \fixme PH Should use TGT_* constants (in kq.h) to compare to multi
+ * \todo PH tmpd should be a local var?
+ *
+ * \param   whom Attacker (person doing the action)
+ * \param   multi Target(s)
+ * \returns Enemy index (PSIZE..PSIZE+numens-1) or -1 if cancelled or
+ *          SEL_ALL_ENEMIES if 'all' was selected (by pressing U or D)
 */
 int select_enemy (int whom, int multi)
 {
@@ -439,16 +451,21 @@ int select_enemy (int whom, int multi)
       return SEL_ALL_ENEMIES;
 }
 
-/*                                                                           */
-/*  Author  : Josh Bolduc                                                    */
-/*  Created : ???????? - ??:??                                               */
-/*  Updated :                                                                */
-/*  Purpose : Automatically select a hero.                                   */
-/*          : Used in enemyc.c and heroc.c                                   */
-/*  Params  : whom=person that is doing the action ?? (unused)               */
-/*          : csts=Only select characters whose .sts[csts]==0                */
-/*          : or select any if csts==NO_STS_CHECK                            */
-/*  Returns : Index of hero  (0..numchrs-1)                                  */
+
+
+/*! \brief  Select a party member automatically
+ * \author  Josh Bolduc
+ * \created ????????
+ * \updated ????????
+ *
+ * Automatically select a hero.
+ * Used in: enemyc.c and heroc.c
+ *
+ * \param   whom Person doing the action
+ * \param   csts Only select characters whose .sts[csts] ==0 or select any
+ *             if csts ==NO_STS_CHECK
+ * \returns Index of hero (0..numchrs-1)
+*/
 int auto_select_hero (int whom, int csts)
 {
    int a, cntr = 0;
@@ -485,21 +502,26 @@ int auto_select_hero (int whom, int csts)
    return tmpd[rand () % cntr];
 }
 
-/*                                                                           */
-/*  Author  : Josh Bolduc                                                    */
-/*  Created : ???????? - ??:??                                               */
-/*  Updated :                                                                */
-/*  Purpose : Automatically select an enemy                                  */
-/*          : Used in enemyc.c and heroc.c                                   */
-/*  Params  : whom=particular enemy, if csts!=NO_STS_CHECK then it is 75%    */
-/*          : likely to return 'whom'                                        */
-/*          : csts=Only select characters whose .sts[csts]==0                */
-/*          : or special case if csts==S_BLESS then  .sts[S_BLESS]<3         */
-/*          : or special case if csts==S_STRENGTH then  .sts[S_STRENGTH]<2   */
-/*          : or select only where HP<75% of MHP     if csts==CURE_CHECK     */
-/*          : or select any if csts==NO_STS_CHECK                            */
-/*          : Never selects a dead enemy                                     */
-/*  Returns : Index of enemy (PSIZE..PSIZE+numens-1) or -1 if no enemy found */
+
+
+/*! \brief  Select an enemy automatically
+ * \author  Josh Bolduc
+ * \created ????????
+ * \updated ????????
+ *
+ * Automatically select an enemy.
+ * Used in: enemyc.c and heroc.c
+ *
+ * \param   whom Particular enemy.  If csts !=NO_STS_CHECK then it is 75%
+ *               likely to return 'whom'
+ * \param   csts Only select characters whose .sts[csts]==0
+ *               or special case if csts==S_BLESS then .sts[S_BLESS]<3
+ *               or special case if csts==S_STRENGTH then .sts[S_STRENGTH]<2
+ *               or select only where HP<75% of MHP if csts==CURE_CHECK
+ *               or select any if csts==NO_STS_CHECK
+ *               (Never selects a dead enemy)
+ * \returns Enemy index (PSIZE..PSIZE+numens-1) or -1 if no enemy found
+*/
 int auto_select_enemy (int whom, int csts)
 {
    int a, ne = 0;
@@ -550,14 +572,18 @@ int auto_select_enemy (int whom, int csts)
    return tmpd[rand () % ne];
 }
 
-/*                                                                           */
-/*  Author  : Josh Bolduc                                                    */
-/*  Created : ???????? - ??:??                                               */
-/*  Updated :                                                                */
-/*  Purpose : Just checks the status of a fighter for purposes of targetting.*/
-/*  Params  : tgt=index into fighter array                                   */
-/*  Returns : 1 unless the fighter is dead or has HP<1 or MHP<1              */
 
+
+/*! \brief  Check if attacker is able to attack
+ * \author  Josh Bolduc
+ * \created ????????
+ * \updated ????????
+ *
+ * Just checks the status of a fighter for purposes of targetting.
+ *
+ * \param   tgt Index into fighter array
+ * \returns 0 if fighter is dead or has HP<1 or MHP<1, otherwise 1
+*/
 static int can_attack (int tgt)
 {
    if (fighter[tgt].mhp < 1 || fighter[tgt].hp < 1

@@ -20,11 +20,11 @@
 */
 
 /*! \file
- * \brief palette fading routines
+ * \brief Palette fading routines
  *
  * \author ML
  * \date October 2002
- */
+*/
 
 #include <string.h>
 
@@ -38,19 +38,21 @@
 #include "music.h"
 #include "res.h"
 
+
+
 /*! \brief Fade between sub-ranges of two palettes
  *
  *  Fades from source to dest, at the specified speed (1 is the slowest, 64
- *  is instantaneous). Only affects colors between from and to (inclusive,
+ *  is instantaneous). Only affects colors between 'from' and 'to' (inclusive,
  *  pass 0 and 255 to fade the entire palette).
  *  Calls poll_music() to ensure the song keeps playing smoothly.
  *  Based on the Allegro function of the same name.
  *
- * \param source Palette to fade from
- * \param dest Palette to fade to
- * \param speed How fast to fade (0..64)
- * \param from Starting palette index (0..255)
- * \param to Ending palette index (0..255)
+ * \param   source Palette to fade from
+ * \param   dest Palette to fade to
+ * \param   speed How fast to fade (0..64)
+ * \param   from Starting palette index (0..255)
+ * \param   to Ending palette index (0..255)
  */
 static void _fade_from_range (AL_CONST PALETTE source, AL_CONST PALETTE dest,
                               int speed, int from, int to)
@@ -78,11 +80,14 @@ static void _fade_from_range (AL_CONST PALETTE source, AL_CONST PALETTE dest,
    set_palette_range (dest, from, to, TRUE);
 }
 
+
+
 /*! \brief Perform one of a range of palette transitions
  * 
  * Fade to black, white or to the game palette (pal) 
- * \param type Any of TRANS_FADE_IN, TRANS_FADE_OUT, TRANS_FADE_WHITE
- * \param param Speed of transition
+ *
+ * \param   type Any of TRANS_FADE_IN, TRANS_FADE_OUT, TRANS_FADE_WHITE
+ * \param   param Speed of transition
  */
 void do_transition (int type, int param)
 {

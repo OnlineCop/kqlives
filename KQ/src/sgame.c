@@ -18,17 +18,18 @@
    the Free Software Foundation,
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
+
 /*! \file
  * \brief Save and Load game
- *
- * Support for saving and loading  games.
- * Also includes the main menu and the system menu
- * (usually accessible by pressing ESC)
- * 
  * \author JB
  * \date ????????
- * \todo PH do we _really_ want things like controls and screen 
- * mode to be saved/loaded ? 
+ *
+ * Support for saving and loading games.
+ * Also includes the main menu and the system menu
+ * (usually accessible by pressing ESC).
+ *
+ * \todo PH Do we _really_ want things like controls and screen
+ *          mode to be saved/loaded ?
 */
 
 #include <stdio.h>
@@ -74,10 +75,10 @@ static int confirm_save (void);
 
 
 /*! \brief Load mini stats
-
-   This loads the mini stats for each saved game.  These
-   mini stats are just for displaying info about the save
-   game on the save/load game screen.
+ *
+ * This loads the mini stats for each saved game.
+ * These mini stats are just for displaying info about the save game on the
+ * save/load game screen.
 */
 void load_sgstats (void)
 {
@@ -138,11 +139,14 @@ void load_sgstats (void)
      }
 }
 
+
+
 /*! \brief Display saved game statistics
  *
- *   This is the routine that displays the information about
- *  each saved game for the save/load screen.
- * \param saving Zero if loading, non zero if saving.
+ * This is the routine that displays the information about
+ * each saved game for the save/load screen.
+ *
+ * \param saving 0 if loading, 1 if saving.
 */
 static void show_sgstats (int saving)
 {
@@ -211,10 +215,13 @@ static void show_sgstats (int saving)
      }
 }
 
+
+
 /*! \brief Save game
  *
  * You guessed it... save the game.
- * \returns zero if save failed   
+ *
+ * \returns 0 if save failed, 1 if success
 */
 static int save_game (void)
 {
@@ -286,10 +293,13 @@ static int save_game (void)
    return 1;
 }
 
+
+
 /*! \brief Load game
  *
  * Uh-huh.
- * \returns zero if loading failed
+ *
+ * \returns 1 if load succeeded, 0 otherwise
 */
 static int load_game (void)
 {
@@ -374,12 +384,15 @@ static int load_game (void)
    return 1;
 }
 
+
+
 /*! \brief Save/Load menu
  *
- *  This is the actual save/load menu.  The only parameter to
- *  the function indicates whether we are saving or loading.
- * \param am_saving ==1 if saving
- * \returns zero if an error occurred or save/load cancelled
+ * This is the actual save/load menu.  The only parameter to
+ * the function indicates whether we are saving or loading.
+ *
+ * \param   am_saving 0 if loading, 1 if saving
+ * \returns 0 if an error occurred or save/load cancelled
 */
 static int saveload (int am_saving)
 {
@@ -448,11 +461,14 @@ static int saveload (int am_saving)
    return stop - 1;
 }
 
+
+
 /*! \brief Confirm save
  *
- * If the save slot selected already has a saved game in
- * it, confirm that we want to overwrite.
- * \returns non-zero if confirmed
+ * If the save slot selected already has a saved game in it, confirm that we
+ * want to overwrite it.
+ *
+ * \returns 0 if cancelled, 1 if confirmed
 */
 static int confirm_save (void)
 {
@@ -483,16 +499,19 @@ static int confirm_save (void)
    return 0;
 }
 
+
+
 /*! \brief Main menu screen
  *
- * This is the main menu... just display the opening and then
- * the menu and then wait for input.
- * Also handles loading a saved game.
- * \param c Non-zero if the intro (the bit with the staff and the eight heroes) 
- * should be displayed.
+ * This is the main menu... just display the opening and then the menu and
+ * then wait for input.  Also handles loading a saved game.
+ *
+ * \todo PH make the config menu accessible from here, otherwise you have to
+ *          sit through the intro before you can change any settings.
+ *
+ * \param   c Non-zero if the intro (the bit with the staff and the eight heroes)
+ *            should be displayed.
  * \returns 0 if new game, 1 if continuing
- * \todo PH make the config menu accessible from here 
- * otherwise you have to sit through the intro before you can change any settings.
 */
 int start_menu (int c)
 {
@@ -669,12 +688,15 @@ int start_menu (int c)
    return stop - 1;
 }
 
+
+
 /*! \brief Display system menu
  *
  * This is the system menu that is invoked from within the game.
  * From here you can save, load, configure a couple of options or
  * exit the game altogether.
- * \returns zero if cancelled/ nothing happened
+ *
+ * \returns 0 if cancelled or nothing happened, 1 otherwise
 */
 int system_menu (void)
 {

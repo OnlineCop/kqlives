@@ -42,8 +42,9 @@ static int check_xp (int, int);
 static void status_screen (int);
 
 
-/*
-   Main menu that calls all the other little menus :)
+/*! \brief Main menu
+ *
+ * Main menu that calls all the other little menus :)
 */
 void menu (void)
 {
@@ -124,8 +125,11 @@ void menu (void)
      }
 }
 
-/*
-   Draw the main menu that is used above.
+
+
+/*! \brief Draws the main menu
+ *
+ * Draw the menu when the player hits ENTER
 */
 void draw_mainmenu (int swho)
 {
@@ -161,8 +165,11 @@ void draw_mainmenu (int swho)
       draw_playerstat (double_buffer, pidx[p], 52 + xofs, p * 56 + 72 + yofs);
 }
 
-/*
-   Draw the terse stats of a single player.
+
+
+/*! \brief Draw player's stats
+ *
+ * Draw the terse stats of a single player.
 */
 void draw_playerstat (BITMAP * where, int i, int dx, int dy)
 {
@@ -193,8 +200,11 @@ void draw_playerstat (BITMAP * where, int i, int dx, int dy)
    print_font (where, dx + 144 - j, dy + 32, strbuf, FNORMAL);
 }
 
-/*
-   List any special items that the party has.
+
+
+/*! \brief Show special items
+ *
+ * List any special items that the party has.
 */
 void spec_items (void)
 {
@@ -386,8 +396,11 @@ void spec_items (void)
      }
 }
 
-/*
-   Draw the verbose stats of a single player.
+
+
+/*! \brief Draw a player's status screen
+ *
+ * Draw the verbose stats of a single player.
 */
 static void status_screen (int ch)
 {
@@ -538,9 +551,12 @@ static void status_screen (int ch)
      }
 }
 
-/*
-   Just used to convert all characters in party from party structure
-   to fighter structure.
+
+
+/*! \brief Copy party-->fighter structure
+ *
+ * Just used to convert all characters in party from party structure
+ * to fighter structure.
 */
 void update_equipstats (void)
 {
@@ -550,10 +566,16 @@ void update_equipstats (void)
       fighter[i] = player2fighter (pidx[i]);
 }
 
-/*
-   This function converts from the party structure to fighter structure.
-   Pass the character index and the function returns a fighter structure.
-   This is used for combat and for menu functions.
+
+
+/* \brief Convert character-->fighter structure
+ *
+ * This function converts from the party structure to fighter structure.
+ * Pass the character index and the function returns a fighter structure.
+ * This is used for combat and for menu functions.
+ *
+ * \param   who Index of player to convert
+ * \returns tf (fighter structure)
 */
 s_fighter player2fighter (int who)
 {
@@ -699,8 +721,11 @@ s_fighter player2fighter (int who)
    return tf;
 }
 
-/*
-   This converts from fighter to player structure.  Used when leaving combat.
+
+
+/*! \brief Converts fighter-->character
+ *
+ * This converts from fighter to player structure.  Used when leaving combat.
 */
 void revert_equipstats (void)
 {
@@ -731,8 +756,16 @@ void revert_equipstats (void)
      }
 }
 
-/*
-   Yep.
+
+
+/*! \brief Add experience to stats
+ *
+ * Yep.
+ *
+ * \param   pl Player
+ * \param   the_xp Amount of experience to give
+ * \param   ls Learned new spell (always 1?)
+ * \returns whether or not player raised levels
 */
 int give_xp (int pl, int the_xp, int ls)
 {
@@ -740,8 +773,15 @@ int give_xp (int pl, int the_xp, int ls)
    return check_xp (pl, ls);
 }
 
-/*
-   Checks for level ups.
+
+
+/*! \brief Check for level-ups
+ *
+ * Checks for level ups.
+ *
+ * \param   pl Player
+ * \param   ls Learned new spell
+ * \returns 1 if new spell learned, 0 otherwise
 */
 static int check_xp (int pl, int ls)
 {
@@ -766,8 +806,13 @@ static int check_xp (int pl, int ls)
    return z;
 }
 
-/*
-   Performs a level up.
+
+
+/*! \brief Levels up player
+ *
+ * Performs a level-up.
+ *
+ * \param   pr Person leveling up
 */
 static void level_up (int pr)
 {

@@ -47,8 +47,14 @@ static void camp_draw_spell_menu (int, int, int);
 static void camp_spell_targeting (int, int);
 static int camp_castable (int, int);
 
-/*
-   Does the target even need the spell that's been selected?
+/*! \brief Does target need spell?
+ *
+ * Does the target even need the spell that's been selected?
+ *
+ * \param   ca Caster
+ * \param   ta Target
+ * \param   sn Index of spell
+ * \returns 0 if spell failed, 1 if success
 */
 static int need_spell (int ca, int ta, int sn)
 {
@@ -111,10 +117,16 @@ static int need_spell (int ca, int ta, int sn)
    return 1;
 }
 
-/*
-   This function is called by level_up() and checks to see
-   if the character has learned any new spells (that s/he did
-   not already know).
+
+
+/*! \brief Character learned new spells?
+ *
+ * This function is called by level_up() and checks to see
+ * if the character has learned any new spells (that s/he did
+ * not already know).
+ *
+ * \param   who Character's index
+ * \returns 0 if no spell learned, else spell(s) learned
 */
 int learn_new_spells (int who)
 {
@@ -159,8 +171,15 @@ int learn_new_spells (int who)
    return g;
 }
 
-/*
-   Draw the current character's grimoire contents.
+
+
+/*! \brief Draw spell menu
+ *
+ * Draw the current character's grimoire contents.
+ *
+ * \param   c Index of caster
+ * \param   pg Page that spell is found on
+ * \param   ptr Cursor on current page
 */
 static void camp_draw_spell_menu (int c, int pg, int ptr)
 {
@@ -196,9 +215,14 @@ static void camp_draw_spell_menu (int c, int pg, int ptr)
    draw_sprite (double_buffer, pgb[pg], 230 + xofs, 194 + yofs);
 }
 
-/*
-   Display the magic spell menu and allow the player to
-   arrange or cast spells.
+
+
+/*! \brief Spell menu
+ *
+ * Display the magic spell menu and allow the player to
+ * arrange or cast spells.
+ *
+ * \param   c Index of caster
 */
 void camp_spell_menu (int c)
 {
@@ -325,8 +349,14 @@ void camp_spell_menu (int c)
      }
 }
 
-/*
-   Select any necessary targets and prepare the spell.
+
+
+/*! \brief Select the target(s)
+ *
+ * Select any necessary targets and prepare the spell.
+ *
+ * \param   mc Index of spell caster
+ * \param   sn Spell number
 */
 static void camp_spell_targeting (int mc, int sn)
 {
@@ -379,9 +409,16 @@ static void camp_spell_targeting (int mc, int sn)
      }
 }
 
-/*
-   Perform the necessary checking to determine if a spell can be
-   cast while camping and if the mp exists to do so.
+
+
+/*! \brief Check if spell is castable
+ *
+ * Perform the necessary checking to determine if a spell can be
+ * cast while camping and if the mp exists to do so.
+ *
+ * \param   who Index of caster
+ * \param   sno Spell number
+ * \returns 1 if spell was cast, 0 otherwise
 */
 static int camp_castable (int who, int sno)
 {

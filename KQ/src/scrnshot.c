@@ -43,17 +43,15 @@ const char *ss_exit_msg[5] = {
 };
 
 
+
 /*! \brief Saves the src_bmp as a sequential list of files.
  *
  * The screenshot will be saved into /shots/{prefix}0001.pcx
  *
- * \param src_bmp [in]  the bitmap to save
- * \param prefix [in]  the first 4 to 7 characters of the name
- * \returns 
- *      0 = success
- *	non-zero = failure
+ * \param   src_bmp The bitmap to save
+ * \param   prefix The first 4 to 7 characters of the name
+ * \returns 0 if success, non-zero if failure
 */
-
 int save_screenshot (BITMAP * src_bmp, const char *prefix)
 {
    const char *folder = "shots";

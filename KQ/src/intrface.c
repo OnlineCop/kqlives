@@ -18,16 +18,17 @@
    the Free Software Foundation,
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
-/*! \file 
+
+/*! \file
  * \brief Interface functions
+ * \author JB,PH
+ * \date ????????
+ * \updated 20021125 -- Added extra functions
  *
  * This file implements the interface between
  * the C code and the Lua scripts.
  *
- * \author JB,PH
- * \date ??????
- * \date Added extra fns 20021125
- */
+*/
 
 #include <stdio.h>
 #include <string.h>
@@ -371,10 +372,10 @@ int tmx, tmy, tmvx, tmvy, changing_map = 0;
  *
  * Calculate what's the real entity number,
  * given an enemy number or HERO1 or HERO2
- * 
- * \param ee input number
+ *
+ * \param   ee Input number
  * \returns real entity number
- */
+*/
 static int real_entity_num (int ee)
 {
    if (ee == 255)
@@ -384,6 +385,15 @@ static int real_entity_num (int ee)
    return ee + PSIZE;
 }
 
+
+
+/*! \brief Get player ID
+ *
+ * This just gets the player's ID
+ *
+ * \param   L::1 Which character inquired about
+ * \returns character's ID
+*/
 static int KQ_get_pidx (lua_State * L)
 {
    int a = lua_tonumber (L, 1);
@@ -392,6 +402,15 @@ static int KQ_get_pidx (lua_State * L)
    return 1;
 }
 
+
+
+/*! \brief Get player progress
+ *
+ * This just gets the player's progress through the game
+ *
+ * \param   L::1 Which Progress to evaluate
+ * \returns the value of the Progress
+*/
 static int KQ_get_progress (lua_State * L)
 {
    int a = lua_tonumber (L, 1);
@@ -401,6 +420,16 @@ static int KQ_get_progress (lua_State * L)
    return 1;
 }
 
+
+
+/*! \brief Set player progress
+ *
+ * This just sets the player's progress through the game
+ *
+ * \param   L::1 The index of the Progress to evaluate
+ * \param   L::2 The value of L::1
+ * \returns 0 when done
+*/
 static int KQ_set_progress (lua_State * L)
 {
    int a = lua_tonumber (L, 1);
@@ -410,6 +439,15 @@ static int KQ_set_progress (lua_State * L)
    return 0;
 }
 
+
+
+/*! \brief Get person's name
+ *
+ * This gets the name of one of the people in the party
+ *
+ * \param   L::1 Which party member to evaluate
+ * \returns person's name
+*/
 static int KQ_get_party_name (lua_State * L)
 {
    int a = lua_tonumber (L, 1);
@@ -419,6 +457,15 @@ static int KQ_get_party_name (lua_State * L)
    return 1;
 }
 
+
+
+/*! \brief Get person's experience
+ *
+ * This gets the selected player's experience
+ *
+ * \param   L::1 Which person's EXP to get
+ * \returns person's experience
+*/
 static int KQ_get_party_xp (lua_State * L)
 {
    int a = lua_tonumber (L, 1);
@@ -428,6 +475,16 @@ static int KQ_get_party_xp (lua_State * L)
    return 1;
 }
 
+
+
+/*! \brief Set person's experience
+ *
+ * This sets the selected player's experience
+ *
+ * \param   L::1 Which person's EXP to set
+ * \param   L::2 Amount of EXP to set
+ * \returns 0 when done
+*/
 static int KQ_set_party_xp (lua_State * L)
 {
    int a = lua_tonumber (L, 1);
@@ -437,6 +494,15 @@ static int KQ_set_party_xp (lua_State * L)
    return 0;
 }
 
+
+
+/*! \brief Get person's needed experience
+ *
+ * This gets the experience still needed to get a level-up for a person
+ *
+ * \param   L::1 Which person's EXP to evaluate
+ * \returns 0 when done
+*/
 static int KQ_get_party_next (lua_State * L)
 {
    int a = lua_tonumber (L, 1);
@@ -446,6 +512,16 @@ static int KQ_get_party_next (lua_State * L)
    return 1;
 }
 
+
+
+/*! \brief Set person's needed experience
+ *
+ * This sets the experience still needed to get a level-up for a person
+ *
+ * \param   L::1 Which person's EXP to evaluate
+ * \param   L::2 Amount of EXP to set
+ * \returns 0 when done
+*/
 static int KQ_set_party_next (lua_State * L)
 {
    int a = lua_tonumber (L, 1);
@@ -455,6 +531,15 @@ static int KQ_set_party_next (lua_State * L)
    return 0;
 }
 
+
+
+/*! \brief Get person's level
+ *
+ * This gets the person's current level
+ *
+ * \param   L::1 Which person's level to check
+ * \returns person's level
+*/
 static int KQ_get_party_lvl (lua_State * L)
 {
    int a = lua_tonumber (L, 1);
@@ -464,6 +549,16 @@ static int KQ_get_party_lvl (lua_State * L)
    return 1;
 }
 
+
+
+/*! \brief Set person's level
+ *
+ * This sets the person's current level
+ *
+ * \param   L::1 Which person's level to check
+ * \param   L::2 Which level to set L::1 to
+ * \returns 0 when done
+*/
 static int KQ_set_party_lvl (lua_State * L)
 {
    int a = lua_tonumber (L, 1);
@@ -473,6 +568,15 @@ static int KQ_set_party_lvl (lua_State * L)
    return 0;
 }
 
+
+
+/*! \brief Get person's mrp
+ *
+ * This gets the person's current mrp
+ *
+ * \param   L::1 Which person's mrp to check
+ * \returns person's mrp
+*/
 static int KQ_get_party_mrp (lua_State * L)
 {
    int a = lua_tonumber (L, 1);
@@ -482,6 +586,16 @@ static int KQ_get_party_mrp (lua_State * L)
    return 1;
 }
 
+
+
+/*! \brief Set person's mrp
+ *
+ * This sets the person's current mrp
+ *
+ * \param   L::1 Which person's mrp to set
+ * \param   L::2 Amount of mrp to set to L::1
+ * \returns 0 when done
+*/
 static int KQ_set_party_mrp (lua_State * L)
 {
    int a = lua_tonumber (L, 1);
@@ -491,6 +605,15 @@ static int KQ_set_party_mrp (lua_State * L)
    return 0;
 }
 
+
+
+/*! \brief Get person's HP
+ *
+ * This gets the person's current hit points
+ *
+ * \param   L::1 Which person's HP to check
+ * \returns person's HP
+*/
 static int KQ_get_party_hp (lua_State * L)
 {
    int a = lua_tonumber (L, 1);
@@ -500,6 +623,16 @@ static int KQ_get_party_hp (lua_State * L)
    return 1;
 }
 
+
+
+/*! \brief Set person's HP
+ *
+ * This sets the person's current hit points
+ *
+ * \param   L::1 Which person's level to set
+ * \param   L::2 Amount of HP to set to L::1
+ * \returns 0 when done
+*/
 static int KQ_set_party_hp (lua_State * L)
 {
    int a = lua_tonumber (L, 1);
@@ -509,6 +642,15 @@ static int KQ_set_party_hp (lua_State * L)
    return 0;
 }
 
+
+
+/*! \brief Get person's MHP
+ *
+ * This gets the person's maximum hit points
+ *
+ * \param   L::1 Which person's MHP to check
+ * \returns person's MHP
+*/
 static int KQ_get_party_mhp (lua_State * L)
 {
    int a = lua_tonumber (L, 1);
@@ -518,6 +660,16 @@ static int KQ_get_party_mhp (lua_State * L)
    return 1;
 }
 
+
+
+/*! \brief Set person's level
+ *
+ * This sets the person's maximum hit points
+ *
+ * \param   L::1 Which person's MHP to set
+ * \param   L::2 Amount of MHP to set to L::1
+ * \returns 0 when done
+*/
 static int KQ_set_party_mhp (lua_State * L)
 {
    int a = lua_tonumber (L, 1);
@@ -527,6 +679,15 @@ static int KQ_set_party_mhp (lua_State * L)
    return 0;
 }
 
+
+
+/*! \brief Get person's MP
+ *
+ * This gets the person's current magic points
+ *
+ * \param   L::1 Which person's mp to check
+ * \returns person's MP
+*/
 static int KQ_get_party_mp (lua_State * L)
 {
    int a = lua_tonumber (L, 1);
@@ -536,6 +697,16 @@ static int KQ_get_party_mp (lua_State * L)
    return 1;
 }
 
+
+
+/*! \brief Set person's MP
+ *
+ * This sets the person's current magic points
+ *
+ * \param   L::1 Which person's MP to set
+ * \param   L::2 Amount of MP to set to L::1
+ * \returns 0 when done
+*/
 static int KQ_set_party_mp (lua_State * L)
 {
    int a = lua_tonumber (L, 1);
@@ -545,6 +716,15 @@ static int KQ_set_party_mp (lua_State * L)
    return 0;
 }
 
+
+
+/*! \brief Get person's MMP
+ *
+ * This gets the person's maximum magic points
+ *
+ * \param   L::1 Which person's MMP to check
+ * \returns person's MMP
+*/
 static int KQ_get_party_mmp (lua_State * L)
 {
    int a = lua_tonumber (L, 1);
@@ -554,6 +734,16 @@ static int KQ_get_party_mmp (lua_State * L)
    return 1;
 }
 
+
+
+/*! \brief Set person's MMP
+ *
+ * This sets the person's maximum magic points
+ *
+ * \param   L::1 Which person's MMP to set
+ * \param   L::2 Amont of MMP to set to L::1
+ * \returns 0 when done
+*/
 static int KQ_set_party_mmp (lua_State * L)
 {
    int a = lua_tonumber (L, 1);
@@ -563,6 +753,16 @@ static int KQ_set_party_mmp (lua_State * L)
    return 0;
 }
 
+
+
+/*! \brief Get person's equipment (unused)
+ *
+ * This gets the person's current equipment
+ *
+ * \param   L::1 Which person to check
+ * \param   L::2 Which equipment slot
+ * \returns person's equipment
+*/
 static int KQ_get_party_eqp (lua_State * L)
 {
    int a = lua_tonumber (L, 1);
@@ -573,6 +773,17 @@ static int KQ_get_party_eqp (lua_State * L)
    return 1;
 }
 
+
+
+/*! \brief Set person's equipment (unused)
+ *
+ * This sets the person's current equipment
+ *
+ * \param   L::1 Which person to check
+ * \param   L::2 Which equipment slot
+ * \param   L::3 Equipment to set in slot L::2
+ * \returns 0 when done
+*/
 static int KQ_set_party_eqp (lua_State * L)
 {
    int a = lua_tonumber (L, 1);
@@ -583,6 +794,16 @@ static int KQ_set_party_eqp (lua_State * L)
    return 0;
 }
 
+
+
+/*! \brief Get person's stats
+ *
+ * This gets the person's stats
+ *
+ * \param   L::1 Which person to check
+ * \param   L::2 Which stat to check
+ * \returns person's stats
+*/
 static int KQ_get_party_stats (lua_State * L)
 {
    int a = lua_tonumber (L, 1);
@@ -593,6 +814,17 @@ static int KQ_get_party_stats (lua_State * L)
    return 1;
 }
 
+
+
+/*! \brief Set person's stats (unused)
+ *
+ * This sets the person's stats
+ *
+ * \param   L::1 Which person to check
+ * \param   L::2 Which stats id to evaluate
+ * \param   L::3 Value to stick in L::2
+ * \returns 0 when done
+*/
 static int KQ_set_party_stats (lua_State * L)
 {
    int a = lua_tonumber (L, 1);
@@ -603,6 +835,16 @@ static int KQ_set_party_stats (lua_State * L)
    return 0;
 }
 
+
+
+/*! \brief Get person's res
+ *
+ * This gets the person's resistance
+ *
+ * \param   L::1 Which person to check
+ * \param   L::2 Which res to check
+ * \returns person's res
+*/
 static int KQ_get_party_res (lua_State * L)
 {
    int a = lua_tonumber (L, 1);
@@ -613,6 +855,17 @@ static int KQ_get_party_res (lua_State * L)
    return 1;
 }
 
+
+
+/*! \brief Set person's res
+ *
+ * This sets the person's resistance
+ *
+ * \param   L::1 Which person's res to set
+ * \param   L::2 Which res to set
+ * \param   L::3 Value to set to res
+ * \returns 0 when done
+*/
 static int KQ_set_party_res (lua_State * L)
 {
    int a = lua_tonumber (L, 1);
@@ -622,6 +875,8 @@ static int KQ_set_party_res (lua_State * L)
       party[a].res[b] = lua_tonumber (L, 3);
    return 0;
 }
+
+
 
 static int KQ_get_ent_chrx (lua_State * L)
 {
@@ -1017,31 +1272,35 @@ static int KQ_set_tile_all (lua_State * L)
    return 0;
 }
 
+
+
 /* PH: not used (yet?), therefore commented out */
 /* static int KQ_get_tile_all(lua_State* L) { */
-/* 	int tx=lua_tonumber(L, 1); */
-/* 	int ty=lua_tonumber(L, 2); */
-/* 	int offset=tx+ty*g_map.xsize; */
+/* 	 int tx=lua_tonumber(L, 1); */
+/* 	 int ty=lua_tonumber(L, 2); */
+/* 	 int offset=tx+ty*g_map.xsize; */
 
-/* 	lua_pushnumber(L, map_seg[offset]); */
-/* 	lua_pushnumber(L, b_seg[offset]); */
-/* 	lua_pushnumber(L, f_seg[offset]); */
-/* 	lua_pushnumber(L, z_seg[offset]); */
-/* 	lua_pushnumber(L, o_seg[offset]); */
-/* 	lua_pushnumber(L, s_seg[offset]); */
-/* 	return 6; */
+/* 	 lua_pushnumber(L, map_seg[offset]); */
+/* 	 lua_pushnumber(L, b_seg[offset]); */
+/* 	 lua_pushnumber(L, f_seg[offset]); */
+/* 	 lua_pushnumber(L, z_seg[offset]); */
+/* 	 lua_pushnumber(L, o_seg[offset]); */
+/* 	 lua_pushnumber(L, s_seg[offset]); */
+/* 	 return 6; */
 /* } */
 
+
+
 /*! \brief Copy tile block
+ * \author PH
+ * \date 20021125
  *
  * Copies a region of the map (all layers).
  * Invocation: copy_tile_all(source_x, source_y, dest_x, dest_y, width, height).
- * These params are meant to be similar to
- * the allegro blit() function.
+ * These params are meant to be similar to the allegro blit() function.
+ *
  * \bugs No error checking is done. Uses direct access to the struct s_map.
- * \author PH
- * \date 20021125
- */
+*/
 static int KQ_copy_tile_all (lua_State * L)
 {
    int sx = lua_tonumber (L, 1);
@@ -1268,6 +1527,8 @@ static int KQ_prompt (lua_State * L)
    return 1;
 }
 
+
+
 /* static int KQ_bubble (lua_State * L) */
 /* { */
 /*    char *txt[4]; */
@@ -1278,6 +1539,8 @@ static int KQ_prompt (lua_State * L)
 /*    bubble_text (b, txt[0], txt[1], txt[2], txt[3]); */
 /*    return 0; */
 /* } */
+
+
 
 static int KQ_thought (lua_State * L)
 {
@@ -1407,126 +1670,139 @@ static int KQ_krnd (lua_State * L)
    return 1;
 }
 
+
+
+/*! \brief Response for touching a fire.
+ *
+ * This gives one of three random responses per character for when the
+ * player faces a fire and presses ALT.
+ *
+ * \param   L::1 Which person is touching the fire
+ * \returns 0 when done
+*/
 static int KQ_touch_fire (lua_State * L)
 {
    switch ((int) lua_tonumber (L, 1))
      {
-     case 0:                   // SENSAR
+     case 0:  // SENSAR
         switch (rand () % 3)
           {
           case 0:
-             bubble_text (0, "What th..? Ouch! That's hot!", "", "", "");
+             bubble_text (0, "What th..? Ouch! That's hot!","","","");
              break;
           case 1:
              bubble_text (0, "There's no way I'm sticking",
-                          "my hand in that fire!", "", "");
+                             "my hand in that fire!","","");
              break;
           case 2:
-             bubble_text (0, "This feels pretty nice.", "", "", "");
+             bubble_text (0, "This feels pretty nice.","","","");
              break;
           }
         break;
-     case 1:                   // SARINA
+     case 1:  // SARINA
         switch (rand () % 3)
           {
           case 0:
-             bubble_text (0, "Mmm, wood smoke.", "", "", "");
+             bubble_text (0, "Mmm, wood smoke.","","","");
              break;
           case 1:
              bubble_text (0, "Smells like burnt hair.",
-                          "Hey wait... that's MY hair!", "", "");
+                             "Hey wait... that's MY hair!","","");
              break;
           case 2:
-             bubble_text (0, "Ooh, cozy.", "", "", "");
+             bubble_text (0, "Ooh, cozy.","","","");
              break;
           }
         break;
-     case 2:                   // CORIN
+     case 2:  // CORIN
         switch (rand () % 3)
           {
           case 0:
-             bubble_text (0, "I sure like fire.", "", "", "");
+             bubble_text (0, "I sure like fire.","","","");
              break;
           case 1:
-             bubble_text (0, "Watching this is relaxing.", "", "", "");
+             bubble_text (0, "Watching this is relaxing.","","","");
              break;
           case 2:
-             bubble_text (0, "This is making me sleepy.", "", "", "");
+             bubble_text (0, "This is making me sleepy.","","","");
              break;
           }
         break;
-     case 3:                   // AJATHAR
+     case 3:  // AJATHAR
         switch (rand () % 3)
           {
           case 0:
-             bubble_text (0, "Hmm... I want marshmallows.", "", "", "");
+             bubble_text (0, "Hmm... I want marshmallows.","","","");
              break;
           case 1:
-             bubble_text (0, "You call this a fire?!", "", "", "");
+             bubble_text (0, "You call this a fire?!","","","");
              break;
           case 2:
-             bubble_text (0, "Ah, relaxing.", "", "", "");
+             bubble_text (0, "Ah, relaxing.","","","");
              break;
           }
         break;
-     case 4:                   // CASANDRA
+     case 4:  // CASANDRA
         switch (rand () % 3)
           {
           case 0:
              bubble_text (0, "Something's burning. I",
-                          "hope it's one of those", "stupid books!", "");
+                             "hope it's one of those",
+                             "stupid books!","");
              break;
           case 1:
-             bubble_text (0, "The fire is getting low.", "", "", "");
+             bubble_text (0, "The fire is getting low.","","","");
              break;
           case 2:
-             bubble_text (0, "Yessir, this is a fire.", "", "", "");
+             bubble_text (0, "Yessir, this is a fire.","","","");
              break;
           }
         break;
-     case 5:                   // TEMMIN
+     case 5:  // TEMMIN
         switch (rand () % 3)
           {
           case 0:
-             bubble_text (0, "Ah, the age-old fire.", "", "", "");
+             bubble_text (0, "Ah, the age-old fire.","","","");
              break;
           case 1:
-             bubble_text (0, "This needs more coal.", "", "", "");
+             bubble_text (0, "This needs more coal.","","","");
              break;
           case 2:
              bubble_text (0, "This would be great",
-                          "to read a book next to.", "", "");
+                             "to read a book next to.","","");
              break;
           }
         break;
-     case 6:                   // AYLA
+     case 6:  // AYLA
         switch (rand () % 3)
           {
           case 0:
-             bubble_text (0, "I wonder how hot this is?", "", "", "");
+             bubble_text (0, "I wonder how hot this is?","","","");
              break;
           case 1:
              bubble_text (0, "Someone should clean all",
-                          "this soot out of here.", "", "");
+                             "this soot out of here.","","");
              break;
           case 2:
              bubble_text (0, "Well, my face is warm",
-                          "now, but my butt is", "still freezing!", "");
+                             "now, but my butt is",
+                             "still freezing!","");
              break;
           }
         break;
-     case 7:                   // NOSLOM
+     case 7:  // NOSLOM
         switch (rand () % 3)
           {
           case 0:
-             bubble_text (0, "I prefer torches.", "", "", "");
+             bubble_text (0, "I prefer torches.","","","");
              break;
           case 1:
-             bubble_text (0, "I love the crackel of", "a good fire.", "", "");
+             bubble_text (0, "I love the crackel of",
+                             "a good fire.","","");
              break;
           case 2:
              bubble_text (0, "I wonder if a spell would",
-                          "make this burn brighter?", "", "");
+                             "make this burn brighter?","","");
              break;
           }
         break;
@@ -1534,6 +1810,16 @@ static int KQ_touch_fire (lua_State * L)
    return 0;
 }
 
+
+
+/*! \brief Response for reading a book.
+ *
+ * This gives one of three random responses per character for when the
+ * player faces a bookshelf and presses ALT.
+ *
+ * \param   L::1 Which person is reading the book
+ * \returns 0 when done
+*/
 static int KQ_book_talk (lua_State * L)
 {
    switch ((int) lua_tonumber (L, 1))
@@ -2205,17 +2491,19 @@ int KQ_bubble (lua_State * l)
 }
 
 
+
 /*! \brief Initialise scripting engine
  *
- * Initialise the Lua scripting engine
- * by loading from a file. A new VM is
+ * Initialise the Lua scripting engine by loading from a file. A new VM is
  * created each time.
- * \param fname Base name of script; xxxxx loads script scripts/xxxxx.lob
- * \todo PH Check the return value for errors 
- * a buggy (or missing) compiled script is a common source of error 
- * \todo PH check that \p theL does not already point to a VM
- * (otherwise leaks will occur)
- */
+ *
+ * \todo PH Check the return value for errors.  A buggy (or missing) compiled
+ *          script is a common source of error
+ * \todo PH Check that \p theL does not already point to a VM (otherwise leaks
+ *          will occur)
+ *
+ * \param   fname Base name of script; xxxxx loads script scripts/xxxxx.lob
+*/
 void do_luainit (char *fname)
 {
    int oldtop;
@@ -2238,18 +2526,20 @@ void do_luainit (char *fname)
    lua_settop (theL, oldtop);
 }
 
+
+
 #ifdef KQ_CHEATS
 /*! \brief Load cheat code
  *
  * Load the contents of scripts/cheat.lob, usually
  * in response to f10 being pressed.
- * This can contain any scripting code,  
+ * This can contain any scripting code,
  * in the function cheat().
- * The variable \p cheat_loaded appears to 
+ * The variable \p cheat_loaded appears to
  * be provided to ensure the cheat code is loaded
  * once only. However it is never set, so the check
- * never fails. 
- */
+ * never fails.
+*/
 void do_luacheat (void)
 {
    int oldtop;
@@ -2268,11 +2558,14 @@ void do_luacheat (void)
    message ("Cheating complete.", 255, 50, xofs, yofs);
 }
 #endif
+
+
+
 /*! \brief Kill the Lua VM
  *
  * Close the Lua virtual machine, and note that
  * the cheat code should be reloaded if called.
- */
+*/
 void do_luakill (void)
 {
    if (theL)
@@ -2286,15 +2579,17 @@ void do_luakill (void)
    mylen = 0;
 }
 
-/*! \brief Run initial code 
- * 
+
+
+/*! \brief Run initial code
+ *
  * Calls the function autoexec() which
  * should contain some initial start-up routines
  * for this map. This occurs while the map is faded out.
  * This code should NOT call any graphical functions
  * because this causes KQ to lock. Instead,
  * use postexec()
- */
+*/
 void do_autoexec (void)
 {
    int oldtop = lua_gettop (theL);
@@ -2305,13 +2600,13 @@ void do_autoexec (void)
    check_map_change ();
 }
 
+
+
 /*! \brief Run initial graphical code
  *
- * This function is called after the 
- * map is faded back in. It's possible
- * to show speech, move entities, etc.
- * here.
- */
+ * This function is called after the map is faded back in. It's possible
+ * to show speech, move entities, etc. here.
+*/
 void do_postexec (void)
 {
    int oldtop = lua_gettop (theL);
@@ -2322,15 +2617,16 @@ void do_postexec (void)
    check_map_change ();
 }
 
-/*! \brief Trigger zone action 
+
+
+/*! \brief Trigger zone action
  *
- * Run the lua function zone_handler(int)
- * to take action based on the zone that the 
- * hero has just stepped on. 
- * This function is not called for zone 0,
+ * Run the lua function zone_handler(int) to take action based on the zone
+ * that the hero has just stepped on.  This function is not called for zone 0,
  * unless the map property zero_zone is non-zero.
- * \param zn_num Zone number
- */
+ *
+ * \param   zn_num Zone number
+*/
 void do_zone (int zn_num)
 {
    int oldtop = lua_gettop (theL);
@@ -2342,13 +2638,15 @@ void do_zone (int zn_num)
    check_map_change ();
 }
 
-/*! \brief Trigger entity action 
+
+
+/*! \brief Trigger entity action
  *
- * Run the lua function entity_handler(int)
- * to take action based on the entity that the 
- * hero has just approached and pressed ALT. 
- * \param en_num Entity number
- */
+ * Run the lua function entity_handler(int) to take action based on the entity
+ * that the hero has just approached and pressed ALT.
+ *
+ * \param   en_num Entity number
+*/
 void do_entity (int en_num)
 {
    int oldtop = lua_gettop (theL);
@@ -2360,7 +2658,13 @@ void do_entity (int en_num)
    check_map_change ();
 }
 
-/*! \brief Change map, unless already in the map-change process */
+
+
+/*! \brief Check to change the map
+ *
+ * Check to see if we can change the map.  Does nothing if we are already in
+ * the process of changing the map.
+*/
 static void check_map_change (void)
 {
    if (changing_map == 0)
