@@ -33,7 +33,7 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "lua.h"
+#include <lua.h>
 #include "intrface.h"
 #include "setup.h"
 #include "effects.h"
@@ -418,6 +418,9 @@ fields[] = {
    {"facing", 14},
     /* Active or not */
    {"active", 15},
+    /* Some functions */
+    {"say", 16},
+    {"think", 17},
 };
 // *INDENT-ON*
 
@@ -483,7 +486,6 @@ static int get_field (const char *n)
  */
 static int party_getter(lua_State* L) {
     int which=lua_tonumber(L, 2);
-    TRACE("Getting %s\n", lua_tostring(L, 2));
     if (which>=0 && which<numchrs) {
         lua_getglobal(L, "player");
         lua_rawgeti(L, -1, pidx[which]);
@@ -498,21 +500,26 @@ static int party_getter(lua_State* L) {
  * Implement setting the character objects in the
  * party array. Set an element to nil to remove the relevant
  * hero from the party.
- * \param L::1 which party member (0..MAX-1)
+ * \param L::1 which party member (0..PSIZE-1)
  * \param L::2 hero object
+ * \returns 0 (no values returned)
  */
 static int party_setter(lua_State* L) {
     int which=lua_tonumber(L, 2);
-    if (which>=0 && which <MAXCHRS) {
+    if (which>=0 && which <PSIZE) {
 /* check if it is a valid hero object */
         if (lua_isnil(L, 3)) {
             int i;
+            /* is there a character there anyway? */
+            if (which>=numchrs) return 0;
             /* it was nil, erase a character */
-            for (i=which; i<MAXCHRS; ++i) {
+            for (i=which; i<(PSIZE-1); ++i) {
                 pidx[i]=pidx[i+1];
                 memcpy(&g_ent[i], &g_ent[i+1], sizeof(s_entity));
             }
             --numchrs;
+            g_ent[numchrs].active=0;
+            pidx[numchrs]=-1;
         }
         else if (lua_istable(L, 3)) {
             s_player* tt;
@@ -717,6 +724,12 @@ static int KQ_char_getter (lua_State * L)
       case 15:
          lua_pushnumber (L, ent->active);
          break;
+      case 16:
+          lua_pushcfunction(L, KQ_bubble_ex);
+          break;
+      case 17:
+          lua_pushcfunction(L, KQ_thought_ex);
+              
       }
    }
    if (top == lua_gettop (L)) {
@@ -2898,25 +2911,9 @@ static int KQ_use_up (lua_State * L)
  */
 int KQ_bubble_ex (lua_State * L)
 {
-   int entity;
-   s_entity *ent;
+   int entity=real_entity_num(L, 1);
    const char *msg = lua_tostring (L, 2);
 
-   switch (lua_type (L, 1)) {
-   case LUA_TNUMBER:
-      entity = real_entity_num (L, 1);
-      break;
-   case LUA_TTABLE:
-      lua_pushstring (L, "_ent");
-      lua_rawget (L, 1);
-      ent = lua_touserdata (L, -1);
-      /* convert from pointer to an index for text_ex */
-      entity = ent ? ent - g_ent : 255;
-      break;
-   default:
-      entity = 255;
-      break;
-   }
    text_ex (B_TEXT, entity, msg);
    return 0;
 }
