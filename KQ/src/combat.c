@@ -1201,8 +1201,7 @@ static int attack_result (int ar, int dr)
       if ((c >= R_POISON) && (c <= R_SLEEP)) {
          if ((res_throw (dr, c) == 0) && (fighter[dr].sts[c - 8] == 0)) {
             if (non_dmg_save (dr, 50) == 0) {
-               if ((c == R_POISON) || (c == R_PETRIFY)
-                   || (c == R_SILENCE))
+               if ((c == R_POISON) || (c == R_PETRIFY) || (c == R_SILENCE))
                   tempd.sts[c - 8] = 1;
                else
                   tempd.sts[c - 8] = rand () % 3 + 2;
@@ -1321,8 +1320,7 @@ static void heroes_win (void)
    blit (double_buffer, back, 0, 0, 0, 0, 352, 280);
    for (index = 0; index < numens; index++) {
       /* PH bug: (?) should fitm be reset to zero at the start of this loop?
-       * If you defeat 2 enemies,
-       * you should (possibly) get 2 items, right/
+       * If you defeat 2 enemies, you should (possibly) get 2 items, right?
        */
       if ((rand () % 100) < fighter[index + PSIZE].dip) {
          if (fighter[index + PSIZE].ditmc > 0)

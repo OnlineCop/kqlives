@@ -1687,8 +1687,7 @@ static int KQ_copy_tile_all (lua_State * L)
    int wid = (int) lua_tonumber (L, 5);
    int hgt = (int) lua_tonumber (L, 6);
    int os, od, i, j;
-   /*      sprintf (strbuf, "Copy (%d,%d)x(%d,%d) to (%d,%d)", sx, sy, wid,
-      hgt, dx, dy);
+   /*      sprintf (strbuf, "Copy (%d,%d)x(%d,%d) to (%d,%d)", sx, sy, wid, hgt, dx, dy);
       klog(strbuf);
     */
    for (j = 0; j < hgt; ++j) {

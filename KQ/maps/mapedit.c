@@ -206,7 +206,9 @@ void animate (void)
    for (i = 0; i < MAX_ANIM; i++)
       adata[i] = tanim[gmap.tileset][i];
 
-}
+}                               /* animate */
+
+END_OF_FUNCTION (animate);
 
 
 /*! \brief Memory allocation
@@ -267,6 +269,8 @@ void bufferize (void)
    clipb = 0;
 }                               /* bufferize () */
 
+END_OF_FUNCTION (bufferize);
+
 
 /*! \brief Return the maximum zone used in the map
  *
@@ -282,6 +286,8 @@ int check_last_zone (void)
          a = z_map[p];
    return a;
 }                               /* check_last_zone () */
+
+END_OF_FUNCTION (check_last_zone);
 
 
 /*! \brief Select an option from the menu
@@ -502,6 +508,8 @@ void check_mdupdate (int cx, int cy)
    }
 }                               /* check_mupdate () */
 
+END_OF_FUNCTION (check_mdupdate);
+
 
 /*! \brief Select an icon from the tileset
  *
@@ -522,6 +530,8 @@ void check_tilesel (int cx, int cy)
       curtile = icon_set * ICONSET_SIZE + (xp * (ICONSET_SIZE / 2) + yp);
    }
 }                               /* check_tilesel () */
+
+END_OF_FUNCTION (check_tilesel);
 
 
 /*! \brief Code shutdown and memory deallocation
@@ -553,6 +563,8 @@ void cleanup (void)
    for (k = 0; k < MAX_SHADOWS; k++)
       destroy_bitmap (shadow[k]);
 }                               /* cleanup () */
+
+END_OF_FUNCTION (cleanup);
 
 
 /*! \brief Clears a layer from the map
@@ -591,6 +603,8 @@ void clear_layer (void)
    }
 }                               /* clear_layer () */
 
+END_OF_FUNCTION (clear_layer);
+
 
 /*! \brief Clear obstructions on map
  *
@@ -606,6 +620,8 @@ void clear_obstructs (void)
          o_map[co] = 0;
 }                               /* clear_obstructs () */
 
+END_OF_FUNCTION (clear_obstructs);
+
 
 /*! \brief Clear shadows on the map
  *
@@ -620,6 +636,8 @@ void clear_shadows (void)
       for (co = 0; co < gmap.xsize * gmap.ysize; co++)
          sh_map[co] = 0;
 }                               /* clear_shadows () */
+
+END_OF_FUNCTION (clear_shadows);
 
 
 /*! \brief Default method for displaying messages to screen
@@ -638,6 +656,8 @@ void cmessage (char *buff)
    print_sfont (160 - cx, 97, buff, screen);
 }                               /* cmessage () */
 
+END_OF_FUNCTION (cmessage);
+
 
 /*! \brief Confirm exit
  *
@@ -650,6 +670,8 @@ int confirm_exit (void)
    cmessage ("Are you sure you want to exit? (y/n)");
    return yninput ();
 }                               /* confirm_exit () */
+
+END_OF_FUNCTION (confirm_exit);
 
 
 /*! \brief Copy an entire layer into another
@@ -708,6 +730,8 @@ void copy_layer (void)
       }
    }
 }                               /* copy_layer () */
+
+END_OF_FUNCTION (copy_layer);
 
 
 /*! \brief Copy all the layers in a block area
@@ -771,6 +795,8 @@ void copy_region (void)
    }
 }                               /* copy_region () */
 
+END_OF_FUNCTION (copy_region);
+
 
 /*! \brief Set the map's description
  *
@@ -795,6 +821,8 @@ void describe_map (void)
 
    strcpy (gmap.map_desc, tcd);
 }                               /* describe_map () */
+
+END_OF_FUNCTION (describe_map);
 
 
 /*! \brief Update the screen
@@ -987,6 +1015,8 @@ void draw_map (void)
       }
    }                            /* if (showing.entities == 1) */
 }                               /* draw_map () */
+
+END_OF_FUNCTION (draw_map);
 
 
 /*! \brief Draw the menus
@@ -1274,6 +1304,8 @@ void draw_menubars (void)
    }
 }                               /* draw_menubars () */
 
+END_OF_FUNCTION (draw_menubars);
+
 
 /*! \brief Process keyboard input
  *
@@ -1331,6 +1363,8 @@ int get_line (int window_x, int window_y, char *buffer, int max_len)
    }                            /* while (1) */
 }                               /* get_line () */
 
+END_OF_FUNCTION (get_line);
+
 
 /*! \brief Gets the index of the tile under the mouse
  *
@@ -1350,6 +1384,8 @@ void get_tile (void)
    /* Set the iconset "page" to the one where the selected icon is found */
    icon_set = curtile / ICONSET_SIZE;
 }                               /* get_tile () */
+
+END_OF_FUNCTION (get_tile);
 
 
 /*! \brief Change map tiles
@@ -1434,6 +1470,8 @@ void global_change (void)
    }
 }                               /* global_change () */
 
+END_OF_FUNCTION (global_change);
+
 
 /*! \brief Error reporting tool
  *
@@ -1451,6 +1489,8 @@ void klog (char *msg)
    fprintf (ff, "%s\n", msg);
    fclose (ff);
 }                               /* klog () */
+
+END_OF_FUNCTION (klog);
 
 
 /*! \brief Draw the layers with parallax
@@ -1501,6 +1541,8 @@ static void draw_layer (short *layer, int parallax)
       }
    }
 }                               /* draw_layer () */
+
+END_OF_FUNCTION (void draw_layer);
 
 
 /*! \brief Draw the shadows
@@ -1553,6 +1595,8 @@ static void draw_shadow (int parallax)
    }
 }                               /* draw_shadow () */
 
+END_OF_FUNCTION (void draw_shadow);
+
 
 /*! \brief Preview map
  *
@@ -1598,6 +1642,8 @@ void preview_map (void)
    }
 }                               /* preview_map () */
 
+END_OF_FUNCTION (preview_map);
+
 
 /*! \brief Paste the copied selection to all Layers
  *
@@ -1639,6 +1685,8 @@ void paste_region (int tx, int ty)
       }
    }
 }                               /* paste_region () */
+
+END_OF_FUNCTION (paste_region);
 
 
 /*! \brief Pastes user-defined layer(s)
@@ -1712,6 +1760,8 @@ void paste_region_special (int tx, int ty)
    }                            /* for (zy = 0; zy <= cbh; zy++) */
 }                               /* paste_region_special () */
 
+END_OF_FUNCTION (paste_region_special);
+
 
 /*! \brief Displays the text on the screen
  *
@@ -1737,6 +1787,8 @@ void print_sfont (int x, int y, char *string, BITMAP * where)
       masked_blit (font6, where, 0, c * 6, i * 6 + x, y, 6, 6);
    }
 }                               /* print_sfont () */
+
+END_OF_FUNCTION (print_sfont);
 
 
 /*! \brief Mouse and keyboard input
@@ -2347,6 +2399,8 @@ void process_controls (void)
       x = htiles - 1;
 }                               /* process_controls () */
 
+END_OF_FUNCTION (process_controls);
+
 
 /*! \brief Resize the current map
  *
@@ -2475,6 +2529,8 @@ void resize_map (void)
    clipb = 0;
 }                               /* resize_map () */
 
+END_OF_FUNCTION (resize_map);
+
 
 /*! \brief Handy-dandy help screen
  *
@@ -2482,6 +2538,8 @@ void resize_map (void)
  */
 void show_help (void)
 {
+// This line turns off other/indent.pro indentation settings:
+// *INDENT-OFF*
    int this_counter;
    #define NUMBER_OF_ITEMS 55
 
@@ -2542,6 +2600,8 @@ void show_help (void)
       "",
       "                [PRESS ESC OR ENTER]                 "
    };
+// This turns the other/indent.pro settings back on:
+// *INDENT-ON*
 
    rectfill (screen, (19 * 6) - 5, 30, (54 * 8) + 5, NUMBER_OF_ITEMS * 7 + 40,
              0);
@@ -2556,6 +2616,8 @@ void show_help (void)
    yninput ();
 
 }                               /* show_help () */
+
+END_OF_FUNCTION (show_help);
 
 
 /*! \brief The opposite of shutdown, maybe?
@@ -2660,6 +2722,8 @@ void startup (void)
    showing.last_layer = draw_mode;
 }                               /* startup () */
 
+END_OF_FUNCTION (startup);
+
 
 /*! \brief Update the tileset
  *
@@ -2678,6 +2742,8 @@ void update_tileset (void)
    icon_set = 0;
    destroy_bitmap (pcx_buffer);
 }                               /* update_tileset () */
+
+END_OF_FUNCTION (update_tileset);
 
 
 /*! \brief Save the whole map as a pcx
@@ -2735,6 +2801,8 @@ void visual_map (void)
    }
 }                               /* visual_map () */
 
+END_OF_FUNCTION (visual_map);
+
 
 /*! \brief Wait for ENTER key
  *
@@ -2751,6 +2819,8 @@ void wait_enter (void)
          done = 1;
    }
 }                               /* wait_enter () */
+
+END_OF_FUNCTION (wait_enter);
 
 
 /*! \brief Clear the contents of a map
@@ -2773,6 +2843,8 @@ void wipe_map (void)
    /* TT FIXED: Forgot to get rid of all the entities! */
    init_entities ();
 }                               /* wipe_map () */
+
+END_OF_FUNCTION (wipe_map);
 
 
 /*! \brief Keyboard input for yes/no question
@@ -2797,3 +2869,5 @@ int yninput (void)
    }
    return done - 1;
 }                               /* yninput () */
+
+END_OF_FUNCTION (yninput);

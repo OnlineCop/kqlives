@@ -841,4 +841,6 @@ void getfont (void)
    for (a = 0; a < 546; a++)
       for (b = 0; b < 6; b++)
          putpixel (font6, b, a, clr[(int) *ptr++]);
-}
+}                               /* getfont () */
+
+END_OF_FUNCTION (getfont);

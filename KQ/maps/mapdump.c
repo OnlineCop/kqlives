@@ -87,6 +87,8 @@ void bufferize (void)
    memset (o_map, 0, gmap.xsize * gmap.ysize);
 }                               /* bufferize () */
 
+END_OF_FUNCTION (bufferize);
+
 
 /*! \brief Load map to modify
  *
@@ -170,27 +172,32 @@ void load_map_batch (const char *fname)
 
 }                               /* load_map () */
 
+END_OF_FUNCTION (load_map_batch);
+
 
 /*! \brief Display help on the command syntax */
 static void usage (char *argv)
 {
-   printf("Map to PCX converter for KQ.\n");
-   printf("Usage: %s [+/-][options] filename(s)\n", argv);
-   printf("Options:\n");
-   printf("   +  includes the option: it WILL appear in the PCX image.\n");
-   printf("   -  negates an option: it will not appear in the PCX image.\n");
-   printf("   1  shows layer 1 (default ON)\n");
-   printf("   2  shows layer 2 (default ON)\n");
-   printf("   3  shows layer 3 (default ON)\n");
-   printf("   e  shows the entities (default OFF)\n");
-   printf("   o  shows the obstacles (default OFF)\n");
-   printf("   s  shows the shadows (default ON)\n");
-   printf("   z  shows the zones (default OFF)\n");
-   printf("   filename  is the .MAP file(s) to be used\n\n");
-   printf("Example: %s +1oz -23es\n", argv);
-   printf("  Output will be a map with only level 1, obstacles, and zones showing.\n");
-   printf("  Layers 2 and 3, entities, and shadows will not be included.\n\n");
-}
+   printf ("Map to PCX converter for KQ.\n");
+   printf ("Usage: %s [+/-][options] filename(s)\n", argv);
+   printf ("Options:\n");
+   printf ("   +  includes the option: it WILL appear in the PCX image.\n");
+   printf ("   -  negates an option: it will not appear in the PCX image.\n");
+   printf ("   1  shows layer 1 (default ON)\n");
+   printf ("   2  shows layer 2 (default ON)\n");
+   printf ("   3  shows layer 3 (default ON)\n");
+   printf ("   e  shows the entities (default OFF)\n");
+   printf ("   o  shows the obstacles (default OFF)\n");
+   printf ("   s  shows the shadows (default ON)\n");
+   printf ("   z  shows the zones (default OFF)\n");
+   printf ("   filename  is the .MAP file(s) to be used\n\n");
+   printf ("Example: %s +1oz -23es\n", argv);
+   printf ("  Output will be a map with only level 1, obstacles, and zones");
+   printf (" showing.\n");
+   printf ("  Layers 2 and 3, entities, and shadows will not be included.\n");
+}                               /* usage () */
+
+END_OF_FUNCTION (void usage);
 
 
 /*! \brief Perform visual affects to output PCX file according
@@ -281,6 +288,8 @@ void visual_map_ex (const char *op)
    }
 }                               /* visual_map () */
 
+END_OF_FUNCTION (visual_map_ex);
+
 
 int main (int argc, char *argv[])
 {
@@ -299,7 +308,7 @@ int main (int argc, char *argv[])
 
    for (i = 1; i < argc; i++) {
       if (argv[i][0] == '-') {
-         if (strcmp(argv[i] + 1, "-help") == 0) {
+         if (strcmp (argv[i] + 1, "-help") == 0) {
             usage (*argv);
             return 0;
          }
@@ -363,4 +372,4 @@ int main (int argc, char *argv[])
    return 0;
 }                               /* main () */
 
-END_OF_MAIN ()
+END_OF_MAIN ();

@@ -81,9 +81,9 @@
 /*! Name of the current map */
 char curmap[16];
 /*! Names of the tile sets (in the datafile) */
-char icon_sets[7][16] = { "LAND_PCX", "NEWTOWN_PCX", "CASTLE_PCX",
-   "INCAVE_PCX", "VILLAGE_PCX", "MOUNT_PCX", "SHRINE_BMP"
-};
+char icon_sets[7][16] = {
+   "LAND_PCX", "NEWTOWN_PCX", "CASTLE_PCX", "INCAVE_PCX", "VILLAGE_PCX",
+   "MOUNT_PCX", "SHRINE_BMP"};
 
 
 

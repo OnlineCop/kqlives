@@ -67,6 +67,8 @@ void displace_entities (void)
    }
 }                               /* displace_entities () */
 
+END_OF_FUNCTION (displace_entities);
+
 
 /*! \brief Draw the entities
  *
@@ -98,6 +100,8 @@ void draw_ents (void)
       }
    }
 }                               /* draw_ents () */
+
+END_OF_FUNCTION (draw_ents);
 
 
 /* \brief Display the entity menu
@@ -210,6 +214,8 @@ void draw_entdata (int en)
    blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
 }                               /* draw_entdata () */
 
+END_OF_FUNCTION (draw_entdata);
+
 
 /*! \brief Remove an entity from the map
  *
@@ -254,6 +260,8 @@ void erase_entity (int pex, int pey)
    /* Oh yea, and do this too */
    number_of_ents--;
 }                               /* erase_entity () */
+
+END_OF_FUNCTION (erase_entity);
 
 
 /*! \brief Prepares the entity array for new entries
@@ -320,6 +328,8 @@ void init_entities (void)
    number_of_ents = 0;
 }                               /* init_entities () */
 
+END_OF_FUNCTION (init_entities);
+
 
 /*! \brief Place an entity on the map
  *
@@ -358,6 +368,8 @@ void place_entity (int ex, int ey)
    strcpy (gent[number_of_ents].script, "");    /* Pre-defined movement (pace, dance...) */
    number_of_ents++;
 }                               /* place_entity () */
+
+END_OF_FUNCTION (place_entity);
 
 
 /*! \brief Update stats for entities
@@ -529,3 +541,5 @@ void update_entities (void)
    window_y = t_window_y;
    draw_mode = tdm;
 }                               /* update_entities () */
+
+END_OF_FUNCTION (update_entities);

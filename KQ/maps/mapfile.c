@@ -70,6 +70,8 @@ void prompt_load_map (void)
    return;
 }                               /* prompt_load_map () */
 
+END_OF_FUNCTION (prompt_load_map);
+
 
 /*! \brief Load a map
  *
@@ -144,6 +146,8 @@ void load_map (char *fname)
    return;
 }                               /* load_map () */
 
+END_OF_FUNCTION (load_map);
+
 
 /*! \brief Error in loading a map
  *
@@ -160,14 +164,15 @@ void error_load (char *fname)
    print_sfont (6, 14, strbuf, screen);
    wait_enter ();
    return;
-}
+}                               /* error_load () */
 
+END_OF_FUNCTION (error_load);
 
 
 /*! \brief Convert a PCX image to a map
  *
  * Take a PCX image and convert its values to make a map
- * 20040129 PH improved so you can reload pcx onto any layer 
+ * 20040129 PH improved so you can reload pcx onto any layer
  *          used to be only background or foreground
  */
 void make_mapfrompcx (void)
@@ -240,6 +245,8 @@ void make_mapfrompcx (void)
    }
 }                               /* make_mapfrompcx () */
 
+END_OF_FUNCTION (make_mapfrompcx);
+
 
 /*! \brief Convert map to PCX images
  *
@@ -271,6 +278,8 @@ void maptopcx (void)
    destroy_bitmap (pm);
    destroy_bitmap (pf);
 }                               /* maptopcx () */
+
+END_OF_FUNCTION (maptopcx);
 
 
 /*! \brief Create a new map
@@ -400,6 +409,8 @@ void new_map (void)
    //*map_fname = "";
 }                               /* new_map () */
 
+END_OF_FUNCTION (new_map);
+
 
 /*! \brief Save the current map
  *
@@ -469,3 +480,5 @@ void save_map (void)
       wait_enter ();
    }
 }                               /* save_map () */
+
+END_OF_FUNCTION (save_map);

@@ -200,7 +200,8 @@ static void process_entity (int target_entity)
          }
          if (g_ent[target_entity].framectr > 20)
             g_ent[target_entity].framectr = 0;
-         if (g_ent[target_entity].movcnt == 0 && g_ent[target_entity].moving > 0) {
+         if (g_ent[target_entity].movcnt == 0
+             && g_ent[target_entity].moving > 0) {
             g_ent[target_entity].moving = MOVE_NOT;
             if (target_entity < PSIZE) {
                steps++;
@@ -214,8 +215,10 @@ static void process_entity (int target_entity)
                }
                if (party[pidx[target_entity]].eqp[5] == I_REGENERATOR) {
                   party[pidx[target_entity]].hp++;
-                  if (party[pidx[target_entity]].hp > party[pidx[target_entity]].mhp)
-                     party[pidx[target_entity]].hp = party[pidx[target_entity]].mhp;
+                  if (party[pidx[target_entity]].hp >
+                      party[pidx[target_entity]].mhp)
+                     party[pidx[target_entity]].hp =
+                        party[pidx[target_entity]].mhp;
                }
             }
             if (target_entity == 0)
@@ -424,7 +427,8 @@ static void moveup (int target_entity)
    if (ty == 0)
       return;
    if (g_ent[target_entity].obsmode == 1
-       && (obstruction (tx, ty, 0, -1) || entityat (tx, ty - 1, target_entity)))
+       && (obstruction (tx, ty, 0, -1)
+           || entityat (tx, ty - 1, target_entity)))
       return;
    g_ent[target_entity].tiley--;
    g_ent[target_entity].moving = MOVE_UP;
@@ -508,7 +512,8 @@ static void moveleft (int target_entity)
    if (tx == 0)
       return;
    if (g_ent[target_entity].obsmode == 1
-       && (obstruction (tx, ty, -1, 0) || entityat (tx - 1, ty, target_entity)))
+       && (obstruction (tx, ty, -1, 0)
+           || entityat (tx - 1, ty, target_entity)))
       return;
    g_ent[target_entity].tilex--;
    g_ent[target_entity].moving = MOVE_LEFT;
@@ -796,7 +801,8 @@ void set_script (int target_entity, char *movestring)
    g_ent[target_entity].sidx = 0;
    g_ent[target_entity].cmdnum = 0;
    g_ent[target_entity].movemode = MM_SCRIPT;
-   strncpy (g_ent[target_entity].script, movestring, sizeof (g_ent[target_entity].script));
+   strncpy (g_ent[target_entity].script, movestring,
+            sizeof (g_ent[target_entity].script));
 }
 
 
@@ -902,7 +908,8 @@ static void target (int target_entity)
 static void chase (int target_entity)
 {
    if (g_ent[target_entity].chasing == 0) {
-      if (entity_near (target_entity, 0, 3) == 1 && rand () % 100 <= g_ent[target_entity].extra) {
+      if (entity_near (target_entity, 0, 3) == 1
+          && rand () % 100 <= g_ent[target_entity].extra) {
          g_ent[target_entity].chasing = 1;
          if (g_ent[target_entity].speed < 7)
             g_ent[target_entity].speed++;
