@@ -108,7 +108,7 @@ void draw_entdata (const int ent_index)
 
    normalize_view ();
    clear (double_buffer);
-   draw_map ();
+   preview_map ();
 
    ent_x = (gent[ent_index].tilex - window_x) * 16;
    ent_y = (gent[ent_index].tiley - window_y) * 16;
@@ -215,7 +215,7 @@ void erase_entity (const int ent_x, const int ent_y)
       return;
 
    /* This re-numerates the index of entities */
-   for (a = ent_index + 1; a < number_of_ents; a++) {
+   for (a = ent_index + 1; a <= number_of_ents; a++) {
       gent[a - 1] = gent[a];
       gent[a].chrx = 0;       /* Entity's identity (what s/he looks like) */
       gent[a].x = 0;          /* x-coord on map */
