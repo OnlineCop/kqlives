@@ -30,70 +30,22 @@ function postexec()
   if (get_progress(P_TALKBUTLER) == 0) then
     rest(200);
     bubble(8,"Welcome all.","","","");
-    bubble(8,"My name is Nostik.  The reason I",
-             "have gathered all of you here is",
-             "that I am in need of adventurers",
-             "to partake in a quest for me.");
-    bubble(8,"You eight were the",
-             "best candidates.","","");
-    bubble(8,"You see, for the past 15 years I",
-             "was a prisoner of the Ice-Lord",
-             "Malkaron. I thwarted him many",
-             "years ago and he sought revenge.");
-    bubble(8,"He captured me, tortured me and",
-             "then imprisoned me. Just",
-             "recently, I was released by",
-             "rebels of Malkaron's army.");
-    bubble(8,"I returned here where I was",
-             "hoping to start over. There is",
-             "just one problem.","");
-    bubble(8,"When I was captured by Malkaron",
-             "he took my most prized",
-             "possession. The item in question",
-             "was half of a magical artifact.");
-    bubble(8,"The artifact is called the Staff",
-             "of Xenarum. I quested long and",
-             "hard to find that one half of",
-             "it and then Malkaron stole it.");
-    bubble(8,"After escaping, I discovered",
-             "that Malkaron did not keep the",
-             "Staff. He gave it to someone",
-             "else long ago.");
-    bubble(8,"Therefore, that means that the",
-             "Staff could be anywhere, and",
-             "keep in mind that it was only",
-             "one of the two pieces.");
-    bubble(8,"I also need the other piece.",
-             "That's why I need you people to",
-             "search for me.","");
-    bubble(8,"This will be a difficult quest",
-             "and I am getting to old",
-             "for adventuring.","");
-    bubble(8,"I need you to search until you",
-             "find both pieces. Bring them to",
-             "me, and fame and fortune will",
-             "be yours.");
-    bubble(8,"Oh, before you go though, I have",
-             "a couple of things I need to",
-             "tell you about.","");
-    bubble(8,"The first thing is that this",
-             "quest is to remain as secret as",
-             "possible. Malkaron and his",
-             "cronies are all over the place.");
-    bubble(8,"That means that you should avoid",
-             "telling the citizens of this",
-             "land anything about your quest.","");
-    bubble(8,"Secondly, I'd appreciate it if",
-             "you didn't travel in groups any",
-             "bigger than two members.","");
-    bubble(8,"Large groups of adventurers",
-             "attract attention.","","");
-    bubble(8,"Aside from all this, you may do",
-             "whatever you have to in order to",
-             "complete this quest.","");
-    bubble(8,"Oh, and be sure to talk to my",
-             "butler before you leave. He has",
-             "something you will need.","");
+    bubble(8,"I am the legendary Nostik. I am a wizard. A very old wizard in fact. I know the secret of the Great Magic, and you have come to learn.");
+    bubble(8,"Be heretofore warned however: my words are not to be meddled with, for you are crunchy and taste good with...");
+    bubble(8,"Well, never mind. I shall get right to the point.");
+    bubble(8,"I have said that I am in need of adventurers to partake in a quest for me. You eight have shown great courage to stay. Courage alone isn't enough, however. You must prove your worthiness of this Great Magic. Does anyone wish to leave?");
+    set_ent_script(8,"W25F1W35F3W35F0W35F3W50");
+    wait_for_entity(8,8);
+    if (prompt(8,2,0,"Very well then. Do you need a background?",
+                     "","  yes","  no") == 0) then
+      -- yes
+      bubble(8,"A very long time ago, a great priest appeared at the Xenarum shrine. There he chose three Disciples to follow and learn of a better life. Some say that this priest was the very Adrial the Messiah.");
+      bubble(8,"Taking a non-violent approach to everything, Adrial chose Three Disciples to follow him and spread peace and knowledge around the land. Adrial taught of becoming the best that you can be in the followings of `The God'. The legend suggests that his Three Disciples were jealous of his connection with `The God' and betrayed him.");
+      bubble(8,"This is where you come in. Supposedly one Adrial's Disciples, Chaiman, kept a journal of his voyage. Inside the journal speaks of what actually happened with the miracles and everything. No one has ever seen this journal but word has it that it is kept somewhere in Xenarum. That land is inaccessible except with the Staff of Xenarum, which is the key to the Shifting Mounts.");
+      bubble(8,"Your journey is to find this Staff. Bring it to me; I must see what is in that journal! I am offering to teach any of you the Great Magic in exchange for that Staff.");
+      bubble(8,"You see now why I have chosen only the eight of you; this journey must be as inconspicuous as possible, as the Three Disciples may have minions everywhere. You can travel with anyone you wish, but please stay in groups of no more than two. More than that will draw attention to you, and may put all of us in jeopardy.");
+    end
+    bubble(8,"I thank you for your help. Talk to my butler before you leave and he will help you get started on your journey.");
   end
 end
 
@@ -134,7 +86,7 @@ function zone_handler(zn)
                "were supposed to see me before",
                "you left.");
       bubble(9,"Anyways, Master Nostik asked",
-               "me to give you this.","","");
+               "me to give you this.");
       LOC_talk_butler();
     end
 
@@ -149,7 +101,11 @@ function entity_handler(en)
     LOC_chit_chat(en);
 
   elseif (en == 8) then
-    bubble(8,"Good luck.","","","");
+    if (get_progress(P_TALKBUTLER) == 0) then
+      bubble(8,"Talk to my butler before you leave and he will help you get started on your journey.");
+    else
+      bubble(8,"Feel free to look through my books and scrolls. I have made a study about this Disciple's journal and you may learn much.");
+    end
 
   elseif (en == 9) then
     if (get_progress(P_TALKBUTLER) == 0) then
@@ -159,8 +115,7 @@ function entity_handler(en)
     elseif (get_progress(P_TALKBUTLER) == 1) then
       bubble(9,"Good luck.","","","");
     else
-      bubble(9,"I'm afraid Master Nostik is",
-               "away at present.","","");
+      bubble(9,"I'm afraid Master Nostik has already gone in search of the Staff of Xenarum.");
     end
 
   end
