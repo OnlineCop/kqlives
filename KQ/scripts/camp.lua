@@ -58,10 +58,10 @@ function zone_handler(zn)
     change_map("main", 235, 38, 235, 38);
 
   elseif (zn == 3) then
-    set_ent_script(22, "L1U2");
-    set_ent_script(23, "L1U3");
-    wait_for_entity(22, 23);
-    bubble(22, "You're not welcome here!");
+    set_ent_script(7, "L1U2");
+    set_ent_script(8, "L1U3");
+    wait_for_entity(7, 8);
+    bubble(7, "You're not welcome here!");
     drawmap();
     screen_dump();
     set_run(0);
@@ -70,38 +70,39 @@ function zone_handler(zn)
     if (get_alldead() == 1) then
       return;
     end
-    set_ent_active(22, 0);
-    set_ent_active(23, 0);
+    set_ent_active(7, 0);
+    set_ent_active(8, 0);
     set_zone(23, 24, 0);
     set_zone(24, 24, 0);
 
   elseif (zn == 4) then
-    set_ent_script(14, "R1U6L2F1");
-    set_ent_script(15, "L2U3");
-    set_ent_script(16, "U1L2U1");
-    set_ent_script(17, "U2L2U2");
-    wait_for_entity(14, 17);
+    set_ent_script(12, "U1L2U1");
+    set_ent_script(13, "L2U3");
+    set_ent_script(14, "U2L2U2");
+    set_ent_script(15, "R1U6L2F1");
+    wait_for_entity(12, 15);
     set_run(0);
     combat(4);
     set_run(1);
     if (get_alldead() == 1) then
       return;
     end
+    set_ent_active(12, 0);
+    set_ent_active(13, 0);
     set_ent_active(14, 0);
     set_ent_active(15, 0);
-    set_ent_active(16, 0);
-    set_ent_active(17, 0);
     set_zone(20, 43, 0);
     set_zone(21, 43, 0);
 
   elseif (zn == 5) then
-    set_ent_speed(10, 4);
-    set_ent_speed(11, 4);
-    set_ent_speed(12, 4);
-    set_ent_script(10, "R1D4L3D3");
-    set_ent_script(11, "L8U3");
-    set_ent_script(12, "U1L8U3");
-    wait_for_entity(10, 12);
+    set_ent_script(16, "R1D4L3D3");
+    set_ent_script(17, "L8U3");
+    if (get_numchrs() == 2 and get_ent_tilex(HERO2) == 32 and get_ent_tiley(HERO2) == 49) then
+      set_ent_script(18, "U1L8U2");
+    else
+      set_ent_script(18, "U1L8U3");
+    end
+    wait_for_entity(16, 18);
     
     set_run(0);
     combat(3);
@@ -109,42 +110,38 @@ function zone_handler(zn)
     if (get_alldead() == 1) then
       return;
     end
-    set_ent_active(10, 0);
-    set_ent_active(11, 0);
-    set_ent_active(12, 0);
+    set_ent_active(16, 0);
+    set_ent_active(17, 0);
+    set_ent_active(18, 0);
     set_zone(32, 48, 0);
     set_zone(34, 52, 0);
     set_zone(34, 53, 0);
 
   elseif (zn == 6) then
-    set_ent_script(6, "D4R1D2");
-    set_ent_script(7, "D6R2F0");
-    set_ent_script(8, "D1R1D1");
-    set_ent_script(9, "R1D3");
-    wait_for_entity(6, 9);
+    set_ent_script(19, "R1D3");
+    set_ent_script(20, "D1R1D1");
+    set_ent_script(21, "D6R2F0");
+    set_ent_script(22, "D4R1D2");
+    wait_for_entity(19, 22);
     set_run(0);
     combat(4);
     set_run(1);
     if (get_alldead() == 1) then
       return;
     end
-    set_ent_active(6, 0);
-    set_ent_active(7, 0);
-    set_ent_active(8, 0);
-    set_ent_active(9, 0);
+    set_ent_active(19, 0);
+    set_ent_active(20, 0);
+    set_ent_active(21, 0);
+    set_ent_active(22, 0);
     set_zone(36, 28, 0);
     set_zone(37, 28, 0);
 
   elseif (zn == 7) then
-    set_ent_speed(10, 5);
-    if (get_numchrs() == 1) then
-      set_ent_script(10, "R1D4L3D8R1");
-    else
-      set_ent_script(10, "R1D4L3D8F3");
-    end
-    set_ent_script(11, "L2D1L2");
-    set_ent_script(12, "U1L5");
-    wait_for_entity(10, 12);
+    set_ent_speed(16, 6);
+    set_ent_script(16, "R1D4L3D7R1F0");
+    set_ent_script(17, "L2D1L2");
+    set_ent_script(18, "U1L5");
+    wait_for_entity(16, 18);
 
     set_run(0);
     combat(3);
@@ -152,9 +149,9 @@ function zone_handler(zn)
     if (get_alldead() == 1) then
       return;
     end
-    set_ent_active(10, 0);
-    set_ent_active(11, 0);
-    set_ent_active(12, 0);
+    set_ent_active(16, 0);
+    set_ent_active(17, 0);
+    set_ent_active(18, 0);
     set_zone(32, 48, 0);
     set_zone(34, 52, 0);
     set_zone(34, 53, 0);
@@ -195,8 +192,8 @@ end
 
 
 function entity_handler(en)
-  if (en == 5) then
-    bubble(5, "You have to get through us to get to them.");
+  if (en == 28) then
+    bubble(en, "You have to get through us to get to them.");
     drawmap();
     set_run(0);
     combat(5);
@@ -204,21 +201,21 @@ function entity_handler(en)
     if (get_alldead() == 1) then
       return;
     end
-    set_ent_active(5, 0);
-    set_ent_active(34, 0);
-    set_ent_active(35, 0);
-    set_ent_active(36, 0);
+    set_ent_active(28, 0);
+    set_ent_active(25, 0);
+    set_ent_active(26, 0);
+    set_ent_active(27, 0);
 
-  elseif (en == 19) then
+  elseif (en == 9) then
     if (get_numchrs() > 1) then
       bubble(en, "Intruders!");
     else
       bubble(en, "Intruder!");
     end
 
-    set_ent_script(20, "D1R6U1");
-    set_ent_script(21, "D1R3U2");
-    wait_for_entity(20, 21);
+    set_ent_script(10, "D1R6U1");
+    set_ent_script(11, "D1R3U2");
+    wait_for_entity(10, 11);
     drawmap();
     set_run(0);
     combat(3);
@@ -226,17 +223,17 @@ function entity_handler(en)
     if (get_alldead() == 1) then
       return;
     end
-    set_ent_active(19, 0);
-    set_ent_active(20, 0);
-    set_ent_active(21, 0);
+    set_ent_active(9, 0);
+    set_ent_active(10, 0);
+    set_ent_active(11, 0);
 
-  elseif (en == 25) then
+  elseif (en == 5) then
     bubble(en, "Thanks for your help! We should be able to find our way out.");
     -- TT: Remember to add the 'thankful soldier' #1 benefits back in Randen
 
-  elseif (en == 26) then
+  elseif (en == 6) then
     bubble(en, "Thanks for your help! We should be able to find our way out.");
-    -- TT: Remember to add the 'thankful soldier' #1 benefits back in Randen
+    -- TT: Remember to add the 'thankful soldier' #2 benefits back in Randen
 
   elseif (en == 37) then
     local a;
@@ -252,17 +249,17 @@ function entity_handler(en)
     bubble(HERO1, "Hmm... this almost sounds as though the whole thing was planned.");
     bubble(en, "Hmm...");
     bubble(HERO1, "Excuse me, Mr. Mayor.");
-    bubble(4, "Yes?");
+    bubble(2, "Yes?");
     bubble(HERO1, "Do you think that this could have possibly been a planned attack with the purpose of trying to kidnap you?");
-    bubble(4, "I can't see what these vermin would hope to gain by imprisoning me, but I suppose it's possible.");
+    bubble(2, "I can't see what these vermin would hope to gain by imprisoning me, but I suppose it's possible.");
     bubble(en, "That's got to be it; there were far too many of them for it to be a random encounter with brigands.");
     bubble(en, "And here I was blaming myself for the whole thing.");
     bubble(HERO1, "It's not your fault. You did your job, the mayor is unharmed.");
-    bubble(4, "So, can we get out of here now or what?");
+    bubble(2, "So, can we get out of here now or what?");
     set_ent_facing(en, 1);
     bubble(en, "Yes sir!");
     set_ent_facing(en, 0);
-    bubble(en, "I'll go back to Randen with the mayor. Why don't you meet me there afterwards?");
+    bubble(en, "I'll go back to Randen with the mayor. Why don't you meet me there after?");
     bubble(HERO1, "Sure.");
 
     set_ftile(41, 14, 0);
@@ -288,35 +285,26 @@ function entity_handler(en)
     set_autoparty(0);
     orient_heroes();
 
-    set_ent_script(37, "D5");
-    wait_for_entity(37, 37);
-
-    set_ent_script(3, "L1D4");
-    wait_for_entity(3, 3);
-
-    set_ent_script(4, "D4");
-    wait_for_entity(4, 4);
-
-    set_ent_script(2, "L1D3");
-    wait_for_entity(2, 2);
-
-    set_ent_script(1, "R1D2");
-    wait_for_entity(1, 1);
-
-    set_ent_script(0, "R2D1");
-    wait_for_entity(0, 0);
-
-    set_ent_script(37, "L4D10");
-    set_ent_script(3, "D1L4D10");
-    set_ent_script(4, "D2L4D10");
-    set_ent_script(2, "D3L4D10");
-    set_ent_script(1, "D4L4D10");
-    set_ent_script(0, "D5L4D10");
-
     -- TT: This keeps the dead brigands from trying to move too
-    for a = 6, 36, 1 do
+    for a = 5, 36, 1 do
       set_ent_movemode(a, 0);
     end
+
+    set_ent_script(37, "D5");
+    set_ent_script(4, "L1D4");
+    set_ent_script(3, "D1L1D3");
+    set_ent_script(2, "R1D1L1D2");
+    set_ent_script(1, "R2D1L1D1");
+    set_ent_script(0, "R3D1L1F0");
+
+    wait_for_entity(0, 37);
+
+    set_ent_script(37, "L4D10");
+    set_ent_script(4, "D1L4D10");
+    set_ent_script(3, "D3L4D10");
+    set_ent_script(2, "D2L4D10");
+    set_ent_script(1, "D4L4D10");
+    set_ent_script(0, "D5L4D10");
 
     wait_for_entity(0, 37);
 
@@ -328,7 +316,7 @@ function entity_handler(en)
 
     set_progress(P_FOUNDMAYOR, 1);
 
-  elseif (en == 13 or en == 18 or en == 24 or (en >= 27 and en <= 33)) then
+  elseif (en == 23 or en == 24 or (en >= 29 and en <= 36)) then
     if (get_numchrs() > 1) then
       bubble(en, "Intruders!");
     else
