@@ -172,7 +172,8 @@ function entity_handler(en)
             wait_for_entity(HERO1, HERO2);
             orient_heroes();
           end
-
+          set_ent_script(6, "L1D2");
+          wait_for_entity(6, 6);
           bubble(6, "Good luck in your endeavours.");
           if (get_progress(P_OLDPARTNER) > 0) then
             set_progress(P_FINALPARTNER, get_progress(P_OLDPARTNER));
