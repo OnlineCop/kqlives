@@ -116,6 +116,16 @@
 #define P_EARLYPROGRESS   88
 #define P_OPALDRAGONOUT   89
 #define P_OPALARMOUR      90
+/* These are to store who's waiting in the manor */
+#define P_MANORPARTY      91
+#define P_MANORPARTY1     92
+#define P_MANORPARTY2     93
+#define P_MANORPARTY3     94
+#define P_MANORPARTY4     95
+#define P_MANORPARTY5     96
+#define P_MANORPARTY6     97
+#define P_MANORPARTY7     98
+
 /* 'specials' */
 #define P_SHOPSTART       1750
 #define P_SKIPINTRO       1997
