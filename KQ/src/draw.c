@@ -22,7 +22,7 @@
 /*! \file
  * \brief Character and Map drawing
  * \author JB
- * \date ??????
+ * \date ????????
  *
  * Includes functions to draw characters, text and maps.
  * Also some colour manipulation.
@@ -903,8 +903,8 @@ static void set_textpos (int who)
 /*! \brief Draw text box
  *
  * Hmm... I think this function draws the textbox :p
- * \date 20030417 PH This now daws the text as well as just the box
  *
+ * \date 20030417 PH This now draws the text as well as just the box
  * \param   bstyle Style (B_TEXT or B_THOUGHT)
 */
 static void draw_textbox (int bstyle)
@@ -960,6 +960,7 @@ static void draw_textbox (int bstyle)
      }
    else
       return;
+
    for (a = 0; a < gbbh; a++)
      {
         print_font (double_buffer, gbbx + 8 + xofs,
@@ -1443,6 +1444,7 @@ int prompt (int who, int numopt, int bstyle, char *sp1, char *sp2, char *sp3,
             char *sp4)
 {
    int ly, stop = 0, ptr = 0, rd = 1, a;
+
    gbbw = 1;
    gbbh = 0;
    gbbs = 0;

@@ -94,14 +94,17 @@ int vx, vy, mx, my;
 int steps = 0, lastm[PSIZE];
 
 /*! 23: various global bitmaps */
-BITMAP *double_buffer, *map_icons[MAX_TILES],
+BITMAP *double_buffer, *fx_buffer, *map_icons[MAX_TILES],
    *back, *tc, *tc2, *bub[8], *b_shield, *b_shell, *b_repulse, *b_mp,
    *cframes[NUM_FIGHTERS][MAXCFRAMES], *tcframes[NUM_FIGHTERS][MAXCFRAMES],
    *frames[MAXCHRS][MAXFRAMES],
    *eframes[MAXE][MAXEFRAMES], *pgb[9], *sfonts[5], *bord[8],
    *menuptr, *mptr, *sptr, *stspics, *sicons, *bptr,
    *missbmp, *noway, *upptr, *dnptr,
-   *shadow[MAX_SHADOWS], *kfonts /*, *portrait[MAXCHRS] */ ;
+   *shadow[MAX_SHADOWS], *kfonts;
+#if 0
+   *shadow[MAX_SHADOWS], *kfonts, *portrait[MAXCHRS];
+#endif
 
 /*! Layers in the map */
 unsigned short *map_seg = NULL, *b_seg = NULL, *f_seg = NULL;
@@ -130,7 +133,7 @@ s_anim adata[MAX_ANIM];
 /*! Number of enemies */
 int noe = 0;
 /*! Identifies characters in the party */
-int pidx[PSIZE];
+int pidx[MAXCHRS];
 /*! Number of characters in the party */
 int numchrs = 0;
 /*! Current gold */
@@ -301,6 +304,7 @@ char ctext[39];
 #ifdef KQ_CHEATS
 static void data_dump (void);
 #endif
+static BITMAP *alloc_bmp (int, int, char *);
 static void allocate_stuff (void);
 static void load_data (void);
 static void load_heroes (void);
@@ -320,7 +324,9 @@ COLOR_MAP cmap;
 unsigned char can_run = 1;
 /*! Is the map description is displayed on screen? */
 unsigned char display_desc = 0;
-/*! Which map layers should be drawn. These are set when the map is loaded; see change_map()*/
+/*! Which map layers should be drawn. These are set when the map is loaded;
+    see change_map()
+*/
 unsigned char draw_background = 1, draw_middle = 1,
    draw_foreground = 1, draw_shadow = 1;
 /*! Items in inventory. g_inv[][0] is the item id, g_inv[][1] is the quantity */
@@ -339,10 +345,6 @@ int cheat_loaded = 0;
 /*! Is cheat mode activated? */
 int cheat = 0;
 #endif
-
-/* These are unused:
- * int warx = 0, wary = 0;
-*/
 
 /*! The number of frames per second */
 #define KQ_FPS 100
@@ -411,8 +413,37 @@ void readcontrols (void)
    left = key[kleft];
    right = key[kright];
 
+   poll_music ();
+
+   /* PH 2002.09.21 in case this is needed (not sure on which platforms it is) */
+   if (keyboard_needs_poll ())
+     {
+        poll_keyboard ();
+     }
+
+   /* Tells us that a certain key (or keys) are being held down */
+   if (key[kup])
+      up = 1;
+   if (key[kdown])
+      down = 1;
+   if (key[kleft])
+      left = 1;
+   if (key[kright])
+      right = 1;
+
+   if (key[kesc])
+      besc = 1;
+   if (key[kalt])
+      balt = 1;
+   if (key[kctrl])
+      bctrl = 1;
+   if (key[kenter])
+      benter = 1;
+
+   /* Emergency kill-game set. */
    if (key[KEY_ALT] && key[KEY_X])
       program_death ("X-ALT pressed... exiting.");
+
 #ifdef KQ_CHEATS
    if (key[KEY_F11])
       data_dump ();
@@ -475,7 +506,6 @@ void data_dump (void)
    ff = fopen ("progress.log", "w");
    if (!ff)
       program_death ("Could not open progress.log!");
-   /* PH FIXME (wrong filename!)  program_death ("Could not open treasure.log!"); */
    for (a = 0; a < 200; a++)
       fprintf (ff, "%d = %d\n", a, progress[a]);
    fclose (ff);
@@ -488,16 +518,16 @@ void data_dump (void)
  * This is used to determine what part of the map is
  * visible on the screen.  Usually, the party can walk around
  * in the center of the screen a bit without causing it to
- * scroll.  The centre parameter is mostly used for warps and
- * such, so that the players start in the centre of the screen.
+ * scroll.  The center parameter is mostly used for warps and
+ * such, so that the players start in the center of the screen.
  *
- * \param centre Unused variable
+ * \param center Unused variable
 */
-void calc_viewport (int centre)
+void calc_viewport (int center)
 {
    int sx, sy, bl, br, bu, bd, zx, zy;
 
-   (void) centre;               // ML,2002.09.21: unused variable right now, casting to void to prevent warnings
+   (void) center;               // ML,2002.09.21: unused variable right now, casting to void to prevent warnings
 
    if (vfollow && numchrs > 0)
      {
@@ -509,10 +539,12 @@ void calc_viewport (int centre)
         zx = vx;
         zy = vy;
      }
+
 /*
-  if (centre)
-  {
+  if (center)
+    {
 */
+
    bl = 152;
    br = 152;
    bu = 112;
@@ -1255,6 +1287,18 @@ static void startup (void)
 
    unload_datafile_object (pcxb);
    load_heroes ();
+   pcxb = load_datafile_object (PCX_DATAFILE, "KQFACES_PCX");
+
+   if (!pcxb)
+      program_death ("Could not load kqfaces.pcx!");
+
+   for (p = 0; p < 4; p++)
+     {
+        blit ((BITMAP *) pcxb->dat, portrait[p], 0, p * 40, 0, 0, 40, 40);
+        blit ((BITMAP *) pcxb->dat, portrait[p + 4], 40, p * 40, 0, 0, 40, 40);
+     }
+
+   unload_datafile_object (pcxb);
    load_data ();
    init_players ();
 
@@ -1295,6 +1339,7 @@ static void load_data (void)
          blit ((BITMAP *) pb->dat, eframes[q][p], p * 16, q * 16, 0, 0, 16, 16);
    unload_datafile_object (pb);
 }
+
 
 #ifdef DEBUGMODE
 /*! \brief Create bitmap
@@ -1385,6 +1430,7 @@ static void allocate_stuff (void)
 
    double_buffer = alloc_bmp (352, 280, "double_buffer");
    back = alloc_bmp (352, 280, "back");
+   fx_buffer = alloc_bmp (352, 280, "fx_buffer");
 
    for (p = 0; p < MAX_SHADOWS; p++)
       shadow[p] = alloc_bmp (16, 16, "shadow[x]");
@@ -1418,7 +1464,31 @@ static void allocate_stuff (void)
 }
 
 
+/*! \brief Create bitmap
+ *
+ * This function allocates a bitmap and kills the
+ * program if it fails. The name you supply is
+ * shown if this happens.
+ *
+ * \param   bx Width
+ * \param   by Height
+ * \param   bname Name of bitmap
+ * \returns the pointer to the created bitmap
+*/
+static BITMAP *alloc_bmp (int bx, int by, char *bname)
+{
+   BITMAP *tmp;
 
+   tmp = create_bitmap (bx, by);
+
+   if (!tmp)
+     {
+        sprintf (strbuf, "Could not allocate %s!.", bname);
+        program_death (strbuf);
+     }
+
+   return tmp;
+}
 
 
 
@@ -1479,6 +1549,7 @@ static void deallocate_stuff (void)
 
    destroy_bitmap (double_buffer);
    destroy_bitmap (back);
+   destroy_bitmap (fx_buffer);
 
    for (p = 0; p < MAX_SHADOWS; p++)
       destroy_bitmap (shadow[p]);
@@ -1565,6 +1636,7 @@ void load_heroes (void)
 
    unload_datafile_object (pcxb);
 }
+
 
 /*! \brief Initialise all players
  *
@@ -1763,7 +1835,11 @@ int in_party (int pn)
 {
    int a;
 
+   /* TT: updated for in_party */
+   for (a = 0; a < MAXCHRS; a++)
+#if 0
    for (a = 0; a < numchrs; a++)
+#endif
       if (pidx[a] == pn)
          return a + 1;
 
@@ -1818,7 +1894,6 @@ int main (void)
                   timer_count--;
                   poll_music ();
                   process_entities ();
-
 
                   frate++;
 

@@ -578,8 +578,10 @@ int start_menu (int c)
              clear_to_color (double_buffer, 15 - a);
              masked_blit ((BITMAP *) bg->dat, double_buffer, 0, 0, 0,
                           60 - (a * 4), 320, 124);
-/*              masked_blit ((BITMAP *) bg->dat, double_buffer, 0, 148, 0, 172, */
-/*                           320, 52); */
+#if 0
+             masked_blit ((BITMAP *) bg->dat, double_buffer, 0, 148, 0, 172,
+                          320, 52);
+#endif
              blit2screen (0, 0);
              wait (a == 0 ? 500 : 100);
           }
@@ -601,8 +603,10 @@ int start_menu (int c)
              clear_bitmap (double_buffer);
              masked_blit ((BITMAP *) bg->dat, double_buffer, 0, 0, 0, 0, 320,
                           124);
-/*              masked_blit ((BITMAP *) bg->dat, double_buffer, 0, 148, 0, 172, */
-/*                           320, 52); */
+#if 0
+             masked_blit ((BITMAP *) bg->dat, double_buffer, 0, 148, 0, 172,
+                          320, 52);
+#endif
              menubox (double_buffer, 120, 116, 10, 4, BLUE);
              print_font (double_buffer, 136, 124, "Continue", FNORMAL);
              print_font (double_buffer, 136, 132, "New Game", FNORMAL);

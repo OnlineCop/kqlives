@@ -183,7 +183,7 @@ static void process_entity (int i)
                                g_ent[i].speed++;
                             g_ent[i].delay = 0;
                             /* PH FIXME check for emoved here? or not? */
-                            if (g_ent[0].tilex > g_ent[i].tilex)
+                            if (g_ent[0].tilex > g_ent[i].tilex && emoved == 0)
                                moveright (i);
                             if (g_ent[0].tilex < g_ent[i].tilex && emoved == 0)
                                moveleft (i);
@@ -254,7 +254,7 @@ static void process_entity (int i)
                 g_ent[i].framectr = 0;
              if (g_ent[i].movcnt == 0 && g_ent[i].moving > 0)
                {
-                  g_ent[i].moving = 0;
+                  g_ent[i].moving = MOVE_NOT;
                   if (i < PSIZE)
                     {
                        steps++;

@@ -288,6 +288,7 @@ int select_encounter (int en, int etid)
 /*    fclose (edat); */
 /* } */
 
+
 /*! \brief Array of enemy 'fighters' 
  */
 static s_fighter **enemies = NULL;
@@ -310,7 +311,9 @@ void load_enemies (void)
         /* Already done the loading */
         return;
      }
-/*    klog ("Loading enemies from disk"); */
+#if 0
+   klog ("Loading enemies from disk");
+#endif
    enemy_pcx = load_datafile_object (PCX_DATAFILE, "ENEMY2_PCX");
    if (enemy_pcx == NULL)
      {
@@ -389,19 +392,23 @@ void load_enemies (void)
         f->imb_s = tmp;
         fscanf (edat, "%d", &tmp);
         f->imb_a = tmp;
-/*         sprintf (strbuf, "Img for %d: (%d,%d)x(%d,%d)", enemies_n - 1, lx, ly, */
-/*                  f->cw, f->cl); */
-/*         klog (strbuf); */
+#if 0
+        sprintf (strbuf, "Img for %d: (%d,%d)x(%d,%d)", enemies_n - 1, lx, ly,
+                 f->cw, f->cl);
+        klog (strbuf);
+#endif
         f->img =
            create_sub_bitmap ((BITMAP *) enemy_pcx->dat, lx, ly, f->cw, f->cl);
         for (p = 0; p < 2; p++)
           {
              fscanf (edat, "%d", &tmp);
-/*              if (tmp > 0) */
-/*                { */
-/*                   sprintf (strbuf, "%s has imbued %d", f->name, tmp); */
-/*                   klog (strbuf); */
-/*                } */
+#if 0
+             if (tmp > 0)
+               {
+                  sprintf (strbuf, "%s has imbued %d", f->name, tmp);
+                  klog (strbuf);
+               }
+#endif
              f->imb[p] = tmp;
           }
      }
@@ -442,6 +449,7 @@ void load_enemies (void)
    fclose (edat);
 }
 
+
 /*! \brief Unload the data loaded by load_enemies()
  * 
  * JB would have said 'duh' here! Not much explanation required.
@@ -464,6 +472,7 @@ void unload_enemies (void)
      }
 }
 
+
 /*! \brief Prepare an enemy for battle
  *
  * Fills out a supplied s_fighter structure with the default,
@@ -475,7 +484,7 @@ void unload_enemies (void)
  * \returns the value of en, for convenience, or NULL if an error occurred.
  * \sa make_enemy_by_name()
  */
-static s_fighter *make_enemy (int who, s_fighter * en)
+static s_fighter *make_enemy (int who, s_fighter *en)
 {
    if (enemies && who >= 0 && who < enemies_n)
      {
@@ -490,6 +499,7 @@ static s_fighter *make_enemy (int who, s_fighter * en)
         return NULL;
      }
 }
+
 
 #if 0
 /*! \brief Prepare an enemy for battle
@@ -521,6 +531,8 @@ static s_fighter *make_enemy_by_name (const char *who, s_fighter * en)
    return NULL;
 }
 #endif
+
+
 /*! \brief Initialise enemy & sprites
  *
  * If required, load the all the enemies, then
@@ -531,7 +543,6 @@ static s_fighter *make_enemy_by_name (const char *who, s_fighter * en)
  * \author PH
  * \date 2003????
  */
-
 void enemy_init (void)
 {
    int i, p;
@@ -554,6 +565,7 @@ void enemy_init (void)
           }
      }
 }
+
 
 #if 0
 /*! \brief Copy frames from main bitmap

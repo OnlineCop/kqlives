@@ -357,11 +357,11 @@ static const struct luaL_reg lrs[] = {
    {"check_key", KQ_check_key},
    {"log", KQ_log},
    {"wait_enter", KQ_wait_enter},
+   {"istable", KQ_istable},
    /*   {"get_tile_all", KQ_get_tile_all}, */
    {"copy_tile_all", KQ_copy_tile_all},
    {"use_up", KQ_use_up},
    {"battle", KQ_battle},
-   {"istable", KQ_istable},
    {NULL, NULL}
 };
 
@@ -405,6 +405,8 @@ fields[] =
    {
    "mmp", 8}
 ,};
+
+
 static int fieldcmp (const void *pa, const void *pb)
 {
    const struct s_field *a = (const struct s_field *) pa;
@@ -412,9 +414,10 @@ static int fieldcmp (const void *pa, const void *pb)
    return strcmp (a->name, b->name);
 }
 
-/*! \brief Sort field array 
- * 
- * This uses qsort to sort the fields, ready for bsearch to search them 
+
+/*! \brief Sort field array
+ *
+ * This uses qsort to sort the fields, ready for bsearch to search them
  * \author PH
  * \date Created 20030407
  */
@@ -423,6 +426,7 @@ static void fieldsort (void)
    qsort (fields, sizeof (fields) / sizeof (*fields), sizeof (struct s_field),
           fieldcmp);
 }
+
 
 /*! \brief Get the field number from a name.
  *
@@ -453,7 +457,7 @@ static int get_field (const char *n)
 }
 
 
-/*! \brief Object interface for party 
+/*! \brief Object interface for party
  *
  * This implements the settable tag method
  */
@@ -503,7 +507,7 @@ int KQ_party_setter (lua_State * L)
 }
 
 
-/*! \brief Object interface for party 
+/*! \brief Object interface for party
  *
  * This implements the gettable tag method
  */
@@ -555,13 +559,12 @@ int KQ_party_getter (lua_State * L)
 
 /*! \brief Initialise the object interface for heroes and entities
  *
- * This registers a new tag type for the heroes.
- * and adds the gettable method to it. It then creates global variables for all 
- * heroes with their names as defined (Sensar etc.)
- * Then it sets the 'player[]' global (all heroes) and the
- * 'party[]' global (all heroes currently in play)
- * Finally it sets the 'entity[]' array
- * 
+ * This registers a new tag type for the heroes and adds the gettable method
+ * to it. It then creates global variables for all heroes with their names as
+ * defined (Sensar etc.). Then it sets the 'player[]' global (all heroes) and
+ * the 'party[]' global (all heroes currently in play). Finally it sets the
+ * 'entity[]' array.
+ *
  * \param L the Lua state object
  */
 static void init_obj (lua_State * L)
@@ -585,7 +588,6 @@ static void init_obj (lua_State * L)
    lua_newtable (L);
    for (i = 0; i < numchrs; ++i)
      {
-
         lua_getglobal (L, party[pidx[i]].name);
         /* also fill in the entity reference */
         lua_pushstring (L, "_ent");
@@ -604,7 +606,7 @@ static void init_obj (lua_State * L)
      }
    lua_setglobal (L, "player");
    /* entity[] array
-    * at the moment,  NPCs aren't fully implemented - the
+    * at the moment, NPCs aren't fully implemented - the
     * only thing you can do is call bubble()/thought()
     * so they can just be an index
     */
@@ -629,6 +631,7 @@ DATAFILE *g_df;
 lua_State *theL;
 char tmap_name[16];
 int tmx, tmy, tmvx, tmvy, changing_map = 0;
+
 
 /*! \brief Process HERO1 and HERO2 pseudo-entity numbers
  *
@@ -1818,16 +1821,16 @@ static int KQ_drawmap (lua_State * L)
    return 0;
 }
 
-/*! \brief implement Lua prompt dialog 
+
+/*! \brief implement Lua prompt dialog
  *
- * This is an interface from the old-style prompt
- * to the new prompt_ex.
+ * This is an interface from the old-style prompt to the new prompt_ex.
  * In the old style you could specify talk prompts or thought prompts,
  * and specify the number of options (n). The prompt would consist of (L-n)
  * text lines and n options, where L is the number of _non-blank_ lines,
  * up to 4.
  *
- * \date 20030506 
+ * \date 20030506
  * \author PH
  * \bug Long strings will overflow the buffer
  */
@@ -1836,19 +1839,24 @@ static int KQ_prompt (lua_State * L)
    char *txt[4];
    char pbuf[256];
    int a, b, nopts, nonblank;
+
    /* The B_TEXT or B_THOUGHT is ignored */
    b = real_entity_num (lua_tonumber (L, 1));
    nopts = lua_tonumber (L, 2);
+
    if (nopts > 4)
       nopts = 4;
+
    pbuf[0] = '\0';
    nonblank = 0;
+
    for (a = 0; a < 4; a++)
      {
         txt[a] = (char *) lua_tostring (L, a + 4);
         if (txt[a] && (strlen (txt[a]) > 0))
            nonblank = a + 1;
      }
+
    if (nonblank > nopts)
      {
         /* bug: long strings will crash it! */
@@ -1968,7 +1976,7 @@ static int KQ_add_chr (lua_State * L)
 {
    int a = lua_tonumber (L, 1);
 
-   if (numchrs < PSIZE)
+   if (numchrs < MAXCHRS)
      {
         pidx[numchrs] = a;
         g_ent[numchrs].active = 1;
@@ -1992,9 +2000,9 @@ static int KQ_remove_chr (lua_State * L)
              a--;
              pidx[a] = -1;
              numchrs--;
-             if (a != PSIZE - 1)
+             if (a != MAXCHRS - 1)
                {
-                  for (b = 0; b < PSIZE - 1; b++)
+                  for (b = 0; b < MAXCHRS - 1; b++)
                     {
                        if (pidx[b] == -1)
                          {
@@ -2029,7 +2037,7 @@ static int KQ_krnd (lua_State * L)
 /*  * \param   L::1 Which person is touching the fire */
 /*  * \returns 0 when done */
 /* *\/ */
-/* static int KQ_touch_fire (lua_State *L) */
+/* static int KQ_touch_fire (lua_State * L) */
 /* { */
 /*    switch ((int) lua_tonumber (L, 1)) */
 /*      { */
@@ -2162,7 +2170,7 @@ static int KQ_krnd (lua_State * L)
 /*  * \param   L::1 Which person is reading the book */
 /*  * \returns 0 when done */
 /* *\/ */
-/* static int KQ_book_talk (lua_State *L) */
+/* static int KQ_book_talk (lua_State * L) */
 /* { */
 /*    switch ((int) lua_tonumber (L, 1)) */
 /*      { */
@@ -2843,33 +2851,33 @@ static int KQ_use_up (lua_State * L)
 /* extern char *parse_string (const char *); */
 
 /* The text_ex function just takes one string, and does the line breaks automatically.
- * The old bubble/thought functions which took four strings are handled by 
+ * The old bubble/thought functions which took four strings are handled by
  * code in global.lua. This is for backward compatibility with the old scripts.
  * You can use either, but bubble_ex() does avoid some extra processing.
  * The 'ent' param can be a number, or an object e.g. party[0].
  */
 
-int KQ_bubble_ex (lua_State * l)
+int KQ_bubble_ex (lua_State * L)
 {
    int entity;
    s_entity *ent;
-   const char *msg = lua_tostring (l, 2);
+   const char *msg = lua_tostring (L, 2);
 
-   switch (lua_type (l, 1))
+   switch (lua_type (L, 1))
      {
-     case LUA_TNUMBER:
-        entity = real_entity_num (lua_tonumber (l, 1));
-        break;
-     case LUA_TTABLE:
-        lua_pushstring (l, "_ent");
-        lua_rawget (l, 1);
-        ent = lua_touserdata (l, -1);
-        /* convert from pointer to an index for text_ex */
-        entity = ent ? ent - g_ent : 255;
-        break;
-     default:
-        entity = 255;
-        break;
+        case LUA_TNUMBER:
+           entity = real_entity_num (lua_tonumber (L, 1));
+           break;
+        case LUA_TTABLE:
+           lua_pushstring (L, "_ent");
+           lua_rawget (L, 1);
+           ent = lua_touserdata (L, -1);
+           /* convert from pointer to an index for text_ex */
+           entity = ent ? ent - g_ent : 255;
+           break;
+        default:
+           entity = 255;
+           break;
      }
    text_ex (B_TEXT, entity, msg);
    return 0;
@@ -2921,7 +2929,6 @@ int KQ_istable (lua_State * L)
  *
  * Initialise the Lua scripting engine by loading from a file. A new VM is
  * created each time.
- *
  *
  * \param   fname Base name of script; xxxxx loads script scripts/xxxxx.lob
 */
@@ -3057,7 +3064,7 @@ void do_postexec (void)
  * that the hero has just stepped on.  This function is not called for zone 0,
  * unless the map property zero_zone is non-zero.
  *
- * PH used the Lua ref system here; should be quicker to 
+ * PH used the Lua ref system here; should be quicker to
  * get a reference to 'zone_handler' than to do a look-up
  * based on the name. Whether this is significant I don't know.
  *

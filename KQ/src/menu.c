@@ -588,7 +588,7 @@ void update_equipstats (void)
  * \param   who Index of player to convert
  * \returns tf (fighter structure)
 */
-s_fighter *player2fighter (int who, s_fighter * pf)
+s_fighter *player2fighter (int who, s_fighter *pf)
 {
    int j, a, b;
    int z[5] = { 5, 3, 2, 1, 4 };

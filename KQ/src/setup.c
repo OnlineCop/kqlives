@@ -218,6 +218,7 @@ void parse_setup (void)
    fclose (s);
 }
 
+
 /*! \brief Draw a setting and its title
  * 
  * Helper function for the config menu.
@@ -234,6 +235,7 @@ static void citem (int y, char *caption, char *value)
    print_font (double_buffer, 280 - 8 * strlen (value) + xofs, y + yofs, value,
                FNORMAL);
 }
+
 
 /*! \brief Display configuration menu
  *
@@ -628,6 +630,7 @@ static int getavalue (char *capt, int minu, int maxu, int cv, int sp)
    return cv;
 }
 
+
 /*! \brief Show keys help
  * Show a screen with the keys listed, and other helpful info
  * \author PH
@@ -813,12 +816,14 @@ void play_effect (int efc, int panning)
    SAMPLE *samp;
    PALETTE whiteout, old;
    pause_music ();
+
    /* Patch provided by mattrope: */
    /* sfx array is empty if sound is not initialized */
    if (is_sound != 0)
       samp = (SAMPLE *) sfx[efc]->dat;
    else
       samp = NULL;              /* PH not strictly needed but I added it */
+
    switch (efc)
      {
      default:
@@ -834,11 +839,15 @@ void play_effect (int efc, int panning)
            play_sample (samp, gsvol, panning, 1000, 0);
         clear_bitmap (double_buffer);
         blit (back, double_buffer, xofs, yofs, xofs, yofs, 320, 240);
+
         if (in_combat == 0)
           {
              xo = xofs;
              yo = yofs;
           }
+
+        blit (fx_buffer, double_buffer, xo, yo, xo, yo, 320, 240);
+
         for (a = 0; a < 8; a++)
           {
              blit2screen (xo + bx[a], yo + by[a]);
@@ -873,7 +882,7 @@ void play_effect (int efc, int panning)
                   wait (10);
                }
           }
-        blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
+        blit (fx_buffer, double_buffer, 0, 0, 0, 0, 352, 280);
         break;
      }
    resume_music ();
