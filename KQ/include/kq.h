@@ -244,9 +244,9 @@
 */
 typedef struct
 {
-  unsigned short start; /*!< First tile in sequence  */
-  unsigned short end; /*!< Last tile in sequence */
-  unsigned short delay; /*!< Frames to wait between tile changes */ 
+   unsigned short start;        /*!< First tile in sequence  */
+   unsigned short end;          /*!< Last tile in sequence */
+   unsigned short delay;        /*!< Frames to wait between tile changes */
 }
 s_anim;
 

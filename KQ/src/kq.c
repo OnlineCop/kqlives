@@ -84,19 +84,18 @@ int steps = 0, lastm[PSIZE];
 
 /*! 23: various global bitmaps */
 BITMAP *double_buffer, *map_icons[MAX_TILES],
-  *back, *tc, *tc2, *bub[8], *b_shield, *b_shell, *b_repulse, *b_mp,
-*cframes[NUM_FIGHTERS][MAXCFRAMES], *tcframes[NUM_FIGHTERS][MAXCFRAMES],
-*frames[MAXCHRS][MAXFRAMES],
-*eframes[MAXE][MAXEFRAMES], *pgb[9], *sfonts[5], *bord[8],
-*menuptr, *mptr, *sptr, *stspics, *sicons, *bptr,
-*missbmp, *noway, *upptr, *dnptr,
-*shadow[MAX_SHADOWS],
- *kfonts, *portrait[MAXCHRS];
+   *back, *tc, *tc2, *bub[8], *b_shield, *b_shell, *b_repulse, *b_mp,
+   *cframes[NUM_FIGHTERS][MAXCFRAMES], *tcframes[NUM_FIGHTERS][MAXCFRAMES],
+   *frames[MAXCHRS][MAXFRAMES],
+   *eframes[MAXE][MAXEFRAMES], *pgb[9], *sfonts[5], *bord[8],
+   *menuptr, *mptr, *sptr, *stspics, *sicons, *bptr,
+   *missbmp, *noway, *upptr, *dnptr,
+   *shadow[MAX_SHADOWS], *kfonts, *portrait[MAXCHRS];
 
 /*! Layers in the map */
 unsigned short *map_seg, *b_seg, *f_seg;
 /*! Zone, shadow and obstacle layers */
-unsigned char  *z_seg, *s_seg, *o_seg;
+unsigned char *z_seg, *s_seg, *o_seg;
 /*! keeps track of tasks completed and treasure chests opened */
 unsigned char *progress, *treasure;
 /*! Current map */
@@ -129,7 +128,7 @@ int gp = 0;
 int xofs, yofs;
 /*! Sound and music volume */
 int gsvol = 250, gmvol = 250;
-/*! Is the party under 'automatic' (i.e. scripted) control */ 
+/*! Is the party under 'automatic' (i.e. scripted) control */
 unsigned char autoparty = 0;
 /* Not used:
 unsigned char autofollow = 1;
@@ -151,7 +150,7 @@ unsigned char kq_version = 91;
 unsigned char hold_fade = 0;
 /*! True if player can save at this point */
 unsigned char cansave = 0;
-/*! True if the intro is to be skipped (the bit where the heroes learn of the quest) */ 
+/*! True if the intro is to be skipped (the bit where the heroes learn of the quest) */
 unsigned char skip_intro = 0;
 /*! Graphics mode settings */
 unsigned char wait_retrace = 0, windowed = 0, stretch_view = 0;
@@ -276,7 +275,7 @@ int noi;
 /*! Items in a shop */
 int shin[12];
 /*! Should we display a box with ctext in it (used in combat) */
-int  dct = 0;
+int dct = 0;
 /*! Name of current spell or special ability */
 char ctext[39];
 
@@ -303,8 +302,8 @@ unsigned char can_run = 1;
 /*! Is the map description is displayed on screen? */
 unsigned char display_desc = 0;
 /*! Which map layers should be drawn. These are set when the map is loaded; see change_map()*/
-unsigned char draw_background = 1, draw_middle = 1, 
-  draw_foreground = 1, draw_shadow = 1;
+unsigned char draw_background = 1, draw_middle = 1,
+   draw_foreground = 1, draw_shadow = 1;
 /*! Items in inventory. g_inv[][0] is the item id, g_inv[][1] is the quantity */
 unsigned short g_inv[MAX_INV][2];
 /*! View coordinates; the view is a way of selecting a subset of th emap to show. */
@@ -359,6 +358,7 @@ void my_counter (void)
 
    timer_count++;
 }
+
 END_OF_FUNCTION (my_counter);
 
 
@@ -1663,4 +1663,5 @@ int main (void)
    deallocate_stuff ();
    return 0;
 }
+
 END_OF_MAIN ();
