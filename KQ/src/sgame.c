@@ -499,7 +499,7 @@ static int confirm_save (void)
    return 0;
 }
 
-
+extern void display_credits (void);
 
 /*! \brief Main menu screen
  *
@@ -578,14 +578,10 @@ int start_menu (int c)
              clear_to_color (double_buffer, 15 - a);
              masked_blit ((BITMAP *) bg->dat, double_buffer, 0, 0, 0,
                           60 - (a * 4), 320, 124);
-             masked_blit ((BITMAP *) bg->dat, double_buffer, 0, 148, 0, 172,
-                          320, 52);
+/*              masked_blit ((BITMAP *) bg->dat, double_buffer, 0, 148, 0, 172, */
+/*                           320, 52); */
              blit2screen (0, 0);
-             if (a == 0)
-                wait (500);
-
-             else
-                wait (100);
+             wait (a == 0 ? 500 : 100);
           }
         if (c == 0)
            wait (500);
@@ -605,17 +601,25 @@ int start_menu (int c)
              clear_bitmap (double_buffer);
              masked_blit ((BITMAP *) bg->dat, double_buffer, 0, 0, 0, 0, 320,
                           124);
-             masked_blit ((BITMAP *) bg->dat, double_buffer, 0, 148, 0, 172,
-                          320, 52);
+/*              masked_blit ((BITMAP *) bg->dat, double_buffer, 0, 148, 0, 172, */
+/*                           320, 52); */
              menubox (double_buffer, 120, 116, 10, 4, BLUE);
              print_font (double_buffer, 136, 124, "Continue", FNORMAL);
              print_font (double_buffer, 136, 132, "New Game", FNORMAL);
              print_font (double_buffer, 144, 140, "Config", FNORMAL);
              print_font (double_buffer, 152, 148, "Exit", FNORMAL);
              draw_sprite (double_buffer, menuptr, 120, ptr * 8 + 124);
-             blit2screen (0, 0);
+             rd = 0;
           }
+        display_credits ();
+        blit2screen (0, 0);
         readcontrols ();
+        if (bhelp)
+          {
+             unpress ();
+             show_help ();
+             rd = 1;
+          }
         if (up)
           {
              unpress ();
@@ -623,6 +627,7 @@ int start_menu (int c)
              if (ptr < 0)
                 ptr = 3;
              play_effect (SND_CLICK, 128);
+             rd = 1;
           }
         if (down)
           {
@@ -631,6 +636,7 @@ int start_menu (int c)
              if (ptr > 3)
                 ptr = 0;
              play_effect (SND_CLICK, 128);
+             rd = 1;
           }
         if (balt)
           {
@@ -671,8 +677,9 @@ int start_menu (int c)
    unload_datafile_object (bg);
    if (stop == 2)
      {
+        /* New game init */
         for (a = 0; a < MAXCHRS; a++)
-           memcpy (&party[a], &players[a], sizeof (s_player));
+           memcpy (&party[a], &players[a].plr, sizeof (s_player));
         init_players ();
         memset (progress, 0, 2000);
         memset (treasure, 0, 1000);

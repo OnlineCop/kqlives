@@ -175,12 +175,16 @@ void draw_mainmenu (int swho)
 /*! \brief Draw player's stats
  *
  * Draw the terse stats of a single player.
+ * \param where bitmap to draw onto
+ * \param i player (index in party array) to show info for
+ * \param dx x-coord of stats view
+ * \param dy y-coord of stats view
 */
 void draw_playerstat (BITMAP * where, int i, int dx, int dy)
 {
    int j;
 
-   draw_sprite (where, portrait[i], dx, dy);
+   draw_sprite (where, players[i].portrait, dx, dy);
    print_font (where, dx + 48, dy, party[i].name, FNORMAL);
    draw_stsicon (where, 0, i, 8, dx + 48, dy + 8);
    print_font (where, dx + 48, dy + 16, "LV", FGOLD);
@@ -406,6 +410,7 @@ void spec_items (void)
 /*! \brief Draw a player's status screen
  *
  * Draw the verbose stats of a single player.
+ * \param ch character to draw (index in pidx array)
 */
 static void status_screen (int ch)
 {

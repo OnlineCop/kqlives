@@ -78,6 +78,16 @@ static int combat_castable (int, int);
 /*! \brief Set up heroes
  *
  * This sets up the heroes' fighter vars and frames.
+ * The frames are:
+ * - Facing away
+ * - Facing towards
+ * - Arms out
+ * - Dead
+ * - Victory
+ * - Arms forward
+ *
+ * Then an array to the right where each character is wielding 
+ * some different luminous green weapons.
 */
 void hero_init (void)
 {

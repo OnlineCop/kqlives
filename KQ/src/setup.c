@@ -45,7 +45,7 @@ char debugging = 0;
 /*! Speed-up for slower machines */
 char slow_computer = 0;
 /*! Look up table of names for keys */
-char keynames[115][12] = {
+char *keynames[115] = {
    "",
    "A", "B", "C", "D", "E", "F", "G", "H", "I", "J",
    "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T",
@@ -92,7 +92,7 @@ void parse_setup (void)
 {
    FILE *s;
    int dab = 0;
-
+   /* Default key assignments */
    kup = KEY_UP;
    kdown = KEY_DOWN;
    kright = KEY_RIGHT;
@@ -217,7 +217,22 @@ void parse_setup (void)
    fclose (s);
 }
 
-
+/*! \brief Draw a setting and its title
+ * 
+ * Helper function for the config menu.
+ * The setting title is drawn, then its value right-aligned.
+ * \author PH
+ * \date 20030527
+ * \param y y-coord of line
+ * \param caption title of the setting (e.g. "Windowed mode:")
+ * \param value the setting (e.g. "Yes")
+ */
+static void citem (int y, char *caption, char *value)
+{
+   print_font (double_buffer, 48 + xofs, y + yofs, caption, FNORMAL);
+   print_font (double_buffer, 280 - 8 * strlen (value) + xofs, y + yofs, value,
+               FNORMAL);
+}
 
 /*! \brief Display configuration menu
  *
@@ -229,8 +244,8 @@ void config_menu (void)
 {
    int stop = 0, ptr = 0, rd = 1, p;
    int temp_key = 0;
-
-   char dc[16][40] = {
+   /* helper strings */
+   char *dc[16] = {
       "Display KQ in a window.",
       "Stretch to fit 640x480 resolution.",
       "Display the frame rate during play.",
@@ -259,125 +274,39 @@ void config_menu (void)
              print_font (double_buffer, 96 + xofs, 8 + yofs,
                          "KQ Configuration", FGOLD);
              menubox (double_buffer, 32 + xofs, 24 + yofs, 30, 19, BLUE);
-             print_font (double_buffer, 48 + xofs, 32 + yofs,
-                         "Windowed Mode:", FNORMAL);
-             print_font (double_buffer, 48 + xofs, 40 + yofs,
-                         "Stretch Display:", FNORMAL);
-             print_font (double_buffer, 48 + xofs, 48 + yofs,
-                         "Show Frame Rate:", FNORMAL);
-             print_font (double_buffer, 48 + xofs, 56 + yofs,
-                         "Wait for Retrace:", FNORMAL);
-             print_font (double_buffer, 48 + xofs, 72 + yofs, "Up Key:",
-                         FNORMAL);
-             print_font (double_buffer, 48 + xofs, 80 + yofs, "Down Key:",
-                         FNORMAL);
-             print_font (double_buffer, 48 + xofs, 88 + yofs, "Left Key:",
-                         FNORMAL);
-             print_font (double_buffer, 48 + xofs, 96 + yofs, "Right Key:",
-                         FNORMAL);
-             print_font (double_buffer, 48 + xofs, 104 + yofs, "Confirm Key:",
-                         FNORMAL);
-             print_font (double_buffer, 48 + xofs, 112 + yofs, "Cancel Key:",
-                         FNORMAL);
-             print_font (double_buffer, 48 + xofs, 120 + yofs, "Menu Key:",
-                         FNORMAL);
-             print_font (double_buffer, 48 + xofs, 128 + yofs,
-                         "System Menu Key:", FNORMAL);
-             print_font (double_buffer, 48 + xofs, 144 + yofs,
-                         "Sound System:", FNORMAL);
+             citem (32, "Windowed mode:", windowed == 1 ? "YES" : "NO");
+             citem (40, "Stretch Display:", stretch_view == 1 ? "YES" : "NO");
+             citem (48, "Show Frame Rate:", show_frate == 1 ? "YES" : "NO");
+             citem (56, "Wait for Retrace:", wait_retrace == 1 ? "YES" : "NO");
+             citem (72, "Up Key:", keynames[kup]);
+             citem (80, "Down Key:", keynames[kdown]);
+             citem (88, "Left Key:", keynames[kleft]);
+             citem (96, "Right Key:", keynames[kright]);
+             citem (104, "Confirm Key:", keynames[kalt]);
+             citem (112, "Cancel Key:", keynames[kctrl]);
+             citem (120, "Menu Key:", keynames[kenter]);
+             citem (128, "System Menu Key:", keynames[kesc]);
+             citem (144, "Sound System:", is_sound ? "ON" : "OFF");
+
              if (is_sound == 2)
                {
-                  print_font (double_buffer, 48 + xofs, 152 + yofs,
-                              "Sound Volume:", FNORMAL);
-                  print_font (double_buffer, 48 + xofs, 160 + yofs,
-                              "Music Volume:", FNORMAL);
+                  sprintf (strbuf, "%3d%%", gsvol * 100 / 250);
+                  citem (152, "Sound Volume:", strbuf);
+
+                  sprintf (strbuf, "%3d%%", gmvol * 100 / 250);
+                  citem (160, "Music Volume:", strbuf);
                }
-             if (is_sound == 0)
+             else
                {
                   print_font (double_buffer, 48 + xofs, 152 + yofs,
                               "Sound Volume:", FDARK);
                   print_font (double_buffer, 48 + xofs, 160 + yofs,
                               "Music Volume:", FDARK);
                }
-             print_font (double_buffer, 48 + xofs, 176 + yofs,
-                         "Slow Computer:", FNORMAL);
 
-             if (windowed == 1)
-                print_font (double_buffer, 256 + xofs, 32 + yofs, "YES",
-                            FNORMAL);
-             else
-                print_font (double_buffer, 264 + xofs, 32 + yofs, "NO",
-                            FNORMAL);
-             if (stretch_view == 1)
-                print_font (double_buffer, 256 + xofs, 40 + yofs, "YES",
-                            FNORMAL);
-             else
-                print_font (double_buffer, 264 + xofs, 40 + yofs, "NO",
-                            FNORMAL);
-             if (show_frate == 1)
-                print_font (double_buffer, 256 + xofs, 48 + yofs, "YES",
-                            FNORMAL);
-             else
-                print_font (double_buffer, 264 + xofs, 48 + yofs, "NO",
-                            FNORMAL);
-             if (wait_retrace == 1)
-                print_font (double_buffer, 256 + xofs, 56 + yofs, "YES",
-                            FNORMAL);
-             else
-                print_font (double_buffer, 264 + xofs, 56 + yofs, "NO",
-                            FNORMAL);
-             print_font (double_buffer,
-                         280 - (strlen (keynames[kup]) * 8) + xofs, 72 + yofs,
-                         keynames[kup], FNORMAL);
-             print_font (double_buffer,
-                         280 - (strlen (keynames[kdown]) * 8) + xofs,
-                         80 + yofs, keynames[kdown], FNORMAL);
-             print_font (double_buffer,
-                         280 - (strlen (keynames[kleft]) * 8) + xofs,
-                         88 + yofs, keynames[kleft], FNORMAL);
-             print_font (double_buffer,
-                         280 - (strlen (keynames[kright]) * 8) + xofs,
-                         96 + yofs, keynames[kright], FNORMAL);
-             print_font (double_buffer,
-                         280 - (strlen (keynames[kalt]) * 8) + xofs,
-                         104 + yofs, keynames[kalt], FNORMAL);
-             print_font (double_buffer,
-                         280 - (strlen (keynames[kctrl]) * 8) + xofs,
-                         112 + yofs, keynames[kctrl], FNORMAL);
-             print_font (double_buffer,
-                         280 - (strlen (keynames[kenter]) * 8) + xofs,
-                         120 + yofs, keynames[kenter], FNORMAL);
-             print_font (double_buffer,
-                         280 - (strlen (keynames[kesc]) * 8) + xofs,
-                         128 + yofs, keynames[kesc], FNORMAL);
-             if (is_sound == 0)
-               {
-                  print_font (double_buffer, 256 + xofs, 144 + yofs, "OFF",
-                              FNORMAL);
-                  print_font (double_buffer, 256 + xofs, 152 + yofs, "N/A",
-                              FDARK);
-                  print_font (double_buffer, 256 + xofs, 160 + yofs, "N/A",
-                              FDARK);
-               }
-             else
-               {
-                  print_font (double_buffer, 264 + xofs, 144 + yofs, "ON",
-                              FNORMAL);
-                  sprintf (strbuf, "%3d%%", gsvol * 100 / 250);
-                  print_font (double_buffer, 248 + xofs, 152 + yofs, strbuf,
-                              FNORMAL);
-                  sprintf (strbuf, "%3d%%", gmvol * 100 / 250);
-                  print_font (double_buffer, 248 + xofs, 160 + yofs, strbuf,
-                              FNORMAL);
-               }
-             if (slow_computer == 1)
-                print_font (double_buffer, 256 + xofs, 176 + yofs, "YES",
-                            FNORMAL);
-             else
-                print_font (double_buffer, 264 + xofs, 176 + yofs, "NO",
-                            FNORMAL);
+             citem (176, "Slow Computer:", slow_computer ? "YES" : "NO");
 
-             // this affects the VISUAL placement of the arrow
+             /* this affects the VISUAL placement of the arrow */
              p = ptr;
              if (ptr > 3)
                 p++;
@@ -582,6 +511,7 @@ void config_menu (void)
 /*! \brief Process keypresses when mapping new keys
  *
  * This grabs whatever key is being pressed and returns it to the caller.
+ * PH 20030527 Removed call to keypressed() and added poll_music()
  *
  * \returns the key being pressed, 0 if error (or cancel?)
 */
@@ -591,11 +521,12 @@ static int getakey (void)
 
    clear_keybuf ();
    menubox (double_buffer, 108 + xofs, 108 + yofs, 11, 1, DARKBLUE);
-   print_font (double_buffer, 116 + xofs, 116 + yofs, "press a key", FNORMAL);
+   print_font (double_buffer, 116 + xofs, 116 + yofs, "Press a key", FNORMAL);
    blit2screen (xofs, yofs);
 
-   while (keypressed () == 0)
+   while (1)
      {
+        poll_music ();
         for (a = 0; a < KEY_MAX; a++)
            if (key[a] != 0)
               return a;
@@ -607,6 +538,7 @@ static int getakey (void)
 
 /*! \brief Play sound effects / music if adjusting it */
 /* TT: looks like a hack to me! :-) */
+/* PH: I cannot tell a lie: it was Matthew... */
 #define IF_VOLUME_ALERT() \
    if (!strcmp (capt, "Sound Volume")){\
    set_volume (cv * 10, 0);\
@@ -626,7 +558,7 @@ set_music_volume (cv / 25.5);
  * \param   maxu Maximum vlaue of option
  * \param   cv Current value (initial value)
  * \param   sp Show percent. If sp==1, show as a percentage of maxu
- * \returns the new value for option
+ * \returns the new value for option, or -1 if cancelled.
 */
 static int getavalue (char *capt, int minu, int maxu, int cv, int sp)
 {
@@ -695,6 +627,35 @@ static int getavalue (char *capt, int minu, int maxu, int cv, int sp)
    return cv;
 }
 
+/*! \brief Show keys help
+ * Show a screen with the keys listed, and other helpful info
+ * \author PH
+ * \date 20030527
+ */
+void show_help (void)
+{
+   menubox (double_buffer, 116 + xofs, yofs, 9, 1, BLUE);
+   print_font (double_buffer, 132 + xofs, 8 + yofs, "KQ Help", FGOLD);
+   menubox (double_buffer, 32 + xofs, 24 + yofs, 30, 20, BLUE);
+   menubox (double_buffer, xofs, 216 + yofs, 38, 1, BLUE);
+   print_font (double_buffer, 16 + xofs, 224 + yofs,
+               "Press CONFIRM to exit this screen", FNORMAL);
+   citem (72, "Up Key:", keynames[kup]);
+   citem (80, "Down Key:", keynames[kdown]);
+   citem (88, "Left Key:", keynames[kleft]);
+   citem (96, "Right Key:", keynames[kright]);
+   citem (104, "Confirm Key:", keynames[kalt]);
+   citem (112, "Cancel Key:", keynames[kctrl]);
+   citem (120, "Menu Key:", keynames[kenter]);
+   citem (128, "System Menu Key:", keynames[kesc]);
+   do
+     {
+        blit2screen (xofs, yofs);
+        readcontrols ();
+     }
+   while (!balt);
+   unpress ();
+}
 
 
 /*! \brief Set mode
@@ -869,7 +830,7 @@ void play_effect (int efc, int panning)
         /* PH What is this line for? */
         blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
         if (is_sound != 0)
-            play_sample (samp, gsvol, panning, 1000, 0);
+           play_sample (samp, gsvol, panning, 1000, 0);
         clear_bitmap (double_buffer);
         blit (back, double_buffer, xofs, yofs, xofs, yofs, 320, 240);
         if (in_combat == 0)

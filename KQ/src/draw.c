@@ -173,7 +173,8 @@ void convert_cframes (int who, int st, int fn, int aflag)
 
 /*! \brief Restore colours
  *
- * Restore specified fighter frames to normal color.
+ * Restore specified fighter frames to normal color. This is done
+ * by blitting the 'master copy' from tcframes.
  *
  * \param   who Character to restore
  * \param   aflag If ==1 then ignore \p who and convert all frames
