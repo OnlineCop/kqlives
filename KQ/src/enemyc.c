@@ -592,8 +592,8 @@ static int enemy_stscheck (int who, int ws, int s)
 /*! \brief check skills
  *
  * Very simple... see if the skill that was selected can be used.
- * \param w
- * \param ws
+ * \param w enemy index
+ * \param ws enemy skill index
 */
 static void enemy_skillcheck (int w, int ws)
 {

@@ -259,7 +259,7 @@ static int save_game (void)
    pack_fwrite (curmap, 16, sdat);
    pack_fwrite (progress, 2000, sdat);
    pack_fwrite (treasure, 1000, sdat);
-   pack_fwrite (shopq, NUMSHOPS * 12 * sizeof (shopq[0][0]), sdat);
+   pack_fwrite (shopq, NUMSHOPS * SHOPITEMS * sizeof (shopq[0][0]), sdat);
    pack_fwrite (g_inv, MAX_INV * 2 * sizeof (g_inv[0][0]), sdat);
    /* PH FIXME: do we _really_ want things like controls and screen */
    /* mode to be saved/loaded ? */
@@ -332,7 +332,7 @@ static int load_game (void)
    pack_fread (curmap, 16, sdat);
    pack_fread (progress, 2000, sdat);
    pack_fread (treasure, 1000, sdat);
-   pack_fread (shopq, NUMSHOPS * 12 * sizeof (shopq[0][0]), sdat);
+   pack_fread (shopq, NUMSHOPS * SHOPITEMS * sizeof (shopq[0][0]), sdat);
    pack_fread (g_inv, MAX_INV * 2 * sizeof (g_inv[0][0]), sdat);
    pack_fread (&gsvol, sizeof (gsvol), sdat);
    pack_fread (&gmvol, sizeof (gmvol), sdat);
@@ -649,7 +649,7 @@ int start_menu (int c)
         memset (treasure, 0, 1000);
         numchrs = 0;
         for (a = 0; a < NUMSHOPS; a++)
-           for (b = 0; b < 12; b++)
+           for (b = 0; b < SHOPITEMS; b++)
               shopq[a][b] = shops[a][b][1];
         for (b = 0; b < 2; b++)
           {

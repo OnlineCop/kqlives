@@ -691,7 +691,7 @@ static void border (BITMAP * where, int x, int y, int x2, int y2)
    putpixel (where, x2 - 4, y2 - 4, WHITE);
 }
 
-/*! \briefDraw menu box
+/*! \brief Draw menu box
  *
  * Draw a menubox.  This is kinda hacked because of translucency, but it
  * works.  I use the DARKBLUE define to draw a non-translucent box.

@@ -34,7 +34,21 @@
 #include "music.h"
 #include "timing.h"
 
+// TT add:
+/* vars: [NUMSHOPS] = index of shop
+ *       [SHOPITEMS] = number of items a shop can sell
+ *       [3] = info about items sold:
+ *          [0] = index of item
+ *          [1] = quantity of items
+ *          [2] = quantity of items (special)
+ *                After long gameplay, shops will sell
+ *                quantity of #[2] of items instead of #[1]
+ *                (see shop() for details)
+*/
+unsigned short shops[NUMSHOPS][SHOPITEMS][3] = {
+#if 0
 unsigned short shops[NUMSHOPS][12][3] = {
+#endif
    {{I_SHIELD1, 6, 10},
     {I_CAP1, 4, 10},
     {I_ROBE1, 3, 10},
@@ -347,7 +361,7 @@ unsigned short shops[NUMSHOPS][12][3] = {
     {0, 0, 0}},
 };
 
-unsigned short shopq[NUMSHOPS][12];
+unsigned short shopq[NUMSHOPS][SHOPITEMS];
 
 
 /*  internal variables  */
@@ -528,7 +542,11 @@ int shop (int shop_num)
 
    shop_no = shop_num;
    strcpy (sname, shopn[shop_no]);
+   // TT edit:
+   for (a = 0; a < SHOPITEMS; a++)
+#if 0
    for (a = 0; a < 12; a++)
+#endif
      {
         if (shops[shop_no][a][2] > 0)
            if ((khr * 60) + kmin - progress[P_SHOPSTART + shop_no] >
@@ -536,7 +554,12 @@ int shop (int shop_num)
               shopq[shop_no][a] = shops[shop_no][a][1];
         shin[a] = shops[shop_no][a][0];
      }
+   // TT add:
+   noi = SHOPITEMS-1;
+   for (a = SHOPITEMS-1; a >= 0; a--)
+#if 0
    for (a = 11; a >= 0; a--)
+#endif
       if (shin[a] == 0)
          noi = a;
    if (noi == 0)
@@ -982,7 +1005,10 @@ static void sell_item (int itno, int ni)
           {
              unpress ();
              gp += sp;
+             for (a = 0; a < SHOPITEMS; a++)
+#if 0
              for (a = 0; a < 12; a++)
+#endif
                {
                   if (l > 0 && shops[shop_no][a][0] == l)
                     {

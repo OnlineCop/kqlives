@@ -273,7 +273,7 @@ char sname[39];
 /*! Number of items in a shop */
 int noi;
 /*! Items in a shop */
-int shin[12];
+int shin[SHOPITEMS];
 /*! Should we display a box with ctext in it (used in combat) */
 int dct = 0;
 /*! Name of current spell or special ability */
