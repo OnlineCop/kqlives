@@ -205,7 +205,7 @@ void process_controls (void)
         /* TT: The Attribute must be 'Active' to be able to draw to the map */
 
         /* Toggle Entities Attribute */
-        if (k == KEY_F11)
+        if (k == KEY_E)
           {
              if (showing.entities == 1)
                {
@@ -317,10 +317,6 @@ void process_controls (void)
         if (k == KEY_D)
            displace_entities ();
 
-        /* Empty the contents of the clipboard */
-        if (k == KEY_E)
-           clipb = 0;
-
         /* Resize the map's height and width */
         if (k == KEY_R)
            resize_map ();
@@ -395,6 +391,8 @@ void process_controls (void)
                   copyx1 = copyx2 = -1;
                   copyy1 = copyy2 = -1;
                }
+             /* Empty the contents of the clipboard */
+             clipb = 0;
           }
 
         /* Change the values for the current mode */
@@ -709,13 +707,13 @@ void process_controls (void)
                 map[((gy + y) * gmap.xsize) + gx + x] = 0;
 
              /* Erase a tile from Layer 2 */
-             if (draw_mode == MAP_LAYER2 && dmode == 1)
+             if (draw_mode == MAP_LAYER2)
                 b_map[((gy + y) * gmap.xsize) + gx + x] = 0;
 
              /* Erase a tile from Layer 3 */
-             if (draw_mode == MAP_LAYER3 && dmode == 1)
+             if (draw_mode == MAP_LAYER3)
                 f_map[((gy + y) * gmap.xsize) + gx + x] = 0;
-          }
+          } /* if (dmode == 1) */
 
         /* Finish the Block Copy */
         if (draw_mode == BLOCK_COPY && copying == 1)
@@ -1966,7 +1964,7 @@ void show_help (void)
       "G  . . . . . . . . . . . . . . . . . . . .  Grab Tile",
       "L  . . . . . . . . . . . . . . . . . . . .  Last Zone",
       "",
-      "F11  . . . . . . . . . . . . . . . . . .  Entity Mode",
+      "E  . . . . . . . . . . . . . . . . . . .  Entity Mode",
       "O  . . . . . . . . . . . . . . . . . .  Obstacle Mode",
       "S  . . . . . . . . . . . . . . . . . . .  Shadow Mode",
       "Z  . . . . . . . . . . . . . . . . . . . .  Zone Mode",
