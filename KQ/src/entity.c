@@ -675,7 +675,7 @@ static void parsems (int n)
  * - B: start script again
  * - X+param: move to x-coord param
  * - Y+param: move to y-coord param
- * - F+param: face direction param
+ * - F+param: face direction param (0=S, 1=N, 2=W, 3=E)
  *
  * \param   n Entity to process
  */
