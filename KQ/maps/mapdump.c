@@ -104,8 +104,8 @@ void cleanup (void)
  */
 void error_load (const char *problem_file)
 {
-   ASSERT (problem_file);
    char err_msg[80];
+   ASSERT (problem_file);
 
    strcat (strncpy (err_msg, problem_file, sizeof (err_msg) - 1), "\n");
    TRACE ("%s: could not load %s\n", allegro_error, problem_file);
@@ -143,14 +143,15 @@ void usage (const char *argv)
 
 int main (int argc, char *argv[])
 {
+   char fn[PATH_MAX], *filenames[PATH_MAX];
+   int i, k, number_of_files = 0, verbose = 0;
+   COLOR_MAP cmap;
+
    /* Make sure that we have some sort of input; exit with error if not */
    if (argc == 1) {
       usage (argv[0]);
       return 0;
    }
-   char fn[PATH_MAX], *filenames[PATH_MAX];
-   int i, k, number_of_files = 0, verbose = 0;
-   COLOR_MAP cmap;
    allegro_init ();
    create_trans_table (&cmap, pal, 128, 128, 128, NULL);
    color_map = &cmap;
@@ -234,7 +235,7 @@ int main (int argc, char *argv[])
          if (verbose)
             fprintf (stdout, "- Loading file #%d: %s\n", i + 1,
                      (char *) filenames[i]);
-         replace_extension (fn, filenames[i], "pcx", sizeof (fn));
+         replace_extension (fn, filenames[i], "bmp", sizeof (fn));
          if (verbose)
             fprintf (stdout, "  - %s replaced by extension .PCX: %s\n",
                      filenames[i], fn);

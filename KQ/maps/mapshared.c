@@ -11,6 +11,7 @@
 
 #include <allegro.h>
 #include <string.h>
+#include <stdio.h>
 #include "mapdraw.h"
 #include "../include/disk.h"
 
