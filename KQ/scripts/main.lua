@@ -235,6 +235,89 @@ function zone_handler(zn)
   elseif (zn == 42) then
     change_map("unfinished", 0, 0, 0, 0);
 
+  elseif (zn == 43) then
+    warp(45, 24, 16);
+
+  elseif (zn == 44) then
+    warp(255, 73, 16);
+
+  elseif (zn == 45) then
+    warp(61, 58, 16);
+
+  elseif (zn == 46) then
+    warp(29, 33, 16);
+
+  elseif (zn == 47) then
+    warp(26, 53, 16);
+
+  elseif (zn == 48) then
+    warp(69, 56, 16);
+
+  elseif (zn == 49) then
+    warp(37, 81, 16);
+
+  elseif (zn == 50) then
+    warp(20, 47, 16);
+
+  elseif (zn == 51) then
+    warp(37, 52, 16);
+
+  elseif (zn == 52) then
+    warp(44, 71, 16);
+
+  elseif (zn == 53) then
+    warp(70, 40, 16);
+
+  elseif (zn == 54) then
+    warp(45, 45, 16);
+
+  elseif (zn == 55) then
+    warp(20, 53, 16);
+
+  elseif (zn == 56) then
+    warp(66, 45, 16);
+
+  elseif (zn == 57) then
+    warp(12, 85, 16);
+
+  elseif (zn == 58) then
+    warp(26, 47, 16);
+
+  elseif (zn == 59) then
+    warp(31, 77, 16);
+
+  elseif (zn == 60) then
+    warp(15, 94, 16);
+
+  elseif (zn == 61) then
+    warp(33, 119, 16);
+
+  elseif (zn == 62) then
+    warp(44, 84, 16);
+
+  elseif (zn == 63) then
+    warp(108, 101, 16);
+
+  elseif (zn == 64) then
+    warp(28, 118, 16);
+
+  elseif (zn == 65) then
+    warp(85, 129, 16);
+
+  elseif (zn == 66) then
+    warp(86, 137, 16);
+
+  elseif (zn == 67) then
+    warp(18, 135, 16);
+
+  elseif (zn == 68) then
+    warp(79, 130, 16);
+
+  elseif (zn == 69) then
+    warp(41, 54, 16);
+
+  elseif (zn == 70) then
+    warp(12, 24, 16);
   end
 end
 
