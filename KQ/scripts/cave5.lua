@@ -199,6 +199,7 @@ function hero_escape(script)
     set_ent_script(HERO1, script);
     wait_for_entity(HERO1, HERO1);
   end
+  orient_heroes();
 end
 
 function zone_handler(zn)
