@@ -1,16 +1,18 @@
 -- town2 - "Randen"
 
 function autoexec()
-  local a;
-  set_progress(P_EARLYPROGRESS, 2);
+  if (get_progress(P_EARLYPROGRESS) < 2) then
+    set_progress(P_EARLYPROGRESS, 2);
+  end
+
   if not LOC_manor_or_party(AJATHAR) then
 -- // Make one of the ents look like Ajathar if he's not been recruited yet.
-     set_ent_id(10, AJATHAR)
-     set_ent_active(10,1)
-     set_ent_tilex(10,15)
-     set_ent_tiley(10,15)
+    set_ent_id(10, AJATHAR);
+    set_ent_active(10, 1);
+    set_ent_tilex(10, 15);
+    set_ent_tiley(10, 15);
   else
-     set_ent_active(10,0)
+    set_ent_active(10, 0);
   end
   refresh();
 end
@@ -215,118 +217,117 @@ end
 function entity_handler(en)
   if (en == 0) then
     if (get_progress(P_WARPSTONE) == 1) then
-      bubble(0, "Back again, are you?");
+      bubble(en, "Back again, are you?");
     else
-      bubble(0, "You must be an adventurer. There has been an unusual number of you people around lately.");
+      bubble(en, "You must be an adventurer. There has been an unusual number of you people around lately.");
     end
 
   elseif (en == 1) then
     if (get_progress(P_WARPSTONE) == 1) then
-      bubble(1, "Where is that man?");
+      bubble(en, "Where is that man?");
     else
-      bubble(1, "My husband is late again.");
+      bubble(en, "My husband is late again.");
     end
 
   elseif (en == 2) then
     if (get_progress(P_FIGHTONBRIDGE) > 4) then
-      bubble(2, "Welcome to Randen.");
+      bubble(en, "Welcome to Randen.");
     else
-      bubble(2, "This is the town of Randen. We're mostly a coastal trade town, but with the bridge out, trade is extremely slow.");
+      bubble(en, "This is the town of Randen. We're mostly a coastal trade town, but with the bridge out, trade is extremely slow.");
     end
 
   elseif (en == 3) then
     if (get_progress(P_FIGHTONBRIDGE) > 4) then
-      bubble(3, "Good day.");
+      bubble(en, "Good day.");
     else
-    if get_progress(P_BLADE)==0  then
+      if (get_progress(P_BLADE) == 0)  then
         set_progress(P_BLADE, 1)
         -- PH: Just my little joke hehe
-        bubble(3, "I'm just preparing some vegetables.")
+        bubble(en, "I'm just preparing some vegetables.")
         bubble(HERO1, "That's a strange knife you've got there.")
-        bubble(3, "What? Oh, this. Yes, it's a Phoenix Blade")
-        bubble(3, "I found it lying about under a pile of leaves in the forest.")
-        bubble(HERO1, "Isn't there supposed to be be someone out looking for that?")
-        bubble(3, "I heard that, too, but it's been ages and no-one has turned up.")
-        bubble(3, "I would give it back, but I need it for slicing carrots!")
+        bubble(en, "What? Oh, this. Yes, it's a Phoenix Blade")
+        bubble(en, "I found it lying about under a pile of leaves in the forest.")
+        bubble(HERO1, "Isn't there supposed to be someone out looking for that?")
+        bubble(en, "I heard that, too, but it's been ages and no-one has turned up.")
+        bubble(en, "I would give it back, but I need it for slicing carrots!")
         bubble(HERO1, "Your secret's safe with me.")
-    else
-      bubble(3, "Oh, goodness, I didn't make enough for company... sorry.");
-    end
+      else
+        bubble(en, "Oh, goodness, I didn't make enough for company... sorry.");
+      end
     end
 
   elseif (en == 4) then
     if (get_progress(P_FIGHTONBRIDGE) > 4) then
-      bubble(4, "Hi!");
+      bubble(en, "Hi!");
     else
-      bubble(4, "I'm hungry, I hope mom is done making lunch soon.");
+      bubble(en, "I'm hungry, I hope mom is done making lunch soon.");
     end
 
   elseif (en == 5) then
     if (get_progress(P_WARPSTONE) == 1) then
-      bubble(5, "Business is good.");
+      bubble(en, "Business is good.");
       return
     end
     if (get_progress(P_FIGHTONBRIDGE) > 4) then
-      bubble(5, "Now that the bridge is repaired I'm back in business.");
+      bubble(en, "Now that the bridge is repaired I'm back in business.");
       if (get_treasure(9) == 0) then
-        bubble(5, "I hear you had something to do with speeding along the bridge's construction. I'd like you to have this.");
+        bubble(en, "I hear you had something to do with speeding along the bridge's construction. I'd like you to have this.");
         chest(9, I_B_SHOCK, 1);
       end
     else
-      bubble(5, "If you haven't already noticed, the bridge across Brayden river is gone.");
-      bubble(5, "An altercation between some travelers and brigands resulted in a volley of magic that left the bridge in cinders.");
-      wait(25);
-      bubble(5, "A new bridge is supposed to be built soon. This town can't survive for long without our major trade route.");
+      bubble(en, "If you haven't already noticed, the bridge across Brayden river is gone.");
+      bubble(en, "An altercation between some travelers and brigands resulted in a volley of magic that left the bridge in cinders.");
+      set_ent_script(en, "W25");
+      wait_for_entity(en);
+      bubble(en, "A new bridge is supposed to be built soon. This town can't survive for long without our major trade route.");
     end
 
   elseif (en == 6) then
     if (get_progress(P_WARPSTONE) == 1) then
-      bubble(6, "I'm sorry, the mayor isn't seeing any visitors at present.");
+      bubble(en, "I'm sorry, the mayor isn't seeing any visitors at present.");
     else
       if (get_progress(P_FOUNDMAYOR) == 0) then
         if (get_progress(P_FIGHTONBRIDGE) > 4) then
-          bubble(6, "The mayor has yet to return from Andra. A few of our men are out looking for him as we speak.");
+          bubble(en, "The mayor has yet to return from Andra. A few of our men are out looking for him as we speak.");
         else
-          bubble(6, "The mayor was going to Andra to talk to the council there. I think that he should have been back by now.");
-          bubble(6, "We may have to go and look for him soon. We need to make sure that he is safe.");
+          bubble(en, "The mayor was going to Andra to talk to the council there. I think that he should have been back by now.");
+          bubble(en, "We may have to go and look for him soon. We need to make sure that he is safe.");
         end
       elseif (get_progress(P_FOUNDMAYOR) < 3) then
-        bubble(6, "The mayor is back now, thanks to you. However, the mayor is not seeing any visitors for a while.");
-        bubble(6, "He is still recovering from his ordeal.");
+        bubble(en, "The mayor is back now, thanks to you. However, the mayor is not seeing any visitors for a while.");
+        bubble(en, "He is still recovering from his ordeal.");
       else
-        bubble(6, "The mayor is back now. He's been through quite a dramatic ordeal and is not seeing any visitors for awhile.");
+        bubble(en, "The mayor is back now. He's been through quite a dramatic ordeal and is not seeing any visitors for awhile.");
       end
     end
 
   elseif (en == 7) then
     if (get_progress(P_WARPSTONE) == 1) then
-      bubble(7, "Are you enjoying your stay?");
+      bubble(en, "Are you enjoying your stay?");
     else
       if (get_progress(P_FOUNDMAYOR) ~= 0) then
-        bubble(7, "Thank you!");
+        bubble(en, "Thank you!");
       else
-        bubble(7, "The mayor left for Andra with an adventurer that he had just hired and his usual contingent of guards.");
-        bubble(7, "I wonder if they avoided the trouble at the bridge.");
+        bubble(en, "The mayor left for Andra with an adventurer that he had just hired and his usual contingent of guards.");
+        bubble(en, "I wonder if they avoided the trouble at the bridge.");
       end
     end
 
   elseif (en == 8) then
- --   if (get_progress(P_GETPARTNER) == 1) then
- --     LOC_partner_check(8);
- --   elseif (get_progress(P_GETPARTNER) > 1) then
-      bubble(8, "I wonder how long it takes to build a bridge?");
- --   end
+    bubble(en, "I wonder how long it takes to build a bridge?");
 
   elseif (en == 9) then
-  --  if (get_progress(P_GETPARTNER) == 1) then
-  --    LOC_partner_check(9);
-  --  elseif (get_progress(P_GETPARTNER) > 1) then
-      bubble(9, "How long does it take to build a bridge?");
-  --  end
+    bubble(en, "How long does it take to build a bridge?");
 
- elseif (en == 10) then
-       LOC_meet_ajathar()
- end
+  elseif (en == 10) then
+    LOC_meet_ajathar(en);
+
+  elseif (en == 11) then
+    LOC_meet_casandra(en);
+
+  elseif (en == 12) then
+    LOC_meet_temmin(en);
+  end
 end
 
 
@@ -352,73 +353,56 @@ function LOC_partner_check(who)
   end
 end
 
--- Checks if this ent is in the party, or in the manor,
--- or has never been recruited.
--- who: hero id
--- returns "manor" if in manor, "party" if in party, nil otherwise
-function LOC_manor_or_party(who)
-   local a
-   if get_pidx(0)==who then
-      return "party"
-   elseif get_numchrs()>1 and get_pidx(1)==who then
-      return "party"
-   end
-   for a=P_MANORPARTY,P_MANORPARTY7 do
-      if get_progress(a)-1==who then
-	 return "manor"
-      end
-   end
-   return nil
-end
 
-function LOC_meet_ajathar()
-   local ta, id;
-   ta=get_progress(P_TALK_AJATHAR);
-   if (get_progress(P_PORTALGONE)==0) then
-      if (ta==0) then
-	 bubble(HERO1, "Hello! You haven't ventured very far!")
-	 bubble(10, "I have been maintaining a constant prayer vigil at this point. It should discourage the monsters from emerging into the town.")
-	 bubble(HERO1, "And what if they DO come out?")
-	 bubble(10, "My training also included swordsmanship")
-	 set_progress(P_TALK_AJATHAR, 1)
-      elseif (ta==1) then
-	 bubble(10, "I hope I am doing the right thing here")
-      end
-   else
-      if (ta==0) then 
-	 bubble(10, "Be careful! That tunnel is infested with monsters")
-	 bubble(HERO1, "Fortunately, I been successful in closing the Portal. No more monsters will trouble us now")
-	 set_progress(P_TALK_AJATHAR, 1)
+function LOC_meet_ajathar(en)
+  local ta, id;
+  ta = get_progress(P_TALK_AJATHAR);
+  if (get_progress(P_PORTALGONE) == 0) then
+    if (ta == 0) then
+      bubble(HERO1, "Hello! You haven't ventured very far!");
+      bubble(en, "I have been maintaining a constant prayer vigil at this point. It should discourage the monsters from emerging into the town.");
+      bubble(HERO1, "And what if they DO come out?");
+      bubble(en, "My training also included swordsmanship.");
+      set_progress(P_TALK_AJATHAR, 1);
+    elseif (ta == 1) then
+      bubble(en, "I hope I am doing the right thing here.");
+    end
+  else
+    if (ta == 0) then
+      bubble(en, "Be careful! That tunnel is infested with monsters.");
+      bubble(HERO1, "Fortunately, I been successful in closing the Portal. No more monsters will trouble us now.");
+      set_progress(P_TALK_AJATHAR, 1);
+    else
+      bubble(HERO1, "You can rest easy now. I have closed the Portal that let the monsters through.");
+    end
+    bubble(en, "Great! Can I offer my services?");
+    -- Give Ajathar his default equipment
+    set_all_equip(AJATHAR, I_MACE2, I_SHIELD1, I_HELM1, I_ROBE2, I_BAND1, 0);
+    id = select_team{AJATHAR};
+    -- /* Add the characters that weren't selected to the manor */
+    add_to_manor(id);
+
+    if (id[1]) then
+      set_ent_id(en, id[1]);
+
+      if (id[2]) then
+        -- Two heroes were de-selected
+        set_ent_id(9, id[2]);
+        set_ent_active(9, 1);
+        set_ent_tilex(9, get_ent_tilex(en));
+        set_ent_tiley(9, get_ent_tiley(en) + 1);
+        bubble(en, "If you need us, we'll be back at the manor.");
+        set_ent_script(en, "L1U1L1U2L2U1K");
+        set_ent_script(9,  "L1U2L1U2L2U1K");
+        wait_for_entity(9, en);
+        set_ent_active(9, 0);
       else
-	 bubble(HERO1, "You can rest easy now. I have closed the Portal that let the monsters through.")
+        -- One hero was de-selected
+        bubble(en, "If you need me, I'll be back at the manor.");
+        set_ent_script(en, "L1U2L2U1L1U1");
+        wait_for_entity(en, en);
       end
-      bubble(10, "Great! Can I offer my services?")
--- Give ajathar his default equipment
-      set_all_equip(AJATHAR, I_MACE2, I_SHIELD1, I_HELM1, I_ROBE2, I_BAND1, 0);
-      id=select_team{AJATHAR}
---// add the characters that weren't selected to the manor
-      add_to_manor(id)
-      if (id[1]) then
-	 set_ent_id(10, id[1])
-	 if (id[2]) then
-	    -- two heroes were de-selected
-	    set_ent_id(9,id[2])
-	    set_ent_active(9,1)
-	    set_ent_tilex(9,get_ent_tilex(10))
-	    set_ent_tiley(9, get_ent_tiley(10)+1)
-	    bubble(10, "If you need us, we'll be back at the manor")
-	    set_ent_script(10, "L1U1L1U2L2U1K")
-	    set_ent_script(9,  "L1U2L1U2L2U1K")
-	    wait_for_entity(9,10)
-	    set_ent_active(9,0)
-	 else
-	    -- one hero was de-selected
-	    bubble(10, "If you need me, I'll be back at the manor")
-	    set_ent_script(10, "L1U2L2U1L1U1")
-	    wait_for_entity(10,10)
-	 end
-      end
-      set_ent_active(10, 0)
-   end
+    end
+    set_ent_active(en, 0);
+  end
 end
-

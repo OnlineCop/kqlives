@@ -1,10 +1,17 @@
 -- town3 - "Andra"
 
 function autoexec()
-  set_progress(P_EARLYPROGRESS, 3);
+  if (get_progress(P_EARLYPROGRESS) < 3) then
+    set_progress(P_EARLYPROGRESS, 3);
+  end
   if (get_progress(P_TALKDERIG) > 2) then
     set_ent_active(1, 0);
   end
+  refresh();
+end
+
+
+function refresh()
   if (get_treasure(12) == 1) then
     set_obs(12, 41, 0);
   end
@@ -82,7 +89,7 @@ function zone_handler(zn)
 
   elseif (zn == 22) then
     chest(12, 0, 1);
-    autoexec();
+    refresh();
 
   elseif (zn == 23) then
     chest(14, I_NPOULTICE, 1);

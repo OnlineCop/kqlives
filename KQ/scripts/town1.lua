@@ -1,6 +1,7 @@
 -- town1 - "Ekla"
 
 -- TT todo:
+-- /*
 -- Reflect NPCs scripts to accommodate theory that monsters appeared
 -- out of nowhere.  Unadium-coin lady will not help until after you find
 -- her father/grandfather.
@@ -22,9 +23,9 @@
 -- P_EKLAWELCOME: Corny welcome message when you talk to man in Ekla
 --   0 - He had not yet given you his corny "Yes! This makes 8!" speech
 --   1 - Now he likes cheese
--- P_DARKIMPBOSS: Monster blocking stairway to Randen
---   0 - Still there
---   1 - You defeated it
+-- P_DARKIMPBOSS: Dark Imp is in the tunnel from Ekla to Randen
+--   0 - It is blocking the stairway
+--   1 - You defeated it and the pathway is now clear
 -- P_PORTALGONE: Whether the portal in the tunnel is still working
 --   0 - Still letting monsters through
 --   1 - You touched Rod of Cancellation to it
@@ -37,11 +38,14 @@
 -- P_CANCELROD: Possession of Rod of Cancellation
 --   0 - Do not have it
 --   1 - Got it
+-- */
 
 
 function autoexec()
-  set_progress(P_EARLYPROGRESS, 1);
-  refresh()
+  if (get_progress(P_EARLYPROGRESS) == 0) then
+    set_progress(P_EARLYPROGRESS, 1);
+  end
+  refresh();
 end
 
 
@@ -54,6 +58,9 @@ function refresh()
   if (get_progress(P_START) == 0) then
     set_progress(P_START, 1);
   end
+  -- TT:
+  -- Two people are wandering around until you use the transporter from
+  -- Ajantara to Randen.
   if (get_progress(P_WARPSTONE) == 1) then
     set_ent_active(1, 0);
     set_ent_active(3, 0);
@@ -147,34 +154,28 @@ end
 
 function entity_handler(en)
   if (en == 0) then
+    -- Hero has used the warp stone in Ajantara
     if (get_progress(P_WARPSTONE) == 1) then
       if (get_progress(P_EKLAWELCOME) > 0) then
-        bubble(0, "Welcome back.");
+        -- He is nice to you, since you talked to him at the beginning of the game.
+        bubble(en, "Welcome back.");
         return;
       else
-        bubble(0, "You're in Ekla, genius. But do you care?");
-        bubble(HERO1, "Huh? What's your problem?");
-        bubble(0, "Problem? On now I have a problem! First you completely ignore me. Now you come running to me for help.");
-        bubble(HERO1, "Whoa, down Rover. Get over yourself. I was probably just busy.");
-        bubble(0, "Rover? ROVER?! Oh, am I someone's house pet now?");
-        bubble(HERO1, "Well, you're some sort of farm animal. And I'm not just referring to the smell.");
-        if (get_numchrs() > 1) then
-          bubble(HERO2, "Yea, and if you don't back off, we're going to have to put you down like one. Understand?");
-        else
-          bubble(HERO1, "And if you don't back off, I'm going to have to put you down like one. Got it?");
-        end
-        wait(50);
-        bubble(0, "...");
-        bubble(HERO1, "Good. Glad we have that understanding. Now, do you have anything else to say?");
+        -- He is rude to you, since you didn't talk to him at the beginning of the game.
+        bubble(en, "Congratulations. You're back in Ekla.");
+        bubble(HERO1, "Well, uh, thanks. I kinda know that by now.");
+        bubble(en, "Well, I've been here since the game started. This is the first time you talked to me. Consider yourself officially greeted.");
+        bubble(HERO1, "Oh, that's nice. So do you have any advice that is still applicable to my quest?");
+        bubble(en, "You bet I do!");
         set_progress(P_EKLAWELCOME, 1);
         return;
       end
     end
     if (get_progress(P_EKLAWELCOME) == 0) then
-      bubble(0, "Welcome to the town of Ekla.");
-      bubble(0, "Alright! You make eight. If I welcome enough newcomers to this town, I'll get promoted.");
-      bubble(0, "I might get a job sitting in a house all day saying the same thing over and over to anyone who talks to me.");
-      bubble(0, "I should start practicing.");
+      bubble(en, "Welcome to the town of Ekla.");
+      bubble(en, "Alright! You make eight. If I welcome enough newcomers to this town, I'll get promoted.");
+      bubble(en, "I might get a job sitting in a house all day saying the same thing over and over to anyone who talks to me.");
+      bubble(en, "I should start practicing.");
       wait(25);
       set_progress(P_EKLAWELCOME, 1);
       if (party[0] == CASANDRA) then
@@ -182,19 +183,34 @@ function entity_handler(en)
         thought(HERO1, "Maybe I should put him out of his misery.");
       end
     else
-      bubble(0, "I like cheese.")
+      bubble(0, "I like cheese!");
+      return;
     end
 
   elseif (en == 1) then
     if (get_progress(P_DARKIMPBOSS) == 0) then
-      bubble(1, "If you are going underground be warned that there are a great number of beasties roaming around down there as of late.");
-      bubble(1, "Before attempting to pass through there make sure you have some good armor and a strong weapon.");
-      bubble(1, "As well, if you don't know any magic, I suggest you learn some.");
+      if (get_progess(P_EKLACITIZEN) == 0) then
+        bubble(en, "Many monsters have appeared from the portal underground. They have begun spreading into the forests around here and killing off our wild game.");
+        bubble(HERO1, "Do you know where they came from?");
+        bubble(en, "There's a portal down in the underground tunnel that has opened back up. Only Derig is old enough to know how we got it closed the last time.");
+        bubble(HERO1, "So who is Derig?");
+        bubble(en, "Oh, a crazy old man who likes to disappear into the hills and forests for weeks.");
+        bubble(HERO1, "Uh-huh. Well, thanks for your help.");
+        set_progress(P_EKLACITIZEN, 1);
+        return;
+      else
+        -- // TT: This is where we will check if Player talked to Derig yet.
+        bubble(HERO1, "Any sign of that Derig fellow?");
+        bubble(en, "No, not that I know of. You could ask around. Someone might know his whereabouts.");
+        bubble(HERO1, "Alright, thanks.");
+        bubble(en, "Oh, and when you go underground be warned that there are still a great number of beasties roaming around down there.");
+        bubble(en, "Be sure you have some good armor and a strong weapon, and if you don't know any magic, I suggest you learn some.");
+      end
     else
       if (get_progress(P_PORTALGONE) == 1) then
-        bubble(1, "The passage should be safe now.");
+        bubble(en, "Now that the portal is closed, the passage should be safe.");
       else
-        bubble(1, "The tunnel is still dangerous, so be careful.");
+        bubble(en, "The tunnel is still dangerous, so be careful.");
       end
     end
 

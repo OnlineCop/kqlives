@@ -84,8 +84,8 @@ function autoexec()
     -- Center map on your character coords
     calc_viewport(1);
 
-  -- P_MANOR > 0 when you already talked to Hunert, but you have no recruits
-  elseif (get_progress(P_MANOR) ==1) then
+  -- P_MANOR == 1 when you already talked to Hunert, but you have no recruits
+  elseif (get_progress(P_MANOR) == 1) then
     -- Remove all party members from the map
     for a = 0, 7, 1 do
       set_ent_active(a, 0);

@@ -243,3 +243,24 @@ function add_to_manor(hero)
     end
   end
 end
+
+
+-- Checks if this ent is in the party, or in the manor,
+-- or has never been recruited.
+-- who: hero id
+-- returns "manor" if in manor, "party" if in party, nil otherwise
+function LOC_manor_or_party(who)
+  local a;
+  if (get_pidx(0) == who) then
+    return "party";
+  elseif (get_numchrs() > 1 and get_pidx(1) == who) then
+    return "party";
+  end
+
+  for a = P_MANORPARTY, P_MANORPARTY7 do
+    if (get_progress(a) - 1 == who) then
+      return "manor";
+    end
+  end
+  return nil;
+end

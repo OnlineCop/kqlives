@@ -51,9 +51,12 @@ function postexec()
   warp(130, 24, 4);
   msg("Reisha Mountain", 255, 1500);
 
-  bubble(15, "Thank you all for coming.");
+  bubble(15, "Hunert:",
+             "",
+             "Thank you all for coming.");
+  bubble(15, "I appreciate all those willing to help us. However, only a few of you will be chosen.");
 
-  set_ent_script(15, "W25F2W25F0W25F3W25F0");
+  set_ent_script(15, "W25F2W25F0W25F3W25F0W30");
   wait_for_entity(15, 15);
 
   bubble(255, "Alright, I have made my decision...");
@@ -75,62 +78,64 @@ end
 
 
 function LOC_choose_hero()
---  local stop = 0;
---  local rd = 1;
---  local a, p;
---  local ptr = 0;
---
---  clear_buffer();
---  screen_dump();
---  do_fadein(16);
---  while (stop == 0) do
---    if (rd == 1) then
---      clear_buffer();
---      for a = 0, 7, 1 do
---        if (ptr == a) then
---          dark_mbox(a * 32 + 32, 16, 2, 2);
---        else
---          mbox(a * 32 + 32, 16, 2, 2);
---        end
---        drawframe(a, 0, a * 32 + 40, 24);
---      end
---      mbox(80, 64, 18, 5);
---      draw_pstat(ptr, 88, 72);
---      mbox(80, 120, 18, 8);
---      ptext(88, 128, "Strength", 5);
---      ptext(88, 136, "Agility", 5);
---      ptext(88, 144, "Vitality", 5);
---      ptext(88, 152, "Intellect", 5);
---      ptext(88, 160, "Sagacity", 5);
---      ptext(88, 168, "Speed", 5);
---      ptext(88, 176, "Aura", 5);
---      ptext(88, 184, "Spirit", 5);
---      for p = 0, 7, 1 do
---        ptext(184, p * 8 + 128, ":", 5);
---        pnum(208, p * 8 + 128, get_party_stats(ptr, p) / 100, 0);
---      end
---      screen_dump();
---    end
---    read_controls(0, 0, 1, 1, 1, 0, 0, 0);
---    rd = 0;
---    if (check_key(2) == 1) then
---      ptr = ptr - 1;
---      if (ptr < 0) then
---        ptr = 7;
---      end
---      sfx(0);
---      rd = 1;
---    elseif (check_key(3) == 1) then
---      ptr = ptr + 1;
---      if (ptr > 7) then
---        ptr = 0;
---      end
---      sfx(0);
---      rd = 1;
---    elseif (check_key(4) == 1) then
---      stop = 1;
---    end
---  end
+-- /*
+  local stop = 0;
+  local rd = 1;
+  local a, p;
+  local ptr = 0;
+
+  clear_buffer();
+  screen_dump();
+  do_fadein(16);
+  while (stop == 0) do
+    if (rd == 1) then
+      clear_buffer();
+      for a = 0, 7, 1 do
+        if (ptr == a) then
+          dark_mbox(a * 32 + 32, 16, 2, 2);
+        else
+          mbox(a * 32 + 32, 16, 2, 2);
+        end
+        drawframe(a, 0, a * 32 + 40, 24);
+      end
+      mbox(80, 64, 18, 5);
+      draw_pstat(ptr, 88, 72);
+      mbox(80, 120, 18, 8);
+      ptext(88, 128, "Strength", 5);
+      ptext(88, 136, "Agility", 5);
+      ptext(88, 144, "Vitality", 5);
+      ptext(88, 152, "Intellect", 5);
+      ptext(88, 160, "Sagacity", 5);
+      ptext(88, 168, "Speed", 5);
+      ptext(88, 176, "Aura", 5);
+      ptext(88, 184, "Spirit", 5);
+      for p = 0, 7, 1 do
+        ptext(184, p * 8 + 128, ":", 5);
+        pnum(208, p * 8 + 128, get_party_stats(ptr, p) / 100, 0);
+      end
+      screen_dump();
+    end
+    read_controls(0, 0, 1, 1, 1, 0, 0, 0);
+    rd = 0;
+    if (check_key(2) == 1) then
+      ptr = ptr - 1;
+      if (ptr < 0) then
+        ptr = 7;
+      end
+      sfx(0);
+      rd = 1;
+    elseif (check_key(3) == 1) then
+      ptr = ptr + 1;
+      if (ptr > 7) then
+        ptr = 0;
+      end
+      sfx(0);
+      rd = 1;
+    elseif (check_key(4) == 1) then
+      stop = 1;
+    end
+  end
+-- */
 
 -- TT add:
   local ptr = NOSLOM;
