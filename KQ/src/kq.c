@@ -59,6 +59,7 @@
 #include "scrnshot.h"
 #include "sgame.h"
 #include "shopmenu.h"
+#include "credits.h"
 
 /*! Name of the current map */
 char curmap[16];
@@ -73,10 +74,10 @@ char icon_sets[6][16] = { "LAND_PCX", "NEWTOWN_PCX", "CASTLE_PCX",
  * Seems to use some kind of homebrew Hungarian notation; I assume 'b' means
  * bool.  Most if not all of these are updated in readcontrols() below ....
 */
-int right, left, up, down, besc, balt, bctrl, benter;
-/*!  Scan codes for the keys */
+int right, left, up, down, besc, balt, bctrl, benter, bhelp;
+/*!  Scan codes for the keys (help is always F1)*/
 int kright, kleft, kup, kdown, kesc, kenter, kalt, kctrl;
-/*! Joystick buttons (currently not used) */
+/*! Joystick buttons */
 int jbalt, jbctrl, jbenter, jbesc;
 
 /*! View and character positions */
@@ -92,7 +93,7 @@ BITMAP *double_buffer, *map_icons[MAX_TILES],
    *eframes[MAXE][MAXEFRAMES], *pgb[9], *sfonts[5], *bord[8],
    *menuptr, *mptr, *sptr, *stspics, *sicons, *bptr,
    *missbmp, *noway, *upptr, *dnptr,
-   *shadow[MAX_SHADOWS], *kfonts, *portrait[MAXCHRS];
+   *shadow[MAX_SHADOWS], *kfonts /*, *portrait[MAXCHRS] */ ;
 
 /*! Layers in the map */
 unsigned short *map_seg, *b_seg, *f_seg;
@@ -163,7 +164,12 @@ unsigned short tilex[MAX_TILES];
 unsigned short adelay[MAX_ANIM];
 /*! Temporary buffer for string operations (used everywhere!) */
 char *strbuf;
-/*! Characters actually in play */
+
+/*! Characters in play. The pidx[] array references this for the heroes actually
+ * on screen, e.g. party[pidx[0]] is the 'lead' character, 
+ * party[pidx[1]] is the follower, if there are 2 in the party.
+ * We need to store all of them, because heroes join and leave during the game.
+*/
 s_player party[MAXCHRS];
 
 /*! Initial character data
@@ -172,7 +178,7 @@ s_player party[MAXCHRS];
  * structure. I had to invent my own little (somewhat ugly) layout since it
  * all shot past the 80-character mark by quite a ways :)
 */
-s_player players[MAXCHRS];
+s_heroinfo players[MAXCHRS];
 /* s_player players[MAXCHRS] = { */
 /*    { */
 /*     "Sensar", 0, 70, 1, 100, 40, 40, 0, 0, */
@@ -287,7 +293,6 @@ char ctext[39];
 #ifdef KQ_CHEATS
 static void data_dump (void);
 #endif
-static BITMAP *alloc_bmp (int, int, char *);
 static void allocate_stuff (void);
 static void load_data (void);
 static void load_heroes (void);
@@ -374,20 +379,11 @@ END_OF_FUNCTION (my_counter);
 /*! \brief Handle user input.
  *
  * Updates all of the game controls according to user input.
+ * PH20030527 updated to re-enable the joystick
 */
 void readcontrols (void)
 {
-   balt = 0;
-   besc = 0;
-   balt = 0;
-   bctrl = 0;
-   benter = 0;
-
-   up = 0;
-   down = 0;
-   left = 0;
-   right = 0;
-
+   JOYSTICK_INFO *stk;
    poll_music ();
 
    /* PH 2002.09.21 in case this is needed (not sure on which platforms it is) */
@@ -396,23 +392,16 @@ void readcontrols (void)
         poll_keyboard ();
      }
 
-   if (key[kup])
-      up = 1;
-   if (key[kdown])
-      down = 1;
-   if (key[kleft])
-      left = 1;
-   if (key[kright])
-      right = 1;
+   balt = key[kalt];
+   besc = key[kesc];
+   bctrl = key[kctrl];
+   benter = key[kenter];
+   bhelp = key[KEY_F1];
 
-   if (key[kesc])
-      besc = 1;
-   if (key[kalt])
-      balt = 1;
-   if (key[kctrl])
-      bctrl = 1;
-   if (key[kenter])
-      benter = 1;
+   up = key[kup];
+   down = key[kdown];
+   left = key[kleft];
+   right = key[kright];
 
    if (key[KEY_ALT] && key[KEY_X])
       program_death ("X-ALT pressed... exiting.");
@@ -438,17 +427,17 @@ void readcontrols (void)
      {
         if (poll_joystick () == 0)
           {
-             left = joy[use_joy - 1].stick[0].axis[0].d1;
-             right = joy[use_joy - 1].stick[0].axis[0].d2;
-             up = joy[use_joy - 1].stick[0].axis[1].d1;
-             down = joy[use_joy - 1].stick[0].axis[1].d2;
-/* 23: this bit was commented out before I got here :) */
-/*
-      balt = joy[use_joy-1].button[0].b;
-      bctrl = joy[use_joy-1].button[1].b;
-      benter = joy[use_joy-1].button[2].b;
-      besc = joy[use_joy-1].button[3].b;
-*/
+             stk = &joy[use_joy - 1];
+             left |= stk->stick[0].axis[0].d1;
+             right |= stk->stick[0].axis[0].d2;
+             up |= stk->stick[0].axis[1].d1;
+             down |= stk->stick[0].axis[1].d2;
+
+             balt |= stk->button[0].b;
+             bctrl |= stk->button[1].b;
+             benter |= stk->button[2].b;
+             besc |= stk->button[3].b;
+
           }
      }
 }
@@ -1193,18 +1182,6 @@ static void startup (void)
 
    unload_datafile_object (pcxb);
    load_heroes ();
-   pcxb = load_datafile_object (PCX_DATAFILE, "KQFACES_PCX");
-
-   if (!pcxb)
-      program_death ("Could not load kqfaces.pcx!");
-
-   for (p = 0; p < 4; p++)
-     {
-        blit ((BITMAP *) pcxb->dat, portrait[p], 0, p * 40, 0, 0, 40, 40);
-        blit ((BITMAP *) pcxb->dat, portrait[p + 4], 40, p * 40, 0, 0, 40, 40);
-     }
-
-   unload_datafile_object (pcxb);
    load_data ();
    init_players ();
 
@@ -1246,6 +1223,36 @@ static void load_data (void)
    unload_datafile_object (pb);
 }
 
+#ifdef DEBUGMODE
+/*! \brief Create bitmap
+ *
+ * This function allocates a bitmap and kills the
+ * program if it fails. The name you supply is
+ * shown if this happens.
+ * \note PH is this really necessary?
+ *
+ * \param   bx Width
+ * \param   by Height
+ * \param   bname Name of bitmap
+ * \returns the pointer to the created bitmap
+*/
+static BITMAP *alloc_bmp (int bx, int by, char *bname)
+{
+   BITMAP *tmp;
+
+   tmp = create_bitmap (bx, by);
+
+   if (!tmp)
+     {
+        sprintf (strbuf, "Could not allocate %s!.", bname);
+        program_death (strbuf);
+     }
+
+   return tmp;
+}
+#else
+#define alloc_bmp(w, h, n) create_bitmap((w), (h))
+#endif
 
 
 /*! \brief Create bitmaps
@@ -1330,39 +1337,15 @@ static void allocate_stuff (void)
 // } TT add
 
    for (p = 0; p < 8; p++)
-      portrait[p] = alloc_bmp (40, 40, "portrait[x]");
+      players[p].portrait = alloc_bmp (40, 40, "portrait[x]");
 
    for (p = 0; p < MAX_TILES; p++)
       map_icons[p] = alloc_bmp (16, 16, "map_icons[x]");
+   allocate_credits ();
 }
 
 
 
-/*! \brief Create bitmap
- *
- * This function allocates a bitmap and kills the
- * program if it fails. The name you supply is
- * shown if this happens.
- *
- * \param   bx Width
- * \param   by Height
- * \param   bname Name of bitmap
- * \returns the pointer to the created bitmap
-*/
-static BITMAP *alloc_bmp (int bx, int by, char *bname)
-{
-   BITMAP *tmp;
-
-   tmp = create_bitmap (bx, by);
-
-   if (!tmp)
-     {
-        sprintf (strbuf, "Could not allocate %s!.", bname);
-        program_death (strbuf);
-     }
-
-   return tmp;
-}
 
 
 
@@ -1413,7 +1396,11 @@ static void deallocate_stuff (void)
         for (p = 0; p < NUM_FIGHTERS; p++)
           {
              destroy_bitmap (cframes[p][i]);
-             destroy_bitmap (tcframes[p][i]);
+             /* PH this might stop crashes, not an ideal solution though.
+              * Reason: enemy handling uses tcframes just as a pointer to
+              * a bitmap alloc'd elsewhere, hero handling does not. 
+              */
+/*              destroy_bitmap (tcframes[p][i]); */
           }
      }
 
@@ -1430,7 +1417,7 @@ static void deallocate_stuff (void)
       destroy_bitmap (bord[p]);
 
    for (p = 0; p < MAXCHRS; p++)
-      destroy_bitmap (portrait[p]);
+      destroy_bitmap (players[p].portrait);
 
    for (p = 0; p < MAX_TILES; p++)
       destroy_bitmap (map_icons[p]);
@@ -1459,6 +1446,7 @@ static void deallocate_stuff (void)
         shutdown_music ();
         free_samples ();
      }
+   deallocate_credits ();
 }
 
 
@@ -1466,13 +1454,16 @@ static void deallocate_stuff (void)
  *
  * \author PH
  * \date 20030320
- * Loads the hero stats from a file
+ * Loads the hero stats from a file.
+ * \bug Endian-ness will bite your bum here.
  *
  */
 void load_heroes (void)
 {
    PACKFILE *f;
+   DATAFILE *pcxb;
    int i;
+   /* Hero stats */
    sprintf (strbuf, "%s/hero.kq", DATA_DIR);
    if ((f = pack_fopen (strbuf, F_READ_PACKED)) == NULL)
      {
@@ -1480,9 +1471,24 @@ void load_heroes (void)
      }
    for (i = 0; i < MAXCHRS; ++i)
      {
-        pack_fread (&players[i], sizeof (s_player), f);
+        pack_fread (&players[i].plr, sizeof (s_player), f);
      }
    pack_fclose (f);
+   /* portraits */
+   pcxb = load_datafile_object (PCX_DATAFILE, "KQFACES_PCX");
+
+   if (!pcxb)
+      program_death ("Could not load kqfaces.pcx!");
+
+   for (i = 0; i < 4; ++i)
+     {
+        blit ((BITMAP *) pcxb->dat, players[i].portrait, 0, i * 40, 0, 0, 40,
+              40);
+        blit ((BITMAP *) pcxb->dat, players[i + 4].portrait, 40, i * 40, 0, 0,
+              40, 40);
+     }
+
+   unload_datafile_object (pcxb);
 }
 
 /*! \brief Initialise all players
