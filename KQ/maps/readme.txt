@@ -1,40 +1,85 @@
-Map Editor for KQ
-by TeamTerradactyl
+Mapdraw: a map editor for KQ
+Mapdump: a .MAP to .PCX image extractor
 
-Thank you in your interest in the KQ game's map editor, Mapdraw.
+Thank you in your interest in the KQ game's map editor, Mapdraw, and its sidekick, MapDump.
 
-Mapdraw has been designed for developers to create the maps quickly and with as little pain as possible.  There is no current GUI menus (such as File, Edit, etc.), so you will have to make use of the keyboard shortcuts (use F1 to see a list of possible keys).
+Mapdraw has been designed for developers to create the maps for KQ quickly and with as little pain as possible.  Unfortunately at this time, there are no current GUI menus (such as File, Edit, etc.), so you will have to make use of the keyboard shortcuts (use F1 to see a list of possible keys).
 
-The maps used in KQ have 3 layers: Background, middle, and foreground.
-- Layer 1, background: 90% of the drawing goes here.
-- Layer 2, middle: Objects and tiles which must be drawn on top of another go here.  This includes dishes on a table background, shrubs covering an item on the ground, etc.
-- Layer 3, foreground: Drawn over the top of the Player's sprite, such as bookshelf- or treetops, ceilings, etc.
+Maps are constructed with 3 layers (background, middle, and foreground), entities (NPCs) and their attributes, obstacles, shadows, and zones.
 
-*NOTE: KQ makes use of Parallax, which means that one layer can move more quickly or slowly than another in order to create a spacial depth perception.  (See pass.map and cave3b.map for examples.)  This may affect the above descriptions slightly.
+The background, middle, and foreground layers are broken down as follows:
+- Layer 1, background: 90% of the drawing goes here.  This includes the base of trees, tables, ground tiles (such as dirt or flowers), and buildings.
+- Layer 2, middle: Objects and tiles which must be drawn on top of Layer 1 go here.  This includes dishes on a table, shrubs covering an item on the ground, etc.  The Player's character will still walk over the top of these, unlike Layer 3.
+- Layer 3, foreground: Drawn over the top of the Player's sprite, such as building and castle overhangs, the top of bookshelves, treetops, etc.
 
-Besides the 3 layers, maps have 4 attributes:
-- Shadows are drawn over EVERYTHING.  This is a partially transparent layer where, when the Player is standing under it, part or all of their sprite will be lightened or darkened.
+*NOTE: KQ makes use of Parallax, a feature which means that one layer can move more quickly or slowly than another in order to create a spacial depth perception.  (Look at pass.map and cave3b.map as examples.)  This may affect the above descriptions slightly.
+
+The four layers are broken down as follows:
+- Shadows are drawn over EVERYTHING.  This is a partially transparent layer where, when a Player or NPC is standing under it, part or all of their sprite will be lightened or darkened (depending on the type of shadow).
 - Obstacles restrict movement.
   - The most common obstacle used is the SQUARE, where nothing can move onto the tile from any 4 directions.
   - The other types are the T-shaped obstacles.  These will block movement only in one direction, meaning you can enter the tile from 3 directions, but cannot move onto or off of the tile from the 4th.  Examples are chairs, beds, and pillars.
-- Entities initial attributes are saved into the maps.
-  - Their attributes can also be changed at run-time by scripts.  This includes coordinates, direction, speed, scripted movements, etc.
-- Zones are trigger-points used in the Lua files (in the scripts/ directory).  This is anything from changing maps, to treasure chests, to starting battles.
+- Zones are trigger-points (hotspots) where the developer can perform an action, based on the LUA script files.  They can be used to change maps, read a book, initiate a battle, find an item (hidden treasure or open a treasure chest), etc.
+- Entities (or NPCs) and their initial attributes are stored in the maps.  This includes coordinates, direction, speed, scripted movements, etc.  These attributes can be changed at run-time by scripts, but conversations, etc. are handled by the LUA script files.
 
 ===============================
+MAPDRAW:
 
-Now that you understand the basic structure of the MAP file, you can create or modify your maps.
+Now that you understand the basic structure of the MAP file, you can create or modify your maps.  Below is a quick-reference section with the keys and their descriptions.
 
-You can draw to the individual layers by selecting Layer 1, 2, or 3 (Key: 1, 2, or 3).  If you want to view more than one layer (as indicated in the F1 help screen), press 4-7.
+The map editor is split into three panes: the main view-window, the tile selection area on the right, and the stats at the bottom of the map.
 
-Attributes are toggled, meaning that if you select Shadows, for example (Key: S), you will be in draw mode for all shadows on the map, and no other layer or attribute is affected.
+===============================
+VIEW WINDOW:
 
-The + and - keys (either by the backspace key or on the number pad) are used to choose which tile (they are on the right-side menu) or Attribute (select between different Shadows or Obstacles, for example) you will draw to the map.
+The view-window is self-explanatory, so I won't cover it here.
 
-There are other key shortcuts as well, but you can experiment with them with the F1 Help menu.
+===============================
+TILE SELECTION:
 
-To load a previously saved map, press F2.  It will prompt you for the map name.  You will need to supply Mapdraw with the path and/or filename of the MAP file.
+The tile selection area on the right contains all the tiles which are available for this tileset.  You can change the tileset being used by clicking on the "Icon:" selection at the bottom.
 
+You will see a 2x10 grid with the tiles.  The first icon is blank; it will ALWAYS be used as the default, or "none".  You may click on any of these tiles to select it, and use the +/- keys to advance through the available tiles.  This is a dynamic tileset, which means that if the PCX image being used is ever changed/modified, it will appear here and you will have more (or fewer) tiles to choose from.  Currently, KQ maps only support 16x16 tiles, so you will have to work within those boundaries.
+
+Below the tiles shows which editing mode you are currently in.  If it is "Layer 1", "Layer 2", "Layer 3", "Entities", "Obstacles, "Shadows", or "Zones", you are in a mode which will allow you to draw onto the map.  Anything else is simply a viewing mode, and nothing will be modified on the map if you click on a tile in the view-window.
+
+Immediately below the editing mode, you will see the "page" of tiles you are on and the selected tile in (parentheses).
+
+You will also be shown the mouse's x/y coordinates.
+
+===============================
+MAP STATS:
+
+Here is a sample of what you will see:
+
+Map:
+Icon:                   Start X:    Mult:
+Song:                   Start Y:    Div:
+ZeroZone:               Width:
+Map #:      Warp:       Height:
+Mode:       WarpX:      SunStone:
+Save:       WarpY:      Last Zone:
+
+"Map" gives you the filename of the current map.
+"Icon" tells which tilemap you are using.  Clicking on it will change it.
+"Song" is the default song played when the player enters the specified map.
+"ZeroZone" means that zone 0 triggers an event.
+"Map #" corresponds to the map's identifier # (see MAP_* in include/kq.h for details).
+"Mode" is the parallax mode.  This means some layers will move at a different speed than others.
+"Save" specifies whether the player can save their game in this map.
+"Warp" means that the player can (or can't) use the Warp spell to exit this map.
+"WarpX" and "WarpY" are where, when the Warp spell is used, the player ends up at.  This only works when Warp is true.
+"Start X" and "Start Y" are the default coordinates on the map where the player will start.
+"Width" and "Height" are just that, respectively.
+"SunStone" is true when the map can be defined as a "sunny place" where a SunStone will work.
+"Last Zone" displays the number of the zone with the largest value.
+"Mult" and "Div" are used for parallax/depth-perception.
+
+Attributes are toggled, meaning that if you select Shadows, for example (KEY_S), you will be able to draw just to that layer until you turn it off or select a different option.
+
+When you are in one of the four Attributes, you will also see which Attribute # you have currently selected.  You will also have "Current Tile" which means that if you move the mouse over a tile in the map and it has that Attribute, it will tell you its value for that tile.  The last is called "Highlight" which just makes a large red bullet appear over the top of the Attribute, so you can more easily see where it is.
+
+The KEY_+ and KEY_- keys (at the top of the keyboard, or on the number pad) are used to choose which tile (they are on the right-side menu) or Attribute you will draw to the map.
 
 ===============================
 Keys:
@@ -49,65 +94,88 @@ NOTE: These are viewing modes, which won't modify the map
 5   - Layers 1+3
 6   - Layers 2+3
 7   - Layers 1+2+3
+A   - Show all Layers and Attributes
+C   - Show map as player would see it (including parallax)
 
-NOTE: Attributes can be "toggled".  You can only draw the Attribute to the
-      map if it is showing AND it is the current drawing mode.  You can have
-      multiple Attributes showing at once, but only one can be the current
-      drawing mode at any given time.  Displaying Layers or toggling the
-      Attribute again turns it off.
-F11 - Toggle Entites Attribute
-S   - Toggle Shadows Attribute
+NOTE: Attributes can be "toggled".  You may have all 4 showing at once, but
+      you will only affect whichever is currently active.  If an Attribute
+      is not showing, pressing the appropriate KEY_* shortcut will display
+      it and set it as the "active" Attribute.  If the Attribute is active and
+      you press its key again, it will be toggled off.
 O   - Toggle Obstacles Attribute
+S   - Toggle Shadows Attribute
 Z   - Toggle Zone Attribute
+E   - Toggle Entities Attribute
+F12 - Modify Entity Mode
+D   - Displace (or move) all the Entities in the map
 
-C   - View Layers 1-3, plus Entities and Shadows Attributes
-A   - Turn Layers 1-3, plus all four Attributes
-
-T   - Block copy (left click starts, right click finishes block copy)
-P   - Paste the copied block/tile (right-click pastes to user-specified map)
-
-W   - Wipe the contents of the current map
-D   - Displace the location of one or more Entities
-E   - Empty the contents of the clipboard
-R   - Resize the map's height and width (fixed the bug in this one!)
-J   - Copy Layers 1-3 to a mini PCX image
-F1  - Load a saved map
-F2  - Create a new map
-F3  - Save the current map
-F4  - Erase a Layer from the map
-F5  - Load a PCX image and convert it to a map
-F6  - Change all the instances of one tile in a map to another
-F7  - Remove all Obstructions from the map
-F8  - Remove all Shadows from the map
-F9  - Copy from one layer to another
+F1  - Help file
+F2  - Load map
+F3  - Save current map
+N   - New map
+R   - Resize current map
 F10 - Map description (what the player sees when entering a town, cave, etc.)
-F12 - Entity Modification Mode
-ESC - Stop Block copying
+
+G   - Grab (select) a tile from the map and display it on the Tile Selection on the right
+H   - Highlight the current Attribute (works for Obstacles, Shadows, and Zones)
+
+F   - Select the first used zone on a map (usually 0)
+L   - Select the last used zone on a map
+
+T   - Block copy (left click starts, right click completes the selection)
+P   - Paste the copied block/tile (left click: all Layers/Attributes, right-click pastes to specific Layer/Attribute)
+ESC - Cancel copy/paste
+
+F5  - Load a PCX image and convert it to a map
+J   - Create a PCX image from one (or more) of the Layers
+V   - Visualize (create entire image, minus Entities) of whole map
+F6  - Copy any instance of the specified tile into any instance of another tile
+F9  - Copy the properties from one Layer to another
+
+F4  - Clear all the tiles from the specified Layer 
+F7  - Clear all the Obstructions on the map
+F8  - Clear all the Shadows on the map
+W   - Wipe the contents of the current map
+
+UP ARROW    - Move up 1 space
+DOWN ARROW  - Move down 1 space
+LEFT ARROW  - Move left 1 space
+RIGHT ARROW - Move right 1 space
+PGUP        - Move up 1 entire screen
+PGDN        - Move down 1 entire screen
+BACKSPACE   - Move right 1 entire screen
+TAB         - Move left 1 entire screen
+HOME        - Move to the top-left corner of the map
+END         - Move to the bottom-right corner of the map
+
+Q   - Quit the program
 
 +/- keys:
 If you are in Entities mode, selects an entity (a whole lot to choose from)
 If you are in Shadows mode, selects a shadow type (11 to choose from)
 If you are in Obstacles mode, selects an obstacle (5 to choose from)
-If you are in Zones mode, select a zone (up to 255; this is what the LUA
- files refer to )
-If you are in regular Layer 1-3 mode, select one of the icons from the
- right-hand menu
-
-Up, Down, Left, Right: Move the view window around
-PgUp, PgDn, Tab, Backspace, Home, End: Move more quickly
-
-You can use the mouse to select a tile from the tile map in the right-hand
-menu.  You can also change map options in the bottom menu.
-
-
-===============================
-The code is fairly well-commented, so everything should be self-explanitory.
-These few key changes were implemented for ease-of-use, and keys are easily
-redefined if they're undesirable.
-
+If you are in Zones mode, select a zone (up to 255; this is what the LUA files refer to)
+Otherwise, it will change the selection of the tiles in the Tile Selection area on the right side of the screen.
 
 ===============================
 Changes, updates:
+
+20040725:
+* Added a Highlight feature to help see where all the Obstacles, Shadows, or Zones of the specified number are located (with a big red dot)
+* Count the current Obstacles, Shadows, or Zones and display the user (for example, it helps to see if we've used a specific Zone yet or not)
+* Code clarification (more legible), bug fixes
+* Zone numbers are formatted depending on the length of the number for easier reading
+* Shows where the current copy selection starts and ends for better visability
+* Cleaned up the screen; fonts and other spacing issues
+* Increased the number of tiles displayed from 20 to 40 in the Tile Selection area
+* Added a help file (lots of help by PH on this one)
+* Error-checking to make sure images can be loaded; if not, give an error message (hopefully, no more "random" crashes)
+* Smart-tileset checking: if the desired tile isn't available, skip to the next one after showing a warning (this is helpful for when you want to add your own tilesets temporarily, then remove it without recompiling the code, or if one of the PCX images isn't found in the current directory)
+* Created new file, mapdump, to supercede the need for visual_map() (more flexible)
+* Allegro version-specific code (patch by PH)
+* Additional error-checking code (hopefully, fewer error messages!)
+
+Older changes:
 
 * You can change the tileset by clicking on the " Icon: *** " PCX name and it
   shows the results immediately across the map.
@@ -117,15 +185,20 @@ Changes, updates:
     draw_mode to the current layer.
 * Added help menu (F1).
 * Added extra file open/save checks.
-* Fixed multiple memory bugs and map-resize issues.
 
 
 ===============================
 Known bugs:
 
-* If the view window is at the bottom of the map when the mapsize is reduced, it will crash the editor.  Either don't be at the bottom of the map when you decrease its height, or don't shrink the map :-)
 
 
 Questions and comments (donations, threats...) are of course welcome.
 
 -TeamTerradactyl :: teamterradactyl@users.sourceforge.net
+
+===============================
+Todo:
+
+Create an is_modified() function to know if we should prompt to save the map or not
+Fix the maps's WarpX/WarpY values.
+- In the game, we will need to modify the Warp spell so the player can select where they would like to warp to.  They should be able to warp to any previously-visited town.  Towns will not allow players to warp out of them (the map's Warp == "no"), and some maps may have requirements that must be met before the player can leave there (like the towers where the player may have a Unadium or Goblin object in their posession), so Warp needs to be disabled here.  Else, if Warp is enabled, we need to reset the values of the progress(P_*) associated with that particular map's quest/requirements before the player is taken out of there.  We may be able to use the map's value of "extra_byte" to store whether we need to do any "cleanup" before the player is warped out of there; if there is a value there, then we have to clean it up, if not, we can go ahead and warp.
