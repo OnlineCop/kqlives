@@ -95,10 +95,13 @@ function zone_handler(zn)
     set_zone(21, 43, 0);
 
   elseif (zn == 5) then
-    set_ent_script(10, "R1D4L3D3");
+    set_ent_speed(11, 4);
+    set_ent_speed(12, 4);
+    set_ent_script(10, "D2L2D3");
     set_ent_script(11, "L8U2");
     set_ent_script(12, "U1L8U2");
     wait_for_entity(10, 12);
+    
     set_run(0);
     combat(3);
     set_run(1);
@@ -132,10 +135,12 @@ function zone_handler(zn)
     set_zone(37, 28, 0);
 
   elseif (zn == 7) then
-    set_ent_script(10, "R1D4L3D7");
+    set_ent_speed(10, 4);
+    set_ent_script(10, "D2L2D7");
     set_ent_script(11, "L2D1L2");
     set_ent_script(12, "U1L5");
     wait_for_entity(10, 12);
+    wait(100);
     set_run(0);
     combat(3);
     set_run(1);
@@ -205,6 +210,7 @@ function entity_handler(en)
     else
       bubble(en, "Intruder!");
     end
+
     set_ent_script(20, "D1R6U1");
     set_ent_script(21, "D1R3U2");
     wait_for_entity(20, 21);

@@ -3,30 +3,8 @@
 function autoexec()
 
 -- set_progress(P_ORACLE, 0);
--- TT: This needs to be changed so they only reset if you enter or exit
--- the front doors, not just enter the map (like a loaded game)
-
-  set_progress(P_FLOOR1, 0);
-  set_progress(P_FLOOR2, 0);
-  set_progress(P_FLOOR3, 0);
-  set_progress(P_FLOOR4, 0);
-
-  set_progress(P_STONE1, 0);
-  set_progress(P_STONE2, 0);
-  set_progress(P_STONE3, 0);
-  set_progress(P_STONE4, 0);
-
-  set_progress(P_WALL1, 0);
-  set_progress(P_WALL2, 0);
-  set_progress(P_WALL3, 0);
-  set_progress(P_WALL4, 0);
-
-  set_progress(P_DOOROPEN, 0);
-  set_progress(P_DOOROPEN2, 0);
-  set_progress(P_TREASUREROOM, 0);
-
-  set_progress(P_BSTONES, 0);
-  set_progress(P_WSTONES, 0);
+-- TT: This was changed so they only reset if you enter or exit
+-- the front doors, not just enter the map (like load a game)
 
   refresh();
 end
@@ -211,7 +189,7 @@ function refresh()
 
   -- Picked up Black stone (4: Single treasure, treasure chest)
   if (get_progress(P_STONE4) == 1) then
-    set_ftile(111, 8, 65);
+    set_mtile(111, 8, 65);
   end
 end
 
@@ -233,13 +211,32 @@ function zone_handler(zn)
       set_progress(P_TOWEROPEN, 0);
     end
 
-    -- Reset the Black and White stones in your inventory
-    set_progress(P_WSTONES, 0);
-    set_progress(P_BSTONES, 0);
+    -- Reset the Black and White stones on the ground
     set_progress(P_STONE1, 0);
     set_progress(P_STONE2, 0);
     set_progress(P_STONE3, 0);
     set_progress(P_STONE4, 0);
+    set_progress(P_BSTONES, 0);
+    set_progress(P_WSTONES, 0);
+
+    -- Reset the stones located in the walls
+    set_progress(P_WALL1, 0);
+    set_progress(P_WALL2, 0);
+    set_progress(P_WALL3, 0);
+    set_progress(P_WALL4, 0);
+
+    -- Close the open-by-switch doors
+    set_progress(P_DOOROPEN, 0);
+    set_progress(P_DOOROPEN2, 0);
+    set_progress(P_TREASUREROOM, 0);
+
+    -- Reset the holes on the 2nd floor
+    set_progress(P_FTOTAL, 0);
+    set_progress(P_FLOOR1, 0);
+    set_progress(P_FLOOR2, 0);
+    set_progress(P_FLOOR3, 0);
+    set_progress(P_FLOOR4, 0);
+
     change_map("main", 263, 53, 263, 53);
 
   -- Stairs up (1: Main entrance -> 2: Floor switches)
