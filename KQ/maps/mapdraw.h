@@ -6,7 +6,7 @@
  */
 
 #define MAX_TILES    1024
-#define NUM_TILESETS    6
+#define NUM_TILESETS    7
 #define MAX_EPICS      40
 #define MAX_ZONES     256
 #define MAX_SHADOWS    12
