@@ -22,4 +22,4 @@ ifndef NO_PERL
 else
 %.lob: %.lua $(INCLUDES)
 	$(CPP) $(foreach X, $(INCLUDES), -imacros $(X)) $< | luac -o $@ -
-endif 
+endif

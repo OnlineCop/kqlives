@@ -79,9 +79,9 @@ end
 
 
 function Ayla:touch_fire()
-   bubble(HERO1, pick("I wonder how hot this is?",
-          "Someone should clean all this soot out of here.",
-          "Well, my face is warm now, but my butt is still freezing!"));
+  bubble(HERO1, pick("I wonder how hot this is?",
+         "Someone should clean all this soot out of here.",
+         "Well, my face is warm now, but my butt is still freezing!"));
 end
 
 
@@ -219,27 +219,27 @@ end
 -- hero can be a single value or a table
 -- returns the number of heroes that were actually added
 function add_to_manor(hero)
-   local total;
-   if istable(hero) then
-      total=0
-      for i,v in hero do
-	 total=total+add_to_manor(v)
+  local total;
+  if istable(hero) then
+    total = 0;
+    for i, v in hero do
+      total = total + add_to_manor(v);
+    end
+    return total;
+  else
+    if hero < 0 or hero > 7 then
+      return 0;
+    end
+    for i = 0, 7 do
+      if (get_progress(i + P_MANORPARTY) == hero) then
+        return 0;
       end
-      return total;
-   else
-      if hero<0 or hero>7 then
-	 return 0
+    end
+    for i = 0, 7 do
+      if (get_progress(i + P_MANORPARTY) == 0) then
+        set_progress(i + P_MANORPARTY, hero + 1);
+        return 1;
       end
-      for i = 0, 7 do
-	 if (get_progress(i + P_MANORPARTY) == hero) then
-	    return 0;
-	 end
-      end
-      for i = 0, 7 do
-	 if (get_progress(i + P_MANORPARTY) == 0) then
-	    set_progress(i + P_MANORPARTY, hero + 1);
-	    return 1;
-	 end
-      end
-   end
+    end
+  end
 end

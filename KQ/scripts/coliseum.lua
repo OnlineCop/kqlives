@@ -113,7 +113,7 @@ function entity_handler(en)
         bubble(6, "As well, after you register you can't leave the coliseum grounds. If you leave, you will be forced to register again.");
         bubble(6, "Now, let's talk about the actual fights!");
         bubble(6, "The first three battles are more or less just preliminary fights to make sure you have what it takes.");
-        bubble(6, "If you win the first three rounds,  you qualify for more advanced matches.");
+        bubble(6, "If you win the first three rounds, you qualify for more advanced matches.");
         bubble(6, "The more advanced matches are against more skilled opponents and will determine whether or not your skills are balanced enough.");
         bubble(6, "If you manage to defeat the advanced warriors, you will be given a chance to fight Trayor for the grand prize.");
         a = prompt(6, 2, 0, "So, are you willing to pay the",
@@ -153,7 +153,7 @@ function entity_handler(en)
         end
       elseif (a == 1) then
         if (get_progress(P_ROUNDNUM) == 7) then
-          bubble(6, "Astounding! Whoever you are,  you're going to go far!");
+          bubble(6, "Astounding! Whoever you are, you're going to go far!");
           bubble(6, "Well, I guess this is yours.");
           sfx(5);
           msg("Opal Shield procured", 255, 0, xofs, yofs);
@@ -224,11 +224,11 @@ function entity_handler(en)
   elseif (en == 12) then
     if (get_progress(P_OLDPARTNER) == 0) then
       bubble(12, "Wow! I saw you fighting. You cleaned up!");
-      bubble(12, "Oh yeah! I'm here because I ran into some guy named Derig. Well,  he actually came looking for me.");
+      bubble(12, "Oh yeah! I'm here because I ran into some guy named Derig. Well, he actually came looking for me.");
       bubble(12, "Anyways, he wanted me to come and find you.");
       bubble(HERO1, "Derig! What does he want now?");
       bubble(12, "He said that he found out where all of the Opal armor is and he sent me to tell you.");
-      bubble(12, "He also figured that if you didn't have a partner by now,  that I should make my services available to you.");
+      bubble(12, "He also figured that if you didn't have a partner by now, that I should make my services available to you.");
       bubble(12, "And let me just say that after travelling all this way to find you... I won't take no for an answer!");
       bubble(HERO1, "Well, in that case, welcome to the team.");
       bubble(HERO1, "Now, I already found the Opal Helmet and the Opal Shield.");
@@ -249,8 +249,8 @@ function entity_handler(en)
       screen_dump();
       msg("$1 joined!", 255, 0);
     else
-      bubble(12, "Hey... long time no see.  I saw you fighting. You were amazing!");
-      bubble(12, "Oh yeah! I'm here because I ran into some guy named Derig. Well,  he actually came looking for me.");
+      bubble(12, "Hey... long time no see. I saw you fighting. You were amazing!");
+      bubble(12, "Oh yeah! I'm here because I ran into some guy named Derig. Well, he actually came looking for me.");
       bubble(12, "He knew that we were separated and he gave me some information to bring back.");
       bubble(HERO1, "Speaking of that... where did you go?");
       bubble(12, "Heh... when we hit the teleporter, it sent me back to Ekla.");

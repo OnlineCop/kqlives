@@ -122,7 +122,7 @@ function entity_handler(en)
         bubble(HERO1, "Are trolls common to this area? I have seen none in my travels.");
         bubble(7, "That is the strange part of all this. Trolls have not been seen in these parts for nearly a century!");
         bubble(7, "I must say that we suspect that someone is directing the troll in these matters.");
-        bubble(HERO1, "Well, don't worry.  We will get that statue back for you and get to the bottom of this whole thing.");
+        bubble(HERO1, "Well, don't worry. We will get that statue back for you and get to the bottom of this whole thing.");
         bubble(7, "Oh, and if you haven't seen the cave yet... or even if you have, you'll need to know that there is a trick to opening the door.");
         bubble(7, "There is a set of stones off to the left of the entrace. You have to press them in the right order to gain access.");
         bubble(7, "Press the first stone, then the fourth and lastly the third. Then the door will open. Got it?");

@@ -113,8 +113,9 @@ function postexec()
     bubble(8, "Alright everyone, I welcome you. Let me get right to the major points of why you're here.");
     bubble(8, "Monsters have started attacking us from out of nowhere. We need your help to find their origins and put a stop to it!");
     bubble(8, "Go out, discover where they came from, and get rid of them so we can enjoy peace once again. I have two hunches as to where they came from.");
-    if (prompt(8, 2, 1, "Do you want to hear what",
-                        "they are?", "  yes", "  no") == 0) then
+    if (prompt(8, 2, 1, "Do you want to hear what", "they are?",
+                        "  yes",
+                        "  no") == 0) then
       -- yes
       while (not done_talking) do
         -- TT: Is there a way to advance the pointer by one, so if the player

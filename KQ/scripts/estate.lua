@@ -95,14 +95,14 @@ function zone_handler(zn)
       set_ent_facing(1, 0);
       bubble(1, "Oh $0!");
       bubble(1, "I woke up because I thought I heard fighting in your room.");
-      bubble(1, "When I turned to wake Dungar,  I realized that he was dead.");
+      bubble(1, "When I turned to wake Dungar, I realized that he was dead.");
       bubble(1, "Someone stabbed him in his sleep!");
-      bubble(HERO1, "Oh no! You were right though,  I was fighting an assassin who was sent here to kill me. He obviously was not alone.");
+      bubble(HERO1, "Oh no! You were right though, I was fighting an assassin who was sent here to kill me. He obviously was not alone.");
       bubble(HERO1, "This is all my fault!");
       bubble(1, "No it's not... this is all because of that damn guild!");
       bubble(HERO1, "Yes, but when I was there to get the Helmet back, it all seemed as though it was too easy.");
       bubble(HERO1, "They set me up. They wanted to follow me so that they could kill Dungar!");
-      bubble(1, "That may be true $0,  but you were doing the right thing. You didn't know.");
+      bubble(1, "That may be true $0, but you were doing the right thing. You didn't know.");
       bubble(HERO1, "I'm so sorry Emma!");
       bubble(1, "It's okay... I guess I've been expecting something like this to happen for a long time.");
       bubble(1, "You can't marry an ex-thief and expect to have a normal life. I'll be alright.");
@@ -143,7 +143,7 @@ function entity_handler(en)
       if (a == 0) then
         bubble(1, "Hello, are you a friend of my husband's?");
       elseif (a == 1) then
-        bubble(1, "You need the Opal helmet?  I'm afraid you are too late... It was stolen!");
+        bubble(1, "You need the Opal helmet? I'm afraid you are too late... It was stolen!");
         bubble(1, "My husband left for Sunarin to try and get it back. If you go there you will probably find him.");
         set_progress(P_TALKGELIK, 2);
       elseif (a == 2) then

@@ -117,7 +117,7 @@ function entity_handler(en)
     if (a < 2) then
       bubble(2, "This is very hard work!");
     elseif (a == 4) then
-      bubble(2, "That monster popped up right under my nose.  Thanks for everything!");
+      bubble(2, "That monster popped up right under my nose. Thanks for everything!");
     end
 
   elseif (en == 3) then

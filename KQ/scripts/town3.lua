@@ -147,7 +147,7 @@ function entity_handler(en)
       bubble(1, "You see, before the humans settled these lands, there used to be goblins here.");
       bubble(1, "The humans forced the goblins out of these lands. That's why things are still really bitter between our two peoples.");
       bubble(1, "Anyways, the humans went about conquering and settling, and in time, they built a temple to the north of town.");
-      bubble(1, "Why they chose to build it there is beyond me, but unfortunately,  it turns out that the temple was constructed over an old tomb.");
+      bubble(1, "Why they chose to build it there is beyond me, but unfortunately, it turns out that the temple was constructed over an old tomb.");
       bubble(1, "The tomb is a goblin holy place. The tomb belongs to the first king of the goblins who died over six hundred years ago.");
       bubble(1, "Well, after a few months, the priests at the temple began disappearing. It was discovered that spirits were to blame.");
       bubble(1, "There are strange spirits all over this land, but these were the enraged spirits of goblins who called the tomb home.");
@@ -169,8 +169,8 @@ function entity_handler(en)
       change_map("fort", 38, 16, 38, 16);
     end
     if (get_progress(P_TALKDERIG) == 0) then
-      bubble(1, "I am the captain of the guard. I  should warn you to stay away from the goblin lands to the south.");
-      bubble(1, "In fact, for everyone's safety,  we've sealed off the pass.");
+      bubble(1, "I am the captain of the guard. I should warn you to stay away from the goblin lands to the south.");
+      bubble(1, "In fact, for everyone's safety, we've sealed off the pass.");
       return;
     end
     if (get_progress(P_GOBLINITEM) == 0) then

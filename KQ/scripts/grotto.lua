@@ -99,7 +99,7 @@ function entity_handler(en)
         bubble(0, "He's the captain of the city guard and should be easy to find. He can guide you from there.");
       end
       bubble(HERO1, "Can you tell me anything else?");
-      bubble(0, "I have nothing further to tell you except this: be cautious,  especially of Nostik.");
+      bubble(0, "I have nothing further to tell you except this: be cautious, especially of Nostik.");
       bubble(0, "I have yet to figure out why he wants the Staff, but I don't trust him.");
       bubble(HERO1, "Why? What does this Staff do?");
       bubble(0, "I don't know, and that's the problem.");

@@ -175,7 +175,9 @@ function zone_handler(zn)
     refresh();
 
   elseif (zn == 37) then
-    if (prompt(255, 2, 0, "Take a nap?", "  yes", "  no") == 0) then
+    if (prompt(255, 2, 0, "Take a nap?",
+                          "  yes",
+                          "  no") == 0) then
       for a=0, get_numchrs() - 1, 1 do
         set_party_hp(a, get_party_mhp(a));
         set_party_mp(a, get_party_mmp(a));
