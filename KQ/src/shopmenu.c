@@ -913,7 +913,7 @@ static void sell_menu (void)
              unpress ();
              pg--;
              if (pg < 0)
-                pg = 7;
+                pg = MAX_INV / 16 - 1;
              play_effect (SND_CLICK, 128);
              rd = 1;
           }
@@ -921,7 +921,7 @@ static void sell_menu (void)
           {
              unpress ();
              pg++;
-             if (pg > 7)
+             if (pg > (MAX_INV / 16 - 1))
                 pg = 0;
              play_effect (SND_CLICK, 128);
              rd = 1;
