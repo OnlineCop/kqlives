@@ -27,30 +27,30 @@ function postexec()
 end
 
 -- updated 20020929 PH
--- added test for P_OPALHELMET so 
+-- added test for P_OPALHELMET so
 -- that you can re-enter the guild
 -- if you do not have the helmet yet
 function zone_handler(zn)  
   if (zn == 1) then
-    if (get_progress(P_OPALHELMET)==1) then 
+    if (get_progress(P_OPALHELMET)==1) then
       set_progress(P_FOUGHTGUILD,2);
-    end	
+    end
     change_map("town5",18,37,18,37);
 
   elseif (zn == 2) then
     warp(10,5,8);
-  
+
   elseif (zn == 3) then
     if (get_progress(P_GUILDSECRET) == 0) then
       bubble(HERO1,"Well I'll be...","","","");
-      bubble(HERO1,"The book really is called 'How",
+      bubble(HERO1,"The book really IS called 'How",
                    "to Enter the Ember's Secret",
                    "Hideout'. Heh... brilliant in",
-                   "it's simplicity I suppose.");
+                   "its simplicity, I suppose.");
       set_progress(P_GUILDSECRET,1);
       refresh();
     end
-  
+
   elseif (zn == 4) then
     if (get_pidx(0) == AYLA) then
       bubble(HERO1,"I'm a thief... but even I",
@@ -61,25 +61,25 @@ function zone_handler(zn)
 
   elseif (zn == 5) then
     chest(47,0,500);
-  
+
   elseif (zn == 6) then
     warp(37,7,8);
-  
+
   elseif (zn == 7) then
     warp(23,19,8);
-  
+
   elseif (zn == 8) then
     chest(50,I_SWORD4,1);
-  
+
   elseif (zn == 9) then
     bubble(HERO1,"These look interesting.","","","");
-  
+
   elseif (zn == 10) then
     bubble(HERO1,"Locked.","","","");
-  
+
   elseif (zn == 11) then
     local a,b;
-  
+
     if (get_progress(P_FOUGHTGUILD) == 0) then
       a = get_vx();
       b = get_vy();
@@ -128,7 +128,7 @@ function zone_handler(zn)
       bubble(HERO1,"Those guys are gone!","","","");
       bubble(HERO1,"But they left the chest behind.","","","");
     end
-  
+
   elseif (zn == 12) then
     if (get_progress(P_OPALHELMET) == 0) then
       sfx(5);
@@ -141,7 +141,7 @@ function zone_handler(zn)
       bubble(HERO1,"I don't like this.",
                    "It was just too easy.","","");
     end
-  
+
   elseif (zn == 13) then
     warp(10,27,8);
 
