@@ -367,12 +367,14 @@ static void camp_spell_targeting (int mc, int sn)
                   return;
                }
              else
-                play_effect (SND_TWINKLE, 128);
+/*  DS: This piece of code need to be here, because if a spell cast fail */
+/*      you can't adjust your hp                                         */
+                for (a = 0; a < numchrs; a++)
+                   adjust_hp (a, ta[a]);
+             play_effect (SND_TWINKLE, 128);
           }
         else
            play_effect (SND_TWINKLE, 128);      /* this should be a failure sound */
-        for (a = 0; a < numchrs; a++)
-           adjust_hp (a, ta[a]);
         revert_equipstats ();
      }
 }

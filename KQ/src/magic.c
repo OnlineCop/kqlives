@@ -138,7 +138,10 @@ int combat_spell (int whom, int is_item)
    if (cast_spell (whom, is_item) == 0)
      {
         /* do failure sound and/or graphic */
-        return 0;
+/*  DS: If you return from here, the word 'miss' don't appear in the fight */
+/*      when the magic fails                                               */
+/* 	return 0; */
+        ;
      }
 
    if (sn == M_ABSORB || sn == M_DRAIN)
@@ -233,14 +236,38 @@ int cast_spell (int whom, int is_item)
            check for spell failure - only applies to spells that
            don't have a hit% or do damage
          */
+/*  DS IDEA: move this code to the function non_dmg_save() */
         if (magic[sn].dmg == 0 && magic[sn].bon == 0 && magic[sn].hit == 0)
           {
              if (rand () % 100 + 1 >
                  fighter[whom].stats[A_AUR + magic[sn].stat])
-                return 0;
+               {
+/*  DS: The spell fail, so set ta[target] to MISS */
+                  if (tgt != SEL_ALL_ALLIES)
+                     ta[tgt] = MISS;
+                  else
+                    {
+                       int i, nt, st;
+                       if (whom < PSIZE)
+                         {
+                            nt = numchrs;
+                            st = 0;
+                         }
+                       else
+                         {
+                            nt = numens;
+                            st = PSIZE;
+                         }
+                       for (i = st; i < nt; i++)
+                         {
+                            ta[i] = MISS;
+                         }
+                    }
+
+                  return 0;
+               }
           }
      }
-
    /* call the appropriate spell effect function */
    switch (magic[sn].icon)
      {
@@ -422,11 +449,16 @@ static void heal_one_ally (int cs, int tgt, int sn)
 {
    int a, b = 0;
 
-   if (rand () % 100 + 1 > fighter[cs].stats[A_AUR + magic[sn].stat])
-     {
-        ta[tgt] = MISS;
-        return;
-     }
+/*  DS: Because these lines, sometimes when you cast restore or others */
+/*      spells, the spell don't work correctly. In cast_spell() this   */
+/*      is tested, so don't need to test again.                        */
+/*   if (rand () % 100 + 1 > fighter[cs].stats[A_AUR + magic[sn].stat]) */
+/*     { */
+/* 	ta[tgt] = MISS; */
+/* 	return; */
+/*     } */
+/*  DS: Now the 'cs' argument isn't used, so I'm doing this:           */
+   cs = cs;
    switch (sn)
      {
      case M_RESTORE:
@@ -473,12 +505,17 @@ static void heal_one_ally (int cs, int tgt, int sn)
 */
 static void geffect_one_ally (int cs, int tgt, int sn)
 {
-   if (rand () % 100 + 1 > fighter[cs].stats[A_AUR + magic[sn].stat]
-       || fighter[tgt].sts[S_STONE] > 0)
-     {
-        ta[tgt] = MISS;
-        return;
-     }
+/*  DS: The same problem of heal_one_ally(), this have been tested in */
+/*      cast_spell(), because the hit% of all magics with good effect */
+/*      are 0                                                         */
+/*    if (rand () % 100 + 1 > fighter[cs].stats[A_AUR + magic[sn].stat] */
+/*        || fighter[tgt].sts[S_STONE] > 0) */
+/*      { */
+/* 	ta[tgt] = MISS; */
+/* 	return; */
+/*      } */
+/*  DS: Now the 'cs' argument isn't used, so I'm doing this: */
+   cs = cs;
    switch (sn)
      {
      case M_TRUEAIM:
