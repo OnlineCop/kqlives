@@ -101,7 +101,7 @@ void blit2screen (int xw, int yw)
  * \param   source Bitmap to copy from
  * \returns target or a new bitmap.
  */
-BITMAP *copy_bitmap (BITMAP *target, BITMAP *source)
+BITMAP *copy_bitmap (BITMAP * target, BITMAP * source)
 {
    if (target) {
       if (target->w < source->w || target->h < source->h) {
@@ -137,7 +137,7 @@ BITMAP *copy_bitmap (BITMAP *target, BITMAP *source)
  * \param   st Start of output color range
  * \param   fn End of output color range
  */
-void color_scale (BITMAP *src, BITMAP *dest, int st, int fn)
+void color_scale (BITMAP * src, BITMAP * dest, int st, int fn)
 {
    int ix, iy, z, a;
 
@@ -241,7 +241,7 @@ void revert_cframes (int who, int aflag)
  * \param   icx x-coord
  * \param   icy y-coord
  */
-void draw_icon (BITMAP *where, int ino, int icx, int icy)
+void draw_icon (BITMAP * where, int ino, int icx, int icy)
 {
    masked_blit (sicons, where, 0, ino * 8, icx, icy, 8, 8);
 }
@@ -263,7 +263,7 @@ void draw_icon (BITMAP *where, int ino, int icx, int icy)
  * \param   icx x-coord to draw to
  * \param   icy y-coord to draw to
  */
-void draw_stsicon (BITMAP *where, int cc, int who, int inum, int icx, int icy)
+void draw_stsicon (BITMAP * where, int cc, int who, int inum, int icx, int icy)
 {
    int j, st = 0, s;
 
@@ -653,7 +653,7 @@ static void draw_shadows (void)
  * \param   x2 Bottom-right x-coord
  * \param   y2 Bottom-right y-coord
  */
-static void border (BITMAP *where, int x, int y, int x2, int y2)
+static void border (BITMAP * where, int x, int y, int x2, int y2)
 {
    vline (where, x + 1, y + 3, y2 - 3, GREY2);
    vline (where, x + 2, y + 3, y2 - 3, GREY3);
@@ -704,7 +704,7 @@ static void border (BITMAP *where, int x, int y, int x2, int y2)
  * \param   bg Colour/style of background
  * \param   bstyle Style of border
  */
-static void draw_kq_box (BITMAP *where, int x1, int y1, int x2, int y2,
+static void draw_kq_box (BITMAP * where, int x1, int y1, int x2, int y2,
                          int bg, int bstyle)
 {
    int a;
@@ -758,7 +758,7 @@ static void draw_kq_box (BITMAP *where, int x1, int y1, int x2, int y2,
  * \param   h Height
  * \param   c Colour (see note above)
  */
-void menubox (BITMAP *where, int x, int y, int w, int h, int c)
+void menubox (BITMAP * where, int x, int y, int w, int h, int c)
 {
    draw_kq_box (where, x, y, x + w * 8 + 16, y + h * 8 + 16, c, B_TEXT);
 }
@@ -776,7 +776,7 @@ void menubox (BITMAP *where, int x, int y, int w, int h, int c)
  * \param   msg String to draw
  * \param   cl Font index (0..6)
  */
-void print_font (BITMAP *where, int sx, int sy, char *msg, int cl)
+void print_font (BITMAP * where, int sx, int sy, char *msg, int cl)
 {
    int z, cc, hgt = 8;
 
@@ -813,7 +813,7 @@ void print_font (BITMAP *where, int sx, int sy, char *msg, int cl)
  * \param   msg String to draw
  * \param   cl Font index (0..4)
  */
-void print_num (BITMAP *where, int sx, int sy, char *msg, int cl)
+void print_num (BITMAP * where, int sx, int sy, char *msg, int cl)
 {
    int z, cc;
 
