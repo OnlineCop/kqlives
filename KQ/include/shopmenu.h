@@ -29,6 +29,7 @@
 
 int shop (int);                 /*  only in intrface.c  */
 void inn (char *, int, int);    /*  only in intrface.c  */
+void do_inn_effects (int);      /*  only in intrface.c  */
 
 
 

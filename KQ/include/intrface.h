@@ -25,6 +25,12 @@
 #include <lua.h>
 
 
+/* Facing directions */
+#define FACE_DOWN    0
+#define FACE_UP      1
+#define FACE_LEFT    2
+#define FACE_RIGHT   3
+
 
 #define NUM_IFUNCS   142
 

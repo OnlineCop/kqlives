@@ -144,6 +144,7 @@
 #define P_MAYORGUARD1     106
 #define P_MAYORGUARD2     107
 
+#define P_TALK_TSORIN     108
 
 /* 'specials' */
 #define P_SHOPSTART       1750
@@ -155,6 +156,15 @@
 /*! \name Special identifiers for bubble() */
 #define HERO1             200
 #define HERO2             201
+
+
+/*! \name Facing directions */
+/*\{*/
+#define FACE_DOWN    0
+#define FACE_UP      1
+#define FACE_LEFT    2
+#define FACE_RIGHT   3
+/*\}*/
 
 
 /*! \name Hero identifiers */
