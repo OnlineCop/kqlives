@@ -5,6 +5,7 @@ cave2
 cave3a
 cave3b
 cave4
+cave5
 cheat
 coliseum
 cult
