@@ -35,7 +35,7 @@
 /*! Array of strings */
 static char *credits[] = {
    "(C) 2001 DoubleEdge Software",
-   "(C) 2002,3 KQ Lives Team",
+   "(C) 2002-4 KQ Lives Team",
    "http://kqlives.sourceforge.net/",
    "Peter Hull",
    "TeamTerradactyl",
