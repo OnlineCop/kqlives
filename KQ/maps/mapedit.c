@@ -934,7 +934,10 @@ void check_mdupdate (int cx, int cy)
       /* Make sure the line isn't blank */
       if (a == 0)
          return;
-      /* Make sure the value is valid (999 is a VERY extreme value!) */
+      /* Make sure the value is valid (999 is a VERY extreme value!).
+         Even though you cannot divide by 0 (see below), you CAN multiply
+         by 0 to make the background totally stationary.
+       */
       if (!(atoi (strbuf) >= 0 && atoi (strbuf) <= 999)) {
          cmessage ("Invalid parallax multiplier!");
          wait_enter ();
@@ -953,8 +956,10 @@ void check_mdupdate (int cx, int cy)
       /* Make sure the line isn't blank */
       if (a == 0)
          return;
-      /* Make sure the value is valid (999 is a VERY extreme value!) */
-      if (!(atoi (strbuf) >= 0 && atoi (strbuf) <= 999)) {
+      /* Make sure the value is valid (999 is a VERY extreme value!) and
+         you CANNOT divide by zero.
+       */
+      if (!(atoi (strbuf) > 0 && atoi (strbuf) <= 999)) {
          cmessage ("Invalid parallax divider!");
          wait_enter ();
          return;
@@ -1042,36 +1047,41 @@ void visual_map (void)
  * \author PH
  * \date 20031205
  * \param layer pointer to layer data array
- * \param pr ==0 draw with parallax off or !=0 on
+ * \param parallax ==0 draw with parallax off or !=0 on
  */
-static void draw_layer (short *layer, int pr)
+static void draw_layer (short *layer, int parallax)
 {
-   int i, j;
-   int i0, j0, i1, j1;
+   int layer_x, j;
+   int layer_x1, layer_x2, layer_y1, layer_y2;
    int x0, y0;
-   /* calculate the top left, taking parallax into account */
-   i0 = pr ? gx * gmap.pmult / gmap.pdiv : gx;
-   j0 = pr ? gy * gmap.pmult / gmap.pdiv : gy;
-   /* calculate bottom right */
-   i1 = i0 + htiles;
-   j1 = j0 + vtiles;
-   /* make sure these don't step off the edges of the map */
-   if (i0 < 0)
-      i0 = 0;
-   if (j0 < 0)
-      j0 = 0;
-   if (i1 > gmap.xsize)
-      i1 = gmap.xsize;
-   if (j1 > gmap.ysize)
-      j1 = gmap.ysize;
-   /* calculate the pixel-based coordinate of the top left */
-   x0 = i0 * 16;
-   y0 = j0 * 16;
-   /* ..and draw the tilemap */
-   for (j = j0; j < j1; ++j) {
-      for (i = i0; i < i1; ++i) {
-         draw_sprite(double_buffer, icons[layer[i + j * gmap.xsize]],
-                     i * 16 - x0, j * 16 - y0);
+
+   /* Calculate the top left, taking parallax into account */
+   layer_x1 = parallax ? gx * gmap.pmult / gmap.pdiv : gx;
+   layer_y1 = parallax ? gy * gmap.pmult / gmap.pdiv : gy;
+
+   /* Calculate bottom right */
+   layer_x2 = layer_x1 + htiles;
+   layer_y2 = layer_y1 + vtiles;
+
+   /* Make sure these don't step off the edges of the map */
+   if (layer_x1 < 0)
+      layer_x1 = 0;
+   if (layer_y1 < 0)
+      layer_y1 = 0;
+   if (layer_x2 > gmap.xsize)
+      layer_x2 = gmap.xsize;
+   if (layer_y2 > gmap.ysize)
+      layer_y2 = gmap.ysize;
+
+   /* Calculate the pixel-based coordinate of the top left */
+   x0 = layer_x1 * 16;
+   y0 = layer_y1 * 16;
+
+   /* ...And draw the tilemap */
+   for (j = layer_y1; j < layer_y2; ++j) {
+      for (layer_x = layer_x1; layer_x < layer_x2; ++layer_x) {
+         draw_sprite(double_buffer, icons[layer[layer_x + j * gmap.xsize]],
+                     layer_x * 16 - x0, j * 16 - y0);
       }
    }
 }
@@ -1082,35 +1092,46 @@ static void draw_layer (short *layer, int pr)
  * Draws the shadows onto the screen and takes into consideration any layer
  * effects that need to take place (see map_mode_text[] for details).
  * This is basically the same as draw_layer().
- * \param pr ==0 draw with parallax off or !=0 on
+ * \param parallax ==0 draw with parallax off or !=0 on
  * \author PH
  * \date 20031205
  */
-static void draw_shadow (int pr)
+static void draw_shadow (int parallax)
 {
-   int i, j;
-   int i0, j0, i1, j1;
+   int layer_x, j;
+   int layer_x1, layer_y1, layer_x2, layer_y2;
    int x0, y0;
    int ss;
-   i0 = pr ? gx * gmap.pmult / gmap.pdiv : gx;
-   j0 = pr ? gy * gmap.pmult / gmap.pdiv : gy;
-   i1 = i0 + htiles;
-   j1 = j0 + vtiles;
-   if (i0 < 0)
-      i0 = 0;
-   if (j0 < 0)
-      j0 = 0;
-   if (i1 > gmap.xsize)
-      i1 = gmap.xsize;
-   if (j1 > gmap.ysize)
-      j1 = gmap.ysize;
+
+   /* Calculate the top left, taking parallax into account */
+   layer_x1 = parallax ? gx * gmap.pmult / gmap.pdiv : gx;
+   layer_y1 = parallax ? gy * gmap.pmult / gmap.pdiv : gy;
+
+   /* Calculate bottom right */
+   layer_x2 = layer_x1 + htiles;
+   layer_y2 = layer_y1 + vtiles;
+
+   /* Make sure these don't step off the edges of the map */
+   if (layer_x1 < 0)
+      layer_x1 = 0;
+   if (layer_y1 < 0)
+      layer_y1 = 0;
+   if (layer_x2 > gmap.xsize)
+      layer_x2 = gmap.xsize;
+   if (layer_y2 > gmap.ysize)
+      layer_y2 = gmap.ysize;
+
+   /* Calculate the pixel-based coordinate of the top left */
    x0 = gx * 16;
    y0 = gy * 16;
-   for (j = j0; j < j1; ++j) {
-      for (i = i0; i < i1; ++i) {
-         ss = sh_map[j * gmap.xsize + i];
+
+   /* ...And draw the tilemap */
+   for (j = layer_y1; j < layer_y2; ++j) {
+      for (layer_x = layer_x1; layer_x < layer_x2; ++layer_x) {
+         ss = sh_map[j * gmap.xsize + layer_x];
          if (ss > 0) {
-            draw_trans_sprite (double_buffer, shadow[ss], i * 16-x0, j * 16-y0);
+            draw_trans_sprite (double_buffer, shadow[ss],
+                               layer_x * 16 - x0, j * 16 - y0);
          }
       }
    }
@@ -1126,19 +1147,20 @@ static void draw_shadow (int pr)
  */
 static void draw_ents(void) {
    int d, x0, y0;
-   BITMAP *e;
+   BITMAP *ent;
    x0 = gx * 16;
    y0 = gy * 16;
+
    for (d = 0; d < noe; d++) {
       /* Draw only the entities within the view-screen */
       if ((gent[d].tilex >= gx) && (gent[d].tilex < gx + htiles) &&
          (gent[d].tiley >= gy) && (gent[d].tiley < gy + vtiles)) {
-            e = eframes[gent[d].chrx][gent[d].facing * 3];
+            ent = eframes[gent[d].chrx][gent[d].facing * 3];
             /* Draw either a normal sprite or a translucent one */
             if (gent[d].transl == 0)
-               draw_sprite (double_buffer, e, gent[d].tilex * 16 - x0, gent[d].tiley * 16 - y0);
+               draw_sprite (double_buffer, ent, gent[d].tilex * 16 - x0, gent[d].tiley * 16 - y0);
             else
-               draw_trans_sprite (double_buffer, e, gent[d].tilex * 16 - x0, gent[d].tiley * 16 - y0);
+               draw_trans_sprite (double_buffer, ent, gent[d].tilex * 16 - x0, gent[d].tiley * 16 - y0);
       }
    }
 }
@@ -1202,6 +1224,7 @@ void draw_map (void)
 
    /* Clear everything with black */
    rectfill (double_buffer, 0, 0, (SW - 81), (SH - 49), 0);
+
    /* The maxx/maxy is used since the map isn't always as large as the
       view-window, we don't want to check/update anything that would be
       out of bounds.
@@ -1400,8 +1423,7 @@ void draw_menubars (void)
    char dt[14][12] = { "Layer1", "Layer2", "Layer3",
       "View L1+2", "View L1+3", "View L2+3", "View L1+2+3",
       "Shadows", "Zones", "Obstacles", "Entities",
-      "Block Copy", "Block Paste",
-      "Grab Tile"
+      "Block Copy", "Block Paste", "Grab Tile"
    };
 
    /* The white line that seperates the bottom menu */
