@@ -138,8 +138,12 @@ int combat (int bno)
    /* ML 2002-09-22: not needed right now int saved_song; */
    int encounter;
    int lc;
+
+#if 0
    sprintf (strbuf, "Battle %d:", bno);
    klog (strbuf);
+#endif
+
    /* PH: some checking! */
    if (bno < 0 || bno >= NUM_BATTLES)
      {
@@ -147,16 +151,28 @@ int combat (int bno)
         program_death (strbuf);
      }
 
+   /* TT: no battles during scripted movements */
+   if (g_ent[0].movemode == 2)
+     {
+        return 0;
+     }
+
    /*  RB: check if we had had a random encounter  */
    if (battles[bno].enc > 1)
      {
+        /* TT: This will skip battles if the player hasn't moved the necessary
+           number of steps AND a random number does not equal zero.
+        */
         if ((steps < STEPS_NEEDED) || ((rand () % battles[bno].enc) > 0))
           {
+#if 0
              sprintf (strbuf, "Skipped due to 1-in-%d or %d<%d",
                       battles[bno].enc, steps, STEPS_NEEDED);
              klog (strbuf);
+#endif
              return 0;
           }
+#if 0
         else
           {
              sprintf (strbuf, "Steps %d >= %d", steps, STEPS_NEEDED);
@@ -167,38 +183,55 @@ int combat (int bno)
      {
         sprintf (strbuf, "battle->enc=%d", battles[bno].enc);
         klog (strbuf);
+#endif
      }
+
    /*  RB: had one! choose what we had just found  */
    steps = 0;
    hero_level = party[pidx[0]].lvl;
    encounter = select_encounter (battles[bno].etnum, battles[bno].eidx);
+#if 0
    sprintf (strbuf, "Encounter %d:", encounter);
    klog (strbuf);
+#endif
+
    /* !! should be party[pidx[0]].lvl */
    if (hero_level >= erows[encounter].lvl + 5 && battles[bno].eidx == 99)
      {
+#if 0
         sprintf (strbuf, "Query level %d vs %d", hero_level,
                  erows[encounter].lvl);
         klog (strbuf);
+#endif
         lc = (hero_level - erows[encounter].lvl) * 5;
+
+        /* TT: This will skip battles based on a random number from hero's
+           level minus enemy's level.
+        */
         if ((rand () % 100) < lc)
           {
+#if 0
              sprintf (strbuf, "Skipped, delta level %d", lc);
              klog (strbuf);
+#endif
              return 0;
           }
+#if 0
         else
           {
              sprintf (strbuf, "Proceeding, delta level %d\n", lc);
              klog (strbuf);
           }
+#endif
      }
+#if 0
    else
      {
         sprintf (strbuf, "No Query level %d vs %d or eidx==%d", hero_level,
                  erows[encounter].lvl, battles[bno].eidx);
         klog (strbuf);
      }
+#endif
 
    if (progress[P_REPULSE] > 0)
      {
@@ -206,11 +239,15 @@ int combat (int bno)
         if (lc < 5)
            lc = 5;
 
+        /* Although Repulse is active, there's still a 1-in-20 chance of
+           battle */
         if ((rand () % 100) < lc)
           {
+#if 0
              sprintf (strbuf, "Skipped, repulse delta %d\n", lc);
              klog (strbuf);
 
+#endif
              return 0;
           }
      }
@@ -607,8 +644,8 @@ void battle_render (int plyr, int hl, int sall)
         /*           the player choose when it should be turned red).     */
         /*  TT TODO: I like this idea; maybe somewhere in the Options     */
         /*           menu?  I find that when the bar flashes red/yellow   */
-        /*          to warn the player, it's much more eye-pleasing than  */
-        /*          just a solid color (and not too hard to implement).   */
+        /*           to warn the player, it's much more eye-pleasing than */
+        /*           just a solid color (and not too hard to implement).  */
 
         print_font (double_buffer, b + 8, 208, strbuf,
                     (fighter[z].hp < (fighter[z].mhp / 5)) ? FRED : FNORMAL);
