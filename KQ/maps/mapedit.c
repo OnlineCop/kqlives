@@ -41,7 +41,7 @@ static int draw_mode = MAP_LAYER123, curtile = 0, dmode = 0;
 static int curzone = 0, curshadow = 0, curobs = 0;
 static int copying = 0, copyx1 = -1, copyx2 = -1, copyy1 = -1, copyy2 = -1;
 static int clipb = 0, cbh = 0, cbw = 0;
-static int needupdate, highlight;
+static int needupdate, highlight, grab_tile = 0;
 static const int COLUMN_WIDTH = 80;
 
 s_map gmap;
@@ -101,6 +101,9 @@ static const char *map_mode_text[] = {
    "1(2E3S",
    "12E(3S",
 };
+
+/*! Current sequence position of animated tiles */
+unsigned short tilex[MAX_TILES];
 
 const int htiles = (SW - 80) / 16;
 const int vtiles = (SH - 48) / 16;
@@ -163,20 +166,15 @@ END_OF_MAIN ();
 
 /*! \brief Animation
  *
- * Realise that this is only an ATTEMPT to get this thing to show what an
- * animation would be like.  It is only available for the PREVIEW mode, so we
- * don't confuse the person putting in one graphic, thinking it will be
- * another.
- *
- * This updates tile indexes for animation threads.
+ * When the user is in MAP_PREVIEW mode, this will loop through all the tiles
+ * which are designated to animate (water, fire, etc.)
  */
 void animate (void)
 {
-
    /* TT TODO:
-    * Firstly, I will need to declare the animation sequences.
-    * Second, I _think_ that tilex[] (now called map[]) handles which tile is
-    * being shown on-screen.
+    * Make the animation work when the user hits the spacebar
+    * I think the error is in here, that something isn't incrementing when it should
+    * so I just need to find what that would be and increment it.
     */
    int i, j;
 
@@ -186,16 +184,13 @@ void animate (void)
    for (i = 0; i < MAX_ANIM; i++) {
       if (adata[i].start != 0) {
          for (j = adata[i].start; j <= adata[i].end; j++) {
-            if (map[j] < adata[i].end)
-               map[j]++;
+            if (tilex[j] < adata[i].end)
+               tilex[j]++;
             else
-               map[j] = adata[i].start;
-         }
+               tilex[j] = adata[i].start;
+         }                      // for (j)
       }
-   }
-
-   for (i = 0; i < MAX_ANIM; i++)
-      adata[i] = tanim[gmap.tileset][i];
+   }                            // for (i)
 }                               /* animate */
 
 
@@ -456,7 +451,8 @@ void copy_layer (void)
             done = 1;
          }
       }
-   }
+   }                            // while ()
+
    /* This is incase we need to redraw the map, the information will still be
     * visible to the user
     */
@@ -673,12 +669,13 @@ void draw_map (void)
           */
          w = ((window_y + dy) * gmap.xsize) + window_x + dx;
 
-         if (draw_mode & MAP_LAYER1 || draw_mode & MAP_PREVIEW)
+         if (draw_mode & MAP_LAYER1)
             drawlayer1 = 1;
-         if (draw_mode & MAP_LAYER2 || draw_mode & MAP_PREVIEW)
+         if (draw_mode & MAP_LAYER2)
             drawlayer2 = 1;
-         if (draw_mode & MAP_LAYER3 || draw_mode & MAP_PREVIEW)
+         if (draw_mode & MAP_LAYER3)
             drawlayer3 = 1;
+
          switch (draw_mode) {
          case BLOCK_COPY:
          case BLOCK_PASTE:
@@ -686,21 +683,24 @@ void draw_map (void)
          case MAP_SHADOWS:
          case MAP_OBSTACLES:
          case MAP_ZONES:
-         case GRAB_TILE:
             if (showing.last_layer & MAP_LAYER1)
                drawlayer1 = 1;
             if (showing.last_layer & MAP_LAYER2)
                drawlayer2 = 1;
             if (showing.last_layer & MAP_LAYER3)
                drawlayer3 = 1;
+            if (showing.last_layer == MAP_PREVIEW) {
+               drawlayer1 = 1;
+               drawlayer2 = 1;
+               drawlayer3 = 1;
+            }
             break;
          default:
             break;
-         }
+         }                      // switch (draw_mode)
 
          /* Clear the background before drawing */
-         if (draw_mode == MAP_LAYER1 || draw_mode == MAP_LAYER2
-             || draw_mode == MAP_LAYER3 || draw_mode == MAP_PREVIEW)
+         if ((draw_mode >= MAP_LAYER1 && draw_mode <= MAP_LAYER3))
             rectfill (double_buffer, dx * 16, dy * 16, dx * 16 + 15,
                       dy * 16 + 15, 0);
 
@@ -747,8 +747,8 @@ void draw_map (void)
                break;
             default:
                break;
-            }
-         }
+            }                   // switch (o_map)
+         }                      // if (showing.obstacles)
 
          /* Draw the Zones */
          if ((showing.zones) && (z_map[w] > 0) && (z_map[w] < MAX_ZONES)) {
@@ -796,7 +796,7 @@ void draw_map (void)
                            (int) (z_map[w] % 100));
             }
 #endif
-         }
+         }                      // if (showing.zones)
 
          /* Highlight each instance of the Attribute */
          if (highlight) {
@@ -829,12 +829,11 @@ void draw_map (void)
                                   eframes[gent[i].chrx][gent[i].facing * 3],
                                   (gent[i].tilex - window_x) * 16,
                                   (gent[i].tiley - window_y) * 16);
-            }
-         }
-      }
-   }
+            }                   // if..else ()
+         }                      // if (gent[i].tilex/tiley)
+      }                         // for (i)
+   }                            // if (showing.entities)
 
-   /* if (showing.entities == 1) */
    /* Displays the rectangle around the Block Copy coords */
    if (draw_mode == BLOCK_COPY && copyx1 != -1 && copyy1 != -1) {
       int rectx1, rectx2, recty1, recty2;
@@ -868,10 +867,10 @@ void draw_menubars (void)
    int draw_mode_display, draw_mode_last;
 
    /* Description for the current draw_mode (could use work) */
-   char dt[15][12] = { "Layer1", "Layer2", "Layer3",
+   char dt[14][12] = { "Layer1", "Layer2", "Layer3",
       "View L1+2", "View L1+3", "View L2+3", "View L1+2+3",
       "Shadows", "Zones", "Obstacles", "Entities",
-      "Block Copy", "Block Paste", "Grab Tile", "Preview"
+      "Block Copy", "Block Paste", "Preview"
    };
 
    /* Determine the views that we're currently using */
@@ -917,11 +916,8 @@ void draw_menubars (void)
    case BLOCK_PASTE:
       draw_mode_display = 12;
       break;
-   case GRAB_TILE:
-      draw_mode_display = 13;
-      break;
    case MAP_PREVIEW:
-      draw_mode_display = 14;
+      draw_mode_display = 13;
       break;
    default:
       draw_mode_display = 0;
@@ -970,11 +966,8 @@ void draw_menubars (void)
    case BLOCK_PASTE:
       draw_mode_last = 12;
       break;
-   case GRAB_TILE:
-      draw_mode_last = 13;
-      break;
    case MAP_PREVIEW:
-      draw_mode_last = 14;
+      draw_mode_last = 13;
       break;
    default:
       draw_mode_last = 0;
@@ -1093,9 +1086,9 @@ void draw_menubars (void)
                   16);
             blit (icons[ICONSET_SIZE / 2 + p], double_buffer, 0, 0, (SW - 24),
                   p * 16 + 1, 16, 16);
-         }
-      }
-   }
+         }                      // if..else ()
+      }                         // for (p)
+   }                            // if (icon_set)
 
    /* Calculate from the total 40 icons, which one the user selected */
    if (curtile >= icon_set * ICONSET_SIZE
@@ -1108,11 +1101,30 @@ void draw_menubars (void)
       /* These are the right 20: */
       xp = (curtile / (ICONSET_SIZE / 2)) + 2;
       yp = curtile % (ICONSET_SIZE / 2);
-   }
+   }                            // if..elseif (curtile)
 
    /* Draw the rectangle around the selected icon */
    rect (double_buffer, (xp * 16) + (SW - 72), (yp * 16),
          (xp * 16) + (SW - 56), (yp * 16) + 16, 255);
+
+   /* Determine which tile is going to be displayed */
+   if (draw_mode == MAP_SHADOWS) {
+      sprintf (strbuf, "Shadow");
+      stretch_blit (shadow[curshadow], double_buffer, 0, 0, 16, 16, SW - 56,
+                    250, 32, 32);
+   } else if (draw_mode == MAP_ENTITIES) {
+      sprintf (strbuf, "Entity");
+      stretch_blit (eframes[current_ent][0], double_buffer, 0, 0, 16, 16,
+                    SW - 56, 250, 32, 32);
+   } else {
+      sprintf (strbuf, " Tile");
+      stretch_blit (icons[curtile], double_buffer, 0, 0, 16, 16, SW - 56, 250,
+                    32, 32);
+   }
+   print_sfont (SW - 58, 234, strbuf, double_buffer);
+   print_sfont (SW - 62, 240, "Preview:", double_buffer);
+   rect (double_buffer, SW - 58, 248, SW - 23, 283, 255);
+
 
    /* Display the draw_mode */
    print_sfont ((SW - 72), 164, "Mode:", double_buffer);
@@ -1128,7 +1140,7 @@ void draw_menubars (void)
       print_sfont ((SW - 72), 182, strbuf, double_buffer);
       sprintf (strbuf, "y=%d", window_y + y);
       print_sfont ((SW - 72), 188, strbuf, double_buffer);
-   }
+   }                            // if (mouse_x, mouse_y)
 
    /* Show when a user is drawing to the map */
    if (dmode == 1)
@@ -1142,7 +1154,7 @@ void draw_menubars (void)
             16, 16);
       sprintf (strbuf, "%d", number_of_ents);
       print_sfont ((SW - 14), (SH - 12), strbuf, double_buffer);
-   }
+   }                            // if (draw_mode == MAP_ENTITIES)
 
    /* Displays the value of the Obstacle under the mouse */
    if (draw_mode == MAP_OBSTACLES) {
@@ -1159,7 +1171,7 @@ void draw_menubars (void)
          sprintf (strbuf, "Current Tile: %d", p);
          print_sfont ((COLUMN_WIDTH * 4), (SH - 40), strbuf, double_buffer);
       }
-   }
+   }                            // if (draw_mode == MAP_OBSTALES)
 
    /* Displays the value of the Shadow under the mouse */
    if (draw_mode == MAP_SHADOWS) {
@@ -1176,7 +1188,7 @@ void draw_menubars (void)
          sprintf (strbuf, "Current Tile: %d", p);
          print_sfont ((COLUMN_WIDTH * 4), (SH - 40), strbuf, double_buffer);
       }
-   }
+   }                            // if (draw_mode == MAP_SHADOWS)
 
    /* Displays the value of the Zone under the mouse */
    if (draw_mode == MAP_ZONES) {
@@ -1195,14 +1207,20 @@ void draw_menubars (void)
       }
    }
 
-   if (draw_mode == MAP_OBSTACLES || draw_mode == MAP_SHADOWS
-       || draw_mode == MAP_ZONES) {
+   if (draw_mode >= MAP_OBSTACLES && draw_mode <= MAP_ZONES) {
       if (highlight)
          sprintf (strbuf, "Highlight: ON");
       else
          sprintf (strbuf, "Highlight: OFF");
       print_sfont ((COLUMN_WIDTH * 4), (SH - 34), strbuf, double_buffer);
    }
+
+   if (grab_tile) {
+      print_sfont ((COLUMN_WIDTH * 4), (SH - 22), "Currently grabbing:",
+                   double_buffer);
+      sprintf (strbuf, dt[draw_mode_display]);
+      print_sfont ((COLUMN_WIDTH * 4) + 24, (SH - 16), strbuf, double_buffer);
+   }                            // if (draw_tile)
 
    /* Draw a rectangle around the mouse when it's inside the view-window */
    if (mouse_y / 16 < vtiles && mouse_x / 16 < htiles)
@@ -1290,14 +1308,37 @@ void get_tile (void)
 {
    int tile = ((window_y + y) * gmap.xsize) + window_x + x;
 
-   if (showing.last_layer == MAP_LAYER2)
-      curtile = b_map[tile];
-   else if (showing.last_layer == MAP_LAYER3)
-      curtile = f_map[tile];
-   else
+   switch (draw_mode) {
+   case MAP_LAYER1:
       curtile = map[tile];
+      break;
+   case MAP_LAYER2:
+      curtile = b_map[tile];
+      break;
+   case MAP_LAYER3:
+      curtile = f_map[tile];
+      break;
+   case MAP_ENTITIES:
+      for (tile = 0; tile < number_of_ents; tile++)
+         if ((gent[tile].tilex == window_x + x)
+             && (gent[tile].tiley == window_y + y))
+            current_ent = gent[tile].chrx;
+      break;
+   case MAP_OBSTACLES:
+      curobs = o_map[tile];
+      break;
+   case MAP_SHADOWS:
+      curshadow = sh_map[tile];
+      break;
+   case MAP_ZONES:
+      curzone = z_map[tile];
+      break;
+   default:
+      break;
+   }
 
-   icon_set = (curtile / ICONSET_SIZE) - ((curtile / ICONSET_SIZE) % 2);
+   if (draw_mode >= MAP_LAYER1 && draw_mode <= MAP_LAYER3)
+      icon_set = (curtile / ICONSET_SIZE) - ((curtile / ICONSET_SIZE) % 2);
 }                               /* get_tile () */
 
 
@@ -1337,7 +1378,8 @@ void global_change (void)
             done = 1;
          }
       }
-   }
+   }                            // while ()
+
    /* This is incase we need to redraw the map, the information will still be
     * visible to the user
     */
@@ -1366,7 +1408,8 @@ void global_change (void)
             done = 1;
          }
       }
-   }
+   }                            // while ();
+
    /* This is incase we need to redraw the map, the information will still be
     * visible to the user
     */
@@ -1660,7 +1703,6 @@ void preview_map (void)
       draw_shadow (0);
       break;
    default:
-
       sprintf (strbuf, "Mode %d preview not supported, sorry!", gmap.map_mode);
       print_sfont (8, 8, strbuf, double_buffer);
 #ifdef HAVE_TEXT_EX
@@ -1720,7 +1762,8 @@ void draw_layer (short *layer, const int parallax)
    /* ...And draw the tilemap */
    for (j = layer_y1; j < layer_y2; ++j) {
       for (layer_x = layer_x1; layer_x < layer_x2; ++layer_x) {
-         draw_sprite (double_buffer, icons[layer[layer_x + j * gmap.xsize]],
+         draw_sprite (double_buffer,
+                      icons[tilex[layer[layer_x + j * gmap.xsize]]],
                       layer_x * 16 - x0, j * 16 - y0);
       }
    }
@@ -1799,6 +1842,7 @@ void process_keyboard (const int k)
       showing.obstacles = 1;
       showing.zones = 1;
       showing.last_layer = draw_mode;
+      grab_tile = 0;
       break;
    case (KEY_C):
       /* View Layers 1+2+3, plus Entities and Shadows, as the player would see
@@ -1810,6 +1854,7 @@ void process_keyboard (const int k)
       showing.obstacles = 0;
       showing.zones = 0;
       showing.last_layer = MAP_LAYER123;
+      grab_tile = 0;
       break;
    case (KEY_D):
       /* Move (displace) the location of all the entities on the map */
@@ -1821,12 +1866,20 @@ void process_keyboard (const int k)
          if (draw_mode == MAP_ENTITIES) {
             draw_mode = showing.last_layer;
             showing.entities = 0;
-         } else
+         } else {
+            if (draw_mode == MAP_PREVIEW)
+               showing.last_layer = MAP_LAYER123;
             draw_mode = MAP_ENTITIES;
+         }
       } else {
-         draw_mode = MAP_ENTITIES;
+         if (draw_mode < MAP_ENTITIES)
+            showing.last_layer = draw_mode;
+         else if (draw_mode == MAP_PREVIEW)
+            showing.last_layer = MAP_LAYER123;
          showing.entities = 1;
+         draw_mode = MAP_ENTITIES;
       }
+      grab_tile = 0;
       break;
    case (KEY_F):
       /* Get the first Zone used and set the indicator to that */
@@ -1834,26 +1887,19 @@ void process_keyboard (const int k)
          curzone = 0;
       break;
    case (KEY_G):
-      /* Get the tile under the mouse curser */
-      /* TT TODO: I think that we should be able to 'grab' a zone, shadow, or
-       * obstacle the same as a layer tile
+      /* Get the tile under the mouse curser, including a 4 of the Attributes.
+       * This will not let you enter grab_tile mode if you are not in a mode
+       * which can be drawn onto.
        */
-      if (draw_mode == GRAB_TILE)
-         return;
-
-      if ((draw_mode == MAP_LAYER1) || (draw_mode == MAP_LAYER2)
-          || (draw_mode == MAP_LAYER3))
-         showing.last_layer = draw_mode;
-      else if ((showing.last_layer != MAP_LAYER1)
-               && (showing.last_layer != MAP_LAYER2)
-               && (showing.last_layer != MAP_LAYER3))
-         showing.last_layer = MAP_LAYER1;
-      draw_mode = GRAB_TILE;
+      if ((draw_mode >= MAP_LAYER1 && draw_mode <= MAP_LAYER3)
+          || (draw_mode >= MAP_ENTITIES && draw_mode <= MAP_ZONES))
+         grab_tile = 1 - grab_tile;
+      else
+         grab_tile = 0;
       break;
    case (KEY_H):
       /* Highlight current obstacles, shadows, and zones */
-      if ((draw_mode == MAP_OBSTACLES) || (draw_mode == MAP_SHADOWS)
-          || (draw_mode == MAP_ZONES)) {
+      if (draw_mode >= MAP_OBSTACLES && draw_mode <= MAP_ZONES) {
          highlight = highlight ? 0 : 1;
       }
       break;
@@ -1869,6 +1915,7 @@ void process_keyboard (const int k)
    case (KEY_N):
       /* Create a new map; you can choose the tileset to use for it */
       new_map ();
+      grab_tile = 0;
       break;
    case (KEY_O):
       /* Toggle whether obstacles should be shown or turned off */
@@ -1876,16 +1923,25 @@ void process_keyboard (const int k)
          if (draw_mode == MAP_OBSTACLES) {
             draw_mode = showing.last_layer;
             showing.obstacles = 0;
-         } else
+         } else {
+            if (draw_mode == MAP_PREVIEW)
+               showing.last_layer = MAP_LAYER123;
             draw_mode = MAP_OBSTACLES;
+         }
       } else {
-         draw_mode = MAP_OBSTACLES;
+         if (draw_mode < MAP_ENTITIES)
+            showing.last_layer = draw_mode;
+         else if (draw_mode == MAP_PREVIEW)
+            showing.last_layer = MAP_LAYER123;
          showing.obstacles = 1;
+         draw_mode = MAP_OBSTACLES;
       }
+      grab_tile = 0;
       break;
    case (KEY_P):
       /* Paste the copied selection area */
       draw_mode = BLOCK_PASTE;
+      grab_tile = 0;
       break;
    case (KEY_R):
       /* Resize the map's height and width */
@@ -1897,16 +1953,25 @@ void process_keyboard (const int k)
          if (draw_mode == MAP_SHADOWS) {
             draw_mode = showing.last_layer;
             showing.shadows = 0;
-         } else
+         } else {
+            if (draw_mode == MAP_PREVIEW)
+               showing.last_layer = MAP_LAYER123;
             draw_mode = MAP_SHADOWS;
+         }
       } else {
-         draw_mode = MAP_SHADOWS;
+         if (draw_mode < MAP_ENTITIES)
+            showing.last_layer = draw_mode;
+         else if (draw_mode == MAP_PREVIEW)
+            showing.last_layer = MAP_LAYER123;
          showing.shadows = 1;
+         draw_mode = MAP_SHADOWS;
       }
+      grab_tile = 0;
       break;
    case (KEY_T):
       /* Copy a selection */
       draw_mode = BLOCK_COPY;
+      grab_tile = 0;
       break;
    case (KEY_V):
       /* Save whole map as a picture */
@@ -1925,18 +1990,25 @@ void process_keyboard (const int k)
          if (draw_mode == MAP_ZONES) {
             draw_mode = showing.last_layer;
             showing.zones = 0;
-         } else
+         } else {
+            if (draw_mode == MAP_PREVIEW)
+               showing.last_layer = MAP_LAYER123;
             draw_mode = MAP_ZONES;
+         }
       } else {
-         draw_mode = MAP_ZONES;
+         if (draw_mode < MAP_ENTITIES)
+            showing.last_layer = draw_mode;
+         else if (draw_mode == MAP_PREVIEW)
+            showing.last_layer = MAP_LAYER123;
          showing.zones = 1;
+         draw_mode = MAP_ZONES;
       }
+      grab_tile = 0;
       break;
    case (KEY_SPACE):
       /* Attempt at giving the user a chance to see the animations */
-      if (draw_mode == MAP_PREVIEW) {
+      if (draw_mode == MAP_PREVIEW)
          animate ();
-      }
       break;
    case (KEY_F1):
       /* Display the help screen */
@@ -1945,6 +2017,7 @@ void process_keyboard (const int k)
    case (KEY_F2):
       /* Load a map */
       prompt_load_map ();
+      grab_tile = 0;
       break;
    case (KEY_F3):
       /* Save the map you are working on */
@@ -1999,6 +2072,7 @@ void process_keyboard (const int k)
       /* Enter the Modify Entity mode */
       showing.entities = 1;
       update_entities ();
+      grab_tile = 0;
       break;
    case (KEY_ESC):
       /* TT TODO: This currently cancels a Block Copy, but future use is
@@ -2142,8 +2216,7 @@ void process_menu_bottom (const int cx, const int cy)
    /* The mouse is over 'Icon:' menu */
    if (cx >= 0 && cx < (COLUMN_WIDTH * 2) && cy >= (SH - 40)
        && cy <= (SH - 35)) {
-      /* This allows the user to select the tileset used
-         for the current map.
+      /* This allows the user to select the tileset used for the current map.
        */
       gmap.tileset++;
       if (gmap.tileset >= NUM_TILESETS)
@@ -2430,12 +2503,19 @@ void process_mouse (const int mouse_button)
    /* Left mouse button */
    if (mouse_button == 1) {
 
-      /* Drawing to the map only happen when (dmode == 1) */
+      /* The 3 settings for dmode are:
+       *   0: We are in a non-edit mode, meaning that we are not going to draw
+       *      to the map on Layers 1-3, or the 4 Attributes
+       *   1: We are in edit mode and can only draw to a Layer or Attribute
+       *   2: This is only when grab_tile is 1, and the user has the right-
+       *      mouse button clicked and HELD. When released, dmode changes to 1
+       *      again so we can draw to the screen.
+       */
       if (dmode == 0) {
          switch (draw_mode) {
-         case (BLOCK_COPY):
+         case BLOCK_COPY:
             /* Begin area copy
-             * This copies all Layers and Attributes except Entities
+             * This copies all Layers and Attributes, including Entities
              */
             if (copying == 0) {
                copyx1 = window_x + x;
@@ -2446,7 +2526,7 @@ void process_mouse (const int mouse_button)
                copying = 1;
             }
             break;
-         case (BLOCK_PASTE):
+         case BLOCK_PASTE:
             /* Paste copied region(s) onto the map
              * This pastes ALL Layers/Attributes except Entities (use right-
              * click to select the Layers/Attributes you want to paste)
@@ -2454,16 +2534,11 @@ void process_mouse (const int mouse_button)
             if (clipb != 0)
                paste_region (window_x + x, window_y + y);
             break;
-         case (GRAB_TILE):
-            /* Grab the tile; select its icon from the iconset on the right */
-            get_tile ();
-            break;
          default:
             break;
          }                      /* switch (draw_mode) */
-      }
+      }                         // if (dmode == 0)
 
-      /* if (dmode == 0) */
       /* Now draw to the map */
       if (dmode == 1) {
          switch (draw_mode) {
@@ -2499,17 +2574,15 @@ void process_mouse (const int mouse_button)
          default:
             break;
          }                      /* switch (draw_mode) */
-      }                         /* if (dmode == 1) */
-   }
+      }                         /* if (dmode) */
+   }                            // if (mouse_button == 1)
 
-   /* if (mouse_button == 1) */
    /* Right mouse button */
    if (mouse_button == 2) {
-
       /* Drawing to the map only happen when (dmode == 1) */
       if (dmode == 0) {
          switch (draw_mode) {
-         case (BLOCK_COPY):
+         case BLOCK_COPY:
             /* Finish the Block Copy */
             if (copying == 1) {
                copyx2 = window_x + x;
@@ -2518,22 +2591,16 @@ void process_mouse (const int mouse_button)
                copying = 0;
             }
             break;
-         case (BLOCK_PASTE):
+         case BLOCK_PASTE:
             /* Paste Layers and/or Attributes */
             if (clipb != 0)
                paste_region_special (window_x + x, window_y + y);
             break;
-         case (GRAB_TILE):
-            /* Grab the tile and set the mode to a drawing mode */
-            get_tile ();
-            dmode = 2;
-            break;
          default:
             break;
          }                      /* switch (draw_mode) */
-      }
+      }                         // if (dmode)
 
-      /* if (dmode == 0) */
       /* Now draw to the map */
       if (dmode == 1) {
          switch (draw_mode) {
@@ -2568,8 +2635,9 @@ void process_mouse (const int mouse_button)
          default:
             break;
          }                      /* switch (draw_mode) */
-      }                         /* if (dmode == 1) */
-   }                            /* if (mouse_button == 2) */
+      }                         /* if (dmode) */
+   }                            // if (mouse_button == 2)
+
    x = mouse_x / 16;
    y = mouse_y / 16;
    if (y > (vtiles - 1))
@@ -2610,20 +2678,19 @@ void read_controls (void)
 
    /* Go back to default drawing mode when mouse buttons released */
    if (!(mouse_b & 1) && !(mouse_b & 2)) {
-      /* When draw_mode == GRAB_TILE and the user right-clicks a tile, it
+      mouse_button = 0;
+      /* When grab_tile == 1 and the user right-clicks a tile, it
        * enters grab mode and continues to "grab" tiles under the mouse until
-       * the button is released.  Then it automatically changes to Layer[1-3]
-       * (whichever the last "drawing" mode was) so the user can draw that
-       * tile onto the map immediately.
+       * the button is released.  Then it automatically changes to whichever
+       * Layer or Attribute (any one except Entities) the last "drawing" mode
+       * was, so the user can draw that tile onto the map immediately.
        */
       if (dmode == 2) {
-         /* Change to a drawing mode, and use the most recently-used Layer. */
-         draw_mode = showing.last_layer;
+         grab_tile = 0;
          needupdate = 1;
       }
-      mouse_button = 0;
       dmode = 0;
-   }
+   }                            // if (mouse_b)
 
    /* Left mouse button */
    if (mouse_b & 1) {
@@ -2646,37 +2713,46 @@ void read_controls (void)
          return;
       }
 
-      /* The mouse is inside the window.  Draw to the map */
-      if ((draw_mode == MAP_LAYER1) || (draw_mode == MAP_LAYER2)
-          || (draw_mode == MAP_LAYER3) || (draw_mode == MAP_OBSTACLES)
-          || (draw_mode == MAP_ZONES) || (draw_mode == MAP_ENTITIES)
-          || (draw_mode == MAP_SHADOWS)) {
-         dmode = 1;
-      }
-      process_mouse (mouse_button);
-      return;
-   }
+      /* The mouse is inside the window */
+      if (grab_tile) {
+         /* Grab the tile under the mouse curser */
+         get_tile ();
+      } else {
+         /* Draw to the map */
+         if (draw_mode >= MAP_LAYER1 && draw_mode <= MAP_ZONES)
+            dmode = 1;
 
-   /* if (mouse_b & 1) */
+         /* Ensures that the user doesn't draw outside the map's height/width */
+         if (x < gmap.xsize && y < gmap.ysize)
+            process_mouse (mouse_button);
+      }
+      return;
+   }                            // if (mouse_b & 1)
+
    /* Right mouse button */
    if (mouse_b & 2) {
+      /* Right-clicking over either (bottom or right) menus does nothing */
+      if ((y > vtiles - 1) || (x > htiles - 1))
+         return;
+
       mouse_button = 2;
       needupdate = 1;
 
-      /* Check if the mouse is over either (bottom or right) menu */
-      if ((y > (vtiles - 1)) || x > (htiles - 1))
-         return;
+      /* The mouse is inside the window */
+      if (grab_tile) {
+         dmode = 2;
+         get_tile ();
+      } else {
+         /* Draw to the map */
+         if (draw_mode >= MAP_LAYER1 && draw_mode <= MAP_ZONES)
+            dmode = 1;
 
-      /* The mouse is inside the window.  Draw to the map */
-      if (((draw_mode == MAP_LAYER1) || (draw_mode == MAP_LAYER2)
-           || (draw_mode == MAP_LAYER3) || (draw_mode == MAP_OBSTACLES)
-           || (draw_mode == MAP_ZONES) || (draw_mode == MAP_ENTITIES)
-           || (draw_mode == MAP_SHADOWS)) && (dmode == 0)) {
-         dmode = 1;
+         /* Ensures that the user doesn't draw outside the map's height/width */
+         if (x < gmap.xsize && y < gmap.ysize)
+            process_mouse (mouse_button);
       }
-      process_mouse (mouse_button);
       return;
-   }                            /* if (mouse_b & 2) */
+   }                            // if (mouse_b & 2)
 }                               /* read_controls () */
 
 
@@ -2750,10 +2826,10 @@ void resize_map (const int selection)
                wait_enter ();
             } else {
                done = 1;
-            }
-         }
-      }
-   }
+            }                   // if..else ()
+         }                      // if (strlen())
+      }                         // while ()
+   }                            // if (selection)
 
    /* Pre-copy the map info */
    for (iy = 0; iy < gmap.ysize; iy++) {
@@ -2859,7 +2935,8 @@ void select_only (const int lastlayer, const int which_layer)
    showing.zones = 0;
    if (lastlayer)
       showing.last_layer = draw_mode;
-}
+   grab_tile = 0;
+}                               /* select_only () */
 
 
 /*! \brief Handy-dandy help screen
@@ -3087,7 +3164,7 @@ void startup (void)
  */
 void update_tileset (void)
 {
-   int tmapx, tmapy;
+   int tmapx, tmapy, i;
    int tileset_start;
 
    /* This will try to use the selected tileset; however, if there's a coding
@@ -3121,6 +3198,14 @@ void update_tileset (void)
                tmapy * 16, 0, 0, 16, 16);
    icon_set = 0;
    destroy_bitmap (pcx_buffer);
+
+   /* Update the animation tile sequences */
+   for (i = 0; i < MAX_TILES; i++)
+      tilex[i] = i;
+   for (i = 0; i < MAX_ANIM; i++) {
+      adata[i] = tanim[gmap.tileset][i];
+   }
+
 }                               /* update_tileset () */
 
 
@@ -3164,7 +3249,6 @@ void wipe_map (void)
    memset (sh_map, 0, gmap.xsize * gmap.ysize);
    memset (z_map, 0, gmap.xsize * gmap.ysize);
 
-   /* TT FIXED: Forgot to get rid of all the entities! */
    init_entities ();
 }                               /* wipe_map () */
 

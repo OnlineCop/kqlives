@@ -205,9 +205,6 @@ void erase_entity (const int ent_x, const int ent_y)
    if (number_of_ents == 0)
       return;
 
-   /* Be careful not to delete everyone standing here */
-   while (mouse_b & 2);
-
    for (a = 0; a < number_of_ents; a++)
       /* Get the index number of the last-drawn entity from this spot */
       if (gent[a].tilex == ent_x && gent[a].tiley == ent_y)
@@ -305,17 +302,20 @@ void init_entities (void)
  */
 void place_entity (int ent_x, int ent_y)
 {
-   int a;
+   int a, someone_there = 0;
 
-   /* Yea, can't have to many lemmings on the map at once */
+   /* Don't allow too many NPCs on the map */
    if (number_of_ents >= 50)
       return;
 
-   /* Wait for the over-zealous user to let go of the mouse button */
-   while (mouse_b & 1) {
-      a++;
-      a--;
-   }
+   /* This will prevent user from placing more than 1 entity on a coord */
+   for (a = 0; a < number_of_ents; a++)
+      if (gent[a].tilex == ent_x && gent[a].tiley == ent_y)
+         someone_there = 1;
+
+   /* NPC already found; do nothing */
+   if (someone_there)
+      return;
 
    /* Set its personality/attributes/stats */
    gent[number_of_ents].chrx = current_ent;     /* What it looks like */
@@ -332,6 +332,7 @@ void place_entity (int ent_x, int ent_y)
    gent[number_of_ents].facing = 0;     /* 0=S, 1=N, 2=W, 3=E */
    strcpy (gent[number_of_ents].script, "");    /* Pre-defined movement (pace, dance...) */
    number_of_ents++;
+
 }                               /* place_entity () */
 
 

@@ -24,18 +24,17 @@
 #define MAP_LAYER1      1       /* Map (sea-level) */
 #define MAP_LAYER2      2       /* Background (ground-level) */
 #define MAP_LAYER3      4       /* Foreground (tree-tops, etc.) */
-#define MAP_ENTITIES    8       /* Entities Attribute */
-#define MAP_OBSTACLES  16       /* Obstacles Attribute */
-#define MAP_SHADOWS    32       /* Shadows Attribute */
-#define MAP_ZONES      64       /* Zones Attribute */
 #define MAP_LAYER12  (MAP_LAYER1 | MAP_LAYER2)  /* Map + background */
 #define MAP_LAYER13  (MAP_LAYER1 | MAP_LAYER3)  /* Map + foreground */
 #define MAP_LAYER23  (MAP_LAYER2 | MAP_LAYER3)  /* Background + foreground */
 #define MAP_LAYER123  (MAP_LAYER1 | MAP_LAYER2 | MAP_LAYER3)    /* Map + background + foreground */
+#define MAP_ENTITIES    8       /* Entities Attribute */
+#define MAP_OBSTACLES  16       /* Obstacles Attribute */
+#define MAP_SHADOWS    32       /* Shadows Attribute */
+#define MAP_ZONES      64       /* Zones Attribute */
 #define BLOCK_COPY    128       /* Mode to start copying an area */
 #define BLOCK_PASTE   256       /* Mode to paste the copied area */
-#define GRAB_TILE     512       /* Select a tile in the map to draw */
-#define MAP_PREVIEW  1024       /* Draw a proper preview with layer ordering and parallax */
+#define MAP_PREVIEW   512       /* Draw a proper preview with layer ordering and parallax */
 
 #define ICONSET_SIZE   20       /* Number of icons shown in the icon map */
 
@@ -59,8 +58,6 @@ s_show;
  * A requirement for this program is that all icon-files have a blank icon in
  * entry 0
  */
-
-
 
 /* From mapdata.c */
 void getfont (void);
@@ -150,6 +147,9 @@ extern int number_of_ents, current_ent;
 extern s_entity gent[];
 extern s_map gmap;
 extern s_show showing;
+
+extern unsigned short tilex[MAX_TILES];
+extern s_anim tanim[NUM_TILESETS][MAX_ANIM];
 extern s_anim adata[MAX_ANIM];
 
 extern short window_x, window_y;

@@ -34,6 +34,9 @@ short max_sets = 51;
 
 s_map gmap;
 s_entity gent[50];
+s_anim tanim[NUM_TILESETS][MAX_ANIM];
+s_anim adata[MAX_ANIM];
+unsigned short tilex[MAX_TILES];
 
 /* Show details when parsing MAP files */
 int verbose = 0;
@@ -117,7 +120,8 @@ void error_load (const char *problem_file)
 void usage (const char *argv)
 {
    fprintf (stdout, "Map to image converter for KQ.\n");
-   fprintf (stdout, "Usage: %s [+/-][options] [-v] [-b] [-f] filename(s)\n", argv);
+   fprintf (stdout, "Usage: %s [+/-][options] [-v] [-b] [-f] filename(s)\n",
+            argv);
    fprintf (stdout, "Options:\n");
    fprintf (stdout,
             "   +  includes the option: it WILL appear in the image.\n");
@@ -268,10 +272,9 @@ int main (int argc, char *argv[])
                fprintf (stdout, "  - \"%s\" created with mode \"%d\"\n", fn,
                         gmap.map_mode);
          } else {
-            if (verbose)
-               fprintf (stdout,
-                        "  - %s already exists. Use -f option to force overwrite.\n",
-                        fn);
+            fprintf (stdout,
+                     "Warning: the file %s already exists. Use the -f option to force overwrite.\n",
+                     fn);
          }
       }
    }
