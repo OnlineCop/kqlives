@@ -371,6 +371,10 @@ void readcontrols (void)
       int kill_time = timer_count + KQ_FPS / 2;
       while (key[KEY_ALT] && key[KEY_X]) {
          if (timer_count >= kill_time) {
+            /* Pressed, now wait for release */
+            clear_bitmap (screen);
+            while (key[KEY_ALT] && key[KEY_X]) {
+            }
             program_death ("X-ALT pressed... exiting.");
          }
       }
@@ -594,8 +598,6 @@ void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
       program_death (strbuf);
    }
 
-   /* pack_fread (&g_map, sizeof (s_map), pf); */
-   /* pack_fread (&g_ent[PSIZE], sizeof (s_entity) * 50, pf); */
    load_s_map (&g_map, pf);
    for (i = 0; i < 50; ++i)
       load_s_entity (&g_ent[PSIZE + i], pf);
@@ -1015,6 +1017,7 @@ static void startup (void)
 
    map_seg = b_seg = f_seg = NULL;
    s_seg = z_seg = o_seg = NULL;
+   memset (&g_map, 0, sizeof (s_map));
    progress = (unsigned char *) malloc (2000);
    treasure = (unsigned char *) malloc (1000);
 
@@ -1537,7 +1540,7 @@ void wait_for_entity (int est, int efi)
          break;
 
       if (key[KEY_X] && key[KEY_ALT])
-         program_death (strbuf);
+         program_death ("X-Alt pressed - exiting");
 
       n = 0;
       for (e = est; e <= efi; ++e) {
