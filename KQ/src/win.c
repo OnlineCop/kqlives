@@ -27,6 +27,7 @@
  *
  * This includes any bits which are specific for Windows platforms
  */
+#include <winalleg.h>
 #include "kq.h"
 static int init_path = 0;
 static char user_dir[PATH_MAX];
