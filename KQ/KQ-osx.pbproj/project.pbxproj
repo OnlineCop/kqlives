@@ -211,10 +211,6 @@
 				8816BEA604D07B6100000002,
 				8816BEA704D07B6100000002,
 				8816BEA804D07B6100000002,
-				88C1A23B05D65EC300A80B02,
-				88C1A23C05D65EC300A80B02,
-				88C1A23D05D65EC300A80B02,
-				88C1A23E05D65EC300A80B02,
 				88C1A23F05D65EC300A80B02,
 				88C1A24005D65EC300A80B02,
 				88C1A24105D65EC300A80B02,
@@ -1266,7 +1262,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = osx.m;
-			path = src/platform/osx.m;
+			path = src/osx.m;
 			refType = 4;
 		};
 		8816BD6C04D0797100000002 = {
@@ -2085,30 +2081,6 @@
 			isa = PBXFileReference;
 			path = tunnel.lua;
 			refType = 4;
-		};
-		88C1A23B05D65EC300A80B02 = {
-			fileRef = 88C1A1C705D65EC300A80B02;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		88C1A23C05D65EC300A80B02 = {
-			fileRef = 88C1A1C805D65EC300A80B02;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		88C1A23D05D65EC300A80B02 = {
-			fileRef = 88C1A1C905D65EC300A80B02;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		88C1A23E05D65EC300A80B02 = {
-			fileRef = 88C1A1CA05D65EC300A80B02;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		88C1A23F05D65EC300A80B02 = {
 			fileRef = 88C1A1CB05D65EC300A80B02;
