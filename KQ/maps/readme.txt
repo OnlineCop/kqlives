@@ -1,18 +1,32 @@
-Mapdraw Info:
+Map Editor for KQ
 
-There have been a few changes to the map editor.
+In order to use the map editor, Mapdraw, you will need to compile the source.  To run the binary, you need to change to the maps/ directory and invoke Mapdraw.  (Mapdraw does not currently support command-line arguments.)
 
-* Added entry-checking so too-large or too-small values aren't accepted.
-* You can change the tileset by clicking on the " Icon: *** " PCX name and it
-  shows the results immediately across the map.
-* Increased the length of the song's filename to 18 characters.
-* Function to select the tile under the mouse cursor (its icon in the tileset
-  menu is updated to show which tile you've selected).
-  * Added right-click tile-grabbing to first "grab" the tile the change to one
-    of the drawing modes for quick placement of the tile.
-* Added help menu (F1).
-* Added extra file open/save checks.
-* Fixed multiple memory bugs and map-resize issues.
+You will see a level editor with map stats on the bottom and tiles on the right.  There is no current GUI menus, so you will have to make use of the keyboard shortcuts (hit F1 to see a list of possible keys).
+
+To load a previously saved map, press F2.  It will prompt you for the map name.  You will need to supply Mapdraw with the path and/or filename of the .MAP file.
+
+The maps used in KQ have 3 layers:
+- Layer 1 is the background layer.
+- Layer 2 is the middle layer.  Some maps will draw the middle layer above the Player's sprite.  Most, however, will simply draw over the background but under the Player.  This includes dishes on a table background tile, shrubs covering an item on the ground, etc.
+- Layer 3 is the foreground layer.  This is drawn over the top of the Player's sprite, such as tall bookshelves, treetops, or doorways and ceilings that partially obfuscate the Player.
+
+The maps also have 4 attributes saved on each individual map:
+- Shadows are drawn over EVERYTHING.  This is a partially transparent layer where, when the Player is standing under it, part or all of their sprite will be lightened or darkened.  (Key: S)
+- Obstacles are placed on the map wherever a sprite is not able to walk onto.  Be sure, when making or modifying a map, that all areas of the map are enclosed with an obstacle so the Player doesn't walk outide of the area s/he is supposed to stay within.  (Key: O)
+  - The most common obstacle used is the SQUARE, where nothing can move onto the tile from any 4 directions.
+  - The other types are the T-shaped obstacles.  These will block movement only in one direction, meaning you can enter the tile from 3 directions, but cannot move onto or off of the tile from the 4th.
+- Entities are, for the most part, hard-coded onto the maps.  (Key: E)
+  - You can modify their attributes such as initial direction they are facing, whether or not they face the Player when being talked to, their sprite (what they look like), etc. by pressing F12.
+- Zones are used in the Lua files (in the scripts/ directory) to trigger a response when a player walks over the specified tile.
+
+You can draw to the individual layers by selecting Layer 1, 2, or 3 (Key: 1, 2, or 3).  If you want to view more than one layer (as indicated in the F1 help screen), press 4-7.
+
+Attributes are toggled.  That means that if you select Shadows, for example (Key: S), you will be in draw mode for all shadows on the map, and no other layer is affected.
+
+The + and - keys (either by the backspace key or on the number pad) are used to choose which tile (they are on the right-side menu) or Attribute (select between different Shadows or Obstacles, for example) you will draw to the map.
+
+There are other key shortcuts as well, but you can experiment with them with the F1 Help menu.
 
 
 ===============================
@@ -85,26 +99,19 @@ These few key changes were implemented for ease-of-use, and keys are easily
 redefined if they're undesirable.  I do have a couple TODOs that I need help
 with:
 
+
 ===============================
-TODO
+Changes, updates:
 
-The Zone Attribute is displayed using a crosshair with the letter 'z' in the
-middle.  This needs to be changed to be a crosshair with the number of the
-zone in the middle so it's easier to see which zone is where.
-
-
-
-Fixes to maps:
-
-- Moved most tiles from Layer 3 to Layer 2
-- Fixed 'atype' for all entities in following maps:
-  ('atype' should be 0 or 1; these had values > 1)
-
-  bridge.map
-  fort.map
-  grotto.map
-  tower.map
-
+* You can change the tileset by clicking on the " Icon: *** " PCX name and it
+  shows the results immediately across the map.
+* Function to select the tile under the mouse cursor (its icon in the tileset
+  menu is updated to show which tile you've selected).
+  * Added right-click tile-grabbing to "grab" the tile and then set the
+    draw_mode to the current layer.
+* Added help menu (F1).
+* Added extra file open/save checks.
+* Fixed multiple memory bugs and map-resize issues.
 
 
 Questions and comments (donations, threats...) are of course welcome.
