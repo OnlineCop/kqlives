@@ -452,6 +452,7 @@ void readcontrols (void)
    if (key[KEY_F12])
      {
         save_screenshot (screen, "kq");
+        play_effect (SND_TWINKLE, 128);
         /* wait for key to be released before continuing */
         /* PH 2002.09.21 n.b. keyboard not necessarily in polling mode */
         while (key[KEY_F12])
@@ -1875,11 +1876,11 @@ int main (void)
                     {
                        stop = system_menu ();
                     }
-/*                  if (bhelp)
+                  if (bhelp)
                     {
-                       select_party (NULL, 0, 0);
+                       /* to do - in-game help system. */
                     }
-*/                    
+
 
                   if (alldead)
                     {
