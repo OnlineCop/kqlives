@@ -20,8 +20,13 @@
 */
 
 #include <string.h>
-
 #include <allegro.h>
+/*! \file
+ * \brief In-game music routines
+ *
+ * Handles playing and pausing music in the game.
+ * Interfaces to wither JGMOD or DUMB, depending on #defines
+ */
 
 #ifndef KQ_USE_JGMOD
 /* DUMB version of music */
@@ -31,11 +36,11 @@
 
 /* private variables */
 #define MAX_MUSIC_PLAYERS 3
-DUH *mod_song[MAX_MUSIC_PLAYERS];
-AL_DUH_PLAYER *mod_player[MAX_MUSIC_PLAYERS];
-int current_music_player;
+static DUH *mod_song[MAX_MUSIC_PLAYERS];
+static AL_DUH_PLAYER *mod_player[MAX_MUSIC_PLAYERS];
+static int current_music_player;
 
-/*!	init_music()
+/*!	\brief Initialize music
 
 	Initializes the music players. Must be called before any other
 	music function. Needs to be shutdown when finished.
@@ -58,7 +63,7 @@ void init_music ()
 }
 
 
-/*!	shutdown_music()
+/*!	\brief Shutdown music
 	
 	Performs any cleanup needed. Must be called before the program
 	exits.
@@ -66,11 +71,8 @@ void init_music ()
 void shutdown_music ()
 {
    if (is_sound != 0)
-
      {
-
         do
-
           {
              stop_music ();
           }
@@ -79,24 +81,20 @@ void shutdown_music ()
 }
 
 
-/*!	set_music_volume()
-
+/*!	\brief Set music volume
 	Sets the volume of the currently playing music.
-
-	Parameters:
-		[in] volume: 0 (silent) to 100 (loudest)
+	\param volume [in] 0.0 (silent) to 1.0 (loudest)
 */
 void set_music_volume (float volume)
 {
    if (is_sound != 0 && mod_player[current_music_player])
-
      {
         al_duh_set_volume (mod_player[current_music_player], volume);
      }
 }
 
 
-/*!	poll_music()
+/*!	\brief Poll music
 
 	Does whatever is needed to ensure the music keeps playing.
 	It's safe to call this too much, but shouldn't be called
@@ -112,20 +110,18 @@ void poll_music ()
 }
 
 
-/*!	play_music()
+/*!	\brief Play music
 
 	This will stop any currently played song, and then play
 	the requested song.	Based on the extension given, the appropriate 
 	player is called.
 
-	Parameters:
-		[in] music_name: The relative filename of the song to be played.
-		[in] position: The position of the file to begin at.
+	\param music_name [in] The relative filename of the song to be played.
+	\param position [in] The position of the file to begin at.
 */
 void play_music (const char *music_name, long position)
 {
    if (is_sound != 0)
-
      {
         char filename[250];
         stop_music ();
@@ -138,11 +134,9 @@ void play_music (const char *music_name, long position)
 
         else if (strstr (filename, ".s3m"))
            mod_song[current_music_player] = dumb_load_s3m (filename);
-
         else
            mod_song[current_music_player] = NULL;
         if (mod_song[current_music_player])
-
           {
 
              /* ML: we should (?) adjust the buffer size after everything is running smooth */
@@ -150,9 +144,7 @@ void play_music (const char *music_name, long position)
                 al_start_duh (mod_song[current_music_player], 2, position,
                               1.0, 4096 * 4, 44100);
           }
-
         else
-
           {
              TRACE ("Could not load %s!\n", filename);
           }
@@ -160,7 +152,7 @@ void play_music (const char *music_name, long position)
 }
 
 
-/*!	stop_music()
+/*!	\brief Stop music 
 	
 	Stops any music being played. To start playing more music, you
 	must call play_music(), as the current music player will no longer 
@@ -179,7 +171,7 @@ void stop_music (void)
 }
 
 
-/*!	pause_music()
+/*!	\brief Pause music
 
 	Pauses the currently playing music file. It may be resumed
 	by calling resume_music(). Pausing the music file may be used
@@ -206,7 +198,7 @@ void pause_music (void)
 }
 
 
-/*!	resume_music()
+/*!	\brief Resume music
 
 	Resumes the most recently paused music file. If a call to
 	play_music() was made in between, that file will be stopped.
@@ -229,21 +221,36 @@ void resume_music (void)
 
 static JGMOD *gsong;
 
+/*! \brief Initialize music
+ *
+ * Initialize the mod player with 6 channels 
+ */
 void init_music ()
 {
    install_mod (6);
 }
 
+/*! \brief Shut down music
+ *
+ * Finish using the mod player
+ */
 void shutdown_music ()
 {
    stop_music ();
    remove_mod ();
 }
+
+/*! \brief Set music volume
+ * 
+ * \param vol Set volume from 0.0 (silent) to 1.0 (full volume)
+ */
 void set_music_volume (float vol)
 {
    set_mod_volume ((int) (vol * 255.0));
 }
 
+/*! \brief Stop music 
+ */
 void stop_music ()
 {
    if (is_sound == 0)
@@ -252,6 +259,11 @@ void stop_music ()
       stop_mod ();
 }
 
+/*! \brief Play music
+ *
+ * \param sngname File with music
+ * \param start_track position to start
+ */
 void play_music (const char *sngnme, long start_track)
 {
    if (is_sound == 0)
@@ -274,15 +286,23 @@ void play_music (const char *sngnme, long start_track)
      }
 }
 
+/*! \brief Poll music
+ * JGMOD doesn't need polling; this is a no-op
+ */
 void poll_music ()
 {
    /* JGMOD doesn't need polling */
 }
+
+/*! \brief Pause music
+ */
 void pause_music ()
 {
    pause_mod ();
 }
 
+/*! \brief Resume music
+ */
 void resume_music ()
 {
    resume_mod ();
