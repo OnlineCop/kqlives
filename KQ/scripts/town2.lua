@@ -2,15 +2,9 @@
 
 -- /*
 -- {
--- P_BLADE:
---   0 - Woman hasn't mentioned the Phoenix Blade
+-- P_BLADE: Whether woman mentioned the Phoenix Blade
+--   0 - You have not spoken to her
 --   1 - She has now
---
--- P_EARLYPROGRESS: Used when talking to Derig in the Grotto.
---   0 - Have not yet entered Ekla
---   1 - Entered Ekla
---   2 - Entered Randen
---   3 - Entered Andra
 --
 -- P_FIGHTONBRIDGE:
 --   0 - Have not visited the bridge, not fought
@@ -23,20 +17,20 @@
 --   1 - Found the mayor, he does not want company
 --   2 - Found mayor & used WARPSTONE to return; he wants your company
 --   3 - You have spoken to the mayor
--- 
+--
 -- P_PORTALGONE: Whether the portal in the tunnel is still working
 --   0 - Still letting monsters through
 --   1 - The Portal is sealed shut
--- 
+--
 -- P_SHOWBRIDGE:
 --   0 - Bridge is incomplete
 --   1 - Monsters on bridge defeated; slept at Inn: bridge is passable
 --   2 - Bridge is totally complete, bridge(2).(lua|map) no longer used at all
--- 
+--
 -- P_TALK_AJATHAR:
 --   0 - Have not spoken to Ajathar when you entered the map
 --   1 - You have spoken to him at least once already
--- 
+--
 -- P_WARPSTONE: The teleporter from Ajantara <-> Randen
 --   0 - Have not used it yet
 --   1 - Stepped on the warp stone and created its counterpart in Randen
@@ -45,23 +39,36 @@
 
 
 function autoexec()
-  if (get_progress(P_EARLYPROGRESS) < 2) then
-    set_progress(P_EARLYPROGRESS, 2)
-  end
-
   if not LOC_manor_or_party(AJATHAR) then
--- // Make one of the ents look like Ajathar if he's not been recruited yet.
+    -- // Make the NPC look like Ajathar if he hasn't been recruited yet
     set_ent_id(10, AJATHAR)
   else
+    -- // Otherwise, remove him from screen
     set_ent_active(10, 0)
   end
 
-  -- Move the guard so we can see the mayor
   if (get_progress(P_WARPSTONE) == 1) then
+    -- // Move the guard next to the mayor's house over one space so we can now go in
     set_ent_tilex(6, 57)
+
+    if (get_progress(P_SHOWBRIDGE) == 1) then
+      set_progress(P_SHOWBRIDGE, 2)
+    end
+
     if (get_progress(P_FOUNDMAYOR) == 1) then
       set_progress(P_FOUNDMAYOR, 2)
     end
+  end
+
+  -- // This NPC will only appear if you spoke with him in the camp
+  if (get_progress(P_MAYORGUARD1) == 0) then
+    set_ent_active(12, 0)
+  end
+
+  -- // Ditto, plus make sure you can't speak to a "ghost" over the counter
+  if (get_progress(P_MAYORGUARD2) == 0) then
+    set_ent_active(11, 0)
+    set_zone(134, 11, 0)
   end
 
   refresh()
@@ -71,32 +78,43 @@ end
 function refresh()
   if (get_treasure(3) == 1) then
     set_mtile(110, 19, 265)
+    set_zone(110, 19, 0)
   end
   if (get_treasure(4) == 1) then
     set_mtile(111, 19, 265)
+    set_zone(111, 19, 0)
   end
   if (get_treasure(5) == 1) then
     set_mtile(112, 19, 265)
+    set_zone(112, 19, 0)
   end
   if (get_treasure(7) == 1) then
     set_obs(14, 47, 0)
+    set_zone(14, 47, 0)
   end
   if (get_treasure(10) == 1) then
     set_obs(35, 38, 0)
+    set_zone(35, 38, 0)
   end
   if (get_treasure(31) == 1) then
     set_mtile(115, 36, 265)
+    set_zone(115, 36, 0)
   end
   if (get_treasure(46) == 1) then
     set_mtile(116, 36, 265)
-  end
-  if (get_progress(P_WARPSTONE) == 1) then
-    set_mtile(35, 15, 0)
+    set_zone(116, 36, 0)
   end
   if (get_treasure(97) == 1) then
     set_mtile(135, 10, 265)
+    set_zone(135, 10, 0)
   end
-  
+
+  if (get_progress(P_WARPSTONE) == 1) then
+    set_mtile(35, 15, 0)
+  else
+    set_zone(35, 15, 0)
+  end
+
 end
 
 
@@ -155,13 +173,12 @@ function zone_handler(zn)
     door_out(66, 39)
 
   elseif (zn == 17) then
-    -- PH added code to check if you do stay over night
-    -- This is done indirectly; if your gp goes down it
-    -- means you must have spent some here.
+    -- /* PH added code to check if you do stay over night.
+    --    This is done indirectly; if your GP goes down it
+    --    means you must have slept here. */
     local old_gp = get_gp()
     inn("Wayside Inn", 30, 1)
-    -- This means you MUST stay at the inn before the
-    -- bridge gets repaired. Correct?
+    -- // This means you MUST stay at the inn before the bridge gets repaired.
     if (get_gp() < old_gp) then
       if (get_progress(P_FIGHTONBRIDGE) == 4) then
         set_progress(P_FIGHTONBRIDGE, 5)
@@ -234,9 +251,7 @@ function zone_handler(zn)
     bubble(HERO1, "Inns always have boring books.")
 
   elseif (zn == 36) then
-    if (get_progress(P_WARPSTONE) == 1) then
-      change_map("town6", 38, 56, 38, 56)
-    end
+    change_map("town6", 38, 56, 38, 56)
 
   elseif (zn == 37) then
     touch_fire(party[0])
@@ -262,12 +277,10 @@ function zone_handler(zn)
     refresh()
 
   elseif (zn == 43) then
-    if (get_progress(MAYORGUARD2) == 1) then
+    if (get_progress(MAYORGUARD2) > 0) then
       bubble(11, "Thank you for rescuing me!")
-    else
-      bubble(11, "I shouldn't be showing up if you haven't rescued me yet. It hasn't been programmed in to remove my NPC sprite.")
     end
-  
+
   elseif (zn == 44) then
     set_btile(139, 8, 0)
     set_ftile(139, 8, 518)
@@ -287,7 +300,7 @@ function zone_handler(zn)
   elseif (zn == 46) then
     chest(97, 0, 1500)
     refresh()
-  
+
   elseif (zn == 47) then
     door_in(129, 16, 124, 6, 140, 18)
 
@@ -316,10 +329,15 @@ function entity_handler(en)
     end
 
   elseif (en == 1) then
-    if (get_progress(P_WARPSTONE) == 1) then
+    if (get_progress(P_FOUNDMAYOR) == 0) then
+      bubble(en, "My husband is late again.")
+    elseif (get_progress(P_FOUNDMAYOR) == 1) then
+      bubble(en, "I'm getting so worried...")
+      bubble(en, "You don't think Malkaron has something to do with it?")
+    elseif (get_progress(P_FOUNDMAYOR) == 2) then
       bubble(en, "Where is that man?")
     else
-      bubble(en, "My husband is late again.")
+      bubble(en, "Oh... that bad man, making me worry like this, I'm gonna kill him!")
     end
 
   elseif (en == 2) then
@@ -331,14 +349,19 @@ function entity_handler(en)
       end
     else
       bubble(en, "This is the town of Randen. We're mostly a coastal trade town, but with the bridge out, trade is extremely slow.")
+      bubble(en, "Do you think it has something to do with Malkaron? We've heard a lot of rumors about him as of late...")
     end
 
   elseif (en == 3) then
-    if (get_progress(P_FIGHTONBRIDGE) > 4) then
+    if (get_progress(P_FOUNDMAYOR) > 1 and get_progress(P_MAYORGUARD1) > 0 and get_progress(P_MAYORGUARD2) > 0) then
+      bubble(en, "My husband gets so forgetful. Sometimes he doesn't lock up after himself.")
+      set_obs(113, 23, 0)
+      set_zone(113, 23, 0)
+    elseif (get_progress(P_FIGHTONBRIDGE) > 4) then
       bubble(en, "Good day.")
     else
       if (get_progress(P_BLADE) == 0)  then
-        -- PH: Just my little joke hehe
+        -- // PH: Just my little joke hehe
         bubble(en, "I'm just preparing some vegetables.")
         bubble(HERO1, "That's a strange knife you've got there.")
         bubble(en, "What? Oh, this. Yes, it's a Phoenix Blade.")
@@ -365,12 +388,13 @@ function entity_handler(en)
     end
 
   elseif (en == 5) then
-    if (get_progress(P_WARPSTONE) == 1) then
-      bubble(en, "Business is good.")
-      return
-    end
     if (get_progress(P_FIGHTONBRIDGE) > 4) then
-      bubble(en, "Now that the bridge is repaired I'm back in business!")
+      if (get_progress(P_WARPSTONE) == 1) then
+        bubble(en, "Business is good.")
+      else
+        bubble(en, "Now that the bridge is repaired I'm back in business!")
+      end
+
       if (get_treasure(9) == 0) then
         bubble(en, "I hear you had something to do with speeding along the bridge's construction. I'd like you to have this.")
         chest(9, I_B_SHOCK, 1)
@@ -390,7 +414,7 @@ function entity_handler(en)
       end
     else
       bubble(en, "If you haven't already noticed, the bridge across Brayden river is gone.")
-      bubble(en, "An altercation between some travelers and brigands resulted in a volley of magic that left the bridge in cinders.")
+      bubble(en, "It appears that some travelers were stopped by Malkaron's brigands on the bridge, resulting in a volley of magic that left it in cinders.")
       set_ent_script(en, "W25")
       wait_for_entity(en)
       bubble(en, "A new bridge is supposed to be built soon. This town can't survive for long without our major trade route.")
@@ -419,16 +443,16 @@ function entity_handler(en)
     if (get_progress(P_WARPSTONE) == 1) then
       bubble(en, "Are you enjoying your stay?")
     else
-      if (get_progress(P_FOUNDMAYOR) ~= 0) then
-        bubble(en, "Thank you!")
-      else
+      if (get_progress(P_FOUNDMAYOR) == 0) then
         bubble(en, "The mayor left for Andra with an adventurer that he had just hired and his usual contingent of guards.")
-        bubble(en, "I wonder if they avoided the trouble at the bridge.")
+        bubble(en, "I wonder if they avoided the trouble at the bridge?")
+      else
+        bubble(en, "Thank you!")
       end
     end
 
   elseif (en == 8) then
-    bubble(en, "I wonder how long it takes to build a bridge?")
+    bubble(en, "I wonder why those adventurers were stopped at the bridge? I'm not sure I want to try crossing it just yet.")
 
   elseif (en == 9) then
     bubble(en, "How long does it take to build a bridge?")
@@ -440,7 +464,14 @@ function entity_handler(en)
     bubble(en, "Hey, you can't be back here! What are you trying to do, steal from me?")
 
   elseif (en == 12) then
-    bubble(en, "Thanks for rescuing me back there!")
+    if (get_progress(P_MAYORGUARD1) == 1) then
+      bubble(en, "Thanks for rescuing me back there! Here, have this:")
+      set_gp(get_gp() + 1000)
+      msg("You acquired 1000 gold pieces!")
+      set_progress(P_MAYORGUARD1, 2)
+    else
+      bubble(en, "Those forces of Malkaron's sure are tough!")
+    end
 
   end
 end
@@ -467,7 +498,7 @@ function LOC_join_ajathar(en)
       bubble(HERO1, "You can rest easy now. I have closed the Portal that let the monsters through.")
     end
     bubble(en, "Great! Can I offer my services?")
-    -- Give Ajathar his default equipment
+    -- // Give Ajathar his default equipment
     set_all_equip(AJATHAR, I_MACE2, I_SHIELD1, I_HELM1, I_ROBE2, I_BAND1, 0)
     id = select_team{AJATHAR}
     -- /* Add the characters that weren't selected to the manor */
@@ -477,7 +508,7 @@ function LOC_join_ajathar(en)
       set_ent_id(en, id[1])
 
       if (id[2]) then
-        -- Two heroes were de-selected
+        -- // Two heroes were de-selected
         set_ent_id(9, id[2])
         set_ent_active(9, 1)
         set_ent_tilex(9, get_ent_tilex(en))
@@ -488,7 +519,7 @@ function LOC_join_ajathar(en)
         wait_for_entity(9, en)
         set_ent_active(9, 0)
       else
-        -- One hero was de-selected
+        -- // One hero was de-selected
         bubble(en, "If you need me, I'll be back at the manor.")
         set_ent_script(en, "L1U2L2U1L1U1")
         wait_for_entity(en, en)

@@ -11,13 +11,13 @@ end
 
 
 function refresh()
-  if (get_treasure(17) > 0) then
+  if (get_treasure(17) == 1) then
     set_btile(43, 5, 95);
   end
-  if (get_treasure(18) > 0) then
+  if (get_treasure(18) == 1) then
     set_btile(44, 6, 95);
   end
-  if (get_treasure(19) > 0) then
+  if (get_treasure(19) == 1) then
     set_btile(45, 5, 95);
   end
   if (get_progress(P_ORACLE) > 0) then

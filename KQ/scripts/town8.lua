@@ -2,6 +2,8 @@
 
 -- /*
 -- {
+-- We're going to learn about the Xenars for the first time here.
+--
 -- P_WALKING: Layer which the player is walking on
 --   0 - You're on an elevated cliff: you walk OVER bridges
 --   1 - You're on ground level: you walk UNDER bridges

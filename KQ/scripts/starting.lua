@@ -1,13 +1,20 @@
 -- starting - "Various pieces of heroes' homes back in Antoria"
 
+-- /*
+-- {
+-- P_SKIPINTRO: Whether to show the entire starting again
+--   0 - Show the entire starting
+--   1 - Do not show everything
+-- }
+-- */
+
 function autoexec()
+  set_desc(0)
   return
 end
 
 
 function postexec()
-  local a
-
   if (get_progress(P_SKIPINTRO) == 1) then
     LOC_choose_hero()
     return
@@ -29,39 +36,8 @@ function postexec()
   LOC_storyline(AYLA)
   LOC_storyline(NOSLOM)
 
-  view_range(1, 116, 12, 141, 31)
-  screen_dump()
+  LOC_meet_nostik()
 
-  set_ent_active(HERO1, 0)
-
-  -- Put a bunch of people around Hunert the butler
-  place_ent(3, 129, 26)
-  place_ent(4, 135, 27)
-  place_ent(5, 132, 27)
-  place_ent(6, 126, 19)
-  place_ent(7, 133, 19)
-  place_ent(8, 133, 21)
-  place_ent(9, 125, 25)
-  place_ent(10, 129, 24)
-  for a = 0, 7, 1 do
-    set_ent_id(3 + a, a)
-    set_ent_active(3 + a, 1)
-    set_ent_movemode(3 + a, 0)
-  end
-  set_noe(get_noe() + 8)
-  warp(130, 24, 4)
-  msg("Reisha Mountain", 255, 1500)
-
-  bubble(0, "I would like to thank you all for coming.")
-  bubble(0, "I appreciate all those willing to help. My master has summoned eight of you. Are you all accounted for?")
-
-  set_ent_script(0, "W25F2W25F0W25F3W25F0W30")
-  wait_for_entity(0, 0)
-
-  bubble(255, "Excellent. If everyone is ready, I will take you to meet master Nostik...")
-  wait(50)
-
-  set_autoparty(1)
   LOC_choose_hero()
 end
 
@@ -76,12 +52,60 @@ function entity_handler(en)
 end
 
 
+function LOC_meet_nostik()
+  local a
+
+  view_range(1, 116, 12, 141, 31)
+  screen_dump()
+
+  set_ent_active(HERO1, 0)
+
+  -- Put a bunch of people around Hunert the butler
+  place_ent(3, 127, 24)
+  set_ent_facing(3, FACE_RIGHT)
+  place_ent(4, 133, 24)
+  set_ent_facing(4, FACE_LEFT)
+  place_ent(5, 127, 25)
+  set_ent_facing(5, FACE_RIGHT)
+  place_ent(6, 133, 25)
+  set_ent_facing(6, FACE_LEFT)
+  place_ent(7, 128, 26)
+  set_ent_facing(7, FACE_UP)
+  place_ent(8, 132, 26)
+  set_ent_facing(8, FACE_UP)
+  place_ent(9, 129, 27)
+  set_ent_facing(9, FACE_UP)
+  place_ent(10, 131, 27)
+  set_ent_facing(10, FACE_UP)
+
+  for a = 0, 7, 1 do
+    set_ent_id(3 + a, a)
+    set_ent_active(3 + a, 1)
+    set_ent_movemode(3 + a, 0)
+  end
+  set_noe(get_noe() + 8)
+  warp(130, 24, 4)
+  set_desc(1)
+
+  bubble(0, "I would like to thank you all for coming.")
+  bubble(0, "I appreciate all those willing to help. My master has summoned eight of you. Are you all accounted for?")
+
+  set_ent_script(0, "W25F2W25F0W25F3W25F0W30")
+  wait_for_entity(0, 0)
+
+  bubble(0, "Excellent. If everyone is ready, I will take you to meet master Nostik...")
+  wait(50)
+
+  set_autoparty(1)
+end
+
 function LOC_choose_hero()
 -- /*
+  local ptr = 0
+
   local stop = 0
   local rd = 1
   local a, p
-  local ptr = 0
 
   clear_buffer()
   screen_dump()
@@ -139,7 +163,7 @@ function LOC_choose_hero()
 -- TT add:
   local ptr = NOSLOM
   add_chr(ptr)
-  set_all_equip(party[0], I_KNIFE1, 0, 0, I_SUIT1, 0, 0)
+  set_all_equip(ptr, I_KNIFE1, 0, 0, I_SUIT1, 0, 0)
   change_map("manor", 37, 7, 37, 7)
 end
 
@@ -149,7 +173,7 @@ function LOC_storyline(en)
   add_chr(en)
 
   if (en == SENSAR) then
-    set_ent_facing(HERO1, 1)
+    set_ent_facing(HERO1, FACE_UP)
 
     view_range(1, 8, 10, 22, 27)
     warp(10, 16, 16)
@@ -282,7 +306,7 @@ function LOC_storyline(en)
     bubble(HERO1, "Hey now, what's this?")
     wait(50)
 
-    set_ent_facing(HERO1, 0)
+    set_ent_facing(HERO1, FACE_DOWN)
     wait(50)
 
     bubble(HERO1, "Hmm... I don't like the sound of this one bit. I wonder if I even know who this anonymous fellow is?")
@@ -313,9 +337,9 @@ function LOC_storyline(en)
     wait_for_entity(HERO1, HERO1)
     set_ftile(57, 6, 0)
     wait(50)
-    set_ent_facing(HERO1, 0)
+    set_ent_facing(HERO1, FACE_DOWN)
     wait(100)
-    set_ent_facing(HERO1, 1)
+    set_ent_facing(HERO1, FACE_UP)
     wait(50)
 
     bubble(HERO1, "I cannot say, sir. I know no one who lives at Reisha Mountain.")
@@ -331,7 +355,7 @@ function LOC_storyline(en)
     wait_for_entity(HERO1, HERO1)
 
   elseif (en == CASANDRA) then
-    set_ent_facing(HERO1, 1)
+    set_ent_facing(HERO1, FACE_UP)
 
     view_range(1, 37, 29, 70, 59)
     warp(53, 58, 16)
@@ -436,7 +460,7 @@ function LOC_storyline(en)
     bubble(HERO1, "Anyone this desperate must have a lot of dough to back it up, and I'm just the one to steal it from him!")
 
     bubble(HERO1, "I can just imagine...")
-    set_ent_facing(HERO1, 0)
+    set_ent_facing(HERO1, FACE_DOWN)
     wait(50)
 
     bubble(HERO1, "I'd be the richest thief on the block.")
@@ -444,7 +468,7 @@ function LOC_storyline(en)
     wait(50)
 
   elseif (en == NOSLOM) then
-    set_ent_facing(HERO1, 1)
+    set_ent_facing(HERO1, FACE_UP)
     view_range(1, 101, 31, 111, 47)
     warp(106, 35, 4)
 
@@ -453,7 +477,7 @@ function LOC_storyline(en)
     bubble(HERO1, "$0:",
                   "This does not look good. I'm almost positive the handwriting on this note is the same as...")
     wait(50)
-    set_ent_facing(HERO1, 0)
+    set_ent_facing(HERO1, FACE_DOWN)
     wait(50)
 
     bubble(HERO1, "Hmm...")

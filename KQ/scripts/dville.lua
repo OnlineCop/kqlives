@@ -1,5 +1,12 @@
 -- dville - "Denorian village southeast of Oracle's tower"
 
+-- /*
+-- {
+-- All done, except the statue needs to be returned. Need to add a PM who will
+-- help you if you discover who stole the statue (the troll)
+-- }
+-- */
+
 function autoexec()
   return;
 end

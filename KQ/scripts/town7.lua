@@ -6,7 +6,7 @@ end
 
 
 function refresh()
-  if (get_treasure(72) > 0) then
+  if (get_treasure(72) == 1) then
     set_obs(42, 18, 0);
   end
 end

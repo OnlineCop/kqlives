@@ -2,10 +2,10 @@
 
 function autoexec()
 
-  if (get_progress(P_SHOWBRIDGE) == 0) then
-    set_mtile(241, 29, 82)
-  end
   if (get_progress(P_SHOWBRIDGE) < 2) then
+    if (get_progress(P_SHOWBRIDGE) == 0) then
+      set_mtile(241, 29, 82)
+    end
     set_btile(240, 29, 80)
     set_btile(242, 29, 80)
     set_obs(241, 29, 1)
@@ -17,7 +17,7 @@ function autoexec()
     set_obs(263, 52, 0)
   end
 
-  if (get_progress(P_FOUNDMAYOR) == 1) then
+  if (get_progress(P_FOUNDMAYOR) > 0 and get_progress(P_MAYORGUARD1) > 0 and get_progress(P_MAYORGUARD2) > 0) then
     set_zone(235, 37, 0)
   end
 
@@ -70,10 +70,10 @@ function zone_handler(zn)
 
   elseif (zn == 7) then
     if (get_progress(P_FIGHTONBRIDGE) == 5) then
-      set_ent_facing(HERO1, 2)
+      set_ent_facing(HERO1, FACE_LEFT)
       change_map("bridge2", 0, 0, 0, 0)
     else
-      set_ent_facing(HERO1, 2)
+      set_ent_facing(HERO1, FACE_LEFT)
       change_map("bridge", 0, 0, 0, 0)
     end
 
@@ -341,7 +341,7 @@ function zone_handler(zn)
     warp(12, 24, 16)
 
   elseif (zn == 71) then
-    set_ent_facing(HERO1, 2)
+    set_ent_facing(HERO1, FACE_LEFT)
     change_map("bridge2", 63, 18, 63, 18)
 
   elseif (zn == 72) then

@@ -17,7 +17,7 @@ end
 
 
 function refresh()
-  if (get_treasure(70) > 0) then
+  if (get_treasure(70) == 1) then
     set_obs(15, 39, 0)
   end
 end
@@ -149,7 +149,6 @@ function zone_handler(zn)
 
   elseif (zn == 30) then
     if (get_progress(P_WARPSTONE) == 0) then
-      set_progress(P_SHOWBRIDGE, 2)
       set_progress(P_WARPSTONE, 1)
     end
     change_map("town2", 35, 15, 35, 15)

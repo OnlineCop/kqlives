@@ -42,13 +42,12 @@ function postexec()
 end
 
 
--- // P_TALKDERIG will ALWAYS be > 0!
 function zone_handler(zn)
   if (zn == 1) then
     -- // This is the first time you try the door
     if (get_progress(P_FELLINPIT) == 0) then
       bubble(HERO1, "There's some kind of barrier here. I can't get past it.")
-      set_mtile(15, 19, 360)
+      set_btile(15, 19, 30)
       set_zone(15, 19, 3)
       bubble(HERO1, "Hey... What's that thing down there?")
       set_progress(P_FELLINPIT, 1)
@@ -66,10 +65,13 @@ function zone_handler(zn)
         -- // I have never seen Derig; he has never helped me.
         bubble(HERO1, "This doesn't do anything; I can't get out of here. I'll give up and just go to sleep.")
         set_progress(P_TALKDERIG, 2)
+        set_ent_facing(HERO1, 3)
         change_map("grotto", 19, 16, 19, 16)
       elseif (get_progress(P_TALKDERIG) == 2) then
         -- // Derig helped you out, when you were sleeping.  You re-entered the pit before speaking to Jen.
         bubble(HERO1, "Oops, I'm stuck down here again. I'll try sleeping again to get back out.")
+        inn("You decide to sleep", 0, 0)
+        set_ent_facing(HERO1, 3)
         change_map("grotto", 19, 16, 19, 16)
       end
     elseif (get_progress(P_UCOIN) == 1) then
@@ -83,6 +85,7 @@ function zone_handler(zn)
       -- // Derig has helped you out of here before
       bubble(HERO1, "Derig, can you help me out of here?")
       bubble(255, "Sure thing. Here you go.")
+      set_ent_facing(HERO1, 3)
       change_map("grotto", 19, 16, 19, 16)
     end
   end

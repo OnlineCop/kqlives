@@ -6,23 +6,23 @@
 --   0 - Do not have it
 --   1 - Got it
 --   2 - Returned it to Derig
+--
 -- P_DARKIMPBOSS: Dark Imp is in the tunnel from Ekla to Randen
 --   0 - It is blocking the stairway
 --   1 - You defeated it and the pathway is now clear
--- P_EARLYPROGRESS: Used when talking to Derig in the Grotto.
---   0 - Have not yet entered Ekla
---   1 - Entered Ekla
---   2 - Entered Randen
---   3 - Entered Andra
+--
 -- P_EKLAWELCOME: Corny welcome message when you talk to the man in Ekla
 --   0 - He hasn't yet given you his corny "Yes! This makes 8!" speech
 --   1 - Now he likes cheese
+--
 -- P_PORTALGONE: Whether the portal in the tunnel is still working
 --   0 - Still letting monsters through
 --   1 - The Portal is sealed shut
+--
 -- P_START: Monsters will not attack you until you enter and leave Ekla
 --   0 - Haven't entered Ekla yet
 --   1 - Entered Ekla; monsters will now attack randomly on world map
+--
 -- P_TALKDERIG: If you've spoken to Derig
 --   0 - Never entered grotto
 --   1 - Entered grotto; didn't fall down pit
@@ -30,11 +30,13 @@
 --   3 - Fell down pit, spoke with Derig
 --   4 - Derig told you about the Rod of Cancellation
 --   5 - Returned Unadium coin and Rod of Cancellation to Derig
+--
 -- P_UCOIN: Unadium Coin from Jen
 --   0 - Have not yet spoken with the granddaughter, Jen
 --   1 - Spoke to Jen
 --   2 - Received coin
 --   3 - Returned coin
+--
 -- P_WARPSTONE: The teleporter from Ajantara <-> Randen
 --   0 - Haven't used it yet
 --   1 - Stepped on the warp stone and created its counterpart in Randen
@@ -43,11 +45,6 @@
 
 
 function autoexec()
-  -- If we have never been in the town before
-  if (get_progress(P_EARLYPROGRESS) == 0) then
-    set_progress(P_EARLYPROGRESS, 1)
-  end
-
   -- Remove Derig from the screen
   if (get_progress(P_TALKDERIG) < 4) or (get_progress(P_TALKDERIG) > 5) then
     set_ent_active(4, 0)
@@ -57,9 +54,10 @@ function autoexec()
     set_ent_tiley(2, 50)
     set_ent_facing(2, FACE_DOWN)
     set_ent_facing(4, FACE_DOWN)
-    set_ent_facing(HERO1, 1)
+    set_ent_facing(HERO1, FACE_UP)
     if (get_progress(P_TALKDERIG) == 4) then
       set_desc(0)
+      view_range(1, 52, 40, 69, 56)
     end
   end
 
@@ -100,7 +98,6 @@ end
 
 function postexec()
   if (get_progress(P_TALKDERIG) == 4) then
-    view_range(1, 52, 40, 69, 56)
     bubble(4, "I'm Derig. If I'm here, then you found me in the Grotto.")
     bubble(4, "To stop the monsters in our underground tunnel, you must seal the portal.")
     bubble(4, "In order to do that, you can use a Rod of Cancellation to melt it shut.")
@@ -275,7 +272,11 @@ function entity_handler(en)
       elseif (get_progress(P_TALKDERIG) == 2) then
         -- You entered the grotto and fell in pit (you had NOT spoken to Jen first, though).  Someone helped you get out.
         bubble(en, "You've already been to the grotto.")
-        bubble(HERO1, "Yes, we fell down a hole and someone pulled us out.")
+        if (get_numchrs() > 1) then
+          bubble(HERO1, "Yes, we fell down a hole and someone pulled us out.")
+        else
+          bubble(HERO1, "Yes, I fell down a hole and someone pulled me out.")
+        end
         bubble(en, "That is Derig, my grandfather. Go back and look for him.")
       end
       -- Now you have spoken to Jen
@@ -291,7 +292,11 @@ function entity_handler(en)
         bubble(en, "Well? Go find Derig in the grotto!")
       elseif (get_progress(P_TALKDERIG) == 3) then
         bubble(en, "Okay, that was stupid. You saw him by the fire and you didn't talk to him.")
-        bubble(en, "GO BACK AND TALK TO HIM! HE'S SITTING BY THE FIRE YOU MORON!")
+        if (get_numchrs() > 1) then
+          bubble(en, "GO BACK AND TALK TO HIM! HE'S SITTING BY THE FIRE YOU MORON!")
+        else
+          bubble(en, "GO BACK AND TALK TO HIM! HE'S SITTING BY THE FIRE YOU MORONS!")
+        end
       elseif (get_progress(P_TALKDERIG) == 4) then
         -- This should never occur
       elseif (get_progress(P_TALKDERIG) == 5) then

@@ -1,5 +1,13 @@
 -- cave6a - "Cave north of Ajantara"
 
+-- /*
+-- {
+-- It would be really good if we could get some sort of cave town 2/ people
+-- and the 7th PM.
+-- }
+-- */
+
+
 function autoexec()
   return
 end

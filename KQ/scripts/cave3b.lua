@@ -6,7 +6,7 @@ end
 
 
 function refresh()
-  if (get_treasure(20) > 0) then
+  if (get_treasure(20) == 1) then
     set_mtile(11, 36, 95);
   end
 end

@@ -2,39 +2,34 @@
 
 -- /*
 -- {
--- Which globals should we have for manor?
---
--- P_MANOR
---   (0) New game; You haven't spoken to the butler yet
---   (1) Butler has spoken to you, or you have no new recruits yet
---   (2) You've recruited others and they're waiting around the table
+-- P_MANOR: Status of conversations when you are in the manor
+--   0 - New game; you haven't spoken to the butler yet
+--   1 - Nostik further explained your mission; you haven't spoken to butler
+--   2 - Butler has spoken to you, or you have no new recruits yet
+--   3 - You've recruited others and they're waiting around the table
 --
 -- P_PLAYERS
---   (0) You haven't recruited anyone yet
---   (1..7) You have others in your party
+--   0 - You haven't recruited anyone yet
+--   1..7 - You have others in your party
 --
 -- P_MANORPARTY[0-7]
---   Whether this character has been recruited into your party
+--   0..7 - Whether this character has been recruited into your party
 --
--- When the game starts, Nostik debriefs everybody quickly and then offers to
--- go into detail for whoever wants to stay.  We should script it so everyone
--- else leaves immediately (walks out the door) and you're left at the table.
+--
+-- Details:
+--
+-- When the game starts, Nostik debriefs everybody and offers to go into detail
+-- for whoever wants to listen.  Everyone else leaves immediately (walks out
+-- the door) and you're left at the table.
 --
 -- Before you can leave yourself, the butler, Hunert, will stop to talk to you
 -- and fill you in, as well as give you some money to start the quest.
 --
 -- When you return to the manor, the dining room should be empty unless you
 -- have 'recruited' other party members into your team.  If you have, then
--- those members are sitting in their places around the table.  Even the
--- person that is trailing you will be sitting there; no one will join your
--- little "procession" until you leave the manor.  When you talk to the party
--- members around the table, PH's team selector will be activated.
--- Irregardless of who you choose, they don't 'jump up' and start trailing you
--- immediately; they stay around the table until you leave.  This prevents
--- 'jumping' when a character is traded.  The 'removed' character would
--- otherwise magically disappear from behind you and appear at the table, and
--- the person you're recruiting will disappear from their seat and be standing
--- behind/under you.  I just don't like that; it just looks like bad coding.
+-- those members are sitting in their places around the table.  When you speak
+-- to Hunert, the butler, he will allow you to choose your party members and
+-- whether they will lead or follow in the 2-person party.
 --
 -- Quick reference:
 --
@@ -53,97 +48,60 @@
 
 
 function autoexec()
-  if (get_progress(P_PLAYERS) > 0) then
-    set_progress(P_MANOR, 2)
-  end
+  view_range(1, 5, 4, 26, 22)
 
+  if (get_progress(P_PLAYERS) > 0) then
+    set_progress(P_MANOR, 3)
+  end
 
   if (get_progress(P_MANOR) == 0) then
     -- New game; Nostik has not explained the quest yet
     LOC_setup_newgame()
   elseif (get_progress(P_MANOR) == 1) then
+    -- You spoke to Nostik about the purpose of your mission
+  elseif (get_progress(P_MANOR) == 2) then
     -- You already talked to Hunert, but you have no recruits
     for a = 0, 7, 1 do
       set_ent_active(a, 0)
     end
-  elseif (get_progress(P_MANOR) == 2) then
+  elseif (get_progress(P_MANOR) == 3) then
     -- You have recruited at least 1 other party member
     LOC_at_table()
 
     -- Put Nostik to bed (he is old and feeble)
-    place_ent(8, 9, 37)
+    place_ent(8, 12, 37)
   end
-
 end
 
 
 function postexec()
-  local player_response, done_talking;
+  local en = 8
 
   if (get_progress(P_MANOR) == 0) then
-    rest(200);
+    rest(200)
 
-    -- SLF: Hey, I want to add some contributions here. They will be as simple
-    -- as possible and whoever wants to do more can make them actually sound
-    -- good.
-    bubble(8, "Alright everyone, I welcome you. Let me get right to the major points of why you're here.");
-    bubble(8, "Monsters have started attacking us from out of nowhere. We need your help to find their origins and put a stop to it!");
-    bubble(8, "Go out, discover where they came from, and get rid of them so we can enjoy peace once again. I have two hunches as to where they came from.");
-    if (prompt(8, 2, 1, "Do you want to hear what", "they are?",
-                        "  yes",
-                        "  no") == 0) then
-      -- yes
-      while (not done_talking) do
-        -- TT: Is there a way to advance the pointer by one, so if the player
-        -- just keeps pressing ALT, it does not keep repeating the same thing?
-        player_response = prompt(8, 3, 0, "These are my ideas:",
-                                          "  Staff of Xenarum ",
-                                          "  Malkaron",
-                                          "  Done");
+    bubble(en, "Alright everyone, I welcome you. Let me get right to the major points of why you're here.")
+    LOC_explain_mission(en)
 
-        if (player_response == 0) then
-          -- Staff of Xenarum
-          bubble(8, "The Staff of Xenarum is very powerful. I found it in some ancient ruins.");
-          bubble(8, "The fame of the staff spread until Malkaron learned that I had it. He found me and stole it.");
-          bubble(8, "I never tapped its full potential but know it used to be a very powerful tool for good or evil.");
-          bubble(8, "If Malkaron has found a way to use it, he may be controlling these monsters through its powers.");
-        elseif (player_response == 1) then
-          -- Malkaron
-          bubble(8, "A corrupt man, Malkaron was a power-hungry nobleman in a frozen country. Because of that, many have dubbed him the Ice Lord.");
-          bubble(8, "15 years ago, he captured me and took my Staff of Xenarum. He mysteriously became very powerful very quickly. I believe it was the staff that gave him such great power.");
-          bubble(8, "Rebels in his army found me and helped me escape. Sadly, I lost one of my eyes during the ordeal, but Hunert, my butler, has been able to help me a great deal. He is very useful, and he will be a valuable resource for you.");
-        elseif (player_response == 2) then
-          done_talking = 1;
-        else
-          -- We should never reach this one; it is just error-checking:
-          bubble(8, "That's not an option, Einstein!");
-        end
-      end
-    end
-
-    bubble(8, "I cannot help you by going out myself, but I shall be here if you would need me.");
-    bubble(8, "Good luck all of you.");
+    bubble(en, "For fear of going out and being spotted, I will stay here if you need anything.")
+    bubble(en, "Good luck all of you.")
 
     -- TT: make everyone else walk out the door
-    set_ent_script(SENSAR, "D1R3D1L1D6R3");
-    set_ent_script(SARINA, "D1R2D1L1D6R4");
-    set_ent_script(CORIN, "D1R1D1L1D6R4D1");
-    set_ent_script(AJATHAR, "D2L1D6R4D2");
-    set_ent_script(CASANDRA, "U1R1D3L1D1L1D6R2");
-    set_ent_script(TEMMIN, "U1R2D3L1D1L1D6R1");
-    set_ent_script(AYLA, "U1R3D3L1D1L1D6");
-    set_ent_script(NOSLOM, "U1R4D3L1D1L1D5");
+    set_ent_script(SENSAR,   "D1R5D1L3D6R4D1K")
+    set_ent_script(SARINA,   "D1R4D1L3D6R4D1K")
+    set_ent_script(CORIN,    "D1R3D1L3D6R4D1K")
+    set_ent_script(AJATHAR,  "D1R2D1L3D6R4D1K")
+    set_ent_script(CASANDRA, "U1R1D4R1D1L3D6R4D1K")
+    set_ent_script(TEMMIN,   "U1R2D4R1D1L3D6R4D1K")
+    set_ent_script(AYLA,     "U1R3D4R1D1L3D6R4D1K")
+    set_ent_script(NOSLOM,   "U1R4D4R1D1L3D6R4D1K")
     for a = 0, 7, 1 do
-      set_ent_speed(a, 4);
+      set_ent_speed(a, 4)
     end
 
-    wait_for_entity(0, 7);
+    wait_for_entity(0, 7)
 
-    for a = 0, 7, 1 do
-      set_ent_active(a, 0);
-    end
-
-    bubble(8, "When you are ready to go, talk to Hunert and he will get you started on your journey.");
+    bubble(en, "When you are ready to go, talk to Hunert and he will get you started on your journey.")
   end
 end
 
@@ -151,97 +109,132 @@ end
 function zone_handler(zn)
   -- Front door
   if (zn == 1) then
-    change_map("main", 107, 40, 107, 40);
+    change_map("main", 107, 40, 107, 40)
 
   -- Stairs going up
   elseif (zn == 2) then
-    warp(25, 34, 8);
+    view_range(1, 5, 24, 26, 42)
+    warp(25, 28, 8)
 
   -- Stairs going down
   elseif (zn == 3) then
-    warp(25, 5, 8);
+    view_range(1, 5, 4, 26, 22)
+    warp(25, 8, 8)
 
   -- Doors, duh
   elseif (zn == 4) then
-    bubble(HERO1, "Locked.");
+    bubble(HERO1, "Locked.")
 
   -- Bookshelves
   elseif (zn == 5) then
-    bubble(HERO1, "Wow! This guy reads weird stuff.");
+    bubble(HERO1, "Wow! This guy reads weird stuff.")
 
   -- In front of exit
   elseif (zn == 6) then
-    if (get_progress(P_MANOR) == 0) then
-      bubble(9, "Hey! Hold on!");
+    local en = 9
+
+    if (get_progress(P_MANOR) == 0 or get_progress(P_MANOR) == 1) then
+      bubble(en, "Hey! Hold on!")
 
       -- Turn around, see who is yelling
-      set_ent_script(HERO1, "U1");
-      wait_for_entity(HERO1, HERO1);
-      bubble(HERO1, "Huh?");
+      set_ent_script(HERO1, "U1")
+      wait_for_entity(HERO1, HERO1)
+      bubble(HERO1, "Huh?")
 
       -- Butler running speed
-      set_ent_speed(9, 5);
+      set_ent_speed(en, 5)
 
       -- Check location on map
       if (get_ent_tilex(HERO1) == 16) then
         -- Hero is in front of right door
-        set_ent_script(9, "D1R3D2L5D7L1D1");
+        set_ent_script(en, "D1R3D2L5D7L1D1")
       else
         -- Hero is in front of left door
-        set_ent_script(9, "D1R3D2L5D7L2D1");
+        set_ent_script(en, "D1R3D2L5D7L2D1")
       end
 
       -- Process movement script
-      wait_for_entity(9, 9);
+      wait_for_entity(en, en)
 
       -- Butler normal speed
-      set_ent_speed(9, 3);
+      set_ent_speed(en, 3)
 
-      bubble(9, "It might be foolish to leave without hearing what I have to say.");
-      bubble(9, "First, Nostik gives you this.");
+      bubble(en, "It might be foolish to leave without hearing what I have to say.")
+      bubble(en, "First, Nostik gives you this.")
 
-      -- TT: Added the (9) so the text bubble correctly displays
-      LOC_talk_butler(9);
+      -- TT: Added the (en) so the text bubble correctly displays
+      LOC_talk_butler(en)
     end
-
   -- Search fireplaces
   elseif (zn == 7) then
-    touch_fire(party[0]);
+    touch_fire(party[0])
   end
 end
 
 
 function entity_handler(en)
   -- You are talking to other party members
-  if (en >= 0 and en <= 7) then
-    LOC_chit_chat(en);
+  if (en == SENSAR) then
+    bubble(en, "I would be useful to you, since I can use Rage in battle.")
+  elseif (en == SARINA) then
+    bubble(en, "In battle, I can attack multiple targets at once if I'm equipped with the right weapon.")
+  elseif (en == CORIN) then
+    bubble(en, "I can infuse weapons with magic during battle.")
+  elseif (en == AJATHAR) then
+    bubble(en, "I notice that chanting a prayer during battle can heal your party or dispells the undead monsters.")
+  elseif (en == CASANDRA) then
+    bubble(en, "I can use my Boost ability to strengthen spells when I am attacking.")
+  elseif (en == TEMMIN) then
+    bubble(en, "I am very protective of my team members and will take a beating in their place.")
+  elseif (en == AYLA) then
+    bubble(en, "I'm a thief by trade. You might be surprised what you can steal from enemies!")
+  elseif (en == NOSLOM) then
+    bubble(en, "I have a very keen eye. Not even enemies can hide their weaknesses from me!")
 
   -- Nostik
   elseif (en == 8) then
     if (get_progress(P_MANOR) == 0) then
-      bubble(en, "Talk to my butler before you leave and he will help you get started on your journey.");
+      if (prompt(en, 2, 1, "Do you need me to explain it again?",
+                           "  yes",
+                           "  no") == 0) then
+        LOC_explain_mission(en)
+        bubble(en, "I hope this helps you have a better understanding of what's going on.")
+      else
+        bubble(HERO1, "No, I think I get it. But why did you choose me?")
+        bubble(en, "As you may have noticed, you're not the only one. We've been friends a long time, $0, and I know I can trust you with confidence.")
+        bubble(HERO1, "Oh. I thought you selected me because of my brains or because my magic skills were more finely honed than anyone else's...")
+        bubble(en, "Heh-heh. You DO have certain skills which I'm counting on will help you out on your mission, but so do the others, so don't get a big head.")
+        bubble(HERO1, "Yea, yea. So why didn't you just get everybody into one big group and just let all of us go out and find this staff?")
+        bubble(en, "Groups attract attention. If you see a group of three or more people wandering around, you begin to suspect something's up. That's exactly what you'd want to avoid, if you ever want to stay ahead of Malkaron and his minions.")
+        bubble(HERO1, "Oh yea, I hadn't thought of that.")
+        set_progress(P_MANOR, 1)
+      end
+      wait(50)
+      bubble(en, "You should be going. Talk to Hunert before you go. He can help start you on your way.")
     elseif (get_progress(P_MANOR) == 1) then
-      bubble(en, "Good luck, $0.");
+      bubble(en, "You should be going. Talk to Hunert before you go. He can help start you on your way.")
     elseif (get_progress(P_MANOR) == 2) then
-      bubble(en, "Zzz... zzz... zzz...");
+      bubble(en, "Good luck, $0.")
+    elseif (get_progress(P_MANOR) == 3) then
+      bubble(en, "Zzz... zzz... zzz...")
     else
-      bubble(en, "Mine aren't the only books on the Staff of Xenarum and other treasures.");
+      bubble(en, "Mine aren't the only books on the Staff of Xenarum and other treasures.")
     end
 
   -- Butler Hunert
   elseif (en == 9) then
-    if (get_progress(P_MANOR) == 0) then
-      bubble(en, "Ah yes, Master Nostik asked me to give you this.");
-      LOC_talk_butler(en);
-    elseif (get_progress(P_MANOR) == 1) then
-      bubble(en, "Books are an amazing source of knowledge. Nostik has spent many years writing his own.");
+    if (get_progress(P_MANOR) == 0 or get_progress(P_MANOR) == 1) then
+      bubble(en, "Ah yes, Master Nostik asked me to give you this.")
+      LOC_talk_butler(en)
     elseif (get_progress(P_MANOR) == 2) then
-      bubble(en, "Welcome back, $0. The others are here waiting for you.");
-      bubble(en, "You can exchange your party members here.");
+      bubble(en, "Books are an amazing source of knowledge. Nostik has spent many years writing his own.")
+    elseif (get_progress(P_MANOR) == 3) then
+      bubble(en, "Welcome back, $0. The others are here waiting for you.")
+      bubble(en, "You can exchange your party members here.")
 
       -- PH, this is where your script comes in?
-      select_manor();
-      LOC_at_table();
+      select_manor()
+      LOC_at_table()
     end
   end
 
@@ -275,72 +268,91 @@ function LOC_setup_newgame()
 end
 
 
+function LOC_explain_mission(en)
+    local a
+    a = prompt(en, 3, 1, "Do you want the long version or the short version?",
+                         "  long",
+                         "  short",
+                         "  neither")
+    if (a == 0) then
+      -- long
+      bubble(en, "The world is in an upheaval right now. Malkaron is a military general who, quite suddenly, became unstoppable. His forces were practically invincible. The world was plagued with his destruction. Then just a few months ago, Malkaron withdrew and all this frenzy stopped. He and his armies seemed to have just vanished.")
+      bubble(en, "Peace only lasted only until now, when monsters have begun to appear everywhere. They kill livestock, attack towns and ransack villages. They are looking for something.")
+      wait(75)
+      bubble(en, "The fact is, I had, until recently, been an advisor to him in his army. He is furious with me, however, and he's sent out scouts to find me.")
+      bubble(en, "Malkaron had a magical staff which gave him and his armies total invincibility. It turned anything made from Opal into a substance which couldn't be broken, merely by being in close proximity to the staff. That is why his army was unstoppable. They wore Opal armour.")
+      bubble(en, "Naturally, he kept this a well-guarded secret, but since he carried this staff with him everywhere his armies went, I began to piece the clues together. Malkaron became suspicious, and sent me to the dungeon.")
+      LOC_explain_mission2(en)
+    elseif (a == 1) then
+      -- short
+      bubble(en, "Malkaron is a general whose armies became invincible. They practically tore the world apart until just recently.")
+      bubble(en, "Their forces unexpectedly withdrew a few months ago and it's been peaceful until now.")
+      bubble(en, "It appears that there are monsters springing up everywhere, looking for something.")
+      bubble(en, "Malkaron had a magical staff that hardened anything made from Opal into an unbreakable substance by mere proximity to the staff.")
+      bubble(en, "He found out that I knew about it, and threw me into the dungeon.")
+      LOC_explain_mission2(en)
+    else
+      bubble(en, "Fine, I'll tell you the minimal amount. Malkaron captured me.")
+    end
+
+    bubble(en, "I escaped by use of my magic, and now I am here.")
+end
+
+
+function LOC_explain_mission2(en)
+    wait(75)
+    bubble(en, "This is where you come in. I believe that Malkaron has lost the staff and is now looking for it. Those monsters are his scouts.")
+    bubble(en, "If this is true, I need your help to find it before he does.")
+    bubble(en, "Each of you have a different skill that I believe will be very beneficial to your search.")
+    bubble(en, "You will need to stop the monsters. They are Malkaron's eyes and ears, and if they find the staff before you do, we may be in trouble again.")
+    wait(50)
+end
+
+
 function LOC_talk_butler(en)
-  drawmap();
-  screen_dump();
-  sfx(6);
-  msg("You've acquired 200 gp!", 255, 0);
-  set_gp(get_gp() + 200);
-  drawmap();
-  screen_dump();
-  bubble(en, "The source of the monsters is a mystery. They appear out of nowhere and may attack randomly.");
-  bubble(HERO1, "You mean they will just go on a wild rampage and start gouging us for no reason?");
-  bubble(en, "Heh heh. That's a good way of putting it. It seems to me that they have no qualms about attacking anyone or anything.");
-  bubble(HERO1, "That will sure make it hard to sleep at night.");
-  bubble(en, "Maybe so. Try sleeping in a town or village inn. Monsters seem to avoid populated places for some reason.");
-  bubble(HERO1, "I wonder why that is?");
-  msg("Hunert shrugs", 255, 0);
-  bubble(HERO1, "Well, thank you for the information.");
-  set_progress(P_MANOR, 1);
+  drawmap()
+  screen_dump()
+  sfx(6)
+  msg("You've acquired 200 gp!", 255, 0)
+  set_gp(get_gp() + 200)
+  drawmap()
+  screen_dump()
+  bubble(en, "Since there are so many monsters wandering around, you may be attacked at random.")
+  bubble(HERO1, "You mean monsters will go on a wild rampage and just start gouging me for no reason?")
+  bubble(en, "Well, yes. That's a good way of putting it.")
+  bubble(HERO1, "That will sure make it hard to sleep at night.")
+  bubble(en, "Heh heh. Maybe so. Try sleeping in a town or village inn. Monsters avoid populated places for some reason.")
+  bubble(en, "Here, I'll put a monster repellant on you that will last long enough for you to make it into town.")
+  msg("Hunert sprinkles some strong-scented oils on you.", 255, 0)
+  bubble(en, "Hopefully, it will give you a chance to buy some better weapons and armour.")
+  bubble(HERO1, "Whew! That reeks! Why does it have to smell so bad?")
+  msg("Hunert shrugs", 255, 0)
+  bubble(HERO1, "Well, thank you for the information.")
+  set_progress(P_MANOR, 2)
 end
 
-
--- TT: This is no longer used if all the heroes leave at the beginning.
-function LOC_chit_chat(a)
-  local b;
-  local c;
-
-  b = get_ent_id(a);
-  if (b == SENSAR) then
-    bubble(a, "Good luck to you friend.");
-  elseif (b == SARINA) then
-    bubble(a, "I really need that reward.");
-  elseif (b == CORIN) then
-    bubble(a, "Hmmm... this all seems very odd.");
-  elseif (b == AJATHAR) then
-    bubble(a, "I hope to learn much on this journey.");
-  elseif (b == CASANDRA) then
-    bubble(a, "That Staff is as good as mine.");
-  elseif (b == TEMMIN) then
-    bubble(a, "This will certainly not be easy.");
-  elseif (b == AYLA) then
-    bubble(a, "I am confident we will all do well.");
-  elseif (b == NOSLOM) then
-    bubble(a, "I am fortunate to have been selected.");
-  end
-end
 
 -- Decide who should be sitting around the table
 function LOC_at_table()
   local id, a
   for a = 0, 7 do
     -- You have not recruited this person into your team
-    id = get_progress(a + P_MANORPARTY) - 1;
+    id = get_progress(a + P_MANORPARTY) - 1
     if (id == get_pidx(0)) then
-      id = -1;
+      id = -1
     end
     if (get_numchrs() == 2 and id == get_pidx(1)) then
-      id = -1;
+      id = -1
     end
     if (id < 0) then
       -- Remove entity from the map
-      set_ent_active(a, 0);
+      set_ent_active(a, 0)
     else
       -- Place around the table
-      set_ent_active(a, 1);
-      set_ent_id(a, id);
-      set_ent_chrx(a, 255);
-      set_ent_obsmode(a,1);
+      set_ent_active(a, 1)
+      set_ent_chrx(a, 255)
+      set_ent_id(a, id)
+      set_ent_obsmode(a,1)
     end
   end
 end

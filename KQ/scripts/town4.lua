@@ -1,5 +1,13 @@
 -- town4 - "Maldea"
 
+-- /*
+-- {
+-- Need a rewrite so we accurately lose the character.
+-- You also find out that you can't wear the Opal armour because it's cursed.
+-- }
+-- */
+
+
 function autoexec()
   if (get_progress(P_WARPEDTOT4) == 0) then
     if (get_numchrs() > 1) then
@@ -26,7 +34,7 @@ end
 
 
 function refresh()
-  if (get_treasure(81) > 0) then
+  if (get_treasure(81) == 1) then
     set_ftile(94, 7, 237);
   end
 end
@@ -178,11 +186,11 @@ function zone_handler(zn)
     if (prompt(255, 2, 0, "Take a nap?",
                           "  yes",
                           "  no") == 0) then
-      for a=0, get_numchrs() - 1, 1 do
-        set_party_hp(a, get_party_mhp(a));
-        set_party_mp(a, get_party_mmp(a));
-      end
-      inn("House", 0, 0);
+--      for a=0, get_numchrs() - 1, 1 do
+--        set_party_hp(a, get_party_mhp(a));
+--        set_party_mp(a, get_party_mmp(a));
+--      end
+      do_inn_effects(1);
     end
 
   elseif (zn == 38) then

@@ -2,11 +2,6 @@
 
 -- /*
 -- {
--- P_EARLYPROGRESS: Used when talking to Derig in the Grotto.
---   0 - Have not yet entered Ekla
---   1 - Entered Ekla
---   2 - Entered Randen
---   3 - Entered Andra
 -- P_FELLINPIT: Set when you fall down the pit
 --   0 - Haven't fallen down the pit
 --   1 - Fell into the pit, Derig helped you out

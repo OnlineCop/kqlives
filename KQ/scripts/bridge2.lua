@@ -49,7 +49,7 @@ function zone_handler(zn)
 
   elseif (zn == 2) then
     -- // TT: This is still here incase the player didn't get it on the first
-    -- //  (incomplete) bridge.  They can only get it once.
+    -- //     (incomplete) bridge.  They can only get it once.
     chest(8, I_OSEED, 2)
     autoexec()
 
@@ -110,9 +110,9 @@ function entity_handler(en)
     if (get_progress(P_BANGTHUMB) == 0) then
       bubble(en, "Yes, wha...")
       msg("WHAM!", 255, 0)
-      set_ent_facing(en, 2)
+      set_ent_facing(en, FACE_LEFT)
       bubble(en, "Yow!! My thumb! I banged my thumb!")
-      set_ent_facing(en, 0)
+      set_ent_facing(en, FACE_DOWN)
       bubble(en, "I hope that you're satisfied!")
     else
       bubble(en, "Owww, my poor thumb...")

@@ -1,6 +1,30 @@
 -- cave1 - "Underground tunnel from Ekla to Randen"
 
+-- /*
+-- {
+-- P_ODDWALL: Whether the player is told that the wall looks odd
+--   0 - Have not yet seen the message
+--   1 - Saw the message (only see it 1 time whenever you enter the map)
+--
+-- P_DARKIMPBOSS: Defeated the monster blocking the tunnel
+--   0 - Still there
+--   1 - Defeated
+--
+-- P_DYINGDUDE: Man in tunnel dying
+--   0 - You have not spoken to him
+--   1 - Now he is dead
+--
+-- P_PORTALGONE: Whether the portal in the tunnel is still working
+--   0 - Still letting monsters through
+--   1 - The Portal is sealed shut
+-- }
+-- */
+
 function autoexec()
+  if (get_treasure(2) == 0) then
+    set_progress(P_ODDWALL, 0)
+  end
+  
   -- PH added refresh here to get rid of DarkImp
   refresh()
 end
