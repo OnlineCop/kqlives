@@ -96,8 +96,7 @@ menu.  You can also change map options in the bottom menu.
 ===============================
 The code is fairly well-commented, so everything should be self-explanitory.
 These few key changes were implemented for ease-of-use, and keys are easily
-redefined if they're undesirable.  I do have a couple TODOs that I need help
-with:
+redefined if they're undesirable.
 
 
 ===============================
@@ -114,6 +113,12 @@ Changes, updates:
 * Fixed multiple memory bugs and map-resize issues.
 
 
+===============================
+Known bugs:
+
+* If the view window is at the bottom of the map when the mapsize is reduced, it will crash the editor.  Either don't be at the bottom of the map when you decrease its height, or don't shrink the map :-)
+
+
 Questions and comments (donations, threats...) are of course welcome.
 
--TeamTerradactyl
+-TeamTerradactyl :: teamterradactyl@users.sourceforge.net
