@@ -116,13 +116,13 @@ void error_load (const char *problem_file)
 /*! \brief Display help on the command syntax */
 void usage (const char *argv)
 {
-   fprintf (stdout, "Map to PCX converter for KQ.\n");
-   fprintf (stdout, "Usage: %s [+/-][options] [-v] filename(s)\n", argv);
+   fprintf (stdout, "Map to image converter for KQ.\n");
+   fprintf (stdout, "Usage: %s [+/-][options] [-v] [-b] [-f] filename(s)\n", argv);
    fprintf (stdout, "Options:\n");
    fprintf (stdout,
-            "   +  includes the option: it WILL appear in the PCX image.\n");
+            "   +  includes the option: it WILL appear in the image.\n");
    fprintf (stdout,
-            "   -  negates an option: it will not appear in the PCX image.\n");
+            "   -  negates an option: it will not appear in the image.\n");
    fprintf (stdout, "   1  shows layer 1 (default ON)\n");
    fprintf (stdout, "   2  shows layer 2 (default ON)\n");
    fprintf (stdout, "   3  shows layer 3 (default ON)\n");
@@ -131,6 +131,8 @@ void usage (const char *argv)
    fprintf (stdout, "   s  shows the shadows (default ON)\n");
    fprintf (stdout, "   z  shows the zones (default OFF)\n\n");
    fprintf (stdout, "   -v displays %s output in verbose mode\n\n", argv);
+   fprintf (stdout, "   -b output as Windows bitmap instead of PCX\n\n");
+   fprintf (stdout, "   -f overwrite image, even if it already exists\n\n");
    fprintf (stdout, "   filename  is the .MAP file(s) to be used\n");
    fprintf (stdout, "Example: %s +1oz -23es town1.map town2.map\n\n", argv);
    fprintf (stdout,
@@ -145,6 +147,8 @@ int main (int argc, char *argv[])
 {
    char fn[PATH_MAX], *filenames[PATH_MAX];
    int i, k, number_of_files = 0, verbose = 0;
+   int force_overwrite = 0;
+   char *output_ext = "pcx";
    COLOR_MAP cmap;
 
    /* Make sure that we have some sort of input; exit with error if not */
@@ -152,7 +156,9 @@ int main (int argc, char *argv[])
       usage (argv[0]);
       return 0;
    }
-   allegro_init ();
+
+   install_allegro (SYSTEM_NONE, &errno, atexit);
+   set_color_conversion (COLORCONV_TOTAL);
    create_trans_table (&cmap, pal, 128, 128, 128, NULL);
    color_map = &cmap;
 
@@ -163,6 +169,10 @@ int main (int argc, char *argv[])
       }
       if (!strcmp (argv[i], "-v") || !strcmp (argv[i], "--verbose"))
          verbose = 1;
+      if (!strcmp (argv[i], "-b"))
+         output_ext = "bmp";
+      if (!strcmp (argv[i], "-f"))
+         force_overwrite = 1;;
    }
 
    show_layer1 = d_layer1;
@@ -196,9 +206,16 @@ int main (int argc, char *argv[])
          show_shadows = strchr (argv[i] + 1, 's') ? 1 : d_shadows;
          show_zones = strchr (argv[i] + 1, 'z') ? 1 : d_zones;
       } else {
-         if (exists (argv[i]))
-            filenames[number_of_files++] = argv[i];
-         else
+         if (exists (argv[i])) {
+            if (number_of_files < PATH_MAX)
+               filenames[number_of_files++] = argv[i];
+            else {
+               fprintf (stderr,
+                        "Too many files specified on command line (max %d)\n",
+                        PATH_MAX);
+               return 1;
+            }
+         } else
             fprintf (stderr, "Unrecognized argument: %s\n", argv[i]);
       }
    }
@@ -235,20 +252,27 @@ int main (int argc, char *argv[])
          if (verbose)
             fprintf (stdout, "- Loading file #%d: %s\n", i + 1,
                      (char *) filenames[i]);
-         replace_extension (fn, filenames[i], "bmp", sizeof (fn));
+         replace_extension (fn, filenames[i], output_ext, sizeof (fn));
          if (verbose)
-            fprintf (stdout, "  - %s replaced by extension .PCX: %s\n",
-                     filenames[i], fn);
+            fprintf (stdout, "  - %s replaced by extension .%s: %s\n",
+                     filenames[i], output_ext, fn);
          load_map (filenames[i]);
          if (verbose)
             fprintf (stdout, "  - Setting palette\n");
          set_palette (pal);
-         if (verbose)
-            fprintf (stdout, "  - Saving %s...\n", fn);
-         visual_map (fn);
-         if (verbose)
-            fprintf (stdout, "  - \"%s\" created with mode \"%d\"\n", fn,
-                     gmap.map_mode);
+         if (!exists (fn) || force_overwrite) {
+            if (verbose)
+               fprintf (stdout, "  - Saving %s...\n", fn);
+            visual_map (fn);
+            if (verbose)
+               fprintf (stdout, "  - \"%s\" created with mode \"%d\"\n", fn,
+                        gmap.map_mode);
+         } else {
+            if (verbose)
+               fprintf (stdout,
+                        "  - %s already exists. Use -f option to force overwrite.\n",
+                        fn);
+         }
       }
    }
 
