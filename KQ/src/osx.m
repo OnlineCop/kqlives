@@ -27,13 +27,23 @@
  *
  * This includes any bits which are specific for Mac OSX  platforms
  */
+
 #import <Foundation/Foundation.h>
-#import <Foundation/NSPathUtilities.h>
+/*#import <Foundation/NSPathUtilities.h>*/
 #include <string.h>
+
+/* I can't include kq.h here as it clashes with some stupid OS9 names like shadow and strbuf */
+#define DATA_DIR       0
+#define MAP_DIR        1
+#define SAVE_DIR       2
+#define MUSIC_DIR      3
+#define SCRIPT_DIR     4
+#define SETTINGS_DIR   5
+
 static NSString *user_dir;
 static NSString *game_dir;
 static BOOL init_path = NO;
-/* For MacOSX only, find the bundle's directory */
+
 /*! \brief Return the name of 'significant' directories.
  *
  * \param dir Enumerated constant for directory type  \sa DATA_DIR et al.
@@ -55,13 +65,12 @@ const char *kqres (int dir, const char *file)
                                                 NSUserDomainMask, YES);
       user_dir =[[arr objectAtIndex: 0] stringByAppendingPathComponent:@"KQ"];
         [user_dir retain];
-      [[NSFileManager defaultManager] createDirectoryAtPath: home attributes:nil];
+      [[NSFileManager defaultManager] createDirectoryAtPath: user_dir attributes:nil];
 
         /* Now the data directory */
-        game_dir =[[NSBundle mainBundle] bundlePath];
+        game_dir =[[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent: @"Contents/Resources"];
         [game_dir retain];
-        strcpy (mybuffer,[dd cString]);
-
+	NSLog(@"Putting user data in %@, game data in %@\n", user_dir, game_dir);
         init_path = YES;
      }
 
@@ -70,18 +79,15 @@ const char *kqres (int dir, const char *file)
      case DATA_DIR:
         base = game_dir;
         sub = @"data";
-        sprintf (ans, "%s/data/%s", game_dir, file);
-        break;
+         break;
      case MUSIC_DIR:
         base = game_dir;
         sub = @"music";
-        sprintf (ans, "%s/music/%s", game_dir, file);
-        break;
+         break;
      case MAP_DIR:
         base = game_dir;
         sub = @"maps";
-        sprintf (ans, "%s/maps/%s", game_dir, file);
-        break;
+         break;
      case SAVE_DIR:
      case SETTINGS_DIR:
         base = user_dir;
@@ -94,7 +100,8 @@ const char *kqres (int dir, const char *file)
      default:
         return NULL;
      }
- arr =[NSArray arrayWithObjects: base, sub,[NSString stringWithCString:file], nil];
+ ff=[NSString stringWithCString: file];
+ arr =[NSArray arrayWithObjects: base, sub,ff, nil];
  return strncpy (ans,[[NSString pathWithComponents:arr] cString], sizeof
                    (ans));
 }
