@@ -759,21 +759,21 @@ void set_graphics_mode (void)
  */
 void sound_init (void)
 {
-   if (is_sound == 1) {
-      if (install_sound (DIGI_AUTODETECT, MIDI_AUTODETECT, NULL) == -1) {
-         is_sound = 0;
-      } else {
-         reserve_voices (8, 0);
-         set_volume_per_voice (2);
-         init_music ();
-         is_sound = load_samples ()? 0 : 2;     /* load the wav files */
-      }
-   } else if (is_sound == 2) {
-      shutdown_music ();
-      free_samples ();
-      remove_sound ();
-      is_sound = 0;
-   }
+  if (!sound_avail) {
+    is_sound=0;
+    return;
+  }
+  switch(is_sound) {
+  case 1:
+     /*set_volume_per_voice (2);*/
+     init_music ();
+     is_sound = load_samples ()? 0 : 2;     /* load the wav files */
+     break;
+  case 2:
+    free_samples ();
+    is_sound = 0;
+    break;
+  }
 }
 
 
@@ -871,14 +871,12 @@ void play_effect (int efc, int panning)
 
    switch (efc) {
    default:
-      if (is_sound != 0)
-         play_sample (samp, gsvol, panning, 1000, 0);
+     if (samp) play_sample (samp, gsvol, panning, 1000, 0);
       break;
    case SND_BAD:
       blit (double_buffer, fx_buffer, 0, 0, 0, 0, 352, 280);
 
-      if (is_sound != 0)
-         play_sample (samp, gsvol, panning, 1000, 0);
+      if (samp) play_sample (samp, gsvol, panning, 1000, 0);
       clear_bitmap (double_buffer);
       blit (fx_buffer, double_buffer, xofs, yofs, xofs, yofs, 320, 240);
 
@@ -904,7 +902,7 @@ void play_effect (int efc, int panning)
          whiteout[a].r = whiteout[a].g = whiteout[a].b = s;
       }
       blit (fx_buffer, double_buffer, xofs, yofs, xofs, yofs, 320, 240);
-      if (is_sound) {
+      if (samp) {
          play_sample (samp, gsvol, panning, 1000, 0);
       }
       for (s = 0; s < (int) (sizeof (sc) / sizeof (*sc)); ++s) {
