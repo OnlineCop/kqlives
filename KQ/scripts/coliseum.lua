@@ -80,81 +80,81 @@ end
 
 function entity_handler(en)
   if (en == 0) then
-    bubble(0, "I actually made it to the second round!");
+    bubble(en, "I actually made it to the second round!");
 
   elseif (en == 1) then
-    bubble(1, "I'm out of practice.");
+    bubble(en, "I'm out of practice.");
 
   elseif (en == 2) then
-    bubble(2, "I can't stand waiting like this!");
+    bubble(en, "I can't stand waiting like this!");
 
   elseif (en == 3) then
-    bubble(3, "There's not enough women in these competitions.");
+    bubble(en, "There's not enough women in these competitions.");
 
   elseif (en == 4) then
-    bubble(4, "I came all this way and then found out that I didn't have enough money for the registration fee!");
+    bubble(en, "I came all this way and then found out that I didn't have enough money for the registration fee!");
 
   elseif (en == 5) then
-    bubble(5, "I'm waiting for my next match.");
+    bubble(en, "I'm waiting for my next match.");
 
   elseif (en == 6) then
     local a, b;
 
     if (get_progress(P_OPALSHIELD) == 1) then
-      bubble(6, "This is where you register.");
-      bubble(6, "Hey, wait a minute... you're the one who defeated Trayor. We can't let you register again... you're too good for these guys.");
+      bubble(en, "This is where you register.");
+      bubble(en, "Hey, wait a minute... you're the one who defeated Trayor. We can't let you register again... you're too good for these guys.");
       return;
     end
     if (get_progress(P_ROUNDNUM) == 0) then
-      bubble(6, "This is where you register.");
+      bubble(en, "This is where you register.");
       if (get_progress(P_FIRSTTIME) == 0) then
-        bubble(6, "Before I explain the rules, I should tell you that the registration fee is 2000 gp!");
-        bubble(6, "If you lose even once, you are done... and will have to register again.");
-        bubble(6, "As well, after you register you can't leave the coliseum grounds. If you leave, you will be forced to register again.");
-        bubble(6, "Now, let's talk about the actual fights!");
-        bubble(6, "The first three battles are more or less just preliminary fights to make sure you have what it takes.");
-        bubble(6, "If you win the first three rounds, you qualify for more advanced matches.");
-        bubble(6, "The more advanced matches are against more skilled opponents and will determine whether or not your skills are balanced enough.");
-        bubble(6, "If you manage to defeat the advanced warriors, you will be given a chance to fight Trayor for the grand prize.");
-        a = prompt(6, 2, 0, "So, are you willing to pay the",
-                         "2000 gp entrance fee?",
-                         "  no",
-                         "  yes");
+        bubble(en, "Before I explain the rules, I should tell you that the registration fee is 2000 gp!");
+        bubble(en, "If you lose even once, you are done... and will have to register again.");
+        bubble(en, "As well, after you register you can't leave the coliseum grounds. If you leave, you will be forced to register again.");
+        bubble(en, "Now, let's talk about the actual fights!");
+        bubble(en, "The first three battles are more or less just preliminary fights to make sure you have what it takes.");
+        bubble(en, "If you win the first three rounds, you qualify for more advanced matches.");
+        bubble(en, "The more advanced matches are against more skilled opponents and will determine whether or not your skills are balanced enough.");
+        bubble(en, "If you manage to defeat the advanced warriors, you will be given a chance to fight Trayor for the grand prize.");
+        a = prompt(en, 2, 0, "So, are you willing to pay the",
+                             "2000 gp entrance fee?",
+                             "  no  ",
+                             "  yes ");
         set_progress(P_FIRSTTIME, 1);
       else
-        a = prompt(6, 2, 0, "The registration fee is 2000 gp.",
-                         "Are you in?",
-                         "  no",
-                         "  yes");
+        a = prompt(en, 2, 0, "The registration fee is 2000 gp.",
+                             "Are you in?",
+                             "  no  ",
+                             "  yes ");
       end
       if (a == 0) then
-        bubble(6, "Oh well. Come back when you're ready.");
+        bubble(en, "Oh well. Come back when you're ready.");
       else
         if (get_gp() >= 2000) then
 
           set_gp(get_gp() - 2000);
-          bubble(6, "Consider yourself registered. After each battle, come back and talk to me.");
+          bubble(en, "Consider yourself registered. After each battle, come back and talk to me.");
           set_ent_script(6, "U2R1F2");
           wait_for_entity(6, 6);
           set_progress(P_ROUNDNUM, 1);
           set_progress(P_BATTLESTATUS, 0);
         else
-          bubble(6, "Umm... you don't seem to have enough. I would suggest selling some junk. In any case, you can't register at this point.");
+          bubble(en, "Umm... you don't seem to have enough. I would suggest selling some junk. In any case, you can't register at this point.");
         end
       end
     else
       a = get_progress(P_BATTLESTATUS);
       if (a == 0) then
         if (get_progress(P_ROUNDNUM) == 7) then
-          bubble(6, "Wow! This is it... your next battle is with Trayor. Good luck... you'll need it!");
+          bubble(en, "Wow! This is it... your next battle is with Trayor. Good luck... you'll need it!");
         else
           b = "Battle number "..get_progress(P_ROUNDNUM).." just";
-          bubble(6, b, "head on through that door when you are ready.");
+          bubble(en, b, "head on through that door when you are ready.");
         end
       elseif (a == 1) then
         if (get_progress(P_ROUNDNUM) == 7) then
-          bubble(6, "Astounding! Whoever you are, you're going to go far!");
-          bubble(6, "Well, I guess this is yours.");
+          bubble(en, "Astounding! Whoever you are, you're going to go far!");
+          bubble(en, "Well, I guess this is yours.");
           sfx(5);
           msg("Opal Shield procured", 255, 0, xofs, yofs);
           set_progress(P_OPALSHIELD, 1);
@@ -172,9 +172,8 @@ function entity_handler(en)
             wait_for_entity(HERO1, HERO2);
             orient_heroes();
           end
-          set_ent_script(6, "L1D2");
-          wait_for_entity(6, 6);
-          bubble(6, "Good luck in your endeavours.");
+
+          bubble(en, "Good luck in your endeavours.");
           if (get_progress(P_OLDPARTNER) > 0) then
             set_progress(P_FINALPARTNER, get_progress(P_OLDPARTNER));
           else
@@ -195,15 +194,15 @@ function entity_handler(en)
               end
             end
           end
-          set_ent_id(12, get_progress(P_FINALPARTNER) - 1);
-          set_ent_active(12, 1);
+          set_ent_id(en, get_progress(P_FINALPARTNER) - 1);
+          set_ent_active(en, 1);
         else
-          bubble(6, "Congratulations! You should have a rest or heal up. Come back and talk to me again after you've prepared.");
+          bubble(en, "Congratulations! You should have a rest or heal up. Come back and talk to me again after you've prepared.");
           set_progress(P_BATTLESTATUS, 0);
           set_progress(P_ROUNDNUM, get_progress(P_ROUNDNUM) + 1);
         end
       elseif (a == 2) then
-        bubble(6, "Ooh... tough luck!");
+        bubble(en, "Ooh... tough luck!");
         set_progress(P_BATTLESTATUS, 0);
         set_progress(P_ROUNDNUM, 0);
         set_ent_script(HERO1, "D3F1");
@@ -215,69 +214,69 @@ function entity_handler(en)
     end
 
   elseif (en == 7) then
-    bubble(7, "Losing isn't so bad.");
-    bubble(7, "No wait, let me re-phrase that!");
-    bubble(7, "Losing sucks!");
+    bubble(en, "Losing isn't so bad.");
+    bubble(en, "No wait, let me re-phrase that!");
+    bubble(en, "Losing sucks!");
 
   elseif (en == 8) then
-    bubble(8, "What a waste of money.");
+    bubble(en, "What a waste of money.");
     bubble(HERO1, "How many matches did you fight?");
-    bubble(8, "Matches? I haven't left the bar yet!");
+    bubble(en, "Matches? I haven't left the bar yet!");
 
   elseif (en == 9) then
-    bubble(9, "These fights are quite interesting.");
+    bubble(en, "These fights are quite interesting.");
 
   elseif (en == 10) then
-    bubble(10, "Wine puts losing in a whole new perspective.");
+    bubble(en, "Wine puts losing in a whole new perspective.");
 
   elseif (en == 11) then
-    bubble(11, "The Coliseum hasn't been the same since they discontinued betting on the fights.");
+    bubble(en, "The Coliseum hasn't been the same since they discontinued betting on the fights.");
 
   elseif (en == 12) then
     if (get_progress(P_OLDPARTNER) == 0) then
-      bubble(12, "Wow! I saw you fighting. You cleaned up!");
-      bubble(12, "Oh yeah! I'm here because I ran into some guy named Derig. Well, he actually came looking for me.");
-      bubble(12, "Anyways, he wanted me to come and find you.");
+      bubble(en, "Wow! I saw you fighting. You cleaned up!");
+      bubble(en, "Oh yeah! I'm here because I ran into some guy named Derig. Well, he actually came looking for me.");
+      bubble(en, "Anyways, he wanted me to come and find you.");
       bubble(HERO1, "Derig! What does he want now?");
-      bubble(12, "He said that he found out where all of the Opal armor is and he sent me to tell you.");
-      bubble(12, "He also figured that if you didn't have a partner by now, that I should make my services available to you.");
-      bubble(12, "And let me just say that after travelling all this way to find you... I won't take no for an answer!");
+      bubble(en, "He said that he found out where all of the Opal armor is and he sent me to tell you.");
+      bubble(en, "He also figured that if you didn't have a partner by now, that I should make my services available to you.");
+      bubble(en, "And let me just say that after travelling all this way to find you... I won't take no for an answer!");
       bubble(HERO1, "Well, in that case, welcome to the team.");
       bubble(HERO1, "Now, I already found the Opal Helmet and the Opal Shield.");
-      bubble(12, "So what about the other stuff? Do you already know where the Band and Armor are?");
+      bubble(en, "So what about the other stuff? Do you already know where the Band and Armor are?");
       bubble(HERO1, "No... no, I don't know where the other pieces are.");
-      bubble(12, "Alrighty then, down to business. The Band belongs to a merchant in Ajantara south of here.");
-      bubble(12, "The Armor, however, is hidden deep in a cavern east of here.");
+      bubble(en, "Alrighty then, down to business. The Band belongs to a merchant in Ajantara south of here.");
+      bubble(en, "The Armor, however, is hidden deep in a cavern east of here.");
       bubble(HERO1, "Well, where should we go first?");
-      bubble(12, "Derig said to get the Armor last and since all that leaves is the Band, then we should go for that.");
+      bubble(en, "Derig said to get the Armor last and since all that leaves is the Band, then we should go for that.");
       bubble(HERO1, "Fair enough... let's roll.");
       add_chr(get_progress(P_FINALPARTNER) - 1);
       LOC_partner_up();
       set_progress(P_FINALPARTNER, 0);
-      copy_ent(12, HERO2);
-      set_ent_active(12, 0);
+      copy_ent(en, HERO2);
+      set_ent_active(en, 0);
       orient_heroes();
       drawmap();
       screen_dump();
       msg("$1 joined!", 255, 0);
     else
-      bubble(12, "Hey... long time no see. I saw you fighting. You were amazing!");
-      bubble(12, "Oh yeah! I'm here because I ran into some guy named Derig. Well, he actually came looking for me.");
-      bubble(12, "He knew that we were separated and he gave me some information to bring back.");
+      bubble(en, "Hey... long time no see. I saw you fighting. You were amazing!");
+      bubble(en, "Oh yeah! I'm here because I ran into some guy named Derig. Well, he actually came looking for me.");
+      bubble(en, "He knew that we were separated and he gave me some information to bring back.");
       bubble(HERO1, "Speaking of that... where did you go?");
-      bubble(12, "Heh... when we hit the teleporter, it sent me back to Ekla.");
-      bubble(12, "I was on the way back to the teleporter when I ran into Derig... and now I'm here.");
+      bubble(en, "Heh... when we hit the teleporter, it sent me back to Ekla.");
+      bubble(en, "I was on the way back to the teleporter when I ran into Derig... and now I'm here.");
       bubble(HERO1, "So, what did Derig tell you?");
-      bubble(12, "He told me where all the Opal stuff is... the Shield, the Band, the Armor, and the Helmet.");
+      bubble(en, "He told me where all the Opal stuff is... the Shield, the Band, the Armor, and the Helmet.");
       bubble(HERO1, "I already snagged the Helmet and the Shield... where are the other parts?");
-      bubble(12, "You already found the Helmet and Shield! Wow! Well, the Band is in a town called Ajantara to the south.");
-      bubble(12, "The Armor is deep in a cavern to the east. And Derig said to get the Armor last, so we should go to Ajantara first. Okay?");
+      bubble(en, "You already found the Helmet and Shield! Wow! Well, the Band is in a town called Ajantara to the south.");
+      bubble(en, "The Armor is deep in a cavern to the east. And Derig said to get the Armor last, so we should go to Ajantara first. Okay?");
       bubble(HERO1, "No problem... let's go.");
       add_chr(get_progress(P_FINALPARTNER) - 1);
       LOC_partner_up();
       set_progress(P_FINALPARTNER, 0);
-      copy_ent(12, HERO2);
-      set_ent_active(12, 0);
+      copy_ent(en, HERO2);
+      set_ent_active(en, 0);
       orient_heroes();
       drawmap();
       screen_dump();
