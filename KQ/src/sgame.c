@@ -89,7 +89,7 @@ void load_sgstats (void)
 
    for (a = 0; a < NUMSG; a++)
      {
-        sprintf (strbuf, "%ssg%d.sav", SAVE_DIR, a);
+        sprintf (strbuf, "%s/sg%d.sav", savedir, a);
         ldat = pack_fopen (strbuf, F_READ_PACKED);
         if (!ldat)
           {
@@ -247,7 +247,7 @@ static int save_game (void)
    sgp[save_ptr] = gp;
    smin[save_ptr] = kmin;
    shr[save_ptr] = khr;
-   sprintf (strbuf, "%ssg%d.sav", SAVE_DIR, save_ptr);
+   sprintf (strbuf, "%s/sg%d.sav", savedir, save_ptr);
    sdat = pack_fopen (strbuf, F_WRITE_PACKED);
    if (!sdat)
      {
@@ -309,7 +309,7 @@ static int load_game (void)
 
    ww = windowed;
    ss = stretch_view;
-   sprintf (strbuf, "%ssg%d.sav", SAVE_DIR, save_ptr);
+   sprintf (strbuf, "%s/sg%d.sav", savedir, save_ptr);
    sdat = pack_fopen (strbuf, F_READ_PACKED);
    if (!sdat)
      {
@@ -648,6 +648,7 @@ int start_menu (int c)
                      stop = 2;
                   else if (saveload (0) == 1)
                      stop = 1;
+                  rd = 1;
                }
 
              else if (ptr == 1)
@@ -661,6 +662,7 @@ int start_menu (int c)
                {
                   clear (double_buffer);
                   config_menu ();
+                  rd = 1;
 
                   /* TODO: Save Global Settings Here */
                }

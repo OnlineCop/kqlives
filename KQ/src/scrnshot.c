@@ -31,6 +31,7 @@
 #include <string.h>
 #include <allegro.h>
 #include <stdio.h>
+#include "kq.h"
 #include "scrnshot.h"
 
 /*! \brief Lookup table for error/success messages */
@@ -54,14 +55,14 @@ const char *ss_exit_msg[5] = {
 */
 int save_screenshot (BITMAP * src_bmp, const char *prefix)
 {
-   const char *folder = "shots";
-   char filename[260];
+   char filename[4096];
 
    /* this is defined as 8 to keep DOS support */
 #define SAVE_NAME_SIZE (8)
 
-   /* check to make sure the folder exists */
-   if (file_exists (folder, FA_DIREC, NULL))
+   /* check to make sure the folder exists, but ignore errors if the
+    * directory contains '.' because allegro cannot detect it. */
+   if (strchr (savedir, '.') || file_exists (savedir, FA_DIREC, NULL))
      {
         /* the name can only be up to SAVE_NAME_SIZE-1 characters */
         int prefix_len = strlen (prefix);
@@ -71,7 +72,7 @@ int save_screenshot (BITMAP * src_bmp, const char *prefix)
              int last = -1;     /* will store the latest screenshot number */
 
              /* construct the wild card to look like "saves/prefix*.pcx" */
-             sprintf (filename, "%s/%s*.pcx", folder, prefix);
+             sprintf (filename, "%s/%s*.pcx", savedir, prefix);
 
              /* 
                 now, lets look for pre-existing screen shots 
@@ -113,7 +114,7 @@ int save_screenshot (BITMAP * src_bmp, const char *prefix)
                            SAVE_NAME_SIZE - prefix_len);
 
                   /* after the next sprintf, we will have something like "shots/kq000001.pcx" */
-                  sprintf (filename, format, folder, prefix, last);
+                  sprintf (filename, format, savedir, prefix, last);
 
                   /* if the src_bmp is the screen, then we need to create a sub bitmap just in case */
                   temp =

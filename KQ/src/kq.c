@@ -39,6 +39,14 @@
 #include <stdio.h>
 #include <time.h>
 #include <string.h>
+#if defined(HAVE_GETPWUID)
+#include <unistd.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <pwd.h>
+#elif defined(HAVE_LOADLIBRARY)
+#include <direct.h>
+#endif
 
 #include <allegro.h>
 
@@ -96,11 +104,11 @@ BITMAP *double_buffer, *map_icons[MAX_TILES],
    *shadow[MAX_SHADOWS], *kfonts /*, *portrait[MAXCHRS] */ ;
 
 /*! Layers in the map */
-unsigned short *map_seg, *b_seg, *f_seg;
+unsigned short *map_seg = NULL, *b_seg = NULL, *f_seg = NULL;
 /*! Zone, shadow and obstacle layers */
-unsigned char *z_seg, *s_seg, *o_seg;
+unsigned char *z_seg = NULL, *s_seg = NULL, *o_seg = NULL;
 /*! keeps track of tasks completed and treasure chests opened */
-unsigned char *progress, *treasure;
+unsigned char *progress = NULL, *treasure = NULL;
 /*! Current map */
 s_map g_map;
 /*! Current entities (players+NPCs) */
@@ -163,7 +171,7 @@ unsigned short tilex[MAX_TILES];
  * the next tile is shown */
 unsigned short adelay[MAX_ANIM];
 /*! Temporary buffer for string operations (used everywhere!) */
-char *strbuf;
+char *strbuf = NULL, *savedir = NULL;
 
 /*! Characters in play. The pidx[] array references this for the heroes actually
  * on screen, e.g. party[pidx[0]] is the 'lead' character, 
@@ -1056,12 +1064,77 @@ static void startup (void)
    time_t t;
    DATAFILE *pcxb;
 
+#if defined(HAVE_GETPWUID)
+   struct passwd *pwd;
+   char *home = NULL;
+
+   if ((home = getenv ("HOME")) == NULL)
+     {
+        /* Try looking in password file for home dir. */
+        if ((pwd = getpwuid (getuid ())))
+           home = pwd->pw_dir;
+     }
+
+   /* Do not get fooled by a corrupted $HOME */
+   if (home != NULL && strlen (home) < PATH_MAX)
+     {
+        savedir = malloc (strlen (home) + strlen ("/.kq") + 1);
+        sprintf (savedir, "%s/.kq", home);
+        /* Always try to make the directory, just to be sure. */
+        mkdir (savedir, 0755);
+     }
+   else
+#elif defined(HAVE_LOADLIBRARY)
+   typedef HRESULT (WINAPI * SHGETFOLDERPATH) (HWND, int, HANDLE, DWORD,
+                                               LPTSTR);
+
+#  define CSIDL_FLAG_CREATE 0x8000
+#  define CSIDL_APPDATA 0x1A
+#  define SHGFP_TYPE_CURRENT 0
+
+   char home[MAX_PATH];
+   HINSTANCE SHFolder;
+   SHGETFOLDERPATH SHGetFolderPath;
+
+   *home = '\0';
+
+   /* Load the shfolder dll to retrieve SHGetFolderPath */
+   SHFolder = LoadLibrary ("shfolder.dll");
+   if (SHFolder != NULL)
+     {
+        SHGetFolderPath =
+           (void *) GetProcAddress (SHFolder, "SHGetFolderPathA");
+        if (SHGetFolderPath != NULL)
+          {
+             /* Get the "Application Data" folder for the current user */
+             if (SHGetFolderPath (NULL, CSIDL_APPDATA | CSIDL_FLAG_CREATE,
+                                  NULL, SHGFP_TYPE_CURRENT, home) == S_OK)
+                FreeLibrary (SHFolder);
+             else
+                *home = '\0';
+          }
+        FreeLibrary (SHFolder);
+     }
+
+   if (*home)
+     {
+        savedir = malloc (strlen (home) + strlen ("/kq") + 1);
+        sprintf (savedir, "%s/kq", home);
+        /* Always try to make the directory, just to be sure. */
+        mkdir (savedir);
+     }
+   else
+#endif
+     {
+        savedir = strdup (SAVE_DIR);
+     }
+   TRACE ("Storing app data in %s\n", savedir);
    allegro_init ();
 
 /*
    buffers to allocate
 */
-   strbuf = (char *) malloc (256);
+   strbuf = (char *) malloc (4096);
    map_seg = (unsigned short *) malloc (560);
    b_seg = (unsigned short *) malloc (560);
    f_seg = (unsigned short *) malloc (560);
@@ -1440,6 +1513,8 @@ static void deallocate_stuff (void)
       free (treasure);
    if (strbuf)
       free (strbuf);
+   if (savedir)
+      free (savedir);
 
    if (is_sound)
      {

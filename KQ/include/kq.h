@@ -469,7 +469,7 @@ extern unsigned char autoparty, autofollow, alldead, is_sound, deadeffect,
 extern unsigned char kq_version, hold_fade, cansave, skip_intro, wait_retrace,
    windowed, stretch_view;
 extern unsigned short tilex[MAX_TILES], adelay[MAX_ANIM];
-extern char *strbuf;
+extern char *strbuf, *savedir;
 extern s_player party[MAXCHRS];
 extern s_heroinfo players[MAXCHRS];
 extern s_fighter fighter[NUM_FIGHTERS];

@@ -415,21 +415,15 @@ int skill_use (int who)
         fitm = 0;
         if (rand () % 100 < cts)
           {
-             if (fighter[tgt].sitmc > 0)
-                fitm = fighter[tgt].sitmc;
-             if (fighter[tgt].sitmr > 0)
+             if (fighter[tgt].sitmr > 0 && (rand () % 100) < 5)
                {
-                  b = rand () % 100;
-                  if (b < 5)
-                    {
-                       fitm = fighter[tgt].sitmr;
-                       fighter[tgt].sitmr = 0;
-                    }
-                  else
-                    {
-                       if (fitm > 0)
-                          fighter[tgt].sitmc = 0;
-                    }
+                  fitm = fighter[tgt].sitmr;
+                  fighter[tgt].sitmr = 0;
+               }
+             else if (fighter[tgt].sitmc > 0 && (rand () % 100) < 95)
+               {
+                  fitm = fighter[tgt].sitmc;
+                  fighter[tgt].sitmc = 0;
                }
              if (fitm > 0)
                {
