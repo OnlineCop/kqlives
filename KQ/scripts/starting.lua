@@ -403,7 +403,7 @@ function LOC_storyline(en)
 
     set_ent_speed(HERO1, 5)
 
-    set_ent_script(HERO1, "D7L2D13W100")
+    set_ent_script(HERO1, "D7L2D13W100K")
     wait_for_entity(HERO1, HERO1)
 
     set_ent_id(1, 255)
@@ -413,7 +413,7 @@ function LOC_storyline(en)
     set_ent_tilex(1, 48)
     set_ent_tiley(1, 54)
     set_ent_script(1, "R2F0W50")
-    wait_for_entity(1, 24)
+    wait_for_entity(1, 1)
     bubble(1, "$0? Hello?")
 
   elseif (en == TEMMIN) then
