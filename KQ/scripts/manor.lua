@@ -1,4 +1,4 @@
--- "manor - Nostik's manor southwest of Ekla"
+-- manor - "Nostik's manor southwest of Ekla"
 
 function autoexec()
   local a;
@@ -25,7 +25,7 @@ end
 function postexec()
   return
 end
-  
+
 function postexec()
   if (get_progress(P_TALKBUTLER) == 0) then
     rest(200);
@@ -96,27 +96,27 @@ function postexec()
              "something you will need.","");
   end
 end
-  
+
 function zone_handler(zn)
   if (zn == 1) then
     if (get_progress(P_TALKBUTLER) == 1) then
       set_progress(P_TALKBUTLER,2);
     end
     change_map("main",107,40,107,40);
-  
+
   elseif (zn == 2) then
     warp(25,34,8);
-  
+
   elseif (zn == 3) then
     warp(25,5,8);
-  
+
   elseif (zn == 4) then
     bubble(HERO1,"Locked.","","","");
-  
+
   elseif (zn == 5) then
     bubble(HERO1,"Wow! This guy reads",
                  "weird stuff.","","");
-  
+
   elseif (zn == 6) then
     if (get_progress(P_TALKBUTLER) == 0) then
       bubble(9,"Hey! Hold on!","","","");
@@ -141,13 +141,13 @@ function zone_handler(zn)
   end
 end
 
-function entity_handler(en)  
+function entity_handler(en)
   if (en >= 0 and en <= 7) then
     LOC_chit_chat(en);
 
   elseif (en == 8) then
     bubble(8,"Good luck.","","","");
-  
+
   elseif (en == 9) then
     if (get_progress(P_TALKBUTLER) == 0) then
       bubble(9,"Ah yes, Master Nostik asked",
@@ -162,8 +162,8 @@ function entity_handler(en)
 
   end
 end
-  
-function LOC_talk_butler()  
+
+function LOC_talk_butler()
   drawmap();
   screen_dump();
   sfx(6);
@@ -226,7 +226,7 @@ function LOC_talk_butler()
            "be leaving now.","","");
   bubble(HERO1,"Certainly, thanks.","","","");
 end
-  
+
 function LOC_chit_chat(a)
   local b;
   local c;

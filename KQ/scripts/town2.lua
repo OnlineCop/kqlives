@@ -1,4 +1,4 @@
--- town2 - Randen
+-- town2 - "Randen"
 
 function autoexec()
   local a;
@@ -51,7 +51,7 @@ function autoexec()
   end
   refresh();
 end
-  
+
 function refresh()
   if (get_treasure(7) == 1) then
     set_obs(14,47,0);
@@ -72,7 +72,7 @@ function refresh()
     set_mtile(35,15,0);
   end
 end
-  
+
 function postexec()
   return
 end
@@ -80,59 +80,59 @@ end
 function zone_handler(zn)
   if (zn == 1) then
     change_map("cave1",47,47,47,47);
-  
+
   elseif (zn == 2) then
     door_in(85,7,80,0,90,10);
-  
+
   elseif (zn == 3) then
     door_in(86,21,80,12,92,24);
-  
+
   elseif (zn == 4) then
     door_in(102,7,93,0,105,10);
-  
+
   elseif (zn == 5) then
     door_in(97,20,94,12,107,23);
-  
+
   elseif (zn == 6) then
     door_in(96,35,80,26,102,49);
-  
+
   elseif (zn == 7) then
     door_in(112,7,107,0,117,10);
-  
+
   elseif (zn == 8) then
     door_in(114,37,104,25,117,40);
-  
+
   elseif (zn == 9) then
     bubble(HERO1,"Locked.","","","");
-  
+
   elseif (zn == 10) then
     door_out(20,19);
-  
+
   elseif (zn == 11) then
     door_out(28,20);
-  
+
   elseif (zn == 12) then
     door_out(24,31);
-  
+
   elseif (zn == 13) then
     door_out(44,47);
-  
+
   elseif (zn == 14) then
     door_out(18,42);
-  
+
   elseif (zn == 15) then
     door_out(49,37);
-  
+
   elseif (zn == 16) then
     door_out(66,39);
-  
+
   elseif (zn == 17) then
     -- PH added code to check if you do stay over night
     -- This is done indirectly; if your gp goes down it
     -- means you must have spent some here.
     local old_gp=get_gp();
     inn("Wayside Inn",30,1);
-    -- This means you MUST stay at the inn before the 
+    -- This means you MUST stay at the inn before the
     -- bridge gets repaired. Correct?
     if (get_gp()<old_gp) then
       if (get_progress(P_FIGHTONBRIDGE) == 4) then
@@ -144,76 +144,76 @@ function zone_handler(zn)
         autoexec();
       end
     end
-  
+
   elseif (zn == 18) then
     shop(4);
-  
+
   elseif (zn == 19) then
     shop(5);
-  
+
   elseif (zn == 20) then
     view_range(1,119,0,122,24);
     warp(121,21,8);
-  
+
   elseif (zn == 21) then
     view_range(1,94,12,107,23);
     warp(106,16,8);
-  
+
   elseif (zn == 22) then
     view_range(1,109,12,117,19);
     warp(116,15,8);
-  
+
   elseif (zn == 23) then
     view_range(1,119,0,122,24);
     warp(121,3,8);
-  
+
   elseif (zn == 24) then
     chest(3,I_KNIFE2,1);
     refresh();
-  
+
   elseif (zn == 25) then
     chest(4,0,250);
     refresh();
-  
+
   elseif (zn == 26) then
     chest(5,I_SALVE,1);
     refresh();
-  
+
   elseif (zn == 27) then
     chest(7,I_PURITYGEM,1);
     refresh();
-  
+
   elseif (zn == 28) then
     change_map("main",222,19,222,19);
-  
+
   elseif (zn == 29) then
     chest(10,I_MHERB,1);
     refresh();
-  
+
   elseif (zn == 30) then
     book_talk(get_pidx(0));
-  
+
   elseif (zn == 31) then
     chest(11,I_LTONIC,1);
-  
+
   elseif (zn == 32) then
     book_talk(get_pidx(0));
-  
+
   elseif (zn == 33) then
     bubble(HERO1,"Hmmm... books about herbs.","","","");
-  
+
   elseif (zn == 34) then
     bubble(HERO1,"How to make friends",
                  "through hypnosis.","","");
-  
+
   elseif (zn == 35) then
     bubble(HERO1,"Inns always have boring books.","","","");
-  
+
   elseif (zn == 36) then
     if (get_progress(P_WARPSTONE) == 1) then
       change_map("town6",38,56,38,56);
     end
-  
+
   end
 end
 
@@ -226,14 +226,14 @@ function entity_handler(en)
                "has been an unusual number of",
                "you people around lately.","");
     end
-  
+
   elseif (en == 1) then
     if (get_progress(P_WARPSTONE) == 1) then
       bubble(1,"Where is that man?","","","");
     else
       bubble(1,"My husband is late again.","","","");
     end
-  
+
   elseif (en == 2) then
     if (get_progress(P_FIGHTONBRIDGE) > 4) then
       bubble(2,"Welcome to Randen.","","","");
@@ -243,7 +243,7 @@ function entity_handler(en)
                "town, but with the bridge out,",
                "trade is extremely slow.");
     end
-  
+
   elseif (en == 3) then
     if (get_progress(P_FIGHTONBRIDGE) > 4) then
       bubble(3,"Good day.","","","");
@@ -251,7 +251,7 @@ function entity_handler(en)
       bubble(3,"Oh, goodness, I didn't make",
                "enough for company... sorry.","","");
     end
-  
+
   elseif (en == 4) then
     if (get_progress(P_FIGHTONBRIDGE) > 4) then
       bubble(4,"Hi!","","","");
@@ -259,7 +259,7 @@ function entity_handler(en)
       bubble(4,"I'm hungry, I hope mom is",
                "done making lunch soon.","","");
     end
-  
+
   elseif (en == 5) then
     if (get_progress(P_WARPSTONE) == 1) then
       bubble(5,"Business is good.","","","");
@@ -280,7 +280,7 @@ function entity_handler(en)
                "the bridge across Brayden river",
                "is gone.","");
       bubble(5,"An altercation between some",
-               "travellers and brigands resulted",
+               "travelers and brigands resulted",
                "in a volley of magic that left",
                "the bridge in cinders.");
       wait(25);
@@ -289,7 +289,7 @@ function entity_handler(en)
                "survive for long without our",
                "major trade route.");
     end
-  
+
   elseif (en == 6) then
     if (get_progress(P_WARPSTONE) == 1) then
       bubble(6,"I'm sorry, the mayor isn't",
@@ -322,7 +322,7 @@ function entity_handler(en)
                  "visitors for awhile.");
       end
     end
-  
+
   elseif (en == 7) then
     if (get_progress(P_WARPSTONE) == 1) then
       bubble(7,"Are you enjoying your stay?","","","");
@@ -338,7 +338,7 @@ function entity_handler(en)
                  "trouble at the bridge.","","");
       end
     end
-  
+
   elseif (en == 8) then
     if (get_progress(P_GETPARTNER) == 1) then
       LOC_partner_check(8);
@@ -346,7 +346,7 @@ function entity_handler(en)
       bubble(8,"How long does it take to",
                "build a bridge?","","");
     end
-  
+
   elseif (en == 9) then
     if (get_progress(P_GETPARTNER) == 1) then
       LOC_partner_check(9);
@@ -354,11 +354,11 @@ function entity_handler(en)
       bubble(9,"How long does it take to",
                "build a bridge?","","");
     end
-  
+
   elseif (en == 10) then
     if (get_progress(P_GETPARTNER) ~= 3) then
       if (get_numchrs() == 1) then
-        bubble(10,"Wow!. You were great back there.",
+        bubble(10,"Wow! You were great back there.",
                   "I really appreciate what you did",
                   "for me. In return, I shall",
                   "accompany you.");
@@ -378,7 +378,7 @@ function entity_handler(en)
         msg("$1 joined!",255,0,xofs,yofs);
         set_progress(P_FOUNDMAYOR,2);
       else
-        bubble(10,"Wow!. You were great back there.",
+        bubble(10,"Wow! You were great back there.",
                   "I really appreciate what you did",
                   "for me.","");
         bubble(10,"I would like to come along with",
@@ -406,7 +406,7 @@ function entity_handler(en)
 
   end
 end
-  
+
 function LOC_partner_check(who)
   if (prompt(who,2,0,"Hi $0, want to team up?","  yes","  no","") == 0) then
     bubble(who,"Great! Let's go.","","","");

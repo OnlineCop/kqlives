@@ -1,8 +1,8 @@
--- camp - orc forest encampment south of Randen
+-- camp - "Orc forest encampment south of Randen"
 
 function autoexec()
   local a;
-  
+
   set_ent_active(37,0);
   if (get_progress(P_FOUNDMAYOR) == 0 and get_progress(P_PARTNER3) == 0) then
     while (get_progress(P_PARTNER3) == 0) do
@@ -18,7 +18,7 @@ function autoexec()
   end
   refresh();
 end
-  
+
 function refresh()
   if (get_treasure(55) == 1) then
     set_ftile(66,45,265);
@@ -46,14 +46,14 @@ end
 function postexec()
   return
 end
-  
+
 function zone_handler(zn)
   if (zn == 1) then
     change_map("main",235,36,235,36);
-  
+
   elseif (zn == 2) then
     change_map("main",235,38,235,38);
-  
+
   elseif (zn == 3) then
     set_ent_script(22,"L1U2");
     set_ent_script(23,"L1U3");
@@ -71,7 +71,7 @@ function zone_handler(zn)
     set_ent_active(23,0);
     set_zone(23,24,0);
     set_zone(24,24,0);
-  
+
   elseif (zn == 4) then
     set_ent_script(14,"R1U6L2F1");
     set_ent_script(15,"L2U3");
@@ -90,7 +90,7 @@ function zone_handler(zn)
     set_ent_active(17,0);
     set_zone(20,43,0);
     set_zone(21,43,0);
-  
+
   elseif (zn == 5) then
     set_ent_script(10,"R1D4L3D3");
     set_ent_script(11,"L8U2");
@@ -108,7 +108,7 @@ function zone_handler(zn)
     set_zone(32,48,0);
     set_zone(34,52,0);
     set_zone(34,53,0);
-  
+
   elseif (zn == 6) then
     set_ent_script(6,"D4R1D2");
     set_ent_script(7,"D6R2F0");
@@ -127,7 +127,7 @@ function zone_handler(zn)
     set_ent_active(9,0);
     set_zone(36,28,0);
     set_zone(37,28,0);
-  
+
   elseif (zn == 7) then
     set_ent_script(10,"R1D4L3D7");
     set_ent_script(11,"L2D1L2");
@@ -145,31 +145,31 @@ function zone_handler(zn)
     set_zone(32,48,0);
     set_zone(34,52,0);
     set_zone(34,53,0);
-  
+
   elseif (zn == 8) then
     chest(55,I_NLEAF,2);
     refresh();
-  
+
   elseif (zn == 9) then
     chest(56,0,250);
     refresh();
-  
+
   elseif (zn == 10) then
     chest(57,I_RRUNE,1);
     refresh();
-  
+
   elseif (zn == 11) then
     chest(58,I_SALVE,2);
     refresh();
-  
+
   elseif (zn == 12) then
     chest(59,I_EDROPS,1);
     refresh();
-  
+
   elseif (zn == 13) then
     chest(60,I_SPEAR1,1);
     refresh();
-  
+
   elseif (zn == 14) then
     chest(61,I_ARMOR2,1);
     refresh();
@@ -183,7 +183,7 @@ function entity_handler(en)
              "get to them.","","");
     drawmap();
     set_run(0);
-    combat(5);
+--    combat(5);
     set_run(1);
     if (get_alldead() == 1) then
       return
@@ -192,7 +192,7 @@ function entity_handler(en)
     set_ent_active(34,0);
     set_ent_active(35,0);
     set_ent_active(36,0);
-  
+
   elseif (en == 19) then
     if (get_numchrs() > 1) then
       bubble(19,"Intruders!","","","");
@@ -211,18 +211,18 @@ function entity_handler(en)
     set_ent_active(19,0);
     set_ent_active(20,0);
     set_ent_active(21,0);
-  
+
   elseif (en == 25) then
-    bubble(25,"Thanks for your help! We Should",
+    bubble(25,"Thanks for your help! We should",
               "be able to find our way out.","","");
-  
+
   elseif (en == 26) then
-    bubble(26,"Thanks for your help! We Should",
+    bubble(26,"Thanks for your help! We should",
               "be able to find our way out.","","");
-  
+
   elseif (en == 37) then
     local a;
-    local heroname=get_party_name(get_pidx(0));  
+    local heroname=get_party_name(get_pidx(0));
     a = get_progress(P_PARTNER3)-1;
     bubble(37,"Hey, "..heroname.."! Am I ever",
               "glad to see you! We're in a bit",
@@ -256,8 +256,8 @@ function entity_handler(en)
              "would hope to gain by",
              "imprisoning me, but I suppose",
              "it's possible.");
-    bubble(37,"That's got to be it, there was",
-              "far too many of them, for it to",
+    bubble(37,"That's got to be it; there were",
+              "far too many of them for it to",
               "be a random encounter with",
               "brigands.");
     bubble(37,"And here I was blaming myself",
@@ -271,7 +271,7 @@ function entity_handler(en)
     set_ent_facing(37,0);
     bubble(37,"I'll go back to Randen with",
               "the mayor. Why don't you meet",
-              "me there after.","");
+              "me there after?","");
     bubble(HERO1,"Sure.","","","");
     set_ftile(41,14,0);
     set_autoparty(1);

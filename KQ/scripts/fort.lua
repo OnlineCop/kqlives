@@ -1,4 +1,4 @@
--- fort - mountain fort south of Andra
+-- fort - "Mountain fort south of Andra"
 
 function autoexec()
   if (get_progress(P_TALKDERIG) > 2) then
@@ -43,33 +43,33 @@ function postexec()
   end
 end
 
-function zone_handler(zn)  
+function zone_handler(zn)
   if (zn == 1) then
     change_map("main",261,33,261,33);
-  
+
   elseif (zn == 2) then
     change_map("main",261,36,261,36);
-  
+
   elseif (zn == 3) then
     door_in(40,16,36,10,44,18);
-  
+
   elseif (zn == 4) then
     door_out(17,31);
 
   end
 end
 
-function entity_handler(en)  
+function entity_handler(en)
   if (en == 0) then
     bubble(0,"We have no outposts in goblin",
              "territory. If you get into real",
              "trouble, you'll have to go all",
              "the way back to Andra.");
-  
+
   elseif (en == 1) then
     bubble(1,"Make sure to stock",
              "up on supplies.","","");
-  
+
   elseif (en == 2) then
     if (get_progress(P_TALKDERIG) < 3) then
       bubble(2,"We cannot let you pass.","","","");
@@ -77,7 +77,7 @@ function entity_handler(en)
       bubble(2,"You are free to come and",
                "go as you please.","","");
     end
-  
+
   elseif (en == 3) then
     if (get_progress(P_TALKDERIG) < 3) then
       bubble(3,"No one is allowed",
@@ -85,11 +85,11 @@ function entity_handler(en)
     else
       bubble(3,"Be careful in the goblin lands.","","","");
     end
-  
+
   elseif (en == 4) then
     bubble(4,"Only the captain may authorize",
              "passage through here.","","");
-  
+
   elseif (en == 5) then
     bubble(5,"Best of luck to you.","","","");
 

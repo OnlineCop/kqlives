@@ -1,4 +1,4 @@
--- guild - home of the Embers in Sunarin
+-- guild - "Home of the Embers in Sunarin"
 
 function autoexec()
   refresh();
@@ -30,7 +30,7 @@ end
 -- added test for P_OPALHELMET so
 -- that you can re-enter the guild
 -- if you do not have the helmet yet
-function zone_handler(zn)  
+function zone_handler(zn)
   if (zn == 1) then
     if (get_progress(P_OPALHELMET)==1) then
       set_progress(P_FOUGHTGUILD,2);

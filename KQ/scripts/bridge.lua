@@ -1,4 +1,4 @@
--- bridge - on Brayden river Randen and Andra
+-- bridge - "On Brayden river Randen and Andra"
 
 function autoexec()
   if (get_treasure(8) == 1) then
@@ -39,11 +39,11 @@ function zone_handler(zn)
       set_obs(29,17,1);
       set_zone(29,17,3);
     end
-  
+
   elseif (zn == 2) then
     chest(8,I_OSEED,2);
     autoexec();
-  
+
   elseif (zn == 3) then
     if (get_progress(P_FIGHTONBRIDGE) == 2) then
       can_run = 0;
@@ -57,16 +57,16 @@ function zone_handler(zn)
 
   end
 end
-  
+
 function entity_handler(en)
   local a = get_progress(P_FIGHTONBRIDGE);
-  
+
   if (en >= 2) then
     if (a == 0) then
       set_progress(P_FIGHTONBRIDGE,1);
     elseif (a == 2) then
-      bubble(en,"There's some weird creatures",
-                "in the water.","","");
+      bubble(en,"There are some weird creatures",
+                "in the water!","","");
       return
     elseif (a == 3) then
       bubble(en,"I think we'll take a break",
@@ -74,7 +74,7 @@ function entity_handler(en)
       return
     end
   end
-  
+
   if (en == 0) then
     if (a == 0) then
       bubble(0,"We're on the lookout",
@@ -91,7 +91,7 @@ function entity_handler(en)
       bubble(0,"We should be done soon...",
                "come back a little later.","","");
     end
-  
+
   elseif (en == 1) then
     if (a == 0) then
       if (get_progress(P_LOSERONBRIDGE) == 0) then
@@ -113,12 +113,12 @@ function entity_handler(en)
     elseif (a == 3) then
       bubble(1,"Wow!","","","");
     end
-  
+
   elseif (en == 2) then
     if (a == 4 or a < 2) then
       bubble(2,"This is very hard work!","","","");
     end
-  
+
   elseif (en == 3) then
     if (a == 4 or a < 2) then
       bubble(3,".....","","","");
@@ -131,31 +131,31 @@ function entity_handler(en)
         set_progress(P_ASLEEPONBRIDGE,1);
       end
     end
-  
+
   elseif (en == 4) then
     if (a == 4 or a < 2) then
       bubble(4,"I think that other",
                "guy is asleep.","","");
     end
-  
+
   elseif (en == 5) then
     if (a == 4 or a < 2) then
       bubble(5,"I really could use a break.",
                "It's been almost 15 minutes",
                "since the last one!","");
     end
-  
+
   elseif (en == 6) then
     if (a == 4 or a < 2) then
       bubble(6,"I never should have listened",
                "to my mother when she told",
                "me to take up construction.","");
       bubble(6,"I should've been a florist",
-                "like my dad.","","");
+               "like my dad.","","");
       if (a == 0) then
         set_progress(P_FIGHTONBRIDGE,1);
       end
     end
 
   end
-end  
+end

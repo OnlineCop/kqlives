@@ -1,4 +1,4 @@
--- coliseum - coliseum west of Sunarin
+-- coliseum - "Coliseum west of Sunarin"
 
 function autoexec()
   set_ent_active(12,0);
@@ -6,7 +6,7 @@ function autoexec()
     place_ent(6,67,20);
   end
 end
-  
+
 function postexec()
   return
 end
@@ -16,31 +16,31 @@ function zone_handler(zn)
     set_progress(P_ROUNDNUM,0);
     set_progress(P_BATTLESTATUS,0);
     change_map("main",218,123,218,123);
-  
+
   elseif (zn == 2) then
     door_in(72,11,62,0,82,14);
-  
+
   elseif (zn == 3) then
     door_in(66,30,62,16,70,33);
-  
+
   elseif (zn == 4) then
     door_in(79,27,72,16,86,30);
-  
+
   elseif (zn == 5) then
     door_out(20,21);
-  
+
   elseif (zn == 6) then
     door_out(30,22);
-  
+
   elseif (zn == 7) then
     door_out(40,20);
-  
+
   elseif (zn == 8) then
     inn("The Coliseum Inn",250,1);
-  
+
   elseif (zn == 9) then
     shop(22);
-  
+
   elseif (zn == 10) then
     if (get_progress(P_BATTLESTATUS) > 0) then
       bubble(HERO1,"I'm not ready yet.","","","");
@@ -71,34 +71,34 @@ function zone_handler(zn)
 
   end
 end
-  
+
 function entity_handler(en)
   if (en == 0) then
     bubble(0,"I actually made it to",
              "the second round!","","");
-  
+
   elseif (en == 1) then
     bubble(1,"I'm out of practice.","","","");
-  
+
   elseif (en == 2) then
     bubble(2,"I can't stand waiting like this!","","","");
-  
+
   elseif (en == 3) then
     bubble(3,"There's not enough women",
              "in these competitions.","","");
-  
+
   elseif (en == 4) then
     bubble(4,"I came all this way and then",
              "found out that I didn't have",
              "enough money for the",
              "registration fee!");
-  
+
   elseif (en == 5) then
-    bubble(5,"I'm waiting for my next match","","","");
-  
+    bubble(5,"I'm waiting for my next match.","","","");
+
   elseif (en == 6) then
     local a,b;
-  
+
     if (get_progress(P_OPALSHIELD) == 1) then
       bubble(6,"This is where you register.","","","");
       bubble(6,"Hey, wait a minute... you're the",
@@ -111,7 +111,7 @@ function entity_handler(en)
       bubble(6,"This is where you register.","","","");
       if (get_progress(P_FIRSTTIME) == 0) then
         bubble(6,"Before I explain the rules, I",
-                 "should tell you that the", 
+                 "should tell you that the",
                  "registration fee is 2000 gp!","");
         bubble(6,"If you lose even once, you are",
                  "done... and will have to",
@@ -124,7 +124,7 @@ function entity_handler(en)
                  "the actual fights!","","");
         bubble(6,"The first three battles are",
                  "more or less just preliminary",
-                 "fights to make sure you have what",
+                 "fights to make sure you have",
                  "what it takes.");
         bubble(6,"If you win the first three rounds,",
                  "you qualify for more advanced",
@@ -138,25 +138,23 @@ function entity_handler(en)
                  "given a chance to fight Trayor",
                  "for the grand prize.");
         a = prompt(6,2,0,"So, are you willing to pay the",
-                              "2000 gp entrance fee?",
-                              "  no",
-                              "  yes");
+                         "2000 gp entrance fee?",
+                         "  no","  yes");
         set_progress(P_FIRSTTIME,1);
       else
         a = prompt(6,2,0,"The registration fee is 2000 gp.",
-                              "Are you in?",
-                              "  no",
-                              "  yes");
+                         "Are you in?",
+                         "  no","  yes");
       end
       if (a == 0) then
         bubble(6,"Oh well. Come back",
                  "when you're ready.","","");
       else
         if (get_gp() >= 2000) then
-        
+
           set_gp(get_gp()-2000);
           bubble(6,"Consider yourself registered.",
-                   "After each battle come back",
+                   "After each battle, come back",
                    "and talk to me.","");
           set_ent_script(6,"U2R1F2");
           wait_for_entity(6,6);
@@ -173,7 +171,7 @@ function entity_handler(en)
       a = get_progress(P_BATTLESTATUS);
       if (a == 0) then
         if (get_progress(P_ROUNDNUM) == 7) then
-          bubble(6,"Wow! This is it... you're next",
+          bubble(6,"Wow! This is it... your next",
                    "battle is with Trayor. Good",
                    "luck... you'll need it!","");
         else
@@ -235,31 +233,31 @@ function entity_handler(en)
         play_map_song();
       end
     end
-  
+
   elseif (en == 7) then
     bubble(7,"Losing isn't so bad.","","","");
     bubble(7,"No wait, let me re-phrase that!","","","");
     bubble(7,"Losing sucks!","","","");
-  
+
   elseif (en == 8) then
     bubble(8,"What a waste of money.","","","");
     bubble(HERO1,"How many matches did you fight?","","","");
     bubble(8,"Matches? I haven't",
              "left the bar yet!","","");
-  
+
   elseif (en == 9) then
     bubble(9,"These fights are",
              "quite interesting.","","");
-  
+
   elseif (en == 10) then
     bubble(10,"Wine puts losing in a",
               "whole new perspective.","","");
-  
+
   elseif (en == 11) then
     bubble(11,"The Coliseum hasn't been the",
               "same since they discontinued",
               "betting on the fights.","");
-  
+
   elseif (en == 12) then
     if (get_progress(P_OLDPARTNER) == 0) then
       bubble(12,"Wow! I saw you fighting.",
@@ -293,7 +291,7 @@ function entity_handler(en)
       bubble(12,"Alrighty then, down to business.",
                 "The Band belongs to a merchant",
                 "in Ajantara south of here.","");
-      bubble(12,"The Armor however, is hidden",
+      bubble(12,"The Armor, however, is hidden",
                 "deep in a cavern east of here.","","");
       bubble(HERO1,"Well, where should we go first?","","","");
       bubble(12,"Derig said to get the Armor last",
@@ -356,7 +354,7 @@ function entity_handler(en)
 
   end
 end
-  
+
 function LOC_partner_up()
   local a;
 

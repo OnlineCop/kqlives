@@ -1,4 +1,4 @@
--- "tower - Oracle's tower, southwest of mountain fort"
+-- tower - "Oracle's tower, southwest of mountain fort"
 
 function autoexec()
   refresh();
@@ -6,7 +6,7 @@ end
 
 function refresh()
   local a;
-  
+
   if (get_treasure(33) == 1) then
     set_ftile(76,7,65);
   end
@@ -145,7 +145,7 @@ function refresh()
     set_ftile(111,8,65);
   end
 end
-  
+
 function postexec()
   return
 end
@@ -160,38 +160,38 @@ function zone_handler(zn)
     set_progress(P_WSTONES,0);
     set_progress(P_BSTONES,0);
     change_map("main",263,53,263,53);
-  
+
   elseif (zn == 2) then
     warp(49,3,8);
-  
+
   elseif (zn == 3) then
     warp(14,3,8);
-  
+
   elseif (zn == 4) then
     warp(85,6,8);
-  
+
   elseif (zn == 5) then
     warp(49,7,8);
-  
+
   elseif (zn == 6) then
     warp(110,15,8);
-  
+
   elseif (zn == 7) then
     warp(76,17,8);
-  
+
   elseif (zn == 8) then
     warp(152,3,8);
-  
+
   elseif (zn == 9) then
     warp(120,4,8);
-  
+
   elseif (zn == 10) then
     bubble(HERO1,"Locked.","","","");
-  
+
   elseif (zn == 11) then
     bubble(HERO1,"Wow! There are a lot",
                  "of strange books here.","","");
-  
+
   elseif (zn == 12) then
     if (get_progress(P_FLOOR1) == 0) then
       if (get_progress(P_FTOTAL) < 2) then
@@ -214,7 +214,7 @@ function zone_handler(zn)
       set_obs(50,9,1);
       sfx(26);
     end
-  
+
   elseif (zn == 13) then
     if (get_progress(P_FLOOR2) == 0) then
       if (get_progress(P_FTOTAL) < 2) then
@@ -237,7 +237,7 @@ function zone_handler(zn)
       set_obs(51,7,1);
       sfx(26);
     end
-  
+
   elseif (zn == 14) then
     if (get_progress(P_FLOOR3) == 0) then
       if (get_progress(P_FTOTAL) < 2) then
@@ -260,7 +260,7 @@ function zone_handler(zn)
       set_obs(47,8,1);
       sfx(26);
     end
-  
+
   elseif (zn == 15) then
     if (get_progress(P_FLOOR4) == 0) then
       if (get_progress(P_FTOTAL) < 2) then
@@ -283,19 +283,19 @@ function zone_handler(zn)
       set_obs(51,9,1);
       sfx(26);
     end
-  
+
   elseif (zn == 16) then
     LOC_stoner(P_WALL1,76,9);
-  
+
   elseif (zn == 17) then
     LOC_stoner(P_WALL2,80,9);
-  
+
   elseif (zn == 18) then
     LOC_stoner(P_WALL3,90,13);
-  
+
   elseif (zn == 19) then
     LOC_stoner(P_WALL4,94,13);
-  
+
   elseif (zn == 20) then
     if (get_progress(P_STONE1) == 0) then
       set_progress(P_STONE1,1);
@@ -304,7 +304,7 @@ function zone_handler(zn)
       sfx(5);
       msg("White Stone procured!",15,0);
     end
-  
+
   elseif (zn == 21) then
     if (get_progress(P_STONE2) == 0) then
       set_progress(P_STONE2,1);
@@ -313,7 +313,7 @@ function zone_handler(zn)
       sfx(5);
       msg("White Stone procured!",15,0);
     end
-  
+
   elseif (zn == 22) then
     if (get_progress(P_STONE3) == 0) then
       set_progress(P_STONE3,1);
@@ -322,7 +322,7 @@ function zone_handler(zn)
       sfx(5);
       msg("Black Stone procured!",15,0);
     end
-  
+
   elseif (zn == 23) then
     if (get_progress(P_STONE4) == 0) then
       set_progress(P_STONE4,1);
@@ -331,21 +331,21 @@ function zone_handler(zn)
       sfx(5);
       msg("Black Stone procured!",15,0);
     end
-  
+
   elseif (zn == 24) then
     if (get_progress(P_DOOROPEN) == 0) then
       sfx(26);
       set_progress(P_DOOROPEN,1);
       refresh();
     end
-  
+
   elseif (zn == 25) then
     if (get_progress(P_DOOROPEN) == 1) then
       sfx(26);
       set_progress(P_DOOROPEN,0);
       refresh();
     end
-  
+
   elseif (zn == 26) then
     if (get_progress(P_DOOROPEN2) == 0) then
       sfx(26);
@@ -357,55 +357,55 @@ function zone_handler(zn)
       set_zone(83,19,0);
       set_progress(P_DOOROPEN2,1);
     end
-  
+
   elseif (zn == 27) then
     chest(33,I_PCURING,1);
     refresh();
-  
+
   elseif (zn == 28) then
     chest(34,I_LTONIC,1);
     refresh();
-  
+
   elseif (zn == 29) then
     chest(35,I_SPEEDBOOTS,1);
     refresh();
-  
+
   elseif (zn == 30) then
     chest(36,I_SWORD3,1);
     refresh();
-  
+
   elseif (zn == 31) then
     chest(37,I_ROBE3,1);
     refresh();
-  
+
   elseif (zn == 32) then
     chest(38,0,400);
     refresh();
-  
+
   elseif (zn == 33) then
     chest(39,I_B_WHIRLWIND,1);
     refresh();
-  
+
   elseif (zn == 34) then
     chest(40,I_EDAENRA,1);
     refresh();
-  
+
   elseif (zn == 35) then
     chest(41,I_SSTONE,1);
     refresh();
-  
+
   elseif (zn == 36) then
     chest(42,I_MESRA,1);
     refresh();
-  
+
   elseif (zn == 37) then
     chest(43,I_STAFF2,1);
     refresh();
-  
+
   elseif (zn == 38) then
     chest(44,I_GAUNTLET2,1);
     refresh();
-  
+
   elseif (zn == 40) then
     if (get_progress(P_WALL1) == 1 and get_progress(P_WALL2) == 2 and get_progress(P_WALL3) == 2 and get_progress(P_WALL4) == 1) then
       set_progress(P_TREASUREROOM,1);
@@ -415,7 +415,7 @@ function zone_handler(zn)
       set_zone(78,9,0);
       sfx(26);
     end
-  
+
   elseif (zn == 42) then
     if (get_progress(P_DRAGONDOWN) == 0) then
       bubble(255,"The Oracle is not",
@@ -439,18 +439,18 @@ function zone_handler(zn)
         return
       end
     end
-  
+
   elseif (zn == 43) then
     sfx(7);
     set_save(1);
     set_sstone(1);
-  
+
   elseif (zn == 44) then
     set_save(0);
     set_sstone(0);
 
   end
-end  
+end
 
 function entity_handler(en)
   if (en == 0) then
@@ -557,8 +557,8 @@ function entity_handler(en)
                      "our quest and is slowly knocking",
                      "us off?","");
         bubble(HERO1,"I never thought of that. Let's",
-                     "hope that he doesn't know about.",
-                     "We have no choice but to go",
+                     "hope that he doesn't know about",
+                     "it. We have no choice but to go",
                      "on anyways.");
         bubble(HERO2,"Yeah, I guess you're right.",
                      "Let's go.","","");
@@ -572,7 +572,7 @@ function entity_handler(en)
 
   end
 end
-  
+
 function LOC_stoner(a,b,c)
   if (get_progress(a) == 0) then
     if (get_progress(P_BSTONES) == 0 and get_progress(P_WSTONES) == 0) then

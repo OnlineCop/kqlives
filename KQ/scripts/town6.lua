@@ -1,4 +1,4 @@
--- town6 - Ajantara
+-- town6 - "Ajantara"
 
 function autoexec()
   refresh();
@@ -16,7 +16,7 @@ function refresh()
     set_obs(15,39,0);
   end
 end
-  
+
 function postexec()
   return
 end
@@ -24,96 +24,96 @@ end
 function zone_handler(zn)
   if (zn == 1) then
     change_map("main",258,185,258,185);
-  
+
   elseif (zn == 2) then
     door_in(56,9,52,1,72,12);
-  
+
   elseif (zn == 3) then
     door_in(68,9,52,1,72,12);
-  
+
   elseif (zn == 4) then
     door_in(83,9,74,1,86,12);
-  
+
   elseif (zn == 5) then
     door_in(58,22,52,14,64,25);
-  
+
   elseif (zn == 6) then
     door_in(70,22,66,14,74,25);
-  
+
   elseif (zn == 7) then
     door_in(80,22,76,14,84,25);
-  
+
   elseif (zn == 8) then
     door_in(60,35,52,27,68,38);
-  
+
   elseif (zn == 9) then
     door_in(77,42,70,27,84,45);
-  
+
   elseif (zn == 10) then
     door_out(14,14);
-  
+
   elseif (zn == 11) then
     door_out(20,14);
-  
+
   elseif (zn == 12) then
     door_out(35,15);
-  
+
   elseif (zn == 13) then
     door_out(17,31);
-  
+
   elseif (zn == 14) then
     door_out(31,27);
-  
+
   elseif (zn == 15) then
     door_out(20,41);
-  
+
   elseif (zn == 16) then
     door_out(33,40);
-  
+
   elseif (zn == 17) then
     door_out(34,54);
-  
+
   elseif (zn == 18) then
-    bubble(HERO1,"Locked","","","");
-  
+    bubble(HERO1,"Locked.","","","");
+
   elseif (zn == 19) then
     shop(15);
-  
+
   elseif (zn == 20) then
     shop(16);
-  
+
   elseif (zn == 21) then
     if (get_progress(P_TOWN6INN) > 0) then
       inn("Ajantara Inn",1,1);
     else
       inn("Ajantara Inn",150,1);
     end
-  
+
   elseif (zn == 22) then
     shop(17);
-  
+
   elseif (zn == 23) then
     shop(18);
-  
+
   elseif (zn == 24) then
     chest(67,I_B_BLIZZARD,1);
-  
+
   elseif (zn == 25) then
     chest(68,I_EDAENRA,1);
-  
+
   elseif (zn == 26) then
     chest(69,I_NLEAF,1);
-  
+
   elseif (zn == 27) then
     chest(70,I_HPUP,1);
     refresh();
-  
+
   elseif (zn == 28) then
     bubble(HERO1,"These are fascinating.","","","");
-  
+
   elseif (zn == 29) then
     book_talk(get_pidx(0));
-  
+
   elseif (zn == 30) then
     if (get_progress(P_SAVEBREANNE) == 1) then
       if (get_numchrs() == 1) then
@@ -139,7 +139,7 @@ function zone_handler(zn)
         bubble(HERO1,"It's as if someone is purposely",
                      "trying to make me go crazy.","","");
         bubble(HERO2,"Don't you think that you're",
-                     "exaggerating just a little.","","");
+                     "exaggerating just a little?","","");
         bubble(HERO2,"Sure it may seem that things are",
                      "out of our control, but what we're",
                      "doing is of the utmost importance.","");
@@ -149,7 +149,7 @@ function zone_handler(zn)
                      "mission.");
         bubble(HERO2,"However, as we've pursued our",
                      "quest we've managed to do some good",
-                     "along the way. That's whay really",
+                     "along the way. That's what really",
                      "counts.");
         bubble(HERO1,"Hmm... I guess you're right. I just",
                      "don't like being out of control. We",
@@ -175,7 +175,7 @@ function zone_handler(zn)
       end
       set_progress(P_SAVEBREANNE,2);
     end
-  
+
   elseif (zn == 31) then
     if (get_progress(P_WARPSTONE) == 0) then
       set_progress(P_WARPSTONE,1);
@@ -185,7 +185,7 @@ function zone_handler(zn)
   end
 end
 
-function entity_handler(en)  
+function entity_handler(en)
   if (en == 0) then
     if (get_progress(P_OPALSHIELD) == 0) then
       bubble(0,"How do you like",
@@ -318,7 +318,7 @@ function entity_handler(en)
       bubble(HERO1,"Crap!","","","");
       set_progress(P_SAVEBREANNE,4);
     end
-  
+
   elseif (en == 1) then
     if (get_progress(P_OPALSHIELD) == 0) then
       bubble(1,"Welcome... enjoy your stay.","","","");
@@ -333,11 +333,11 @@ function entity_handler(en)
         bubble(1,"Breanne is a dear.","","","");
       end
     end
-  
+
   elseif (en == 2) then
     bubble(2,"This is a lovely little town.",
              "Don't you think so?","","");
-  
+
   elseif (en == 3) then
     if (get_progress(P_OPALSHIELD) == 0) then
       bubble(3,"Wanna play tag with me?","","","");
@@ -348,10 +348,10 @@ function entity_handler(en)
     else
       bubble(3,"This town rocks!","","","");
     end
-  
+
   elseif (en == 4) then
     bubble(4,"Sorry, I'm far too busy.","","","");
-  
+
   elseif (en == 5) then
     if (get_progress(P_SAVEBREANNE) < 3) then
       bubble(5,"There has been a lot of",
@@ -361,11 +361,11 @@ function entity_handler(en)
       bubble(5,"Has the Cult really",
                "been rousted?","","");
     end
-  
+
   elseif (en == 6) then
     bubble(6,"Lord and Lady Ajantara have",
              "hired us to watch the town.","","");
-  
+
   elseif (en == 7) then
     if (get_progress(P_OPALSHIELD) == 0) then
       bubble(7,"Lord Ajantara's grandfather",
@@ -388,14 +388,14 @@ function entity_handler(en)
         bubble(7,"You truly are kind.","","","");
       else
         bubble(7,"It's a lovely",
-                 "day isn't it.","","");
+                 "day isn't it?","","");
       end
     end
-  
+
   elseif (en == 8) then
     bubble(8,"Everything in this town is",
              "owned by Lord and Lady Ajantara.","","");
-  
+
   elseif (en == 9) then
     if (get_progress(P_OPALSHIELD) == 0) then
       bubble(9,"Hiya!","","","");

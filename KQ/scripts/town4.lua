@@ -1,4 +1,4 @@
--- town4 - Maldea
+-- town4 - "Maldea"
 
 function autoexec()
   if (get_progress(P_WARPEDTOT4) == 0) then
@@ -66,111 +66,111 @@ end
 function zone_handler(zn)
   if (zn == 1) then
     change_map("main",205,45,205,45);
-  
+
   elseif (zn == 2) then
     door_in(96,8,93,0,103,12);
     set_ent_active(6,0);
-  
+
   elseif (zn == 3) then
     door_in(116,9,109,0,123,12);
-  
+
   elseif (zn == 4) then
     door_in(132,9,125,0,139,12);
-  
+
   elseif (zn == 5) then
     door_in(148,11,141,0,155,14);
-  
+
   elseif (zn == 6) then
     door_in(100,25,93,16,107,28);
-  
+
   elseif (zn == 7) then
     door_in(116,25,109,16,123,28);
-  
+
   elseif (zn == 8) then
     door_in(132,25,125,16,139,28);
-  
+
   elseif (zn == 9) then
     door_in(148,25,141,16,155,28);
-  
+
   elseif (zn == 10) then
     door_in(98,39,93,30,103,42);
-  
+
   elseif (zn == 11) then
     door_in(110,39,105,30,115,42);
-  
+
   elseif (zn == 12) then
     door_in(122,43,117,30,127,46);
-  
+
   elseif (zn == 13) then
     door_in(137,39,129,30,145,42);
-  
+
   elseif (zn == 14) then
     door_out(22,20);
-  
+
   elseif (zn == 15) then
     door_out(41,24);
-  
+
   elseif (zn == 16) then
     door_out(57,26);
-  
+
   elseif (zn == 17) then
     door_out(23,64);
-  
+
   elseif (zn == 18) then
     door_out(16,30);
-  
+
   elseif (zn == 19) then
     door_out(31,38);
-  
+
   elseif (zn == 20) then
     door_out(61,41);
-  
+
   elseif (zn == 21) then
     door_out(75,60);
-  
+
   elseif (zn == 22) then
     door_out(76,81);
-  
+
   elseif (zn == 23) then
     door_out(59,66);
-  
+
   elseif (zn == 24) then
     door_out(18,79);
-  
+
   elseif (zn == 25) then
     door_out(34,81);
-  
+
   elseif (zn == 26) then
     shop(10);
-  
+
   elseif (zn == 27) then
     shop(11);
-  
+
   elseif (zn == 28) then
     shop(12);
-  
+
   elseif (zn == 29) then
     inn("Seaside Inn",60,1);
-  
+
   elseif (zn == 30) then
     bubble(HERO1,"Locked.","","","");
-  
+
   elseif (zn == 31) then
     book_talk(get_pidx(0));
-  
+
   elseif (zn == 33) then
     chest(51,I_FRUNE,1);
-  
+
   elseif (zn == 34) then
     chest(52,I_EDROPS,1);
-  
+
   elseif (zn == 35) then
     chest(53,I_RUBYBROOCH,1);
 
   elseif (zn == 36) then
     chest(81,I_B_WARP,1);
     refresh();
-  
+
   elseif (zn == 37) then
     if (prompt(255,2,0,"Take a nap?","  yes","  no","") == 0) then
       for a=0,get_numchrs()-1,1 do
@@ -179,30 +179,30 @@ function zone_handler(zn)
       end
       inn("House",0,0);
     end
-  
+
   elseif (zn == 38) then
     set_save(1);
-  
+
   elseif (zn == 39) then
     set_save(0);
-  
+
   elseif (zn == 40) then
     view_range(1,93,44,102,60);
     warp(101,57,8);
-  
+
   elseif (zn == 41) then
     view_range(1,93,0,103,12);
     warp(101,9,8);
-  
+
   elseif (zn == 42) then
     door_out(24,16);
-  
+
   elseif (zn == 43) then
     door_in(95,48,93,44,102,60);
 
   end
 end
-  
+
 function entity_handler(en)
   if (en == 0) then
     if (get_progress(P_TALKGELIK) == 0) then
@@ -217,28 +217,30 @@ function entity_handler(en)
       bubble(0,"So how do you like",
                "our little town?","","");
     end
-  
+
   elseif (en == 1) then
     bubble(1,"I planted all of the flowers",
              "in this town. I love flowers.","","");
     bubble(1,"Did I mention that",
              "I love flowers?","","");
-  
+
   elseif (en == 2) then
     bubble(2,"Did you meet the old flower",
              "lady? She's nuts!","","");
-  
+
   elseif (en == 3) then
     bubble(3,"You should go talk to Trezin on",
              "the other side of town. He's",
              "selling his house, and it's a",
              "really good deal.");
-  
+
   elseif (en == 6) then
     if (get_progress(P_BOUGHTHOUSE) == 0) then
       bubble(6,"Hey, the name's Trezin, and have",
-               "I got a deal for you.","","");
-      if (prompt(6,2,0,"You can have this lovely house","for a mere 7500 gp. Sound good?","  no","  yes") == 0) then
+               "I got a deal for you!","","");
+      if (prompt(6,2,0,"You can have this lovely house",
+                       "for a mere 7500 gp. Sound good?",
+                       "  no","  yes") == 0) then
         bubble(6,"So be it. You know where I am",
                  "if you change your mind.","","");
       else
@@ -265,7 +267,7 @@ function entity_handler(en)
                  "a little something inside for",
                  "you. It's a very handy spell",
                  "called Warp.");
-        bubble(6,"The Warp spell let's you escape",
+        bubble(6,"The Warp spell lets you escape",
                  "from dungeons and other such",
                  "places.","");
         bubble(6,"As a bonus, you can use Warp",
@@ -273,7 +275,7 @@ function entity_handler(en)
                  "and it will bring you back to",
                  "the house! Great huh?");
         bubble(6,"Well, enough of my yapping.",
-                 "Go in and see for yourself,",
+                 "Go in and see for yourself!,",
                  "I've got to go put this",
                  "money somewhere safe!");
         set_ent_movemode(6,2);
@@ -290,7 +292,7 @@ function entity_handler(en)
       bubble(6,"What are you waiting for?",
                "Go in and take a look around.","","");
     end
-  
+
   elseif (en == 7) then
     if (get_progress(P_OPALHELMET) == 0) then
       if (get_progress(P_TALKGELIK) == 0) then
@@ -302,7 +304,7 @@ function entity_handler(en)
                  "who lives in his own private",
                  "estate east of town.");
         bubble(7,"You should go and",
-                 "talk to him","","");
+                 "talk to him.","","");
         bubble(7,"If you get the Helmet, come back",
                  "here and hopefully by then I",
                  "can find out out a little bit",
@@ -316,7 +318,7 @@ function entity_handler(en)
     end
     if (get_progress(P_OPALSHIELD) == 0 and get_progress(P_OPALHELMET) > 0) then
       if (get_progress(P_TALKGELIK) == 4) then
-        bubble(7,"Ah, you are back, and you",
+        bubble(7,"Ah, you are back and you",
                  "have the Helmet.","","");
         bubble(7,"Oh, in case you are curious,",
                  "you can't wear any of the armor",
@@ -347,7 +349,7 @@ function entity_handler(en)
         bubble(7,"No, you have to",
                  "fight him for it.","","");
         bubble(HERO1,"Fight, fight, fight.",
-                     "that's all I ever do.","","");
+                     "That's all I ever do.","","");
         bubble(7,"Well, that's just how",
                  "these things work.","","");
         bubble(HERO1,"Well, I guess I'm off to fight",
@@ -392,26 +394,26 @@ function entity_handler(en)
     if (get_progress(P_TALKGELIK) == 6) then
       bubble(7,"How are things going?","","","");
     end
-  
+
   elseif (en == 8) then
     bubble(8,"Hello, nice day isn't it?","","","");
-  
+
   elseif (en == 9) then
     bubble(9,"So the duck says, 200 gp...",
              "same as in town.","","");
     bubble(9,"Ha ha ha ha!","","","");
     bubble(9,"Don't you get it?","","","");
-  
+
   elseif (en == 10) then
     bubble(10,"My roommate tells",
              "the worst jokes.","","");
-  
+
   elseif (en == 11) then
     bubble(11,"... huh... oh, hi... I'm sick.","","","");
-  
+
   elseif (en == 12) then
     bubble(12,"zzz","","","");
-  
+
   elseif (en == 13) then
     bubble(13,"My son is sick in bed.","","","");
 

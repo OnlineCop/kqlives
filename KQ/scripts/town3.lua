@@ -1,4 +1,4 @@
--- town3 - Andra
+-- town3 - "Andra"
 
 function autoexec()
   if (get_progress(P_TALKDERIG) > 2) then
@@ -16,102 +16,102 @@ end
 function zone_handler(zn)
   if (zn == 1) then
     change_map("main",261,30,216,30);
-  
+
   elseif (zn == 2) then
     door_in(69,9,59,0,79,12);
-  
+
   elseif (zn == 3) then
     door_out(22,17);
-  
+
   elseif (zn == 4) then
     door_in(66,51,59,42,73,53);
-  
+
   elseif (zn == 5) then
     door_out(39,17);
-  
+
   elseif (zn == 6) then
     door_in(73,60,69,55,77,63);
-  
+
   elseif (zn == 7) then
     door_out(13,24);
-  
+
   elseif (zn == 8) then
     door_in(63,37,59,28,67,40);
-  
+
   elseif (zn == 9) then
     door_out(19,39);
-  
+
   elseif (zn == 10) then
     door_in(63,60,59,55,67,63);
-  
+
   elseif (zn == 11) then
     door_out(41,31);
-  
+
   elseif (zn == 12) then
     door_in(67,23,59,14,75,26);
-  
+
   elseif (zn == 13) then
     door_out(40,45);
-  
+
   elseif (zn == 14) then
     bubble(HERO1,"Locked.","","","");
-  
+
   elseif (zn == 15) then
     inn("Riverside Inn",35,1);
-  
+
   elseif (zn == 16) then
     shop(6);
-  
+
   elseif (zn == 17) then
     shop(7);
-  
+
   elseif (zn == 18) then
     shop(8);
-  
+
   elseif (zn == 19) then
     shop(9);
-  
+
   elseif (zn == 20) then
     door_in(73,37,69,28,77,40);
-  
+
   elseif (zn == 21) then
     door_out(19,52);
-  
+
   elseif (zn == 22) then
     chest(12,0,1);
     autoexec();
-  
+
   elseif (zn == 23) then
     chest(14,I_NPOULTICE,1);
-  
+
   elseif (zn == 24) then
     book_talk(get_pidx(0));
-  
+
   elseif (zn == 25) then
     chest(13,I_CAP2,1);
-  
+
   elseif (zn == 26) then
     book_talk(get_pidx(0));
-  
+
   elseif (zn == 27) then
     book_talk(get_pidx(0));
-  
+
   elseif (zn == 28) then
     bubble(HERO1,"Various books about magic.","","","");
-  
+
   elseif (zn == 29) then
     bubble(HERO1,"The art of battle-magic.","","","");
-  
+
   elseif (zn == 30) then
     bubble(HERO1,"How magic can make you rich!","","","");
-  
+
   elseif (zn == 31) then
     bubble(HERO1,"Ten reasons why you should never",
-                 "call a wizard pencil-neck.","","");
+                 "call a wizard 'pencil-neck'.","","");
 
   end
 end
-  
+
 function entity_handler(en)
   if (en == 0) then
     bubble(0,"This is the town of Andra.","","","");
@@ -119,7 +119,7 @@ function entity_handler(en)
       bubble(0,"Tsorin? He should be",
                "around here somewhere.","","");
     end
-  
+
   elseif (en == 1) then
     if (get_progress(P_TALKDERIG) == 1) then
       bubble(1,"Yes, I am Tsorin. I understand",
@@ -167,7 +167,7 @@ function entity_handler(en)
                "to need something goblin-made.","");
       bubble(1,"It could be anything, as long",
                "as it was made by goblins.","","");
-      bubble(1,"And I think it has",
+      bubble(1,"And I think that it has",
                "to be magical.","","");
       bubble(HERO1,"So, how am I supposed to",
                    "find something magical that",
@@ -176,7 +176,7 @@ function entity_handler(en)
                "have to go to the temple north",
                "of here.","");
       bubble(1,"You see, before the humans",
-               "settled these lands there used",
+               "settled these lands, there used",
                "to be goblins here.","");
       bubble(1,"The humans forced the goblins",
                "out of these lands. That's why",
@@ -246,11 +246,11 @@ function entity_handler(en)
     if (get_progress(P_GOBLINITEM) == 0) then
       bubble(1,"Any luck at the temple yet?","","","");
     end
-  
+
   elseif (en == 2) then
     bubble(2,"I wish the weapon shop",
              "sold slingshots.","","");
-  
+
   elseif (en == 3 or en == 4) then
     bubble(en,"We're guarding against goblins.","","","");
 

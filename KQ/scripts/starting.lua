@@ -1,4 +1,4 @@
--- "starting - various pieces of heroes' homes back in Antoria"
+-- starting - "Various pieces of heroes' homes back in Antoria"
 
 function autoexec()
   if (get_progress(P_SKIPINTRO) == 0) then
@@ -13,7 +13,7 @@ end
 
 function postexec()
   local a;
-  
+
   if (get_progress(P_SKIPINTRO) == 1) then
     LOC_choose_hero();
     return
@@ -60,7 +60,7 @@ function postexec()
   wait_for_entity(HERO1,HERO1);
   bubble(HERO1,"Fortune!","","","");
   thought(HERO1,"Perhaps this is what I need in",
-                "order to help mom and dad.","","");
+                "order to help Mom and Dad.","","");
   thought(HERO1,"I'll have to talk to",
                 "them right away.","","");
   set_ent_speed(HERO1,5);
@@ -84,7 +84,7 @@ function postexec()
   wait_for_entity(HERO1,HERO1);
   thought(HERO1,"I don't like the sound of this",
                 "one bit. I wonder who this",
-                "Nostik guy is.","");
+                "Nostik guy is?","");
   thought(HERO1,"Well, I'd better get packed.",
                 "It's a long way to Reisha",
                 "Mountain.","");
@@ -114,8 +114,8 @@ function postexec()
             "opportunity for you to",
             "investigate this whole quest.");
   bubble(24,"It seems a little suspicious.","","","");
-  bubble(HERO1,"I would be honored sir,",
-               "where do I go first?","","");
+  bubble(HERO1,"I would be honored sir.",
+               "Where do I go first?","","");
   bubble(24,"The note says to go to Reisha",
              "Mountain where you will receive",
              "further instruction.","");
@@ -248,7 +248,7 @@ function postexec()
   wait(100);
   LOC_choose_hero();
 end
-  
+
 function zone_handler(zn)
   return
 end

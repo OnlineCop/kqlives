@@ -1,4 +1,4 @@
--- grotto - small forest grotto north of Ekla
+-- grotto - "Small forest grotto north of Ekla"
 
 function autoexec()
   if (get_treasure(15) == 1) then
@@ -21,7 +21,7 @@ end
 
 function postexec()
   return
-end  
+end
 
 function zone_handler(zn)
   if (zn == 1) then
@@ -29,10 +29,10 @@ function zone_handler(zn)
       set_progress(P_FELLINPIT,3);
     end
     change_map("main",129,19,129,19);
-  
+
   elseif (zn == 2) then
     bubble(HERO1,"Mmmm... cozy.","","","");
-  
+
   elseif (zn == 3) then
     if (get_progress(P_FELLINPIT) == 0) then
       set_btile(16,14,153);
@@ -42,11 +42,11 @@ function zone_handler(zn)
       bubble(HERO1,"I'd rather not go in",
                    "there right now.","","");
     end
-  
+
   elseif (zn == 4) then
     chest(15,I_ERUNE,1);
     set_obs(24,16,0);
-  
+
   elseif (zn == 5) then
     if (get_progress(P_UCOIN) == 0) then
       bubble(HERO1,"Hmm... this seems like it should",
@@ -56,7 +56,7 @@ function zone_handler(zn)
         change_map("grotto2",0,0,0,0);
       end
     end
-  
+
   elseif (zn == 6) then
     chest(80,I_MACE1,1);
     set_obs(26,10,0);
@@ -64,7 +64,7 @@ function zone_handler(zn)
   end
 end
 
-function entity_handler(en)  
+function entity_handler(en)
   if (en == 0) then
     if (get_progress(P_TALKDERIG) == 1) then
       if (get_progress(P_FELLINPIT) == 0) then
@@ -111,9 +111,9 @@ function entity_handler(en)
                "guard and should be easy to",
                "find. He can guide you from",
                "there.");
-      bubble(HERO1,"Can you tell me anything else.","","","");
+      bubble(HERO1,"Can you tell me anything else?","","","");
       bubble(0,"I have nothing further to tell",
-               "you except this; be cautious,",
+               "you except this: be cautious,",
                "especially of Nostik.","");
       bubble(0,"I have yet to figure out why",
                "he wants the Staff, but I",

@@ -1,4 +1,4 @@
--- cult - cult of the Shadow Walker base on island west of Sunarin
+-- cult - "Cult of the Shadow Walker base on island west of Sunarin"
 
 function autoexec()
   local a;
@@ -251,7 +251,7 @@ function zone_handler(zn)
       bubble(HERO1,"Your parents sent us",
                    "to rescue you.","","");
       bubble(23,"You'll have to get me out later.",
-                "those creeps took some of my",
+                "Those creeps took some of my",
                 "blood and they are going to do",
                 "something evil with it.");
       bubble(23,"You've got to stop them!","","","");

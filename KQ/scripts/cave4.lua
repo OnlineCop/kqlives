@@ -1,4 +1,4 @@
--- cave4 - cave south of Oracle tower and west of Denorian village
+-- cave4 - "Cave south of Oracle's tower and west of Denorian village"
 
 function autoexec()
   refresh();
@@ -28,7 +28,7 @@ function refresh()
     set_zone(37,66,2);
   end
 end
-  
+
 function postexec()
   return
 end
@@ -36,10 +36,10 @@ end
 function zone_handler(zn)
   if (zn == 0) then
     combat(10);
-  
+
   elseif (zn == 1) then
     change_map("main",244,67,244,67);
-  
+
   elseif (zn == 2) then
     if (get_progress(P_C4DOORSOPEN) == 0) then
       set_foreground(0);
@@ -62,7 +62,7 @@ function zone_handler(zn)
       sfx(26);
       set_progress(P_C4DOORSOPEN,1);
     end
-  
+
   elseif (zn == 3) then
     if (get_progress(P_C4DOORSOPEN) == 1) then
       set_btile(5,9,250);
@@ -85,7 +85,7 @@ function zone_handler(zn)
       set_foreground(1);
       set_progress(P_C4DOORSOPEN,0);
     end
-  
+
   elseif (zn == 4) then
     if (get_progress(P_BRONZEKEY) == 0) then
       bubble(HERO1,"Locked.","","","");
@@ -96,46 +96,46 @@ function zone_handler(zn)
       set_progress(P_BRONZEKEY,2);
       refresh();
     end
-  
+
   elseif (zn == 5) then
     bubble(HERO1,"Aw... it's full of normal junk.","","","");
-  
+
   elseif (zn == 6) then
     chest(62,I_SHADECLOAK,1);
     refresh();
-  
+
   elseif (zn == 7) then
     chest(63,I_B_GLOOM,1);
     refresh();
-  
+
   elseif (zn == 8) then
     chest(64,I_STRSEED,1);
     refresh();
-  
+
   elseif (zn == 9) then
     chest(65,I_SALVE,2);
     refresh();
-  
+
   elseif (zn == 10) then
     chest(66,I_ARMOR4,1);
     refresh();
-  
+
   elseif (zn == 11) then
     warp(48,98,8);
-  
+
   elseif (zn == 12) then
     warp(39,61,8);
-  
+
   elseif (zn == 13) then
     if (get_progress(P_DENORIAN) == 3) then
-      bubble(HERO1,"The Denorians were right.  This",
-                    "troll was being directed by",
-                    "someone... that scumbag Demnas.","");
+      bubble(HERO1,"The Denorians were right. This",
+                   "troll was being directed by",
+                   "someone... that scumbag Demnas.","");
       bubble(HERO1,"He used this poor bugger and",
-                    "then left him here to rot.","","");
+                   "then left him here to rot.","","");
       wait(100);
       bubble(HERO1,"Well, I should go back to the",
-                    "village now and report all this.","","");
+                   "village now and report all this.","","");
       set_progress(P_DENORIAN,4);
     else
       bubble(HERO1,"This cell became his tomb.","","","");
@@ -152,7 +152,7 @@ function entity_handler(en)
     bubble(0,"Are you accusing me of stealing",
              "this statue?","","");
     bubble(HERO1,"Well, the thief was traced",
-                       "back to this cave.","","");
+                 "back to this cave.","","");
     bubble(0,"Oh, so now I'm a thief?!!","","","");
     bubble(HERO1,"That depends... did you take",
                  "the statue or not?","","");

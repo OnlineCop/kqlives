@@ -1,4 +1,4 @@
--- town1 - Ekla
+-- town1 - "Ekla"
 
 function autoexec()
   refresh()
@@ -16,7 +16,7 @@ function refresh()
     set_ent_active(3,0);
   end
 end
-  
+
 function postexec()
   return
 end
@@ -24,77 +24,77 @@ end
 function zone_handler(zn)
   if (zn == 1) then
     change_map("main",132,30,132,30);
-  
+
   elseif (zn == 2) then
     inn("The Blue Boar Inn",25,1);
-  
+
   elseif (zn == 3) then
     shop(0);
-  
+
   elseif (zn == 4) then
     shop(1);
-  
+
   elseif (zn == 5) then
     shop(2);
-  
+
   elseif (zn == 6) then
     bubble(HERO1,"Locked.","","","");
-  
+
   elseif (zn == 7) then
     change_map("cave1",0,0,0,0);
-  
+
   elseif (zn == 8) then
     chest(0,I_B_SCORCH,1);
     refresh();
-  
+
   elseif (zn == 9) then
     bubble(255,"I don't have much.","","","");
     shop(3);
-  
+
   elseif (zn == 10) then
     door_in(60,20,52,11,64,22);
-  
+
   elseif (zn == 11) then
     door_out(20,19);
-  
+
   elseif (zn == 12) then
     door_in(81,33,76,24,88,35);
-  
+
   elseif (zn == 13) then
     door_out(18,40);
-  
+
   elseif (zn == 14) then
     door_in(56,33,52,24,60,35);
-  
+
   elseif (zn == 15) then
     door_out(14,45);
-  
+
   elseif (zn == 16) then
     door_in(73,19,66,11,79,22);
-  
+
   elseif (zn == 17) then
     door_out(34,37);
-  
+
   elseif (zn == 18) then
     door_in(68,31,62,24,74,33);
-  
+
   elseif (zn == 19) then
     door_out(31,27);
-  
+
   elseif (zn == 20) then
     chest(6,I_NLEAF,1);
-  
+
   elseif (zn == 21) then
     book_talk(get_pidx(0));
-  
+
   elseif (zn == 22) then
     door_in(62,54,52,41,69,57);
-  
+
   elseif (zn == 23) then
     door_out(37,56);
 
   end
-end  
+end
 
 function entity_handler(en)
   if (en == 0) then
@@ -117,12 +117,12 @@ function entity_handler(en)
       if (get_pidx(0) == CASANDRA) then
         thought(HERO1,"Geez! What a loser!","","","");
         thought(HERO1,"Maybe I should put him",
-                     "out of his misery.","","");
+                      "out of his misery.","","");
       end
     else
       bubble(0,"I like cheese.","","","")
     end
-  
+
   elseif (en == 1) then
     if (get_progress(P_DARKIMPBOSS) == 0) then
       bubble(1,"If you are going underground be",
@@ -144,7 +144,7 @@ function entity_handler(en)
                  "so be careful.","","");
       end
     end
-  
+
   elseif (en == 2) then
     if (get_progress(P_WARPSTONE) == 1) then
       bubble(2,"How are things going?","","","");
@@ -192,13 +192,18 @@ function entity_handler(en)
                  "still doing here?","","");
       end
     elseif (get_progress(P_UCOIN) == 0) then
-    
-      if (prompt(2,2,0,"Say, have you been through","the passage lately?","  yes","  no") == 0) then
-        if (prompt(2,2,0,"Then you saw the portal?","  yep","  nope","") == 0) then
+
+      if (prompt(2,2,0,"Say, have you been through",
+                       "the passage lately?",
+                       "  yes","  no") == 0) then
+        if (prompt(2,2,0,"Then you saw the portal?",
+                         "  yep","  nope","") == 0) then
           bubble(2,"Well, you could do the town",
                    "a big favour and get rid",
                    "of it for us.","");
-          if (prompt(2,2,0,"I can tell you how if you're","interested?","  sure","  sorry") == 0) then
+          if (prompt(2,2,0,"I can tell you how if you're",
+                           "interested.",
+                           "  sure","  sorry") == 0) then
             set_progress(P_UCOIN,2);
             LOC_old_lady();
           else
@@ -216,7 +221,9 @@ function entity_handler(en)
           bubble(2,"Anyways, there is a way to get",
                    "rid of the monsters and put an",
                    "end to this mess.","");
-          if (prompt(2,2,0,"Would you be interested in helping","out our little town?","  sure","  sorry") == 0) then
+          if (prompt(2,2,0,"Would you be interested in helping",
+                           "out our little town?",
+                           "  sure","  sorry") == 0) then
             set_progress(P_UCOIN,2);
             LOC_old_lady();
           else
@@ -228,7 +235,7 @@ function entity_handler(en)
       else
         bubble(2,"Well, I guess that's not",
                  "important. You'll go there",
-                 "eventually I suppose.","");
+                 "eventually, I suppose.","");
         bubble(2,"If you've been around town, then",
                  "you likely know that the tunnel",
                  "is full of monsters!","");
@@ -236,7 +243,9 @@ function entity_handler(en)
                  "a magical portal that appeared",
                  "just recently. It's unknown how",
                  "it got there, but it has to go.");
-        if (prompt(2,2,0,"Would you be interested in trying","to get rid of this portal?","  yes","  no") == 0) then
+        if (prompt(2,2,0,"Would you be interested in trying",
+                         "to get rid of this portal?",
+                         "  yes","  no") == 0) then
           set_progress(P_UCOIN,2);
           LOC_old_lady();
         else
@@ -246,7 +255,7 @@ function entity_handler(en)
         end
       end
     end
-  
+
   elseif (en == 3) then
     if (get_progress(P_DARKIMPBOSS) == 0) then
       bubble(3,"We're here investigating the",
@@ -272,9 +281,9 @@ function entity_handler(en)
     end
 
   end
-end  
+end
 
-  
+
 function LOC_old_lady()
   if (get_progress(P_UCOIN) == 2) then
     bubble(2,"Great! Take this.","","","");

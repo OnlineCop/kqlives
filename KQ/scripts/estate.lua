@@ -1,4 +1,4 @@
--- estate - home of Dungar and Emma east of Maldea
+-- estate - "Home of Dungar and Emma east of Maldea"
 
 function autoexec()
   if (get_progress(P_OPALHELMET) == 0 and get_progress(P_TALKGELIK) < 3) then
@@ -65,30 +65,30 @@ function postexec()
     bubble(HERO1,"No problem. I'll be back in a bit.","","","");
   end
 end
-  
+
 function zone_handler(zn)
   if (zn == 1) then
     change_map("main",222,41,222,41);
-  
+
   elseif (zn == 2) then
     door_in(61,17,53,5,69,20);
-  
+
   elseif (zn == 3) then
     door_in(69,31,66,23,74,34);
-  
+
   elseif (zn == 4) then
     chest(54,I_EDROPS,1);
-  
+
   elseif (zn == 5) then
     door_out(22,23);
-  
+
   elseif (zn == 6) then
     bubble(HERO1,"Locked.","","","");
-  
+
   elseif (zn == 7) then
     view_range(1,71,5,87,19);
     warp(86,17,8);
-  
+
   elseif (zn == 8) then
     if (get_progress(P_TALKGELIK) < 4) then
       bubble(HERO1,"That scream came from up here",
@@ -97,13 +97,13 @@ function zone_handler(zn)
       view_range(1,53,5,69,20);
       warp(68,17,8);
     end
-  
+
   elseif (zn == 9) then
     bubble(HERO1,"These look rare.","","","");
-  
+
   elseif (zn == 10) then
     door_out(36,23);
-  
+
   elseif (zn == 12) then
     if (get_progress(P_TALKGELIK) < 4) then
       set_progress(P_TALKGELIK,4);
@@ -168,7 +168,7 @@ function zone_handler(zn)
                "I'll be fine. Now go!","","");
       bubble(HERO1,"Goodbye.","","","");
     end
-  
+
   elseif (zn == 13) then
     bubble(HERO1,"Goodbye Dungar. I'm sorry.","","","");
 
@@ -178,10 +178,10 @@ end
 function entity_handler(en)
   if (en == 0) then
     bubble(0,"I'm the groundskeeper here.","","","");
-  
+
   elseif (en == 1) then
     local a;
-  
+
     if (get_progress(P_OPALHELMET) == 0) then
       a = get_progress(P_TALKGELIK);
       if (a == 0) then
@@ -208,7 +208,7 @@ function entity_handler(en)
         bubble(1,"...","","","");
       end
     end
-  
+
   elseif (en == 2) then
     if (get_progress(P_OPALHELMET) == 0) then
       bubble(2,"Just return here with the Helmet",
@@ -224,8 +224,8 @@ function entity_handler(en)
       bubble(HERO1,"Well, I'd love to, but I",
                    "really should be going.","","");
       bubble(2,"Nonsense! I insist you spend",
-               "the spend the night with us",
-               "and celebrate.","");
+               "the night with us and celebrate.",
+               "","");
       bubble(HERO1,"Well, alright... but I'll",
                    "have to leave first thing",
                    "in the morning.","");
@@ -247,7 +247,7 @@ function entity_handler(en)
       drawmap();
       screen_dump();
       do_fadein(4);
-      msg("Later",255,1000);
+      msg("Later...",255,1000);
       bubble(HERO1,"Ugh... what a party!","","","");
       set_ent_script(HERO1,"R3U1L1W50F1");
       wait_for_entity(HERO1,HERO1);
