@@ -249,7 +249,7 @@ function zone_handler(zn)
 
   elseif (zn == 43) then
     change_map("town5", 0, 0, 0, 0)
-//    warp(45, 24, 16)
+/*    warp(45, 24, 16) */
 
   elseif (zn == 44) then
     warp(255, 73, 16)
