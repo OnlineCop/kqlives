@@ -240,6 +240,8 @@ static int save_game (void)
    pack_fwrite (treasure, 1000, sdat);
    pack_fwrite (shopq, NUMSHOPS * 12 * sizeof (shopq[0][0]), sdat);
    pack_fwrite (g_inv, MAX_INV * 2 * sizeof (g_inv[0][0]), sdat);
+   /* PH FIXME: do we _really_ want things like controls and screen */
+   /* mode to be saved/loaded ? */
    pack_fwrite (&gsvol, sizeof (gsvol), sdat);
    pack_fwrite (&gmvol, sizeof (gmvol), sdat);
    pack_fwrite (&windowed, sizeof (windowed), sdat);
