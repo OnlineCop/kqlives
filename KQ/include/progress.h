@@ -136,7 +136,7 @@
 #define P_PLAYERS         100
 #define P_TALK_AJATHAR    101
 #define P_BLADE           102
-#define P_AYLA_QUEST	  103
+#define P_AYLA_QUEST      103
 
 /* 'specials' */
 #define P_SHOPSTART       1750
