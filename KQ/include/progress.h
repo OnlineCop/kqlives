@@ -20,6 +20,10 @@
 
 /*! \name Progress indicators */
 /*\{*/
+
+#define P_INTRO           91
+#define P_PLAYERS         92
+
 #define P_START           0
 #define P_ODDWALL         1
 #define P_DARKIMPBOSS     2

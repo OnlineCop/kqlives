@@ -429,6 +429,7 @@ extern int balt;                /*  selector.c, (eqp|item|mas|shop)menu.c,  */
 extern int bctrl;               /*  selector.c, (eqp|item|mas|shop)menu.c,  */
                         /*  sgame.c, heroc.c, intrface.c, setup.c,  */
                         /*  menu.c                                  */
+
 extern int bhelp;
 extern int kright;              /*  setup.c, sgame.c  */
 extern int kleft;               /*  setup.c, sgame.c  */
@@ -442,9 +443,9 @@ extern int jbalt;               /*  setup.c, sgame.c  */
 extern int jbctrl;              /*  setup.c, sgame.c  */
 extern int jbenter;             /*  setup.c, sgame.c  */
 extern int jbesc;               /*  setup.c, sgame.c  */
-extern int vx, vy, mx, my, steps, lastm[PSIZE];;
+extern int vx, vy, mx, my, steps, lastm[PSIZE];
 
-extern BITMAP *double_buffer;
+extern BITMAP *double_buffer, *fx_buffer;
 extern BITMAP *map_icons[MAX_TILES];
 
 
@@ -458,12 +459,12 @@ extern BITMAP *shadow[MAX_SHADOWS];     /*  draw.c  */
 extern unsigned short *map_seg;
 extern unsigned short *b_seg, *f_seg;
 extern unsigned char *progress, *z_seg, *s_seg, *o_seg, *treasure;
-extern BITMAP *kfonts /*, *portrait[MAXCHRS] */ ;
+extern BITMAP *kfonts;
 extern s_map g_map;
 extern s_entity g_ent[MAX_ENT + PSIZE];
 extern s_anim tanim[6][MAX_ANIM];
 extern s_anim adata[MAX_ANIM];
-extern int noe, pidx[PSIZE], numchrs, gp, xofs, yofs, gsvol, gmvol;
+extern int noe, pidx[MAXCHRS], numchrs, gp, xofs, yofs, gsvol, gmvol;
 extern unsigned char autoparty, autofollow, alldead, is_sound, deadeffect,
    vfollow, use_sstone;
 extern unsigned char kq_version, hold_fade, cansave, skip_intro, wait_retrace,
