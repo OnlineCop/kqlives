@@ -20,6 +20,13 @@ function autoexec()
   if (get_progress(P_FOUNDMAYOR) == 0) then
     set_zone(235, 37, 0)
   end
+
+  if ((get_progress(P_OPALHELMET) == 1) and
+      (get_progress(P_OPALSHIELD) == 1) and
+      (get_progress(P_OPALBAND) == 1) and
+      (get_progress(P_OPALARMOUR) == 1)) then
+    set_zone(264, 164, 73)
+  end
 end
 
 
@@ -250,8 +257,7 @@ function zone_handler(zn)
     change_map("unfinished", 0, 0, 0, 0)
 
   elseif (zn == 43) then
-    change_map("town5", 0, 0, 0, 0)
-/*    warp(45, 24, 16) */
+    change_map("town8", 0, 0, 0, 0)
 
   elseif (zn == 44) then
     warp(255, 73, 16)
@@ -337,6 +343,44 @@ function zone_handler(zn)
   elseif (zn == 71) then
     set_ent_facing(HERO1, 2)
     change_map("bridge2", 63, 18, 63, 18)
+
+  elseif (zn == 72) then
+    if ((get_progress(P_OPALHELMET) == 1) and
+        (get_progress(P_OPALSHIELD) == 1) and
+        (get_progress(P_OPALBAND) == 1) and
+        (get_progress(P_OPALARMOUR) == 1)) then
+      set_btile(264, 164, 54)
+      set_zone(264, 164, 73)
+      set_obs(264, 164, 0)
+      sfx(26)
+      bubble(HERO1, "Ah, there we go.")
+    else
+      bubble(HERO1, "I think this entrance will open once I have all the opal stuff.")
+    end
+
+  elseif (zn == 73) then
+    change_map("cave6a", 0, 0, 0, 0)
+
+  elseif (zn == 74) then
+    change_map("cave6b", 5, 7, 5, 7)
+
+  elseif (zn == 75) then
+    bubble(HERO1, "The underwater tunnel should go here.")
+    warp(203, 182, 16)
+  
+  elseif (zn == 76) then
+    bubble(HERO1, "The second part of the underwater tunnel should go here.")
+    warp(262, 159, 16)
+
+  elseif (zn == 77) then
+    bubble(HERO1, "This is where the castle town of Xenar goes.")
+    bubble(HERO1, "It's not finished yet.")
+
+  elseif (zn == 78) then
+    bubble(HERO1, "This is the cave behind the Xenar Castle. Sorry, you can't go in there yet.")
+
+  elseif (zn == 79) then
+    bubble(HERO1, "This is as far as the dock goes.")
 
   end
 end

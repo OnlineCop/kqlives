@@ -44,7 +44,7 @@ end
 
 function zone_handler(zn)
   if (zn == 1) then
-    change_map("main", 255, 73, 255, 73)
+    change_map("main", 230, 162, 230, 162)
 
   elseif (zn == 2) then
     set_progress(P_WALKING, 0)
