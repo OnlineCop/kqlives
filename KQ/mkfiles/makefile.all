@@ -68,7 +68,7 @@ editor:
 #  for the third level of depth, etc.                                         #
 #                                                                             #
 clean:
-	$(RM) $(RMFLAGS) $(EXEC) $(OBJ_DIR)/*.o* $(RUNNER)
+	$(RM) $(RMFLAGS) $(EXEC) $(OBJ_DIR)/*/*.o* $(RUNNER)
 
 
 
