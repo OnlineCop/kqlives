@@ -608,7 +608,9 @@ function entity_handler(en)
       bubble(HERO1, "Thanks!");
       set_progress(P_ORACLE, 1);
       set_autoparty(1);
-      set_ent_script(HERO1, "X150Y10F1");
+-- PH added 'D1' so you don't get stuck if you're talking 
+-- to the oracle from the right hand side
+      set_ent_script(HERO1, "D1X150Y10F1");
       if (get_numchrs() == 1) then
         wait_for_entity(HERO1, HERO1);
         bubble(HERO1, "I hope that this Binderak guy hasn't gotten a hold of the others.");
@@ -618,7 +620,7 @@ function entity_handler(en)
         screen_dump();
         bubble(HERO1, "Heh... I should probably stop talking to myself too.");
       else
-        set_ent_script(HERO2, "X150Y11F1");
+        set_ent_script(HERO2, "D1X150Y11F1");
         wait_for_entity(HERO1, HERO2);
         set_ent_facing(HERO1, 0);
         bubble(HERO2, "Hey $0.");
