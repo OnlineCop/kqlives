@@ -14,15 +14,13 @@
 #  make zip        : Same as tgz, but now creates it using zip compressor.    #
 #  make compress   : Compresses the generated executable. You need the upx    #
 #                    executable compressor somewhere in your path.            #
-#  make header     : Adds the copyleft notice to each source and header file  #
-#                    in the package.                                          #
 #                                                                             #
-#  @@AUTHOR@@, @@YEAR@@                                                       #
+#  ReyBrujo, 2002                                                             #
 #                                                                             #
 ###############################################################################
 
 
-.PHONY: clean distclean tgz zip compress
+.PHONY: clean distclean veryclean tgz zip compress
 
 
 #                                                                             #
@@ -44,16 +42,6 @@ PACKAGE_OBJ = fix.bat    \
               $(BIN_DIR)
 
 
-#                                                                             #
-#  HEADERS will contain all the headers (.h) and source (.c, .cpp, etc) that  #
-#  will be processed in order to add the copyleft notice.                     #
-#                                                                             #
-COPYLEFT := $(MSC_DIR)/license.h
-HEADERS  := $(addprefix $(SRC_DIR)/,$(FILES))
-HEADERS  += $(basename $(wildcard $(INC_DIR)/*.h))
-HEADERS  := $(addsuffix .tmp,$(HEADERS))
-
-
 
 ###############################################################################
 #                                                                             #
@@ -72,7 +60,6 @@ HEADERS  := $(addsuffix .tmp,$(HEADERS))
 #                                                                             #
 clean:
 	$(RM) $(RMFLAGS) $(EXEC) $(OBJ_DIR)/*.o* $(RUNNER)
-	$(RM) $(RMFLAGS) $(HEADERS)
 
 
 
@@ -83,6 +70,15 @@ clean:
 #                                                                             #
 distclean: clean
 	$(RM) $(RMFLAGS) $(PACKAGE_TGZ) $(PACKAGE_ZIP) 
+
+
+
+#                                                                             #
+#  The veryclean target calls distclean to delete the above files, plus       #
+#  deleting all dependencies files.                                           #
+#                                                                             #
+veryclean: distclean
+	$(RM) $(RMFLAGS) $(OBJ_DIR)/*/makefile.dep
 
 
 
@@ -144,100 +140,3 @@ depend:
 	$(GCC) $(DEPFLAGS) $(SRC_DIR)/*.$(SRC_SUFFIX) > _depend.tmp
 	sed -e "s/^\([a-zA-Z0-9_]*\)\.o:/$(subst /,\/,$(OBJDIR))\/\1\.$(OBJ_SUFFIX):/" _depend.tmp > $(OBJDIR)/makefile.dep
 	$(RM) $(RMFLAGS) _depend.tmp
-
-
-
-#                                                                             #
-#  The 'header' target adds the GNU copyleft notice to each source file in    #
-#  the package. Note that there is no easy way to "undo" this action, so you  #
-#  should only call it with your finished package.                            #
-#  What it does is basically catting the notice and then the source into a    #
-#  temporary file, and then moving the temporary file into the original one.  #
-#                                                                             #
-header: $(HEADERS)
-	@echo Added copyleft notice to $(words $(HEADERS)) files.
-
-%.tmp : %.$(SRC_SUFFIX)
-	@echo Adding copyleft notice to $<...
-	@cat $(COPYLEFT) $< > $@
-	@mv $@ $<
-
-%.tmp : %.h
-	@echo Adding copyleft notice to $<...
-	@cat $(COPYLEFT) $< > $@
-	@mv $@ $<
-
-
-#                                                                             #
-#  The 'owner' target looks in all the files found in the package directory   #
-#  for the @@AUTHOR@@, @@EMAIL@@, @@NAME@@, @@WSITE@@ and @@YEAR@@ keywords.  #
-#  Note that once you execute it, it won't be able to refix them.             #
-#                                                                             #
-OWNER_FILES := $(wildcard $(MAK_DIR)/*) $(wildcard $(SRC_DIR)/*) \
-               $(wildcard $(DOC_DIR)/*) $(wildcard $(MSC_DIR)/*) \
-               $(wildcard $(INC_DIR)/*)
-OWNER_FILES := $(filter-out %/tmpfile.txt %/runner.c %.all %misc %copying,$(OWNER_FILES))
-OWNER_FILES := $(subst .,_,$(OWNER_FILES))
-OWNER_MODIF := $(addsuffix .tmp,$(basename $(OWNER_FILES)))
-
-owner: $(OWNER_MODIF)
-	@echo Done!
-	@echo Modified $(words $(OWNER_MODIF)) files. Congratulations!
-	@echo This copy has been registered to you :)
-
-define OWNER_RULE
-    @echo Changing ownership of $<...
-    @sed -e 's/@@AUTHOR@@/$(AUTHOR)/g' -e 's/@@YEAR@@/$(YEAR)/g' \
-         -e 's/@@EMAIL@@/$(EMAIL)/g' -e 's/@@WSITE@@/$(WSITE)/g' \
-         -e 's/@@NAME@@/$(NAME)/g' $< > $@
-    @mv $@ $<
-endef
-
-$(MAK_DIR)/makefile_cfg.tmp : $(MAK_DIR)/makefile.cfg
-	-$(OWNER_RULE)
-$(MAK_DIR)/makefile_dep.tmp : $(MAK_DIR)/makefile.dep
-	-$(OWNER_RULE)
-$(MAK_DIR)/makefile_dj.tmp  : $(MAK_DIR)/makefile.dj
-	-$(OWNER_RULE)
-$(MAK_DIR)/makefile_mgw.tmp : $(MAK_DIR)/makefile.mgw
-	-$(OWNER_RULE)
-$(MAK_DIR)/makefile_vc.tmp  : $(MAK_DIR)/makefile.vc
-	-$(OWNER_RULE)
-$(SRC_DIR)/cmdline_c.tmp    : $(SRC_DIR)/cmdline.c
-	-$(OWNER_RULE)
-$(SRC_DIR)/global_c.tmp     : $(SRC_DIR)/global.c
-	-$(OWNER_RULE)
-$(SRC_DIR)/main_c.tmp       : $(SRC_DIR)/main.c
-	-$(OWNER_RULE)
-$(SRC_DIR)/timer_c.tmp      : $(SRC_DIR)/timer.c
-	-$(OWNER_RULE)
-$(SRC_DIR)/scrshot_c.tmp    : $(SRC_DIR)/scrshot.c
-	-$(OWNER_RULE)
-$(MSC_DIR)/license_h.tmp    : $(MSC_DIR)/license.h
-	-$(OWNER_RULE)
-$(INC_DIR)/cmdline_h.tmp    : $(INC_DIR)/cmdline.h
-	-$(OWNER_RULE)
-$(INC_DIR)/config_h.tmp     : $(INC_DIR)/config.h
-	-$(OWNER_RULE)
-$(INC_DIR)/game_h.tmp       : $(INC_DIR)/game.h
-	-$(OWNER_RULE)
-$(INC_DIR)/global_h.tmp     : $(INC_DIR)/global.h
-	-$(OWNER_RULE)
-$(INC_DIR)/memleak_h.tmp    : $(INC_DIR)/memleak.h
-	-$(OWNER_RULE)
-$(INC_DIR)/mmxcode_h.tmp    : $(INC_DIR)/mmxcode.h
-	-$(OWNER_RULE)
-$(INC_DIR)/option_h.tmp     : $(INC_DIR)/option.h
-	-$(OWNER_RULE)
-$(INC_DIR)/timer_h.tmp      : $(INC_DIR)/timer.h
-	-$(OWNER_RULE)
-$(INC_DIR)/scrshot_h.tmp    : $(INC_DIR)/scrshot.h
-	-$(OWNER_RULE)
-$(DOC_DIR)/history_txt.tmp  : $(DOC_DIR)/history.txt
-	-$(OWNER_RULE)
-$(DOC_DIR)/idea_txt.tmp     : $(DOC_DIR)/idea.txt
-	-$(OWNER_RULE)
-$(DOC_DIR)/links_txt.tmp    : $(DOC_DIR)/links.txt
-	-$(OWNER_RULE)
-$(DOC_DIR)/readme_txt.tmp   : $(DOC_DIR)/readme.txt
-	-$(OWNER_RULE)
