@@ -361,7 +361,7 @@ function LOC_manor_or_party(who)
    if get_pidx(0)==who then
       return "party"
    elseif get_numchrs()>1 and get_pidx(1)==who then
-      return party
+      return "party"
    end
    for a=P_MANORPARTY,P_MANORPARTY7 do
       if get_progress(a)-1==who then
