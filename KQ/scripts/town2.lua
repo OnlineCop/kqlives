@@ -428,7 +428,7 @@ function entity_handler(en)
         if (get_progress(P_FIGHTONBRIDGE) > 4) then
           bubble(en, "The mayor has yet to return from Andra. A few of our men are out looking for him as we speak.")
         else
-          bubble(en, "The mayor was going to Andra to talk to the council there. I think that he should have been back by now.")
+          bubble(en, "The mayor was going to Andra to talk to the Council there. I think that he should have been back by now.")
           bubble(en, "We may have to go and look for him soon. We need to make sure that he is safe.")
         end
       elseif (get_progress(P_FOUNDMAYOR) < 3) then

@@ -219,7 +219,7 @@ function LOC_storyline(en)
 
     thought(HERO1, "`$0, I am an old friend.",
                    "This note is intended for your   ",
-                   "eyes only. Haste and discression ",
+                   "eyes only. Haste and discretion  ",
                    "are of the utmost importance.    ")
     thought(HERO1, "I implore you to travel to Reisha",
                    "Mountain with all possible speed.",
@@ -344,7 +344,7 @@ function LOC_storyline(en)
 
     bubble(HERO1, "I cannot say, sir. I know no one who lives at Reisha Mountain.")
     bubble(HERO1, "My knowledge of geography dictates that it is in a secluded mountain range, but that is all.")
-    bubble(1, "Very well, $0. I am giving you an opportunity to investigave this quest.")
+    bubble(1, "Very well, $0. I am giving you an opportunity to investigate this quest.")
     bubble(1, "Among other things, this will test your training as well as get you out on a little adventure.")
     bubble(HERO1, "I would be honored sir. Where do I go first?")
     bubble(1, "Proceed directly to Reisha Mountain. Let's not keep our mystery host waiting.")

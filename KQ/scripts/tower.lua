@@ -604,7 +604,7 @@ function entity_handler(en)
       bubble(en, "Well, not exactly, but I do know where you have to go and how you will get there.")
       bubble(en, "You have to gather several items, all of which are made of Opal, in order to proceed.")
       bubble(en, "Once you find these things, you will then use them to travel the underwater passage on the western shore.")
-      bubble(en, "The passage will take you to the the tiny kingdom of Esteria. There you will find an evil warlord named Binderak.")
+      bubble(en, "The passage will take you to the tiny kingdom of Esteria. There you will find an evil warlord named Binderak.")
       bubble(en, "He is the one who acquired the Staff from Malkaron all those years ago. I believe he still has that half of the Staff.")
       bubble(en, "However, I may be wrong. And I don't know where the other half is. Unfortunately, that is all that I can tell you.")
       bubble(HERO1, "That's plenty. Thanks.")
@@ -692,7 +692,7 @@ function LOC_stoner(a, b, c)
     end
 
   else
-    -- Actually, this is already implicitely true
+    -- Actually, this is already implicitly true
     if (get_progress(a) ~= 0) then
 
       -- Remove a White stone

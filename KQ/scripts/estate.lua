@@ -32,7 +32,7 @@ function postexec()
     bubble(2, "Well, I... umm... that is to say...")
     bubble(1, "Dungar is a retired thief...")
     bubble(2, "Emma!")
-    bubble(1, "Well it's true! In fact Dungar was only one step away from becoming guildmaster!")
+    bubble(1, "Well it's true! In fact Dungar was only one step away from becoming Guildmaster!")
     bubble(2, "Yes, but I got out! The guild was getting too big, and too violent. I just had to leave.")
     bubble(2, "I may have been a thief, but I refused to kill innocent people!")
     bubble(HERO1, "So why are the Embers trying to get this Helmet back? Did you take it from them?")
@@ -133,7 +133,7 @@ end
 
 function entity_handler(en)
   if (en == 0) then
-    bubble(0, "I'm the groundskeeper here.")
+    bubble(0, "I'm the grounds keeper here.")
 
   elseif (en == 1) then
     local a

@@ -256,7 +256,7 @@ function LOC_ayla_girl(girl)
 end
 
 
--- Converations between Ayla and the single woman in the bar
+-- Conversations between Ayla and the single woman in the bar
 function LOC_ayla_bar(woman)
   local pp
   pp = get_progress(P_AYLA_QUEST)
@@ -267,7 +267,7 @@ function LOC_ayla_bar(woman)
     bubble(HERO1, "What did you say?")
     bubble(woman, "Our ruler takes all our wealth and keeps it in the Inner City.",
            "Only the servants get to see what goes on in there.",
-           "That woman over there, she's a maid and she gets to live in a nice cottage just opposite Vezdin's shop")
+           "That woman over there, she's a maid and she gets to live in a nice cottage just opposite Vezdin's shop.")
     bubble(HERO1, "She's certainly got some money to spend on drink.")
     thought(HERO1, "I might just pay a little visit to that cottage while the maid's in here.")
     set_progress(P_AYLA_QUEST, 2)

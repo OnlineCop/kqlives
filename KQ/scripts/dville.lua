@@ -131,7 +131,7 @@ function entity_handler(en)
         bubble(en, "I must say that we suspect that someone is directing the troll in these matters.");
         bubble(HERO1, "Well, don't worry. We will get that statue back for you and get to the bottom of this whole thing.");
         bubble(en, "Oh, and if you haven't seen the cave yet... or even if you have, you'll need to know that there is a trick to opening the door.");
-        bubble(en, "There is a set of stones off to the left of the entrace. You have to press them in the right order to gain access.");
+        bubble(en, "There is a set of stones off to the left of the entrance. You have to press them in the right order to gain access.");
         bubble(en, "Press the first stone, then the fourth and lastly the third. Then the door will open. Got it?");
         bubble(HERO1, "Uh... sure.");
         set_progress(P_DENORIAN, 2);

@@ -262,7 +262,7 @@ function entity_handler(en)
         thought(HERO1, "Oh great. This guy sounds like another used-chariot salesman. Sign...");
       end
       if (prompt(6, 2, 0, "You can have this lovely house",
-                          "for a mere 7500 gp. Sound good?",
+                          "for a mere 7500 GP. Sound good?",
                           "  no",
                           "  yes") == 0) then
         bubble(en, "So be it. You know where I am if you change your mind.");
@@ -285,7 +285,7 @@ function entity_handler(en)
         if (party[0] == CASANDRA) then
           thought(HERO1, "No way! Did he say free?! You mean I can sleep in my OWN house, in my OWN bed for free?! Oh wow!");
         end
-        bubble(en, "Secondly, there is a save spot right in the house! How's that for convienience?");
+        bubble(en, "Secondly, there is a save spot right in the house! How's that for convenience?");
         if (party[0] == CASANDRA) then
           thought(HERO1, "Yea, and how's a nice knuckle sandwich sound for convenience? Just LEAVE already you old geezer!");
         end
@@ -319,7 +319,7 @@ function entity_handler(en)
         bubble(en, "So, you're looking for Opal armor eh? Well, I know of one piece.");
         bubble(en, "The Opal Helmet belongs to a wealthy man named Dungar who lives in his own private estate east of town.");
         bubble(en, "You should go and talk to him.");
-        bubble(en, "If you get the Helmet, come back here and hopefully by then I can find out out a little bit more about the other pieces.");
+        bubble(en, "If you get the Helmet, come back here and hopefully by then I can find out a little bit more about the other pieces.");
         set_progress(P_TALKGELIK, 1);
       else
         bubble(en, "There isn't anything else I can tell you about opal armor right now.");
@@ -339,7 +339,7 @@ function entity_handler(en)
         if (get_progress(P_SEECOLISEUM) == 1) then
           bubble(HERO1, "But the Coliseum was closed when I went there.");
           bubble(en, "Yes... well I'm sure it's open by now.");
-          bubble(HERO1, "Isn't that convienent?");
+          bubble(HERO1, "Isn't that convenient?");
           bubble(en, "Quite.");
         end
         bubble(HERO1, "So, I have to go there and ask Trayor for the shield?");

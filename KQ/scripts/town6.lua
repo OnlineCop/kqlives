@@ -209,7 +209,7 @@ function entity_handler(en)
     else
       bubble(en, "Breanne told us she gave you the Band. We're glad everything has worked out so great. Thank you very much!")
       bubble(en, "I know it's not much, but to show our appreciation, we want you to feel welcome in our town.")
-      bubble(en, "Therefore, any time you need to stay at our inn, you'll only be charged 1 gp!")
+      bubble(en, "Therefore, any time you need to stay at our inn, you'll only be charged 1 GP!")
       set_progress(P_TOWN6INN, 1)
       bubble(HERO1, "That's very kind of you. Thank you!")
       bubble(en, "Oh, and by the way. You should take this.")

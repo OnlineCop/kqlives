@@ -225,7 +225,7 @@ function zone_handler(zn)
     bubble(HERO1, "The drawers are locked.")
 
   elseif (zn == 38) then
-    bubble(HERO1, "This is the pricelist for all of these items.")
+    bubble(HERO1, "This is the price list for all of these items.")
 
   elseif (zn == 39) then
     bubble(HERO1, "None of these potions or herbs are useful.")
@@ -325,7 +325,7 @@ function entity_handler(en)
     elseif (get_progress(P_UCOIN) == 3) then
       -- Returned Rod of Cancellation to Derig
       if (get_treasure(45) == 0) then
-        bubble(en, "Thanks for returning the Rod to my grandfather. Here is a Sunstone for you.")
+        bubble(en, "Thanks for returning the Rod to my grandfather. Here is a SunStone for you.")
         chest(45, I_SSTONE, 1)
       else
         bubble(en, "Thanks again.")
