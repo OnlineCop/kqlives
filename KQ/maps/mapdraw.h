@@ -35,6 +35,11 @@
 
 #include "../include/structs.h"
 
+/* Something for allegro version compatibility */
+/* ..can we use the textout_ex() and friends? */
+#if (ALLEGRO_VERSION>=4 && ALLEGRO_SUB_VERSION>=1)
+#define HAVE_TEXT_EX
+#endif
 
 typedef struct
 {
@@ -63,6 +68,7 @@ void cmessage (char *);
 int confirm_exit (void);
 void copy_layer (void);
 void copy_region (void);
+int count_current_zones (void);
 void describe_map (void);
 void draw_layer (short *, int);
 void draw_map (void);
@@ -101,13 +107,14 @@ void place_entity (int, int);
 void update_entities (void);
 
 /* From mapfile.c */
-void error_load (char *);
+void error_load (AL_CONST char *);
 void load_map (char *);
 void make_mapfrompcx (void);
 void maptopcx (void);
 void new_map (void);
 void prompt_load_map (void);
 void save_map (void);
+void set_pcx (BITMAP **, char *, PALETTE, int);
 
 /* From mapdata.c */
 void getfont (void);

@@ -23,8 +23,9 @@
  * Display an error message for a file that doesn't exist.
  *
  */
-void error_load (char *fname)
+void error_load (AL_CONST char *fname)
 {
+   ASSERT (fname);
    rectfill (screen, 0, 0, 319, 24, 0);
    rect (screen, 2, 2, 317, 22, 255);
    sprintf (strbuf, "Could not load \"%s\"", fname);
@@ -47,6 +48,7 @@ void load_map (char *fname)
    int p, q, i;
    PACKFILE *pf;
 
+   ASSERT (fname);
    pf = pack_fopen (fname, F_READ_PACKED);
    if (!pf) {
       error_load (fname);
@@ -56,10 +58,11 @@ void load_map (char *fname)
    strcpy (map_fname, fname);
    load_s_map (&gmap, pf);
 
-   for (i = 0; i < 50; ++i) {
+   for (i = 0; i < 50; ++i)
       load_s_entity (gent + i, pf);
-   }
+
    bufferize ();
+
    for (q = 0; q < gmap.ysize; ++q) {
       for (p = 0; p < gmap.xsize; ++p) {
          map[q * gmap.xsize + p] = pack_igetw (pf);
@@ -80,15 +83,24 @@ void load_map (char *fname)
    pack_fread (sh_map, (gmap.xsize * gmap.ysize), pf);
    pack_fread (o_map, (gmap.xsize * gmap.ysize), pf);
    pack_fclose (pf);
+
+   if (!exists (icon_files[gmap.tileset])) {
+      error_load (icon_files[gmap.tileset]);
+      sprintf (strbuf, "%s could not be loaded!", icon_files[gmap.tileset]);
+      allegro_message (strbuf);
+      cleanup ();
+      exit (EXIT_FAILURE);
+   }
+
    pcx_buffer = load_pcx (icon_files[gmap.tileset], pal);
    max_sets = (pcx_buffer->h / 16);
-   for (p = 0; p < max_sets; p++) {
-      for (q = 0; q < ICONSET_SIZE; q++) {
-         blit (pcx_buffer, icons[p * ICONSET_SIZE + q], q * 16, p * 16, 0, 0,
+
+   for (q = 0; q < max_sets; q++)
+      for (p = 0; p < ICONSET_SIZE; p++)
+         blit (pcx_buffer, icons[q * ICONSET_SIZE + p], p * 16, q * 16, 0, 0,
                16, 16);
-      }
-   }
    icon_set = 0;
+   destroy_bitmap (pcx_buffer);
 
    /* Check for bogus map squares */
    for (p = 0; p < gmap.xsize * gmap.ysize; ++p) {
@@ -99,7 +111,6 @@ void load_map (char *fname)
       if (b_map[p] > MAX_TILES)
          b_map[p] = 0;
    }
-   destroy_bitmap (pcx_buffer);
 
    /* Recount the number of entities on the map */
    number_of_ents = 0;
@@ -124,70 +135,105 @@ void make_mapfrompcx (void)
 {
    char fname[16];
    char imp[16];
-   int ld;
+   int response, done;
    int w, h, ax, ay;
-   BITMAP *pb;
+   BITMAP *pcx_bitmap;
    short *tm;
 
-   rectfill (screen, 0, 0, 319, 21, 0);
-   rect (screen, 2, 2, 317, 19, 255);
-   print_sfont (6, 6, "Make map from pcx", screen);
-   print_sfont (6, 12, "Filename: ", screen);
-   ld = get_line (66, 12, fname, 40);
+   draw_map ();
+   rectfill (double_buffer, 0, 0, 319, 21, 0);
+   rect (double_buffer, 2, 2, 317, 19, 255);
+   print_sfont (6, 6, "Make map from pcx", double_buffer);
+   print_sfont (6, 12, "Filename: ", double_buffer);
 
-   /* Make sure the line isn't blank */
-   if (ld == 0 || strlen (fname) < 1)
-      return;
+   done = 0;
+   while (!done) {
+      blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+      response = get_line (66, 12, fname, 40);
 
-   blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
-   rectfill (screen, 0, 0, 319, 17, 0);
-   rect (screen, 2, 2, 317, 15, 255);
+      /* If the user hits ESC, break out of the function entirely */
+      if (response == 0)
+         return;
+
+      /* Make sure this line isn't blank */
+      if (strlen (strbuf) > 0) {
+         if (!exists (fname)) {
+            error_load (fname);
+            return;
+            /* TT TODO: move the "Load %s?" (below) here, so the user can type
+             * it in correctly this time.
+             */
+         }
+         done = 1;
+      }
+   }
+
+   draw_map ();
+   rectfill (double_buffer, 0, 0, 319, 15, 0);
+   rect (double_buffer, 2, 2, 317, 13, 255);
    sprintf (strbuf, "Load %s? (y/n)", fname);
    print_sfont (6, 6, strbuf, screen);
 
-   if (yninput ()) {
+   blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+   if (!yninput ())
+      return;
+
+   draw_map ();
+   rectfill (double_buffer, 0, 0, 319, 21, 0);
+   rect (double_buffer, 2, 2, 317, 19, 255);
+   print_sfont (6, 6, "Put to (B)ack (M)id (F)ore?", double_buffer);
+
+   done = 0;
+   while (!done) {
       blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
       tm = NULL;
-      do {
-         rectfill (screen, 0, 0, 319, 27, 0);
-         rect (screen, 2, 2, 317, 25, 255);
-         print_sfont (6, 6, "Put to (B)ack (M)id (F)ore?", screen);
-         if (get_line (6, 16, imp, sizeof (imp)) > 0) {
-            switch (*imp) {
-            case 'm':
-            case 'M':
-               tm = b_map;
-               break;
-            case 'b':
-            case 'B':
-               tm = map;
-               break;
-            case 'f':
-            case 'F':
-               tm = f_map;
-               break;
-            }
+
+      response = get_line (6, 12, imp, sizeof (imp));
+
+      /* If the user hits ESC, break out of the function entirely */
+      if (response == 0)
+         return;
+
+      /* Make sure this line isn't blank */
+      if (strlen (strbuf) > 0) {
+         if (*imp == 'm' || *imp == 'M') {
+            tm = b_map;
+            done = 1;
          }
-      } while (map == NULL);
-
-      pb = load_bitmap (fname, pal);
-      if (pb->w < gmap.xsize)
-         w = pb->w;
-      else
-         w = gmap.xsize;
-
-      if (pb->h < gmap.ysize)
-         h = pb->h;
-      else
-         h = gmap.ysize;
-
-      for (ay = 0; ay < h; ay++) {
-         for (ax = 0; ax < w; ax++) {
-            tm[ay * gmap.xsize + ax] = pb->line[ay][ax];
+         if (*imp == 'b' || *imp == 'B') {
+            tm = map;
+            done = 1;
+         }
+         if (*imp == 'f' || *imp == 'F') {
+            tm = f_map;
+            done = 1;
          }
       }
-      destroy_bitmap (pb);
+
+      if (!exists (fname)) {
+         error_load (fname);
+         return;
+      }
+
    }
+
+   pcx_bitmap = load_bitmap (fname, pal);
+   if (pcx_bitmap->w < gmap.xsize)
+      w = pcx_bitmap->w;
+   else
+      w = gmap.xsize;
+
+   if (pcx_bitmap->h < gmap.ysize)
+      h = pcx_bitmap->h;
+   else
+      h = gmap.ysize;
+
+   for (ay = 0; ay < h; ay++) {
+      for (ax = 0; ax < w; ax++) {
+         tm[ay * gmap.xsize + ax] = pcx_bitmap->line[ay][ax];
+      }
+   }
+   destroy_bitmap (pcx_bitmap);
 }                               /* make_mapfrompcx () */
 
 END_OF_FUNCTION (make_mapfrompcx);
@@ -200,28 +246,28 @@ END_OF_FUNCTION (make_mapfrompcx);
 void maptopcx (void)
 {
    /* Foreground, middle, and background */
-   BITMAP *pf, *pm, *pb;
+   BITMAP *pcx_foreground, *pcx_middleground, *pcx_background;
    int jx, jy;
 
    /* Background PCX image */
-   pb = create_bitmap (gmap.xsize, gmap.ysize);
+   pcx_background = create_bitmap (gmap.xsize, gmap.ysize);
    /* Middle PCX image */
-   pm = create_bitmap (gmap.xsize, gmap.ysize);
+   pcx_middleground = create_bitmap (gmap.xsize, gmap.ysize);
    /* Foreground PCX image */
-   pf = create_bitmap (gmap.xsize, gmap.ysize);
+   pcx_foreground = create_bitmap (gmap.xsize, gmap.ysize);
    for (jy = 0; jy < gmap.ysize; jy++) {
       for (jx = 0; jx < gmap.xsize; jx++) {
-         pb->line[jy][jx] = map[jy * gmap.xsize + jx];
-         pm->line[jy][jx] = b_map[jy * gmap.xsize + jx];
-         pf->line[jy][jx] = f_map[jy * gmap.xsize + jx];
+         pcx_background->line[jy][jx] = map[jy * gmap.xsize + jx];
+         pcx_foreground->line[jy][jx] = b_map[jy * gmap.xsize + jx];
+         pcx_foreground->line[jy][jx] = f_map[jy * gmap.xsize + jx];
       }
    }
-   save_pcx ("mdback.pcx", pb, pal);
-   save_pcx ("mdmid.pcx", pm, pal);
-   save_pcx ("mdfore.pcx", pf, pal);
-   destroy_bitmap (pb);
-   destroy_bitmap (pm);
-   destroy_bitmap (pf);
+   save_pcx ("mdback.pcx", pcx_background, pal);
+   save_pcx ("mdmid.pcx", pcx_foreground, pal);
+   save_pcx ("mdfore.pcx", pcx_foreground, pal);
+   destroy_bitmap (pcx_background);
+   destroy_bitmap (pcx_foreground);
+   destroy_bitmap (pcx_foreground);
 }                               /* maptopcx () */
 
 END_OF_FUNCTION (maptopcx);
@@ -233,125 +279,137 @@ END_OF_FUNCTION (maptopcx);
  */
 void new_map (void)
 {
-   /* Name of the map */
    int response;
    int new_height = 0, new_width = 0, new_tileset = 0;
-   int p, q;
+   int done;
 
    cmessage ("Do you want to create a new map?");
    if (!yninput ())
       return;
 
-   // Redraw the screen, blank
-   blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+   draw_map ();
+   rect (double_buffer, 2, 2, 317, 43, 255);
+   rectfill (double_buffer, 3, 3, 316, 42, 0);
+   print_sfont (6, 6, "New map", double_buffer);
+   print_sfont (6, 18, "Width: ", double_buffer);
 
-   rect (screen, 2, 2, 317, 43, 255);
-   rectfill (screen, 3, 3, 316, 42, 0);
-   print_sfont (6, 6, "New map", screen);
+   done = 0;
+   while (!done) {
+      blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+      response = get_line (48, 18, strbuf, 4);
 
-   print_sfont (6, 18, "Width: ", screen);
-   response = get_line (48, 18, strbuf, 4);
-
-   /* Make sure the line isn't blank */
-   if (response == 0 || strlen (strbuf) < 1)
-      return;
-
-   new_width = atoi (strbuf);
-
-   /* Make sure the value is valid */
-   if (new_width < 20 || new_width > SW) {
-      cmessage ("Invalid width!");
-      wait_enter ();
-      return;
-   }
-
-   print_sfont (6, 26, "Height: ", screen);
-   response = get_line (54, 26, strbuf, 4);
-
-   /* Make sure the line isn't blank */
-   if (response == 0 || strlen (strbuf) < 1)
-      return;
-
-   new_height = atoi (strbuf);
-
-   /* Make sure the value is valid */
-   if (new_height < 15 || new_height > SH) {
-      cmessage ("Invalid height!");
-      wait_enter ();
-      return;
-   }
-
-   int loop = 1;
-   while (loop) {
-
-      rect (screen, 2, 2, 317, 43, 255);
-      rectfill (screen, 3, 3, 316, 42, 0);
-      print_sfont (6, 6, "New map", screen);
-
-      sprintf (strbuf, "Width: %d", new_width);
-      print_sfont (6, 18, strbuf, screen);
-      sprintf (strbuf, "Height: %d", new_height);
-      print_sfont (6, 26, strbuf, screen);
-
-      rectfill (screen, 3, 33, 316, 39, 0);
-      print_sfont (6, 34, "Choose a tile set (0-5): ", screen);
-      response = get_line (156, 34, strbuf, 2);
-
-      /* Make sure the line isn't blank */
-      if (response == 0 || strlen (strbuf) < 1)
+      /* If the user hits ESC, break out of the function entirely */
+      if (response == 0)
          return;
 
-      new_tileset = atoi (strbuf);
+      /* Make sure this line isn't blank */
+      if (strlen (strbuf) > 0) {
+         new_width = atoi (strbuf);
 
-      if (new_tileset > 5) {
-         cmessage ("Invalid tileset!");
-         wait_enter ();
-      } else {
-         sprintf (strbuf, "Load %s? (y/n)", icon_files[new_tileset]);
-         cmessage (strbuf);
-         if (yninput ()) {
-            loop = 0;
+         /* Make sure the value is valid */
+         if (new_width < 20 || new_width > SW) {
+            cmessage ("Invalid width!");
+            wait_enter ();
+         } else {
+            done = 1;
          }
       }
+   }
+   /* This is so incase we need to redraw the map, it'll have the information
+    * that the user passed into it
+    */
+   sprintf (strbuf, "%d", new_width);
+   print_sfont (48, 18, strbuf, double_buffer);
+   print_sfont (6, 26, "Height: ", double_buffer);
 
-      // Redraw the screen, blank
+   done = 0;
+   while (!done) {
       blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+      response = get_line (54, 26, strbuf, 4);
 
+      /* If the user hits ESC, break out of the new_map() loop entirely */
+      if (response == 0)
+         return;
+
+      /* Make sure the line isn't blank */
+      if (strlen (strbuf) > 0) {
+         new_height = atoi (strbuf);
+
+         /* Make sure the value is valid */
+         if (new_height < 15 || new_height > SH) {
+            cmessage ("Invalid height!");
+            wait_enter ();
+         } else {
+            done = 1;
+         }
+      }
+   }
+   /* This is incase we need to redraw the map, the information will still be
+    * visible to the user
+    */
+   sprintf (strbuf, "%d", new_height);
+   print_sfont (54, 26, strbuf, double_buffer);
+   sprintf (strbuf, "Choose a tile set (0-%d):", NUM_TILESETS - 1);
+   print_sfont (6, 34, strbuf, double_buffer);
+
+   done = 0;
+   while (!done) {
+      blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+      response = get_line (156, 34, strbuf, 2);
+
+      /* If the user hits ESC, break out of the new_map() loop entirely */
+      if (response == 0)
+         return;
+
+      /* Make sure the line isn't blank */
+      if (strlen (strbuf) > 0) {
+         new_tileset = atoi (strbuf);
+
+         /* Make sure the value is valid */
+         if (new_tileset < 0 || new_tileset > NUM_TILESETS - 1) {
+            /* TT TODO: The only bug I see so far is if the user enters a "bad"
+             * value, such as "Q" or "-"... it thinks the user entered "0"
+             */
+            cmessage ("Invalid tileset!");
+            wait_enter ();
+         } else {
+            sprintf (strbuf, "Load %s? (y/n)", icon_files[new_tileset]);
+            cmessage (strbuf);
+            if (yninput ()) {
+               done = 1;
+            }
+         }
+      }
    }
 
-   gmap.tileset = new_tileset;
-   gmap.xsize = new_width;
-   gmap.ysize = new_height;
+   /* Redraw the screen, blank */
+   blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
 
-   /* Default values for a map */
+   /* Default values for the new map */
    gmap.map_no = 0;
    gmap.zero_zone = 0;
    gmap.map_mode = 0;
-   gmap.can_save = 1;
+   gmap.can_save = 0;
+   gmap.tileset = new_tileset;
    gmap.use_sstone = 1;
+   gmap.can_warp = 0;
+   gmap.extra_byte = 0;
+   gmap.xsize = new_width;
+   gmap.ysize = new_height;
    gmap.pmult = 1;
    gmap.pdiv = 1;
-   gmap.song_file[0] = 0;
-   gmap.map_desc[0] = 0;
    gmap.stx = 0;
    gmap.sty = 0;
+   gmap.warpx = 0;
+   gmap.warpy = 0;
+   gmap.extra_sdword1 = 0;
+   gmap.extra_sdword2 = 0;
+   gmap.song_file[0] = 0;
+   gmap.map_desc[0] = 0;
 
    bufferize ();
-
-   pcx_buffer = load_pcx (icon_files[gmap.tileset], pal);
-   max_sets = (pcx_buffer->h / 16);
-   for (p = 0; p < max_sets; p++)
-      for (q = 0; q < ICONSET_SIZE; q++)
-         blit (pcx_buffer, icons[p * ICONSET_SIZE + q], q * 16, p * 16, 0, 0,
-               16, 16);
-   icon_set = 0;
-   destroy_bitmap (pcx_buffer);
+   update_tileset ();
    init_entities ();
-
-/* TT TODO:
- * We need to clear 'map_fname'
- */
-   //*map_fname = "";
 }                               /* new_map () */
 
 END_OF_FUNCTION (new_map);
@@ -482,3 +540,31 @@ void save_map (void)
 }                               /* save_map () */
 
 END_OF_FUNCTION (save_map);
+
+
+/*! \brief Check to see if a requested PCX file is available
+ *
+ * Another very useful function
+ * 
+ * /param   pcx_buf Buffer to save the PCX image back into
+ * /param   pcx_file PCX file to load
+ * /param   pcx_pal Palette to set the image to
+ * /param   critical If file cannot be found, exit the program with an error
+ */
+void set_pcx (BITMAP **pcx_buf, char *pcx_file, PALETTE pcx_pal, int critical)
+{
+   if (exists (pcx_file))
+      *pcx_buf = load_pcx (pcx_file, pcx_pal);
+   else if (critical) {
+      /* This means that this file is critical to the program, so we need to
+       * exit the program completely, as this cannot be recovered from.
+       */
+      sprintf (strbuf, "PCX image could not be found: %s", pcx_file);
+      allegro_message (strbuf);
+      cleanup ();
+      exit (EXIT_FAILURE);
+   }
+   return;
+}                               /* set_pcx () */
+
+END_OF_FUNCTION (set_pcx)

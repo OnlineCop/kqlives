@@ -17,6 +17,11 @@
 #include "mapdraw.h"
 #include "../include/disk.h"
 
+/* Something for allegro version compatibility */
+/* ..can we use the textout_ex() and friends? */
+#if (ALLEGRO_VERSION>=4 && ALLEGRO_SUB_VERSION>=1)
+#define HAVE_TEXT_EX
+#endif
 
 /* globals */
 
@@ -50,8 +55,10 @@ s_entity gent[50];
 int noe = 0;
 
 /* Default values, incase an option is not specified */
-int show_layer1 = 1, show_layer2 = 1, show_layer3 = 1, show_shadows = 1,
-   show_zones = 0, show_obstacles = 0, show_entities = 1;
+int d_layer1 = 1, d_layer2 = 1, d_layer3 = 1, d_shadows = 1,
+   d_zones = 0, d_obstacles = 0, d_entities = 1;
+int show_layer1, show_layer2, show_layer3, show_shadows,
+   show_zones, show_obstacles, show_entities;
 
 char *icon_files[NUM_TILESETS] = {
    "land.pcx", "newtown.pcx", "castle.pcx",
@@ -178,26 +185,31 @@ END_OF_FUNCTION (load_map_batch);
 /*! \brief Display help on the command syntax */
 static void usage (char *argv)
 {
-   printf ("Map to PCX converter for KQ.\n");
-   printf ("Usage: %s [+/-][options] filename(s)\n", argv);
-   printf ("Options:\n");
-   printf ("   +  includes the option: it WILL appear in the PCX image.\n");
-   printf ("   -  negates an option: it will not appear in the PCX image.\n");
-   printf ("   1  shows layer 1 (default ON)\n");
-   printf ("   2  shows layer 2 (default ON)\n");
-   printf ("   3  shows layer 3 (default ON)\n");
-   printf ("   e  shows the entities (default OFF)\n");
-   printf ("   o  shows the obstacles (default OFF)\n");
-   printf ("   s  shows the shadows (default ON)\n");
-   printf ("   z  shows the zones (default OFF)\n");
-   printf ("   filename  is the .MAP file(s) to be used\n\n");
-   printf ("Example: %s +1oz -23es town1.map town2.map\n\n", argv);
-   printf ("  Output will be `town1.pcx' and `town2.pcx' with only level 1, obstacles,\n");
-   printf ("    and zones showing.\n");
-   printf ("  Layers 2 and 3, entities, and shadows will NOT be included.\n");
+   fprintf (stdout, "Map to PCX converter for KQ.\n");
+   fprintf (stdout, "Usage: %s [+/-][options] [-v] filename(s)\n", argv);
+   fprintf (stdout, "Options:\n");
+   fprintf (stdout,
+            "   +  includes the option: it WILL appear in the PCX image.\n");
+   fprintf (stdout,
+            "   -  negates an option: it will not appear in the PCX image.\n");
+   fprintf (stdout, "   1  shows layer 1 (default ON)\n");
+   fprintf (stdout, "   2  shows layer 2 (default ON)\n");
+   fprintf (stdout, "   3  shows layer 3 (default ON)\n");
+   fprintf (stdout, "   e  shows the entities (default OFF)\n");
+   fprintf (stdout, "   o  shows the obstacles (default OFF)\n");
+   fprintf (stdout, "   s  shows the shadows (default ON)\n");
+   fprintf (stdout, "   z  shows the zones (default OFF)\n\n");
+   fprintf (stdout, "   -v displays %s output in verbose mode\n\n", argv);
+   fprintf (stdout, "   filename  is the .MAP file(s) to be used\n");
+   fprintf (stdout, "Example: %s +1oz -23es town1.map town2.map\n\n", argv);
+   fprintf (stdout,
+            "  Output will be `town1.pcx' and `town2.pcx' with only level 1, obstacles,\n");
+   fprintf (stdout, "    and zones showing.\n");
+   fprintf (stdout,
+            "  Layers 2 and 3, entities, and shadows will NOT be included.\n");
 }                               /* usage () */
 
-END_OF_FUNCTION (void usage);
+END_OF_FUNCTION (usage);
 
 
 /*! \brief Perform visual affects to output PCX file according
@@ -224,31 +236,54 @@ void visual_map_ex (const char *op)
                draw_sprite (bmp, icons[b_map[w]], i * 16, j * 16);
             if (show_layer3)
                draw_sprite (bmp, icons[f_map[w]], i * 16, j * 16);
+            // TT TODO: We need to draw entities here
+
             if (show_shadows)
                draw_trans_sprite (bmp, shadow[sh_map[w]], i * 16, j * 16);
 
-            if (show_zones) {
-               if (z_map[w] > 0 && z_map[w] < MAX_ZONES) {
-                  if (z_map[w] < 10) {
-                     /* The zone's number is single-digit */
-                     textprintf_ex (bmp, font, i * 16 + 4, j * 16 + 4,
-                                    makecol (255, 255, 255), 0, "%d",
-                                    z_map[w]);
-                  } else if (z_map[w] < 100) {
-                     /* The zone's number is double-digit */
-                     textprintf_ex (bmp, font, i * 16, j * 16 + 4,
-                                    makecol (255, 255, 255), 0, "%d",
-                                    z_map[w]);
-                  } else if (i < 1000) {
-                     /* The zone's number is triple-digit */
-                     textprintf_ex (bmp, font, i * 16 + 4, j * 16,
-                                    makecol (255, 255, 255), 0, "%d",
-                                    (int) (z_map[w] / 100));
-                     textprintf_ex (bmp, font, i * 16, j * 16 + 8,
-                                    makecol (255, 255, 255), 0, "%02d",
-                                    (int) (z_map[w] % 100));
-                  }
+            if ((show_zones) && (z_map[w] > 0) && (z_map[w] < MAX_ZONES)) {
+/* This check is here because of the differing versions of the Allegro library */
+#ifdef HAVE_TEXT_EX
+               if (z_map[w] < 10) {
+                  /* The zone's number is single-digit, center vert+horiz */
+                  textprintf_ex (bmp, font, i * 16 + 4, j * 16 + 4,
+                                 makecol (255, 255, 255), 0, "%d", z_map[w]);
+               } else if (z_map[w] < 100) {
+                  /* The zone's number is double-digit, center only vert */
+                  textprintf_ex (bmp, font, i * 16, j * 16 + 4,
+                                 makecol (255, 255, 255), 0, "%d", z_map[w]);
+               } else if (z_map[w] < 1000) {
+                  /* The zone's number is triple-digit.  Print the 100's digit
+                   * in top-center of the square; the 10's and 1's digits on
+                   * bottom of the square */
+                  textprintf_ex (bmp, font, i * 16 + 4, j * 16,
+                                 makecol (255, 255, 255), 0, "%d",
+                                 (int) (z_map[w] / 100));
+                  textprintf_ex (bmp, font, i * 16, j * 16 + 8,
+                                 makecol (255, 255, 255), 0, "%02d",
+                                 (int) (z_map[w] % 100));
                }
+#else
+               if (z_map[w] < 10) {
+                  /* The zone's number is single-digit, center vert+horiz */
+                  textprintf (bmp, font, i * 16 + 4, j * 16 + 4,
+                              makecol (255, 255, 255), "%d", z_map[w]);
+               } else if (z_map[w] < 100) {
+                  /* The zone's number is double-digit, center only vert */
+                  textprintf (bmp, font, i * 16, j * 16 + 4,
+                              makecol (255, 255, 255), "%d", z_map[w]);
+               } else if (z_map[w] < 1000) {
+                  /* The zone's number is triple-digit.  Print the 100's digit
+                   * in top-center of the square; the 10's and 1's digits on
+                   * bottom of the square */
+                  textprintf (bmp, font, i * 16 + 4, j * 16,
+                              makecol (255, 255, 255), "%d",
+                              (int) (z_map[w] / 100));
+                  textprintf (bmp, font, i * 16, j * 16 + 8,
+                              makecol (255, 255, 255), "%02d",
+                              (int) (z_map[w] % 100));
+               }
+#endif
             }
 
             if (show_obstacles) {
@@ -294,41 +329,61 @@ END_OF_FUNCTION (visual_map_ex);
 int main (int argc, char *argv[])
 {
    // Make sure that we have some sort of input; exit with error if not
-   if (argc < 2) {
-      usage (*argv);
-      return 1;
+   if (argc == 1) {
+      usage (argv[0]);
+      return 0;
    }
-
-   char fn[PATH_MAX];
-   int i, k;
+   char fn[PATH_MAX], *filenames[PATH_MAX];
+   int i, k, number_of_files = 0, verbose = 0;
    COLOR_MAP cmap;
    allegro_init ();
    create_trans_table (&cmap, pal, 128, 128, 128, NULL);
    color_map = &cmap;
 
    for (i = 1; i < argc; i++) {
-      if (argv[i][0] == '-') {
-         if (strcmp (argv[i] + 1, "-help") == 0) {
-            usage (*argv);
-            return 0;
-         }
-         /* TT: This means to exclude an effect */
-         show_layer1 = strchr (argv[i] + 1, '1') ? 0 : show_layer1;
-         show_layer2 = strchr (argv[i] + 1, '2') ? 0 : show_layer2;
-         show_layer3 = strchr (argv[i] + 1, '3') ? 0 : show_layer3;
-         show_entities = strchr (argv[i] + 1, 'e') ? 0 : show_entities;
-         show_obstacles = strchr (argv[i] + 1, 'o') ? 0 : show_obstacles;
-         show_shadows = strchr (argv[i] + 1, 's') ? 0 : show_shadows;
-         show_zones = strchr (argv[i] + 1, 'z') ? 0 : show_zones;
+      if (!strcmp (argv[i], "--help") || !strcmp (argv[i], "-h")) {
+         usage (argv[0]);
+         return 0;
+      }
+      if (!strcmp (argv[i], "-v") || !strcmp (argv[i], "--verbose"))
+         verbose = 1;
+   }
+
+   show_layer1 = d_layer1;
+   show_layer2 = d_layer2;
+   show_layer3 = d_layer3;
+   show_entities = d_entities;
+   show_obstacles = d_obstacles;
+   show_shadows = d_shadows;
+   show_zones = d_zones;
+   if (verbose)
+      fprintf (stdout, "\nStarting %s...\n", argv[0]);
+   for (i = 1; i < argc; i++) {
+      // Do not allow "--" options to be passed
+      if (argv[i][0] == '-' && argv[i][1] == '-') {
+      } else if (argv[i][0] == '-') {
+         /* This means to exclude an effect */
+         show_layer1 = strchr (argv[i] + 1, '1') ? 0 : d_layer1;
+         show_layer2 = strchr (argv[i] + 1, '2') ? 0 : d_layer2;
+         show_layer3 = strchr (argv[i] + 1, '3') ? 0 : d_layer3;
+         show_entities = strchr (argv[i] + 1, 'e') ? 0 : d_entities;
+         show_obstacles = strchr (argv[i] + 1, 'o') ? 0 : d_obstacles;
+         show_shadows = strchr (argv[i] + 1, 's') ? 0 : d_shadows;
+         show_zones = strchr (argv[i] + 1, 'z') ? 0 : d_zones;
       } else if (argv[i][0] == '+') {
-         /* TT: This means to include an effect */
-         show_layer1 = strchr (argv[i] + 1, '1') ? 1 : show_layer1;
-         show_layer2 = strchr (argv[i] + 1, '2') ? 1 : show_layer2;
-         show_layer3 = strchr (argv[i] + 1, '3') ? 1 : show_layer3;
-         show_entities = strchr (argv[i] + 1, 'e') ? 1 : show_entities;
-         show_obstacles = strchr (argv[i] + 1, 'o') ? 1 : show_obstacles;
-         show_shadows = strchr (argv[i] + 1, 's') ? 1 : show_shadows;
-         show_zones = strchr (argv[i] + 1, 'z') ? 1 : show_zones;
+         /* This means to include an effect */
+         show_layer1 = strchr (argv[i] + 1, '1') ? 1 : d_layer1;
+         show_layer2 = strchr (argv[i] + 1, '2') ? 1 : d_layer2;
+         show_layer3 = strchr (argv[i] + 1, '3') ? 1 : d_layer3;
+         show_entities = strchr (argv[i] + 1, 'e') ? 1 : d_entities;
+         show_obstacles = strchr (argv[i] + 1, 'o') ? 1 : d_obstacles;
+         show_shadows = strchr (argv[i] + 1, 's') ? 1 : d_shadows;
+         show_zones = strchr (argv[i] + 1, 'z') ? 1 : d_zones;
+      } else {
+         if (exists (argv[i]))
+            filenames[number_of_files++] = argv[i];
+         else
+            fprintf (stderr, "Unrecognized argument: %s\n", argv[i]);
       }
    }
 
@@ -359,6 +414,28 @@ int main (int argc, char *argv[])
       }
    }
 
+   for (i = 0; i < number_of_files; i++) {
+      if (exists (filenames[i])) {
+         if (verbose)
+            fprintf (stdout, "- Loading file #%d: %s\n", i + 1,
+                     (char *) filenames[i]);
+         replace_extension (fn, filenames[i], "pcx", sizeof (fn));
+         if (verbose)
+            fprintf (stdout, "  - %s replaced by extension .PCX: %s\n",
+                     filenames[i], fn);
+         load_map_batch (filenames[i]);
+         if (verbose)
+            fprintf (stdout, "  - Setting palette\n");
+         set_palette (pal);
+         if (verbose)
+            fprintf (stdout, "  - Saving %s...\n", fn);
+         visual_map_ex (fn);
+         if (verbose)
+            fprintf (stdout, "  - \"%s\" created with mode \"%d\"\n", fn,
+                     gmap.map_mode);
+      }
+   }
+#if 0
    for (i = 1; i < argc; i++) {
       if (argv[i][0] != '-' && argv[i][0] != '+') {
          replace_extension (fn, argv[i], "pcx", sizeof (fn));
@@ -368,6 +445,7 @@ int main (int argc, char *argv[])
          TRACE ("%s mode %d\n", argv[i], gmap.map_mode);
       }
    }
+#endif
 
    return 0;
 }                               /* main () */

@@ -112,7 +112,7 @@ void draw_entdata (int en)
    sprintf (strbuf, "1 - change entity sprite (%d)", gent[en].chrx);
    print_sfont (160, SH - 46, strbuf, double_buffer);
 
-   /* TT: hack */
+   /* Display the direction facing: makes more sense that just "1" or "3" */
    if (gent[en].facing == 0)
       print_sfont (160, SH - 40, "8 - direction facing (S)", double_buffer);
    if (gent[en].facing == 1)
@@ -122,7 +122,6 @@ void draw_entdata (int en)
    if (gent[en].facing == 3)
       print_sfont (160, SH - 40, "8 - direction facing (E)", double_buffer);
 
-   /* TT: end hack */
    if (gent[en].obsmode == 0)
       strcpy (strbuf, "7 - ignore obstructions");
    else
