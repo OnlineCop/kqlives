@@ -28,7 +28,7 @@
 
 /*  RB IDEA: We can use the COUNT definition of the new datafile  */
 /*           dump rather than hardcoding the value here.          */
-#define MAX_SAMPLES  42
+#define MAX_SAMPLES  43
 
 #define SND_MENU     0
 #define SND_CLICK    1
@@ -56,13 +56,13 @@ extern char debugging;          /*  combat.c, setup.c, sgame.c  */
 
 
 
-#if 0
-extern struct DATAFILE *sfx[MAX_SAMPLES];       /*  staticed  */
+/* #if 0 */
+/* extern struct DATAFILE *sfx[MAX_SAMPLES];       /\*  staticed  *\/ */
 
-int getavalue (char *, int, int, int, int);     /*  staticed  */
-int load_samples (void);        /*  staticed  */
-int getakey (void);             /*  staticed  */
-#endif /*  0  */
+/* int getavalue (char *, int, int, int, int);     /\*  staticed  *\/ */
+/* int load_samples (void);        /\*  staticed  *\/ */
+/* int getakey (void);             /\*  staticed  *\/ */
+/* #endif /\*  0  *\/ */
 
 
 

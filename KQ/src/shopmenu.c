@@ -1082,8 +1082,12 @@ void inn (char *iname, int gpc, int pay)
                {
                   gp -= gpts;
                   do_inn_effects ();
+                  stop = 1;
                }
-             stop = 1;
+             else
+               {
+                  stop = 2;
+               }
           }
      }
    timer_count = 0;

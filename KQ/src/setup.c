@@ -712,7 +712,7 @@ static int load_samples (void)
       "TELEPORT_WAV", "CURE_WAV", "RECOVER_WAV", "ARROW_WAV",
       "BOLT2_WAV", "BOLT3_WAV", "FLAME_WAV", "BLIND_WAV",
       "INN_WAV", "CONFUSE_WAV", "DISPEL_WAV", "DOOM_WAV",
-      "DRAIN_WAV", "GAS_WAV"
+      "DRAIN_WAV", "GAS_WAV", "EXPLODE_WAV"
    };
    int index;
 
@@ -759,7 +759,7 @@ void free_samples (void)
  * be played is the 'bad-move' effect, than do something visually
  * so that even if sound is off you know you did something bad :)
  * \param efc Effect to play (index in sfx[])
- * \param panning Left/right pan - see Allegro's play_sample
+ * \param panning Left/right pan - see Allegro's play_sample()
 */
 void play_effect (int efc, int panning)
 {

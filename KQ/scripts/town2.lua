@@ -127,14 +127,22 @@ function zone_handler(zn)
     door_out(66,39);
   
   elseif (zn == 17) then
+    -- PH added code to check if you do stay over night
+    -- This is done indirectly; if your gp goes down it
+    -- means you must have spent some here.
+    local old_gp=get_gp();
     inn("Wayside Inn",30,1);
-    if (get_progress(P_FIGHTONBRIDGE) == 4) then
-      set_progress(P_FIGHTONBRIDGE,5);
-      set_progress(P_SHOWBRIDGE,1);
-    end
-    if (get_progress(P_GETPARTNER) < 2) then
-      set_progress(P_GETPARTNER,3);
-      autoexec();
+    -- This means you MUST stay at the inn before the 
+    -- bridge gets repaired. Correct?
+    if (get_gp()<old_gp) then
+      if (get_progress(P_FIGHTONBRIDGE) == 4) then
+        set_progress(P_FIGHTONBRIDGE,5);
+        set_progress(P_SHOWBRIDGE,1);
+      end
+      if (get_progress(P_GETPARTNER) < 2) then
+        set_progress(P_GETPARTNER,3);
+        autoexec();
+      end
     end
   
   elseif (zn == 18) then

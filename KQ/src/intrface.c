@@ -24,8 +24,9 @@
  * This file implements the interface between
  * the C code and the Lua scripts.
  *
- * \author JB
+ * \author JB,PH
  * \date ??????
+ * \date Added extra fns 20021125
  */
 
 #include <stdio.h>
@@ -200,10 +201,12 @@ static int KQ_check_key (lua_State *);
 static int KQ_log (lua_State *);
 static int KQ_wait_enter (lua_State *);
 static void check_map_change (void);
+/* New functions */
+/*static int KQ_get_tile_all(lua_State*);*/
+static int KQ_copy_tile_all (lua_State *);
 
 
-
-static const struct luaL_reg lrs[NUM_IFUNCS] = {
+static const struct luaL_reg lrs[] = {
    {"get_pidx", KQ_get_pidx},
    {"get_progress", KQ_get_progress},
    {"set_progress", KQ_set_progress},
@@ -345,7 +348,10 @@ static const struct luaL_reg lrs[NUM_IFUNCS] = {
    {"read_controls", KQ_read_controls},
    {"check_key", KQ_check_key},
    {"log", KQ_log},
-   {"wait_enter", KQ_wait_enter}
+   {"wait_enter", KQ_wait_enter},
+   /*   {"get_tile_all", KQ_get_tile_all}, */
+   {"copy_tile_all", KQ_copy_tile_all},
+   {NULL, NULL}
 };
 
 
@@ -1004,6 +1010,59 @@ static int KQ_set_tile_all (lua_State * L)
       set_obs (tvs[0], tvs[1], tvs[6]);
    if (tvs[7] >= 0)
       set_shadow (tvs[0], tvs[1], tvs[7]);
+   return 0;
+}
+
+/* PH: not used (yet?), therefore commented out */
+/* static int KQ_get_tile_all(lua_State* L) { */
+/* 	int tx=lua_tonumber(L, 1); */
+/* 	int ty=lua_tonumber(L, 2); */
+/* 	int offset=tx+ty*g_map.xsize; */
+
+/* 	lua_pushnumber(L, map_seg[offset]); */
+/* 	lua_pushnumber(L, b_seg[offset]); */
+/* 	lua_pushnumber(L, f_seg[offset]); */
+/* 	lua_pushnumber(L, z_seg[offset]); */
+/* 	lua_pushnumber(L, o_seg[offset]); */
+/* 	lua_pushnumber(L, s_seg[offset]); */
+/* 	return 6; */
+/* } */
+
+/*! \brief Copy tile block
+ *
+ * Copies a region of the map (all layers).
+ * Invocation: copy_tile_all(source_x, source_y, dest_x, dest_y, width, height).
+ * These params are meant to be similar to
+ * the allegro blit() function.
+ * \bugs No error checking is done. Uses direct access to the struct s_map.
+ * \author PH
+ * \date 20021125
+ */
+static int KQ_copy_tile_all (lua_State * L)
+{
+   int sx = lua_tonumber (L, 1);
+   int sy = lua_tonumber (L, 2);
+   int dx = lua_tonumber (L, 3);
+   int dy = lua_tonumber (L, 4);
+   int wid = lua_tonumber (L, 5);
+   int hgt = lua_tonumber (L, 6);
+   int os, od, i, j;
+   /*      sprintf(strbuf, "Copy (%d,%d)x(%d,%d) to (%d,%d)", sx,sy,wid,hgt,dx,dy);
+      klog(strbuf); */
+   for (j = 0; j < hgt; ++j)
+     {
+        for (i = 0; i < wid; ++i)
+          {
+             os = sx + i + g_map.xsize * (sy + j);
+             od = dx + i + g_map.xsize * (dy + j);
+             map_seg[od] = map_seg[os];
+             f_seg[od] = f_seg[os];
+             b_seg[od] = b_seg[os];
+             z_seg[od] = z_seg[os];
+             o_seg[od] = o_seg[os];
+             s_seg[od] = s_seg[os];
+          }
+     }
    return 0;
 }
 
@@ -1987,14 +2046,23 @@ static int KQ_wait_enter (lua_State * L)
  */
 void do_luainit (char *fname)
 {
-   int i, oldtop;
-
+   int oldtop;
+   const struct luaL_reg *rg = lrs;
    sprintf (strbuf, "%s%s.lob", SCRIPT_DIR, fname);
    theL = lua_open (0);
-   for (i = 0; i < NUM_IFUNCS; i++)
-      lua_register (theL, lrs[i].name, lrs[i].func);
+   if (theL == NULL)
+      program_death ("Could not initialise scripting engine");
+   while (rg->name)
+     {
+        lua_register (theL, rg->name, rg->func);
+        ++rg;
+     }
    oldtop = lua_gettop (theL);
-   lua_dofile (theL, strbuf);
+   if (lua_dofile (theL, strbuf) != 0)
+     {
+        sprintf (strbuf, "Could not open script:%s", fname);
+        program_death (strbuf);
+     }
    lua_settop (theL, oldtop);
 }
 

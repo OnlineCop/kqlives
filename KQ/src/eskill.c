@@ -37,7 +37,9 @@
 #include "res.h"
 #include "progress.h"
 
-
+/* \file 
+ * \brief Enemy skills 
+ */
 
 /*
    Just a function to process each enemy skill by

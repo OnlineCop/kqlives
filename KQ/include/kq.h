@@ -256,24 +256,24 @@ typedef struct
 {
    unsigned char map_no;        /*!<Map identifier */
    unsigned char zero_zone;     /*!<Non-zero if zone 0 triggers an event */
-   unsigned char map_mode;
+   unsigned char map_mode;      /*!< Map mode (see draw_map()) */
    unsigned char can_save;      /*!< Non-zero if Save is allowed in this map */
-   unsigned char tileset;
+   unsigned char tileset;       /*!< Which tile-set to use */
    unsigned char use_sstone;    /*!< Non-zero if sunstone works on this map */
    unsigned char can_warp;      /*!< Non-zero if Warp is allowed in this map */
-   unsigned char extra_byte;
-   int xsize;
-   int ysize;
-   int pmult;
-   int pdiv;
-   int stx;
-   int sty;
-   int warpx;
-   int warpy;
-   int extra_sdword1;
-   int extra_sdword2;
-   char song_file[16];
-   char map_desc[40];
+   unsigned char extra_byte;    /*!< Currently unused */
+   int xsize;                   /*!< Map width */
+   int ysize;                   /*!< Map height */
+   int pmult;                   /*!< Parallax multiplier */
+   int pdiv;                    /*!< Parallax divider */
+   int stx;                     /*!< Default start x-coord */
+   int sty;                     /*!< Default start y-coord */
+   int warpx;                   /*!< x-coord where warp spell takes you to (see special_spells()) */
+   int warpy;                   /*!< y-coord where warp spell takes you to (see special_spells()) */
+   int extra_sdword1;           /*!< Not used */
+   int extra_sdword2;           /*!<Not used */
+   char song_file[16];          /*!< Base file name for map song */
+   char map_desc[40];           /*!< Map name (shown when map first appears) */
 }
 s_map;
 

@@ -632,6 +632,9 @@ void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
    pack_fread (o_seg, (g_map.xsize * g_map.ysize), pf);
    pack_fclose (pf);
 
+   /* PH fixme: cc[] were not initialised to zero */
+   cc[0] = cc[1] = cc[2] = cc[3] = 0;
+
    for (i = 0; i < g_map.xsize * g_map.ysize; i++)
      {
         if (map_seg[i] > 0)
