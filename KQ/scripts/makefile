@@ -21,5 +21,5 @@ ifndef NO_PERL
 	perl prep.pl < $< | luac -o $@ -
 else
 %.lob: %.lua $(INCLUDES)
-	$(CPP) $(foreach X, $(INCLUDES), -imacros $(X)) $< | luac -o $@ -
+	$(CPP) $(foreach X, $(INCLUDES), -include $(X)) $< | luac -o $@ -
 endif
