@@ -1,3 +1,14 @@
+/***************************************************************************\
+ * This map editor is for the KQ game, supported by the kqlives community. *
+ * Comments and suggestions about the editor are welcome.  Please join our *
+ * mailing list: kqlives-main@lists.sourceforge.net                        *
+ *                                                                         *
+ * Visit our website: http://kqlives.sourceforge.net/index.php             *
+ *                                                                         *
+ * Mapdata.c contains palette color schemes, font face, etc.               *
+\***************************************************************************/
+
+
 #include <allegro.h>
 #include "mapdraw.h"
 
@@ -83,6 +94,11 @@ PALETTE pal = {
 {42, 63, 63, 0}, {46, 63, 63, 0}, {50, 63, 63, 0}, {63, 63, 63, 0}
 };
 
+
+/*! \brief Font layout
+ *
+ * Create the font layout for the map editor
+ */
 void getfont (void)
 {
    int a, b;

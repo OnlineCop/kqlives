@@ -35,56 +35,6 @@
 #include "../include/structs.h"
 
 
-#if 0
-typedef struct
-{
-   unsigned char chrx;     /* Entity's identity (what s/he looks like) */
-   unsigned short x;       /* x-coord on map */
-   unsigned short y;       /* y-coord on map */
-   unsigned short tilex;   /* x-coord tile that entity is standing on */
-   unsigned short tiley;   /* y-coord tile that entity is standing on */
-   unsigned char id;       /* Entity type (fighter, enemy, normal) */
-   unsigned char active;   /* "Alive/Showing on map" or not */
-   unsigned char facing;   /* Direction */
-   unsigned char moving;   /* In the middle of a move */
-   unsigned char movcnt;   /* How far along the move entity is */
-   unsigned char framectr; /* Counter for determining animation frame */
-   unsigned char movemode; /* Stand, wander, script or chasing */
-   unsigned char obsmode;  /* Determine if affected by obstacles or not */
-   unsigned char delay;    /* Movement delay (between steps) */
-   unsigned char delayctr; /* Counter for movement delay */
-   unsigned char speed;    /* How hyperactive the entity is */
-   unsigned char scount;
-   unsigned char cmd;      /* Move/Wait/Facing command */
-   unsigned char sidx;     /* Script ID number */
-   unsigned char extra;
-   unsigned char chasing;  /* Entity is following another */
-   int cmdnum;             /* Number of times we need to repeat 'cmd' */
-   unsigned char atype;
-   unsigned char snapback; /* Snaps back to direction previously facing */
-   unsigned char facehero; /* Look at player when talked to */
-   unsigned char transl;   /* Entity is see-through or not */
-   char script[60];        /* Movement/action script (pacing, etc.) */
-}
-s_entity;
-
-
-typedef struct
-{
-   unsigned char map_no, zero_zone, map_mode, can_save;
-   unsigned char tileset, use_sstone, can_warp, extra_byte;
-   int xsize, ysize;
-   int pmult, pdiv;
-   int stx, sty;
-   int warpx, warpy;
-   int extra_sdword1, extra_sdword2;
-   char song_file[16];
-   char map_desc[40];
-}
-ss_map;
-#endif
-
-
 typedef struct
 {
    int entities, shadows, obstacles, zones;
@@ -115,6 +65,7 @@ void copy_layer (void);
 void copy_region (void);
 void describe_map (void);
 void displace_entities (void);
+void draw_ents (void);
 void draw_entdata (int);
 void draw_map (void);
 void draw_menubars (void);
@@ -124,13 +75,15 @@ void getfont (void);
 void global_change (void);
 void init_entities (void);
 void klog (char *);
-void load_map (void);
+void prompt_load_map (void);
+void load_map (char *);
 void make_mapfrompcx (void);
 void maptopcx (void);
 void new_map (void);
 void paste_region (int, int);
 void paste_region_special (int, int);
 void place_entity (int, int);
+void preview_map (void);
 void print_sfont (int, int, char *, BITMAP *);
 void process_controls (void);
 void resize_map (void);
@@ -148,20 +101,21 @@ extern BITMAP *font6;
 extern BITMAP *icons[];
 extern PALETTE pal;
 
+extern BITMAP *eframes[MAX_EPICS][12];
+
 extern char *icon_files[];
 extern char *strbuf;
 extern char map_fname[];
 
 extern int draw_mode, htiles, vtiles;
-extern int noe, cent;
+extern int number_of_ents, current_ent;
 
 extern s_entity gent[];
 extern s_map gmap;
 extern s_show showing;
 
-extern short gx, gy;
+extern short window_x, window_y;
 extern short icon_set, max_sets;
 
-extern unsigned char *z_map, *cz_map, *sh_map, *cs_map, *o_map, *co_map;
-
 extern unsigned short *map, *b_map, *f_map, *c_map, *cf_map, *cb_map;
+extern unsigned char *z_map, *sh_map, *o_map, *cz_map, *csh_map, *co_map;
