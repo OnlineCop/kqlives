@@ -1203,7 +1203,7 @@ static int attack_result (int ar, int dr)
 	     cfch = 1;
 	     if (ar_cs == 1)
 		cfch = 2;
-
+	     /* PH I _think_ this makes Sensar 2* as likely to make a critical hit */
 	     if (pidx[ar] == SENSAR)
 		cfch = cfch * 2;
 
@@ -1465,14 +1465,21 @@ static void heroes_win (void)
 /*                                                                           */
 /*  Author  : Josh Bolduc                                                    */
 /*  Created : ???????? - ??:??                                               */
-/*  Updated : Never.                                                         */
+/*  Updated : PH 17-sep-2002 added cheat mode                                */
 /*  Purpose : Do what it takes to put a fighter out of commission.           */
 /*  Returns : Nothing.                                                       */
 /*                                                                           */
 void fkill (int victim)
 {
    int index;
-
+   /* PH Combat cheat - when a hero dies s/he is mysteriously boosted back   */ 
+   /* to full HP */
+#ifdef KQ_CHEATS
+   if (cheat && victim<2) {
+     fighter[victim].hp=fighter[victim].mhp;
+     return;
+   }
+#endif
    for (index = 0; index < 24; index++)
       fighter[victim].sts[index] = 0;
 

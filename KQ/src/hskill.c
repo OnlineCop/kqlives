@@ -173,6 +173,8 @@ int skill_use (int who)
 		  fight (who, tgt, 1);
 	       }
 	  }
+	/* PH Is this a bug? 'a' is initially set to fighter[who].mhp/20, which makes sense */
+	/* however 'a' is re-used in the loop above, so its value is a bit indeterminate here */
 	fighter[who].hp -= (a * 2);
 	ta[who] = (a * 2);
 	dct = 0;

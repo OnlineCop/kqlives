@@ -91,6 +91,7 @@ void parse_setup (void)
    jbctrl = 1;
    jbenter = 2;
    jbesc = 3;
+   /* PH Why in the world doesn't he use Allegro cfg functions here? */
    if (!(s = fopen ("setup.cfg", "r")))
      {
 	klog ("Could not open setup.cfg - Using defaults.");

@@ -44,9 +44,9 @@ OBJECTS := $(addprefix $(OBJDIR)/, $(addsuffix .$(OBJ_SUFFIX), $(FILES)))
 
 
 #                                                                             #
-#  By default, and as unique target, build the project.                       #
+#  By default,  build the project and scripts.                                #
 #                                                                             #
-default : $(EXEC)
+default : $(EXEC) scripting
 
 $(EXEC) : $(OBJECTS)
 	$(LINKER) $^ -o $@ $(LFLAGS)

@@ -47,7 +47,7 @@ ALLEGRO := $(addsuffix .lib, $(LIBRARY))
 #                                                                             #
 #  By default build the example.                                              #
 #                                                                             #
-default : $(RUNNER) $(EXEC)
+default : $(RUNNER) $(EXEC) scripting
 
 $(RUNNER) : $(SRC_DIR)/misc/runner.$(SRC_SUFFIX)
 	$(GCC) $< -o $@

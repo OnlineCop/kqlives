@@ -1179,6 +1179,7 @@ void adjust_mp (int who, int amt)
    This adjusts a fighter's stats by applying the effects
    of status-affecting spells.
 */
+/* PH This returns a struct by value; a good thing??? */
 s_fighter status_adjust (int w)
 {
    s_fighter tf;

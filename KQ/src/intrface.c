@@ -1965,6 +1965,8 @@ void do_luainit (char *fname)
    for (i = 0; i < NUM_IFUNCS; i++)
       lua_register (theL, lrs[i].name, lrs[i].func);
    oldtop = lua_gettop (theL);
+   /* PH TODO check the return value for errors */
+   /* a buggy (or missing) compiled script is a common source of error */
    lua_dofile (theL, strbuf);
    lua_settop (theL, oldtop);
 }
@@ -1978,6 +1980,7 @@ void do_luacheat (void)
      {
 	sprintf (strbuf, "%scheat.lob", SCRIPT_DIR);
 	lua_dofile (theL, strbuf);
+	/* PH FIXME cheat_loaded=1; here surely?? */
      }
    lua_getglobal (theL, "cheat");
    lua_call (theL, 0, 0);

@@ -813,6 +813,7 @@ static void draw_textbox (int bstyle)
 /*
    Draw a regular text bubble and display the text.
 */
+/* PH I'd like to make this divide a long string into lines/pages automatically */
 void bubble_text (int who, char *sp1, char *sp2, char *sp3, char *sp4)
 {
    strcpy (msgbuf[0], parse_string (sp1));
