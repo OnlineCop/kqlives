@@ -82,8 +82,7 @@
 char curmap[16];
 /*! Names of the tile sets (in the datafile) */
 char icon_sets[7][16] = { "LAND_PCX", "NEWTOWN_PCX", "CASTLE_PCX",
-			  "INCAVE_PCX", "VILLAGE_PCX", "MOUNT_PCX",
-			  "SHRINE_BMP"
+			  "INCAVE_PCX", "VILLAGE_PCX", "MOUNT_PCX", "SHRINE_BMP"
 };
 
 
@@ -1679,8 +1678,8 @@ void wait_for_entity (int est, int efi)
 
       n = 0;
       for (e = est; e <= efi; ++e) {
-	m=g_ent[e].movemode;
-         if (g_ent[e].active == 1 && (m==MM_SCRIPT || m==MM_TARGET)) {
+         m = g_ent[e].movemode;
+         if (g_ent[e].active == 1 && (m == MM_SCRIPT || m == MM_TARGET)) {
             n = 1;
             break;
          }

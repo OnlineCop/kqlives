@@ -763,7 +763,7 @@ void sound_init (void)
     is_sound=0;
     return;
   }
-  switch(is_sound) {
+  switch (is_sound) {
   case 1:
      /*set_volume_per_voice (2);*/
      init_music ();

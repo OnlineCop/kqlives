@@ -213,7 +213,7 @@ static int KQ_copy_tile_all (lua_State *);
 static int KQ_use_up (lua_State *);
 static int KQ_battle (lua_State *);
 static int KQ_select_team (lua_State *);
-static int KQ_set_ent_target(lua_State *);
+static int KQ_set_ent_target (lua_State *);
 
 static const struct luaL_reg lrs[] = {
    {"get_pidx", KQ_get_pidx},
@@ -1154,6 +1154,8 @@ static int KQ_set_ent_chrx (lua_State * L)
    return 0;
 }
 
+
+
 /*! \brief Make entity go to a certain point
  *
  * Enter target move mode. (MM_TARGET) Entity
@@ -1167,12 +1169,14 @@ static int KQ_set_ent_chrx (lua_State * L)
  */
 static int KQ_set_ent_target(lua_State * L)
 {
-  int a=real_entity_num(lua_tonumber(L,1));
-  g_ent[a].target_x=lua_tonumber(L,2);
-  g_ent[a].target_y=lua_tonumber(L,3);
-  g_ent[a].movemode=MM_TARGET;
-  return 0;
+   int a = real_entity_num (lua_tonumber (L, 1));
+   g_ent[a].target_x = lua_tonumber (L, 2);
+   g_ent[a].target_y = lua_tonumber (L, 3);
+   g_ent[a].movemode = MM_TARGET;
+   return 0;
 }
+
+
 
 static int KQ_get_ent_tilex (lua_State * L)
 {
@@ -2574,7 +2578,7 @@ static int KQ_rest (lua_State * L)
  * until ALT is pressed.
  *
  * \param L::1 String message to show
- * \param L::2 Icon number or 255 for none (icons 
+ * \param L::2 Icon number or 255 for none (icons
  *             are displayed, for instance, when items are procured)
  * \param L::3 Delay time (see wait()) , or 0 for indefinite
  * \returns 0 (no value returned)
