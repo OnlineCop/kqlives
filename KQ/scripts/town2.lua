@@ -19,13 +19,13 @@ function autoexec()
     for a=0,7,1 do
       if (a ~= get_pidx(0)) then
         give_xp(a,300+krnd(100),1);
-      end
-      if (a == SENSAR or a == SARINA or a == TEMMIN or a == AYLA) then
-        set_all_equip(a,I_SWORD2,I_SHIELD1,I_HELM1,I_ARMOR2,I_BAND1,0);
-      elseif (a == AJATHAR) then
-        set_all_equip(a,I_MACE2,I_SHIELD1,I_HELM1,I_ROBE2,I_BAND1,0);
-      elseif (a == CORIN or a == CASANDRA or a == NOSLOM) then
-        set_all_equip(a,I_ROD1,I_SHIELD1,I_CAP1,I_ROBE2,I_BAND1,0);
+        if (a == SENSAR or a == SARINA or a == TEMMIN or a == AYLA) then
+          set_all_equip(a,I_SWORD2,I_SHIELD1,I_HELM1,I_ARMOR2,I_BAND1,0);
+        elseif (a == AJATHAR) then
+          set_all_equip(a,I_MACE2,I_SHIELD1,I_HELM1,I_ROBE2,I_BAND1,0);
+        elseif (a == CORIN or a == CASANDRA or a == NOSLOM) then
+          set_all_equip(a,I_ROD1,I_SHIELD1,I_CAP1,I_ROBE2,I_BAND1,0);
+        end
       end
     end
     set_progress(P_GETPARTNER,1);
