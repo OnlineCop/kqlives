@@ -1,0 +1,91 @@
+obj/mingw/combat.o: src/combat.c d:/compiler/djgpp/lib/../include/sys/version.h \
+ include/enemyc.h include/effects.h include/draw.h include/heroc.h \
+ include/magic.h include/kq.h include/entity.h include/masmenu.h \
+ include/menu.h include/res.h include/setup.h include/combat.h \
+ include/progress.h include/itemmenu.h
+obj/mingw/draw.o: src/draw.c d:/compiler/djgpp/lib/../include/sys/version.h \
+ include/setup.h include/kq.h include/entity.h include/draw.h \
+ include/combat.h include/res.h include/progress.h
+obj/mingw/effects.o: src/effects.c \
+ d:/compiler/djgpp/lib/../include/sys/version.h include/setup.h \
+ include/effects.h include/kq.h include/entity.h include/itemmenu.h \
+ include/draw.h include/combat.h include/magic.h include/ssprites.h \
+ include/res.h
+obj/mingw/enemyc.o: src/enemyc.c d:/compiler/djgpp/lib/../include/sys/version.h \
+ include/kq.h include/entity.h include/enemyc.h include/selector.h \
+ include/combat.h include/skills.h include/res.h include/magic.h \
+ include/progress.h
+obj/mingw/entity.o: src/entity.c d:/compiler/djgpp/lib/../include/sys/version.h \
+ include/kq.h include/entity.h include/setup.h include/menu.h \
+ include/combat.h include/itemdefs.h include/intrface.h
+obj/mingw/eqpmenu.o: src/eqpmenu.c \
+ d:/compiler/djgpp/lib/../include/sys/version.h include/setup.h \
+ include/menu.h include/kq.h include/entity.h include/itemmenu.h \
+ include/eqpmenu.h include/draw.h include/res.h
+obj/mingw/eskill.o: src/eskill.c d:/compiler/djgpp/lib/../include/sys/version.h \
+ include/effects.h include/kq.h include/entity.h include/menu.h \
+ include/itemmenu.h include/masmenu.h include/draw.h include/combat.h \
+ include/enemyc.h include/eskill.h include/magic.h include/heroc.h \
+ include/setup.h include/res.h include/progress.h
+obj/mingw/heroc.o: src/heroc.c d:/compiler/djgpp/lib/../include/sys/version.h \
+ include/setup.h include/eqpmenu.h include/draw.h include/kq.h \
+ include/entity.h include/heroc.h include/combat.h include/selector.h \
+ include/menu.h include/effects.h include/skills.h include/magic.h \
+ include/res.h include/progress.h include/itemdefs.h \
+ include/itemmenu.h
+obj/mingw/hskill.o: src/hskill.c d:/compiler/djgpp/lib/../include/sys/version.h \
+ include/effects.h include/kq.h include/entity.h include/hskill.h \
+ include/selector.h include/itemmenu.h include/draw.h include/combat.h \
+ include/magic.h include/heroc.h include/setup.h include/res.h \
+ include/progress.h
+obj/mingw/intrface.o: src/intrface.c \
+ d:/compiler/djgpp/lib/../include/sys/version.h \
+ d:/compiler/djgpp/include/lua.h include/intrface.h include/setup.h \
+ include/effects.h include/draw.h include/kq.h include/entity.h \
+ include/combat.h include/heroc.h include/menu.h include/enemyc.h \
+ include/magic.h include/sgame.h include/itemmenu.h include/masmenu.h \
+ include/res.h include/progress.h include/itemdefs.h \
+ include/shopmenu.h
+obj/mingw/itemmenu.o: src/itemmenu.c \
+ d:/compiler/djgpp/lib/../include/sys/version.h include/kq.h \
+ include/entity.h include/itemmenu.h include/draw.h include/setup.h \
+ include/menu.h include/skills.h include/res.h include/itemdefs.h \
+ include/combat.h include/magic.h include/effects.h include/selector.h
+obj/mingw/kq.o: src/kq.c d:/compiler/djgpp/lib/../include/sys/version.h \
+ include/setup.h include/entity.h include/kq.h include/draw.h \
+ include/menu.h include/sgame.h include/mpcx.h include/res.h \
+ include/progress.h include/itemdefs.h include/itemmenu.h \
+ include/intrface.h include/masmenu.h
+obj/mingw/magic.o: src/magic.c d:/compiler/djgpp/lib/../include/sys/version.h \
+ include/setup.h include/effects.h include/kq.h include/entity.h \
+ include/itemmenu.h include/menu.h include/draw.h include/combat.h \
+ include/enemyc.h include/magic.h include/ssprites.h include/res.h \
+ include/itemdefs.h include/progress.h
+obj/mingw/masmenu.o: src/masmenu.c \
+ d:/compiler/djgpp/lib/../include/sys/version.h include/kq.h \
+ include/entity.h include/masmenu.h include/draw.h include/setup.h \
+ include/menu.h include/skills.h include/magic.h include/res.h \
+ include/progress.h include/combat.h include/selector.h
+obj/mingw/menu.o: src/menu.c d:/compiler/djgpp/lib/../include/sys/version.h \
+ include/kq.h include/entity.h include/menu.h include/draw.h \
+ include/selector.h include/setup.h include/itemmenu.h \
+ include/masmenu.h include/eqpmenu.h include/res.h include/progress.h \
+ include/itemdefs.h
+obj/mingw/res.o: src/res.c d:/compiler/djgpp/lib/../include/sys/version.h \
+ include/res.h include/kq.h include/entity.h
+obj/mingw/selector.o: src/selector.c \
+ d:/compiler/djgpp/lib/../include/sys/version.h include/kq.h \
+ include/entity.h include/selector.h include/combat.h include/draw.h \
+ include/menu.h include/setup.h
+obj/mingw/setup.o: src/setup.c d:/compiler/djgpp/lib/../include/sys/version.h \
+ include/setup.h include/kq.h include/entity.h include/combat.h \
+ include/draw.h include/res.h
+obj/mingw/sgame.o: src/sgame.c d:/compiler/djgpp/lib/../include/sys/version.h \
+ include/setup.h include/kq.h include/entity.h include/draw.h \
+ include/sgame.h include/kqsnd.h include/combat.h include/res.h \
+ include/masmenu.h include/magic.h include/shopmenu.h \
+ include/progress.h include/menu.h
+obj/mingw/shopmenu.o: src/shopmenu.c \
+ d:/compiler/djgpp/lib/../include/sys/version.h include/setup.h \
+ include/shopmenu.h include/itemmenu.h include/kq.h include/entity.h \
+ include/draw.h include/res.h include/progress.h include/itemdefs.h

@@ -22,8 +22,8 @@
 #ifndef __HSKILL_H
 #define __HSKILL_H
 
-int hero_skillcheck(int);
-int skill_use(int);
-void infusion(int,int);
+int hero_skillcheck (int);
+int skill_use (int);
+void infusion (int, int);
 
 #endif

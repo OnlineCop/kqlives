@@ -22,16 +22,16 @@
 #ifndef __ITEMMENU_H
 #define __ITEMMENU_H
 
-void draw_itemmenu(int,int,int);
-void camp_item_menu(void);
-void sort_items(void);
-void join_items(void);
-int confirm_drop(void);
-int item_quantity(int,int,int);
-void camp_item_targetting(int);
-int check_inventory(int,int);
-void remove_item(int,int);
-void sort_inventory(void);
-int item_effects(int,int,int);
+void draw_itemmenu (int, int, int);
+void camp_item_menu (void);
+void sort_items (void);
+void join_items (void);
+int confirm_drop (void);
+int item_quantity (int, int, int);
+void camp_item_targetting (int);
+int check_inventory (int, int);
+void remove_item (int, int);
+void sort_inventory (void);
+int item_effects (int, int, int);
 
 #endif

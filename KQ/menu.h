@@ -25,16 +25,16 @@
 #include "allegro.h"
 #include "kq.h"
 
-void menu(void);
-void draw_mainmenu(int);
-void draw_playerstat(BITMAP *,int,int,int);
-void spec_items(void);
-void status_screen(int);
-void update_equipstats(void);
-s_fighter player2fighter(int);
-void revert_equipstats(void);
-int give_xp(int,int,int);
-int check_xp(int,int);
-void level_up(int);
+void menu (void);
+void draw_mainmenu (int);
+void draw_playerstat (BITMAP *, int, int, int);
+void spec_items (void);
+void status_screen (int);
+void update_equipstats (void);
+s_fighter player2fighter (int);
+void revert_equipstats (void);
+int give_xp (int, int, int);
+int check_xp (int, int);
+void level_up (int);
 
 #endif

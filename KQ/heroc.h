@@ -22,23 +22,23 @@
 #ifndef __HEROC_H
 #define __HEROC_H
 
-void hero_init(void);
-void hero_choose_action(int);
-void auto_herochooseact(int);
-int hero_attack(int);
-void combat_draw_items(int);
-int combat_item_menu(int);
-int combat_item_usable(int);
-int combat_item(int,int,int);
-void draw_invokable(int);
-int can_invoke_item(int);
-int hero_invoke(int);
-int hero_invokeitem(int,int);
-void hero_run(int);
-int available_spells(int);
-void combat_draw_spell_menu(int,int,int);
-int combat_spell_menu(int);
-int combat_spell_targeting(int);
-int combat_castable(int,int);
+void hero_init (void);
+void hero_choose_action (int);
+void auto_herochooseact (int);
+int hero_attack (int);
+void combat_draw_items (int);
+int combat_item_menu (int);
+int combat_item_usable (int);
+int combat_item (int, int, int);
+void draw_invokable (int);
+int can_invoke_item (int);
+int hero_invoke (int);
+int hero_invokeitem (int, int);
+void hero_run (int);
+int available_spells (int);
+void combat_draw_spell_menu (int, int, int);
+int combat_spell_menu (int);
+int combat_spell_targeting (int);
+int combat_castable (int, int);
 
 #endif

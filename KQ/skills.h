@@ -22,9 +22,9 @@
 #ifndef __SKILLS_H
 #define __SKILLS_H
 
-void combat_skill(int);
-int hero_skillcheck(int);
-int skill_use(int);
-void infusion(int,int);
+void combat_skill (int);
+int hero_skillcheck (int);
+int skill_use (int);
+void infusion (int, int);
 
 #endif

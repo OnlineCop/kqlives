@@ -32,51 +32,56 @@
 
 typedef struct
 {
-  char name[17];
-  unsigned char icon,kol;
-  char desc[40];
-  unsigned char tgt,type,use,ilvl,hnds,bst,elem,imb,eff;
-  int bon,price;
-  unsigned char eq[8];
-  int stats[13];
-  char res[16];
-} s_item;
+   char name[17];
+   unsigned char icon, kol;
+   char desc[40];
+   unsigned char tgt, type, use, ilvl, hnds, bst, elem, imb, eff;
+   int bon, price;
+   unsigned char eq[8];
+   int stats[13];
+   char res[16];
+}
+s_item;
 
 typedef struct
 {
-  char name[13];
-  unsigned char icon;
-  char desc[26];
-  unsigned char stat,mpc,use,tgt;
-  int dmg,bon,hit;
-  unsigned char elem,dlvl,eff;
-  int clvl[8];
-} s_spell;
+   char name[13];
+   unsigned char icon;
+   char desc[26];
+   unsigned char stat, mpc, use, tgt;
+   int dmg, bon, hit;
+   unsigned char elem, dlvl, eff;
+   int clvl[8];
+}
+s_spell;
 
 typedef struct
 {
-  unsigned char numf;
-  unsigned short xsize,ysize;
-  unsigned char orient;
-  unsigned short delay;
-  unsigned char kolor;
-  unsigned char snd;
-  char ename[16];
-} s_effect;
+   unsigned char numf;
+   unsigned short xsize, ysize;
+   unsigned char orient;
+   unsigned short delay;
+   unsigned char kolor;
+   unsigned char snd;
+   char ename[16];
+}
+s_effect;
 
 typedef struct
 {
-  unsigned char tnum,lvl,per;
-  unsigned char idx[5];
-} s_erow;
+   unsigned char tnum, lvl, per;
+   unsigned char idx[5];
+}
+s_erow;
 
 typedef struct
 {
-  unsigned char mapnum, zonenum;
-  unsigned char enc, etnum, eidx;
-  char bmusic[16];
-  char backimg[20];
-} s_encounter;
+   unsigned char mapnum, zonenum;
+   unsigned char enc, etnum, eidx;
+   char bmusic[16];
+   char backimg[20];
+}
+s_encounter;
 
 extern PALETTE pal;
 extern s_item items[NUM_ITEMS];

@@ -24,15 +24,15 @@
 
 #define NUMSHOPS      50
 
-void draw_sideshot(int);
-int shop(int);
-void buy_menu(void);
-void buy_item(int,int);
-void sell_menu(void);
-void sell_howmany(int,int);
-void sell_item(int,int);
-void inn(char *,int,int);
-void do_inn_effects(void);
+void draw_sideshot (int);
+int shop (int);
+void buy_menu (void);
+void buy_item (int, int);
+void sell_menu (void);
+void sell_howmany (int, int);
+void sell_item (int, int);
+void inn (char *, int, int);
+void do_inn_effects (void);
 
 extern unsigned char shop_no;
 extern unsigned short shops[NUMSHOPS][12][3];

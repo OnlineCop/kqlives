@@ -1,0 +1,55 @@
+###############################################################################
+#                                                                             #
+#  This is the DJGPP Makefile for compiling this package. Check also the      #
+#  base makefile for more options.                                            #
+#                                                                             #
+#  ReyBrujo, 2002                                                             #
+#                                                                             #
+###############################################################################
+
+
+
+#                                                                             #
+#  Set the compiler and linker. Usually, they are both gcc, gpp or gxx. By    #
+#  default, we will compile a C project. If you want to compile C++ sources,  #
+#  set COMPILER and LINKER to $(GPP), and the COMPILER_FLAGS to CXXFLAGS.     #
+#                                                                             #
+COMPILER       := $(GCC)
+LINKER         := $(GCC)
+COMPILER_FLAGS := $(CFLAGS)
+OBJDIR         := $(OBJ_DIR)/djgpp
+
+
+
+###############################################################################
+#                                                                             #
+#                        END OF CONFIGURATION SECTION                         #
+#                                                                             #
+###############################################################################
+
+
+
+#                                                                             #
+#  Convert all libraries needed so that GCC can understand them.              #
+#                                                                             #
+LFLAGS += $(addprefix -l, $(LIBRARY) $(ALLEGRO))
+
+
+
+#                                                                             #
+#  Find out the objects we must generate.                                     #
+#                                                                             #
+OBJECTS := $(addprefix $(OBJDIR)/, $(addsuffix .$(OBJ_SUFFIX), $(FILES)))
+
+
+
+#                                                                             #
+#  By default, and as unique target, build the project.                       #
+#                                                                             #
+default : $(EXEC)
+
+$(EXEC) : $(OBJECTS)
+	$(LINKER) $^ -o $@ $(LFLAGS)
+
+$(OBJDIR)/%.$(OBJ_SUFFIX) : $(SRC_DIR)/%.$(SRC_SUFFIX)
+	$(COMPILER) $(COMPILER_FLAGS) -c -o $@ $<

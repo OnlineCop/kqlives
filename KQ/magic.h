@@ -85,29 +85,29 @@
 #define M_PLAGUE         59
 #define M_XSURGE         60
 
-int combat_spell(int,int);
-int cast_spell(int,int);
-void cast_imbued_spell(int,int,int,int);
-void special_spells(int,int);
-void cure_oneall_allies(int,int,int);
-void heal_one_ally(int,int,int);
-void geffect_one_ally(int,int,int);
-void geffect_all_allies(int,int);
-void beffect_one_enemy(int,int,int);
-void beffect_all_enemies(int,int);
-void damage_all_enemies(int,int);
-void damage_oneall_enemies(int,int,int);
-void special_damage_oneall_enemies(int,int,int,int,int);
-void spell_damage(int,int,int,int);
-int res_adjust(int,int,int);
-int res_throw(int,int);
-int non_dmg_save(int,int);
-int mp_needed(int,int);
-void adjust_hp(int,int);
-void adjust_mp(int,int);
-s_fighter status_adjust(int);
-int do_shell_check(int,int);
-int do_shield_check(int,int);
-void set_timed_sts_effect(int,int);
+int combat_spell (int, int);
+int cast_spell (int, int);
+void cast_imbued_spell (int, int, int, int);
+void special_spells (int, int);
+void cure_oneall_allies (int, int, int);
+void heal_one_ally (int, int, int);
+void geffect_one_ally (int, int, int);
+void geffect_all_allies (int, int);
+void beffect_one_enemy (int, int, int);
+void beffect_all_enemies (int, int);
+void damage_all_enemies (int, int);
+void damage_oneall_enemies (int, int, int);
+void special_damage_oneall_enemies (int, int, int, int, int);
+void spell_damage (int, int, int, int);
+int res_adjust (int, int, int);
+int res_throw (int, int);
+int non_dmg_save (int, int);
+int mp_needed (int, int);
+void adjust_hp (int, int);
+void adjust_mp (int, int);
+s_fighter status_adjust (int);
+int do_shell_check (int, int);
+int do_shield_check (int, int);
+void set_timed_sts_effect (int, int);
 
 #endif

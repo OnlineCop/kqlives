@@ -22,6 +22,6 @@
 #ifndef __ESKILL_H
 #define __ESKILL_H
 
-void combat_skill(int);
+void combat_skill (int);
 
 #endif

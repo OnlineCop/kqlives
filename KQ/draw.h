@@ -41,33 +41,33 @@
 #define B_TEXT     0
 #define B_THOUGHT  1
 
-void blit2screen(int,int);
-void color_scale(BITMAP *,BITMAP *,int,int);
-void convert_cframes(int,int,int,int);
-void revert_cframes(int,int);
-void draw_icon(BITMAP *,int,int,int);
-void draw_stsicon(BITMAP *,int,int,int,int,int);
-void drawchar(int,int);
-int is_forestsquare(int,int);
-void drawmap(void);
-void draw_backlayer(void);
-void draw_midlayer(void);
-void draw_forelayer(void);
-void draw_shadows(void);
-void border(BITMAP *,int,int,int,int);
-void menubox(BITMAP *,int,int,int,int,int);
-void print_font(BITMAP *,int,int,char *,int);
-void print_num(BITMAP *,int,int,char *,int);
-void set_textpos(int);
-void draw_textbox(int);
-void thought_text(int, char *,char *,char *,char *);
-void bubble_text(int, char *,char *,char *,char *);
-void generic_text(int,int);
-char *parse_string(char *);
-int prompt(int,int,int,char *,char *,char *,char *);
-void message(char *,int,int,int,int);
-void set_view(int,int,int,int,int);
+void blit2screen (int, int);
+void color_scale (BITMAP *, BITMAP *, int, int);
+void convert_cframes (int, int, int, int);
+void revert_cframes (int, int);
+void draw_icon (BITMAP *, int, int, int);
+void draw_stsicon (BITMAP *, int, int, int, int, int);
+void drawchar (int, int);
+int is_forestsquare (int, int);
+void drawmap (void);
+void draw_backlayer (void);
+void draw_midlayer (void);
+void draw_forelayer (void);
+void draw_shadows (void);
+void border (BITMAP *, int, int, int, int);
+void menubox (BITMAP *, int, int, int, int, int);
+void print_font (BITMAP *, int, int, char *, int);
+void print_num (BITMAP *, int, int, char *, int);
+void set_textpos (int);
+void draw_textbox (int);
+void thought_text (int, char *, char *, char *, char *);
+void bubble_text (int, char *, char *, char *, char *);
+void generic_text (int, int);
+char *parse_string (char *);
+int prompt (int, int, int, char *, char *, char *, char *);
+void message (char *, int, int, int, int);
+void set_view (int, int, int, int, int);
 
-extern unsigned char BLUE,DARKBLUE,DARKRED;
+extern unsigned char BLUE, DARKBLUE, DARKRED;
 
 #endif

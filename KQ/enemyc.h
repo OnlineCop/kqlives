@@ -22,20 +22,20 @@
 #ifndef __ENEMYC_H
 #define __ENEMYC_H
 
-int select_encounter(int,int);
-void enemy_init(void);
-void load_enemyframes(int,int,int);
-void enemy_chooseaction(int);
-int enemy_cancast(int,int);
-void enemy_curecheck(int,int);
-void enemy_spellcheck(int,int);
-int enemy_stscheck(int,int,int);
-void enemy_skillcheck(int,int);
-void enemy_charmaction(int);
-int spell_setup(int,int);
-int skill_setup(int,int);
-void enemy_attack(int);
-void enemy_run(int);
-void enemy_spell(int);
+int select_encounter (int, int);
+void enemy_init (void);
+void load_enemyframes (int, int, int);
+void enemy_chooseaction (int);
+int enemy_cancast (int, int);
+void enemy_curecheck (int, int);
+void enemy_spellcheck (int, int);
+int enemy_stscheck (int, int, int);
+void enemy_skillcheck (int, int);
+void enemy_charmaction (int);
+int spell_setup (int, int);
+int skill_setup (int, int);
+void enemy_attack (int);
+void enemy_run (int);
+void enemy_spell (int);
 
 #endif

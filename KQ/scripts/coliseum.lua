@@ -361,8 +361,9 @@ function LOC_partner_up()
   local a;
 
   a = get_party_xp(get_pidx(0)) - get_party_xp(get_pidx(1));
-  if (a > 5000)
+  if (a > 5000) then
     a = a - 5000;
+  end;
   a = a + krnd(500);
   give_xp(get_pidx(1),a,1);
   a = get_progress(P_FINALPARTNER)-1;

@@ -22,15 +22,15 @@
 #ifndef __EQPMENU_H
 #define __EQPMENU_H
 
-void draw_equipmenu(int,int);
-void draw_equippable(int,int,int);
-void calc_possible_equip(int,int);
-void optimize_equip(int);
-void equip_menu(int);
-void choose_equipment(int,int);
-void calc_equippreview(int,int,int);
-void draw_equippreview(int,int,int);
-int equip(int,int,int);
-int deequip(int,int);
+void draw_equipmenu (int, int);
+void draw_equippable (int, int, int);
+void calc_possible_equip (int, int);
+void optimize_equip (int);
+void equip_menu (int);
+void choose_equipment (int, int);
+void calc_equippreview (int, int, int);
+void draw_equippreview (int, int, int);
+int equip (int, int, int);
+int deequip (int, int);
 
 #endif

@@ -26,13 +26,13 @@
 
 #include "kq.h"
 
-void load_sgstats(void);
-void show_sgstats(int);
-int save_game(void);
-int load_game(void);
-int saveload(int);
-int confirm_save(void);
-int start_menu(int);
-int system_menu(void);
+void load_sgstats (void);
+void show_sgstats (int);
+int save_game (void);
+int load_game (void);
+int saveload (int);
+int confirm_save (void);
+int start_menu (int);
+int system_menu (void);
 
 #endif

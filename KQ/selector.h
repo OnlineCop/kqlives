@@ -22,12 +22,12 @@
 #ifndef __SELECTOR_H
 #define __SELECTOR_H
 
-int select_player(void);
-int select_any_player(int,int,char *);
-int select_hero(int,int,int);
-int select_enemy(int,int);
-int auto_select_hero(int,int);
-int auto_select_enemy(int,int);
-int can_attack(int);
+int select_player (void);
+int select_any_player (int, int, char *);
+int select_hero (int, int, int);
+int select_enemy (int, int);
+int auto_select_hero (int, int);
+int auto_select_enemy (int, int);
+int can_attack (int);
 
 #endif

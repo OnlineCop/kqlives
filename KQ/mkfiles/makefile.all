@@ -1,0 +1,243 @@
+###############################################################################
+#                                                                             #
+#  This file is included by all the other Makefile types. Note that I do a    #
+#  very simple check to know if upx or djp are in your path, but none for     #
+#  tgz or zip...                                                              #
+#                                                                             #
+#  make clean      : Deletes the generated .o and .exe files (you need RM     #
+#                    from fileutils).                                         #
+#  make distclean  : Deletes the same files the clean target does, plus the   #
+#                    possible packages made with the last two targets.        #
+#  make tgz        : Creates a package which can be used to send by mail,     #
+#                    though it is not as good as the original one ;) You      #
+#                    need the tar compressor.                                 #
+#  make zip        : Same as tgz, but now creates it using zip compressor.    #
+#  make compress   : Compresses the generated executable. You need the upx    #
+#                    executable compressor somewhere in your path.            #
+#  make header     : Adds the copyleft notice to each source and header file  #
+#                    in the package.                                          #
+#                                                                             #
+#  @@AUTHOR@@, @@YEAR@@                                                       #
+#                                                                             #
+###############################################################################
+
+
+.PHONY: clean distclean tgz zip compress
+
+
+#                                                                             #
+#  The PACKAGE_TGZ and PACKAGE_ZIP declare the names of the final package.    #
+#  It uses ID_LONG by default, so make sure your file system allows for long  #
+#  names. This will create something like 'mypackage-0.1.2.tgz' (or .zip),    #
+#  which you can deliver as a source release of your game, or as a backup.    #
+#  Finally, the PACKAGE_OBJ defines the objects that will be included into    #
+#  the final package.                                                         #
+#                                                                             #
+PACKAGE_TGZ = $(addsuffix .tgz, $(ID_LONG))
+PACKAGE_ZIP = $(addsuffix .zip, $(ID_LONG))
+PACKAGE_OBJ = fix.bat    \
+              makefile.* \
+              $(SRC_DIR) \
+              $(OBJ_DIR) \
+              $(INC_DIR) \
+              $(DOC_DIR) \
+              $(BIN_DIR)
+
+
+#                                                                             #
+#  HEADERS will contain all the headers (.h) and source (.c, .cpp, etc) that  #
+#  will be processed in order to add the copyleft notice.                     #
+#                                                                             #
+COPYLEFT := $(MSC_DIR)/license.h
+HEADERS  := $(addprefix $(SRC_DIR)/,$(FILES))
+HEADERS  += $(basename $(wildcard $(INC_DIR)/*.h))
+HEADERS  := $(addsuffix .tmp,$(HEADERS))
+
+
+
+###############################################################################
+#                                                                             #
+#                        END OF CONFIGURATION SECTION                         #
+#                                                                             #
+###############################################################################
+
+
+
+#                                                                             #
+#  The clean target deletes the executable, the object files and the runner,  #
+#  if it was created. If you have added more directories to the object one,   #
+#  in example to separate objects, you will have to add those directories     #
+#  manually like $(OBJ_DIR)/*/*.o* for the second level, $(OBJ_DIR)/*/*/*.o*  #
+#  for the third level of depth, etc.                                         #
+#                                                                             #
+clean:
+	$(RM) $(RMFLAGS) $(EXEC) $(OBJ_DIR)/*.o* $(RUNNER)
+	$(RM) $(RMFLAGS) $(HEADERS)
+
+
+
+#                                                                             #
+#  The distclean target lets the package with just the files that came with   #
+#  the distribution. It deletes all the files 'clean' does, but also ALL the  #
+#  backup copies! So be careful when using it!                                #
+#                                                                             #
+distclean: clean
+	$(RM) $(RMFLAGS) $(PACKAGE_TGZ) $(PACKAGE_ZIP) 
+
+
+
+#                                                                             #
+#  Build a tar & gzipped package (or whatever you have configured).           #
+#                                                                             #
+tgz: clean
+	$(TGZ) $(TGZFLAGS) $(PACKAGE_TGZ) $(PACKAGE_OBJ)
+	@echo
+	@echo The package $(PACKAGE_TGZ) has been created. Just to be sure, it
+	@echo is not as good as the original package, but still works *grin*
+
+
+
+#                                                                             #
+#  Build a zip package (or whatever you have configured).                     #
+#                                                                             #
+zip: clean
+	$(ZIP) $(ZIPFLAGS) $(PACKAGE_ZIP) $(PACKAGE_OBJ)
+	@echo
+	@echo The package $(PACKAGE_ZIP) has been created. Just to be sure, it
+	@echo is not as good as the original package, but still works *grin*
+
+
+
+#                                                                             #
+#  Oh, this target is a bit complex. I would have done it manually ;) I try   #
+#  to find an executable compressor (upx or djp) in the current path.         #
+#                                                                             #
+MPATH  := $(subst ;, ,$(subst \,/,$(PATH)))
+UPXPRG := $(foreach GUESS, $(MPATH), $(wildcard $(GUESS)/upx.exe))
+DJPPRG := $(foreach GUESS, $(MPATH), $(wildcard $(GUESS)/djp.exe))
+
+ifneq ($(UPXPRG),)
+	COMPRESSOR := $(UPXPRG)
+	COMP_FLAGS := --best
+else
+ifneq ($(DJPPRG),)
+	COMPRESSOR := $(DJPPRG)
+	COMP_FLAGS := -s
+endif
+endif
+
+compress:
+ifdef COMPRESSOR
+	$(COMPRESSOR) $(COMP_FLAGS) $(EXEC)
+else
+	@echo Could not guess upx or djp compressor location. If you have
+	@echo another installed, configure it manually.
+endif
+
+
+
+#                                                                             #
+#  The depend target builds the different dependencies between source files   #
+#  and headers.                                                               #
+#                                                                             #
+depend:
+	$(GCC) $(DEPFLAGS) $(SRC_DIR)/*.$(SRC_SUFFIX) > _depend.tmp
+	sed -e "s/^\([a-zA-Z0-9_]*\)\.o:/$(subst /,\/,$(OBJDIR))\/\1\.$(OBJ_SUFFIX):/" _depend.tmp > $(OBJDIR)/makefile.dep
+	$(RM) $(RMFLAGS) _depend.tmp
+
+
+
+#                                                                             #
+#  The 'header' target adds the GNU copyleft notice to each source file in    #
+#  the package. Note that there is no easy way to "undo" this action, so you  #
+#  should only call it with your finished package.                            #
+#  What it does is basically catting the notice and then the source into a    #
+#  temporary file, and then moving the temporary file into the original one.  #
+#                                                                             #
+header: $(HEADERS)
+	@echo Added copyleft notice to $(words $(HEADERS)) files.
+
+%.tmp : %.$(SRC_SUFFIX)
+	@echo Adding copyleft notice to $<...
+	@cat $(COPYLEFT) $< > $@
+	@mv $@ $<
+
+%.tmp : %.h
+	@echo Adding copyleft notice to $<...
+	@cat $(COPYLEFT) $< > $@
+	@mv $@ $<
+
+
+#                                                                             #
+#  The 'owner' target looks in all the files found in the package directory   #
+#  for the @@AUTHOR@@, @@EMAIL@@, @@NAME@@, @@WSITE@@ and @@YEAR@@ keywords.  #
+#  Note that once you execute it, it won't be able to refix them.             #
+#                                                                             #
+OWNER_FILES := $(wildcard $(MAK_DIR)/*) $(wildcard $(SRC_DIR)/*) \
+               $(wildcard $(DOC_DIR)/*) $(wildcard $(MSC_DIR)/*) \
+               $(wildcard $(INC_DIR)/*)
+OWNER_FILES := $(filter-out %/tmpfile.txt %/runner.c %.all %misc %copying,$(OWNER_FILES))
+OWNER_FILES := $(subst .,_,$(OWNER_FILES))
+OWNER_MODIF := $(addsuffix .tmp,$(basename $(OWNER_FILES)))
+
+owner: $(OWNER_MODIF)
+	@echo Done!
+	@echo Modified $(words $(OWNER_MODIF)) files. Congratulations!
+	@echo This copy has been registered to you :)
+
+define OWNER_RULE
+    @echo Changing ownership of $<...
+    @sed -e 's/@@AUTHOR@@/$(AUTHOR)/g' -e 's/@@YEAR@@/$(YEAR)/g' \
+         -e 's/@@EMAIL@@/$(EMAIL)/g' -e 's/@@WSITE@@/$(WSITE)/g' \
+         -e 's/@@NAME@@/$(NAME)/g' $< > $@
+    @mv $@ $<
+endef
+
+$(MAK_DIR)/makefile_cfg.tmp : $(MAK_DIR)/makefile.cfg
+	-$(OWNER_RULE)
+$(MAK_DIR)/makefile_dep.tmp : $(MAK_DIR)/makefile.dep
+	-$(OWNER_RULE)
+$(MAK_DIR)/makefile_dj.tmp  : $(MAK_DIR)/makefile.dj
+	-$(OWNER_RULE)
+$(MAK_DIR)/makefile_mgw.tmp : $(MAK_DIR)/makefile.mgw
+	-$(OWNER_RULE)
+$(MAK_DIR)/makefile_vc.tmp  : $(MAK_DIR)/makefile.vc
+	-$(OWNER_RULE)
+$(SRC_DIR)/cmdline_c.tmp    : $(SRC_DIR)/cmdline.c
+	-$(OWNER_RULE)
+$(SRC_DIR)/global_c.tmp     : $(SRC_DIR)/global.c
+	-$(OWNER_RULE)
+$(SRC_DIR)/main_c.tmp       : $(SRC_DIR)/main.c
+	-$(OWNER_RULE)
+$(SRC_DIR)/timer_c.tmp      : $(SRC_DIR)/timer.c
+	-$(OWNER_RULE)
+$(SRC_DIR)/scrshot_c.tmp    : $(SRC_DIR)/scrshot.c
+	-$(OWNER_RULE)
+$(MSC_DIR)/license_h.tmp    : $(MSC_DIR)/license.h
+	-$(OWNER_RULE)
+$(INC_DIR)/cmdline_h.tmp    : $(INC_DIR)/cmdline.h
+	-$(OWNER_RULE)
+$(INC_DIR)/config_h.tmp     : $(INC_DIR)/config.h
+	-$(OWNER_RULE)
+$(INC_DIR)/game_h.tmp       : $(INC_DIR)/game.h
+	-$(OWNER_RULE)
+$(INC_DIR)/global_h.tmp     : $(INC_DIR)/global.h
+	-$(OWNER_RULE)
+$(INC_DIR)/memleak_h.tmp    : $(INC_DIR)/memleak.h
+	-$(OWNER_RULE)
+$(INC_DIR)/mmxcode_h.tmp    : $(INC_DIR)/mmxcode.h
+	-$(OWNER_RULE)
+$(INC_DIR)/option_h.tmp     : $(INC_DIR)/option.h
+	-$(OWNER_RULE)
+$(INC_DIR)/timer_h.tmp      : $(INC_DIR)/timer.h
+	-$(OWNER_RULE)
+$(INC_DIR)/scrshot_h.tmp    : $(INC_DIR)/scrshot.h
+	-$(OWNER_RULE)
+$(DOC_DIR)/history_txt.tmp  : $(DOC_DIR)/history.txt
+	-$(OWNER_RULE)
+$(DOC_DIR)/idea_txt.tmp     : $(DOC_DIR)/idea.txt
+	-$(OWNER_RULE)
+$(DOC_DIR)/links_txt.tmp    : $(DOC_DIR)/links.txt
+	-$(OWNER_RULE)
+$(DOC_DIR)/readme_txt.tmp   : $(DOC_DIR)/readme.txt
+	-$(OWNER_RULE)

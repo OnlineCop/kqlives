@@ -196,111 +196,122 @@
 
 typedef struct
 {
-  unsigned short start, end, delay;
-} s_anim;
+   unsigned short start, end, delay;
+}
+s_anim;
 
 typedef struct
 {
-  unsigned char map_no, zero_zone, map_mode, can_save;
-  unsigned char tileset, use_sstone, can_warp, extra_byte;
-  int xsize,ysize;
-  int pmult,pdiv;
-  int stx,sty;
-  int warpx,warpy;
-  int extra_sdword1,extra_sdword2;
-  char song_file[16];
-  char map_desc[40];
-} s_map;
+   unsigned char map_no, zero_zone, map_mode, can_save;
+   unsigned char tileset, use_sstone, can_warp, extra_byte;
+   int xsize, ysize;
+   int pmult, pdiv;
+   int stx, sty;
+   int warpx, warpy;
+   int extra_sdword1, extra_sdword2;
+   char song_file[16];
+   char map_desc[40];
+}
+s_map;
 
 typedef struct
 {
-  char name[9];
-  int xp,next,lvl,mrp;
-  int hp,mhp,mp,mmp;
-  int stats[13];
-  char res[16];
-  unsigned char sts[24];
-  unsigned char eqp[6];
-  unsigned char spells[60];
-} s_player;
+   char name[9];
+   int xp, next, lvl, mrp;
+   int hp, mhp, mp, mmp;
+   int stats[13];
+   char res[16];
+   unsigned char sts[24];
+   unsigned char eqp[6];
+   unsigned char spells[60];
+}
+s_player;
 
 typedef struct
 {
-  char name[25];
-  int xp,gp,lvl;
-  int cx,cy,cw,cl;
-  int hp,mhp,mp,mmp;
-  int dip,ditmc,ditmr,sitmc,sitmr;
-  int stats[13];
-  char res[16];
-  unsigned char facing,aframe,crit;
-  unsigned char sts[24],defend;
-  unsigned char ai[8],aip[8],atrack[8];
-  int csmem,ctmem,cwt,welem,unl;
-  int aux,bonus,bstat,mrp,imb_s,imb_a,imb[2];
-} s_fighter;
+   char name[25];
+   int xp, gp, lvl;
+   int cx, cy, cw, cl;
+   int hp, mhp, mp, mmp;
+   int dip, ditmc, ditmr, sitmc, sitmr;
+   int stats[13];
+   char res[16];
+   unsigned char facing, aframe, crit;
+   unsigned char sts[24], defend;
+   unsigned char ai[8], aip[8], atrack[8];
+   int csmem, ctmem, cwt, welem, unl;
+   int aux, bonus, bstat, mrp, imb_s, imb_a, imb[2];
+}
+s_fighter;
 
-void my_counter(void);
-void readcontrols(void);
-void data_dump(void);
-void calc_viewport(int);
-void change_map(char *,int,int,int,int);
-void zone_check(void);
-void warp(int,int,int);
-void check_animation(void);
-void activate(void);
-void unpress(void);
-void wait_enter(void);
-void startup(void);
-void load_data(void);
-void allocate_stuff(void);
-BITMAP *alloc_bmp(int,int,char *);
-void deallocate_stuff(void);
-void klog(char *);
-void init_players(void);
-void load_portraits(void);
-void kwait(int);
-void wait_for_entity(int,int);
-void program_death(char *);
-int in_party(int);
+void my_counter (void);
+void readcontrols (void);
+void data_dump (void);
+void calc_viewport (int);
+void change_map (char *, int, int, int, int);
+void zone_check (void);
+void warp (int, int, int);
+void check_animation (void);
+void activate (void);
+void unpress (void);
+void wait_enter (void);
+void startup (void);
+void load_data (void);
+void allocate_stuff (void);
+BITMAP *alloc_bmp (int, int, char *);
+void deallocate_stuff (void);
+void klog (char *);
+void init_players (void);
+void load_portraits (void);
+void kwait (int);
+void wait_for_entity (int, int);
+void program_death (char *);
+int in_party (int);
 
 extern char curmap[16];
-extern int right,left,up,down,besc,benter,balt,bctrl;
-extern int kright,kleft,kup,kdown,kesc,kenter,kalt,kctrl,jbalt,jbctrl,jbenter,jbesc;
-extern int vx,vy,mx,my,steps,lastm[PSIZE];;
+extern int right, left, up, down, besc, benter, balt, bctrl;
+extern int kright, kleft, kup, kdown, kesc, kenter, kalt, kctrl, jbalt,
+   jbctrl, jbenter, jbesc;
+extern int vx, vy, mx, my, steps, lastm[PSIZE];;
 extern BITMAP *double_buffer, *map_icons[MAX_TILES];
-extern BITMAP *back, *tc, *tc2, *bub[8], *b_shield, *b_shell, *b_repulse, *b_mp;
-extern BITMAP *cframes[NUM_FIGHTERS][MAXCFRAMES], *tcframes[NUM_FIGHTERS][MAXCFRAMES], *frames[MAXCHRS][MAXFRAMES];
+extern BITMAP *back, *tc, *tc2, *bub[8], *b_shield, *b_shell, *b_repulse,
+   *b_mp;
+extern BITMAP *cframes[NUM_FIGHTERS][MAXCFRAMES],
+   *tcframes[NUM_FIGHTERS][MAXCFRAMES], *frames[MAXCHRS][MAXFRAMES];
 extern BITMAP *eframes[MAXE][MAXEFRAMES], *pgb[9], *sfonts[5], *bord[8];
-extern BITMAP *menuptr, *mptr, *sptr, *stspics, *sicons, *bptr, *missbmp, *noway, *upptr, *dnptr;
+extern BITMAP *menuptr, *mptr, *sptr, *stspics, *sicons, *bptr, *missbmp,
+   *noway, *upptr, *dnptr;
 extern BITMAP *shadow[MAX_SHADOWS];
 extern unsigned short *map_seg, *b_seg, *f_seg;
 extern unsigned char *progress, *z_seg, *s_seg, *o_seg, *treasure;
 extern BITMAP *kfonts, *portrait[MAXCHRS];
 extern s_map g_map;
-extern s_entity g_ent[MAX_ENT+PSIZE];
+extern s_entity g_ent[MAX_ENT + PSIZE];
 extern s_anim tanim[6][MAX_ANIM];
 extern s_anim adata[MAX_ANIM];
-extern int noe,pidx[PSIZE],numchrs,gp,xofs,yofs,gsvol,gmvol;
-extern unsigned char autoparty,autofollow,alldead,is_sound,deadeffect,vfollow,use_sstone;
-extern unsigned char kq_version,hold_fade,cansave,skip_intro,wait_retrace,windowed,stretch_view;
+extern int noe, pidx[PSIZE], numchrs, gp, xofs, yofs, gsvol, gmvol;
+extern unsigned char autoparty, autofollow, alldead, is_sound, deadeffect,
+   vfollow, use_sstone;
+extern unsigned char kq_version, hold_fade, cansave, skip_intro, wait_retrace,
+   windowed, stretch_view;
 extern unsigned short tilex[MAX_TILES], adelay[MAX_ANIM];
 extern char *strbuf;
-extern s_player party[MAXCHRS],players[MAXCHRS];
+extern s_player party[MAXCHRS], players[MAXCHRS];
 extern s_fighter fighter[NUM_FIGHTERS];
-extern s_fighter tempa,tempd;
-extern int noi,shin[12],dct;
-extern char sname[39],ctext[39];
-extern volatile int timer,ksec,kmin,khr,timer_count;
+extern s_fighter tempa, tempd;
+extern int noi, shin[12], dct;
+extern char sname[39], ctext[39];
+extern volatile int timer, ksec, kmin, khr, timer_count;
 extern unsigned short lup[MAXCHRS][20];
 extern COLOR_MAP cmap;
-extern unsigned char can_run,display_desc;
-extern unsigned char draw_background,draw_middle,draw_foreground,draw_shadow;
+extern unsigned char can_run, display_desc;
+extern unsigned char draw_background, draw_middle, draw_foreground,
+   draw_shadow;
 extern unsigned short g_inv[MAX_INV][2];
-extern int view_x1,view_y1,view_x2,view_y2,view_on,in_combat;
-extern int frate,mfrate,show_frate,use_joy,cheat_loaded;
+extern int view_x1, view_y1, view_x2, view_y2, view_on, in_combat;
+extern int frate, mfrate, show_frate, use_joy, cheat_loaded;
 
 extern int cheat;
-extern int warx,wary;
+extern int warx, wary;
 
 #endif

@@ -22,13 +22,13 @@
 #ifndef __EFFECTS_H
 #define __EFFECTS_H
 
-void fight_animation(int,int,int);
-void display_amount(int,int,int);
-int is_active(int);
-void draw_spellsprite(int,int,int,int);
-void draw_hugesprite(int,int,int,int,int);
-void draw_attacksprite(int,int,int,int);
-void draw_castersprite(int,int);
-void death_animation(int,int);
+void fight_animation (int, int, int);
+void display_amount (int, int, int);
+int is_active (int);
+void draw_spellsprite (int, int, int, int);
+void draw_hugesprite (int, int, int, int, int);
+void draw_attacksprite (int, int, int, int);
+void draw_castersprite (int, int);
+void death_animation (int, int);
 
 #endif

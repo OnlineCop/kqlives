@@ -22,12 +22,12 @@
 #ifndef __MASMENU_H
 #define __MASMENU_H
 
-int need_spell(int,int,int);
-int learn_new_spells(int);
-void camp_draw_spell_menu(int,int,int);
-void camp_spell_menu(int);
-void camp_spell_targeting(int,int);
-int camp_castable(int,int);
+int need_spell (int, int, int);
+int learn_new_spells (int);
+void camp_draw_spell_menu (int, int, int);
+void camp_spell_menu (int);
+void camp_spell_targeting (int, int);
+int camp_castable (int, int);
 
 extern int close_menu;
 

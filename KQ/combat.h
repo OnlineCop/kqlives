@@ -26,32 +26,32 @@
 #define ROUND_MAX    400
 #define DMG_RND_MIN  2
 
-int combat_check(int,int);
-int combat(int);
-void init_fighters(void);
-void snap_togrid(void);
-void roll_initiative(void);
-void battle_render(int,int,int);
-void do_round(void);
-void do_action(int);
-int do_move(int,int);
-void draw_fighter(int,int);
-int check_adjacent(int,int);
-int check_end(void);
-int fight(int,int,int);
-void multi_fight(int);
-int attack_result(int,int);
-void enemies_win(void);
-void heroes_win(void);
-int give_ap(int,int);
-void fkill(int);
+int combat_check (int, int);
+int combat (int);
+void init_fighters (void);
+void snap_togrid (void);
+void roll_initiative (void);
+void battle_render (int, int, int);
+void do_round (void);
+void do_action (int);
+int do_move (int, int);
+void draw_fighter (int, int);
+int check_adjacent (int, int);
+int check_end (void);
+int fight (int, int, int);
+void multi_fight (int);
+int attack_result (int, int);
+void enemies_win (void);
+void heroes_win (void);
+int give_ap (int, int);
+void fkill (int);
 
-extern int combatend,cspd[NUM_FIGHTERS],cact[NUM_FIGHTERS];
-extern int curx,cury,curw,numens;
+extern int combatend, cspd[NUM_FIGHTERS], cact[NUM_FIGHTERS];
+extern int curx, cury, curw, numens;
 extern int tmpd[NUM_FIGHTERS];
-extern int ta[NUM_FIGHTERS],deffect[NUM_FIGHTERS];
-extern int nspeed[NUM_FIGHTERS],bspeed[NUM_FIGHTERS],rcount;
-extern unsigned char vspell,hs,ms;
+extern int ta[NUM_FIGHTERS], deffect[NUM_FIGHTERS];
+extern int nspeed[NUM_FIGHTERS], bspeed[NUM_FIGHTERS], rcount;
+extern unsigned char vspell, hs, ms;
 extern DATAFILE *backart;
 
 #endif

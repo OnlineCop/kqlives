@@ -37,17 +37,17 @@
 #define SND_TWINKLE  7
 
 
-void parse_setup(void);
-void config_menu(void);
-int getakey(void);
-int getavalue(char *,int,int,int,int);
-void set_graphics_mode(void);
-void sound_init(void);
-void load_samples(void);
-void free_samples(void);
-void play_song(char *,int);
-void stop_music(void);
-void play_effect(int,int);
+void parse_setup (void);
+void config_menu (void);
+int getakey (void);
+int getavalue (char *, int, int, int, int);
+void set_graphics_mode (void);
+void sound_init (void);
+void load_samples (void);
+void free_samples (void);
+void play_song (char *, int);
+void stop_music (void);
+void play_effect (int, int);
 
 extern JGMOD *gsong;
 extern DATAFILE *sfx[MAX_SAMPLES];
