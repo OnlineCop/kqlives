@@ -18,6 +18,18 @@
    the Free Software Foundation,
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
+/*! \file
+ * \brief Save and Load game
+ *
+ * Support for saving and loading  games.
+ * Also includes the main menu and the system menu
+ * (usually accessible by pressing ESC)
+ * 
+ * \author JB
+ * \date ????????
+ * \todo PH do we _really_ want things like controls and screen 
+ * mode to be saved/loaded ? 
+*/
 
 #include <stdio.h>
 #include <ctype.h>
@@ -36,26 +48,28 @@
 #include "progress.h"
 #include "menu.h"
 
-/*
-   globals
-*/
+/*! \name Globals */
+/*\{*/
 int snc[NUMSG], sgp[NUMSG], shr[NUMSG], smin[NUMSG], sid[NUMSG][PSIZE],
    slv[NUMSG][PSIZE];
 unsigned char shp[NUMSG][PSIZE], smp[NUMSG][PSIZE];
 int save_ptr = 0;
+/*\}*/
 
 
-
-/*  internal functions  */
+/*! \name Internal functions  */
+/*\{*/
 static void show_sgstats (int);
 static int save_game (void);
 static int load_game (void);
 static int saveload (int);
 static int confirm_save (void);
+/*\}*/
 
 
 
-/*
+/*! \brief Load mini stats
+
    This loads the mini stats for each saved game.  These
    mini stats are just for displaying info about the save
    game on the save/load game screen.
@@ -119,9 +133,11 @@ void load_sgstats (void)
      }
 }
 
-/*
-   This is the routine that displays the information about
-   each saved game for the save/load screen.
+/*! \brief Display saved game statistics
+ *
+ *   This is the routine that displays the information about
+ *  each saved game for the save/load screen.
+ * \param saving Zero if loading, non zero if saving.
 */
 static void show_sgstats (int saving)
 {
@@ -192,8 +208,10 @@ static void show_sgstats (int saving)
      }
 }
 
-/*
-   You guessed it... save the game.
+/*! \brief Save game
+ *
+ * You guessed it... save the game.
+ * \returns zero if save failed   
 */
 static int save_game (void)
 {
@@ -265,8 +283,10 @@ static int save_game (void)
    return 1;
 }
 
-/*
-   Uh-huh.
+/*! \brief Load game
+ *
+ * Uh-huh.
+ * \returns zero if loading failed
 */
 static int load_game (void)
 {
@@ -348,9 +368,12 @@ static int load_game (void)
    return 1;
 }
 
-/*
-   This is the actual save/load menu.  The only parameter to
-   the function indicates whether we are saving or loading.
+/*! \brief Save/Load menu
+ *
+ *  This is the actual save/load menu.  The only parameter to
+ *  the function indicates whether we are saving or loading.
+ * \param am_saving ==1 if saving
+ * \returns zero if an error occurred or save/load cancelled
 */
 static int saveload (int am_saving)
 {
@@ -419,9 +442,11 @@ static int saveload (int am_saving)
    return stop - 1;
 }
 
-/*
-   If the save slot selected already has a saved game in
-   it, confirm that we want to overwrite.
+/*! \brief Confirm save
+ *
+ * If the save slot selected already has a saved game in
+ * it, confirm that we want to overwrite.
+ * \returns non-zero if confirmed
 */
 static int confirm_save (void)
 {
@@ -452,9 +477,16 @@ static int confirm_save (void)
    return 0;
 }
 
-/*
-   This is the main menu... just display the opening and then
-   the menu and then wait for input.
+/*! \brief Main menu screen
+ *
+ * This is the main menu... just display the opening and then
+ * the menu and then wait for input.
+ * Also handles loading a saved game.
+ * \param c Non-zero if the intro (the bit with the staff and the eight heroes) 
+ * should be displayed.
+ * \returns 0 if new game, 1 if continuing
+ * \todo PH make the config menu accessible from here 
+ * otherwise you have to sit through the intro before you can change any settings.
 */
 int start_menu (int c)
 {
@@ -612,10 +644,12 @@ int start_menu (int c)
    return stop - 1;
 }
 
-/*
-   This is the system menu that is invoked from within the game.
-   From here you can save, load, configure a couple of options or
-   exit the game altogether.
+/*! \brief Display system menu
+ *
+ * This is the system menu that is invoked from within the game.
+ * From here you can save, load, configure a couple of options or
+ * exit the game altogether.
+ * \returns zero if cancelled/ nothing happened
 */
 int system_menu (void)
 {
@@ -684,4 +718,4 @@ int system_menu (void)
      }
    return 0;
 }
-/**/
+
