@@ -1,7 +1,7 @@
 -- main - "World map of Anistal"
 
 function autoexec()
-  
+
   if (get_progress(P_SHOWBRIDGE) == 0) then
     set_mtile(241, 29, 82)
   end
@@ -12,9 +12,13 @@ function autoexec()
     set_zone(240, 29, 7)
     set_zone(242, 29, 71)
   end
-    
+
   if (get_progress(P_TOWEROPEN) > 0) then
     set_obs(263, 52, 0)
+  end
+
+  if (get_progress(P_FOUNDMAYOR) == 0) then
+    set_zone(235, 37, 0)
   end
 end
 
@@ -121,9 +125,7 @@ function zone_handler(zn)
     change_map("town4", 0, 0, 0, 0)
 
   elseif (zn == 19) then
-    if (get_progress(P_FOUNDMAYOR) == 0) then
-      change_map("camp", 0, 0, 0, 0)
-    end
+    change_map("camp", 0, 0, 0, 0)
 
   elseif (zn == 20) then
     change_map("estate", 0, 0, 0, 0)
