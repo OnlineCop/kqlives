@@ -181,8 +181,7 @@ static void show_sgstats (int saving)
                rectfill (double_buffer, hx + 33, hy + 9, hx + 65, hy + 15, 2);
                rectfill (double_buffer, hx + 32, hy + 8, hx + 64, hy + 14, 35);
                rectfill (double_buffer, hx + 33, hy + 17, hx + 65, hy + 23, 2);
-               rectfill (double_buffer, hx + 32, hy + 16, hx + 64, hy + 22,
-                         19);
+               rectfill (double_buffer, hx + 32, hy + 16, hx + 64, hy + 22, 19);
                b = shp[sg][a] * 32 / 100;
                rectfill (double_buffer, hx + 32, hy + 9, hx + 32 + b, hy + 13,
                          41);
@@ -748,7 +747,21 @@ int start_menu (int c)
    return stop - 1;
 }
 
-
+/*! \brief Confirm that the player really wants to quit
+ * 
+ * Ask the player if she/he wants to quit, yes or no.
+ * \date 20050119 
+ * \author PH
+ *
+ * \returns 1=quit 0=don't quit
+ */
+static int confirm_quit ()
+{
+   static char *opts[] = { "Yes", "No" };
+   int ans;
+   ans = prompt_ex (0, "Are you sure you want to quit this game?", opts, 2);
+   return ans == 0 ? 1 : 0;
+}
 
 /*! \brief Display system menu
  *
@@ -826,7 +839,7 @@ int system_menu (void)
          if (ptr == 2)
             config_menu ();
          if (ptr == 3)
-            return 1;
+            return confirm_quit ();
       }
       if (bctrl) {
          unpress ();
