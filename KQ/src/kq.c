@@ -100,10 +100,9 @@ BITMAP *double_buffer, *fx_buffer, *map_icons[MAX_TILES],
    *frames[MAXCHRS][MAXFRAMES],
    *eframes[MAXE][MAXEFRAMES], *pgb[9], *sfonts[5], *bord[8],
    *menuptr, *mptr, *sptr, *stspics, *sicons, *bptr,
-   *missbmp, *noway, *upptr, *dnptr,
-   *shadow[MAX_SHADOWS], *kfonts;
+   *missbmp, *noway, *upptr, *dnptr, *shadow[MAX_SHADOWS], *kfonts;
 #if 0
-   *shadow[MAX_SHADOWS], *kfonts, *portrait[MAXCHRS];
+*shadow[MAX_SHADOWS], *kfonts, *portrait[MAXCHRS];
 #endif
 
 /*! Layers in the map */
@@ -627,6 +626,7 @@ void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
       do_transition (TRANS_FADE_OUT, 4);
 
    sprintf (strbuf, "%s%s.map", MAP_DIR, map_name);
+
    pf = pack_fopen (strbuf, F_READ_PACKED);
 
    if (!pf)
@@ -1291,13 +1291,13 @@ static void startup (void)
 
    if (!pcxb)
       program_death ("Could not load kqfaces.pcx!");
-
+#if 0
    for (p = 0; p < 4; p++)
      {
         blit ((BITMAP *) pcxb->dat, portrait[p], 0, p * 40, 0, 0, 40, 40);
         blit ((BITMAP *) pcxb->dat, portrait[p + 4], 40, p * 40, 0, 0, 40, 40);
      }
-
+#endif
    unload_datafile_object (pcxb);
    load_data ();
    init_players ();
@@ -1810,10 +1810,10 @@ int in_party (int pn)
    /* TT: updated for in_party */
    for (a = 0; a < MAXCHRS; a++)
 #if 0
-   for (a = 0; a < numchrs; a++)
+      for (a = 0; a < numchrs; a++)
 #endif
-      if (pidx[a] == pn)
-         return a + 1;
+         if (pidx[a] == pn)
+            return a + 1;
 
    return 0;
 }
@@ -1870,7 +1870,13 @@ int main (void)
                   frate++;
 
                   if (key[kesc])
-                     stop = system_menu ();
+                    {
+                       stop = system_menu ();
+                    }
+                  if (bhelp)
+                    {
+                       select_party (NULL, 0, 0);
+                    }
 
                   if (alldead)
                     {
