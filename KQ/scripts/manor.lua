@@ -158,21 +158,21 @@ function postexec()
     bubble(8, "Good luck all of you.");
 
     -- TT: make everyone else walk out the door
-    set_ent_script(0, "R3D1L1D6R3");
-    set_ent_script(1, "R2D1L1D6R4");
-    set_ent_script(2, "R1D1L1D6R4D1");
-    set_ent_script(3, "D1L1D6R4D2");
-    set_ent_script(4, "R1D2L1D1L1D6R2");
-    set_ent_script(5, "R2D2L1D1L1D6R1");
-    set_ent_script(6, "R3D2L1D1L1D6");
-
-    for a = 0, 6, 1 do
+    set_ent_script(SENSAR, "D1R3D1L1D6R3");      
+    set_ent_script(SARINA, "D1R2D1L1D6R4");      
+    set_ent_script(CORIN, "D1R1D1L1D6R4D1");     
+    set_ent_script(AJATHAR, "D2L1D6R4D2");       
+    set_ent_script(CASANDRA, "U1R1D3L1D1L1D6R2");
+    set_ent_script(TEMMIN, "U1R2D3L1D1L1D6R1");  
+    set_ent_script(AYLA, "U1R3D3L1D1L1D6");      
+    set_ent_script(NOSLOM, "U1R4D3L1D1L1D5");    
+    for a = 0, 7, 1 do                           
       set_ent_speed(a, 4);
     end
 
-    wait_for_entity(0, 6);
+    wait_for_entity(0, 7);
 
-    for a = 0, 6, 1 do
+    for a = 0, 7, 1 do
       set_ent_active(a, 0);
     end
 
