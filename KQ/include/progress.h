@@ -139,6 +139,8 @@
 #define P_BLADE           102
 #define P_AYLA_QUEST      103
 
+#define P_BANGTHUMB       104
+
 
 /* 'specials' */
 #define P_SHOPSTART       1750

@@ -78,15 +78,15 @@ s_item;
 /*! \brief A spell */
 typedef struct
 {
-   char name[14];
-   unsigned char icon;
-   char desc[26];
+   char name[14];               /*!< Name of the spell being used */
+   unsigned char icon;          /*!< Picture used in the spell list (which type of spell) */
+   char desc[26];               /*!< Description of what the spell is intended to do */
    unsigned char stat;
    unsigned char mpc;
    unsigned char use;
    unsigned char tgt;
    int dmg;
-   int bon;
+   int bon;                     /*!< Bonus for */
    int hit;
    unsigned char elem;
    unsigned char dlvl;

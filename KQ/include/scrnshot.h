@@ -38,6 +38,6 @@
 
 extern const char *ss_exit_msg[5];
 
-int save_screenshot (BITMAP * src_bmp, const char *prefix);     /* kq.c */
+int save_screenshot (BITMAP *, const char *);   /* kq.c */
 
 #endif //__SCRNSHOT_H

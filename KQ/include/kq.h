@@ -334,7 +334,7 @@ typedef struct
    int sitmr;                   /*!<\brief steal item rare
                                  * If Ayla steals something, it will be this 5% of the time.
                                  */
-   int stats[13];               /*!<\brief See A_* constants in kq.h */
+   int stats[NUM_STATS];        /*!<\brief See A_* constants in kq.h */
    char res[16];                /*!<\brief See R_* constants in kq.h */
    unsigned char facing;
    unsigned char aframe;
@@ -350,7 +350,7 @@ typedef struct
                                  * The shape of the currently held weapon (sword, dagger, axe etc) \sa hero_init()
                                  */
    int welem;                   /*!< \brief Which element type (sick, fire, water, etc.) */
-   int unl;
+   int unl;                     /*!< \brief Unliving (undead), like zombies, skeletons, etc. */
    int aux;
    int bonus;
    int bstat;

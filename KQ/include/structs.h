@@ -32,7 +32,7 @@ typedef struct
 {
    signed char map_no;          /*!< Map identifier */
    unsigned char zero_zone;     /*!< Non-zero if zone 0 triggers an event */
-   unsigned char map_mode;      /*!< Map mode (see draw_map()) */
+   unsigned char map_mode;      /*!< Map's parallax mode (see draw_map()) */
    unsigned char can_save;      /*!< Non-zero if Save is allowed in this map */
    unsigned char tileset;       /*!< Which tile-set to use */
    unsigned char use_sstone;    /*!< Non-zero if sunstone works on this map */
