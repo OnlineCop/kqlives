@@ -235,6 +235,7 @@
 #define MAP_PASS           26
 #define MAP_TOWN7          27
 #define MAP_CULT           28
+#define MAP_CAVE5          30   /*sic */
 /*\}*/
 
 /*! \brief Animation specifier 

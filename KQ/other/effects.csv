@@ -1,5 +1,5 @@
 nf,fsx,fsy,ori,fdel,kol,sef,pcx_name
-0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,_
 3,24,24,1,50,0,10,AAXE_PCX
 3,24,24,1,50,0,12,AAXE_PCX
 17,24,24,1,100,19,40,ABSORB_PCX
@@ -50,3 +50,4 @@ nf,fsx,fsy,ori,fdel,kol,sef,pcx_name
 13,32,32,1,140,6,17,RASP_PCX
 11,32,32,1,150,8,17,SBLAST_PCX
 3,24,24,1,50,0,31,AAXE_PCX
+11,32,32,1,120,6,7,GENERIC_PCX

@@ -91,7 +91,7 @@ static void draw_itemmenu (int ptr, int pg, int sl)
         j = g_inv[pg * 16 + k][0];
         z = g_inv[pg * 16 + k][1];
         draw_icon (double_buffer, items[j].icon, 88 + xofs, k * 8 + 68 + yofs);
-        if (items[j].use > 0 && items[j].use < 5)
+        if (items[j].use >= USE_ANY_ONCE && items[j].use <= USE_CAMP_INF)
            ck = FNORMAL;
         else
            ck = FDARK;
@@ -404,6 +404,30 @@ int check_inventory (int ii, int qq)
    g_inv[v][0] = ii;
    g_inv[v][1] += qq;
    return 2;
+}
+
+/*! \brief Use up an item, if we have any
+ *
+ * Go through the inventory; if there is one or more of 
+ * an item, remove it.
+ * \author PH
+ * \date 20030102
+ * \param item_id the identifier (I_* constant) of the
+ * item.
+ * \returns 1 if we had it, 0 otherwise
+ */
+int useup_item (int item_id)
+{
+   int i;
+   for (i = 0; i < MAX_INV; ++i)
+     {
+        if (g_inv[i][0] == item_id)
+          {
+             remove_item (i, 1);
+             return 1;
+          }
+     }
+   return 0;
 }
 
 /*

@@ -53,7 +53,7 @@ void play_effect (int, int);    /*  draw.c, effects.c, entity.c, heroc.c, */
                                  /*  sgame.c                               */
 
 extern char debugging;          /*  combat.c, setup.c, sgame.c  */
-
+extern char slow_computer;      /*  effects.c, heroc.c, setup.c  */
 
 
 

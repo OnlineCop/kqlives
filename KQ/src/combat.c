@@ -244,13 +244,14 @@ int combat (int bno)
 
 
 
-/*                                                                           */
-/*  Author  : Josh Bolduc                                                    */
-/*  Created : ???????? - ??:??                                               */
-/*  Updated : Never.                                                         */
-/*  Purpose : Pre-combat setup of fighter structures and initial vars.       */
-/*  Returns : Nothing                                                        */
-/*                                                                           */
+/*! \brief Initiate fighter structs and initial vars
+ *
+ *  Author  : Josh Bolduc
+ *  Created : ???????? - ??:??
+ *  Updated : Never.
+ *  Purpose : Pre-combat setup of fighter structures and initial vars.
+ *  Returns : Nothing
+*/
 static void init_fighters (void)
 {
    int index;
@@ -262,6 +263,7 @@ static void init_fighters (void)
         fighter[index].aux = 0;
      }
 
+   // TT: These two are only called once in the game; should we move them here?
    hero_init ();
    enemy_init ();
    for (index = 0; index < (PSIZE + numens); index++)
@@ -270,13 +272,14 @@ static void init_fighters (void)
 
 
 
-/*                                                                           */
-/*  Author  : Josh Bolduc                                                    */
-/*  Created : ???????? - ??:??                                               */
-/*  Updated : Never.                                                         */
-/*  Purpose : Calculate where the fighters should be drawn.                  */
-/*  Returns : Nothing                                                        */
-/*                                                                           */
+/*! \brief fighter on-screen locations in battle
+ *
+ *  Author  : Josh Bolduc
+ *  Created : ???????? - ??:??
+ *  Updated : Never.
+ *  Purpose : Calculate where the fighters should be drawn.
+ *  Returns : Nothing
+*/
 static void snap_togrid (void)
 {
    int index;
@@ -317,13 +320,14 @@ static void snap_togrid (void)
 
 
 
-/*                                                                           */
-/*  Author  : Josh Bolduc                                                    */
-/*  Created : ???????? - ??:??                                               */
-/*  Updated : Never.                                                         */
-/*  Purpose : Set up surprise vars, speeds, act vars, etc.                   */
-/*  Returns : Nothing                                                        */
-/*                                                                           */
+/*! \brief Choose who attacks first, speeds, etc.
+ *
+ *  Author  : Josh Bolduc
+ *  Created : ???????? - ??:??
+ *  Updated : Never.
+ *  Purpose : Set up surprise vars, speeds, act vars, etc.
+ *  Returns : Nothing
+*/
 static void roll_initiative (void)
 {
    int i, j;
@@ -382,13 +386,15 @@ static void roll_initiative (void)
 
 
 
-/*                                                                           */
-/*  Author  : Josh Bolduc                                                    */
-/*  Created : ???????? - ??:??                                               */
-/*  Updated : 20020914 - 16:16 (RB)                                          */
-/*  Purpose : Draw the battle screen.                                        */
-/*  Returns : Nothing                                                        */
-/*                                                                           */
+/*! \brief draw the battle screen
+ *
+ *  Author  : Josh Bolduc
+ *  Created : ???????? - ??:??
+ *  Updated : 20020914 - 16:16 (RB)
+ *  Purpose : Draw the battle screen.
+ *  Returns : Nothing
+ * \param plyr player
+*/
 void battle_render (int plyr, int hl, int sall)
 {
    int a = 0;
@@ -539,6 +545,11 @@ void battle_render (int plyr, int hl, int sall)
         /*           as a '#define WARNING_LEVEL 5' or something like     */
         /*           that, so we can change it easily (maybe we can let   */
         /*           the player choose when it should be turned red).     */
+        /*  TT TODO: I like this idea; maybe somewhere in the Options     */
+        /*           menu?  I find that when the bar flashes red/yellow   */
+        /*          to warn the player, it's much more eye-pleasing than  */
+        /*          just a solid color (and not too hard to implement).   */
+
         print_font (double_buffer, b + 8, 208, strbuf,
                     (fighter[z].hp < (fighter[z].mhp / 5)) ? FRED : FNORMAL);
 #if 0
@@ -606,15 +617,15 @@ void battle_render (int plyr, int hl, int sall)
 
 
 
-/*                                                                           */
-/*  Author  : Josh Bolduc                                                    */
-/*  Created : ???????? - ??:??                                               */
-/*  Updated : 20020914 - 16:16 (RB)                                          */
-/*  Purpose : This function controls the battle guages and calls for action  */
-/*            when necessary. This is also where things like poison, sleep,  */
-/*            and what-not are checked.                                      */
-/*  Returns : Nothing                                                        */
-/*                                                                           */
+/*
+ *  Author  : Josh Bolduc
+ *  Created : ???????? - ??:??
+ *  Updated : 20020914 - 16:16 (RB)
+ *  Purpose : This function controls the battle guages and calls for action
+ *            when necessary. This is also where things like poison, sleep,
+ *            and what-not are checked.
+ *  Returns : Nothing
+*/
 static void do_round (void)
 {
    int a;
@@ -818,15 +829,15 @@ static void do_action (int dude)
 
 
 
-/*                                                                           */
-/*  Author  : Josh Bolduc                                                    */
-/*  Created : ???????? - ??:??                                               */
-/*  Updated : 20020914 - 16:37 (RB)                                          */
-/*  Purpose : Display a single fighter on the screen. Checks for dead and    */
-/*            stone, and if the fighter is selected. Also displays 'Vision'  */
-/*            spell information.                                             */
-/*  Returns : Nothing                                                        */
-/*                                                                           */
+/*
+ *  Author  : Josh Bolduc
+ *  Created : ???????? - ??:??
+ *  Updated : 20020914 - 16:37 (RB)
+ *  Purpose : Display a single fighter on the screen. Checks for dead and
+ *            stone, and if the fighter is selected. Also displays 'Vision'
+ *            spell information.
+ *  Returns : Nothing
+*/
 void draw_fighter (int dude, int dcur)
 {
    int xx;
@@ -881,14 +892,14 @@ void draw_fighter (int dude, int dcur)
 
 
 
-/*                                                                           */
-/*  Author  : Josh Bolduc                                                    */
-/*  Created : ???????? - ??:??                                               */
-/*  Updated : Never.                                                         */
-/*  Purpose : Just check to see if all the enemies or heroes are dead.       */
-/*  Returns : 1 if the battle ended (either the heroes or the enemies won);  */
-/*            0 otherwise.                                                   */
-/*                                                                           */
+/*
+ *  Author  : Josh Bolduc
+ *  Created : ???????? - ??:??
+ *  Updated : Never.
+ *  Purpose : Just check to see if all the enemies or heroes are dead.
+ *  Returns : 1 if the battle ended (either the heroes or the enemies won);
+ *            0 otherwise.
+*/
 static int check_end (void)
 {
    int index;
@@ -924,13 +935,13 @@ static int check_end (void)
 
 
 
-/*                                                                           */
-/*  Author  : Josh Bolduc                                                    */
-/*  Created : ???????? - ??:??                                               */
-/*  Updated : Never.                                                         */
-/*  Purpose : I don't really need to describe this :p                        */
-/*  Returns : 1 or 0 (TODO: check what each means)                           */
-/*                                                                           */
+/*
+ *  Author  : Josh Bolduc
+ *  Created : ???????? - ??:??
+ *  Updated : Never.
+ *  Purpose : I don't really need to describe this :p
+ *  Returns : 1 or 0 (TODO: check what each means)
+*/
 int fight (int ar, int dr, int sk)
 {
    int a;
@@ -1034,16 +1045,18 @@ int fight (int ar, int dr, int sk)
 
 
 
-/*                                                                           */
-/*  Author  : Josh Bolduc                                                    */
-/*  Created : ???????? - ??:??                                               */
-/*  Updated : Never.                                                         */
-/*  Purpose : This is different than fight in that all enemies are attacked  */
-/*            simultaneously, once. As a note, the attackers stats are       */
-/*            always over-ridden in this function. As well, critical hits    */
-/*            are possible, but the screen doesn't flash.                    */
-/*  Returns : 1 or 0 (TODO: check what each means)                           */
-/*                                                                           */
+/*! \brief Attack all enemies at once
+ *
+ *  Author  : Josh Bolduc
+ *  Created : ???????? - ??:??
+ *  Updated : Never.
+ *  Purpose : This is different than fight in that all enemies are attacked
+ *            simultaneously, once. As a note, the attackers stats are
+ *            always over-ridden in this function. As well, critical hits
+ *            are possible, but the screen doesn't flash.
+ *  Returns : 1 or 0 (TODO: check what each means)
+ * \param ar attacker
+*/
 void multi_fight (int ar)
 {
    int index;
@@ -1062,11 +1075,14 @@ void multi_fight (int ar)
         kw[index] = 0;
      }
 
+   // if the attacker is you, target enemies
    if (ar < PSIZE)
      {
         st = PSIZE;
         nd = numens;
      }
+
+   // if the attacker is enemy, target your party
    else
      {
         st = 0;
@@ -1142,15 +1158,18 @@ void multi_fight (int ar)
 
 
 
-/*                                                                           */
-/*  Author  : Josh Bolduc                                                    */
-/*  Created : ???????? - ??:??                                               */
-/*  Updated : Never.                                                         */
-/*  Purpose : This does the actual attack calculation. The damage done to    */
-/*            the target is kept in the ta[] array.                          */
-/*  Returns : 0 (attack was a miss), 1 (attack was successful) or 2 (attack  */
-/*            was a critical hit).                                           */
-/*                                                                           */
+/*! \brief Attack all enemies at once
+ *
+ *  Author  : Josh Bolduc
+ *  Created : ???????? - ??:??
+ *  Updated : Never.
+ *  Purpose : This does the actual attack calculation. The damage done to
+ *            the target is kept in the ta[] array.
+ *  Returns : 0 (attack was a miss), 1 (attack was successful) or 2 (attack
+ *            was a critical hit).
+ * \param ar attacker
+ * \param dr defender
+*/
 static int attack_result (int ar, int dr)
 {
    int c;
@@ -1287,14 +1306,15 @@ static int attack_result (int ar, int dr)
 
 
 
-/*                                                                           */
-/*  Author  : Josh Bolduc                                                    */
-/*  Created : ???????? - ??:??                                               */
-/*  Updated : Never.                                                         */
-/*  Purpose : Play some sad music and set the dead flag so that the game     */
-/*            will return to the main menu.                                  */
-/*  Returns : Nothing.                                                       */
-/*                                                                           */
+/*! \brief enemies defeated the player
+ *
+ *  Author  : Josh Bolduc
+ *  Created : ???????? - ??:??
+ *  Updated : Never.
+ *  Purpose : Play some sad music and set the dead flag so that the game
+ *            will return to the main menu.
+ *  Returns : Nothing.
+*/
 static void enemies_win (void)
 {
    play_music ("rain.s3m", 0);
@@ -1314,13 +1334,14 @@ static void enemies_win (void)
 
 
 
-/*                                                                           */
-/*  Author  : Josh Bolduc                                                    */
-/*  Created : ???????? - ??:??                                               */
-/*  Updated : Never.                                                         */
-/*  Purpose : Distribute the booty!                                          */
-/*  Returns : Nothing.                                                       */
-/*                                                                           */
+/*! \brief player defeated the enemies
+ *
+ *  Author  : Josh Bolduc
+ *  Created : ???????? - ??:??
+ *  Updated : Never.
+ *  Purpose : Distribute the booty!
+ *  Returns : Nothing.
+*/
 static void heroes_win (void)
 {
    int tgp = 0;
@@ -1483,13 +1504,15 @@ static void heroes_win (void)
 
 
 
-/*                                                                           */
-/*  Author  : Josh Bolduc                                                    */
-/*  Created : ???????? - ??:??                                               */
-/*  Updated : PH 17-sep-2002 added cheat mode                                */
-/*  Purpose : Do what it takes to put a fighter out of commission.           */
-/*  Returns : Nothing.                                                       */
-/*                                                                           */
+/*! \brief kill a fighter
+ *
+ *  Author  : Josh Bolduc
+ *  Created : ???????? - ??:??
+ *  Updated : PH 17-sep-2002 added cheat mode
+ *  Purpose : Do what it takes to put a fighter out of commission.
+ *  Returns : Nothing.
+ * \param victim the one who will die
+*/
 void fkill (int victim)
 {
    int index;

@@ -29,7 +29,7 @@ end
 -- updated 20020929 PH
 -- added test for P_OPALHELMET so 
 -- that you can re-enter the guild
--- if you haven't got the helmet yet
+-- if you do not have the helmet yet
 function zone_handler(zn)  
   if (zn == 1) then
     if (get_progress(P_OPALHELMET)==1) then 

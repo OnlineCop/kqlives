@@ -132,7 +132,7 @@ int select_any_player (int csa, int icn, char *msg)
         if (rd == 1)
           {
              drawmap ();
-             if (csa < 3)
+             if (csa < TGT_ALLY_ALL)
                {
                   menubox (double_buffer,
                            152 - ((strlen (msg) + 1) * 4) + xofs, 8 + yofs,
@@ -149,7 +149,7 @@ int select_any_player (int csa, int icn, char *msg)
                            5, BLUE);
                   draw_playerstat (double_buffer, pidx[k], 88 + xofs,
                                    k * 56 + shy + 8 + yofs);
-                  if (csa < 3)
+                  if (csa < TGT_ALLY_ALL)
                     {
                        if (sa == 0)
                          {
@@ -166,12 +166,12 @@ int select_any_player (int csa, int icn, char *msg)
           }
         rd = 0;
         readcontrols ();
-        if (csa < 3)
+        if (csa < TGT_ALLY_ALL)
           {
              if (left)
                {
                   unpress ();
-                  if (csa == 1)
+                  if (csa == TGT_ALLY_ONE)
                     {
                        if (sa == 0)
                           sa = 1;
@@ -183,7 +183,7 @@ int select_any_player (int csa, int icn, char *msg)
              if (right)
                {
                   unpress ();
-                  if (csa == 1)
+                  if (csa == TGT_ALLY_ONE)
                     {
                        if (sa == 0)
                           sa = 1;
@@ -220,7 +220,7 @@ int select_any_player (int csa, int icn, char *msg)
              stop = 2;
           }
      }
-   if (csa == 3 || stop == 2)
+   if (csa == TGT_ALLY_ALL || stop == 2)
       return -1;
    if (sa == 1)
       return SEL_ALL_ALLIES;
@@ -236,19 +236,17 @@ int select_any_player (int csa, int icn, char *msg)
  *           Used in heroc.c
  * \param   whom =person that is doing the action ??
  * \param    multi =mode (target one, one/all or all)
- * \param    csd =allows you to select a dead character
+ * \param    csd = non-zero allows you to select a dead character
  * \returns  Index of player (0..numchrs-1) or -1 if cancelled
  *           or SEL_ALL_ALLIES if 'all' was selected (by pressing U or D)
 
- * \todo PH  Should use TGT_* constants (in kq.h) to compare to multi
- *          csd should use NO_STS_CHECK like auto_select_hero ??
  * \todo PH  tmpd should be a local var?
 */
 int select_hero (int whom, int multi, int csd)
 {
    int cntr = 0, ptr = 0, stp = 0, rd = 1, sa, a;
 
-   if (multi == 2)
+   if (multi == TGT_ALLY_ONEALL)
       sa = 1;
    else
       sa = 0;
@@ -261,11 +259,11 @@ int select_hero (int whom, int multi, int csd)
           }
         else
           {
-             if (csd == 1)
+             if (csd)
                {
                   tmpd[a] = a;
                   cntr++;
-                  ptr = a;
+                  ptr = a;      /* default: select a dead char if there is one */
                }
           }
      }
@@ -273,7 +271,7 @@ int select_hero (int whom, int multi, int csd)
      {
         if (rd == 1)
           {
-             if (multi > 0 && sa == 1)
+             if (multi > TGT_NONE && sa == 1)
                 battle_render (tmpd[ptr] + 1, whom + 1, 1);
              else
                 battle_render (tmpd[ptr] + 1, whom + 1, 0);
@@ -308,7 +306,7 @@ int select_hero (int whom, int multi, int csd)
                 ptr = 0;
              rd = 1;
           }
-        if (multi == 1 && cntr > 1)
+        if (multi == TGT_ALLY_ONE && cntr > 1)
           {
              if (up)
                {

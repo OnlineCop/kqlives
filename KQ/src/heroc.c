@@ -360,7 +360,6 @@ void auto_herochooseact (int who)
  *
  *\param  whom Index of player (see constants in progress.h)              
  *\return Index of target                                            
- *\todo   PH change 99 (below) into #define'd constants
 */
 static int hero_attack (int whom)
 {
@@ -371,9 +370,11 @@ static int hero_attack (int whom)
    else
      {
         if (fighter[whom].ctmem == 0)
-           tgt = auto_select_enemy (whom, 99);
+           /* PH fixme: replaced 99 with NO_STS_CHECK */
+           /* was 99 a bug? see auto_select_hero()  */
+           tgt = auto_select_enemy (whom, NO_STS_CHECK);
         else
-           tgt = auto_select_hero (whom, 99);
+           tgt = auto_select_hero (whom, NO_STS_CHECK);
      }
    if (tgt == -1)
       return 0;
@@ -759,6 +760,8 @@ static int hero_invokeitem (int whom, int eno)
 static void hero_run (int whom)
 {
    int a, b = 0, c = 0, bt = 0, ct = 0, p, fr, fx, fy, g = 0;
+   // TT: slow_computer additions for speed-ups
+   int count;
 
    whom = whom;
    if (ms == 1)
@@ -817,9 +820,16 @@ static void hero_run (int whom)
    else
       sprintf (strbuf, "Escaped!");
    g = strlen (strbuf) * 4;
+
+   // TT: slow_computer addition for speed-ups
+   if (slow_computer)
+      count = 3;
+   else
+      count = 20;
+
    for (c = 0; c < 5; c++)
      {
-        for (a = 0; a < 20; a++)
+        for (a = 0; a < count; a++)
           {
              clear_bitmap (double_buffer);
              menubox (double_buffer, 152 - g, 32, strlen (strbuf), 1, BLUE);
@@ -1025,7 +1035,7 @@ static int combat_spell_targeting (int whom)
    if (magic[a].tgt <= TGT_ALLY_ALL)
      {
         if (a == M_LIFE || a == M_FULLLIFE)
-           tg = select_hero (whom, magic[a].tgt - 1, 1);
+           tg = select_hero (whom, magic[a].tgt - 1, NO_STS_CHECK);
         else
            tg = select_hero (whom, magic[a].tgt - 1, 0);
         if (tg == -1)

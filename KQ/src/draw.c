@@ -219,8 +219,8 @@ void draw_icon (BITMAP * where, int ino, int icx, int icy)
  * Status icons are 8x8 sub-bitmaps of \p stspics, representing poisoned, etc.
  * \param where bitmap to draw to
  * \param cc non-zero if in combat mode (draw
- *        using info  \p fighter[] rather than \p party[]
- * \param who Charcter to draw status for
+ *        using info  \p fighter[] rather than \p party[] )
+ * \param who Character to draw status for
  * \param inum the maximum number of status icons to draw.
  *        \p inum ==17 when in combat, ==8 otherwise.
  * \param icx x-coord to draw to
@@ -261,7 +261,10 @@ static void drawchar (int xw, int yw)
    int fr, dx, dy, i, f, fid;
    int spec = 0;
 
-   for (i = 0; i < PSIZE + noe; i++)
+   // TT: this draws player 2 over player 1
+   //  for (i = 0; i < PSIZE + noe; i++)
+   // try the 2nd line instead...
+   for (i = PSIZE + noe - 1; i >= 0; i--)
      {
         spec = 0;
         fid = g_ent[i].eid;
@@ -717,10 +720,16 @@ void menubox (BITMAP * where, int x, int y, int w, int h, int c)
      }
    else
      {
+        rectfill (where, x + 2, y + 2, x + wid - 3, y + hgt - 3,
+                  (c == DARKBLUE ? DBLUE : DRED));
+// TT: edit
+#if 0
         if (c == DARKBLUE)
            rectfill (where, x + 2, y + 2, x + wid - 3, y + hgt - 3, DBLUE);
         else
            rectfill (where, x + 2, y + 2, x + wid - 3, y + hgt - 3, DRED);
+#endif
+
         border (where, x, y, x + wid - 1, y + hgt - 1);
      }
 }
@@ -837,18 +846,26 @@ static void set_textpos (int who)
         if (gbby > gby)
           {
              gby += 20;
+             gbt = (gbx < 152 ? 3 : 2);
+// TT: edit
+#if 0
              if (gbx < 152)
                 gbt = 3;
              else
                 gbt = 2;
+#endif
           }
         else
           {
              gby -= 20;
+             gbt = (gbx < 152 ? 1 : 0);
+// TT: edit
+#if 0
              if (gbx < 152)
                 gbt = 1;
              else
                 gbt = 0;
+#endif
           }
         if (gbx < gbbx + 8)
            gbx = gbbx + 8;
@@ -1009,11 +1026,15 @@ static const char *relay (const char *buf)
              switch (tc)
                {
                case ' ':
-                  if (cc < MSG_COLS)
+                  if (cc < MSG_COLS - 1)
                     {
                        msgbuf[cr][cc++] = tc;
-                       ++i;
                     }
+                  else
+                    {
+                       msgbuf[cr][MSG_COLS - 1] = '\0';
+                    }
+                  ++i;
                   break;
                default:
                   state = M_UNDEF;
@@ -1029,14 +1050,14 @@ static const char *relay (const char *buf)
                   state = M_UNDEF;
                   break;
                default:
-                  if (cc < MSG_COLS)
+                  if (cc < MSG_COLS - 1)
                     {
                        msgbuf[cr][cc++] = tc;
                     }
                   else
                     {
                        msgbuf[cr++][lastc] = '\0';
-                       cc = 1;
+                       cc = 0;
                        i = lasts;
                        if (cr >= MSG_ROWS)
                          {

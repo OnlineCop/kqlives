@@ -19,10 +19,14 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+/*! \file */
+/* \brief Defines for all items 
+ * \author JB
+ * \date ??????
+ */
+
 #ifndef __ITEMDEFS_H
 #define __ITEMDEFS_H
-
-
 
 #define I_MACE1             1
 #define I_MACE2             2
@@ -213,7 +217,7 @@
 #define I_B_XSURGE          187
 #define I_CHENDIGAL         188
 #define I_CHENDIGRA         189
-
+#define I_DYNAMITE          190
 
 
 #endif /*  __ITEMDEFS_H  */

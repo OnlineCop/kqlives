@@ -72,6 +72,8 @@ void fight_animation (int tgt, int who, int ma)
 void display_amount (int tgt, int cl, int aflag)
 {
    int dx, dy, sz, c, f, n, g, k, p, z;
+   // TT: used for the slow_computer routine
+   int pcount, ccount;
 
    if (aflag == 1)
      {
@@ -95,9 +97,15 @@ void display_amount (int tgt, int cl, int aflag)
    cury = -1;
    battle_render (0, 0, 0);
    blit (double_buffer, back, 0, 0, 0, 0, 352, 280);
-   for (p = 0; p < 2; p++)
+
+   // TT: slow_computer addition for speed-ups
+   pcount = (slow_computer ? 1 : 2);
+   ccount = (slow_computer ? 3 : 12);
+
+   // TT: slow_computer addition for speed-ups
+   for (p = 0; p < pcount; p++)
      {
-        for (c = 0; c < 12; c++)
+        for (c = 0; c < ccount; c++)
           {
              blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
              for (g = f; g < f + n; g++)
@@ -472,6 +480,8 @@ void draw_castersprite (int cstr, int cc)
 void death_animation (int tgt, int aflag)
 {
    int a, f, dx, dy, n, g, p;
+   // TT: used for the slow_computer routine
+   int count;
 
    if (tgt < 2)
       return;
@@ -498,9 +508,13 @@ void death_animation (int tgt, int aflag)
    play_effect (24, 128);
    battle_render (0, 0, 0);
    blit (double_buffer, back, 0, 0, 0, 0, 352, 280);
+
+   // TT: slow_computer addition for speed-ups
+   count = (slow_computer ? 4 : 1);
    for (p = 0; p < 2; p++)
      {
-        for (a = 0; a < 16; a++)
+        // TT: slow_computer additions for speed-ups
+        for (a = 0; a < 16; a += count)
           {
              convert_cframes (tgt, 1, 15 - (a / 2), aflag);
              for (g = f; g < f + n; g++)

@@ -1,3 +1,4 @@
+# -*- makefile -*-
 ###############################################################################
 #                                                                             #
 #  This file is included by all the other Makefile types. Note that I do a    #
@@ -52,6 +53,8 @@ PACKAGE_OBJ = fix.bat    \
 #                                                                             #
 ###############################################################################
 
+RES_C=src/res.c
+
 # export all our vars to sub-makes
 export
 
@@ -62,6 +65,18 @@ scripting:
 editor:
 	@echo This could take a long time, please wait.
 	$(MAKE) -C maps
+
+
+$(RES_C): other/items.csv other/spells.csv other/effects.csv other/encount.csv
+	cat other/res-skel.1.c > $(RES_C)
+	other/kq2h.pl other/items.csv >> $(RES_C)
+	cat other/res-skel.2.c >> $(RES_C)
+	other/kq2h.pl other/spells.csv >> $(RES_C)
+	cat other/res-skel.3.c >> $(RES_C)
+	other/kq2h.pl other/effects.csv >> $(RES_C)
+	cat other/res-skel.4.c >> $(RES_C)
+	other/kq2h.pl other/encount.csv >> $(RES_C)
+	cat other/res-skel.5.c >> $(RES_C)
 
 #                                                                             #
 #  The clean target deletes the executable, the object files and the runner,  #

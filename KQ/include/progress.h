@@ -108,6 +108,8 @@
 #define P_BOMB4           84
 #define P_BOMB5           85
 #define P_DYNAMITE        86
+#define P_TALKRUFUS       87
+/* 'specials' */
 #define P_SHOPSTART       1750
 #define P_SKIPINTRO       1997
 #define P_REPULSE         1998

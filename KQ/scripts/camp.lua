@@ -222,9 +222,9 @@ function entity_handler(en)
   
   elseif (en == 37) then
     local a;
-  
+    local heroname=get_party_name(get_pidx(0));  
     a = get_progress(P_PARTNER3)-1;
-    bubble(37,"Hey, $0! Am I ever",
+    bubble(37,"Hey, "..heroname.."! Am I ever",
               "glad to see you! We're in a bit",
               "of a jam here.","");
     bubble(37,"I took a small job to help guard",
@@ -277,8 +277,16 @@ function entity_handler(en)
     set_autoparty(1);
     set_ent_script(HERO1,"D2R1F2");
     if (get_numchrs() == 2) then
-      set_ent_script(HERO2,"D2R1F2");
-      wait_for_entity(HERO1,HERO2);
+-- BUG: This fixes the lock-up when player 2 is on the right
+--      side of player 1 (player 2 gets stuck).  Not even
+--      necessary if someone adds a bush or tree there... :)
+      if (get_ent_tilex(HERO2) == get_ent_tilex(HERO1)+1) then
+        set_ent_script(HERO2,"L1D3R2U1F2");
+        wait_for_entity(HERO1,HERO2);
+      else
+        set_ent_script(HERO2,"D2R1F2");
+        wait_for_entity(HERO1,HERO2);
+      end
     else
       wait_for_entity(HERO1,HERO1);
     end

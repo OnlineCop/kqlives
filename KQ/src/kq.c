@@ -696,7 +696,7 @@ void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
 
    play_music (g_map.song_file, 0);
    mx = g_map.xsize * 16 - 304;
-   my = g_map.ysize * 16 - 224;
+   my = g_map.ysize * 16 - 256; /*PH fixme: was 224, drawmap() draws 16 rows, so should be 16*16=256 */
 
    if (mvx == 0 && mvy == 0)
      {
@@ -1669,3 +1669,33 @@ int main (void)
 }
 
 END_OF_MAIN ();
+
+/*! \page treasure A Note on Treasure 
+ *
+ * The treasure chests are allocated in this way:
+ * - 0: town1
+ * - 2: cave1
+ * - 3..5: town2
+ * - 7: town2
+ * - 8: bridge
+ * - 9..10: town2
+ * - 12: town3
+ * - 15: grotto
+ * - 17..19: cave3a
+ * - 20: cave3b
+ * - 21..30: temple2
+ * - 32: town5
+ * - 33..44: tower
+ * - 45: town1
+ * - 48..49: grotto2
+ * - 55..61: camp
+ * - 62..66: cave4
+ * - 70: town6
+ * - 72: town7
+ * - 73..74: pass
+ * - 75..79: cult
+ * - 80: grotto
+ * - 81: town4
+ * 
+ * The names given are the base names of the maps/lua scripts
+ */

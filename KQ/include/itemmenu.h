@@ -29,18 +29,4 @@ int check_inventory (int, int); /*  many functions ;)  */
 void remove_item (int, int);    /*  (eqp|shop)menu.c, heroc.c  */
 int item_effects (int, int, int);       /*  heroc.c  */
 
-
-
-#if 0
-void draw_itemmenu (int, int, int);     /*  staticed  */
-void sort_items (void);         /*  staticed  */
-void join_items (void);         /*  staticed  */
-int confirm_drop (void);        /*  staticed  */
-int item_quantity (int, int, int);      /*  did not exist  */
-void camp_item_targetting (int);        /*  staticed  */
-void sort_inventory (void);     /*  staticed  */
-#endif /*  0  */
-
-
-
 #endif /*  __ITEMMENU_H  */

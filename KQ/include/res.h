@@ -32,7 +32,7 @@
 
 /*!\name Size of resource tables */
 /*\{*/
-#define NUM_ITEMS     190
+#define NUM_ITEMS     191
 #define NUM_SPELLS     61
 #define NUM_EFFECTS    52
 #define NUM_ETROWS    107

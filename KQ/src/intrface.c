@@ -204,6 +204,7 @@ static void check_map_change (void);
 /* New functions */
 /*static int KQ_get_tile_all(lua_State*);*/
 static int KQ_copy_tile_all (lua_State *);
+static int KQ_use_up (lua_State *);
 
 
 static const struct luaL_reg lrs[] = {
@@ -351,6 +352,7 @@ static const struct luaL_reg lrs[] = {
    {"wait_enter", KQ_wait_enter},
    /*   {"get_tile_all", KQ_get_tile_all}, */
    {"copy_tile_all", KQ_copy_tile_all},
+   {"use_up", KQ_use_up},
    {NULL, NULL}
 };
 
@@ -2031,6 +2033,13 @@ static int KQ_wait_enter (lua_State * L)
       L = L;
    wait_enter ();
    return 0;
+}
+extern int useup_item (int);
+static int KQ_use_up (lua_State * L)
+{
+   int i = lua_tonumber (L, 1);
+   lua_pushnumber (L, useup_item (i));
+   return 1;
 }
 
 static char *mybuf = NULL;

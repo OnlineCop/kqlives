@@ -332,6 +332,19 @@ unsigned short shops[NUMSHOPS][12][3] = {
     {0, 0, 0},
     {0, 0, 0},
     {0, 0, 0}},
+   /* Rufus's shop */
+   {{I_DYNAMITE, 20, 20},
+    {0, 0, 0},
+    {0, 0, 0},
+    {0, 0, 0},
+    {0, 0, 0},
+    {0, 0, 0},
+    {0, 0, 0},
+    {0, 0, 0},
+    {0, 0, 0},
+    {0, 0, 0},
+    {0, 0, 0},
+    {0, 0, 0}},
 };
 
 unsigned short shopq[NUMSHOPS][12];
@@ -362,7 +375,8 @@ static char shopn[NUMSHOPS][40] = {
    "Alderic's Weapons",
    "Ezbaran's Items",
    "Agrasian's Armor",
-   "The Colosseum Shop"
+   "The Colosseum Shop",
+   "Rufus's Cabin"
 };
 
 

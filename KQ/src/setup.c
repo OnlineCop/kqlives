@@ -41,6 +41,8 @@
 /*\{*/
 /*! Debug level 0..3 */
 char debugging = 0;
+/*! Speed-up for slower machines */
+char slow_computer = 0;
 /*! Look up table of names for keys */
 char keynames[115][12] = {
    "",
@@ -78,8 +80,9 @@ static int getakey (void);
 
 
 
-/*! \brief Parse setup.cfgRead settings from file
+/*! \brief Parse setup.cfg
  *
+ * Read settings from file
  * Parse the setup.cfg file for key configurations.
  * This file would also contain sound options, but that
  * isn't necessary right now.
@@ -116,6 +119,11 @@ void parse_setup (void)
           {
              fscanf (s, "%d", &dab);
              cheat = dab;
+          }
+        if (!strcmp (strbuf, "slowcomputer"))
+          {
+             fscanf (s, "%d", &dab);
+             slow_computer = dab;
           }
         if (!strcmp (strbuf, "debug"))
           {
@@ -212,7 +220,7 @@ void parse_setup (void)
 void config_menu (void)
 {
    int stop = 0, ptr = 0, rd = 1, p;
-   char dc[15][40] = {
+   char dc[16][40] = {
       "Display KQ in a window.",
       "Stretch to fit 640x480 resolution.",
       "Display the frame rate during play.",
@@ -228,6 +236,7 @@ void config_menu (void)
       "Toggle sound and music on/off.",
       "Overall sound volume (affects music).",
       "Music volume.",
+      "Animation speed-ups for slow machines."
    };
 
    unpress ();
@@ -239,7 +248,7 @@ void config_menu (void)
              menubox (double_buffer, 88 + xofs, yofs, 16, 1, BLUE);
              print_font (double_buffer, 96 + xofs, 8 + yofs,
                          "KQ Configuration", FGOLD);
-             menubox (double_buffer, 32 + xofs, 24 + yofs, 30, 17, BLUE);
+             menubox (double_buffer, 32 + xofs, 24 + yofs, 30, 19, BLUE);
              print_font (double_buffer, 48 + xofs, 32 + yofs,
                          "Windowed Mode:", FNORMAL);
              print_font (double_buffer, 48 + xofs, 40 + yofs,
@@ -280,6 +289,9 @@ void config_menu (void)
                   print_font (double_buffer, 48 + xofs, 160 + yofs,
                               "Music Volume:", FDARK);
                }
+             print_font (double_buffer, 48 + xofs, 176 + yofs,
+                         "Slow Computer:", FNORMAL);
+
              if (windowed == 1)
                 print_font (double_buffer, 256 + xofs, 32 + yofs, "YES",
                             FNORMAL);
@@ -348,12 +360,23 @@ void config_menu (void)
                   print_font (double_buffer, 248 + xofs, 160 + yofs, strbuf,
                               FNORMAL);
                }
+             if (slow_computer == 1)
+                print_font (double_buffer, 256 + xofs, 176 + yofs, "YES",
+                            FNORMAL);
+             else
+                print_font (double_buffer, 264 + xofs, 176 + yofs, "NO",
+                            FNORMAL);
+
+             // this affects the VISUAL placement of the arrow
              p = ptr;
              if (ptr > 3)
                 p++;
              if (ptr > 11)
                 p++;
+             if (ptr > 14)
+                p++;
              draw_sprite (double_buffer, menuptr, 32 + xofs, p * 8 + 32 + yofs);
+             /* This is the bottom window, where the description goes */
              menubox (double_buffer, xofs, 216 + yofs, 38, 1, BLUE);
              print_font (double_buffer, 8 + xofs, 224 + yofs, dc[ptr], FNORMAL);
              blit2screen (xofs, yofs);
@@ -362,17 +385,23 @@ void config_menu (void)
         if (up)
           {
              unpress ();
+             // "jump" over unusable options
+             if (ptr == 15 && is_sound == 0)
+                ptr -= 2;
              ptr--;
              if (ptr < 0)
-                ptr = 14;
+                ptr = 15;
              play_effect (SND_CLICK, 128);
              rd = 1;
           }
         if (down)
           {
              unpress ();
+             // "jump" over unusable options
+             if (ptr == 12 && is_sound == 0)
+                ptr += 2;
              ptr++;
-             if (ptr > 14)
+             if (ptr > 15)
                 ptr = 0;
              play_effect (SND_CLICK, 128);
              rd = 1;
@@ -472,6 +501,10 @@ void config_menu (void)
                        if (is_sound == 0)
                          {
                             is_sound = 1;
+                            print_font (double_buffer, 92 + 2 + xofs,
+                                        204 + yofs, "...please wait...",
+                                        FNORMAL);
+                            blit2screen (xofs, yofs);
                             sound_init ();
                             play_music (g_map.song_file, 0);
                          }
@@ -497,11 +530,15 @@ void config_menu (void)
                        if (p != -1)
                           gmvol = p * 10;
 
-                       /* make sure to st it no matter what */
+                       /* make sure to set it no matter what */
                        set_music_volume (gmvol / 250.0);
                     }
                   else
                      play_effect (SND_BAD, 128);
+                  break;
+               case 15:
+                  // TT: toggle slow_computer
+                  slow_computer = (slow_computer == 0 ? 1 : 0);
                   break;
                }
              rd = 1;
