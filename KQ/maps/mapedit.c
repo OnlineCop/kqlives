@@ -1,3 +1,22 @@
+/* TT TODO:
+ *
+ * Change the F12 function to be able to select the current Attribute.
+ *
+ * This would mean that F12 does not automatically go into the entity-stats
+ * mode; it will only go into it if entities was the active draw_mode.
+ * If zones were selected, you would be able to move through all of the
+ * current zone #s on the screen (meaning, if you had several Zone_5 on the
+ * map, pressing KEY_UP would move from the upper-left most Zone_5, to the
+ * right, all the way to the bottom of the map, and then repeat itself).
+ *
+ * This would give a very handy way of tracking down a "stray" zone.
+ *
+ * The error-check for "no zones" can follow the guidelines of the
+ * "no entities" error message.
+ *
+ */
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -1067,7 +1086,7 @@ void visual_map (void)
         save_bitmap ("vis_map.pcx", bmp, pal);
         destroy_bitmap (bmp);
      }
-}
+} /* visual_map () */
 
 
 /*! \brief Update the screen
@@ -1422,8 +1441,8 @@ void draw_menubars (void)
              blit (icons[icon_set * ICONSET_SIZE + p],
                    double_buffer, 0, 0, (SW - 64), p * 16, 16, 16);
              blit (icons[(icon_set * ICONSET_SIZE) + p +
-                         (ICONSET_SIZE / 2)], double_buffer, 0, 0,
-                   (SW - 48), p * 16, 16, 16);
+                         (ICONSET_SIZE / 2)],
+                   double_buffer, 0, 0, (SW - 48), p * 16, 16, 16);
           }
      }
 
@@ -1446,9 +1465,6 @@ void draw_menubars (void)
 
    /* Display the draw_mode */
    print_sfont ((SW - 72), 164, "Mode:", double_buffer);
-
-/* TT hack: the brace is just to help localize the hack code */
-/* { */
 
    /* Determine the views that we're currently using */
    draw_mode_display = 0;
@@ -1502,19 +1518,6 @@ void draw_menubars (void)
      } /* switch (draw_mode) */
    print_sfont ((SW - 66), 170, dt[draw_mode_display], double_buffer);
 
-#if 0
-/* TT: Okay, this is how the conversion works:
-     log(draw_mode) / log(2)
-   Of course, we need to make it display correctly:
-     (int)(ceil(log(draw_mode) / log(2)))
-   The problems we have are from: LAYER12, LAYER13, LAYER23, LAYER123
-   So, after much fussing over it, I decided to keep it as-is above
-*/
-      print_sfont ((SW - 66), 170, dt[(int)(ceil(log(draw_mode) / log(2)))], double_buffer);
-#endif
-
-/* } */
-
    /* Display the tileset and selected icon */
    sprintf (strbuf, "#%d(%d)", icon_set, curtile);
    print_sfont ((SW - 72), 176, strbuf, double_buffer);
@@ -1565,6 +1568,24 @@ void draw_menubars (void)
    /* Displays the coordinates of the Block Copy */
    if (draw_mode == BLOCK_COPY && copyx1 != -1 && copyy1 != -1)
      {
+// <-- HERE
+        int rectx1, rectx2, recty1, recty2;
+
+        rectx1 = (copyx1 + gx) * 16;
+        recty1 = (copyy1 + gy) * 16;
+        rectx2 = (copyx2 + gx) * 16 + 15;
+        recty2 = (copyy2 + gy) * 16 + 15;
+
+        // TT: Highlight the selected tile (takes into account window's coords)
+        rect (double_buffer, rectx1, recty1, rectx2, recty2, 2);
+
+        /* TT: My next project is to select the top-left coords, then when
+         * the user right-clicks and finishes the copy-selection, the rect
+         * stretches to surround the selected area.  This would mean that I
+         * would have to also check to make sure the coords aren't "backward"
+         * like I have for the copy_region() function.  (Could I actually use
+         * the code from there to implement this?)
+         */
         sprintf (strbuf, "From: %d,%d", copyx1, copyy1);
         print_sfont (320, (SH - 46), strbuf, double_buffer);
         if (copying == 0)
@@ -1850,11 +1871,11 @@ int yninput (void)
 
    while (!done)
      {
-        ch = (readkey () >> 8);
         /* TT: Updated so ENTER/ESC function the same as Y/N */
+        ch = (readkey () >> 8);
         if (ch == KEY_N || ch == KEY_ESC)
            done = 1;
-        if (ch == KEY_Y || ch == KEY_ENTER)
+        if (ch == KEY_Y || ch == KEY_ENTER || ch == KEY_ENTER_PAD)
            done = 2;
      }
    return done - 1;
@@ -2031,7 +2052,15 @@ void cleanup (void)
 */
 void wait_enter (void)
 {
-   while ((readkey () >> 8) != KEY_ENTER);
+   int a, done = 0;
+
+   while (!done)
+     {
+        /* TT: Updated so ENTER/ESC function the same as Y/N */
+        a = (readkey () >> 8);
+        if (a == KEY_ENTER || a == KEY_ENTER_PAD)
+           done = 1;
+     }
 } /* wait_enter () */
 
 
@@ -2113,7 +2142,7 @@ void show_help (void)
       sprintf (strbuf, "%s", help_keys[this_counter]);
       print_sfont (19*6, (this_counter * 7) + 35, strbuf, screen);
    }
-   while(!key[KEY_ENTER] && !key[KEY_ESC]);
+   yninput();
 
 } /* show_help () */
 
