@@ -14,7 +14,7 @@ function autoexec()
     for a=0,19,1 do
       set_ent_active(a,0);
     end
-    set_ent_active(31,0);
+    set_ent_active(23,0);
   end
   set_ent_active(20,0);
   set_ent_active(21,0);

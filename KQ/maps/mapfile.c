@@ -263,29 +263,35 @@ void save_map (void)
    print_sfont (6, 12, strbuf, screen);
    print_sfont (6, 18, "Filename: ", screen);
    ld = get_line (66, 18, fname, 40);
-   if (ld != 0)
+   if (ld == 0)
+      return;
+   blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+   rectfill (screen, 0, 0, 319, 17, 0);
+   rect (screen, 2, 2, 317, 15, 255);
+   if (strlen(fname) < 1)
      {
-        blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
-        rectfill (screen, 0, 0, 319, 17, 0);
-        rect (screen, 2, 2, 317, 15, 255);
-        sprintf (strbuf, "Save %s? (y/n)", fname);
-        print_sfont (6, 6, strbuf, screen);
-        response = yninput ();
-        if (response)
-          {
-             strcpy (map_fname, fname);
-             pf = pack_fopen (fname, F_WRITE_PACKED);
-             pack_fwrite (&gmap, sizeof (ss_map), pf);
-             pack_fwrite (&gent, sizeof (s_entity) * 50, pf);
-             pack_fwrite (map, (gmap.xsize * gmap.ysize * 2), pf);
-             pack_fwrite (b_map, (gmap.xsize * gmap.ysize * 2), pf);
-             pack_fwrite (f_map, (gmap.xsize * gmap.ysize * 2), pf);
-             pack_fwrite (z_map, (gmap.xsize * gmap.ysize), pf);
-             pack_fwrite (s_map, (gmap.xsize * gmap.ysize), pf);
-             pack_fwrite (o_map, (gmap.xsize * gmap.ysize), pf);
-             pack_fclose (pf);
-             cmessage ("Map saved!");
-             wait_enter ();
-          }
+        if (strlen(map_fname) < 1)
+           return;
+        else
+           strcpy(fname, map_fname);
+     }
+   sprintf (strbuf, "Save %s? (y/n)", fname);
+   print_sfont (6, 6, strbuf, screen);
+   response = yninput ();
+   if (response)
+     {
+        strcpy (map_fname, fname);
+        pf = pack_fopen (fname, F_WRITE_PACKED);
+        pack_fwrite (&gmap, sizeof (ss_map), pf);
+        pack_fwrite (&gent, sizeof (s_entity) * 50, pf);
+        pack_fwrite (map, (gmap.xsize * gmap.ysize * 2), pf);
+        pack_fwrite (b_map, (gmap.xsize * gmap.ysize * 2), pf);
+        pack_fwrite (f_map, (gmap.xsize * gmap.ysize * 2), pf);
+        pack_fwrite (z_map, (gmap.xsize * gmap.ysize), pf);
+        pack_fwrite (s_map, (gmap.xsize * gmap.ysize), pf);
+        pack_fwrite (o_map, (gmap.xsize * gmap.ysize), pf);
+        pack_fclose (pf);
+        cmessage ("Map saved!");
+        wait_enter ();
      }
 }
