@@ -361,12 +361,12 @@ function entity_handler(en)
         bubble(10,"That's my pay from the mayor.",
                   "We should use it to get some",
                   "new equipment and such.","");
-        add_chr(progress[P_PARTNER3]-1);
-        progress[P_GETPARTNER] = 3;
+        add_chr(get_progress(P_PARTNER3)-1);
+        set_progress(P_GETPARTNER,3);
         copy_ent(10,HERO2);
         set_ent_active(10,0);
         orient_heroes();
-        give_xp(get_pidx(numchrs()-1),470+krnd(50),1);
+        give_xp(get_pidx(get_numchrs()-1),470+krnd(50),1);
         msg("$1 joined!",255,0,xofs,yofs);
         set_progress(P_FOUNDMAYOR,2);
       else
