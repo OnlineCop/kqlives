@@ -80,13 +80,6 @@
 
 /*! Name of the current map */
 char curmap[16];
-/*! Names of the tile sets (in the datafile) */
-char icon_sets[7][16] = {
-   "LAND_PCX", "NEWTOWN_PCX", "CASTLE_PCX", "INCAVE_PCX", "VILLAGE_PCX",
-   "MOUNT_PCX", "SHRINE_BMP"
-};
-
-
 
 /*! \brief Which keys are pressed.
  *
@@ -124,29 +117,10 @@ s_map g_map;
 /*! Current entities (players+NPCs) */
 s_entity g_ent[MAX_ENT + PSIZE];
 
-/*! Tile animation specifiers for each tile set */
-/* Format: {starting_tile, finishing_tile, animation_speed}
- * You may have up to 5 animations per tile set and tiles
- * must be sequential; they cannot jump around on the set.
- */
-s_anim tanim[7][MAX_ANIM] = {
-   /* land.pcx */
-   {{2, 5, 25}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}},
-   /* newtown.pcx */
-   {{158, 159, 50}, {160, 163, 25}, {176, 179, 25}, {257, 258, 50},
-    {262, 263, 25}},
-   /* castle.pcx */
-   {{57, 58, 50}, {62, 63, 25}, {205, 206, 50}, {250, 253, 25}, {0, 0, 0}},
-   /* incave.pcx */
-   {{30, 35, 30}, {176, 179, 25}, {323, 328, 40}, {380, 385, 40},
-    {360, 365, 30}},
-   /* village.pcx */
-   {{38, 39, 25}, {80, 83, 25}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}},
-   /* mount.pcx */
-   {{58, 59, 50}, {40, 42, 50}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}},
-   /* shrine.bmp */
-   {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}}
-};
+#define MAX_TILESETS 10
+/*! The different tilesets allowed in the game (loaded in from tileset.kq) */
+s_tileset tilesets[10];
+int num_tilesets = 0;
 
 /*! Tile animation specifiers for the current tileset */
 s_anim adata[MAX_ANIM];
@@ -392,9 +366,15 @@ void readcontrols (void)
 //   poll_music ();
 
    /* Emergency kill-game set. */
-   if (key[KEY_ALT] && key[KEY_X])
-      program_death ("X-ALT pressed... exiting.");
-
+   /* PH modified - need to hold down for 0.50 sec */
+   if (key[KEY_ALT] && key[KEY_X]) {
+      int kill_time = timer_count + KQ_FPS / 2;
+      while (key[KEY_ALT] && key[KEY_X]) {
+         if (timer_count >= kill_time) {
+            program_death ("X-ALT pressed... exiting.");
+         }
+      }
+   }
 #ifdef KQ_CHEATS
    if (key[KEY_F11])
       data_dump ();
@@ -682,7 +662,7 @@ void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
       }
    }
 
-   pb = load_datafile_object (PCX_DATAFILE, icon_sets[g_map.tileset]);
+   pb = load_datafile_object (PCX_DATAFILE, tilesets[g_map.tileset].icon_set);
    pcxb = (BITMAP *) pb->dat;
 
    for (o = 0; o < pcxb->h / 16; o++)
@@ -713,7 +693,7 @@ void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
    for (i = 0; i < MAX_TILES; i++)
       tilex[i] = i;
    for (i = 0; i < MAX_ANIM; i++)
-      adata[i] = tanim[g_map.tileset][i];
+      adata[i] = tilesets[g_map.tileset].tanim[i];
 
    noe = 0;
    for (i = 0; i < numchrs; i++)
@@ -1025,6 +1005,7 @@ static void startup (void)
    time_t t;
    DATAFILE *pcxb;
    DATAFILE *pb;
+   PACKFILE *pf;
 
    allegro_init ();
 
@@ -1149,9 +1130,22 @@ static void startup (void)
    pb = load_datafile_object (PCX_DATAFILE, "ENTITIES_PCX");
    for (q = 0; q < MAXE; q++)
       for (p = 0; p < MAXEFRAMES; p++)
-         blit ((BITMAP *) pb->dat, eframes[q][p], p * 16, q * 16, 0, 0, 16,
-               16);
+         blit ((BITMAP *) pb->dat, eframes[q][p], p * 16, q * 16, 0, 0, 16, 16);
    unload_datafile_object (pb);
+   /* initialise tilesets */
+   pf = pack_fopen (kqres (DATA_DIR, "tileset.kq"), F_READ_PACKED);
+   if (!pf) {
+      program_death ("Could not load tileset.kq");
+   }
+   while (!pack_feof (pf)) {
+      load_s_tileset (&tilesets[num_tilesets], pf);
+      TRACE ("%d. %s\n", num_tilesets, tilesets[num_tilesets].icon_set);
+      if ((++num_tilesets) >= MAX_TILESETS)
+         program_death ("Too many tilesets defined in tileset.kq");
+   }
+   pack_fclose (pf);
+
+   /* Initialise players */
    init_players ();
 
    LOCK_VARIABLE (timer);
@@ -1200,8 +1194,7 @@ void load_heroes (void)
       program_death ("Could not load kqfaces.pcx!");
 
    for (i = 0; i < 4; ++i) {
-      blit ((BITMAP *) pcxb->dat, players[i].portrait, 0, i * 40, 0, 0, 40,
-            40);
+      blit ((BITMAP *) pcxb->dat, players[i].portrait, 0, i * 40, 0, 0, 40, 40);
       blit ((BITMAP *) pcxb->dat, players[i + 4].portrait, 40, i * 40, 0, 0,
             40, 40);
    }
