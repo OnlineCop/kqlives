@@ -85,7 +85,7 @@ function autoexec()
     calc_viewport(1);
 
   -- P_MANOR > 0 when you already talked to Hunert, but you have no recruits
-  elseif (get_progress(P_MANOR) > 0) then
+  elseif (get_progress(P_MANOR) ==1) then
     -- Remove all party members from the map
     for a = 0, 7, 1 do
       set_ent_active(a, 0);
@@ -317,10 +317,9 @@ function LOC_chit_chat(a)
   end
 end
 
-
+-- Decide who should be sitting around the table
 function LOC_at_table()
   local id, a
-  log("HERO1 "..get_pidx(0)..", HERO2 "..get_pidx(1));
   for a = 0, 7 do
     -- You have not recruited this person into your team
     id = get_progress(a + P_MANORPARTY) - 1;
@@ -330,7 +329,6 @@ function LOC_at_table()
     if (get_numchrs() == 2 and id == get_pidx(1)) then
       id = -1;
     end
-    log("Ent "..a.." with ID "..id);
     if (id < 0) then
       -- Remove entity from the map
       set_ent_active(a, 0);

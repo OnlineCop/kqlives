@@ -416,31 +416,6 @@ void readcontrols (void)
 
    poll_music ();
 
-   /* PH 2002.09.21 in case this is needed (not sure on which platforms it is) */
-   if (keyboard_needs_poll ())
-     {
-        poll_keyboard ();
-     }
-
-   /* Tells us that a certain key (or keys) are being held down */
-   if (key[kup])
-      up = 1;
-   if (key[kdown])
-      down = 1;
-   if (key[kleft])
-      left = 1;
-   if (key[kright])
-      right = 1;
-
-   if (key[kesc])
-      besc = 1;
-   if (key[kalt])
-      balt = 1;
-   if (key[kctrl])
-      bctrl = 1;
-   if (key[kenter])
-      benter = 1;
-
    /* Emergency kill-game set. */
    if (key[KEY_ALT] && key[KEY_X])
       program_death ("X-ALT pressed... exiting.");

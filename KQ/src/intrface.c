@@ -406,6 +406,9 @@ fields[] =
    ,
    {
    "mmp", 8}
+   ,
+   {
+   "id", 9}
 ,};
 
 
@@ -501,6 +504,9 @@ int KQ_party_setter (lua_State * L)
      case 8:
         pl->mmp = lua_tonumber (L, 3);
         break;
+     case 9:
+        /* id is readonly */
+        break;
      default:
         lua_rawset (L, 1);
         break;
@@ -550,6 +556,9 @@ int KQ_party_getter (lua_State * L)
         break;
      case 8:
         lua_pushnumber (L, pl->mmp);
+        break;
+     case 9:
+        lua_pushnumber (L, pl - party);
         break;
      default:
         lua_rawget (L, 1);

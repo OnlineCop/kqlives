@@ -3,60 +3,15 @@
 function autoexec()
   local a;
   set_progress(P_EARLYPROGRESS, 2);
-  if (get_progress(P_GETPARTNER) == 0) then
-    while (get_progress(P_PARTNER1) == 0) do
-      a = krnd(8);
-      if (a ~= party[0]) then
-        set_progress(P_PARTNER1, a + 1);
-      end
-    end
-    while (get_progress(P_PARTNER2) == 0) do
-      a = krnd(8);
-      if (a ~= party[0] and a ~= get_progress(P_PARTNER1) - 1) then
-        set_progress(P_PARTNER2, a + 1);
-      end
-    end
-    for a=0, 7, 1 do
-      if (a ~= party[0]) then
-        give_xp(a, 300 + krnd(100), 1);
-        if (a == SENSAR or a == SARINA or a == TEMMIN or a == AYLA) then
-          set_all_equip(a, I_SWORD2, I_SHIELD1, I_HELM1, I_ARMOR2, I_BAND1, 0);
-        elseif (a == AJATHAR) then
-          set_all_equip(a, I_MACE2, I_SHIELD1, I_HELM1, I_ROBE2, I_BAND1, 0);
-        elseif (a == CORIN or a == CASANDRA or a == NOSLOM) then
-          set_all_equip(a, I_ROD1, I_SHIELD1, I_CAP1, I_ROBE2, I_BAND1, 0);
-        end
-      end
-    end
-    set_progress(P_GETPARTNER, 1);
-  end
-  if (get_progress(P_GETPARTNER) == 1) then
-    if (get_progress(P_PARTNER1) > 0) then
-      set_ent_id(8, get_progress(P_PARTNER1) - 1);
-      set_ent_active(8, 1);
-    end
-    if (get_progress(P_PARTNER2) > 0) then
-      set_ent_id(9, get_progress(P_PARTNER2) - 1);
-      set_ent_active(9, 1);
-    end
-  elseif (get_progress(P_GETPARTNER) > 1) then
-    set_ent_active(8, 0);
-    set_ent_active(9, 0);
-  end
-  if (get_progress(P_FOUNDMAYOR) == 1) then
-    set_ent_id(10, get_progress(P_PARTNER3) - 1);
-    set_ent_active(10, 1);
-  else
-    set_ent_active(10, 0);
- end
-   if not LOC_manor_or_party(AJATHAR) then
+  if not LOC_manor_or_party(AJATHAR) then
 -- // Make one of the ents look like Ajathar if he's not been recruited yet.
-      set_ent_id(10, AJATHAR)
-      set_ent_active(10,1)
-      set_ent_tilex(10,15)
-      set_ent_tiley(10,15)
-   end
-
+     set_ent_id(10, AJATHAR)
+     set_ent_active(10,1)
+     set_ent_tilex(10,15)
+     set_ent_tiley(10,15)
+  else
+     set_ent_active(10,0)
+  end
   refresh();
 end
 
@@ -283,7 +238,20 @@ function entity_handler(en)
     if (get_progress(P_FIGHTONBRIDGE) > 4) then
       bubble(3, "Good day.");
     else
+    if get_progress(P_BLADE)==0  then
+        set_progress(P_BLADE, 1)
+        -- PH: Just my little joke hehe
+        bubble(3, "I'm just preparing some vegetables.")
+        bubble(HERO1, "That's a strange knife you've got there.")
+        bubble(3, "What? Oh, this. Yes, it's a Phoenix Blade")
+        bubble(3, "I found it lying about under a pile of leaves in the forest.")
+        bubble(HERO1, "Isn't there supposed to be be someone out looking for that?")
+        bubble(3, "I heard that, too, but it's been ages and no-one has turned up.")
+        bubble(3, "I would give it back, but I need it for slicing carrots!")
+        bubble(HERO1, "Your secret's safe with me.")
+    else
       bubble(3, "Oh, goodness, I didn't make enough for company... sorry.");
+    end
     end
 
   elseif (en == 4) then
@@ -343,58 +311,21 @@ function entity_handler(en)
     end
 
   elseif (en == 8) then
-    if (get_progress(P_GETPARTNER) == 1) then
-      LOC_partner_check(8);
-    elseif (get_progress(P_GETPARTNER) > 1) then
+ --   if (get_progress(P_GETPARTNER) == 1) then
+ --     LOC_partner_check(8);
+ --   elseif (get_progress(P_GETPARTNER) > 1) then
       bubble(8, "I wonder how long it takes to build a bridge?");
-    end
+ --   end
 
   elseif (en == 9) then
-    if (get_progress(P_GETPARTNER) == 1) then
-      LOC_partner_check(9);
-    elseif (get_progress(P_GETPARTNER) > 1) then
+  --  if (get_progress(P_GETPARTNER) == 1) then
+  --    LOC_partner_check(9);
+  --  elseif (get_progress(P_GETPARTNER) > 1) then
       bubble(9, "How long does it take to build a bridge?");
-    end
+  --  end
 
  elseif (en == 10) then
-    LOC_meet_ajathar()
-/*    if (get_progress(P_GETPARTNER) ~= 3) then
-      if (get_numchrs() == 1) then
-        bubble(10, "Wow! You were great back there. I really appreciate what you did for me. In return, I shall accompany you.");
-        bubble(10, "Oh... and here... take this.");
-        set_gp(get_gp() + 1000);
-        sfx(6);
-        msg("You received 1000 gp!", 255, 0);
-        bubble(10, "That's my pay from the mayor. We should use it to get some new equipment and such.");
-        add_chr(get_progress(P_PARTNER3) - 1);
-        set_progress(P_GETPARTNER, 3);
-        copy_ent(10, HERO2);
-        set_ent_active(10, 0);
-        orient_heroes();
-        give_xp(get_pidx(get_numchrs() - 1), 470 + krnd(50), 1);
-        msg("$1 joined!", 255, 0, xofs, yofs);
-        set_progress(P_FOUNDMAYOR, 2);
-      else
-        bubble(10, "Wow! You were great back there. I really appreciate what you did for me.");
-        bubble(10, "I would like to come along with you, but you already have a partner.");
-        bubble(10, "At any rate, you've earned this.");
-        set_gp(get_gp() + 500);
-        sfx(6);
-        msg("You received 500 gp!", 255, 0, xofs, yofs);
-        bubble(10, "That's half of what the mayor paid me. I'm actually surprised that he still thought I deserved it, but I'm not one to complain.");
-        bubble(10, "See ya!");
-        if (get_ent_facing(10) == 0) then
-          set_ent_script(10, "L1D10");
-        else
-          set_ent_script(10, "D10");
-        end
-        wait_for_entity(10, 10);
-        set_ent_active(10, 0);
-        set_progress(P_FOUNDMAYOR, 2);
-        set_progress(P_GETPARTNER, 3);
-      end
-   end
-*/
+       LOC_meet_ajathar()
  end
 end
 
@@ -421,11 +352,15 @@ function LOC_partner_check(who)
   end
 end
 
+-- Checks if this ent is in the party, or in the manor,
+-- or has never been recruited.
+-- who: hero id
+-- returns "manor" if in manor, "party" if in party, nil otherwise
 function LOC_manor_or_party(who)
    local a
    if get_pidx(0)==who then
       return "party"
-   elseif get_numchrs()>1 and get_pidx(0)==who then
+   elseif get_numchrs()>1 and get_pidx(1)==who then
       return party
    end
    for a=P_MANORPARTY,P_MANORPARTY7 do
@@ -458,6 +393,8 @@ function LOC_meet_ajathar()
 	 bubble(HERO1, "You can rest easy now. I have closed the Portal that let the monsters through.")
       end
       bubble(10, "Great! Can I offer my services?")
+-- Give ajathar his default equipment
+      set_all_equip(AJATHAR, I_MACE2, I_SHIELD1, I_HELM1, I_ROBE2, I_BAND1, 0);
       id=select_team{AJATHAR}
 --// add the characters that weren't selected to the manor
       add_to_manor(id)
@@ -473,9 +410,6 @@ function LOC_meet_ajathar()
 	    set_ent_script(10, "L1U1L1U2L2U1K")
 	    set_ent_script(9,  "L1U2L1U2L2U1K")
 	    wait_for_entity(9,10)
---	    set_ent_active(10,0)
---	    set_ent_script(9,"U1")
---	    wait_for_entity(9,9)
 	    set_ent_active(9,0)
 	 else
 	    -- one hero was de-selected

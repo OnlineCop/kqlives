@@ -1,4 +1,16 @@
 -- town5 - "Sunarin"
+--/* 
+-- This is where the entrance to the Embers Guild is located
+-- It is also the start of Ayla's quest - robbing the palace in 
+-- the inner city.
+-- controlled by P_AYLA_QUEST:
+-- 	0: Nothing done
+-- 	1: Talked to the girl near the gates
+-- 	2: Talked to the folks in the bar
+-- 	3: Talked to both
+--	4: Got the disguise and ready to go
+--	5: Finished/given up
+--*/
 
 function autoexec()
   if (get_progress(P_TALKGELIK) ~= 2) then
@@ -116,8 +128,11 @@ function entity_handler(en)
     bubble(4, "These two are weird... but at least I don't have to sit alone.");
 
   elseif (en == 5) then
-    bubble(5, "Those gates to the inner city never open. Strangers are not allowed in.");
-
+    if party[0]==Ayla then
+        LOC_ayla_mission()
+    else
+        bubble(5, "Those gates to the inner city never open. Strangers are not allowed in.");
+    end
   elseif (en == 6) then
     bubble(6, "Welcome to Sunarin!",
               "Please feel free to leave at any time.");
@@ -140,4 +155,26 @@ function entity_handler(en)
     change_map("estate", 57, 17, 57, 17);
 
   end
+end
+
+function LOC_ayla_mission()
+local pp
+pp=get_progress(P_AYLA_QUEST)
+if pp==0 then
+    bubble(5, "Those gates to the inner city never open. Strangers are not allowed in.");
+    bubble(HERO1, "I suppose ... there must be some valuable stuff in there?")
+    bubble(5, "Oh, yes, this town should be prosperous, but our ruler takes all our gold in taxes and keeps it walled up in there.")
+    bubble(5, "That's why everyone here is so surly.")
+    bubble(HERO1, "You said strangers weren't allowed in. Can't locals come and go as they please?")
+    bubble(5, "Only servants, they ... hey, why are you so interested?")
+    bubble(HERO1, "No reason. I'm just passing through this town and I was curious, that's all")
+    thought(HERO1, "Hmm... curious about the riches they've got in there. Surely the mission can wait for a while.")
+elseif pp==1 then
+    bubble(5, "You know, I'll call the guards if I see you round here again.")
+elseif pp==2 then
+    
+elseif pp==3 then
+elseif pp==4 then
+else 
+end
 end
