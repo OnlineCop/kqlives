@@ -543,6 +543,9 @@ int start_menu (int c)
 	     menubox (double_buffer, 120, 116, 10, 3, BLUE);
 	     print_font (double_buffer, 136, 124, "Continue", FNORMAL);
 	     print_font (double_buffer, 136, 132, "New Game", FNORMAL);
+/* PH FIXME add option to change the config settings from Main Menu */
+/*   Otherwise you have to start a game, and maybe sit throught the intro before  */
+/* you can change anything. */
 	     print_font (double_buffer, 152, 140, "Exit", FNORMAL);
 	     draw_sprite (double_buffer, menuptr, 120, ptr * 8 + 124);
 	     blit2screen (0, 0);
