@@ -1,4 +1,29 @@
-2002-09-22  Peter Hull  <peter@dell.valleyway>
+2002-09-22  peterhull90  <peterhull90@dell.valleyway>
+
+	* src/kq.c, src/scrnshot.c:
+	Added keyboard polling check and made comments consistent with code
+
+	* obj/unix/.cvsignore: added new line
+
+	* maps/.cvsignore, shots/.cvsignore: Added shots directory
+
+	* ChangeLog: Initial version
+
+	* src/sgame.c: ???
+
+	* src/kq.c: added screenshot functions
+
+	* src/ChangeLog: Added f12 key function
+
+	* mkfiles/makefile.cfg: *** empty log message ***
+
+	* mkfiles/makefile.all: fixed bug in 'clean' target
+
+	* maps/mapdraw.c: Removed unused vars
+
+	* include/scrnshot.h, src/scrnshot.c: Screenshot functionality
+
+2002-09-22  Peter Hull  <peterhull90@hotmail.co>
 
 	* src/scrnshot.c: added #include <stdio.h>
 
