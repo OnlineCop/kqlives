@@ -29,7 +29,7 @@
 
 #include "disk.h"
 
-int load_s_map (s_map *sm, PACKFILE *f)
+int load_s_map (s_map * sm, PACKFILE * f)
 {
    sm->map_no = pack_getc (f);
    sm->zero_zone = pack_getc (f);
@@ -56,7 +56,7 @@ int load_s_map (s_map *sm, PACKFILE *f)
 
 
 
-int save_s_map (s_map *sm, PACKFILE *f)
+int save_s_map (s_map * sm, PACKFILE * f)
 {
    pack_putc (sm->map_no, f);
    pack_putc (sm->zero_zone, f);
@@ -83,7 +83,7 @@ int save_s_map (s_map *sm, PACKFILE *f)
 
 
 
-int load_s_entity (s_entity *s, PACKFILE *f)
+int load_s_entity (s_entity * s, PACKFILE * f)
 {
    s->chrx = pack_getc (f);
    pack_getc (f);               /* alignment */
@@ -119,7 +119,7 @@ int load_s_entity (s_entity *s, PACKFILE *f)
 
 
 
-int save_s_entity (s_entity *s, PACKFILE *f)
+int save_s_entity (s_entity * s, PACKFILE * f)
 {
    pack_putc (s->chrx, f);
    pack_putc (0, f);            /* alignment */
@@ -155,7 +155,7 @@ int save_s_entity (s_entity *s, PACKFILE *f)
 
 
 
-int load_s_player (s_player *s, PACKFILE *f)
+int load_s_player (s_player * s, PACKFILE * f)
 {
    int i;
    pack_fread (s->name, sizeof (s->name), f);
@@ -192,7 +192,7 @@ int load_s_player (s_player *s, PACKFILE *f)
 
 
 
-int save_s_player (s_player *s, PACKFILE *f)
+int save_s_player (s_player * s, PACKFILE * f)
 {
    int i;
    pack_fwrite (s->name, sizeof (s->name), f);
@@ -229,7 +229,7 @@ int save_s_player (s_player *s, PACKFILE *f)
 
 
 
-int load_s_tileset (s_tileset *s, PACKFILE *f)
+int load_s_tileset (s_tileset * s, PACKFILE * f)
 {
    int i;
    pack_fread (s->icon_set, sizeof (s->icon_set), f);
@@ -243,7 +243,7 @@ int load_s_tileset (s_tileset *s, PACKFILE *f)
 
 
 
-int save_s_tileset (s_tileset *s, PACKFILE *f)
+int save_s_tileset (s_tileset * s, PACKFILE * f)
 {
    int i;
    pack_fwrite (s->icon_set, sizeof (s->icon_set), f);
