@@ -6,18 +6,20 @@ cave3a
 cave3b
 cave4
 cave5
-cheat
 coliseum
 cult
 dville
 estate
+esteria
 fort
+global
 grotto
 grotto2
 guild
 main
 manor
 pass
+shrine
 starting
 temple1
 temple2
@@ -29,3 +31,4 @@ town4
 town5
 town6
 town7
+tunnel
