@@ -32,7 +32,7 @@ void inn (char *, int, int);    /*  only in intrface.c  */
 
 
 
-extern unsigned short shops[NUMSHOPS][SHOPITEMS][3];   /*  sgame.c  */
-extern unsigned short shopq[NUMSHOPS][SHOPITEMS];      /*  sgame.c  */
+extern unsigned short shops[NUMSHOPS][SHOPITEMS][3];    /*  sgame.c  */
+extern unsigned short shopq[NUMSHOPS][SHOPITEMS];       /*  sgame.c  */
 
 #endif /*  __SHOPMENU_H  */

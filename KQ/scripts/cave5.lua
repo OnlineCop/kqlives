@@ -20,6 +20,9 @@ end
 
 function refresh()
 -- modify the map to reflect bombed-out areas
+  if (get_progress(P_OPALDRAGONOUT)~=0) then
+    copy_tile_all(124,22,111,39,3,3);
+  end
   if (get_progress(P_BOMB1)~=0) then
     copy_tile_all(110,82,72,94,5,5);
   end
@@ -202,6 +205,22 @@ function hero_escape(script)
   orient_heroes();
 end
 
+function opaldragon()
+local spd;
+if (get_progress(P_OPALDRAGONOUT)==0) then
+    bubble(HERO1, "Ohhh!");
+    bubble(HERO1, "It's real!");
+    spd=get_ent_speed(HERO1);
+    set_ent_speed(HERO1,1);
+    set_ent_script(HERO1, "U7");
+    wait_for_entity(HERO1, HERO1);
+    set_ent_speed(HERO1, spd);
+    combat(16);
+    set_progress(P_OPALDRAGONOUT,1);
+    refresh();
+end
+end
+
 function zone_handler(zn)
 if (zn==0) then
  -- do nothing
@@ -240,6 +259,7 @@ elseif (zn==13) then
 elseif (zn==11) then
  sfx(26); 
  warp(112,49,10);--dragon
+ opaldragon();
 elseif (zn==16) then
  chest(90, I_PCURING,1);
  refresh();

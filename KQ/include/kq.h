@@ -302,28 +302,39 @@ s_player;
 
 /*! \brief Fighter 
  *
- * s_player is transformed into a s_fighter during combat
+ * s_player is transformed into a s_fighter during combat.
+ * See enemy_init() for more information on the fields.
  */
 typedef struct
 {
-   char name[25];
-   int xp;
-   int gp;
-   int lvl;
-   int cx;
-   int cy;
-   int cw;
-   int cl;
-   int hp;
-   int mhp;
-   int mp;
-   int mmp;
-   int dip;
-   int ditmc;
-   int ditmr;
-   int sitmc;
-   int sitmr;
-   int stats[13];
+   char name[25];               /*!< \brief Name */
+   int xp;                      /*!<\brief  eXperience Points */
+   int gp;                      /*!<\brief  Gold Points */
+   int lvl;                     /*!<\brief  LeVeL */
+   int cx;                      /*!<\brief  x-coord of image in datafile */
+   int cy;                      /*!<\brief y-coord of image in datafile */
+   int cw;                      /*!<\brief  width in datafile */
+   int cl;                      /*!<\brief  height in datafile */
+   int hp;                      /*!<\brief  hit-points */
+   int mhp;                     /*!<\brief  max hit points */
+   int mp;                      /*!<\brief  magic points */
+   int mmp;                     /*!<\brief max magic points */
+   int dip;                     /*!<\brief defeat item probability. 
+                                 * Probability in % that the enemy will yield an item when defeated.
+                                 */
+   int ditmc;                   /*!<\brief defeat item common. 
+                                 * If the enemy yields an item, it will be this 95% of the time.
+                                 */
+   int ditmr;                   /*!<\brief defeat item rare.
+                                   * If the enemy yields an item, it will be this 5% of the time.
+                                 */
+   int sitmc;                   /*!<\brief steal item common.
+                                 * If Ayla steals something, it will be this 95% of the time.
+                                 */
+   int sitmr;                   /*!<\brief steal item rare 
+                                 * If Ayla steals something, it will be this 5% of the time.
+                                 */
+   int stats[13];               /*!<\brief See A_* constants in kq.h */
    char res[16];
    unsigned char facing;
    unsigned char aframe;
@@ -336,7 +347,7 @@ typedef struct
    int csmem;
    int ctmem;
    int cwt;
-   int welem;                    /*!< has the ability of 'White' spell element */
+   int welem;                   /*!< \brief Weapon elemental power */
    int unl;
    int aux;
    int bonus;

@@ -942,7 +942,10 @@ static int check_end (void)
  *  Created : ???????? - ??:??
  *  Updated : Never.
  *  Purpose : I don't really need to describe this :p
- *  Returns : 1 or 0 (TODO: check what each means)
+ * \param ar Attacker ID
+ * \param dr Defender ID
+ * \param sk if non-zero, override the attacker's stats.
+ *  \return 1 or 0 (TODO: check what each means)
 */
 int fight (int ar, int dr, int sk)
 {
@@ -1400,6 +1403,10 @@ static void heroes_win (void)
    blit (double_buffer, back, 0, 0, 0, 0, 352, 280);
    for (index = 0; index < numens; index++)
      {
+        /* PH bug: (?) should fitm be reset to zero at the start of this loop? 
+         * If you defeat 2 enemies,
+         * you should (possibly) get 2 items, right/
+         */
         if ((rand () % 100) < fighter[index + PSIZE].dip)
           {
              if (fighter[index + PSIZE].ditmc > 0)

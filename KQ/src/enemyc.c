@@ -132,30 +132,30 @@ int select_encounter (int en, int etid)
  * -# level
  * -# max hp
  * -# max mp
- * -# dip (?)
- * -# ditmc (?)
- * -# ditmr (?)
- * -# sitmc (?)
- * -# sitmr (?)
+ * -# dip Defeat Item Probability.
+ * -# ditmc Defeat ITeM Common.
+ * -# ditmr Defeat ITeM Rare.
+ * -# sitmc Steal ITeM Common.
+ * -# sitmr Steal ITeM Rare.
  * -# strength (agility and vitality are set to 0)
  * -# intelligence AND sagacity (both set to same)
- * -# stat[5]
- * -# stat[6]
- * -# stat[7]
- * -# stat[8]
- * -# stat[9]
- * -# stat[10]
- * -# stat[11]
- * -# stat[12]
+ * -# stat[5] (A_SPD)
+ * -# stat[6] (A_AUR)
+ * -# stat[7] (A_SPI)
+ * -# stat[8] (A_ATT)
+ * -# stat[9] (A_HIT)
+ * -# stat[10] (A_DEF)
+ * -# stat[11] (A_EVD)
+ * -# stat[12] (A_MAG)
  * -# bonus (bstat set to 0)
  * -# cwt (?)
- * -# welem (?)
+ * -# welem Weapon elemental power
  * -# unl (?)
  * -# crit (?)
- * -# imb_s (?)
+ * -# imb_s Item for imbued spell
+ * -# imb_a New value for SAG and INT when casting imbued.
  * -# imb[0] (?)
  * -# imb[1] (?)
- * -# imb[2] (?)
 */
 void enemy_init (void)
 {

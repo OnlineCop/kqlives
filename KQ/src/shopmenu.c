@@ -55,9 +55,6 @@
  *            (see shop() for details)
 */
 unsigned short shops[NUMSHOPS][SHOPITEMS][3] = {
-#if 0
-unsigned short shops[NUMSHOPS][12][3] = {
-#endif
    {{I_SHIELD1, 6, 10},
     {I_CAP1, 4, 10},
     {I_ROBE1, 3, 10},
@@ -481,8 +478,8 @@ static void draw_sideshot (int itm)
                                         strbuf, FGREEN);
                          }
                        if (cs[j + 8] == 0)
-                          print_font (double_buffer, wx + 24, j * 8 + wy, "=",
-                                      FNORMAL);
+                          print_font (double_buffer, wx + 24, j * 8 + wy,
+                                      "=", FNORMAL);
                     }
                }
              else
@@ -505,8 +502,8 @@ static void draw_sideshot (int itm)
                                         strbuf, FGREEN);
                          }
                        if (cs[j + 10] == 0)
-                          print_font (double_buffer, wx + 24, j * 8 + wy, "=",
-                                      FNORMAL);
+                          print_font (double_buffer, wx + 24, j * 8 + wy,
+                                      "=", FNORMAL);
                     }
                }
              if (items[itm].eq[pidx[a]] == 0)
@@ -562,23 +559,23 @@ int shop (int shop_num)
    // TT edit:
    for (a = 0; a < SHOPITEMS; a++)
 #if 0
-   for (a = 0; a < 12; a++)
+      for (a = 0; a < 12; a++)
 #endif
-     {
-        if (shops[shop_no][a][2] > 0)
-           if ((khr * 60) + kmin - progress[P_SHOPSTART + shop_no] >
-               shops[shop_no][a][2])
-              shopq[shop_no][a] = shops[shop_no][a][1];
-        shin[a] = shops[shop_no][a][0];
-     }
+        {
+           if (shops[shop_no][a][2] > 0)
+              if ((khr * 60) + kmin - progress[P_SHOPSTART + shop_no] >
+                  shops[shop_no][a][2])
+                 shopq[shop_no][a] = shops[shop_no][a][1];
+           shin[a] = shops[shop_no][a][0];
+        }
    // TT add:
-   noi = SHOPITEMS-1;
-   for (a = SHOPITEMS-1; a >= 0; a--)
+   noi = SHOPITEMS - 1;
+   for (a = SHOPITEMS - 1; a >= 0; a--)
 #if 0
-   for (a = 11; a >= 0; a--)
+      for (a = 11; a >= 0; a--)
 #endif
-      if (shin[a] == 0)
-         noi = a;
+         if (shin[a] == 0)
+            noi = a;
    if (noi == 0)
       return 1;
    unpress ();
@@ -697,8 +694,8 @@ static void buy_menu (void)
                                    i * 8 + 32 + yofs, strbuf, k);
                     }
                   else
-                     print_font (double_buffer, 200 + xofs, i * 8 + 32 + yofs,
-                                 "Sold Out!", k);
+                     print_font (double_buffer, 200 + xofs,
+                                 i * 8 + 32 + yofs, "Sold Out!", k);
                }
              print_font (double_buffer,
                          160 - (strlen (items[shin[yptr]].desc) * 4) + xofs,
@@ -969,8 +966,8 @@ static void sell_howmany (int itm_no, int pg)
              menubox (double_buffer, 32 + xofs, 168 + yofs, 30, 1, DARKBLUE);
              print_font (double_buffer, 124 + xofs, 176 + yofs, "How many?",
                          FNORMAL);
-             menubox (double_buffer, 32 + xofs, itm_no * 8 + 24 + yofs, 30, 1,
-                      DARKBLUE);
+             menubox (double_buffer, 32 + xofs, itm_no * 8 + 24 + yofs, 30,
+                      1, DARKBLUE);
              draw_icon (double_buffer, items[l].icon, 48 + xofs,
                         itm_no * 8 + 32 + yofs);
              print_font (double_buffer, 56 + xofs, itm_no * 8 + 32 + yofs,
@@ -1035,16 +1032,16 @@ static void sell_item (int itno, int ni)
              gp += sp;
              for (a = 0; a < SHOPITEMS; a++)
 #if 0
-             for (a = 0; a < 12; a++)
+                for (a = 0; a < 12; a++)
 #endif
-               {
-                  if (l > 0 && shops[shop_no][a][0] == l)
-                    {
-                       shopq[shop_no][a] += ni;
-                       if (shopq[shop_no][a] > shops[shop_no][a][1])
-                          shopq[shop_no][a] = shops[shop_no][a][1];
-                    }
-               }
+                  {
+                     if (l > 0 && shops[shop_no][a][0] == l)
+                       {
+                          shopq[shop_no][a] += ni;
+                          if (shopq[shop_no][a] > shops[shop_no][a][1])
+                             shopq[shop_no][a] = shops[shop_no][a][1];
+                       }
+                  }
              play_effect (SND_MONEY, 128);
              remove_item (itno, ni);
              stop = 1;

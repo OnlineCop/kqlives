@@ -1202,24 +1202,29 @@ static void generic_text (int who, int box_style)
 const char *parse_string (const char *the_string)
 {
    static char strbuf[1024];
-   char* ap, *bp, *name;
-   name=NULL;
-   memset(strbuf, 0, sizeof(strbuf));
-   bp=strbuf;
-   for (ap=the_string; *ap; ++ap) {
-     if (*ap=='$') {
-       for (name=party[pidx[ap[1]-'0']].name; *name; ++name) {
-	 if (bp<strbuf+sizeof(strbuf))
-	   *bp++=*name;
-       }
-       ++ap;
+   const char *ap;
+   char *bp, *name;
+   name = NULL;
+   memset (strbuf, 0, sizeof (strbuf));
+   bp = strbuf;
+   for (ap = the_string; *ap; ++ap)
+     {
+        if (*ap == '$')
+          {
+             for (name = party[pidx[ap[1] - '0']].name; *name; ++name)
+               {
+                  if (bp < strbuf + sizeof (strbuf))
+                     *bp++ = *name;
+               }
+             ++ap;
+          }
+        else
+          {
+             if (bp < strbuf + sizeof (strbuf))
+                *bp++ = *ap;
+          }
      }
-     else {
-       if (bp<strbuf+sizeof(strbuf))
-	 *bp++=*ap;
-     }
-   }
-   return name==NULL ? the_string : strbuf;
+   return name == NULL ? the_string : strbuf;
 }
 
 /*! \brief Do user prompt
