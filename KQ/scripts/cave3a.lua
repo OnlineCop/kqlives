@@ -1,6 +1,11 @@
 -- cave3a - "First part of cave on way to Oracle's tower"
 
 function autoexec()
+  if (get_ent_tilex(HERO1) == 24 and get_ent_tiley(HERO1) == 3) then
+    set_warp(1, 264, 57);
+  elseif (get_ent_tilex(HERO1) == 8 and get_ent_tiley(HERO1) == 10) then
+    set_warp(1, 264, 60);
+  end
   refresh();
 end
 
@@ -28,7 +33,10 @@ end
 
 
 function zone_handler(zn)
-  if (zn == 1) then
+  if (zn == 0) then
+    combat(8);
+
+  elseif (zn == 1) then
     change_map("main", 264, 60, 264, 60);
 
   elseif (zn == 2) then
@@ -65,8 +73,7 @@ function zone_handler(zn)
       warp(27, 28, 8);
     end
 
-  elseif (zn == 11) then
-    combat(8);
+  -- zn == 11 is a no-combat zone
 
   elseif (zn == 12) then
     warp(5, 42, 8);

@@ -325,22 +325,22 @@ function zone_handler(zn)
     -- Long room north
     warp(35, 4, 10);
   elseif (zn == 16) then
-    chest(90, I_PCURING, 1);
+    chest(84, I_PCURING, 1);
     refresh();
   elseif (zn == 17) then
-    chest(91, I_B_VISION, 1);
+    chest(85, I_B_VISION, 1);
     refresh();
   elseif (zn == 18) then
-    chest(92, I_WATERRING, 1);
+    chest(86, I_WATERRING, 1);
     refresh();
   elseif (zn == 19) then
-    chest(93, I_KBREW, 1);
+    chest(87, I_KBREW, 1);
     refresh();
   elseif (zn == 20) then
-    chest(94, 0, 1000);
+    chest(88, 0, 1000);
     refresh();
   elseif (zn == 21) then
-    chest(95, I_VITSEED, 2);
+    chest(89, I_VITSEED, 2);
     refresh();
   elseif (zn == 22) then
     if (get_progress(P_OPALARMOUR) == 0) then

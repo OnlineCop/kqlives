@@ -101,23 +101,22 @@ end
 
 function entity_handler(en)
   if (en == 0) then
-    bubble(0, "You'll find great things here.");
+    bubble(en, "You'll find great things here.");
 
   elseif (en == 1) then
-    bubble(1, "Things here are rather pricey.");
+    bubble(en, "Things here are rather pricey.");
 
   elseif (en == 2) then
-    bubble(2, "It's quite peaceful here.",
-             "I like it.");
+    bubble(en, "It's quite peaceful here.", "I like it.");
 
   elseif (en == 3) then
-    bubble(3, "I love the sea.");
+    bubble(en, "I love the sea.");
 
   elseif (en == 4) then
-    bubble(4, "Nothing exciting ever happens here.");
+    bubble(en, "Nothing exciting ever happens here.");
 
   elseif (en == 5) then
-    bubble(5, "This town does not get a lot of visitors.");
+    bubble(en, "This town does not get a lot of visitors.");
 
   end
 end

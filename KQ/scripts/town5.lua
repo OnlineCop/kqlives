@@ -162,34 +162,34 @@ end
 
 function entity_handler(en)
   if (en == 0) then
-    bubble(0, "Do you like this shirt?");
+    bubble(en, "Do you like this shirt?");
 
   elseif (en == 1) then
-    bubble(1, "I really like that guy's shirt.");
+    bubble(en, "I really like that guy's shirt.");
 
   elseif (en == 2) then
-    bubble(2, "I have to stop bringing my wife with me.");
+    bubble(en, "I have to stop bringing my wife with me.");
 
   elseif (en == 3) then
-    bubble(3, "I must have had too many drinks.",
+    bubble(en, "I must have had too many drinks.",
               "My husband is starting to look handsome.");
 
   elseif (en == 4) then
     if (party[0] == Ayla) then
-      LOC_ayla_bar(4);
+      LOC_ayla_bar(en);
     else
-      bubble(4, "These two are weird... but at least I don't have to sit alone.");
+      bubble(en, "These two are weird... but at least I don't have to sit alone.");
     end
 
   elseif (en == 5) then
     if (party[0] == Ayla) then
-      LOC_ayla_girl(5);
+      LOC_ayla_girl(en);
     else
-      bubble(5, "Those gates to the inner city never open. Strangers are not allowed in.");
+      bubble(en, "Those gates to the inner city never open. Strangers are not allowed in.");
     end
 
   elseif (en == 6) then
-    bubble(6, "Welcome to Sunarin!",
+    bubble(en, "Welcome to Sunarin!",
               "Please feel free to leave at any time.");
 
   elseif (en == 7) then

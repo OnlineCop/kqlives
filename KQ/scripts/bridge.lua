@@ -1,4 +1,27 @@
--- bridge - "On Brayden river Randen and Andra"
+-- bridge - "On Brayden river Randen and Andra, incomplete"
+
+-- /*
+-- {
+-- Which globals should we have for the (incomplete) bridge?
+--
+-- P_FIGHTONBRIDGE
+--   (0) Nothing happened on bridge (haven't spoken to worker)
+--   (1) Spoke with a worker, haven't tried to leave yet
+--   (2) Tried to leave, monster appeared (haven't fought it yet)
+--   (3) Defeated monster
+--   (4) Left bridge and re-entered; bridge not completed yet
+--   (5) [Not calculated]: when this is >= 5, we will use bridge2
+--
+-- P_LOSERONBRIDGE
+--   (0) Have not spoken to man who forgot his sword
+--   (1) Spoke to him after defeating the monsters
+--
+-- P_ASLEEPONBRIDGE
+--   (0) Have not spoken to man sleeping on bridge
+--   (1) Man is asleep again
+-- }
+-- */
+
 
 function autoexec()
   if (get_treasure(8) == 1) then
@@ -69,6 +92,7 @@ function entity_handler(en)
   -- a ==2 tried to leave after a==1 and monster has appeared
   -- a ==3 you defeated the monster
   -- a ==4 after a==3 and you left map and returned
+  -- a !=5 in this map; you will use bridge2.(lua|map)
 
   if (en >= 2) then
     if (a == 0) then
@@ -84,77 +108,77 @@ function entity_handler(en)
 
   if (en == 0) then
     if (a == 0 or a == 1) then
-      bubble(0, "We're on the lookout for bandits.");
+      bubble(en, "We're on the lookout for bandits.");
     elseif (a == 2) then
-      bubble(0, "Um... we don't really have any experience dealing with anything hostile... could you take a look for us?");
+      bubble(en, "Um... we don't really have any experience dealing with anything hostile... could you take a look for us?");
     elseif (a == 3) then
-      bubble(0, "Very impressive... it's a good thing you came along. Thanks!");
+      bubble(en, "Very impressive... it's a good thing you came along. Thanks!");
     elseif (a == 4) then
-      bubble(0, "We should be done soon... come back a little later.");
+      bubble(en, "We should be done soon... come back a little later.");
     end
 
   elseif (en == 1) then
     if (a < 2) then
       if (get_progress(P_LOSERONBRIDGE) == 0) then
-        bubble(1, "Those bandits better not show their faces around here again!");
+        bubble(en, "Those bandits better not show their faces around here again!");
         bubble(HERO1, "Or you'll thrash 'em right?");
-        bubble(1, "No... they'd better not show up because I forgot my sword!");
+        bubble(en, "No... they'd better not show up because I forgot my sword!");
         wait(50);
-        bubble(1, "I probably shouldn't have told you that.");
+        bubble(en, "I probably shouldn't have told you that.");
         set_progress(P_LOSERONBRIDGE, 1);
       else
-        bubble(1, "Let me know if you see any bandits, will ya?");
+        bubble(en, "Let me know if you see any bandits, will ya?");
       end
     elseif (a == 2) then
-      bubble(1, ".....");
+      bubble(en, ".....");
     elseif (a == 3) then
-      bubble(1, "Wow!");
+      bubble(en, "Wow!");
     elseif (a == 4) then
-      bubble(1, "The bridge looks like it might be done by tomorrow. Why don't you go have a rest at the inn?");
+      bubble(en, "The bridge looks like it might be done by tomorrow. Why don't you go have a rest at the inn?");
     end
 
   elseif (en == 2) then
     if (a < 2) then
-      bubble(2, "This is very hard work!");
+      bubble(en, "This is very hard work!");
     elseif (a == 4) then
-      bubble(2, "That monster popped up right under my nose. Thanks for everything!");
+      bubble(en, "That monster popped up right under my nose. Thanks for everything!");
     end
 
   elseif (en == 3) then
     if (a < 2) then
-      bubble(3, ".....");
+      bubble(en, ".....");
       if (get_progress(P_ASLEEPONBRIDGE) == 0) then
         wait(50);
-        bubble(3, "Wha...?");
+        bubble(en, "Wha...?");
         set_ent_facing(3, 2);
-        bubble(3, "I wasn't sleeping!");
+        bubble(en, "I wasn't sleeping!");
         set_ent_facing(3, 1);
         set_progress(P_ASLEEPONBRIDGE, 1);
       end
     elseif (a == 4) then
-      bubble(3, "Zzz...");
+      bubble(en, "Zzz...");
     end
 
   elseif (en == 4) then
     if (a < 2) then
-      bubble(4, "I think that guy up there is asleep.");
+      bubble(en, "I think that guy up there is asleep.");
     elseif (a == 4) then
-      bubble(4, "Lousy, no-good... sleeping on the job...");
+      bubble(en, "Lousy, no-good... sleeping on the job...");
     end
 
   elseif (en == 5) then
     if (a < 2) then
-      bubble(5, "I really could use a break. It's been almost 15 minutes since the last one!");
+      bubble(en, "I really could use a break. It's been almost 15 minutes since the last one!");
     elseif (a == 4) then
-      bubble(5, "Now that the bridge is almost done, I think I'm due for another break.");
+      bubble(en, "Now that the bridge is almost done, I think I'm due for another break.");
     end
 
   elseif (en == 6) then
     if (a < 2) then
-      bubble(6, "I never should have listened to my mother when she told me to take up construction.");
-      bubble(6, "I should've been a florist like my dad.");
+      bubble(en, "I never should have listened to my mother when she told me to take up construction.");
+      bubble(en, "I should've been a florist like my dad.");
     elseif (a == 4) then
-      bubble(6, "Now you see why I should've been a florist...");
+      bubble(en, "Now you see why I should've been a florist...");
     end
 
   end

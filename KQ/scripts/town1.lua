@@ -1,19 +1,20 @@
 -- town1 - "Ekla"
 
 -- /*
+-- {
 -- P_EARLYPROGRESS: Used when talking to Derig in the Grotto.
 --   0 - Have not yet entered Ekla
 --   1 - Entered Ekla
 --   2 - Entered Randen
 --   3 - Entered Andra
 -- P_START: Monsters will not attack you until you enter and leave Ekla
---   0 - Have not yet entered Ekla
+--   0 - Haven't entered Ekla yet
 --   1 - Entered Ekla; monsters will now attack randomly on world map
 -- P_WARPSTONE: The teleporter from Ajantara <-> Randen
---   0 - Have not used it yet
+--   0 - Haven't used it yet
 --   1 - Stepped on the warp stone and created its counterpart in Randen
--- P_EKLAWELCOME: Corny welcome message when you talk to man in Ekla
---   0 - He had not yet given you his corny "Yes! This makes 8!" speech
+-- P_EKLAWELCOME: Corny welcome message when you talk to the man in Ekla
+--   0 - He hasn't yet given you his corny "Yes! This makes 8!" speech
 --   1 - Now he likes cheese
 -- P_DARKIMPBOSS: Dark Imp is in the tunnel from Ekla to Randen
 --   0 - It is blocking the stairway
@@ -22,7 +23,7 @@
 --   0 - Still letting monsters through
 --   1 - The Portal is sealed shut
 -- P_UCOIN: Unadium Coin from Jen
---   0 - Have not yet talked to the granddaughter, Jen
+--   0 - Have not yet spoken with the granddaughter, Jen
 --   1 - Spoke to Jen
 --   2 - Received coin
 --   3 - Returned coin
@@ -37,6 +38,7 @@
 --   3 - Fell down pit, spoke with Derig
 --   4 - Derig told you about the Rod of Cancellation
 --   5 - Returned Unadium coin and Rod of Cancellation to Derig
+-- }
 -- */
 
 
@@ -50,11 +52,11 @@ function autoexec()
   if (get_progress(P_TALKDERIG) < 3) or (get_progress(P_TALKDERIG) > 4) then
     set_ent_active(4, 0)
   else
-    -- Move daughter to chair by the table
+    -- Move daughter to the chair next to the table
     set_ent_tilex(2, 64)
     set_ent_tiley(2, 50)
-    set_ent_facing(2, 0)
-    set_ent_facing(4, 0)
+    set_ent_facing(2, FACE_DOWN)
+    set_ent_facing(4, FACE_DOWN)
     set_ent_facing(HERO1, 1)
   end
   refresh()

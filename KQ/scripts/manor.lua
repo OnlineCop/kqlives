@@ -13,6 +13,9 @@
 --   (0) You haven't recruited anyone yet
 --   (1..7) You have others in your party
 --
+-- P_MANORPARTY[0-7]
+--   Whether this character has been recruited into your party
+--
 -- When the game starts, Nostik debriefs everybody quickly and then offers to
 -- go into detail for whoever wants to stay.  We should script it so everyone
 -- else leaves immediately (walks out the door) and you're left at the table.
@@ -58,6 +61,12 @@ function autoexec()
   -- Remove all unused party members from map
 
   -- See if others have joined your party yet
+  for a = 0, 7, 1 do
+    if (LOC_manor_or_party == "manor") then
+      set_ent_active(a, 1);
+    end
+  end
+
   if (get_progress(P_PLAYERS) > 0) then
     set_progress(P_MANOR, 2);
   end
@@ -67,7 +76,7 @@ function autoexec()
     -- Init all 8 heroes
     for a = 0, 7, 1 do
       -- Set up entities 0-7 in manor.map as your team members
-      set_ent_id(a, a);
+--      set_ent_id(a, a);
       -- They should all be obstacles :)
       set_ent_obsmode(a, 1);
       -- What this sprite looks like

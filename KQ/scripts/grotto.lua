@@ -23,12 +23,6 @@
 --   1 - Spoke to Jen
 --   2 - Jen gave you Unadium coin
 --   3 - Returned coin to Derig
---
---   OLD:
---   01 - Declined her offer to help get rid of Tunnel Portal
---   02 - Accepted her offer to help
---   03 - Received Coin (unnecessary, since it immediately follows 2)
---   04 - Returned Coin; received SunStone
 -- */
 
 

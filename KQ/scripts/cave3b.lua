@@ -18,7 +18,10 @@ end
 
 
 function zone_handler(zn)
-  if (zn == 1) then
+  if (zn == 0) then
+    combat(9);
+
+  elseif (zn == 1) then
     change_map("cave3a", 5, 3, 5, 3);
 
   elseif (zn == 2) then
@@ -28,8 +31,7 @@ function zone_handler(zn)
   elseif (zn == 3) then
     change_map("cave3a", 28, 47, 28, 47);
 
-  elseif (zn == 4) then
-    combat(9);
+  -- zn == 4 is a no-combat tile
 
   end
 end

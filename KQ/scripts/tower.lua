@@ -535,7 +535,7 @@ function zone_handler(zn)
       sfx(26);
     end
 
-  -- zn 41 == no enemies attack (3: Treasure room, 5: Oracle room)
+  -- zn == 41: no enemies attack (3: Treasure room, 5: Oracle room)
 
   -- Guardian Dragon (1: Main entrance)
   elseif (zn == 42) then

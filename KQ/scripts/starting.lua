@@ -19,6 +19,7 @@ function postexec()
   -- TT: This makes it a hundred times faster to update scripts and see how
   -- it will appear in real time.  Just comment out everything that you do not
   -- want to sit through every time you recompile the script.
+/*
   LOC_storyline(SENSAR);
   LOC_storyline(SARINA);
   LOC_storyline(CORIN);
@@ -27,6 +28,7 @@ function postexec()
   LOC_storyline(TEMMIN);
   LOC_storyline(AYLA);
   LOC_storyline(NOSLOM);
+*/
 
   view_range(1, 116, 14, 141, 31);
   screen_dump();
