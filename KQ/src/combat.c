@@ -88,6 +88,10 @@ static void init_fighters (void);
 *
 * This function checks the zone at the specified co-ordinates
 * and calls combat based on the map and zone.
+*
+* PH: it seems that this is rarely used (?) - only called by 
+* entityat().
+*
 * \param comx x-coord of player
 * \param comy y-coord of player
 * \returns Outcome of combat() or 0 if no combat
@@ -97,18 +101,22 @@ int combat_check (int comx, int comy)
 {
    int zn;
    int i;
-   int w = -1;
 
    zn = z_seg[comy * g_map.xsize + comx];
 
-   /*  RB TODO: adding a break will make this a bit faster, plus  */
-   /*           calling combat with the FIRST zone, not the LAST  */
-   /*           one.                                              */
+   /*  RB TODO: adding a break will make this a bit faster, plus  
+    *           calling combat with the FIRST zone, not the LAST  
+    *           one.                                              
+    * PH: done this 20020222 
+    */
    for (i = 0; i < NUM_BATTLES; i++)
-      if (battles[i].mapnum == g_map.map_no && battles[i].zonenum == zn)
-         w = i;
-
-   return ((w > -1) ? combat (w) : 0);
+     {
+        if (battles[i].mapnum == g_map.map_no && battles[i].zonenum == zn)
+          {
+             return combat (i);
+          }
+     }
+   return 0;
 }
 
 
@@ -126,34 +134,85 @@ int combat_check (int comx, int comy)
 int combat (int bno)
 {
    int zoom_step;
-
+   int hero_level;
    /* ML 2002-09-22: not needed right now int saved_song; */
    int encounter;
    int lc;
+   sprintf (strbuf, "Battle %d:", bno);
+   klog (strbuf);
+   /* PH: some checking! */
+   if (bno < 0 || bno >= NUM_BATTLES)
+     {
+        sprintf (strbuf, "Combat: battle %d does not exist.", bno);
+        program_death (strbuf);
+     }
 
    /*  RB: check if we had had a random encounter  */
    if (battles[bno].enc > 1)
-      if ((steps < STEPS_NEEDED) || ((rand () % battles[bno].enc) > 0))
-         return 0;
-
+     {
+        if ((steps < STEPS_NEEDED) || ((rand () % battles[bno].enc) > 0))
+          {
+             sprintf (strbuf, "Skipped due to 1-in-%d or %d<%d",
+                      battles[bno].enc, steps, STEPS_NEEDED);
+             klog (strbuf);
+             return 0;
+          }
+        else
+          {
+             sprintf (strbuf, "Steps %d >= %d", steps, STEPS_NEEDED);
+             klog (strbuf);
+          }
+     }
+   else
+     {
+        sprintf (strbuf, "battle->enc=%d", battles[bno].enc);
+        klog (strbuf);
+     }
    /*  RB: had one! choose what we had just found  */
    steps = 0;
+   hero_level = party[pidx[0]].lvl;
    encounter = select_encounter (battles[bno].etnum, battles[bno].eidx);
-   if (fighter[0].lvl >= erows[encounter].lvl + 5 && battles[bno].eidx == 99)
+   sprintf (strbuf, "Encounter %d:", encounter);
+   klog (strbuf);
+   /* !! should be party[pidx[0]].lvl */
+   if (hero_level >= erows[encounter].lvl + 5 && battles[bno].eidx == 99)
      {
-        lc = (fighter[0].lvl - erows[encounter].lvl) * 5;
+        sprintf (strbuf, "Query level %d vs %d", hero_level,
+                 erows[encounter].lvl);
+        klog (strbuf);
+        lc = (hero_level - erows[encounter].lvl) * 5;
         if ((rand () % 100) < lc)
-           return 0;
+          {
+             sprintf (strbuf, "Skipped, delta level %d", lc);
+             klog (strbuf);
+             return 0;
+          }
+        else
+          {
+             sprintf (strbuf, "Proceeding, delta level %d\n", lc);
+             klog (strbuf);
+          }
+     }
+   else
+     {
+        sprintf (strbuf, "No Query level %d vs %d or eidx==%d", hero_level,
+                 erows[encounter].lvl, battles[bno].eidx);
+        klog (strbuf);
      }
 
    if (progress[P_REPULSE] > 0)
      {
-        lc = (fighter[0].lvl - erows[encounter].lvl) * 20;
+        lc = (hero_level - erows[encounter].lvl) * 20;
         if (lc < 5)
            lc = 5;
 
         if ((rand () % 100) < lc)
-           return 0;
+          {
+             sprintf (strbuf, "Skipped, repulse delta %d\n", lc);
+             klog (strbuf);
+
+             return 0;
+          }
      }
 
    in_combat = 1;
