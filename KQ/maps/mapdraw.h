@@ -98,65 +98,70 @@ s_show;
  */
 
 /* prototypes */
-void klog (char *);
-void process_controls (void);
+int check_last_zone (void);
 int confirm_exit (void);
-void check_tilesel (int, int);
-void check_mdupdate (int, int);
-void draw_map (void);
-void draw_menubars (void);
-void bufferize (void);
-void load_map (void);
-void save_map (void);
-void make_mapfrompcx (void);
-void global_change (void);
-void clear_obstructs (void);
-void clear_shadows (void);
 int get_line (int, int, char *, int);
 int yninput (void);
-void startup (void);
-void cleanup (void);
-void new_map (void);
-void init_entities (void);
-void wait_enter (void);
-void cmessage (char *);
-void paste_region_special (int, int);
-void paste_region (int, int);
-void copy_region (void);
-void resize_map (void);
-void displace_entities (void);
-void wipe_map (void);
-void maptopcx (void);
-void place_entity (int, int);
-void erase_entity (int, int);
-void update_entities (void);
-void draw_entdata (int);
-void describe_map (void);
-void copy_layer (void);
-void clear_layer (void);
-void print_sfont (int, int, char *, BITMAP *);
-void getfont (void);
-void update_tileset (void);
-void show_help (void);
-int check_last_zone (void);
-void get_tile (void);
 
+void bufferize (void);
+void check_mdupdate (int, int);
+void check_tilesel (int, int);
+void cleanup (void);
+void clear_layer (void);
+void clear_obstructs (void);
+void clear_shadows (void);
+void cmessage (char *);
+void copy_layer (void);
+void copy_region (void);
+void describe_map (void);
+void displace_entities (void);
+void draw_entdata (int);
+void draw_map (void);
+void draw_menubars (void);
+void erase_entity (int, int);
+void get_tile (void);
+void getfont (void);
+void global_change (void);
+void init_entities (void);
+void klog (char *);
+void load_map (void);
+void make_mapfrompcx (void);
+void maptopcx (void);
+void new_map (void);
+void paste_region (int, int);
+void paste_region_special (int, int);
+void place_entity (int, int);
+void print_sfont (int, int, char *, BITMAP *);
+void process_controls (void);
+void resize_map (void);
+void save_map (void);
+void show_help (void);
+void startup (void);
+void update_entities (void);
+void update_tileset (void);
 void visual_map (void);
+void wait_enter (void);
+void wipe_map (void);
+
+extern BITMAP *double_buffer, *pcx_buffer;
+extern BITMAP *font6;
+extern BITMAP *icons[];
+extern PALETTE pal;
+
+extern char *icon_files[];
+extern char *strbuf;
+extern char map_fname[];
+
+extern int draw_mode, htiles, vtiles;
+extern int noe, cent;
+
+extern s_entity gent[];
+extern s_map gmap;
+extern s_show showing;
+
+extern short gx, gy;
+extern short icon_set, max_sets;
+
+extern unsigned char *z_map, *cz_map, *sh_map, *cs_map, *o_map, *co_map;
 
 extern unsigned short *map, *b_map, *f_map, *c_map, *cf_map, *cb_map;
-extern unsigned char *z_map, *cz_map, *sh_map, *cs_map, *o_map, *co_map;
-extern char *strbuf;
-extern s_map gmap;
-extern s_entity gent[];
-extern s_show showing;
-extern PALETTE pal;
-extern BITMAP *double_buffer, *pcx_buffer;
-extern BITMAP *icons[];
-extern char *icon_files[];
-extern short icon_set, max_sets;
-extern int noe, cent;
-extern char map_fname[];
-extern short gx, gy;
-extern int draw_mode, htiles, vtiles;
-
-extern BITMAP *font6;
