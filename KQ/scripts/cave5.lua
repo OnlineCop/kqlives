@@ -8,8 +8,8 @@ function autoexec()
 end
 
 -- show the status of a chest
--- TT: changed cave5's treasures to layer 2 so
---     they could be updated with correct tiles
+--// TT: changed cave5's treasures to layer 2 so
+--//     they could be updated with correct tiles
 function showch(x, y, tr)
   local ch
   if (get_treasure(tr)==1) then
@@ -233,14 +233,32 @@ end
 function opaldragon()
   local spd;
   if (get_progress(P_OPALDRAGONOUT)==0) then
+    if (get_numchrs()>1) then
+     set_ent_script(HERO2, "L1");
+     wait_for_entity(HERO2, HERO12);
+     -- face 'up'
+     set_ent_facing(HERO2, 1);
+    end
     bubble(HERO1, "Ohhh!");
     bubble(HERO1, "The legend was true!");
     spd=get_ent_speed(HERO1);
-    set_ent_speed(HERO1,1);
-    set_ent_script(HERO1, "U7");
-    wait_for_entity(HERO1, HERO1);
-    set_ent_speed(HERO1, spd);
+    if (get_numchrs()>1) then
+     set_ent_speed(HERO1,1);
+     set_ent_speed(HERO2,1);
+     set_ent_script(HERO1, "U7");
+     set_ent_script(HERO2, "U7");
+     wait_for_entity(HERO1, HERO2);
+     set_ent_speed(HERO1, spd);
+     set_ent_speed(HERO2, spd);
+    else
+     set_ent_speed(HERO1,1);
+     set_ent_script(HERO1,"U7");
+     wait_for_entity(HERO1,HERO1);
+    end
+    set_run(0);
     combat(58);
+    set_run(1);
+    orient_heroes();
     set_progress(P_OPALDRAGONOUT,1);
     refresh();
   end
