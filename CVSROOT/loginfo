@@ -24,6 +24,4 @@
 #DEFAULT (echo ""; id; echo %s; date; cat) >> $CVSROOT/CVSROOT/commitlog
 # or
 #DEFAULT (echo ""; id; echo %{sVv}; date; cat) >> $CVSROOT/CVSROOT/commitlog
-# Do a doxygen on the source code every time we check in
-^KQ-web/ (sleep 10; cd ~/kqlives/KQ-web; cvs update )
-^KQ/ (sleep 10; cd ~/KQ ; cvs update ; cd ; /usr/bin/doxygen)
+
