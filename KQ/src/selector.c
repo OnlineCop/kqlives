@@ -660,7 +660,7 @@ int select_party (int *avail, int n_avail, int numchrs_max)
                {
                   menubox (double_buffer, x, y, 2, 2,
                            cur == (8 + i) ? DARKRED : DARKBLUE);
-                  if (pidx[i] >= 0)
+                  if (i < numchrs && pidx[i] >= 0)
                      draw_sprite (double_buffer, frames[pidx[i]][0], x + 8,
                                   y + 8);
                   x += 40;

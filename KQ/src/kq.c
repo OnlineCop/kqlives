@@ -39,14 +39,14 @@
 #include <stdio.h>
 #include <time.h>
 #include <string.h>
-#if defined(HAVE_GETPWUID)
-#include <unistd.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <pwd.h>
-#elif defined(HAVE_LOADLIBRARY)
-#include <direct.h>
-#endif
+/* #if defined(HAVE_GETPWUID) */
+/* #include <unistd.h> */
+/* #include <sys/stat.h> */
+/* #include <sys/types.h> */
+/* #include <pwd.h> */
+/* #elif defined(HAVE_LOADLIBRARY) */
+/* #include <direct.h> */
+/* #endif */
 
 #include <allegro.h>
 
@@ -174,7 +174,8 @@ unsigned short tilex[MAX_TILES];
  * the next tile is shown */
 unsigned short adelay[MAX_ANIM];
 /*! Temporary buffer for string operations (used everywhere!) */
-char *strbuf = NULL, *savedir = NULL;
+char *strbuf = NULL;
+/* char *savedir = NULL; */
 
 /*! Characters in play. The pidx[] array references this for the heroes actually
  * on screen, e.g. party[pidx[0]] is the 'lead' character, 
@@ -1511,8 +1512,8 @@ static void deallocate_stuff (void)
       free (treasure);
    if (strbuf)
       free (strbuf);
-   if (savedir)
-      free (savedir);
+/*    if (savedir) */
+/*       free (savedir); */
 
    if (is_sound)
      {

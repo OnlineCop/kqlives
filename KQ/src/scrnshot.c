@@ -59,7 +59,7 @@ int save_screenshot (BITMAP * src_bmp, const char *prefix)
 
    /* this is defined as 8 to keep DOS support */
 #define SAVE_NAME_SIZE (8)
-
+   const char *savedir = kqres (SAVE_DIR, ".");
    /* check to make sure the folder exists, but ignore errors if the
     * directory contains '.' because allegro cannot detect it. */
    if (strchr (savedir, '.') || file_exists (savedir, FA_DIREC, NULL))

@@ -53,7 +53,7 @@ const char *kqres (int dir, const char *file)
    static char ans[PATH_MAX];
    if (!init_path)
      {
-     	home=ans;
+        home = ans;
         /* Get home directory; this bit originally written by SH */
         SHFolder = LoadLibrary ("shfolder.dll");
         if (SHFolder != NULL)
@@ -83,7 +83,6 @@ const char *kqres (int dir, const char *file)
           }
         /* Now the data directory */
         strcpy (game_dir, ".");
-        TRACE("Saving data in %s, getting data from %s\n", user_dir, game_dir);
         init_path = 1;
      }
    switch (dir)
@@ -107,5 +106,5 @@ const char *kqres (int dir, const char *file)
      default:
         return NULL;
      }
-   return fix_filename_slashes(ans);
+   return fix_filename_slashes (ans);
 }

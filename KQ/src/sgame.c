@@ -321,11 +321,11 @@ static int save_game (void)
 /*    pack_fwrite (&windowed, sizeof (windowed), sdat); */
 /*    pack_fwrite (&stretch_view, sizeof (stretch_view), sdat); */
 /*    pack_fwrite (&wait_retrace, sizeof (wait_retrace), sdat); */
-   pack_iputl(gsvol, sdat);
-   pack_iputl(gmvol, sdat);
-   pack_putc(windowed, sdat);
-   pack_putc(stretch_view, sdat);
-   pack_putc(wait_retrace, sdat);
+   pack_iputl (gsvol, sdat);
+   pack_iputl (gmvol, sdat);
+   pack_putc (windowed, sdat);
+   pack_putc (stretch_view, sdat);
+   pack_putc (wait_retrace, sdat);
 /*    pack_fwrite (&kup, sizeof (kup), sdat); */
 /*    pack_fwrite (&kdown, sizeof (kdown), sdat); */
 /*    pack_fwrite (&kleft, sizeof (kleft), sdat); */

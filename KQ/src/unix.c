@@ -64,7 +64,7 @@ const char *kqres (int dir, const char *file)
           {
              sprintf (user_dir, "%s/.kq", home);
              /* Always try to make the directory, just to be sure. */
-             mkdir (savedir, 0755);
+             mkdir (user_dir, 0755);
           }
         else
           {
