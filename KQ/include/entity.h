@@ -29,33 +29,33 @@
 
 typedef struct
 {
-   unsigned char chrx;
-   unsigned short x;
-   unsigned short y;
-   unsigned short tilex;
-   unsigned short tiley;
-   unsigned char eid;
-   unsigned char active;
-   unsigned char facing;
-   unsigned char moving;
-   unsigned char movcnt;
-   unsigned char framectr;
-   unsigned char movemode;
-   unsigned char obsmode;
-   unsigned char delay;
-   unsigned char delayctr;
-   unsigned char speed;
+   unsigned char chrx;  // Entity's identity (what s/he looks like)
+   unsigned short x; // x-coord on map
+   unsigned short y; // y-coord on map
+   unsigned short tilex;   // x-coord tile that entity is standing on
+   unsigned short tiley;   // y-coord tile that entity is standing on
+   unsigned char eid;   // Entity type (fighter, enemy, normal)
+   unsigned char active;   // "Alive" or not
+   unsigned char facing;   // Direction
+   unsigned char moving;   // In the middle of a move
+   unsigned char movcnt;   // How far along the move entity is
+   unsigned char framectr; // Counter for determining animation frame
+   unsigned char movemode; // Stand, wander, script or chasing
+   unsigned char obsmode;  // Determine if affected by obstacles or not
+   unsigned char delay; // Movement delay (between steps)
+   unsigned char delayctr; // Counter for movement delay
+   unsigned char speed; // How hyperactive the entity is
    unsigned char scount;
-   unsigned char cmd;
-   unsigned char sidx;
+   unsigned char cmd;   // Move/Wait/Facing command
+   unsigned char sidx;  // Script ID number
    unsigned char extra;
-   unsigned char chasing;
-   int cmdnum;
+   unsigned char chasing;  // Entity is following another
+   int cmdnum; // Number of times we need to repeat 'cmd'
    unsigned char atype;
-   unsigned char snapback;
-   unsigned char facehero;
-   unsigned char transl;
-   char script[60];
+   unsigned char snapback; // Snaps back to direction previously facing
+   unsigned char facehero; // Look at player when talked to
+   unsigned char transl;   // Entity is see-through or not
+   char script[60];  // Movement/action script (pacing, etc.)
 }
 s_entity;
 
