@@ -556,26 +556,18 @@ int shop (int shop_num)
 
    shop_no = shop_num;
    strcpy (sname, shopn[shop_no]);
-   // TT edit:
    for (a = 0; a < SHOPITEMS; a++)
-#if 0
-      for (a = 0; a < 12; a++)
-#endif
-        {
-           if (shops[shop_no][a][2] > 0)
-              if ((khr * 60) + kmin - progress[P_SHOPSTART + shop_no] >
-                  shops[shop_no][a][2])
-                 shopq[shop_no][a] = shops[shop_no][a][1];
-           shin[a] = shops[shop_no][a][0];
-        }
-   // TT add:
+     {
+        if (shops[shop_no][a][2] > 0)
+           if ((khr * 60) + kmin - progress[P_SHOPSTART + shop_no] >
+              shops[shop_no][a][2])
+              shopq[shop_no][a] = shops[shop_no][a][1];
+        shin[a] = shops[shop_no][a][0];
+     }
    noi = SHOPITEMS - 1;
    for (a = SHOPITEMS - 1; a >= 0; a--)
-#if 0
-      for (a = 11; a >= 0; a--)
-#endif
-         if (shin[a] == 0)
-            noi = a;
+      if (shin[a] == 0)
+         noi = a;
    if (noi == 0)
       return 1;
    unpress ();
@@ -1031,17 +1023,14 @@ static void sell_item (int itno, int ni)
              unpress ();
              gp += sp;
              for (a = 0; a < SHOPITEMS; a++)
-#if 0
-                for (a = 0; a < 12; a++)
-#endif
-                  {
-                     if (l > 0 && shops[shop_no][a][0] == l)
-                       {
-                          shopq[shop_no][a] += ni;
-                          if (shopq[shop_no][a] > shops[shop_no][a][1])
-                             shopq[shop_no][a] = shops[shop_no][a][1];
-                       }
-                  }
+               {
+                  if (l > 0 && shops[shop_no][a][0] == l)
+                    {
+                       shopq[shop_no][a] += ni;
+                       if (shopq[shop_no][a] > shops[shop_no][a][1])
+                          shopq[shop_no][a] = shops[shop_no][a][1];
+                    }
+               }
              play_effect (SND_MONEY, 128);
              remove_item (itno, ni);
              stop = 1;
