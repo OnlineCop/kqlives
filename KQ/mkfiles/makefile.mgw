@@ -12,6 +12,9 @@
 #                                                                             #
 #  ReyBrujo, 2002                                                             #
 #                                                                             #
+#  23-Sep-2002:                                                               #
+#     (RB) Added PREPROCESSOR variable.                                       #
+#                                                                             #
 ###############################################################################
 
 
@@ -21,6 +24,7 @@
 #  to modify them.                                                            #
 #                                                                             #
 COMPILER       := $(GCC)
+PREPROCESSOR   := $(GPP) -P -undef
 LINKER         := $(GCC)
 COMPILER_FLAGS := $(CFLAGS)
 OBJDIR         := $(OBJ_DIR)/mingw

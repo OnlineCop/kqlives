@@ -17,6 +17,9 @@
 #                                                                             #
 #  ReyBrujo, 2002                                                             #
 #                                                                             #
+#  23-Sep-2002:                                                               #
+#     (RB): Fixed clean target.                                               #
+#                                                                             #
 ###############################################################################
 
 
@@ -68,7 +71,8 @@ editor:
 #  for the third level of depth, etc.                                         #
 #                                                                             #
 clean:
-	$(RM) $(RMFLAGS) $(EXEC) $(OBJ_DIR)/*/*.o* $(RUNNER)
+	$(RM) $(RMFLAGS) $(EXEC) $(OBJDIR)/*.o* $(RUNNER)
+	$(RM) $(RMFLAGS) $(SCR_DIR)/*.lob
 
 
 

@@ -5,10 +5,14 @@
 #                                                                             #
 #  ReyBrujo, 2002                                                             #
 #                                                                             #
+#  23-Sep-2002:                                                               #
+#     (RB) Added PREPROCESSOR variable.                                       #
+#                                                                             #
 ###############################################################################
 
 
 COMPILER := cl
+PREPROCESSOR := cl -nologo -EP
 LINKER   := link
 LFLAGS   := /NOLOGO /RELEASE /MACHINE:IX86 /SUBSYSTEM:WINDOWS /NODEFAULTLIB:LIBCMT
 RUNNER   := runner.exe
@@ -41,13 +45,13 @@ OBJECTS  := $(addprefix $(OBJDIR)/, $(addsuffix .$(OBJ_SUFFIX), $(FILES)))
 #  Sorry, for now I cannot make MSVC compile the examples as statically       #
 #  linked executables.                                                        #
 #                                                                             #
-ALLEGRO := $(addsuffix .lib, $(LIBRARY))
+ALLEGRO := $(addsuffix .lib, $(LIBRARY) $(ALLEGRO))
 
 
 #                                                                             #
 #  By default build the example.                                              #
 #                                                                             #
-default : $(RUNNER) $(EXEC) scripting
+default : $(RUNNER) $(EXEC) scripting editor
 
 $(RUNNER) : $(SRC_DIR)/misc/runner.$(SRC_SUFFIX)
 	$(GCC) $< -o $@
