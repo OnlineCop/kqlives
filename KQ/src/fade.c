@@ -47,15 +47,22 @@
  *
  * \param   source Palette to fade from
  * \param   dest Palette to fade to
- * \param   speed How fast to fade (0..64)
+ * \param   speed How fast to fade (1..64)
  * \param   from Starting palette index (0..255)
  * \param   to Ending palette index (0..255)
+ * \datem   20040731 PH added check for out-of-range speed
  */
 static void _fade_from_range (AL_CONST PALETTE source, AL_CONST PALETTE dest,
                               int speed, int from, int to)
 {
    PALETTE temp;
    int c, start, last;
+   /* make sure fade speed is in range */
+   if (speed < 1)
+      speed = 1;
+   if (speed > 64)
+      speed = 64;
+
    for (c = 0; c < PAL_SIZE; c++)
       temp[c] = source[c];
    start = retrace_count;
