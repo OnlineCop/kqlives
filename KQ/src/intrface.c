@@ -1801,7 +1801,7 @@ static int KQ_drawsprite (lua_State * L)
    return 0;
 }
 
-
+/*! \brief Update the screen */
 static int KQ_screen_dump (lua_State * L)
 {
    /*  RB: TODO  */
@@ -2865,19 +2865,19 @@ int KQ_bubble_ex (lua_State * L)
 
    switch (lua_type (L, 1))
      {
-        case LUA_TNUMBER:
-           entity = real_entity_num (lua_tonumber (L, 1));
-           break;
-        case LUA_TTABLE:
-           lua_pushstring (L, "_ent");
-           lua_rawget (L, 1);
-           ent = lua_touserdata (L, -1);
-           /* convert from pointer to an index for text_ex */
-           entity = ent ? ent - g_ent : 255;
-           break;
-        default:
-           entity = 255;
-           break;
+     case LUA_TNUMBER:
+        entity = real_entity_num (lua_tonumber (L, 1));
+        break;
+     case LUA_TTABLE:
+        lua_pushstring (L, "_ent");
+        lua_rawget (L, 1);
+        ent = lua_touserdata (L, -1);
+        /* convert from pointer to an index for text_ex */
+        entity = ent ? ent - g_ent : 255;
+        break;
+     default:
+        entity = 255;
+        break;
      }
    text_ex (B_TEXT, entity, msg);
    return 0;
