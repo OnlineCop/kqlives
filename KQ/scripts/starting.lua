@@ -55,7 +55,7 @@ function postexec()
 
   set_ent_script(15, "W25F2W25F0W25F3W25F0");
   wait_for_entity(15, 15);
-  
+
   bubble(255, "Alright, I have made my decision...");
   wait(25);
 
@@ -133,7 +133,7 @@ function LOC_choose_hero()
 --  end
 
 -- TT add:
-  local ptr = 7;
+  local ptr = NOSLOM;
   add_chr(ptr);
   set_all_equip(party[0], I_KNIFE1, 0, 0, I_SUIT1, 0, 0);
   change_map("manor", 37, 7, 37, 7);
@@ -256,7 +256,7 @@ function LOC_storyline(en)
     bubble(HERO1, "$0:",
                   "You wanted to see me sir?");
     bubble(24, "Yes $0. It is time for you to leave the temple and discover the world. I have found the perfect way for you to do that.");
-    bubble(HERO1, "Excellent sir.  What am I to do?");
+    bubble(HERO1, "Excellent sir. What am I to do?");
     bubble(24, "One of the others brought in a notice that speaks of a man named Nostik.");
     bubble(24, "This man makes strange claims to his identity as well as to give or teach others some `Great Magic'.");
     bubble(24, "I am giving you an opportunity to investigave this quest. This will test your training, as well as get you out on a little adventure.");

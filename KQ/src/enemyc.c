@@ -412,6 +412,7 @@ void load_enemies (void)
           }
      }
    fclose (edat);
+
    edat = fopen (kqres (DATA_DIR, "resabil.mon"), "r");
    if (!edat)
       program_death ("Could not load 2nd enemy datafile!");

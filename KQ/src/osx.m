@@ -79,15 +79,15 @@ const char *kqres (int dir, const char *file)
      case DATA_DIR:
         base = game_dir;
         sub = @"data";
-         break;
+        break;
      case MUSIC_DIR:
         base = game_dir;
         sub = @"music";
-         break;
+        break;
      case MAP_DIR:
         base = game_dir;
         sub = @"maps";
-         break;
+        break;
      case SAVE_DIR:
      case SETTINGS_DIR:
         base = user_dir;
@@ -100,8 +100,8 @@ const char *kqres (int dir, const char *file)
      default:
         return NULL;
      }
- ff=[NSString stringWithCString: file];
- arr =[NSArray arrayWithObjects: base, sub,ff, nil];
- return strncpy (ans,[[NSString pathWithComponents:arr] cString], sizeof
+   ff = [NSString stringWithCString: file];
+   arr = [NSArray arrayWithObjects: base, sub,ff, nil];
+   return strncpy (ans,[[NSString pathWithComponents:arr] cString], sizeof
                    (ans));
 }

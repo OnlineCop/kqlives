@@ -1577,7 +1577,7 @@ void draw_menubars (void)
         recty2 = (copyy2 + gy) * 16 + 15;
 
         // TT: Highlight the selected tile (takes into account window's coords)
-        rect (double_buffer, rectx1, recty1, rectx2, recty2, 2);
+        rect (double_buffer, rectx1, recty1, rectx2, recty2, 25);
 
         /* TT: My next project is to select the top-left coords, then when
          * the user right-clicks and finishes the copy-selection, the rect

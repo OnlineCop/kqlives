@@ -586,28 +586,28 @@ function entity_handler(en)
   if (en == 0) then
     if (get_progress(P_ORACLE) == 0) then
       bubble(HERO1, "I guess you knew I was coming, huh?");
-      bubble(0, "Quite right. I have known for some time now that you would be paying me a visit. I have been waiting.");
+      bubble(en, "Quite right. I have known for some time now that you would be paying me a visit. I have been waiting.");
       bubble(HERO1, "Have any of the others been here?");
-      bubble(0, "I haven't seen any of them. They wouldn't be able to get into the tower anyways.");
+      bubble(en, "I haven't seen any of them. They wouldn't be able to get into the tower anyways.");
       bubble(HERO1, "I don't understand. Where are the others? I hardly seen any of them, so I assumed that they were way ahead of me.");
-      bubble(0, "I am not certain. They are probably lost or confused. They did not speak to Derig as you did.");
-      bubble(0, "They probably have no idea where to go.");
+      bubble(en, "I am not certain. They are probably lost or confused. They did not speak to Derig as you did.");
+      bubble(en, "They probably have no idea where to go.");
       bubble(HERO1, "Why wouldn't they have spoken to Derig? It seemed as though Derig was there to help us.");
-      bubble(0, "Actually, Derig chose you above the others. He is a bit of a prophet himself, and he knew exactly who to help.");
-      bubble(0, "If you are concerned about the others you may want to seek them out.");
-      bubble(0, "However, you should wait until later, for there are more important things to take care of first.");
+      bubble(en, "Actually, Derig chose you above the others. He is a bit of a prophet himself, and he knew exactly who to help.");
+      bubble(en, "If you are concerned about the others you may want to seek them out.");
+      bubble(en, "However, you should wait until later, for there are more important things to take care of first.");
       bubble(HERO1, "Yes, I suppose there are. Are you going to tell me how to find the staff?");
-      bubble(0, "Well, not exactly, but I do know where you have to go and how you will get there.");
-      bubble(0, "You have to gather several items, all of which are made of Opal, in order to proceed.");
-      bubble(0, "Once you find these things, you will then use them to travel the underwater passage on the western shore.");
-      bubble(0, "The passage will take you to the the tiny kingdom of Esteria. There you will find an evil warlord named Binderak.");
-      bubble(0, "He is the one who acquired the Staff from Malkaron all those years ago. I believe he still has that half of the Staff.");
-      bubble(0, "However, I may be wrong. And I don't know where the other half is. Unfortunately, that is all that I can tell you.");
+      bubble(en, "Well, not exactly, but I do know where you have to go and how you will get there.");
+      bubble(en, "You have to gather several items, all of which are made of Opal, in order to proceed.");
+      bubble(en, "Once you find these things, you will then use them to travel the underwater passage on the western shore.");
+      bubble(en, "The passage will take you to the the tiny kingdom of Esteria. There you will find an evil warlord named Binderak.");
+      bubble(en, "He is the one who acquired the Staff from Malkaron all those years ago. I believe he still has that half of the Staff.");
+      bubble(en, "However, I may be wrong. And I don't know where the other half is. Unfortunately, that is all that I can tell you.");
       bubble(HERO1, "That's plenty. Thanks.");
-      bubble(0, "Now you must go, for the Stone Dragon will soon piece himself back together and be even stronger.");
+      bubble(en, "Now you must go, for the Stone Dragon will soon piece himself back together and be even stronger.");
       bubble(HERO1, "Okay... thanks again.");
-      bubble(0, "Oh, just one more thing.");
-      bubble(0, "In the caves south of here there was a locked door. That door leads to a teleporter and will now be unlocked.");
+      bubble(en, "Oh, just one more thing.");
+      bubble(en, "In the caves south of here there was a locked door. That door leads to a teleporter and will now be unlocked.");
       bubble(HERO1, "Thanks!");
       set_progress(P_ORACLE, 1);
       set_autoparty(1);
@@ -635,7 +635,7 @@ function entity_handler(en)
         orient_heroes();
       end
     else
-      bubble(0, "There is nothing else that I can tell you.");
+      bubble(en, "There is nothing else that I can tell you.");
     end
 
   end
@@ -669,7 +669,9 @@ function LOC_stoner(a, b, c)
     end
 
     -- At least one of each color stone picked up
-    if (prompt(255, 2, 0, "What stone will you place?", "  black", "  white") == 0) then
+    if (prompt(255, 2, 0, "What stone will you place?",
+                          "  black",
+                          "  white") == 0) then
       set_progress(a, 1);
       set_progress(P_BSTONES, get_progress(P_BSTONES) - 1);
       sfx(5);
