@@ -261,15 +261,15 @@ void load_map (void)
              return;
           }
         strcpy (map_fname, fname);
-	/*
+        /*
         pack_fread (&gmap, sizeof (ss_map), pf);
         pack_fread (&gent, sizeof (s_entity) * 50, pf);
-	*/
-	load_s_map(&gmap, pf);
-	for (i=0; i<50; ++i)
-	  {
-	    load_s_entity(gent+i, pf);
-	  }
+        */
+        load_s_map(&gmap, pf);
+        for (i=0; i<50; ++i)
+          {
+             load_s_entity(gent+i, pf);
+          }
         bufferize ();
         pack_fread (map, (gmap.xsize * gmap.ysize * 2), pf);
         pack_fread (b_map, (gmap.xsize * gmap.ysize * 2), pf);
