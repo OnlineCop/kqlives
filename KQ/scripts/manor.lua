@@ -76,7 +76,7 @@ function autoexec()
     -- Init all 8 heroes
     for a = 0, 7, 1 do
       -- Set up entities 0-7 in manor.map as your team members
---      set_ent_id(a, a);
+      set_ent_id(a, a);
       -- They should all be obstacles :)
       set_ent_obsmode(a, 1);
       -- What this sprite looks like
