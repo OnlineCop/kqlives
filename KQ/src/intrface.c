@@ -56,6 +56,11 @@
 #include "music.h"
 #include "selector.h"
 
+/* Defines */
+#define LUA_ENT_KEY "_ent"
+#define LUA_PLR_KEY "_obj"
+
+
 
 /*  internal functions  */
 static int KQ_get_pidx (lua_State *);
@@ -400,10 +405,20 @@ fields[] = {
    // Maximum magic points
    {"mmp", 8},
    // Index # of entity, which determines look and skills
-   {"id", 9}
+   {"id", 9},
+    /* Position of entity, (X,Y) */
+   {"tilex", 10},
+   {"tiley", 11},
+    /* Entity ID */
+   {"eid", 12},
+    /* Appearance of entity */
+   {"chrx", 13},
+    /* Direction facing */
+   {"facing", 14},
+    /* Active or not */
+   {"active", 15},
 };
 // *INDENT-ON*
-
 
 static int fieldcmp (const void *pa, const void *pb)
 {
@@ -446,21 +461,46 @@ static int get_field (const char *n)
    return ans ? ans->id : -1;
 }
 
+/*
+ PH's own notes:
+ party[] - chrs in play
+ player[] - all players
+ entity[] - all entities
+ chrs in play appear in all 3
+ chrs not in play appear in player
+ npc appear in entity
+ also want ability to add custom properties
+ also want it to change dynamically
+ 
+ */
 
 
 /*! \brief Object interface for party
  *
  * This implements the settable tag method
+ * \param L the lua state. See lua docs for the settable protocol
  */
 int KQ_party_setter (lua_State * L)
 {
    int prop;
    s_player *pl;
+   s_entity *ent;
    prop = get_field (lua_tostring (L, 2));
-   lua_pushstring (L, "_obj");
+   if (prop==-1) {
+       /* It is a user-defined property, set it directly in the table */
+       lua_rawset (L, 1);
+       return 0;
+   }
+   lua_pushstring (L, LUA_PLR_KEY);
    lua_rawget (L, 1);
    pl = (s_player *) lua_touserdata (L, -1);
    lua_pop (L, 1);
+   lua_pushstring(L, LUA_ENT_KEY);
+   lua_rawget(L,1);
+   ent=(s_entity*) lua_touserdata(L,-1);
+   lua_pop(L,1);
+   if (pl) {
+       /* These properties relate to 's_player' structures */
    switch (prop) {
    case 0:
       strncpy (pl->name, lua_tostring (L, 3), sizeof (pl->name));
@@ -493,8 +533,31 @@ int KQ_party_setter (lua_State * L)
       /* id is readonly */
       break;
    default:
-      lua_rawset (L, 1);
       break;
+   }
+   }
+   if (ent) {
+       /* these properties relate to 's_entity' structures */
+       switch (prop) {
+           case 10:
+               ent->tilex=(int) lua_tonumber(L, 3);
+               break;
+           case 11:
+               ent->tiley=(int) lua_tonumber(L, 3);
+               break;
+           case 12:
+               ent->eid=(int) lua_tonumber(L, 3);
+               break;
+           case 13:
+               ent->chrx=(int) lua_tonumber(L, 3);
+               break;
+           case 14:
+               ent->facing=(int) lua_tonumber(L, 3);
+               break;
+           case 15:
+               ent->active=(int) lua_tonumber(L, 3);
+               break;
+       }
    }
    return 0;
 }
@@ -508,12 +571,26 @@ int KQ_party_setter (lua_State * L)
 int KQ_party_getter (lua_State * L)
 {
    int prop;
+    int top;
    s_player *pl;
+   s_entity* ent;
    prop = get_field (lua_tostring (L, 2));
-   lua_pushstring (L, "_obj");
+   if (prop==-1) {
+       /* it is a user-defined property, get it directly */
+       lua_rawget (L, 1);
+       return 1;
+   }
+   lua_pushstring (L, LUA_PLR_KEY);
    lua_rawget (L, 1);
    pl = (s_player *) lua_touserdata (L, -1);
    lua_pop (L, 1);
+   lua_pushstring (L, LUA_ENT_KEY);
+   lua_rawget (L, 1);
+   ent = (s_entity *) lua_touserdata (L, -1);
+   lua_pop (L, 1);
+   top=lua_gettop(L);
+   if (pl) {
+       /* These properties relate to s_player structures */
    switch (prop) {
    case 0:
       lua_pushstring (L, pl->name);
@@ -545,15 +622,81 @@ int KQ_party_getter (lua_State * L)
    case 9:
       lua_pushnumber (L, pl - party);
       break;
-   default:
-      lua_rawget (L, 1);
-      break;
+   }
+   }
+   if (ent) {
+       /* These properties relate to s_entity structures */
+       switch (prop) {
+           case 10:
+               lua_pushnumber(L, ent->tilex);
+               break;
+           case 11:
+               lua_pushnumber(L, ent->tiley);
+               break;
+           case 12:
+               lua_pushnumber(L, ent->eid);
+               break;
+           case 13:
+               lua_pushnumber(L, ent->chrx);
+               break;
+           case 14:
+               lua_pushnumber(L, ent->facing);
+               break;
+           case 15:
+               lua_pushnumber(L, ent->active);
+               break;
+       }
+   }
+   if (top==lua_gettop(L)) {
+       /* Apparently nothing happened. */
+       /* i.e. you asked for an ent property of something that wasn't an ent */
+       /* or a player property for something that wasn't a player */
+       lua_pushnil(L);
    }
    return 1;
 }
-
-
-
+/*! \brief Interface to g_ent array
+*
+* This gets/sets elements in the g_ent array
+*
+*/
+static int KQ_entity_getter(lua_State* L) {
+    return 1;
+}
+static int KQ_entity_setter( lua_State* L) {
+  return 0;
+}
+/*! \brief refresh the mapping from C structs to lua tables
+*
+* If the party changes or the NPC entities change, call this function
+* to re-init the appropriate lua tables
+*/
+void KQ_refresh_mapping(lua_State* L){
+    int i, j;
+    s_entity* ent;
+    lua_getglobal(L, "player");
+    for (i=0; i<MAXCHRS; ++i) {
+        ent=NULL;
+        for (j=0; j<numchrs; ++j) {
+            if (pidx[j]==i) {
+                ent=&g_ent[j];
+                break;
+            }
+        }
+        lua_rawgeti(L, -1, i);
+        lua_pushstring (L, LUA_ENT_KEY);
+       if (ent) {
+            lua_pushuserdata(L, ent);
+        }
+        else {
+            lua_pushnil(L);
+        }
+        lua_rawset (L, -3);
+    }
+    lua_pop(L, 1);
+    
+}
+        
 /*! \brief Initialise the object interface for heroes and entities
  *
  * This registers a new tag type for the heroes and adds the gettable method
@@ -568,29 +711,33 @@ static void init_obj (lua_State * L)
 {
    int i = 0;
    int tag = lua_newtag (L);
-   for (i = 0; i < MAXCHRS; ++i) {
-      lua_newtable (L);
-      lua_settag (L, tag);
-      lua_pushstring (L, "_obj");
-      lua_pushuserdata (L, &party[i]);
-      lua_rawset (L, -3);
-      lua_setglobal (L, party[i].name);
-   }
+
+   /* do all the players */
+   for (i = 0; i < MAXCHRS; ++i)
+     {
+        lua_newtable (L);
+        lua_settag (L, tag);
+        lua_pushstring (L, LUA_PLR_KEY);
+        lua_pushuserdata (L, &party[i]);
+        lua_rawset (L, -3);
+        lua_setglobal (L, party[i].name);
+     }
    lua_pushcfunction (L, KQ_party_getter);
    lua_settagmethod (L, tag, "gettable");
    lua_pushcfunction (L, KQ_party_setter);
    lua_settagmethod (L, tag, "settable");
    /* party[] array */
    lua_newtable (L);
-   for (i = 0; i < numchrs; ++i) {
-      lua_getglobal (L, party[pidx[i]].name);
-      /* also fill in the entity reference */
-      lua_pushstring (L, "_ent");
-      lua_pushuserdata (L, &g_ent[i]);
-      lua_rawset (L, -3);
-      /* and add to the array */
-      lua_rawseti (L, -2, i);
-   }
+   for (i = 0; i < numchrs; ++i)
+     {
+        lua_getglobal (L, party[pidx[i]].name);
+       /* also fill in the entity reference */
+        lua_pushstring (L, LUA_ENT_KEY);
+        lua_pushuserdata (L, &g_ent[i]);
+        lua_rawset (L, -3);
+        /* and add to the array */
+        lua_rawseti (L, -2, i);
+     }
    lua_setglobal (L, "party");
    /* player[] array */
    lua_newtable (L);
@@ -605,14 +752,19 @@ static void init_obj (lua_State * L)
     * so they can just be an index
     */
    lua_newtable (L);
-   for (i = 0; i < numchrs; ++i) {
-      lua_getglobal (L, party[pidx[i]].name);
-      lua_rawseti (L, -2, i);
-   }
-   for (i = PSIZE; i < noe + PSIZE; ++i) {
-      lua_pushnumber (L, i);
-      lua_rawseti (L, -2, i);
-   }
+   for (i = 0; i < numchrs; ++i)
+     {
+        lua_getglobal (L, party[pidx[i]].name);
+        lua_rawseti (L, -2, i);
+     }
+   for (i = PSIZE; i < noe + PSIZE; ++i)
+     {
+       lua_newtable(L);
+       lua_pushstring (L, LUA_ENT_KEY);
+       lua_pushuserdata (L, &g_ent[i]);
+       lua_rawset (L, -3);
+        lua_rawseti (L, -2, i);
+     }
    lua_setglobal (L, "entity");
 }
 
