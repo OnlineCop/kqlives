@@ -930,6 +930,7 @@ static void set_textpos (int who)
 /*! \brief Draw text box
  *
  * Hmm... I think this function draws the textbox :p
+ *
  * \param   bstyle Style (B_TEXT or B_THOUGHT)
 */
 static void draw_textbox (int bstyle)
@@ -950,7 +951,7 @@ static void draw_textbox (int bstyle)
         if (gbt != -1)
            draw_sprite (double_buffer, bub[gbt], gbx + xofs, gby + yofs);
      }
-   else
+   else if (bstyle == B_THOUGHT)
      {
         tm = create_bitmap (wid - 5, hgt - 5);
         rectfill (tm, 0, 0, wid - 5, hgt - 5, BLUE);
@@ -980,6 +981,8 @@ static void draw_textbox (int bstyle)
         if (gbt != -1)
            draw_sprite (double_buffer, bub[gbt + 4], gbx + xofs, gby + yofs);
      }
+   else
+     return;
 }
 
 
@@ -1155,7 +1158,7 @@ void bubble_text_ex (int who, const char *s)
  * through relay() first
  *
  * \sa thought_text()
- * \param   who Character that is speaking
+ * \param   who Character that is thinking
  * \param   s The text to display
 */
 void thought_text_ex (int who, const char *s)
@@ -1173,7 +1176,7 @@ void thought_text_ex (int who, const char *s)
  *
  * Draw a thought bubble and display the text.
  *
- * \sa thought_text_ex()
+ * \sa      thought_text_ex()
  * \param   who Entity that is speaking
  * \param   sp1 Line 1 of text
  * \param   sp2 Line 2 of text
