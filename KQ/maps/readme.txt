@@ -1,28 +1,46 @@
 Mapdraw Info:
 
-Hope you like the changes I made; they are, of course, open for debate :-)
+There have been a few changes to the map editor.
+
+* Added entry-checking so too-large or too-small values aren't accepted.
+* You can change the tileset by clicking on the " Icon: *** " PCX name and it
+  shows the results immediately across the map.
+* Increased the length of the song's filename to 18 characters.
+* Function to select the tile under the mouse cursor (its icon in the tileset
+  menu is updated to show which tile you've selected).
+  * Added right-click tile-grabbing to first "grab" the tile the change to one
+    of the drawing modes for quick placement of the tile.
+* Added help menu (F1).
+* Added extra file open/save checks.
+* Fixed multiple memory bugs and map-resize issues.
+
 
 ===============================
 Keys:
 
-NOTE: You can only edit layers with these:
-1-3 - Layers 1-3 (can edit Layers)
+NOTE: These are drawing modes, which allow you to modify the map
+1   - Layer 1
+2   - Layer 2
+3   - Layer 3
 
-NOTE: You can't edit layers with these:
-4-7 - Multi-layers (can't edit Layers)
+NOTE: These are viewing modes, which won't modify the map
+4   - Layers 1+2
+5   - Layers 1+3
+6   - Layers 2+3
+7   - Layers 1+2+3
 
-NOTE: These Attributes can be toggled.  Displaying Layers turns them off by
-      default.  You can only draw to the the map if the Attribute is the
-      Active mode.  Toggling it again will hide the Attribute.  You can have
-      multiple Attributes on at once.
+NOTE: Attributes can be "toggled".  You can only draw the Attribute to the
+      map if it is showing AND it is the current drawing mode.  You can have
+      multiple Attributes showing at once, but only one can be the current
+      drawing mode at any given time.  Displaying Layers or toggling the
+      Attribute again turns it off.
 F11 - Toggle Entites Attribute
 S   - Toggle Shadows Attribute
 O   - Toggle Obstacles Attribute
 Z   - Toggle Zone Attribute
 
 C   - View Layers 1-3, plus Entities and Shadows Attributes
-A   - Turn on all Layers and all Attributes
-0 (zero) - Turn off all Layers and Attributes
+A   - Turn Layers 1-3, plus all four Attributes
 
 T   - Block copy (left click starts, right click finishes block copy)
 P   - Paste the copied block/tile (right-click pastes to user-specified map)
@@ -70,29 +88,25 @@ with:
 ===============================
 TODO
 
-Fix the Attribute problem in 'mapedit.c':
-This is where the Attributes need to toggle on or off, regardless of which
-Layers are showing.  The current bug is that the Attributes will turn on all
-3 Layers when they are showing, then the Layers turn back off when the
-Attributes are turned off.
+The Zone Attribute is displayed using a crosshair with the letter 'z' in the
+middle.  This needs to be changed to be a crosshair with the number of the
+zone in the middle so it's easier to see which zone is where.
 
 
 
-Known bugs:
+Fixes to maps:
 
-'atype' is defined to be 0 or 1, but in the following maps, this is not the
-case:
+- Moved most tiles from Layer 3 to Layer 2
+- Fixed 'atype' for all entities in following maps:
+  ('atype' should be 0 or 1; these had values > 1)
 
-bridge.map
-fort.map
-grotto.map
-tower.map
-
-Is there a reason that these don't follow suit?  If there is, let me know.
-If not, let's fix them.
+  bridge.map
+  fort.map
+  grotto.map
+  tower.map
 
 
 
 Questions and comments (donations, threats...) are of course welcome.
 
-teamterradactyl@users.sourceforge.net
+-TeamTerradactyl
