@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>KQ</title>
+                                                                     
+  <meta http-equiv="content-type"
+ content="text/html; charset=ISO-8859-1">
+                                       
+  <meta name="author" content="Peter Hull">
+</head>
+  <body text="#c0c0c0" bgcolor="#000000" link="#ffffff" vlink="#ffffff"
+ alink="#99ff99">
+                   
+<h1 align="center">KQ - FAQ</h1>
+         Frequently asked questions about KQ - what's it all about?<br>
+          <br>
+ <!--#include virtual="navigation_bar.html" -->                  <br>
+                 
+<h2>Frequently Asked Questions</h2>
+          1. <i>What is KQ?</i><br>
+               
+<blockquote>KQ is a console-style role-playing game for the PC. It will run
+    on DOS, Linux and Windows (95/NT and above)<br>
+        </blockquote>
+        2. <i>Why is it here?</i><br>
+               
+<blockquote>KQ was abandoned by its original creator, for personal reasons.
+    Because KQ was open source, we can host it here on <a
+ href="http://sourceforge.net/">Sourceforge</a><br>
+        </blockquote>
+        3. <i>Is KQ finished?</i>        
+<blockquote>According the author, the engine is complete, but some more scripting/level
+    design needs to be done before KQ is finally done<br>
+        </blockquote>
+        4. <i>What do I need to run KQ?<br>
+        </i>        
+<blockquote>You will need the <a href="http://allegro.sourceforge.net/">Allegro</a>
+    4.x library, <a href="http://surf.to/jgmod/">JGMOD</a> (for music) and 
+   <a href="http://www.lua.org/">Lua</a>  (for scripting)<br>
+        </blockquote>
+        5. <i>Can I contribute?</i><br>
+               
+<blockquote>Please do. Just contact <a
+ href="mailto:peterhull90@users.sourceforge.net">me</a><br>
+        </blockquote>
+       <small>  KQ was originally written by DoubleEdge software <br>
+         This page hosted by</small> <br>
+       <a href="http://sourceforge.net"><img
+ src="http://sourceforge.net/sflogo.php?group_id=61344&amp;type=5"
+ width="210" height="62" border="0" alt="SourceForge Logo">
+        </a>   <br>
+            <br>
+       <br>
+      <br>
+      <br>
+   <br>
+   <br>
+</body>
+</html>
