@@ -2,6 +2,12 @@
 
 function autoexec()
   set_ent_active(0, 0)
+  if (get_progress(P_TALK_TEMMIN) == 1 or get_progress(P_TALK_TEMMIN) == 2) then
+    set_ent_id(1, TEMMIN)
+  else
+    set_ent_active(1, 0)
+  end
+
   refresh()
 end
 
@@ -37,6 +43,9 @@ function refresh()
   if (get_treasure(30) == 1) then
     set_mtile(69, 87, 41)
   end
+  if (get_progress(P_TALK_TEMMIN) == 2) then
+    set_ent_facehero(1, 1)
+  end
   if (get_progress(P_UNDEADJEWEL) == 2) then
     set_btile(69, 69, 237)
   end
@@ -55,7 +64,7 @@ function zone_handler(zn)
     end
 
   elseif (zn == 1) then
-    change_map("temple1", 46, 26, 46, 26)
+    change_map("temple1", 56, 36, 56, 36)
 
   elseif (zn == 2) then
     warp(2, 45, 8)
@@ -88,13 +97,19 @@ function zone_handler(zn)
       -- Show the enemy guarding the stairs
       set_ent_active(0, 1)
       bubble(0, "Halt!")
-      bubble(0, "Foolish humans... you will soon join the others!")
+      bubble(0, "Foolish humans... be gone!")
+      drawmap()
       set_run(0)
       combat(53)
       set_run(1)
       set_progress(P_KILLBLORD, 1)
       bubble(0, "Argh!")
+      drawmap()
       set_ent_active(0, 0)
+      set_progress(P_UNDEADJEWEL, 1)
+      msg("Goblin jewel procured",255,0);
+      set_progress(P_TALK_TEMMIN, 3)
+      set_ent_active(1, 0)
       return
     end
     warp(75, 71, 8)
@@ -167,23 +182,31 @@ function zone_handler(zn)
       bubble(HERO1, "I guess that would make you dead then?")
       bubble(255, "That is correct.")
       bubble(HERO1, "No problem. I'll just be going now.")
-      bubble(255, "Wait! I know who you are and why you came here.")
-      bubble(HERO1, "How does everybody know who I am and what I'm doing?")
-      bubble(255, "Death gives one surprising insight. In any case, I want you to have this.")
+      bubble(255, "Wait! I wanted to thank you for you help.")
+      if (get_numchrs() > 1) then
+        bubble(HERO1, "Well, we're not the ones who figured this all out.")
+      else
+        bubble(HERO1, "Well, I'm not the one who figured this all out.")
+      end
+      bubble(255, "Regardless, my brethren and I can rest again. Take this.")
       set_progress(P_GOBLINITEM, 1)
       sfx(5)
       msg("Jade pendant procured", 255, 0)
       refresh()
-      bubble(255, "This will help you in your quest.")
+      bubble(255, "This may help you in your quest.")
       bubble(255, "I must go now. Fare thee well.")
-      bubble(HERO1, "Wait! Can you tell me anything about the Oracle?")
+      if (get_numchrs() > 1) then
+        bubble(HERO1, "Hey! What do you know about our quest?")
+      else
+        bubble(HERO1, "Hey! What do you know about my quest?")
+      end
       wait(50)
       bubble(HERO1, "Hello?")
       bubble(HERO1, "Urgh! I hate when they do that!")
       set_progress(P_UNDEADJEWEL, 2)
       return
     else
-      bubble(HERO1, "It looks like there should be something here. Perhaps this is the cause of the goblin's unrest.")
+      bubble(HERO1, "It looks like there should be something here.")
     end
 
   elseif (zn == 21) then
@@ -203,5 +226,29 @@ end
 
 
 function entity_handler(en)
+  if (en == 1) then
+    if (get_progress(P_TALK_TEMMIN) == 1) then
+      if (get_numchrs() > 1) then
+        bubble(en, "$0! $1! I am pleased to see you.")
+      else
+        bubble(en, "$0! I am pleased to see you.")
+      end
+      bubble(HERO1, "Greetings Temmin. The priest upstairs said you came down here with the Goblin Jewel to try and stop these undead.")
+      bubble(en, "That is true, but I have failed. I was attacked by a sentient skeleton of considerable strength. It took the Jewel.")
+      bubble(HERO1, "Where is it?")
+      bubble(en, "I don't rightly recall. I ran for my life and didn't pay attention to where I was going.")
+      bubble(HERO1, "Well, let's go get it back.")
+      bubble(en, "You go ahead. I'm resting here and going back to the temple.")
+      set_ent_script(en, "F1W50")
+      wait_for_entity(en, en)
+      bubble(en, "I am a failure and a coward.")
+      bubble(HERO1, "But...")
+      bubble(en, "Save it. You won't change my mind.")
+      set_progress(P_TALK_TEMMIN, 2)
+      refresh()
+    else
+      bubble(en, "...")
+    end
+  end
   return
 end

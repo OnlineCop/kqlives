@@ -7,12 +7,17 @@
 --   1 - Switched; stairs showing
 --
 -- P_GOBLINITEM:
+--   0 - Have not put the Goblin Jewel back yet
+--   1 - Have put the Goblin Jewel back and stopped the undead
 --
 -- P_PLAYERS:
 --
 -- P_TALK_TEMMIN: Whether you have spoken to Temmin when you entered the map
---   0 - Haven't spoken to him
---   1 - You spoken to him at least once already
+--   0 - Haven't spoken about him
+--   1 - You spoke with the priest about Temmin
+--   2 - You've spoken to him once
+--   3 - He's back in the temple after the jewel was returned
+--   4 - You've finished with Temmin
 --
 -- P_UNDEADJEWEL: Whether you collected the Jewel needed to seal the portal
 --   0 - Don't have it
@@ -24,13 +29,27 @@
 
 
 function autoexec()
-  if not LOC_manor_or_party(TEMMIN) then
+  local b
+
+  if (not LOC_manor_or_party(TEMMIN) and get_progress(P_TALK_TEMMIN) == 3) then
     -- // Make the NPC look like Temmin if he hasn't been recruited yet
-    set_ent_id(38, TEMMIN)
+    set_ent_id(41, TEMMIN)
   else
     -- // Otherwise, remove him from screen
-    set_ent_active(38, 0)
+    set_ent_active(41, 0)
   end
+  if (get_progress(P_TALK_TEMMIN) > 0) then
+    set_ent_tilex(38, 23)
+  end
+  set_ent_active(42, 0)
+  if (get_progress(P_TALK_TEMMIN) == 4) then
+    for b = 23, 29, 1 do
+      set_ent_active(b, 0)
+    end
+    for b = 38, 40, 1 do
+      set_ent_active(b, 0)
+    end
+  end    
 
   refresh()
 end
@@ -45,10 +64,6 @@ function refresh()
     set_btile(53, 15, 119)
     set_obs(53, 15, 1)
     set_zone(54, 15, 9)
-    set_ftile(24, 12, 154)
-    set_btile(24, 13, 156)
-    set_obs(24, 12, 0)
-    set_zone(24, 12, 12)
   end
   if (get_progress(P_UNDEADJEWEL) > 0) then
     set_mtile(30, 42, 65)
@@ -128,6 +143,10 @@ function zone_handler(zn)
     warp(58, 19, 8)
 
   elseif (zn == 13) then
+    set_ftile(24, 12, 154)
+    set_btile(24, 13, 156)
+    set_obs(24, 12, 0)
+    set_zone(24, 12, 12)
     warp(24, 13, 8)
 
   elseif (zn == 14) then
@@ -136,14 +155,6 @@ function zone_handler(zn)
   elseif (zn == 15) then
     if (get_progress(P_GOBLINITEM) == 0) then
       combat(51)
-    end
-
-  elseif (zn == 16) then
-    if (get_progress(P_UNDEADJEWEL) == 0) then
-      set_progress(P_UNDEADJEWEL, 1)
-      sfx(5)
-      msg("Goblin jewel procured", 255, 0)
-      refresh()
     end
 
   end
@@ -158,10 +169,18 @@ function entity_handler(en)
     bubble(en, "We were relieved of duty while the monks guard the alter room.")
 
   elseif (en >= 8 and en <= 11) then
-    bubble(en, "We are guards from Andra, helping defend the temple.")
+    if (get_progress(P_GOBLINITEM) == 0) then
+      bubble(en, "We are guards from Andra, helping defend the temple.")
+    else
+      bubble(en, "I'll guess we'll be going back to Andra soon.")
+    end
 
   elseif (en >= 12 and en <= 15) then
-    bubble(en, "I'm famished. We just finished beating back a bunch of monsters.")
+    if (get_progress(P_GOBLINITEM) == 0) then
+      bubble(en, "I'm famished. We just finished beating back a bunch of monsters.")
+    else
+      bubble(en, "Things are finally get back to normal around here.")
+    end
 
   elseif (en == 16) then
     bubble(en, "I have much to do. Please excuse me.")
@@ -176,15 +195,23 @@ function entity_handler(en)
     bubble(en, "We have to listen to his lessons. I can't talk to you now.")
 
   elseif (en == 20) then
-    bubble(en, "I wish I could go beat the bad guys! This school is boring.")
+    if (get_progress(P_GOBLINITEM) == 0) then
+      bubble(en, "I wish I could go beat the bad guys! This school is boring.")
+    else
+      bubble(en, "This guy just goes on and on.")
+    end
 
   elseif (en == 21) then
     bubble(en, "Those monks lock themselves away until there's a problem. I haven't heard them say a word all week!")
 
   elseif (en == 22) then
-    bubble(en, "I was asked to teach these children, so as to distract them from the monster threat. Pardon me.")
+    if (get_progress(P_GOBLINITEM) == 0) then
+      bubble(en, "I was asked to teach these children, so as to distract them from the monster threat. Pardon me.")
+    else
+      bubble(en, "These children simply won't pay attention.")
+    end
 
-  elseif (en >= 23 and en <= 29) then
+  elseif ((en >= 23 and en <= 29) or en == 39 or en == 40) then
     bubble(en, "...")
     thought(HERO1, "They appear to be in deep meditation.")
 
@@ -207,12 +234,45 @@ function entity_handler(en)
     bubble(en, "...zzz...")
 
   elseif (en == 36) then
-    bubble(en, "...Guarding the... ...zzz... Gotta defend the... zzz...")
+    if (get_progress(P_GOBLINITEM) == 0) then
+      bubble(en, "...Guarding the... ...zzz... Gotta defend the... zzz...")
+    else
+      bubble(en, "...zzz... must sleep...")
+    end
 
   elseif (en == 37) then
     bubble(en, "This door is drafty. I can't get to sleep.")
 
   elseif (en == 38) then
+    if (get_progress(P_TALK_TEMMIN) == 0) then
+      bubble(en, "You should not enter this section of the Temple. It is dangerous.")
+      if (get_numchrs() > 1) then
+        bubble(HERO1, "We're here to help.")
+      else
+        bubble(HERO1, "I'm here to help.")
+      end
+      bubble(en, "A young man has already gone in with the Goblin Jewel. He believes it has something to do with the problem.")
+      bubble(HERO1, "Who was this young man and what exactly is the problem?")
+      bubble(en, "The young man's name was Temmin and the problem is that hordes of undead spirits have risen from beneath the Temple.")
+      if (get_numchrs() > 1) then
+        bubble(HERO1, "We know this Temmin fellow, and we can help him.")
+      else
+        bubble(HERO1, "I know this Temmin fellow, and I can help him.")
+      end
+      bubble(en, "Well, I see no real point in arguing. Go ahead.")
+      bubble(HERO1, "Thank you.")
+      set_progress(P_ALTARSWITCH, 1)
+      refresh()
+      set_ent_script(38, "L1F3")
+      wait_for_entity(38, 38)
+      set_progress(P_TALK_TEMMIN, 1)
+    elseif (get_progress(P_TALK_TEMMIN) < 3) then 
+      bubble(en, "The spirits are restless.")
+    else
+      bubble(en, "The spirits are at peace.")
+    end
+
+  elseif (en == 41) then
     LOC_join_temmin(en)
 
   end
@@ -220,42 +280,51 @@ end
 
 
 function LOC_join_temmin(en)
-  local id
-  if (get_progress(P_PORTAL2GONE) == 0) then
-    if (get_progress(P_TALK_TEMMIN) == 0) then
-      bubble(HERO1, "Hello! What are you doing here?")
-      bubble(en, "I am helping the monks defend the stairway. Monsters have been coming up from the caverns below.")
-      bubble(HERO1, "These monks don't look like they would be very useful in a fight.")
-      bubble(en, "They don't fight; I do. I protect them, and fight the monsters, and they in turn heal me when I need it.")
-      bubble(HERO1, "Hmm... sounds like a plan.")
-      set_progress(P_TALK_TEMMIN, 1)
-    elseif (get_progress(P_TALK_TEMMIN) == 1) then
-      bubble(en, "I am very protective of my friends.")
-    end
+  local id, a
+
+  bubble(en, "Welcome back, you have done a great thing. Your bravery outshines even my cowardice.")
+  bubble(HERO1, "Don't sell yourself short. After all, you're the one who figured out that the Goblin Jewel was the source of the spirits' unrest.")
+  bubble(en, "That was the easy part. When courage was truly needed, I ran.")
+  bubble(HERO1, "Well, I guess that's for you to come to grips with then.")
+  bubble(en, "Indeed. For now, I am at your service.")
+
+  -- // Give Temmin his default equipment
+  set_all_equip(TEMMIN, I_SWORD2, I_SHIELD2, I_HELM2, I_ARMOR3, I_GAUNTLET1, 0)
+  a = get_party_xp(get_pidx(0))
+  a = a * 80 / 100
+  if (a > 3331) then
+    give_xp(TEMMIN, 3331 + krnd(20), 1)
   else
-    if (get_progress(P_TALK_TEMMIN) == 0) then
-      bubble(en, "Ah, $0. I was worried for a while. The monsters were getting very strong.")
-      if (get_numchrs() == 1) then
-        bubble(HERO1, "I sealed the monster's portal. I don't think there should be any more of a threat.")
-      else
-        bubble(HERO1, "We sealed the monster's portal. We don't think there should be any more of a threat.")
-      end
-      set_progress(P_TALK_TEMMIN, 1)
-    else
-      bubble(HERO1, "Finished. The monster's portal is sealed now.")
-    end
-    bubble(en, "Great! Can I offer my services?")
-
-    -- // Give Temmin his default equipment
-    set_all_equip(TEMMIN, I_MACE2, I_SHIELD1, I_HELM1, I_ROBE2, I_BAND1, 0)
-    id = select_team{TEMMIN}
-    -- // Add the characters that weren't selected to the manor
-    add_to_manor(id)
-
-    if (id[1]) then
-      set_ent_id(en, id[1])
-    end
-    set_ent_active(en, 0)
-    set_progress(P_PLAYERS, get_progress(P_PLAYERS) + 1)
+    give_xp(TEMMIN, a + krnd(20), 1)
   end
+  drawmap()
+  id = select_team{TEMMIN}
+  -- // Add the characters that weren't selected to the manor
+  add_to_manor(id)
+
+  if (id[1]) then
+    set_ent_id(en, id[1])
+    set_ent_obsmode(en, 0)
+
+    if (id[2]) then
+        -- // Two heroes were de-selected
+      set_ent_obsmode(42, 0)
+      set_ent_id(42, id[2])
+      set_ent_active(42, 1)
+      set_ent_tilex(42, get_ent_tilex(en))
+      set_ent_tiley(42, get_ent_tiley(en) + 1)
+      bubble(en, "If you need us, we'll be back at the manor.")
+      set_ent_script(en, "D9K")
+      set_ent_script(42, "D9K")
+      wait_for_entity(en, 42)
+    else
+      -- // One hero was de-selected
+      bubble(en, "If you need me, I'll be back at the manor.")
+      set_ent_script(en, "D9K")
+      wait_for_entity(en, en)
+    end
+  end
+  set_ent_active(en, 0)
+  set_progress(P_PLAYERS, get_progress(P_PLAYERS) + 1)
+  set_progress(P_TALK_TEMMIN, 4)
 end

@@ -140,7 +140,8 @@ function entity_handler(en)
     -- TALKDERIG will always == 3 the first time you talk to him
     if (get_progress(P_TALKDERIG) == 3) then
       -- You have never spoken to him before
-      bubble(en, "Hello, I'm Derig. Let's go back to the town and get you the Unadium coin.")
+      bubble(en, "Hello, I'm Derig. I presume that my granddaughter sent you here?")
+      bubble(en, "Let's go back to town.")
       set_progress(P_FELLINPIT, 2)
       set_progress(P_TALKDERIG, 4)
       change_map("town1", 65, 52, 65, 52)

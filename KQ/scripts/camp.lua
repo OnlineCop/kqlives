@@ -267,7 +267,6 @@ function entity_handler(en)
   elseif (en == 37) then
     local a
 
-    a = get_progress(P_PARTNER3) - 1
     bubble(en, "Hey, $0! Am I ever glad to see you! We're in a bit of a jam here.")
     bubble(en, "I took a small job to help guard the mayor on his trip to Andra.")
     bubble(en, "We were on the Brayden bridge when we were ambushed by these orcs. During the fight, one of them used a fire spell.")
@@ -280,11 +279,7 @@ function entity_handler(en)
     bubble(HERO1, "Excuse me, Mr. Mayor.")
     bubble(2, "Yes?")
     bubble(HERO1, "Do you think that this could have possibly been a planned attack with the purpose of trying to kidnap you?")
-    bubble(2, "I can't see what these vermin would hope to gain by imprisoning me, but I suppose it's possible.")
-    bubble(en, "That's got to be it; there were far too many of them for it to be a random encounter with brigands.")
-    bubble(en, "And here I was blaming myself for the whole thing.")
-    bubble(HERO1, "It's not your fault. You did your job, the mayor is unharmed.")
-    bubble(2, "So, can we get out of here now or what?")
+    bubble(2, "I don't see why they would want to kidnap me, but uh... could we possibly get out of here now?")
     set_ent_facing(en, FACE_UP)
     bubble(en, "Yes sir!")
     set_ent_facing(en, FACE_DOWN)
@@ -344,6 +339,10 @@ function entity_handler(en)
     end
 
     set_progress(P_FOUNDMAYOR, 1)
+    set_progress(P_PARTNER1, 1 + get_pidx(0))
+    if (get_numchrs() > 1) then
+      set_progress(P_PARTNER2, 1 + get_pidx(1))
+    end
 
   elseif (en == 23 or en == 24 or (en >= 29 and en <= 36) or en == 38) then
     if (get_numchrs() > 1) then
