@@ -302,9 +302,6 @@ void config_menu (void)
 
              /* TT: This needs to check for ==0 because 1 means sound init */
              if (is_sound == 0)
-#if 0
-             else
-#endif
                {
                   print_font (double_buffer, 48 + xofs, 152 + yofs,
                               "Sound Volume:", FDARK);
@@ -848,7 +845,7 @@ void play_effect (int efc, int panning)
              yo = yofs;
           }
 
-        blit (fx_buffer, double_buffer, xo, yo, xo, yo, 320, 240);
+        /*        blit (fx_buffer, double_buffer, xo, yo, xo, yo, 320, 240); */
 
         for (a = 0; a < 8; a++)
           {

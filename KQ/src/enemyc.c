@@ -484,7 +484,7 @@ void unload_enemies (void)
  * \returns the value of en, for convenience, or NULL if an error occurred.
  * \sa make_enemy_by_name()
  */
-static s_fighter *make_enemy (int who, s_fighter *en)
+static s_fighter *make_enemy (int who, s_fighter * en)
 {
    if (enemies && who >= 0 && who < enemies_n)
      {

@@ -699,7 +699,9 @@ int start_menu (int c)
                 g_inv[a][b] = 0;
           }
         if (skip_intro == 1)
-           progress[P_SKIPINTRO] = 1;
+          {
+             progress[P_SKIPINTRO] = 1;
+          }
      }
    return stop - 1;
 }

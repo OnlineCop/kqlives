@@ -138,7 +138,7 @@ int combat (int bno)
    /* ML 2002-09-22: not needed right now int saved_song; */
    int encounter;
    int lc;
-
+   return 0;
    /* PH: some checking! */
    if (bno < 0 || bno >= NUM_BATTLES)
      {
