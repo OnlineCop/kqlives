@@ -368,6 +368,9 @@ static int load_game (void)
       set_graphics_mode ();
    change_map (curmap, g_ent[0].tilex, g_ent[0].tiley, g_ent[0].tilex,
                g_ent[0].tiley);
+   /* Set music and sound volume */
+   set_volume (gsvol, -1);
+   set_music_volume (((float) gmvol) / 255.0);
    return 1;
 }
 
