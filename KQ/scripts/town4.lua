@@ -15,8 +15,6 @@ function autoexec()
   if (get_progress(P_BOUGHTHOUSE) == 1) then
     set_ent_active(6,0);
   end
--- TT edit:
---  if (get_ent_tilex(HERO1) > 93 and get_ent_tilex(HERO1) < 107 and get_ent_tiley(HERO1) > 0 and get_ent_tiley(HERO1) < 12) then
   if (get_ent_tilex(HERO1) > 93 and get_ent_tilex(HERO1) < 107 and
       get_ent_tiley(HERO1) > 0 and get_ent_tiley(HERO1) < 12) then
     set_sstone(0);
@@ -37,40 +35,28 @@ function postexec()
 
   if (get_progress(P_WARPEDTOT4) == 1) then
     if (get_progress(P_OLDPARTNER) > 0) then
--- TT edit:
---      bubble(HERO1,"What?","","","","");
-      bubble(HERO1,"What?");
+      bubble(HERO1,"What?","","","");
       set_autoparty(1);
       set_ent_script(HERO1,"F0W25F2W25F1W25F3W25F0");
       wait_for_entity(HERO1,HERO1);
       set_autoparty(0);
       a = get_progress(P_OLDPARTNER)-1;
       b = "Where's "..get_party_name(a).."?";
--- TT edit:
---      bubble(HERO1,b,"","","");
-      bubble(HERO1,b);
--- TT edit:
---      bubble(HERO1,"Just great... how am I supposed to get back?");
+      bubble(HERO1,b,"","","");
       bubble(HERO1,"Just great... how am I",
                    "supposed to get back?","","");
       wait(100);
       if (get_pidx(0) == CASANDRA) then
         if (get_progress(P_OLDPARTNER)-1 == TEMMIN) then
           bubble(HERO1,"I have to find him! I'm not letting",
--- TT edit:
---                        "him get away from me that easily.","","");
-                        "him get away from me that easily.");
+                        "him get away from me that easily.","","");
         else
--- TT edit:
---          bubble(HERO1,"Oh well.","","","");
-          bubble(HERO1,"Oh well.");
+          thought(HERO1,"Oh well...","","","");
         end
       else
         bubble(HERO1,"Sigh. I guess I'll just have",
                      "to keep going and hope I find",
--- TT edit:
---                     "a way to get back.","","");
-                     "a way to get back.");
+                     "a way to get back.","");
         wait(50);
       end
     end
@@ -236,35 +222,36 @@ function entity_handler(en)
     if (get_progress(P_TALKGELIK) == 0) then
       bubble(0,"Opal armor? I have no idea where",
                "you would find something like",
--- TT edit:
---               "that.","");
-               "that.");
+               "that.","");
       bubble(0,"You should go talk to Gelik.",
                "He's old... he knows all kinds",
                "of stuff. He lives up in the",
                "north end of town.");
     else
       bubble(0,"So how do you like",
--- TT edit:
---               "our little town?","","");
-               "our little town?");
+               "our little town?","","");
+      if (get_pidx(0) == CASANDRA) then
+        bubble(HERO1,"Oh, not too bad.  Needs",
+                     "more flowers, though...","","");
+      end
     end
 
   elseif (en == 1) then
     bubble(1,"I planted all of the flowers",
--- TT edit:
---             "in this town. I love flowers.","","");
-             "in this town. I love flowers.");
+             "in this town. I love flowers.","","");
+    if (get_pidx(0) == CASANDRA) then
+      bubble(HERO1,"Well, you've certainly done",
+                   "a good job on them.  Have",
+                   "you ever considered birchleaf",
+                   "fertilizer for extra color?");
+      wait(50);
+    end
     bubble(1,"Did I mention that",
--- TT edit:
---             "I love flowers?","","");
-             "I love flowers?");
+             "I love flowers?","","");
 
   elseif (en == 2) then
     bubble(2,"Did you meet the old flower",
--- TT edit:
---             "lady? She's nuts!","","");
-             "lady? She's nuts!");
+             "lady? She's nuts!","","");
 
   elseif (en == 3) then
     bubble(3,"You should go talk to Trezin on",
@@ -275,16 +262,17 @@ function entity_handler(en)
   elseif (en == 6) then
     if (get_progress(P_BOUGHTHOUSE) == 0) then
       bubble(6,"Hey, the name's Trezin, and have",
--- TT edit:
---               "I got a deal for you!","","");
-               "I got a deal for you!");
+               "I got a deal for you!","","");
+      if (get_pidx(0) == CASANDRA) then
+        thought(HERO1,"Oh great. This guy sounds",
+                      "like another used-chariot",
+                      "salesman.  Sign...","");
+      end
       if (prompt(6,2,0,"You can have this lovely house",
                        "for a mere 7500 gp. Sound good?",
                        "  no","  yes") == 0) then
         bubble(6,"So be it. You know where I am",
--- TT edit:
---                 "if you change your mind.","","");
-                 "if you change your mind.");
+                 "if you change your mind.","","");
       else
         if (get_gp() >= 7500) then
           set_gp(get_gp()-7500);
@@ -293,43 +281,62 @@ function entity_handler(en)
                    "short on funds. Fear not. I'll",
                    "be here should you manage to",
                    "find enough money.");
+          if (get_pidx(0) == AYLA) then
+            thought(HERO1,"Yea, or swipe it out of your",
+                          "purse, you old windbag...","","");
+          elseif (get_pidx(0) == CASANDRA) then
+            thought(HERO1,"Yea; fear not, maybe I'll",
+                          "even consider buying it!","",
+                          "Jerk...");
+          end
           return
         end
         bubble(6,"Fantastic! You know a good deal",
--- TT edit:
---                 "when you see one.","","");
-                 "when you see one.");
+                 "when you see one.","","");
         bubble(6,"Oh, there are some things you",
--- TT edit:
---                 "should know about the house.","","");
-                 "should know about the house.");
+                 "should know about the house.","","");
         bubble(6,"First off, you can sleep here",
                  "fully recover HP and MP for",
--- TT edit:
---                 "free!","");
-                 "free!");
+                 "free!","");
+        if (get_pidx(0) == CASANDRA) then
+          thought(HERO1,"No way!  Did he say free?!",
+                        "You mean I can sleep in my",
+                        "OWN house, in my OWN bed",
+                        "for free?!  Oh wow!");
+        end
         bubble(6,"Secondly, there is a save spot",
                  "right in the house! How's that",
--- TT edit:
---                 "for convienience?","");
-                 "for convienience?");
+                 "for convienience?","");
+        if (get_pidx(0) == CASANDRA) then
+          thought(HERO1,"Yea, and how's a nice knuckle",
+                        "sandwich sound for convenience?",
+                        "Just LEAVE already you old",
+                        "geezer!");
+        end
         bubble(6,"And lastly, I've even left",
                  "a little something inside for",
                  "you. It's a very handy spell",
                  "called Warp.");
         bubble(6,"The Warp spell lets you escape",
                  "from dungeons and other such",
--- TT edit:
---                 "places.","");
-                 "places.");
+                 "places.","");
         bubble(6,"As a bonus, you can use Warp",
                  "from anywhere on the world map",
                  "and it will bring you back to",
                  "the house! Great huh?");
+        if (get_pidx(0) == CASANDRA) then
+          thought(HERO1,"Not if you're anywhere around",
+                        "it when I get back, it's not!","","");
+        end
         bubble(6,"Well, enough of my yapping.",
                  "Go in and see for yourself!,",
                  "I've got to go put this",
                  "money somewhere safe!");
+        if (get_pidx(0) == CASANDRA) then
+          thought(HERO1,"Oh, I can tell you where to",
+                        "put it that'll keep it really",
+                        "safe...","");
+        end
         set_ent_movemode(6,2);
         set_ent_obsmode(6,0);
         if (get_ent_facing(6) == 3) then
@@ -342,9 +349,7 @@ function entity_handler(en)
       end
     else
       bubble(6,"What are you waiting for?",
--- TT edit:
---               "Go in and take a look around.","","");
-               "Go in and take a look around.");
+               "Go in and take a look around.","","");
     end
 
   elseif (en == 7) then
@@ -352,17 +357,13 @@ function entity_handler(en)
       if (get_progress(P_TALKGELIK) == 0) then
         bubble(7,"So, you're looking for Opal",
                  "armor eh? Well, I know of one",
--- TT edit:
---                 "piece.","");
-                 "piece.");
+                 "piece.","");
         bubble(7,"The Opal Helmet belongs to",
                  "a wealthy man named Dungar",
                  "who lives in his own private",
                  "estate east of town.");
         bubble(7,"You should go and",
--- TT edit:
---                 "talk to him.","","");
-                 "talk to him.");
+                 "talk to him.","","");
         bubble(7,"If you get the Helmet, come back",
                  "here and hopefully by then I",
                  "can find out out a little bit",
@@ -371,177 +372,111 @@ function entity_handler(en)
       else
         bubble(7,"There isn't anything else I",
                  "can tell you about opal",
--- TT edit:
---                 "armor right now.","");
-                 "armor right now.");
+                 "armor right now.","");
       end
     end
     if (get_progress(P_OPALSHIELD) == 0 and get_progress(P_OPALHELMET) > 0) then
       if (get_progress(P_TALKGELIK) == 4) then
         bubble(7,"Ah, you are back and you",
--- TT edit:
---                 "have the Helmet.","","");
-                 "have the Helmet.");
+                 "have the Helmet.","","");
         bubble(7,"Oh, in case you are curious,",
                  "you can't wear any of the armor",
                  "until you get all of the pieces",
                  "and go to the Water Shrine.");
--- TT edit:
---        bubble(HERO1,"Oh... that's why.","","","");
-        bubble(HERO1,"Oh... that's why.");
+        bubble(HERO1,"Oh... that's why.","","","");
         bubble(7,"Yes, well anyways, I have found",
--- TT edit:
---                 "out where the next piece is.","","");
-                 "out where the next piece is.");
+                 "out where the next piece is.","","");
         bubble(7,"You see, it turns out that the",
                  "Opal Shield is the prize for",
                  "besting the warrior Trayor",
                  "at the Coliseum.");
         if (get_progress(P_SEECOLISEUM) == 0) then
--- TT edit:
---          bubble(HERO1,"Coliseum?","","","");
-          bubble(HERO1,"Coliseum?");
+          bubble(HERO1,"Coliseum?","","","");
         end
         bubble(7,"The coliseum is west of",
--- TT edit:
---                 "Sunarin. You can't miss it.","","");
-                 "Sunarin. You can't miss it.");
+                 "Sunarin. You can't miss it.","","");
         if (get_progress(P_SEECOLISEUM) == 1) then
           bubble(HERO1,"But the Coliseum was closed",
--- TT edit:
---                       "when I went there.","","");
-                       "when I went there.");
+                       "when I went there.","","");
           bubble(7,"Yes... well I'm sure it's",
--- TT edit:
---                   "open by now.","","");
-                   "open by now.");
--- TT edit:
---          bubble(HERO1,"Isn't that convienent?","","","");
-          bubble(HERO1,"Isn't that convienent?");
--- TT edit:
---          bubble(7,"Quite.","","","");
-          bubble(7,"Quite.");
+                   "open by now.","","");
+          bubble(HERO1,"Isn't that convienent?","","","");
+          bubble(7,"Quite.","","","");
         end
         bubble(HERO1,"So, I have to go there and",
--- TT edit:
---                     "ask Trayor for the shield?","","");
-                     "ask Trayor for the shield?");
+                     "ask Trayor for the shield?","","");
         bubble(7,"No, you have to",
--- TT edit:
---                 "fight him for it.","","");
-                 "fight him for it.");
+                 "fight him for it.","","");
         bubble(HERO1,"Fight, fight, fight.",
--- TT edit:
---                     "That's all I ever do.","","");
-                     "That's all I ever do.");
+                     "That's all I ever do.","","");
         bubble(7,"Well, that's just how",
--- TT edit:
---                 "these things work.","","");
-                 "these things work.");
+                 "these things work.","","");
         bubble(HERO1,"Well, I guess I'm off to fight",
                      "Trayor. Oh by the way, what kind",
                      "of battle is this? Is magic",
                      "permitted?");
         bubble(7,"Yes indeed. Anything goes... and",
                  "Trayor is a very capable",
--- TT edit:
---                 "warrior. It won't be easy.","");
-                 "warrior. It won't be easy.");
+                 "warrior. It won't be easy.","");
         bubble(HERO1,"Oh... well nothing",
--- TT edit:
---                     "is ever easy right?","","");
-                     "is ever easy right?");
--- TT edit:
---        bubble(7,"Not if it's worth doing, no.","","","");
-        bubble(7,"Not if it's worth doing, no.");
+                     "is ever easy right?","","");
+        bubble(7,"Not if it's worth doing, no.","","","");
         bubble(HERO1,"Thanks. I'll see you",
--- TT edit:
---                     "after I get the Shield.","","");
-                     "after I get the Shield.");
+                     "after I get the Shield.","","");
         set_progress(P_TALKGELIK,5);
         set_progress(P_SEECOLISEUM,2);
         return
       else
--- TT edit:
---        bubble(7,"Good luck.","","","");
-        bubble(7,"Good luck.");
+        bubble(7,"Good luck.","","","");
       end
     end
     if (get_progress(P_OPALSHIELD) == 1 and get_progress(P_TALKGELIK) < 6) then
       bubble(7,"Oh... you're back. I'm sorry,",
                "but I haven't been able to find",
--- TT edit:
---               "out where the other pieces are.","");
-               "out where the other pieces are.");
--- TT edit:
---      bubble(HERO1,"Hey, don't worry about it.","","","");
-      bubble(HERO1,"Hey, don't worry about it.");
+               "out where the other pieces are.","");
+      bubble(HERO1,"Hey, don't worry about it.","","","");
       bubble(HERO1,"My friend here brought me",
                    "information about the Band and",
                    "the Armor. We'll have no trouble",
                    "finding it now.");
       bubble(HERO1,"I appreciate all your help in",
                    "finding the Helmet and the",
--- TT edit:
---                   "Shield. Thanks!","");
-                   "Shield. Thanks!");
+                   "Shield. Thanks!","");
       bubble(7,"Well, that's great... and",
                "you're welcome. I'm glad",
--- TT edit:
---               "I was able to help.","");
-               "I was able to help.");
--- TT edit:
---      bubble(HERO1,"I'll see you around then.","","","");
-      bubble(HERO1,"I'll see you around then.");
--- TT edit:
---      bubble(7,"Certainly. Good journey.","","","");
-      bubble(7,"Certainly. Good journey.");
+               "I was able to help.","");
+      bubble(HERO1,"I'll see you around then.","","","");
+      bubble(7,"Certainly. Good journey.","","","");
       set_progress(P_TALKGELIK,6);
       return
     end
     if (get_progress(P_TALKGELIK) == 6) then
--- TT edit:
---      bubble(7,"How are things going?","","","");
-      bubble(7,"How are things going?");
+      bubble(7,"How are things going?","","","");
     end
 
   elseif (en == 8) then
--- TT edit:
---    bubble(8,"Hello, nice day isn't it?","","","");
-    bubble(8,"Hello, nice day isn't it?");
+    bubble(8,"Hello, nice day isn't it?","","","");
 
   elseif (en == 9) then
     bubble(9,"So the duck says, 200 gp...",
--- TT edit:
---             "same as in town.","","");
-             "same as in town.");
--- TT edit:
---    bubble(9,"Ha ha ha ha!","","","");
-    bubble(9,"Ha ha ha ha!");
--- TT edit:
---    bubble(9,"Don't you get it?","","","");
-    bubble(9,"Don't you get it?");
+             "same as in town.","","");
+    bubble(9,"Ha ha ha ha!","","","");
+    bubble(9,"Don't you get it?","","","");
+    wait(50);
+    bubble(9,"You don't get it.","","","");
 
   elseif (en == 10) then
     bubble(10,"My roommate tells",
--- TT edit:
---             "the worst jokes.","","");
-             "the worst jokes.");
+             "the worst jokes.","","");
 
   elseif (en == 11) then
--- TT edit:
---    bubble(11,"... huh... oh, hi... I'm sick.","","","");
-    bubble(11,"... huh... oh, hi... I'm sick.");
+    bubble(11,"... huh... oh, hi... I'm sick.","","","");
 
   elseif (en == 12) then
--- TT edit:
---    bubble(12,"zzz","","","");
-    bubble(12,"zzz");
+    bubble(12,"zzz","","","");
 
   elseif (en == 13) then
--- TT edit:
---    bubble(13,"My son is sick in bed.","","","");
-    bubble(13,"My son is sick in bed.");
+    bubble(13,"My son is sick in bed.","","","");
 
   end
 end
