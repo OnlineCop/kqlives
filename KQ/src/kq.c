@@ -126,14 +126,25 @@ unsigned char *progress = NULL, *treasure = NULL;
 s_map g_map;
 /*! Current entities (players+NPCs) */
 s_entity g_ent[MAX_ENT + PSIZE];
+
 /*! Tile animation specifiers for each tile set */
+/* Format: {starting_tile, finishing_tile, animation_speed}
+ * You may have up to 5 animations per tile set and tiles
+ * must be sequential; they cannot jump around on the set.
+ */
 s_anim tanim[6][MAX_ANIM] = {
+   /* land.pcx */
    {{2, 5, 25}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}},
+   /* newtown.pcx */
    {{158, 159, 50}, {160, 163, 25}, {176, 179, 25}, {257, 258, 50},
     {262, 263, 25}},
+   /* castle.pcx */
    {{57, 58, 50}, {62, 63, 25}, {205, 206, 50}, {250, 253, 25}, {0, 0, 0}},
+   /* incave.pcx */
    {{30, 35, 30}, {176, 179, 25}, {323, 328, 40}, {380, 385, 40}, {0, 0, 0}},
+   /* village.pcx */
    {{38, 39, 25}, {80, 83, 25}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}},
+   /* mount.pcx */
    {{58, 59, 50}, {40, 42, 50}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}}
 };
 
