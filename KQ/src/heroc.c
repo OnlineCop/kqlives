@@ -18,6 +18,16 @@
    the Free Software Foundation,
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
+/** \file 
+ * \brief Hero combat
+ *
+ * Stuff relating to hero's special combat skills
+ *\author Josh Bolduc
+ *\date   ????????
+ *\todo PH make sure we understand the two methods of referring to 
+ * a hero - either as an index in the pidx array or an index in the 
+ * party array
+ */
 
 #include <stdio.h>
 #include <string.h>
@@ -38,6 +48,7 @@
 #include "itemdefs.h"
 #include "itemmenu.h"
 
+/** Text names of hero skills */
 char sk_names[MAXCHRS][7] =
    { "Rage", "Sweep", "Infuse", "Prayer", "Boost", "Cover", "Steal",
 "Sense" };
@@ -60,10 +71,10 @@ static int combat_spell_targeting (int);
 static int combat_castable (int, int);
 
 
-
-/*
-   This sets up the heroes fighter vars and frames.
-*/
+/** \brief Set up heroes
+ *
+ * This sets up the heroes fighter vars and frames.
+ */
 void hero_init (void)
 {
    int z, i, p, n;
@@ -121,11 +132,12 @@ void hero_init (void)
      }
    unload_datafile_object (pb);
 }
-
-/*
-   Give the player a menu for a specific character and
-   allow him/her to choose an action.
-*/
+/**\brief Show menu for action selection
+ *
+ * Give the player a menu for a specific character and         
+ * allow him/her to choose an action.      
+ *\param    who Index of player (see constants in progress.h)
+ */
 void hero_choose_action (int who)
 {
    int stop = 0, sptr = 1, ptr = 0, rd = 1, a, amy;
@@ -299,13 +311,15 @@ void hero_choose_action (int who)
 	  }
      }
 }
-
-/*
-   This chooses actions for the character when s/he is 
-   charmed/confused.  This is pretty much the same as the
-   enemy_charmaction function and I really should incorporate
-   them into one.
-*/
+/** \brief Auto-choose options for confused player
+ *
+ *         Chooses actions for the character when s/he is                 
+ *         charmed/confused.  This is pretty much the same as the         
+ *         enemy_charmaction function and I really should incorporate     
+ *         them into one.                                                 
+ *\param   who Index of player (see constants in progress.h)     
+ *\todo    Incorporate enemy_charmaction
+ */
 void auto_herochooseact (int who)
 {
    int eact;
@@ -336,9 +350,14 @@ void auto_herochooseact (int who)
    cact[who] = 0;
 }
 
-/*
-   Select a target for the hero to attack.
-*/
+/**\brief Select target for hero
+ *
+ *  Select a target for the hero to attack.                        
+ *
+ *\param  whom Index of player (see constants in progress.h)              
+ *\return Index of target                                            
+ *\todo   PH change 99 (below) into #define'd constants
+*/                                                                       
 static int hero_attack (int whom)
 {
    int tgt;
@@ -364,9 +383,11 @@ static int hero_attack (int whom)
    return 1;
 }
 
-/*
-   This displays a list of the heroes items for use in
-   combat.
+/**\brief Display item list
+ *
+ * This displays a list of the heroes items for use in
+ * combat.
+ *\param  pg Page of the item list  to display
 */
 static void combat_draw_items (int pg)
 {
@@ -392,9 +413,14 @@ static void combat_draw_items (int pg)
    draw_sprite (double_buffer, pgb[pg], 238, 142);
 }
 
-/*
-   This is the menu used to display the heroes items in
-   combat and to allow him/her to select one.
+/**\brief Choose combat item
+ *
+ * This is the menu used to display the hero's items in
+ * combat and to allow him/her to select one.
+ * The player then selects the target and the action is
+ * performed.
+ *\param  whom Index of character who is doing the choosing
+ *\returns 0 if cancelled, 1 if item was chosen
 */
 static int combat_item_menu (int whom)
 {
@@ -488,9 +514,12 @@ static int combat_item_menu (int whom)
    return stp - 1;
 }
 
-/*
-   This tells us whether or not the specified item
-   is usable in combat.
+/**\brief Can item be used in combat
+ *
+ *   This tells us whether or not the specified item
+ *  is usable in combat.
+ *\param  itno Index of item
+ *\return non-zero if item itno can be used
 */
 static int combat_item_usable (int itno)
 {
@@ -502,8 +531,14 @@ static int combat_item_usable (int itno)
    return 1;
 }
 
-/*
-   Use the selected item and show the effects.
+/**\brief Use item
+ *
+ * Use the selected item and show the effects.
+ *\param  ss Index of character attacking or 
+ * PSIZE if an enemy is attacking
+ *\param  t1 Item to use
+ *\param  tg Index of target
+ *\return Non-zero if anything happened
 */
 static int combat_item (int ss, int t1, int tg)
 {
@@ -550,8 +585,10 @@ static int combat_item (int ss, int t1, int tg)
    return 1;
 }
 
-/*
-   Draw the character's list of equipment.
+/**\brief Draw equipment list
+ * 
+ * Draw the character's list of equipment.
+ *\param dud id of party member to draw
 */
 static void draw_invokable (int dud)
 {
@@ -569,8 +606,11 @@ static void draw_invokable (int dud)
      }
 }
 
-/*
-   Tells us whether or not a specified item is invokable.
+/**\brief Is item invokable
+ *
+ * Tells us whether or not a specified item is invokable.
+ *\param t1 index of item in items array
+ *\returns 1 if item can be invoked
 */
 static int can_invoke_item (int t1)
 {
@@ -581,10 +621,13 @@ static int can_invoke_item (int t1)
    return 1;
 }
 
-/*
-   Displays the characters list of equipment and which
-   ones are invokable.  The player may then choose one
-   (if any) to invoke.
+/**\brief Display and choose item
+ *
+ * Displays the characters list of equipment and which
+ * ones are invokable.  The player may then choose one
+ * (if any) to invoke.
+ *\param whom id of character
+ *\returns 0 if cancelled, 1 if item was selected
 */
 static int hero_invoke (int whom)
 {
@@ -644,8 +687,12 @@ static int hero_invoke (int whom)
    return stp - 1;
 }
 
-/*
-   Invoke the specified item according to target.
+/**\brief Invoke hero item.
+ *
+ * Invoke the specified item according to target.
+ * Calls select_hero or select_enemy as required.
+ *\param whom Hero identifier
+ *\param eno item that is being invoked
 */
 static int hero_invokeitem (int whom, int eno)
 {
@@ -699,15 +746,17 @@ static int hero_invokeitem (int whom, int eno)
    return 1;
 }
 
-/*
-   Check whether or not the heroes can run, and then display
-   the little running-away sequence.
+/**\brief can heroes run?
+ *
+ * Check whether or not the heroes can run, and then display
+ * the little running-away sequence.
+ * \param whom unused (all members of party run anyway)
+ * \todo RB unused variable whom
 */
 static void hero_run (int whom)
 {
    int a, b = 0, c = 0, bt = 0, ct = 0, p, fr, fx, fy, g = 0;
 
-   /*  RB TODO: Again  */
    whom = whom;
    if (ms == 1)
       a = 125;
@@ -791,9 +840,12 @@ static void hero_run (int whom)
    combatend = 2;
 }
 
-/*
-   This checks a fighter's list of spells to see if there
-   are any for her/him to cast.
+/**\brief Count available spells
+ *
+ * This checks a fighter's list of spells to see if there
+ * are any for her/him to cast.
+ *\param who Hero id
+ *\returns the number of available spells
 */
 int available_spells (int who)
 {
@@ -826,9 +878,13 @@ int available_spells (int who)
    return numsp;
 }
 
-/*
-   Draw the list of spells that the character can use
-   in combat.
+/**\brief draw spell list
+ *
+ * Draw the list of spells that the character can use
+ * in combat.
+ *\param c Character id
+ *\param ptr The current line of the menu pointer
+ *\param pg The current page in the spell list
 */
 static void combat_draw_spell_menu (int c, int ptr, int pg)
 {
@@ -858,8 +914,11 @@ static void combat_draw_spell_menu (int c, int ptr, int pg)
    draw_sprite (double_buffer, pgb[pg], 230, 126);
 }
 
-/*
-   Draw the character's spell list and then choose a spell.
+/**\brief Choose spell
+ *
+ * Draw the character's spell list and then choose a spell.
+ *\param c Character id
+ *\returns 0 if cancelled or 1 if something happened
 */
 int combat_spell_menu (int c)
 {
@@ -945,9 +1004,14 @@ int combat_spell_menu (int c)
    return 0;
 }
 
-/*
-   Perform the necessary checking to determine
-   target selection for the particular character's spell.
+/**\brief Check spell targetting
+ *
+ * Perform the necessary checking to determine
+ * target selection for the particular character's spell.
+ *\param whom Character id
+ *\returns -1 if the spell has no targetting, 
+ *         0 if cancelled
+ *         1 if target selected
 */
 static int combat_spell_targeting (int whom)
 {
@@ -978,9 +1042,13 @@ static int combat_spell_targeting (int whom)
    return 1;
 }
 
-/*
-   Perform the necessary checking to determine if a spell can be
-   cast in combat and if the mp exists to do so.
+/**\brief Check spell is castable
+ *
+ * Perform the necessary checking to determine if a spell can be
+ *  cast in combat and if the mp exists to do so.
+ *\param who Character id
+ *\param sno Spell id
+ *\returns 0 if spell cannot be cast, 1 if it can
 */
 static int combat_castable (int who, int sno)
 {

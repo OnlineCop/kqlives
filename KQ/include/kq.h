@@ -1,4 +1,4 @@
-/*
+/*! \page License
    KQ is Copyright (C) 2002 - Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
@@ -18,6 +18,8 @@
    the Free Software Foundation,
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
+
+/*! \file */
 
 #ifndef __KQ_H
 #define __KQ_H
@@ -56,13 +58,18 @@
 #define SPELL_DATAFILE "data/ssprites.dat"
 #define SOUND_DATAFILE "data/kqsnd.dat"
 
+/*! \name Map layer setters */
+/*\{*/
 #define set_btile(tx,ty,t) map_seg[ty*g_map.xsize+tx] = t
 #define set_mtile(tx,ty,t) b_seg[ty*g_map.xsize+tx] = t
 #define set_ftile(tx,ty,t) f_seg[ty*g_map.xsize+tx] = t
 #define set_zone(tx,ty,t) z_seg[ty*g_map.xsize+tx] = t
 #define set_obs(tx,ty,t) o_seg[ty*g_map.xsize+tx] = t
 #define set_shadow(tx,ty,t) s_seg[ty*g_map.xsize+tx] = t
+/*\}*/
 
+/*! \name Attributes of characters */
+/*\{*/
 #define A_STR 0
 #define A_AGI 1
 #define A_VIT 2
@@ -76,7 +83,10 @@
 #define A_DEF 10
 #define A_EVD 11
 #define A_MAG 12
+/*\}*/
 
+/*! \name Spells */
+/*\{*/
 #define S_POISON   0
 #define S_BLIND    1
 #define S_CHARM    2
@@ -95,7 +105,10 @@
 #define S_TRUESHOT 15
 #define S_REGEN    16
 #define S_INFUSE   17
+/*\}*/
 
+/*! \name Special combat skills */
+/*\{*/
 #define C_ATTACK   1
 #define C_COMBO    2
 #define C_SPELL    3
@@ -104,7 +117,10 @@
 #define C_INVOKE   6
 #define C_ITEM     7
 #define C_RUN      8
+/*\}*/
 
+/*! \name Runes */
+/*\{*/
 #define R_EARTH     0
 #define R_BLACK     1
 #define R_FIRE      2
@@ -122,7 +138,10 @@
 #define R_SLEEP     14
 #define R_TIME      15
 #define R_NONE      16
+/*\}*/
 
+/*! \name Weapons */
+/*\{*/
 #define W_BASH         0
 #define W_MACE         1
 #define W_HAMMER       2
@@ -135,7 +154,10 @@
 #define W_SBOOK        27
 #define W_ABOOK        28
 #define W_CHENDIGAL    29
+/*\}*/
 
+/*! \name Use modes */
+/*\{*/
 #define USE_NOT          0
 #define USE_ANY_ONCE     1
 #define USE_ANY_INF      2
@@ -145,7 +167,10 @@
 #define USE_COMBAT_INF   6
 #define USE_ATTACK       7
 #define USE_IMBUED       8
+/*\}*/
 
+/*! \name Weapon/Spell targetting modes */
+/*\{*/
 #define TGT_CASTER        -1
 #define TGT_NONE          0
 #define TGT_ALLY_ONE      1
@@ -154,18 +179,27 @@
 #define TGT_ENEMY_ONE     4
 #define TGT_ENEMY_ONEALL  5
 #define TGT_ENEMY_ALL     6
+/*\}*/
 
+/*! \name Movement directions */
+/*\{*/
 #define MOVE_NOT     0
 #define MOVE_DOWN    1
 #define MOVE_UP      2
 #define MOVE_LEFT    3
 #define MOVE_RIGHT   4
+/*\}*/
 
+/*! \name facing directions */
+/*\{*/
 #define FACE_DOWN    0
 #define FACE_UP      1
 #define FACE_LEFT    2
 #define FACE_RIGHT   3
+/*\}*/
 
+/*! \name Map identifiers */
+/*\{*/
 #define MAP_MAIN           0
 #define MAP_MANOR          1
 #define MAP_TOWN1          2
@@ -195,9 +229,9 @@
 #define MAP_PASS           26
 #define MAP_TOWN7          27
 #define MAP_CULT           28
+/*\}*/
 
-
-
+/*! \brief Animation specifier */
 typedef struct
 {
    unsigned short start;
@@ -207,16 +241,16 @@ typedef struct
 s_anim;
 
 
-
+/*! \brief Map definition */
 typedef struct
 {
-   unsigned char map_no;
-   unsigned char zero_zone;
+  unsigned char map_no; /*!<Map identifier*/
+  unsigned char zero_zone; /*!<Non-zero if zone 0 triggers an event */
    unsigned char map_mode;
-   unsigned char can_save;
+  unsigned char can_save;/*!< Non-zero if Save is allowed in this map */
    unsigned char tileset;
-   unsigned char use_sstone;
-   unsigned char can_warp;
+   unsigned char use_sstone;/*!< Non-zero if sunstone works on this map */
+   unsigned char can_warp;/*!< Non-zero if Warp is allowed in this map */
    unsigned char extra_byte;
    int xsize;
    int ysize;
@@ -234,7 +268,7 @@ typedef struct
 s_map;
 
 
-
+/*! \brief Player */
 typedef struct
 {
    char name[9];
@@ -255,7 +289,10 @@ typedef struct
 s_player;
 
 
-
+/*! \brief Fighter 
+ *
+ * s_player is transformed into a s_fighter during combat
+ */
 typedef struct
 {
    char name[25];

@@ -12,12 +12,14 @@
    Version 0.81 is the last version available under the GNU
    public license.
 */
-
+/** \file
+ * \brief Constants that are included in the C and Lua scripts 
+ */
 #ifndef __PROGRESS_H
 #define __PROGRESS_H
 
 
-
+/*@{*/
 #define P_START           0
 #define P_ODDWALL         1
 #define P_DARKIMPBOSS     2
@@ -104,10 +106,14 @@
 #define P_SKIPINTRO       1997
 #define P_REPULSE         1998
 #define P_TEMP            1999
+/*@}*/
 
+/*@{*/
 #define HERO1             200
 #define HERO2             201
+/*@}*/
 
+/*@{*/
 #define SENSAR            0
 #define SARINA            1
 #define CORIN             2
@@ -116,7 +122,6 @@
 #define TEMMIN            5
 #define AYLA              6
 #define NOSLOM            7
-
-
+/*@}*/
 
 #endif /*  __PROGRESS_H  */

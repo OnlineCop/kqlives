@@ -18,7 +18,11 @@
    the Free Software Foundation,
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
-
+/*! \file 
+ * \brief Definitions of resource types
+ * \author JB
+ * \date ????????
+ */
 #ifndef __RES_H
 #define __RES_H
 
@@ -26,14 +30,17 @@
 
 #include <allegro.h>
 
+/*!\name Size of resource tables */
+/*\{*/
 #define NUM_ITEMS     190
 #define NUM_SPELLS     61
 #define NUM_EFFECTS    52
 #define NUM_ETROWS    106
 #define NUM_BATTLES    56
+/*\}*/
 
 
-
+/*! \brief An item */
 typedef struct
 {
    char name[17];
@@ -58,7 +65,7 @@ typedef struct
 s_item;
 
 
-
+/*! \brief A spell */
 typedef struct
 {
    char name[13];
@@ -79,7 +86,7 @@ typedef struct
 s_spell;
 
 
-
+/*! \brief A special effect */
 typedef struct
 {
    unsigned char numf;
@@ -94,18 +101,18 @@ typedef struct
 s_effect;
 
 
-
+/*! \brief An encounter */
 typedef struct
 {
    unsigned char tnum;
    unsigned char lvl;
    unsigned char per;
-   unsigned char idx[5];
+   unsigned char idx[5]; /*!< Index of enemies */
 }
 s_erow;
 
 
-
+/*! \brief An actual battle */
 typedef struct
 {
    unsigned char mapnum;

@@ -19,6 +19,14 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+/*! \file 
+ * \brief Combat mode
+ *
+ * This is the main file where combat is initiated.
+ * \author JB
+ * \date ????????
+ */
+
 #include <stdio.h>
 #include <string.h>
 #include "enemyc.h"
@@ -36,7 +44,8 @@
 
 
 
-/*  global variables  */
+/*! \name global variables  */
+/*\{*/
 int combatend;
 int cact[NUM_FIGHTERS];
 int curx;
@@ -48,7 +57,7 @@ int rcount;
 unsigned char vspell;
 unsigned char ms;
 DATAFILE *backart;
-
+/*\}*/
 
 
 /*  internal variables  */
@@ -72,14 +81,15 @@ static void init_fighters (void);
 
 
 
-/*                                                                         */
-/*  Author  : Josh Bolduc                                                  */
-/*  Created : ???????? - ??:??                                             */
-/*  Updated : Never.                                                       */
-/*  Purpose : This function checks the zone at the specified co-ordinates  */
-/*            and calls combat based on the map and zone.                  */
-/*  Returns : ?                                                            */
-/*                                                                         */
+/*! \brief Does current location call for combat?                           
+*
+* This function checks the zone at the specified co-ordinates
+* and calls combat based on the map and zone.
+* \param comx x-coord of player
+* \param comy y-coord of player
+* \returns Outcome of combat() or 0 if no combat
+*                                                                         
+*/
 int combat_check (int comx, int comy)
 {
    int zn;
@@ -100,17 +110,16 @@ int combat_check (int comx, int comy)
 
 
 
-/*                                                                           */
-/*  Author  : Josh Bolduc                                                    */
-/*  Created : ???????? - ??:??                                               */
-/*  Updated : Never.                                                         */
-/*  Purpose : The big one... I say that because the game is mostly combat    */
-/*            :p  First, check to see if a random encounter has occured.     */
-/*            The check is skipped if it's a scripted battle. Then call all  */
-/*            the helper and setup functions and start the combat by calling */
-/*            do_round.                                                      */
-/*  Returns : ?                                                              */
-/*                                                                           */
+/*! \brief Main combat function                                              
+*
+*   The big one... I say that because the game is mostly combat    
+*            :p  First, check to see if a random encounter has occured.     
+*            The check is skipped if it's a scripted battle. Then call all  
+*            the helper and setup functions and start the combat by calling 
+*            do_round.                                                      
+* \param bno combat identifier (index into battles[])
+* \returns 0 if no combat, 1 otherwise
+*/                                                                           
 int combat (int bno)
 {
    int zoom_step;
