@@ -201,6 +201,7 @@ static int KQ_log (lua_State *);
 static int KQ_wait_enter (lua_State *);
 static int KQ_istable (lua_State *);
 static void check_map_change (void);
+static int KQ_set_map_mode(lua_State*);
 
 /* New functions */
 #if 0
@@ -362,6 +363,7 @@ static const struct luaL_reg lrs[] = {
    {"use_up", KQ_use_up},
    {"battle", KQ_battle},
    {"select_team", KQ_select_team},
+   {"set_map_mode", KQ_set_map_mode},
    {NULL, NULL}
 };
 
@@ -2547,10 +2549,23 @@ static int KQ_rest (lua_State * L)
 }
 
 
-
+/*! \brief Show message on the screen
+ *
+ * Show a brief message for a set period of time, or
+ * until ALT is pressed.
+ *
+ * \param L::1 String message to show
+ * \param L::2 Icon number or 255 for none (icons 
+ *             are displayed, for instance, when items are procured)
+ * \param L::3 Delay time (see wait()) , or 0 for indefinite
+ * \returns 0 (no value returned)
+ *
+ * 20040308 PH added code to default missing L::2 parameter to 255 (instead of 0)
+ */
 static int KQ_msg (lua_State * L)
 {
-   message ((char *) lua_tostring (L, 1), lua_tonumber (L, 2),
+  int icn=lua_isnumber(L, 2) ? lua_tonumber(L,2) : 255;
+  message ((char *) lua_tostring (L, 1), icn,
             lua_tonumber (L, 3), xofs, yofs);
    return 0;
 }
@@ -3007,7 +3022,10 @@ int KQ_select_team (lua_State * L)
    return 1;
 }
 
-
+int KQ_set_map_mode(lua_State* L) {
+  g_map.map_mode=(int) lua_tonumber(L, 1);
+  return 0;
+}
 
 /*! \brief Initialise scripting engine
  *

@@ -420,8 +420,10 @@ int is_forestsquare (int fx, int fy)
  *  - 3 Order BCMFS, Background & middle parallax
  *  - 4 Order BMCFS, Middle & foreground parallax
  *  - 5 Order BCMFS, Foreground parallax
- *
+ * 
+ * In current KQ maps, only modes 0..2 are used, with the majority being 0.
  * Also handles the Repulse indicator and the map description display.
+ * \bug PH: Shadows are never drawn with parallax (is this a bug?)
  */
 void drawmap (void)
 {
@@ -712,6 +714,7 @@ static void draw_kq_box (BITMAP * where, int x1, int y1, int x2, int y2,
    /* Now the border */
    switch (bstyle) {
    case B_TEXT:
+   case B_MESSAGE:
       border (where, x1, y1, x2 - 1, y2 - 1);
       break;
    case B_THOUGHT:
@@ -829,11 +832,11 @@ void print_num (BITMAP * where, int sx, int sy, char *msg, int cl)
  * The purpose of this function is to calculate where a text bubble
  * should go in relation to the entity who is speaking.
  *
- * \param   who Character that is speaking
+ * \param   who Character that is speaking, or -1 for 'general'
  */
 static void set_textpos (int who)
 {
-   if (who < MAX_ENT) {
+   if (who < MAX_ENT && who>=0) {
       gbx = (g_ent[who].tilex * 16) - vx;
       gby = (g_ent[who].tiley * 16) - vy;
       gbbx = gbx - (gbbw * 4);
@@ -902,7 +905,7 @@ static void set_textpos (int who)
  * Hmm... I think this function draws the textbox :p
  *
  * \date 20030417 PH This now draws the text as well as just the box
- * \param   bstyle Style (B_TEXT or B_THOUGHT)
+ * \param   bstyle Style (B_TEXT or B_THOUGHT or B_MESSAGE)
  */
 static void draw_textbox (int bstyle)
 {
@@ -1074,10 +1077,10 @@ static const char *relay (const char *buf)
 void text_ex (int fmt, int who, const char *s)
 {
    s = parse_string (s);
-   if (fmt == B_MESSAGE) {
+/*   if (fmt == B_MESSAGE) {
       fmt = B_TEXT;
       who = 255;
-   }
+   }*/
    while (s) {
       s = relay (s);
       generic_text (who, fmt);
@@ -1114,8 +1117,8 @@ void thought_text (int who, char *sp1, char *sp2, char *sp3, char *sp4)
  *
  * Generic routine to actually display a text box and wait for a keypress.
  *
- * \param   who Character that is speaking/thinking
- * \param   box_style Style (B_TEXT or B_THOUGHT)
+ * \param   who Character that is speaking/thinking (ignored for B_MESSAGE style)
+ * \param   box_style Style (B_TEXT or B_THOUGHT or B_MESSAGE)
  */
 static void generic_text (int who, int box_style)
 {
@@ -1133,7 +1136,7 @@ static void generic_text (int who, int box_style)
             gbbw = len;
       }
    }
-   set_textpos (who);
+   set_textpos (box_style==B_MESSAGE ? -1 : who);
    if (gbbw == -1 || gbbh == -1)
       return;
    unpress ();
@@ -1408,28 +1411,53 @@ int prompt (int who, int numopt, int bstyle, char *sp1, char *sp2, char *sp3,
  */
 void message (char *m, int icn, int delay, int x_m, int y_m)
 {
-   char msg[41];
-
+   char msg[1024];
+   const char *s;
+   int i, num_lines, max_len, len;
+   /* Do the $0 replacement stuff */
+   memset(msg, 0, sizeof(msg));
+   strncpy (msg, parse_string (m),sizeof(msg)-1);
+   s=msg;
+   /* Save a copy of the screen */
    blit (double_buffer, back, x_m, y_m, 0, 0, 352, 280);
-   strcpy (msg, parse_string (m));
-   if (icn == 255) {
-      menubox (double_buffer, 152 - (strlen (msg) * 4) + x_m, 108 + y_m,
-               strlen (msg), 1, DARKBLUE);
-      print_font (double_buffer, 160 - (strlen (msg) * 4) + x_m, 116 + y_m,
-                  msg, FNORMAL);
-   } else {
-      menubox (double_buffer, 148 - (strlen (msg) * 4) + x_m, 108 + y_m,
-               strlen (msg) + 1, 1, DARKBLUE);
-      draw_icon (double_buffer, icn, 156 - (strlen (msg) * 4) + x_m, 116 + y_m);
-      print_font (double_buffer, 164 - (strlen (msg) * 4) + x_m, 116 + y_m,
-                  msg, FNORMAL);
+   /* Loop for each box full of text... */
+   while (s!=NULL) {
+     s=relay(s);
+     /* Calculate the box size */
+     num_lines=max_len=0;
+     for (i=0; i<MSG_ROWS; ++i) {
+       len=strlen(msgbuf[i]);
+       if (len>0) {
+	 if (max_len<len) max_len=len;
+	 ++num_lines;
+       }
+     }
+     /* Draw the box and maybe the icon */
+     if (icn==255) {
+       /* No icon */
+       menubox (double_buffer, 152 - (max_len * 4) + x_m, 108 + y_m,
+		max_len, num_lines, DARKBLUE);
+     }
+     else {
+       /* There is an icon; make the box a little bit bigger to the left */
+       menubox (double_buffer, 144 - (max_len * 4) + x_m, 108 + y_m,
+		max_len+1, num_lines, DARKBLUE); 
+       draw_icon (double_buffer, icn, 152 - (max_len * 4) + x_m, 116 +y_m);
+     }
+     /* Draw the text */
+     for (i=0; i<num_lines; ++i) {
+       print_font (double_buffer, 160 - (max_len * 4) + x_m, 116 + 8*i+y_m,
+		   msgbuf[i], FNORMAL);
+     }
+     /* Show it */
+     blit2screen (x_m, y_m);
+     /* Wait for delay time/key press */
+     if (delay == 0)
+       wait_enter ();
+     else
+       wait (delay);
+     blit (back, double_buffer, 0, 0, x_m, y_m, 352, 280);
    }
-   blit2screen (x_m, y_m);
-   if (delay == 0)
-      wait_enter ();
-   else
-      wait (delay);
-   blit (back, double_buffer, 0, 0, x_m, y_m, 352, 280);
 }
 
 
