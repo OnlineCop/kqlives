@@ -69,6 +69,33 @@ s_map gmap;
 s_entity gent[50];
 s_show showing;
 
+/*! Tile animation specifiers for each tile set */
+/* Format: {starting_tile, finishing_tile, animation_speed}
+ * You may have up to 5 animations per tile set and tiles
+ * must be sequential; they cannot jump around on the set.
+ */
+s_anim tanim[7][MAX_ANIM] = {
+   /* land.pcx */
+   {{2, 5, 25}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}},
+   /* newtown.pcx */
+   {{158, 159, 50}, {160, 163, 25}, {176, 179, 25}, {257, 258, 50},
+    {262, 263, 25}},
+   /* castle.pcx */
+   {{57, 58, 50}, {62, 63, 25}, {205, 206, 50}, {250, 253, 25}, {0, 0, 0}},
+   /* incave.pcx */
+   {{30, 35, 30}, {176, 179, 25}, {323, 328, 40}, {380, 385, 40},
+    {360, 365, 30}},
+   /* village.pcx */
+   {{38, 39, 25}, {80, 83, 25}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}},
+   /* mount.pcx */
+   {{58, 59, 50}, {40, 42, 50}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}},
+   /* shrine.bmp */
+   {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}}
+};
+
+/*! Tile animation specifiers for the current tileset */
+s_anim adata[MAX_ANIM];
+
 /* Number of entities, index of currently-selected entity */
 int number_of_ents = 0, current_ent = 0;
 
@@ -85,7 +112,8 @@ unsigned char mousepic[] = {
 /* Tileset images */
 char *icon_files[NUM_TILESETS] = {
    "land.pcx", "newtown.pcx", "castle.pcx",
-   "Incave.pcx", "village.pcx", "mount.pcx"
+   "Incave.pcx", "village.pcx", "mount.pcx",
+   "shrine.pcx"
 };
 
 /* The map modes (parallax and drawing order) are listed here in
@@ -101,8 +129,8 @@ static const char *map_mode_text[] = {
    "12E(3S",
 };
 
-int htiles = (SW - 80) / 16;
-int vtiles = (SH - 48) / 16;
+int htiles = (SW - 80) / TW;
+int vtiles = (SH - 48) / TH;
 
 
 /* Welcome to Mapdraw, folks! */
@@ -124,7 +152,7 @@ int main (int argc, char *argv[])
       draw_menubars ();
       if (!nomouse) {
 //         draw_sprite (double_buffer, mouse_pic, mouse_x, mouse_y);
-         show_mouse(double_buffer);
+         show_mouse (double_buffer);
       }
       blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
       scare_mouse ();
@@ -140,6 +168,45 @@ int main (int argc, char *argv[])
 }                               /* main () */
 
 END_OF_MAIN ();
+
+
+/*! \brief Animation
+ *
+ * Realise that this is only an ATTEMPT to get this thing to show what an
+ * animation would be like.  It is only available for the PREVIEW mode, so we
+ * don't confuse the person putting in one graphic, thinking it will be
+ * another.
+ *
+ * This updates tile indexes for animation threads.
+ */
+void animate (void)
+{
+
+   /* TT TODO:
+    * Firstly, I will need to declare the animation sequences.
+    * Second, I _think_ that tilex[] handles which tile is being shown on-
+    * screen.
+    */
+   int i, j;
+
+   if (draw_mode != MAP_PREVIEW)
+      return;
+
+   for (i = 0; i < MAX_ANIM; i++) {
+      if (adata[i].start != 0) {
+         for (j = adata[i].start; j <= adata[i].end; j++) {
+            if (map[j] < adata[i].end)
+               map[j]++;
+            else
+               map[j] = adata[i].start;
+         }
+      }
+   }
+
+   for (i = 0; i < MAX_ANIM; i++)
+      adata[i] = tanim[gmap.tileset][i];
+
+}
 
 
 /*! \brief Memory allocation
@@ -449,8 +516,8 @@ void check_tilesel (int cx, int cy)
 
    /* Make sure that the mouse is over one if the selectable tiles */
    if (cx >= (SW - 64) && cx < (SW - 32) && cy >= 0 && cy < 160) {
-      xp = (cx - (SW - 64)) / 16;
-      yp = cy / 16;
+      xp = (cx - (SW - 64)) / TW;
+      yp = cy / TH;
       /* Set the tileset to the correct "page" */
       curtile = icon_set * ICONSET_SIZE + (xp * (ICONSET_SIZE / 2) + yp);
    }
@@ -774,9 +841,9 @@ void draw_map (void)
          if ((draw_mode & MAP_LAYER1) || (draw_mode == BLOCK_COPY)
              || (draw_mode == BLOCK_PASTE)) {
             if (draw_mode == MAP_LAYER1)
-               rectfill (double_buffer, dx * 16, dy * 16, dx * 16 + 15,
-                         dy * 16 + 15, 0);
-            draw_sprite (double_buffer, icons[map[w]], dx * 16, dy * 16);
+               rectfill (double_buffer, dx * TW, dy * TH, dx * TW + (TW - 1),
+                         dy * TH + (TH - 1), 0);
+            draw_sprite (double_buffer, icons[map[w]], dx * TW, dy * TH);
          }
 
          /* This draws Layer 1 only if it was what was showing when
@@ -786,17 +853,17 @@ void draw_map (void)
              || (draw_mode == MAP_OBSTACLES) || (draw_mode == MAP_ZONES)
              || (draw_mode == GRAB_TILE)) {
             if (showing.last_layer & MAP_LAYER1)
-               blit (icons[map[w]], double_buffer, 0, 0, dx * 16, dy * 16, 16,
-                     16);
+               blit (icons[map[w]], double_buffer, 0, 0, dx * TW, dy * TH, TW,
+                     TH);
          }
 
          /* Clears Layer 2 background and then draws */
          if ((draw_mode & MAP_LAYER2) || (draw_mode == BLOCK_COPY)
              || (draw_mode == BLOCK_PASTE)) {
             if (draw_mode == MAP_LAYER2)
-               rectfill (double_buffer, dx * 16, dy * 16, dx * 16 + 15,
-                         dy * 16 + 15, 0);
-            draw_sprite (double_buffer, icons[b_map[w]], dx * 16, dy * 16);
+               rectfill (double_buffer, dx * TW, dy * TH, dx * TW + (TW - 1),
+                         dy * TH + (TH - 1), 0);
+            draw_sprite (double_buffer, icons[b_map[w]], dx * TW, dy * TH);
          }
 
          /* This draws Layer 2 only if it was what was showing when
@@ -806,7 +873,7 @@ void draw_map (void)
              || (draw_mode == MAP_OBSTACLES) || (draw_mode == MAP_ZONES)
              || (draw_mode == GRAB_TILE)) {
             if (showing.last_layer & MAP_LAYER2)
-               draw_sprite (double_buffer, icons[b_map[w]], dx * 16, dy * 16);
+               draw_sprite (double_buffer, icons[b_map[w]], dx * TW, dy * TH);
          }
 
          /* Clears Layer 3 background and then draws */
@@ -869,30 +936,30 @@ void draw_map (void)
          if (showing.zones == 1 && z_map[w] > 0) {
             if (z_map[w] < 10) {
                /* Center single-digit number vert+horiz */
-               textprintf (double_buffer, font, dx * 16 + 4, dy * 16 + 4,
-                           makecol (255, 255, 255), "%d", z_map[w]);
+               textprintf_ex (double_buffer, font, dx * 16 + 4, dy * 16 + 4,
+                              makecol (255, 255, 255), 0, "%d", z_map[w]);
             }
 
             else if (z_map[w] < 100) {
                /* Center double-digit number vert */
-               textprintf (double_buffer, font, dx * 16, dy * 16 + 4,
-                           makecol (255, 255, 255), "%d",
-                           (int) (z_map[w] / 10));
-               textprintf (double_buffer, font, dx * 16 + 8, dy * 16 + 4,
-                           makecol (255, 255, 255), "%d",
-                           (int) (z_map[w] % 10));
+               textprintf_ex (double_buffer, font, dx * 16, dy * 16 + 4,
+                              makecol (255, 255, 255), 0, "%d",
+                              (int) (z_map[w] / 10));
+               textprintf_ex (double_buffer, font, dx * 16 + 8, dy * 16 + 4,
+                              makecol (255, 255, 255), 0, "%d",
+                              (int) (z_map[w] % 10));
             }
 
             else {
                /* Print 100's digit in top-right corner of square;
                   10's and 1's digits on bottom of square
                 */
-               textprintf (double_buffer, font, dx * 16 + 8, dy * 16,
-                           makecol (255, 255, 255), "%d",
-                           (int) (z_map[w] / 100));
-               textprintf (double_buffer, font, dx * 16, dy * 16 + 8,
-                           makecol (255, 255, 255), "%02d",
-                           (int) (z_map[w] % 100));
+               textprintf_ex (double_buffer, font, dx * 16 + 8, dy * 16,
+                              makecol (255, 255, 255), 0, "%d",
+                              (int) (z_map[w] / 100));
+               textprintf_ex (double_buffer, font, dx * 16, dy * 16 + 8,
+                              makecol (255, 255, 255), 0, "%02d",
+                              (int) (z_map[w] % 100));
             }
          }                      /* if (showing.zones == 1 && z_map[w] > 0) */
       }                         /* for (dx = 0; dx < maxx; dx++) */
@@ -951,7 +1018,7 @@ void draw_menubars (void)
       print_sfont (320, (SH - 24), strbuf, double_buffer);
 
       if (copying == 0) {
-         // TT: Highlight the selected tile (takes into account window's coords)
+         /* Highlight the selected tile (takes into account window's coords) */
          rect (double_buffer, rectx1, recty1, rectx2, recty2, 25);
       } else {
          rect (double_buffer, rectx1, recty1, rectx1 + 15, recty1 + 15, 25);
@@ -1044,7 +1111,7 @@ void draw_menubars (void)
    sprintf (strbuf, "Last zone: %d", a);
    print_sfont (160, (SH - 10), strbuf, double_buffer);
 
-   /* Display the tileset in the right menu */
+   /* Display the iconset in the right menu */
    if (icon_set != 999) {
       for (p = 0; p < (ICONSET_SIZE / 2); p++) {
          blit (icons[icon_set * ICONSET_SIZE + p], double_buffer, 0, 0,
@@ -1067,7 +1134,7 @@ void draw_menubars (void)
             yp * 16 + 15, 255);
    }
 
-   /* Clear everything under the tileset */
+   /* Clear everything under the iconset */
    rectfill (double_buffer, (SW - 72), 164, (SW - 1), (SH - 1), 0);
 
    /* Display the draw_mode */
@@ -1124,7 +1191,7 @@ void draw_menubars (void)
    }                            /* switch (draw_mode) */
    print_sfont ((SW - 66), 170, dt[draw_mode_display], double_buffer);
 
-   /* Display the tileset and selected icon */
+   /* Display the iconset and selected icon */
    sprintf (strbuf, "#%d(%d)", icon_set, curtile);
    print_sfont ((SW - 72), 176, strbuf, double_buffer);
 
@@ -1267,7 +1334,7 @@ int get_line (int window_x, int window_y, char *buffer, int max_len)
 
 /*! \brief Gets the index of the tile under the mouse
  *
- * Grab the currently selected map tile and display it in the tileset
+ * Grab the currently selected map tile and display it in the iconset
  */
 void get_tile (void)
 {
@@ -1280,7 +1347,7 @@ void get_tile (void)
    else
       curtile = map[tile];
 
-   /* Set the tileset "page" to the one where the selected icon is found */
+   /* Set the iconset "page" to the one where the selected icon is found */
    icon_set = curtile / ICONSET_SIZE;
 }                               /* get_tile () */
 
@@ -1520,9 +1587,13 @@ void preview_map (void)
       draw_shadow (0);
       break;
    default:
-      textprintf_centre (double_buffer, font, double_buffer->w / 2,
-                         double_buffer->h / 2, makecol (255, 255, 255),
-                         "Mode %d preview not supported.", gmap.map_mode);
+
+      sprintf (strbuf, "Mode %d preview not supported, sorry!", gmap.map_mode);
+      print_sfont (8, 8, strbuf, double_buffer);
+
+      textprintf_centre_ex (double_buffer, font, double_buffer->w / 2,
+                            double_buffer->h / 2, makecol (255, 255, 255), 0,
+                            "Mode %d preview not supported.", gmap.map_mode);
       break;
    }
 }                               /* preview_map () */
@@ -1694,6 +1765,9 @@ void process_controls (void)
       if (k == KEY_3)
          draw_mode = MAP_LAYER3;
 
+      /* Note: All the rest of these are simply to view the different
+         layers; none can be used to draw onto the map */
+
       /* Show Layers 1+2 */
       if (k == KEY_4)
          draw_mode = MAP_LAYER12;
@@ -1719,7 +1793,8 @@ void process_controls (void)
          showing.last_layer = draw_mode;
       }
 
-      /* View Layers 1+2+3, plus Entities and Shadows */
+      /* View Layers 1+2+3, plus Entities and Shadows,
+         as the player would see the map in the game */
       if (k == KEY_C) {
          draw_mode = MAP_PREVIEW;
          showing.entities = 1;
@@ -1727,6 +1802,12 @@ void process_controls (void)
          showing.obstacles = 0;
          showing.zones = 0;
          showing.last_layer = MAP_LAYER123;
+      }
+
+      if (k == KEY_SPACE) {
+         if (draw_mode == MAP_PREVIEW) {
+            animate ();
+         }
       }
 
       /* Display Layers 1+2+3 and all Attributes */
@@ -1743,6 +1824,7 @@ void process_controls (void)
 
       /* Toggle Entities Attribute */
       if (k == KEY_E) {
+         /* Toggle whether entities should be shown or turned off */
          if (showing.entities == 1) {
             if (draw_mode == MAP_ENTITIES) {
                draw_mode = showing.last_layer;
@@ -2180,7 +2262,7 @@ void process_controls (void)
          paste_region (window_x + x, window_y + y);
 
       /* Get the index of the tile under the mouse and select
-         its icon from the tileset on the right
+         its icon from the iconset on the right
        */
       if (draw_mode == GRAB_TILE)
          get_tile ();
@@ -2581,7 +2663,7 @@ void startup (void)
 
 /*! \brief Update the tileset
  *
- * This changes the tileset in the menu on the right and then updates
+ * This changes the iconset in the menu on the right and then updates
  * the map to show the current tileset
  */
 void update_tileset (void)
@@ -2628,20 +2710,20 @@ void visual_map (void)
             if (z_map[w] > 0 && z_map[w] < MAX_ZONES) {
                if (z_map[w] < 10) {
                   /* The zone's number is single-digit */
-                  textprintf (bmp, font, i * 16 + 4, j * 16 + 4,
-                              makecol (255, 255, 255), "%d", z_map[w]);
+                  textprintf_ex (bmp, font, i * 16 + 4, j * 16 + 4,
+                                 makecol (255, 255, 255), 0, "%d", z_map[w]);
                } else if (z_map[w] < 100) {
                   /* The zone's number is double-digit */
-                  textprintf (bmp, font, i * 16, j * 16 + 4,
-                              makecol (255, 255, 255), "%d", z_map[w]);
+                  textprintf_ex (bmp, font, i * 16, j * 16 + 4,
+                                 makecol (255, 255, 255), 0, "%d", z_map[w]);
                } else if (i < 1000) {
                   /* The zone's number is triple-digit */
-                  textprintf (bmp, font, i * 16 + 4, j * 16,
-                              makecol (255, 255, 255), "%d",
-                              (int) (z_map[w] / 100));
-                  textprintf (bmp, font, i * 16, j * 16 + 8,
-                              makecol (255, 255, 255), "%02d",
-                              (int) (z_map[w] % 100));
+                  textprintf_ex (bmp, font, i * 16 + 4, j * 16,
+                                 makecol (255, 255, 255), 0, "%d",
+                                 (int) (z_map[w] / 100));
+                  textprintf_ex (bmp, font, i * 16, j * 16 + 8,
+                                 makecol (255, 255, 255), 0, "%02d",
+                                 (int) (z_map[w] % 100));
                }
             }
          }
