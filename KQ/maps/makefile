@@ -1,9 +1,18 @@
 # make the map editor
 # makefile by PH
-mapdraw$(EXE_SUFFIX): mapedit.o mapfile.o mapent.o mapdata.o
-	$(LINK.o)  $^ -o $@ $(LDLIBS) $(LFLAGS)
+DISK_H=../include/structs.h ../include/disk.h
 
-mapedit.o: mapedit.c mapdraw.h
-mapfile.o: mapfile.c mapdraw.h
-mapdata.o: mapdata.c mapdraw.h
-mapent.o:  mapent.c  mapdraw.h
+CFLAGS+=-I../include
+
+mapdraw$(EXE_SUFFIX): mapedit.o mapfile.o mapent.o mapdata.o disk.o
+	$(LINK.o)  $^ -o $@  $(LDFLAGS)
+
+disk.o: ../src/disk.c $(DISK_H)
+	$(COMPILE.c)  $< -o $@
+
+mapedit.o: mapedit.c mapdraw.h $(DISK_H)
+mapfile.o: mapfile.c mapdraw.h $(DISK_H)
+mapdata.o: mapdata.c mapdraw.h $(DISK_H)
+mapent.o:  mapent.c  mapdraw.h $(DISK_H)
+
+
