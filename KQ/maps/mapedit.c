@@ -2489,6 +2489,12 @@ void process_menu_right (const int cx, const int cy)
       else
          curtile = icon_set * ICONSET_SIZE + (xp * (ICONSET_SIZE / 2) + yp);
    }
+
+   /* Show the correct tileset "page" when Tile Preview is clicked on */
+   if (cx > SW - 58 && cx < SW - 23 && cy > 248 && cy < 283) {
+      icon_set = (curtile / ICONSET_SIZE) - ((curtile / ICONSET_SIZE) % 2);
+   }
+
 }                               /* process_menu_right () */
 
 
