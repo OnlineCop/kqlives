@@ -19,6 +19,13 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+/*! \file
+ * \brief Enemy combat
+ *
+ * \author JB
+ * \date ??????
+ */
+
 #include <stdio.h>
 
 #include "kq.h"
@@ -30,6 +37,7 @@
 #include "magic.h"
 #include "progress.h"
 
+/*! Index related to enemies in an encounter */
 int cf[NUM_FIGHTERS];
 
 
@@ -47,10 +55,15 @@ static void enemy_attack (int);
 
 
 
-/*
-   This is the main enemy initialization routine.  This function sets up
-   the enemy types and then loads each one in.  It also calls a helper
-   function or two to complete the process.
+/*! \brief Enemy initialisation
+ *
+ * This is the main enemy initialization routine.  This function sets up
+ * the enemy types and then loads each one in.  It also calls a helper
+ * function or two to complete the process.
+ *
+ * \param en
+ * \param etid
+ * \returns number of random encounter
 */
 int select_encounter (int en, int etid)
 {
@@ -102,8 +115,9 @@ int select_encounter (int en, int etid)
    return entry;
 }
 
-/*
-   Load enemy data from files.
+/*! \brief load from file
+ *
+ * Load enemy data from files.
 */
 void enemy_init (void)
 {
@@ -222,8 +236,13 @@ void enemy_init (void)
    fclose (edat);
 }
 
-/*
-   Extract the appropriate frames from the enemy pcx file.
+/*! \brief copy frames from main bitmap
+ *
+ * Extract the appropriate frames from the enemy pcx file.
+ *
+ * \param who
+ * \param locx
+ * \param locy
 */
 static void load_enemyframes (int who, int locx, int locy)
 {
@@ -245,9 +264,12 @@ static void load_enemyframes (int who, int locx, int locy)
    unload_datafile_object (pcx);
 }
 
-/*
-   There is the beginning of some intelligence to this... however, the
-   magic checking and skill checking functions aren't very smart yet :)
+/*! \brief Choose action for enemy
+ *
+ * There is the beginning of some intelligence to this... however, the
+ * magic checking and skill checking functions aren't very smart yet :)
+ *
+ * \param who
 */
 void enemy_chooseaction (int who)
 {
@@ -300,10 +322,14 @@ void enemy_chooseaction (int who)
    cact[who] = 0;
 }
 
-/*
-   This function is fairly specific in that it will only
-   return true (1) if the enemy has the spell in it's list
-   of spells, is not mute and has enough mp to cast the spell.
+/*! \brief check if enemy can cast this spell
+**
+* This function is fairly specific in that it will only
+*  return true (1) if the enemy has the spell in it's list
+*  of spells, is not mute and has enough mp to cast the spell.
+* \param wh
+* \param sp
+* \returns 1 if spell can be cast
 */
 static int enemy_cancast (int wh, int sp)
 {
@@ -321,8 +347,13 @@ static int enemy_cancast (int wh, int sp)
    return 1;
 }
 
-/*
-   If the caster has a cure/drain spell, use it to cure itself.
+/*! \brief use cure spell
+ *
+ *
+ * If the caster has a cure/drain spell, use it to cure itself.
+ *
+ * \param w
+ * \param t (unused)
 */
 static void enemy_curecheck (int w, int t)
 {
@@ -350,9 +381,12 @@ static void enemy_curecheck (int w, int t)
      }
 }
 
-/*
-   This function looks at the enemy's selected spell and tries to
-   determine whether to bother casting it or not.
+/*! \brief check selected spell
+ *
+ * This function looks at the enemy's selected spell and tries to
+ * determine whether to bother casting it or not.
+ * \param w
+ * \param ws
 */
 static void enemy_spellcheck (int w, int ws)
 {
@@ -483,9 +517,14 @@ static void enemy_spellcheck (int w, int ws)
      }
 }
 
-/*
-   Checks a passed status condition to see if anybody is affected by it and
-   determines whether it should be cast or not
+/*! \brief check status
+ *
+ * Checks a passed status condition to see if anybody is affected by it and
+ * determines whether it should be cast or not
+ *
+ * \param who (unused)
+ * \param ws
+ * \param s
 */
 static int enemy_stscheck (int who, int ws, int s)
 {
@@ -512,8 +551,11 @@ static int enemy_stscheck (int who, int ws, int s)
    return 0;
 }
 
-/*
-   Very simple... see if the skill that was selected can be used.
+/*! \brief check skills
+ *
+ * Very simple... see if the skill that was selected can be used.
+ * \param w
+ * \param ws
 */
 static void enemy_skillcheck (int w, int ws)
 {
@@ -540,10 +582,15 @@ static void enemy_skillcheck (int w, int ws)
      }
 }
 
-/*
-   Enemy actions are chosen differently if they are confused.  Confused
-   fighters either attack the enemy, an ally, or do nothing.  Confused
-   fighters never use spells or items.
+/*! \brief action for confused enemy
+ *
+ * Enemy actions are chosen differently if they are confused.  Confused
+ * fighters either attack the enemy, an ally, or do nothing.  Confused
+ * fighters never use spells or items.
+ *
+ * \param who
+ *
+ * \sa auto_herochooseact()
 */
 void enemy_charmaction (int who)
 {
@@ -575,9 +622,13 @@ void enemy_charmaction (int who)
    enemy_attack (who);
 }
 
-/*
-   This is just a helper function for setting up the casting of a spell
-   by an enemy.
+/*! \brief helper for casting
+ *
+ * This is just a helper function for setting up the casting of a spell
+ * by an enemy.
+ * \param whom
+ * \param z
+ * \returns
 */
 static int spell_setup (int whom, int z)
 {
@@ -658,8 +709,13 @@ static int spell_setup (int whom, int z)
       return 1;
 }
 
-/*
-   This is just for aiding in skill setup... choosing skill targets.
+/*! \brief set up skill targets
+ *
+ * This is just for aiding in skill setup... choosing skill targets.
+ *
+ * \param whom
+ * \param sn
+ * \returns 
 */
 static int skill_setup (int whom, int sn)
 {
@@ -682,12 +738,15 @@ static int skill_setup (int whom, int sn)
    return 0;
 }
 
-/*
-   Do an enemy melee attack.  Enemies only defend if they are in critical
-   status.  This could use a little more smarts, so that more intelligent
-   enemies would know to hit spellcasters or injured heroes first, and so
-   that berserk type enemies don't defend.  The hero selection is done in
-   a different function, but it all starts here.
+/*! \brief melee attack
+ *
+ *   Do an enemy melee attack.  Enemies only defend if they are in critical
+ *   status.  This could use a little more smarts, so that more intelligent
+ * enemies would know to hit spellcasters or injured heroes first, and so
+ * that berserk type enemies don't defend.  The hero selection is done in
+ * a different function, but it all starts here.
+ *
+ * \param whom
 */
 static void enemy_attack (int whom)
 {
@@ -744,8 +803,11 @@ static void enemy_attack (int whom)
    RB: unused until now
 */
 
-/*
-   Hmmm... this could use a little work :)
+/*! \brief escape battle
+ *
+ * Hmmm... this could use a little work :)
+ * \param whom
+ * \warning RB unused until now
 */
 void enemy_run (int whom)
 {

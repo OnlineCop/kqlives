@@ -18,6 +18,12 @@
    the Free Software Foundation,
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
+/*! \file
+ * \brief Effects and animations
+ *
+ * \author JB
+ * \date ???????
+ */
 
 #include <stdio.h>
 #include <string.h>
@@ -32,8 +38,14 @@
 #include "ssprites.h"
 #include "res.h"
 
-/*
-   Draw fighting animations.
+/*! \brief Draw fighting animations
+ *
+ *   Draw fighting animations.
+ * Selects the correct image and calls draw_attacksprite()
+ * \param tgt
+ * \param who
+ * \param ma
+ * \sa draw_attacksprite()
 */
 void fight_animation (int tgt, int who, int ma)
 {
@@ -46,10 +58,15 @@ void fight_animation (int tgt, int who, int ma)
    draw_attacksprite (tgt, ma, a, 1);
 }
 
-/*
-   This is what displays damage, healing, etc in combat.
-   It's designed to be able to display an amount for one or all allies or
-   enemies.
+/*! \brief Show various stats
+ *
+ * This is what displays damage, healing, etc in combat.
+ * It's designed to be able to display an amount for one or all allies or
+ * enemies.
+ *
+ * \param tgt
+ * \param cl
+ * \param aflag
 */
 void display_amount (int tgt, int cl, int aflag)
 {
@@ -123,9 +140,18 @@ void display_amount (int tgt, int cl, int aflag)
    blit2screen (0, 0);
 }
 
-/*
-   Just make sure the fighter in question is dead or not.  Sometimes, we
-   still want to return true if s/he is dead.
+/*! \brief fighter status
+*
+*  Just make sure the fighter in question is dead or not.  Sometimes, we
+*  still want to return true if s/he is dead.
+* This happens during the casting of the life and full-life spells, in 
+* combatspell().
+* deadeffect is normally 0, it is changed temporarily to 1 
+*
+* \param guy id of character to check (index into fighter[] array)
+* \returns 1 if alive, 0 if dead
+*
+* \sa M_LIFE M_FULLLIFE combatspell() deadeffect
 */
 int is_active (int guy)
 {
@@ -135,14 +161,23 @@ int is_active (int guy)
       return 0;
 }
 
-/*
-   Draw the spell sprite as it affects one or all allies or enemies.  There
-   is one special var (part of the effect structure) called orient, which affects
-   the y-axis:
-     A value of 0 says align the spell with the top of the fighter sprite.
-     A value of 1 says center the spell.
-     A value of 2 says align the spell with the bottom of the fighter sprite.
-   The x alignment is always centered.
+/*! \brief Draw spell sprite 
+ *
+ * Draw the spell sprite as it affects one or all allies or enemies.  There
+ * is one special var (part of the effect structure) called orient, which affects
+ * the y-axis:
+ * - A value of 0 says align the spell with the top of the fighter sprite.
+ * - A value of 1 says center the spell.
+ * - A value of 2 says align the spell with the bottom of the fighter sprite.
+ *
+ * The x alignment is always centered.
+ * 
+ * \param tgt
+ * \param aflag
+ * \param ef
+ * \param shows
+ *
+ * \sa s_effect
 */
 void draw_spellsprite (int tgt, int aflag, int ef, int shows)
 {
@@ -218,12 +253,19 @@ void draw_spellsprite (int tgt, int aflag, int ef, int shows)
    unload_datafile_object (pb);
 }
 
-/*
-   This draws a large sprite, which is meant to affect an entire group.
-   Calling the function requires supplying exact co-ordinates, so there
-   is no need to worry about centering here... the orient var (from the
-   effect structure) is used to determine whether to draw under or over
-   the fighters.
+/*! \brief Draw a large sprite
+ *
+ * This draws a large sprite, which is meant to affect an entire group.
+ * Calling the function requires supplying exact co-ordinates, so there
+ * is no need to worry about centering here... the orient var (from the
+ * effect structure) is used to determine whether to draw under or over
+ * the fighters.
+ *
+ * \param tgt
+ * \param hx
+ * \param hy
+ * \param ef
+ * \param shows
 */
 void draw_hugesprite (int tgt, int hx, int hy, int ef, int shows)
 {
@@ -280,8 +322,14 @@ void draw_hugesprite (int tgt, int hx, int hy, int ef, int shows)
    unload_datafile_object (pb);
 }
 
-/*
-   Draw the appropriate attack animation.  Effect is x and y centered.
+/*! \brief attack animation
+ *
+ * Draw the appropriate attack animation.  Effect is x and y centered.
+ *
+ * \param tgt
+ * \param aflag
+ * \param ef
+ * \param shows
 */
 void draw_attacksprite (int tgt, int aflag, int ef, int shows)
 {
@@ -359,10 +407,14 @@ void draw_attacksprite (int tgt, int aflag, int ef, int shows)
    unload_datafile_object (pb);
 }
 
-/*
-   Draw the casting sprite.  Effect is x and y centered.  One suggestion
-   I recieved was to have the casting sprite stay on screen until the
-   actual spell effect is done.  I may yet implement this.
+/*! \brief Draw castig sprite
+ *
+ * Draw the casting sprite.  Effect is x and y centered.  One suggestion
+ * I recieved was to have the casting sprite stay on screen until the
+ * actual spell effect is done.  I may yet implement this.
+ *
+ * \param cstr
+ * \param cc
 */
 void draw_castersprite (int cstr, int cc)
 {
@@ -408,8 +460,14 @@ void draw_castersprite (int cstr, int cc)
    fighter[cstr].aframe = 0;
 }
 
-/*
-   Heh... this one's pretty obvious.  Centered on both the x and y axis.
+/*! \brief draw death animation
+ *
+ * Heh... this one's pretty obvious.  Centered on both the x and y axis.
+ * This is the expanding circle animation.
+ *
+ * \param tgt Target, must be >=2 
+ * \param aflag if ==1, then target all. If target <PSIZE then target all heroes,
+ *        otherwise target all enemies.
 */
 void death_animation (int tgt, int aflag)
 {

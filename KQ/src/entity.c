@@ -19,6 +19,13 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+/*! \file
+ * \brief Entity functions
+ *
+ * \author JB
+ * \date ??????
+ */
+
 #include <stdio.h>
 #include <string.h>
 
@@ -32,8 +39,10 @@
 
 
 
-/*  global variables  */
-int emoved;
+/*! \name  global variables  */
+/*\{*/
+int emoved;                     /*!< non-zero if the entity moved this turn */
+/*\}*/
 
 
 
@@ -161,6 +170,7 @@ static void process_entity (int i)
                             if (g_ent[i].speed < 7)
                                g_ent[i].speed++;
                             g_ent[i].delay = 0;
+                            /* PH FIXME check for emoved here? or not? */
                             if (g_ent[0].tilex > g_ent[i].tilex)
                                moveright (i);
                             if (g_ent[0].tilex < g_ent[i].tilex && emoved == 0)
@@ -179,6 +189,7 @@ static void process_entity (int i)
                     {
                        if (entity_near (i, 0, 4) == 1)
                          {
+                            /* PH FIXME check for emoved here? or not? */
                             if (g_ent[0].tilex > g_ent[i].tilex)
                                moveright (i);
                             if (g_ent[0].tilex < g_ent[i].tilex && emoved == 0)

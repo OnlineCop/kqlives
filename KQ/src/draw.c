@@ -199,7 +199,7 @@ void revert_cframes (int who, int aflag)
  * Icons are 8x8 sub-bitmaps of sicons, representing items (sword, etc.)
  *
  * \param where bitmap to draw to
- * \param ico icon to draw
+ * \param ino icon to draw
  * \param icx x-coord
  * \param icy y-coord
 */
