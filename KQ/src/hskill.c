@@ -279,7 +279,7 @@ int skill_use (int who)
          }
          revert_cframes (PSIZE, 1);
          dct = 0;
-         b = fighter[who].lvl * 25;
+         b = fighter[who].lvl * 15;
          for (g = PSIZE; g < PSIZE + numens; g++) {
             if (fighter[g].sts[S_DEAD] == 0 && fighter[g].mhp > 0) {
                if (fighter[g].unl == 99 || fighter[g].unl == 0)
@@ -287,7 +287,7 @@ int skill_use (int who)
                else {
                   a = (fighter[who].lvl + 5) - fighter[g].unl;
                   if (a > 0)
-                     cts = a * 10;
+                     cts = a * 8;
                   else
                      cts = 0;
                }
