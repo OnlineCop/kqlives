@@ -1,0 +1,6 @@
+-nut
+-npsl
+-i3
+-l80
+-br 
+-ce
