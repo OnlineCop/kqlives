@@ -158,10 +158,21 @@ function entity_handler(en)
           sfx(5);
           msg("Opal Shield procured", 255, 0, xofs, yofs);
           set_progress(P_OPALSHIELD, 1);
-          set_ent_script(HERO1, "D3F1");
-          wait_for_entity(HERO1, HERO1);
-          set_ent_script(6, "L1D2");
-          wait_for_entity(6, 6);
+          if (get_ent_tilex(HERO1) == get_ent_tilex(6)) then
+            set_ent_script(HERO1, "L1");
+            wait_for_entity(HERO1, HERO1);
+          end
+
+          if (get_numchrs() == 1) then
+            set_ent_script(HERO1, "D3F1");
+            wait_for_entity(HERO1, HERO1);
+          else
+            set_ent_script(HERO1, "D3F1");
+            set_ent_script(HERO2, "D3F1");
+            wait_for_entity(HERO1, HERO2);
+            orient_heroes();
+          end
+
           bubble(6, "Good luck in your endeavours.");
           if (get_progress(P_OLDPARTNER) > 0) then
             set_progress(P_FINALPARTNER, get_progress(P_OLDPARTNER));
