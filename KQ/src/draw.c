@@ -370,8 +370,6 @@ static void drawchar (int xw, int yw)
             }
          }
       }
-/*      sprintf(strbuf, "%d", g_ent[i].speed); */
-/*      print_num(double_buffer, dx, dy, strbuf, 0); */
    }
 }
 
@@ -436,13 +434,14 @@ void drawmap (void)
       clear_to_color (double_buffer, 1);
       return;
    }
-   draw_backlayer ();
+   clear_bitmap(double_buffer);
+   if (draw_background) draw_backlayer ();
    if (g_map.map_mode == 1 || g_map.map_mode == 3 || g_map.map_mode == 5)
       drawchar (16, 16);
-   draw_midlayer ();
+   if (draw_middle) draw_midlayer ();
    if (g_map.map_mode == 0 || g_map.map_mode == 2 || g_map.map_mode == 4)
       drawchar (16, 16);
-   draw_forelayer ();
+   if (draw_foreground) draw_forelayer ();
    draw_shadows ();
 /*
    This is an obvious hack here.  When I first started, xofs and yofs could
@@ -477,9 +476,8 @@ void drawmap (void)
 static void draw_backlayer (void)
 {
    int dx, dy, pix, xtc, ytc;
+   int v_x1, v_x2, v_y1, v_y2;
 
-   if (draw_background == 0)
-      return;
    if (view_on == 0) {
       view_y1 = 0;
       view_y2 = g_map.ysize - 1;
@@ -491,24 +489,33 @@ static void draw_backlayer (void)
       ytc = vy >> 4;
       dx = vx;
       dy = vy;
+      v_x1 = view_x1;
+      v_y1 = view_y1;
+      v_x2 = view_x2;
+      v_y2 = view_y2;
    } else {
       dx = vx * g_map.pmult / g_map.pdiv;
       dy = vy * g_map.pmult / g_map.pdiv;
       xtc = dx >> 4;
       ytc = dy >> 4;
+      v_x1 = view_x1 * g_map.pmult / g_map.pdiv;
+      v_y1 = view_y1 * g_map.pmult / g_map.pdiv;
+      v_x2 = view_x2 * g_map.pmult / g_map.pdiv;
+      v_y2 = view_y2 * g_map.pmult / g_map.pdiv;
    }
    xofs = 16 - (dx & 15);
    yofs = 16 - (dy & 15);
    for (dy = 0; dy < 16; dy++) {
-      for (dx = 0; dx < 21; dx++) {
-         if (ytc + dy >= view_y1 && xtc + dx >= view_x1 && ytc + dy <= view_y2
-             && xtc + dx <= view_x2) {
-            pix = map_seg[((ytc + dy) * g_map.xsize) + xtc + dx];
-            blit (map_icons[tilex[pix]], double_buffer, 0, 0, dx * 16 + xofs,
-                  dy * 16 + yofs, 16, 16);
-         } else
-            blit (map_icons[0], double_buffer, 0, 0, dx * 16 + xofs,
-                  dy * 16 + yofs, 16, 16);
+      if (ytc + dy >= v_y1 && ytc + dy <= v_y2) {
+         for (dx = 0; dx < 21; dx++) {
+            if (xtc + dx >= v_x1 && xtc + dx <= v_x2) {
+               pix = map_seg[((ytc + dy) * g_map.xsize) + xtc + dx];
+               blit (map_icons[tilex[pix]], double_buffer, 0, 0, dx * 16 + xofs,
+                     dy * 16 + yofs, 16, 16);
+            } /*else
+               blit (map_icons[0], double_buffer, 0, 0, dx * 16 + xofs,
+	       dy * 16 + yofs, 16, 16);*/
+         }
       }
    }
 }
@@ -523,9 +530,8 @@ static void draw_backlayer (void)
 static void draw_midlayer (void)
 {
    int dx, dy, pix, xtc, ytc;
+   int v_x1, v_x2, v_y1, v_y2;
 
-   if (draw_middle == 0)
-      return;
    if (view_on == 0) {
       view_y1 = 0;
       view_y2 = g_map.ysize - 1;
@@ -537,21 +543,30 @@ static void draw_midlayer (void)
       ytc = vy >> 4;
       dx = vx;
       dy = vy;
+      v_x1 = view_x1;
+      v_y1 = view_y1;
+      v_x2 = view_x2;
+      v_y2 = view_y2;
    } else {
       dx = vx * g_map.pmult / g_map.pdiv;
       dy = vy * g_map.pmult / g_map.pdiv;
       xtc = dx >> 4;
       ytc = dy >> 4;
+      v_x1 = view_x1 * g_map.pmult / g_map.pdiv;
+      v_y1 = view_y1 * g_map.pmult / g_map.pdiv;
+      v_x2 = view_x2 * g_map.pmult / g_map.pdiv;
+      v_y2 = view_y2 * g_map.pmult / g_map.pdiv;
    }
    xofs = 16 - (dx & 15);
    yofs = 16 - (dy & 15);
    for (dy = 0; dy < 16; dy++) {
-      for (dx = 0; dx < 21; dx++) {
-         if (ytc + dy >= view_y1 && xtc + dx >= view_x1 && ytc + dy <= view_y2
-             && xtc + dx <= view_x2) {
-            pix = b_seg[((ytc + dy) * g_map.xsize) + xtc + dx];
-            draw_sprite (double_buffer, map_icons[tilex[pix]], dx * 16 + xofs,
-                         dy * 16 + yofs);
+      if (ytc + dy >= v_y1 && ytc + dy <= v_y2) {
+         for (dx = 0; dx < 21; dx++) {
+            if (xtc + dx >= v_x1 && xtc + dx <= v_x2) {
+               pix = b_seg[((ytc + dy) * g_map.xsize) + xtc + dx];
+               draw_sprite (double_buffer, map_icons[tilex[pix]],
+                            dx * 16 + xofs, dy * 16 + yofs);
+            }
          }
       }
    }
@@ -567,9 +582,8 @@ static void draw_midlayer (void)
 static void draw_forelayer (void)
 {
    int dx, dy, pix, xtc, ytc;
+   int v_x1, v_x2, v_y1, v_y2;
 
-   if (draw_foreground == 0)
-      return;
    if (view_on == 0) {
       view_y1 = 0;
       view_y2 = g_map.ysize - 1;
@@ -581,21 +595,30 @@ static void draw_forelayer (void)
       ytc = vy >> 4;
       dx = vx;
       dy = vy;
+      v_x1 = view_x1;
+      v_y1 = view_y1;
+      v_x2 = view_x2;
+      v_y2 = view_y2;
    } else {
       dx = vx * g_map.pmult / g_map.pdiv;
       dy = vy * g_map.pmult / g_map.pdiv;
       xtc = dx >> 4;
       ytc = dy >> 4;
+      v_x1 = view_x1 * g_map.pmult / g_map.pdiv;
+      v_y1 = view_y1 * g_map.pmult / g_map.pdiv;
+      v_x2 = view_x2 * g_map.pmult / g_map.pdiv;
+      v_y2 = view_y2 * g_map.pmult / g_map.pdiv;
    }
    xofs = 16 - (dx & 15);
    yofs = 16 - (dy & 15);
    for (dy = 0; dy < 16; dy++) {
-      for (dx = 0; dx < 21; dx++) {
-         if (ytc + dy >= view_y1 && xtc + dx >= view_x1 && ytc + dy <= view_y2
-             && xtc + dx <= view_x2) {
-            pix = f_seg[((ytc + dy) * g_map.xsize) + xtc + dx];
-            draw_sprite (double_buffer, map_icons[tilex[pix]], dx * 16 + xofs,
-                         dy * 16 + yofs);
+      if (ytc + dy >= v_y1 && ytc + dy <= v_y2) {
+         for (dx = 0; dx < 21; dx++) {
+            if (xtc + dx >= v_x1 && xtc + dx <= v_x2) {
+               pix = f_seg[((ytc + dy) * g_map.xsize) + xtc + dx];
+               draw_sprite (double_buffer, map_icons[tilex[pix]],
+                            dx * 16 + xofs, dy * 16 + yofs);
+            }
          }
       }
    }
