@@ -195,10 +195,10 @@ function entity_handler(en)
     -- You have never spoken to Jen before
     if (get_progress(P_UCOIN) == 0) then
       if (get_progress(P_TALKDERIG) == 0) then
-        -- You've never gone to the grotto.
+        -- You have never gone to the grotto.
         bubble(en, "Jen:", "I'm Derig's granddaughter. Go find Derig in the grotto north of here.")
       elseif (get_progress(P_TALKDERIG) == 1) then
-        -- You entered the grotto, but didn't fall in the pit.
+        -- You entered the grotto, but did not fall in the pit.
         bubble(en, "Jen:", "I'm Derig's granddaughter. Go find Derig in the grotto north of here. You've been there once before.")
       elseif (get_progress(P_TALKDERIG) == 2) then
         -- You entered grotto and fell in pit (you had NOT spoken to Jen first, though.  Someone helped you get out.
@@ -206,14 +206,14 @@ function entity_handler(en)
         bubble(HERO1, "Yes, we fell down a hole and someone pulled us out.")
         bubble(en, "That is Derig, my grandfather. Go back and look for him.")
       end
-      -- Now you've spoken to Jen
+      -- Now you have spoken to Jen
       set_progress(P_UCOIN, 1)
     -- You have spoken to Jen at least once
     elseif (get_progress(P_UCOIN) == 1) then
       if (get_progress(P_TALKDERIG) == 0) then
         bubble(en, "I said to go talk to Derig.")
       elseif (get_progress(P_TALKDERIG) == 1) then
-        -- You entered the grotto, but didn't fall in the pit.
+        -- You entered the grotto, but did not fall in the pit.
         bubble(en, "You must find Derig in the grotto. He's there somewhere.")
       elseif (get_progress(P_TALKDERIG) == 2) then
         bubble(en, "Well? Go find Derig in the grotto!")
