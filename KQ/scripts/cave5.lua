@@ -196,27 +196,37 @@ function zone_handler(zn)
     destroy5();
   elseif (zn==7) then
     warp(35,10,10);
-  elseif (zn==13) then
-    set_save(0);
-    warp(35,4,10);
+  elseif (zn==8) then
+    warp(35,24,10);
   elseif (zn==9) then
     change_map("pass", 78,39,0,0);
   elseif (zn==10) then
     change_map("pass", 106,36,0,0);
-  elseif (zn==12) then
-    change_map("pass", 83,28,0,0);
   elseif (zn==11) then
     set_save(1);
     sfx(26);
     warp(119,139,10);
-  elseif (zn==8) then
-    warp(35,24,10);
+  elseif (zn==12) then
+    change_map("pass", 83,28,0,0);
+  elseif (zn==13) then
+    set_save(0);
+    warp(35,4,10);
   elseif (zn==14) then
     set_save(0);
     warp(112,49,10);
   elseif (zn==15) then
     set_save(1);
     warp(119,132,10);
+  elseif (zn==16) then
+    --treasure
+  elseif (zn==17) then
+    --treasure
+  elseif (zn==18) then
+    --treasure
+  elseif (zn==19) then
+    --treasure
+  elseif (zn==20) then
+    --treasure
   end
 end
 

@@ -11,20 +11,24 @@ function refresh()
     place_ent(1,get_ent_tilex(1)+1,get_ent_tiley(1));
     set_ent_facing(1,2);
   end
-if (get_progress(P_CAVEKEY)>0) then
-  place_ent(2,152,12);
-end
+
+  if (get_progress(P_CAVEKEY)>0) then
+    place_ent(2,152,12);
+  end
+
   if (get_treasure(73) == 1) then
     set_mtile(74,47,39);
   end
   if (get_treasure(74) == 1) then
     set_mtile(75,47,39);
   end
+
   if (get_progress(P_PASSDOOR2) == 1) then
     set_mtile(78,38,57);
     set_mtile(78,39,33);
     set_obs(78,38,0);
   end
+
   if (get_progress(P_PASSDOOR3) == 1) then
     set_mtile(106,35,57);
     set_mtile(106,36,33);
@@ -129,7 +133,7 @@ function miner( en)
   if (get_progress(P_TALKRUFUS)<2) then
     bubble(HERO1, "But, I really need to get in there.");
     set_progress(P_TALKRUFUS, 2);
-    bubble(en, "We-e-ell,");
+    bubble(en, "We-e-ell...");
     bubble(en, "I reckon that you and me might be able to do a little business here.");
   else
     bubble(en, "So, back for some more of the dynamite, are you?");
