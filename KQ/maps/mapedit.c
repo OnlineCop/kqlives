@@ -324,9 +324,9 @@ void process_controls (void)
         /* Copy Layers 1, 2, 3 to mini PCX images */
         if (k == KEY_J)
            maptopcx ();
-	/* Save whole map as a picture */
-	if (k==KEY_V)
-	  visual_map();
+        /* Save whole map as a picture */
+        if (k==KEY_V)
+           visual_map();
         /* Get the last Zone used and set the indicator to one greater than that */
         if (k == KEY_L)
            curzone = check_last_zone () + 1;
@@ -1007,7 +1007,7 @@ void check_mdupdate (int cx, int cy)
 } /* check_mupdate () */
 
 
-/*! \brief save the whole map as a pcx 
+/*! \brief Save the whole map as a pcx
  *
  * Make one giant bitmap and draw all the layers on it,
  * so you can get an overview of what's going on.
@@ -1016,43 +1016,60 @@ void check_mdupdate (int cx, int cy)
  * \author PH
  * \date 20030412
  */
-void visual_map(void)
+void visual_map (void)
 {
-  int i,j, w;
-  BITMAP* bmp;
-  PALETTE pal;
-  int zones[256][3];
-  for (i=0; i<256; ++i) {
-    zones[i][0]=0;
-  }
-  if ((bmp=create_bitmap(gmap.xsize*16, gmap.ysize*16))!=NULL) {
-    for (j=0; j<gmap.ysize; ++j) {
-      w=gmap.xsize*j;
-      for (i=0; i<gmap.xsize; ++i) {
-	blit (icons[map[w]], bmp, 0, 0, i * 16,
-	      j * 16, 16, 16);
-	draw_sprite (bmp, icons[b_map[w]], i * 16,
-		     j * 16);
-	draw_sprite (bmp, icons[f_map[w]], i * 16,
-		     j * 16);
-	draw_trans_sprite (bmp, shadow[s_map[w]],
-			   i * 16, j * 16);
-	zones[z_map[w]][0]++;
-	zones[z_map[w]][1]=i;
-	zones[z_map[w]][2]=j;
-	++w;
-      }
-    }
-    for (i=0; i<256; ++i) {
-      if (zones[i][0]==1) {
-	textprintf(bmp, font, zones[i][1]*16, zones[i][2]*16, makecol(255,255,255), "%d", i);
-      }
-    }
-    get_palette(pal);
-    save_bitmap("vis_map.pcx",bmp, pal);
-    destroy_bitmap(bmp);
-  }
+   int i, j, w;
+   BITMAP *bmp;
+   PALETTE pal;
+   int zones[MAX_ZONES][3];
+
+   for (i = 0; i < MAX_ZONES; ++i)
+     {
+        /* Clear the zones buffer */
+        /* TT fix: Updated to reset all zones */
+        zones[i][0] = 0; /* whether or not there is a "zone" here */
+        zones[i][1] = 0; /* x-coord of zone on bmp */
+        zones[i][2] = 0; /* y-coord of zone on bmp */
+     }
+
+   /* Create a bitmap the same size as the map */
+   if ((bmp = create_bitmap(gmap.xsize * 16, gmap.ysize * 16)) != NULL)
+     {
+        for (j = 0; j < gmap.ysize; j++)
+          {
+             /* Which tile is currently being evaluated */
+             w = gmap.xsize * j;
+             for (i = 0; i < gmap.xsize; i++)
+               {
+                  blit (icons[map[w]], bmp, 0, 0, i * 16, j * 16, 16, 16);
+                  draw_sprite (bmp, icons[b_map[w]], i * 16, j * 16);
+                  draw_sprite (bmp, icons[f_map[w]], i * 16, j * 16);
+                  draw_trans_sprite (bmp, shadow[s_map[w]], i * 16, j * 16);
+                  /* TT: Which is better: set to 1 or increment? */
+                  // zones[z_map[w]][0]++;
+                  zones[z_map[w]][0] = 1; /* ==1 if there is a "zone" here */
+                  zones[z_map[w]][1] = i; /* Pass zone's x-coord to array */
+                  zones[z_map[w]][2] = j; /* Pass zone's y-coord to array */
+                  w++;
+               }
+          }
+
+        /* Print the zone number over the zones */
+        for (i = 0; i < MAX_ZONES; i++)
+          {
+             if (zones[i][0] == 1)
+               {
+                  textprintf (bmp, font, zones[i][1] * 16, zones[i][2] * 16,
+                             makecol (255,255,255), "%d", i);
+               }
+          }
+        get_palette (pal);
+        save_bitmap ("vis_map.pcx", bmp, pal);
+        destroy_bitmap (bmp);
+     }
 }
+
+
 /*! \brief Update the screen
  *
  * Update the screen after all controls taken care of
@@ -1222,10 +1239,47 @@ void draw_map (void)
                } /* if (showing.obstacles == 1) */
 
              /* Draw the Zones */
-             if (showing.zones == 1)
-                if (z_map[w] > 0)
-                   draw_sprite (double_buffer, z_mesh, dx * 16, dy * 16);
-          }
+             if (showing.zones == 1 && z_map[w] > 0)
+               {
+                  /* We used to draw a cross-hair; PH invented a nifty
+                     zone-numbering system to replace it:
+
+                     draw_sprite (double_buffer, z_mesh, dx * 16, dy * 16);
+                  */
+
+                  if (z_map[w] < 10)
+                    {
+                       /* Center single-digit number vert+horiz */
+                       textprintf (double_buffer, font, dx * 16 + 4,
+                         dy * 16 + 4, makecol (255, 255, 255), "%d",
+                         z_map[w]);
+                    }
+
+                  else if (z_map[w] < 100)
+                    {
+                       /* Center double-digit number vert */
+                       textprintf (double_buffer, font, dx * 16,
+                         dy * 16 + 4, makecol (255, 255, 255), "%d",
+                         (int)(z_map[w] / 10) );
+                       textprintf (double_buffer, font, dx * 16 + 8,
+                         dy * 16 + 4, makecol (255, 255, 255), "%d",
+                         (int)(z_map[w] % 10) );
+                    }
+
+                  else
+                    {
+                       /* Print 100's digit in top-right corner of square;
+                          10's and 1's digits on bottom of square
+                       */
+                       textprintf (double_buffer, font, dx * 16 + 8,
+                         dy * 16, makecol (255, 255, 255), "%d",
+                         (int)(z_map[w] / 100) );
+                       textprintf (double_buffer, font, dx * 16,
+                         dy * 16 + 8, makecol (255, 255, 255), "%02d",
+                         (int)(z_map[w] % 100) );
+                    }
+               } /* if (showing.zones == 1 && z_map[w] > 0) */
+          } /* for (dx = 0; dx < maxx; dx++) */
      } /* for (dy = 0; dy < maxy; dy++) */
 
    /* Draw the Entities */
@@ -1673,13 +1727,13 @@ void global_change (void)
               f_map[p] = tt;
         if (ps)
            if (s_map[p] == ft)
-              s_map[p] = ft;
+              s_map[p] = ft; /* Is this supposed to be 'tt'? */
         if (po)
            if (o_map[p] == ft)
-              o_map[p] = ft;
+              o_map[p] = ft; /* ...same... */
         if (pz)
            if (z_map[p] == ft)
-              z_map[p] = ft;
+              z_map[p] = ft; /* ...same... */
      }
 } /* global_change () */
 
@@ -2428,7 +2482,7 @@ void wipe_map (void)
    cmessage ("Do you want to clear the whole map? (y/n)");
    if (!yninput ())
       return;
-   
+
    memset (map, 0, gmap.xsize * gmap.ysize * 2);
    memset (b_map, 0, gmap.xsize * gmap.ysize * 2);
    memset (f_map, 0, gmap.xsize * gmap.ysize * 2);
