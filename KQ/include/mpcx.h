@@ -1,6 +1,6 @@
 /* Allegro datafile object indexes, produced by grabber v4.1.8 (WIP), djgpp */
-/* Datafile: e:\kq\data\mpcx.dat */
-/* Date: Thu Jan  9 00:07:11 2003 */
+/* Datafile: kq/data/mpcx.dat */
+/* Date: Sat May 15 12:56:27 2004 */
 /* Do not hand edit! */
 
 #define ALLFONTS_PCX                     0      /* BMP  */
@@ -17,7 +17,7 @@
 #define BACK9_PCX                        11     /* BMP  */
 #define CASTLE_PCX                       12     /* BMP  */
 #define DESTITLE_PCX                     13     /* BMP  */
-#define ENEMY2_PCX                       14     /* BMP  */
+#define ENEMY_PCX                        14     /* BMP  */
 #define ENTITIES_PCX                     15     /* BMP  */
 #define INCAVE_PCX                       16     /* BMP  */
 #define KQFACES_PCX                      17     /* BMP  */

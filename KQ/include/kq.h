@@ -19,7 +19,7 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-/*! \file 
+/*! \file
  * \brief Main include file for KQ
  * \author JB
  * \date ??????
@@ -84,20 +84,23 @@ const char *kqres (int dir_id, const char *file);
 /*\}*/
 
 /*! \name Attributes of characters */
+/*  These are the stats when you check your
+ *  characters stats (on the left)
+ */
 /*\{*/
-#define A_STR 0
-#define A_AGI 1
-#define A_VIT 2
-#define A_INT 3
-#define A_SAG 4
-#define A_SPD 5
-#define A_AUR 6
-#define A_SPI 7
-#define A_ATT 8
-#define A_HIT 9
-#define A_DEF 10
-#define A_EVD 11
-#define A_MAG 12
+#define A_STR 0                 // Strength
+#define A_AGI 1                 // Agility
+#define A_VIT 2                 // Vitality
+#define A_INT 3                 // Intellect
+#define A_SAG 4                 // Sagacity
+#define A_SPD 5                 // Speed
+#define A_AUR 6                 // Aura
+#define A_SPI 7                 // Spirit
+#define A_ATT 8                 // Attack
+#define A_HIT 9                 // Hit
+#define A_DEF 10                // Defense
+#define A_EVD 11                // Evade
+#define A_MAG 12                // Mag.Def
 /*\}*/
 
 /*! \name Spells */
@@ -134,7 +137,12 @@ const char *kqres (int dir_id, const char *file);
 #define C_RUN      8
 /*\}*/
 
-/*! \name Runes/Resistances? */
+/*! \name Runes/Resistances */
+/*  These are what your strengths and weaknesses to certain
+ *  elements and elemental attacks.  This can be a negative
+ *  value (lots of damage), 0 (neutral), or a positive value
+ *  (very little damage).
+ */
 /*\{*/
 #define R_EARTH     0
 #define R_BLACK     1
@@ -171,8 +179,8 @@ const char *kqres (int dir_id, const char *file);
 #define W_CHENDIGAL    29
 /*\}*/
 
-/*!\name Use modes 
- * Specify how an item can be used.  
+/*!\name Use modes
+ * Specify how an item can be used.
  */
 /*\{*/
 #define USE_NOT          0
@@ -292,7 +300,7 @@ typedef struct
 }
 s_heroinfo;
 
-/*! \brief Fighter 
+/*! \brief Fighter
  *
  * s_player is transformed into a s_fighter during combat.
  * See enemy_init() for more information on the fields.
@@ -311,23 +319,23 @@ typedef struct
    int mhp;                     /*!<\brief  max hit points */
    int mp;                      /*!<\brief  magic points */
    int mmp;                     /*!<\brief max magic points */
-   int dip;                     /*!<\brief defeat item probability. 
+   int dip;                     /*!<\brief defeat item probability.
                                  * Probability in % that the enemy will yield an item when defeated.
                                  */
-   int ditmc;                   /*!<\brief defeat item common. 
+   int ditmc;                   /*!<\brief defeat item common.
                                  * If the enemy yields an item, it will be this 95% of the time.
                                  */
    int ditmr;                   /*!<\brief defeat item rare.
-                                   * If the enemy yields an item, it will be this 5% of the time.
+                                 * If the enemy yields an item, it will be this 5% of the time.
                                  */
    int sitmc;                   /*!<\brief steal item common.
                                  * If Ayla steals something, it will be this 95% of the time.
                                  */
-   int sitmr;                   /*!<\brief steal item rare 
+   int sitmr;                   /*!<\brief steal item rare
                                  * If Ayla steals something, it will be this 5% of the time.
                                  */
    int stats[13];               /*!<\brief See A_* constants in kq.h */
-   char res[16];
+   char res[16];                /*!<\brief See R_* constants in kq.h */
    unsigned char facing;
    unsigned char aframe;
    unsigned char crit;
@@ -338,10 +346,10 @@ typedef struct
    unsigned char atrack[8];
    int csmem;
    int ctmem;
-   int cwt;                     /*!< \brief Current weapon type 
-                                   * The shape of the currently held weapon (sword, dagger, axe etc) \sa hero_init()
+   int cwt;                     /*!< \brief Current weapon type
+                                 * The shape of the currently held weapon (sword, dagger, axe etc) \sa hero_init()
                                  */
-   int welem;                   /*!< \brief Weapon elemental power */
+   int welem;                   /*!< \brief Which element type (sick, fire, water, etc.) */
    int unl;
    int aux;
    int bonus;
@@ -423,7 +431,8 @@ extern BITMAP *double_buffer, *fx_buffer;
 extern BITMAP *map_icons[MAX_TILES];
 
 
-extern BITMAP *back, *tc, *tc2, *bub[8], *b_shield, *b_shell, *b_repulse, *b_mp;
+extern BITMAP *back, *tc, *tc2, *bub[8], *b_shield, *b_shell, *b_repulse,
+   *b_mp;
 extern BITMAP *cframes[NUM_FIGHTERS][MAXCFRAMES],
    *tcframes[NUM_FIGHTERS][MAXCFRAMES], *frames[MAXCHRS][MAXFRAMES];
 extern BITMAP *eframes[MAXE][MAXEFRAMES], *pgb[9], *sfonts[5], *bord[8];
@@ -439,8 +448,8 @@ extern s_entity g_ent[MAX_ENT + PSIZE];
 extern s_anim tanim[7][MAX_ANIM];
 extern s_anim adata[MAX_ANIM];
 extern int noe, pidx[MAXCHRS], numchrs, gp, xofs, yofs, gsvol, gmvol;
-extern unsigned char autoparty, alldead, is_sound, deadeffect,
-   vfollow, use_sstone, sound_avail;
+extern unsigned char autoparty, alldead, is_sound, deadeffect, vfollow,
+   use_sstone, sound_avail;
 extern unsigned char kq_version, hold_fade, cansave, skip_intro, wait_retrace,
    windowed, stretch_view;
 extern unsigned short tilex[MAX_TILES], adelay[MAX_ANIM];
@@ -455,7 +464,8 @@ extern volatile int timer, ksec, kmin, khr, timer_count;
 extern unsigned short lup[MAXCHRS][20];
 extern COLOR_MAP cmap;
 extern unsigned char can_run, display_desc;
-extern unsigned char draw_background, draw_middle, draw_foreground, draw_shadow;
+extern unsigned char draw_background, draw_middle, draw_foreground,
+   draw_shadow;
 extern unsigned short g_inv[MAX_INV][2];
 extern int view_x1, view_y1, view_x2, view_y2, view_on, in_combat;
 extern int frate, mfrate, show_frate, use_joy, cheat_loaded;
