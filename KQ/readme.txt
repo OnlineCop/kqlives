@@ -1,3 +1,25 @@
+KQ - the console-style roleplaying game
+=======================================
+
+KQ is a open-sourced CRPG, with eight characters, over twenty maps,
+countless item, spells and enemies, all accompanied by music and sound
+effects.
+
+The majority of KQ was developed by JB, until he abandoned it in
+Autumn 2002. Due to the wonders of open source, it was rescued by a
+team from the Allegro community (http://www.allegro.cc/), including
+Peter, 23yrold3yrold, ReyBrujo, Dudaskank, Konforce and Troy, later to
+be joined by Team Terradactyl.
+
+26/01/03: Interim Windows binary release
+01/11/02: New Opal cave designed by CB
+01/10/02: Many bug-fixes, code documents with Doxygen
+22/09/02: KQ uses DUMB (http://dumb.sourceforge.net/) for music.
+15/09/02: New Windows/DOS/Unix built system
+03/09/02: KQ moves to Sourceforge (http://kqlives.sourceforge.net/)
+
+Without further ado, over to JB:
+---------------
 Hello.
 
 Disclaimer:
