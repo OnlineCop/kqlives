@@ -99,18 +99,34 @@ function entity_handler(en)
                "this quest.");
       bubble(0,"So far, everything that I",
                "dreamed about has come to pass.","","");
-      bubble(HERO1,"Well, then can you tell me where",
+      if (get_progress(P_EARLYPROGRESS)<2) then
+       bubble(HERO1,"Well, then can you tell me where",
                    "I should start my search?","","");
-      bubble(0,"Yes! You must head to the town",
+       bubble(0,"Yes! You must head to the town",
                "of Andra on the mainland. Take",
                "the tunnel from Ekla to Randen.","");
-      bubble(0,"From there, go east across the",
+       bubble(0,"From there, go east across the",
                "river to Andra. Once there talk",
                "to a man named Tsornin.","");
-      bubble(0,"He's the captain of the city",
+       bubble(0,"He's the captain of the city",
                "guard and should be easy to",
                "find. He can guide you from",
                "there.");
+      elseif (get_progress(P_EARLYPROGRESS)==2) then
+       bubble(HERO1, "Have you had any dreams about where to search next?");
+       bubble(0, "Yes! You need to return to Randen, and go east across the river to Andra");
+       bubble(0, "There, you will meet a man named Tsorinin. He's the captain of the city",
+               "guard and should be easy to",
+               "find. He can guide you from",
+               "there.");
+      elseif (get_progress(P_EARLYPROGRESS)>2) then
+       bubble(HERO1, "I have searched all over, and I can't find the staff. Can you help me?");
+       bubble(0, "You should have come to see me earlier, $0. In the town of Andra you will meet a man called Tsornin. Tell him that I sent you.");
+       bubble(0, "He's the captain of the city",
+               "guard and should be easy to",
+               "find. He can guide you from",
+               "there.");
+      end
       bubble(HERO1,"Can you tell me anything else?","","","");
       bubble(0,"I have nothing further to tell",
                "you except this: be cautious,",

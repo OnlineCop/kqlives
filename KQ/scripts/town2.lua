@@ -2,7 +2,7 @@
 
 function autoexec()
   local a;
-
+  set_progress(P_EARLYPROGRESS, 2);
   if (get_progress(P_GETPARTNER) == 0) then
     while (get_progress(P_PARTNER1) == 0) do
       a = krnd(8);
@@ -428,3 +428,4 @@ function LOC_partner_check(who)
                "some time.","");
   end
 end
+

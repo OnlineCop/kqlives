@@ -1,6 +1,7 @@
 -- town1 - "Ekla"
 
 function autoexec()
+  set_progress(P_EARLYPROGRESS, 1);
   refresh()
 end
 
@@ -315,3 +316,4 @@ function LOC_old_lady()
     end
   end
 end
+

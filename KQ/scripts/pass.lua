@@ -3,6 +3,18 @@
 function autoexec()
   refresh();
 end
+  
+-- show the status of a chest
+function showch(x, y, tr)
+local ch
+if (get_treasure(tr)==1) then
+ ch=39;
+else
+ ch=38;
+end
+set_mtile(x,y,ch);
+end
+
 
 function refresh()
   if (get_progress(P_SAVEBREANNE) > 0) then
@@ -11,18 +23,13 @@ function refresh()
     place_ent(1,get_ent_tilex(1)+1,get_ent_tiley(1));
     set_ent_facing(1,2);
   end
-
-  if (get_progress(P_CAVEKEY)>0) then
-    place_ent(2,152,12);
-  end
-
-  if (get_treasure(73) == 1) then
-    set_mtile(74,47,39);
-  end
-  if (get_treasure(74) == 1) then
-    set_mtile(75,47,39);
-  end
-
+if (get_progress(P_CAVEKEY)>0) then
+  place_ent(2,152,12);
+end
+  showch(74,47,73);
+  showch(75,47,74);
+  showch(84,23,82);
+  showch(93,21,83);
   if (get_progress(P_PASSDOOR2) == 1) then
     set_mtile(78,38,57);
     set_mtile(78,39,33);
@@ -52,23 +59,20 @@ function zone_handler(zn)
     change_map("main",271,100,271,100);
 
   elseif (zn == 3) then
-    bubble(HERO1, "It only opens",
-                  "from the inside","","");
---  if (get_progress(P_CAVEKEY) == 0) then
---    bubble(HERO1,"Locked.","","","");
---    return
---  else
---      sfx(26);
---    set_mtile(83,27,57);
---    set_mtile(83,28,33);
---    drawmap();
---    screen_dump();
---  end
---  change_map("cave5",35,4,0,0);
-
+   if (get_progress(P_CAVEKEY) == 0) then
+    bubble(HERO1,"Locked.","","","");
+    return
+   else
+    sfx(26);
+    set_mtile(83,27,57);
+    set_mtile(83,28,33);
+    drawmap();
+    screen_dump();
+   end
+   change_map("cave5",35,4,0,0);
   elseif (zn == 4) then
-    chest(73,I_VITSEED,1);
-    refresh();
+   chest(73,I_VITSEED,1);
+   refresh();
 
   elseif (zn == 5) then
     chest(74,I_ERUNE,1);
@@ -104,7 +108,11 @@ function zone_handler(zn)
   elseif (zn==9) then -- door out of cabin
     door_out(83,50);
   elseif (zn==10) then --treasure
+   chest(82,0,500);
+   refresh();
   elseif (zn==11) then --treasure
+   chest(83,I_SALVE,1);
+   refresh();
   end
 end
 

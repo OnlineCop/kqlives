@@ -1,6 +1,7 @@
 -- town3 - "Andra"
 
 function autoexec()
+  set_progress(P_EARLYPROGRESS, 3);
   if (get_progress(P_TALKDERIG) > 2) then
     set_ent_active(1,0);
   end
@@ -226,7 +227,8 @@ function entity_handler(en)
       set_progress(P_TALKDERIG,2);
       return
     end
-    if (get_progress(P_TALKDERIG) == 2 and get_progress(P_GOBLINITEM) == 1) then
+    if (get_progress(P_TALKDERIG) == 2 and get_progress(P_GOBLINITEM) == 1) 
+then
       set_progress(P_TALKDERIG,3);
       bubble(1,"Hey... you did it! Fantastic!",
                "Let's head to the fort.","","");
@@ -256,3 +258,4 @@ function entity_handler(en)
 
   end
 end
+

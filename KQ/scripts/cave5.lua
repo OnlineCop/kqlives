@@ -1,7 +1,21 @@
 -- cave5 - "The new Opal cave in the mountain pass"
 
+--todo: top door back in from pass, some chests on wrong level inside cave cabin, obstacles for pass chests
+--      no comment for second side of double pillar.
+
 function autoexec()
   refresh();
+end
+
+-- show the status of a chest
+function showch(x, y, tr)
+local ch
+if (get_treasure(tr)==1) then
+ ch=41;
+else
+ ch=40;
+end
+set_mtile(x,y,ch);
 end
 
 function refresh()
@@ -21,6 +35,14 @@ function refresh()
   if (get_progress(P_BOMB5)~=0) then
     copy_tile_all(121,20,34,25,3,5);
   end
+-- modify for the chests
+  showch(93,19,90);
+  showch(10,11,91);
+  showch(91,61,92);
+  showch(60,78,93);
+  showch(63,78,94);
+  showch(93,100,95);
+  showch(95,98,96);
 end
 
 function postexec()
@@ -112,22 +134,21 @@ end
 
 function destroy4b()
 -- double pillar (right)
-  local p=get_progress(P_BOMB4);
-  if (p==0 and has_dynamite()) then
-    hero_escape("R5D4R7D1R5");
-    sfx(42);
-    set_progress(P_BOMB4, 2);
-  elseif (p==2) then
-    -- already destroyed this side
-    bubble(HERO1, "I weakened it, but", "it might need another",
-                  "hit to destroy it","");
-  elseif (p==1 and has_dynamite()) then
-    -- really destroyed it!
-    hero_escape("R5D4R7D1R5");
-    sfx(42);
-    set_progress(P_BOMB4, 3);
-  end
-  refresh();
+local p=get_progress(P_BOMB4);
+if (p==0 and has_dynamite()) then
+ hero_escape("R5D4R7D1R5");
+ sfx(42);
+ set_progress(P_BOMB4, 2);
+elseif (p==2) then
+ -- already destroyed this side
+ bubble(HERO1, "I weakened it, but it might need another hit to destroy it.");
+elseif (p==1 and has_dynamite()) then
+ -- really destroyed it!
+ hero_escape("R5D4R7D1R5");
+ sfx(42);
+ set_progress(P_BOMB4, 3);
+end
+refresh();
 end
 
 function destroy5()
@@ -181,53 +202,65 @@ function hero_escape(script)
 end
 
 function zone_handler(zn)
---log("Cave - zone "..zn);
-  if (zn==1) then
-    destroy1();
-  elseif (zn==2) then
-    destroy2();
-  elseif (zn==3) then
-    destroy3();
-  elseif (zn==4) then
-    destroy4a();
-  elseif (zn==5) then
-    destroy4b();
-  elseif (zn==6) then
-    destroy5();
-  elseif (zn==7) then
-    warp(35,10,10);
-  elseif (zn==8) then
-    warp(35,24,10);
-  elseif (zn==9) then
-    change_map("pass", 78,39,0,0);
-  elseif (zn==10) then
-    change_map("pass", 106,36,0,0);
-  elseif (zn==11) then
-    set_save(1);
-    sfx(26);
-    warp(119,139,10);
-  elseif (zn==12) then
-    change_map("pass", 83,28,0,0);
-  elseif (zn==13) then
-    set_save(0);
-    warp(35,4,10);
-  elseif (zn==14) then
-    set_save(0);
-    warp(112,49,10);
-  elseif (zn==15) then
-    set_save(1);
-    warp(119,132,10);
-  elseif (zn==16) then
-    --treasure
-  elseif (zn==17) then
-    --treasure
-  elseif (zn==18) then
-    --treasure
-  elseif (zn==19) then
-    --treasure
-  elseif (zn==20) then
-    --treasure
-  end
+if (zn==0) then
+ -- do nothing
+elseif (zn==1) then 
+ destroy1();
+elseif (zn==2) then
+ destroy2();
+elseif (zn==3) then
+ destroy3();
+elseif (zn==4) then
+ destroy4a();
+elseif (zn==5) then
+ destroy4b();
+elseif (zn==6) then
+ destroy5();
+elseif (zn==9) then
+ change_map("pass", 78,39,0,0);
+elseif (zn==10) then
+ change_map("pass", 106,36,0,0);
+elseif (zn==12) then
+ change_map("pass", 83,28,0,0);
+elseif (zn==14) then
+ set_save(0);
+ warp(35,10,10);--long room south
+elseif (zn==15) then
+ warp(35,4,10);--long room north
+elseif (zn==8) then
+ set_save(1);
+ warp(119,132,10);--save point north
+elseif (zn==7) then
+ set_save(1);
+ warp(119,139,10);--save point south
+elseif (zn==13) then
+ set_save(0);
+ warp(35,24,10);--behind pillar
+elseif (zn==11) then
+ sfx(26); 
+ warp(112,49,10);--dragon
+elseif (zn==16) then
+ chest(90, I_PCURING,1);
+ refresh();
+elseif (zn==17) then
+ chest(91, I_B_VISION,1);
+ refresh();
+elseif (zn==18) then
+ chest(92, I_WATERRING,1);
+ refresh();
+elseif (zn==19) then
+ chest(93, I_KBREW,1);
+ refresh();
+elseif (zn==20) then
+ chest(94, 0,1000);
+ refresh();
+elseif (zn==21) then
+ chest(95, I_VITSEED,2);
+ refresh();
+elseif (zn==22) then
+ chest(96, 0, 1000);
+ refresh();
+end
 end
 
 function entity_handler(en)
@@ -246,12 +279,12 @@ end
 -- 8 south of long room
 -- 9 left-bottom exit
 -- 10 right-bottom exit
--- 11 north of long room->119, 139 (save ON)
--- 12 door at extreme left ->out
--- 13 save point room (south) ->long room 4,10 (save OFF)
--- 14 save point room (north) ->112,49 (save OFF)
--- 15 opal dragon room south ->119,132 (save ON)
--- 16..20 chests
+-- 11 north of long room
+-- 12 door at extreme left 
+-- 13 save point room (south) 
+-- 14 save point room (north)  
+-- 15 opal dragon room south 
+-- 16..22 chests
 
 -- character crib for PH
 -- SENSAR   0

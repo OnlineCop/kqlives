@@ -152,7 +152,7 @@ end
 
 function zone_handler(zn)
   if (zn == 0) then
---    combat(54);
+    combat(54);
   elseif (zn == 1) then
     if (get_progress(P_ORACLE) > 0) then
       set_progress(P_TOWEROPEN,0);
@@ -200,8 +200,8 @@ function zone_handler(zn)
         set_btile(42,12,190);
         set_btile(47,9,160);
         set_obs(47,9,1);
-        set_btile(50,9,0);
-        set_obs(50,9,1);
+        set_btile(50,9,160);
+        set_obs(50,9,0);
         sfx(26);
       end
     else
