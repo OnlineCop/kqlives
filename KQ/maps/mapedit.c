@@ -317,8 +317,8 @@ void cleanup (void)
  */
 void clear_layer (void)
 {
-   int response, selected_layer, i;
-   int done;
+   int response, i, done;
+   int selected_layer = 0;
 
    rectfill (double_buffer, 0, 0, 94, 22, 0);
    rect (double_buffer, 2, 2, 92, 20, 255);
@@ -429,7 +429,7 @@ int confirm_exit (void)
  */
 void copy_layer (void)
 {
-   int response, from_layer, to_layer;
+   int response, from_layer = 0, to_layer = 0;
    int a, b, done;
 
    rectfill (double_buffer, 0, 0, 124, 28, 0);
@@ -490,12 +490,19 @@ void copy_layer (void)
    }
 
    for (a = 0; a < gmap.xsize * gmap.ysize; a++) {
-      if (from_layer == 1)
-         b = map[a];
-      else if (from_layer == 2)
-         b = b_map[a];
-      else if (from_layer == 3)
-         b = f_map[a];
+      switch (from_layer) {
+      case 1:
+   b = map[a];
+   break;
+      case 2:
+   b = b_map[a];
+   break;
+      case 3:
+   b = f_map[a];
+   break;
+      default:
+   b = 0;
+      }
 
       if (to_layer == 1)
          map[a] = b;
@@ -1308,10 +1315,10 @@ void get_tile (void)
 void global_change (void)
 {
    int response, done;
-   int tile_from = 0, tile_to, i;
+   int tile_from = 0, tile_to = 0, i;
 
    /* Layers and attributes */
-   int p1, p2, p3, ps, po, pz;
+   int p1 = 0, p2 = 0, p3 = 0, ps = 0, po = 0, pz = 0;
 
    rectfill (double_buffer, 0, 0, 130, 35, 0);
    rect (double_buffer, 2, 2, 128, 33, 255);
@@ -1396,7 +1403,7 @@ void global_change (void)
       }
    }
 
-   for (i = 0; i < gmap.xsize * gmap.ysize; i++) {
+   for (i = 0; done && i < gmap.xsize * gmap.ysize; i++) {
       if (p1)
          if (map[i] == tile_from)
             map[i] = tile_to;
@@ -1428,11 +1435,11 @@ void global_change (void)
 void klog (char *msg)
 {
    char err_msg[80];
+   FILE *ff;
+
    strcat (strncpy (err_msg, msg, sizeof (err_msg) - 1), "\n");
    TRACE ("%s\n%s\n", msg, allegro_error);
    allegro_message (err_msg);
-
-   FILE *ff;
 
    ff = fopen ("mapdraw.log", "a");
    if (!ff)
@@ -2934,6 +2941,26 @@ void startup (void)
    int k, kx, ky, a, tmapx, tmapy;
    COLOR_MAP cmap;
 
+   /* Used for highlighting */
+   unsigned char hilite[] = {
+      00, 00, 00, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 00, 00, 00,
+      00, 00, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 00, 00,
+      00, 25, 25, 25, 45, 45, 45, 45, 45, 45, 45, 45, 25, 25, 25, 00,
+      25, 25, 25, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 25, 25, 25,
+      25, 25, 45, 45, 45, 25, 25, 25, 25, 25, 25, 45, 45, 45, 25, 25,
+      25, 25, 45, 45, 25, 25, 25, 25, 25, 25, 25, 25, 45, 45, 25, 25,
+      25, 25, 45, 45, 25, 25, 25, 00, 00, 25, 25, 25, 45, 45, 25, 25,
+      25, 25, 45, 45, 25, 25, 00, 00, 00, 00, 25, 25, 45, 45, 25, 25,
+      25, 25, 45, 45, 25, 25, 00, 00, 00, 00, 25, 25, 45, 45, 25, 25,
+      25, 25, 45, 45, 25, 25, 25, 00, 00, 25, 25, 25, 45, 45, 25, 25,
+      25, 25, 45, 45, 25, 25, 25, 25, 25, 25, 25, 25, 45, 45, 25, 25,
+      25, 25, 45, 45, 45, 25, 25, 25, 25, 25, 25, 45, 45, 45, 25, 25,
+      25, 25, 25, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 25, 25, 25,
+      00, 25, 25, 25, 45, 45, 45, 45, 45, 45, 45, 45, 25, 25, 25, 00,
+      00, 00, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 00, 00,
+      00, 00, 00, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 00, 00, 00,
+   };
+
    allegro_init ();
    install_keyboard ();
    install_timer ();
@@ -3006,26 +3033,6 @@ void startup (void)
       for (kx = 1; kx < 16; kx += 2)
          putpixel (mesh, kx, ky + 1, 255);
    }
-
-   /* Used for highlighting */
-   unsigned char hilite[] = {
-      00, 00, 00, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 00, 00, 00,
-      00, 00, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 00, 00,
-      00, 25, 25, 25, 45, 45, 45, 45, 45, 45, 45, 45, 25, 25, 25, 00,
-      25, 25, 25, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 25, 25, 25,
-      25, 25, 45, 45, 45, 25, 25, 25, 25, 25, 25, 45, 45, 45, 25, 25,
-      25, 25, 45, 45, 25, 25, 25, 25, 25, 25, 25, 25, 45, 45, 25, 25,
-      25, 25, 45, 45, 25, 25, 25, 00, 00, 25, 25, 25, 45, 45, 25, 25,
-      25, 25, 45, 45, 25, 25, 00, 00, 00, 00, 25, 25, 45, 45, 25, 25,
-      25, 25, 45, 45, 25, 25, 00, 00, 00, 00, 25, 25, 45, 45, 25, 25,
-      25, 25, 45, 45, 25, 25, 25, 00, 00, 25, 25, 25, 45, 45, 25, 25,
-      25, 25, 45, 45, 25, 25, 25, 25, 25, 25, 25, 25, 45, 45, 25, 25,
-      25, 25, 45, 45, 45, 25, 25, 25, 25, 25, 25, 45, 45, 45, 25, 25,
-      25, 25, 25, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 25, 25, 25,
-      00, 25, 25, 25, 45, 45, 45, 45, 45, 45, 45, 45, 25, 25, 25, 00,
-      00, 00, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 00, 00,
-      00, 00, 00, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 00, 00, 00,
-   };
 
    mesh2 = create_bitmap (16, 16);
    for (ky = 0; ky < 16; ky++)
