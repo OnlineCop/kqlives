@@ -37,7 +37,7 @@
 #include <string.h>
 
 #include <allegro.h>
-#include <allegro/internal/aintern.h>
+/*#include <allegro/internal/aintern.h>*/
 
 #include "setup.h"
 #include "fade.h"
@@ -754,6 +754,7 @@ int start_menu (int c)
  * This is the system menu that is invoked from within the game.
  * From here you can save, load, configure a couple of options or
  * exit the game altogether.
+ * \date 20040229 PH added 'Save anytime' facility when cheat mode is ON
  *
  * \returns 0 if cancelled or nothing happened, 1 otherwise
  */
@@ -767,8 +768,16 @@ int system_menu (void)
       menubox (double_buffer, xofs, yofs, 8, 4, BLUE);
       if (cansave == 1)
          print_font (double_buffer, 16 + xofs, 8 + yofs, "Save", FNORMAL);
-      else
+      else {
+#ifdef KQ_CHEATS
+	if (cheat)
+	  print_font (double_buffer, 16 + xofs, 8 + yofs,  "[Save]", FNORMAL);
+	else
+	  print_font (double_buffer, 16 + xofs, 8 + yofs, "Save", FDARK);
+#else
          print_font (double_buffer, 16 + xofs, 8 + yofs, "Save", FDARK);
+#endif /* KQ_CHEATS */
+      }
       print_font (double_buffer, 16 + xofs, 16 + yofs, "Load", FNORMAL);
       print_font (double_buffer, 16 + xofs, 24 + yofs, "Config", FNORMAL);
       print_font (double_buffer, 16 + xofs, 32 + yofs, "Exit", FNORMAL);
@@ -792,7 +801,11 @@ int system_menu (void)
       if (balt) {
          unpress ();
          if (ptr == 0) {
+#ifdef KQ_CHEATS
+	   if (cansave==1 || cheat) {
+#else
             if (cansave == 1) {
+#endif /* KQ_CHEATS */
                saveload (1);
                return 0;
             } else
