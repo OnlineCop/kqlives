@@ -172,24 +172,29 @@ function entity_handler(en)
             wait_for_entity(HERO1, HERO2);
             orient_heroes();
           end
-
+          set_ent_script(6, "L1D2");
+          wait_for_entity(6, 6);
+          bubble(6, "Good luck in your endeavours.")
+	  if (get_numchrs()>1) then -- Skip this partnering up bit.
+	     return
+	  end
           bubble(en, "Good luck in your endeavours.");
           if (get_progress(P_OLDPARTNER) > 0) then
             set_progress(P_FINALPARTNER, get_progress(P_OLDPARTNER));
           else
-            if (party[0] == CASANDRA) then
+            if (party[0] == Casandra) then
               if (krnd(10) < 5) then
                 set_progress(P_FINALPARTNER, TEMMIN + 1);
               end
             end
-            if (party[0] == TEMMIN) then
+            if (party[0] == Temmin) then
               if (krnd(10) < 5) then
                 set_progress(P_FINALPARTNER, CASANDRA + 1);
               end
             end
             while (get_progress(P_FINALPARTNER) == 0) do
               z = krnd(8);
-              if (z ~= party[0]) then
+              if (z ~= party[0].id) then
                 set_progress(P_FINALPARTNER, z+1);
               end
             end
