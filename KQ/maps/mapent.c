@@ -415,7 +415,8 @@ void draw_entdata (int en)
    print_sfont (SW - 78, 6, strbuf, double_buffer);
 
    /* Print all the options in the bottom menu */
-   print_sfont (160, SH - 46, "1 - change entity sprite", double_buffer);
+   sprintf (strbuf, "1 - change entity sprite (%d)", gent[en].chrx);
+   print_sfont (160, SH - 46, strbuf, double_buffer);
 
    /* TT: hack */
    if (gent[en].facing == 0)
@@ -429,9 +430,9 @@ void draw_entdata (int en)
 
    /* TT: end hack */
    if (gent[en].obsmode == 0)
-      strcpy (strbuf, "7 - Ignore obstructions");
+      strcpy (strbuf, "7 - ignore obstructions");
    else
-      strcpy (strbuf, "7 - Obstructive");
+      strcpy (strbuf, "7 - obstructive");
    print_sfont (160, SH - 34, strbuf, double_buffer);
    sprintf (strbuf, "x = %d", gent[en].tilex);
    print_sfont (24, SH - 46, strbuf, double_buffer);
@@ -468,19 +469,19 @@ void draw_entdata (int en)
    }
    print_sfont (0, SH - 10, "0 -", double_buffer);
    if (gent[en].snapback == 0)
-      strcpy (strbuf, "S - Snap back");
+      strcpy (strbuf, "S - snap back");
    else
-      strcpy (strbuf, "S - Don't snap back");
+      strcpy (strbuf, "S - don't snap back");
    print_sfont (160, SH - 28, strbuf, double_buffer);
    if (gent[en].facehero == 0)
-      strcpy (strbuf, "F - Face hero");
+      strcpy (strbuf, "F - face hero");
    else
-      strcpy (strbuf, "F - Don't face hero");
+      strcpy (strbuf, "F - don't face hero");
    print_sfont (160, SH - 22, strbuf, double_buffer);
    if (gent[en].transl == 0)
-      strcpy (strbuf, "T - Opaque");
+      strcpy (strbuf, "T - opaque");
    else
-      strcpy (strbuf, "T - Translucent");
+      strcpy (strbuf, "T - translucent");
    print_sfont (160, SH - 16, strbuf, double_buffer);
    blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
 }                               /* draw_entdata () */
