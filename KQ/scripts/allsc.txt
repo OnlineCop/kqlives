@@ -6,6 +6,8 @@ cave3a
 cave3b
 cave4
 cave5
+cave6a
+cave6b
 coliseum
 cult
 dville
@@ -31,4 +33,5 @@ town4
 town5
 town6
 town7
+town8
 tunnel
