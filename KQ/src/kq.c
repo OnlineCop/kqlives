@@ -1634,6 +1634,8 @@ void init_players (void)
         learn_new_spells (j);
      }
 
+   gp = 0;
+
    pb = load_datafile_object (PCX_DATAFILE, "USCHRS_PCX");
 
    if (!pb)

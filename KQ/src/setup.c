@@ -814,13 +814,12 @@ void free_samples (void)
 */
 void play_effect (int efc, int panning)
 {
-   int a, s, xo = 0, yo = 0;
+   int a, s, xo = 1, yo = 1;
    static const int bx[8] = { -1, 0, 1, 0, -1, 0, 1, 0 };
    static const int by[8] = { -1, 0, 1, 0, 1, 0, -1, 0 };
    static const int sc[] = { 1, 2, 3, 5, 3, 3, 3, 2, 1 };
    SAMPLE *samp;
    PALETTE whiteout, old;
-   pause_music ();
 
    /* Patch provided by mattrope: */
    /* sfx array is empty if sound is not initialized */
@@ -836,14 +835,12 @@ void play_effect (int efc, int panning)
            play_sample (samp, gsvol, panning, 1000, 0);
         break;
      case SND_BAD:
-        blit (double_buffer, back, 0, 0, 0, 0, 352, 280);
+        blit (double_buffer, fx_buffer, 0, 0, 0, 0, 352, 280);
 
-        /* PH What is this line for? */
-        blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
         if (is_sound != 0)
            play_sample (samp, gsvol, panning, 1000, 0);
         clear_bitmap (double_buffer);
-        blit (back, double_buffer, xofs, yofs, xofs, yofs, 320, 240);
+        blit (fx_buffer, double_buffer, xofs, yofs, xofs, yofs, 320, 240);
 
         if (in_combat == 0)
           {
@@ -858,10 +855,10 @@ void play_effect (int efc, int panning)
              blit2screen (xo + bx[a], yo + by[a]);
              wait (10);
           }
-        blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
+        blit (fx_buffer, double_buffer, 0, 0, 0, 0, 352, 280);
         break;
      case SND_EXPLODE:
-        blit (double_buffer, back, 0, 0, 0, 0, 352, 280);
+        blit (double_buffer, fx_buffer, 0, 0, 0, 0, 352, 280);
         clear_bitmap (double_buffer);
         get_palette (old);
         for (a = 0; a < 256; ++a)
@@ -869,7 +866,7 @@ void play_effect (int efc, int panning)
              s = (old[a].r + old[a].g + old[a].b) > 40 ? 0 : 63;
              whiteout[a].r = whiteout[a].g = whiteout[a].b = s;
           }
-        blit (back, double_buffer, xofs, yofs, xofs, yofs, 320, 240);
+        blit (fx_buffer, double_buffer, xofs, yofs, xofs, yofs, 320, 240);
         if (is_sound)
           {
              play_sample (samp, gsvol, panning, 1000, 0);
@@ -890,5 +887,4 @@ void play_effect (int efc, int panning)
         blit (fx_buffer, double_buffer, 0, 0, 0, 0, 352, 280);
         break;
      }
-   resume_music ();
 }

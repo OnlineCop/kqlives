@@ -23,7 +23,6 @@ static char *credits[] = {
    "Rey Brujo",
    "Matthew Leverton",
    "Sam Hocevar",
-   "Steven Fullmer",
    NULL
 };
 static char pressf1[] = "Press F1 for help";
@@ -39,6 +38,7 @@ static void ticker (void)
 }
 
 END_OF_FUNCTION (ticker);
+
 
 /*! \brief An S-shaped curve
  * 
@@ -59,6 +59,7 @@ static int ease (int x)
       return etab[x];
 }
 
+
 void allocate_credits (void)
 {
    unsigned int tlen = 0;
@@ -76,12 +77,16 @@ void allocate_credits (void)
    LOCK_VARIABLE (ticks);
    install_int_ex (ticker, BPS_TO_TIMER (60));
 }
+
+
 void deallocate_credits (void)
 {
    destroy_bitmap (wk);
    wk = NULL;
    remove_int (ticker);
 }
+
+
 void display_credits (void)
 {
    int i, x0, e;

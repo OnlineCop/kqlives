@@ -203,7 +203,7 @@ void hero_choose_action (int who)
                }
              tt = 0;
              for (a = 0; a < 6; a++)
-                if (can_invoke_item (party[pidx[who]].eqp[a]) == 0)
+                if (can_invoke_item (party[pidx[who]].eqp[a]))
                    tt++;
              if (tt > 0)
                {
@@ -635,10 +635,8 @@ static void draw_invokable (int dud)
    menubox (double_buffer, 72, 80, 20, 6, BLUE);
    for (a = 0; a < 6; a++)
      {
-        grd = FNORMAL;
         tt = party[dud].eqp[a];
-        if (can_invoke_item (tt) == 0)
-           grd = FDARK;
+        grd = can_invoke_item (tt) ? FNORMAL : FDARK;
         draw_icon (double_buffer, items[tt].icon, 88, a * 8 + 88);
         print_font (double_buffer, 96, a * 8 + 88, items[tt].name, grd);
      }
@@ -711,7 +709,7 @@ static int hero_invoke (int whom)
         if (balt)
           {
              unpress ();
-             if (can_invoke_item (party[dud].eqp[ptr]) == 1)
+             if (can_invoke_item (party[dud].eqp[ptr]))
                {
                   if (hero_invokeitem (whom, party[dud].eqp[ptr]) == 1)
                      stp = 2;
