@@ -207,6 +207,7 @@ static int KQ_wait_enter (lua_State *);
 static int KQ_istable (lua_State *);
 static void check_map_change (void);
 static int KQ_set_map_mode (lua_State *);
+static int party_getter (lua_State *);
 
 /* New functions */
 #if 0
@@ -464,23 +465,94 @@ static int get_field (const char *n)
 /*
  PH's own notes:
  party[] - chrs in play
- player[] - all players
- entity[] - all entities
- chrs in play appear in all 3
+ player[] - all players; this is read-only
+ entity[] - all entities (NPCs); this array is read-only, though the properties of the ents can change
+ chrs in play appear in party and player
  chrs not in play appear in player
  npc appear in entity
  also want ability to add custom properties
  also want it to change dynamically
- 
  */
 
+/*! \brief Get party array
+ *
+ * Implement the getting of character objects from the party
+ * array.
+ * \param L::1 which party member (0..numchrs-1)
+ * \returns hero object
+ */
+static int party_getter(lua_State* L) {
+    int which=lua_tonumber(L, 2);
+    TRACE("Getting %s\n", lua_tostring(L, 2));
+    if (which>=0 && which<numchrs) {
+        lua_getglobal(L, "player");
+        lua_rawgeti(L, -1, pidx[which]);
+    }
+    else {
+        lua_pushnil(L);
+    }
+    return 1;
+}
+/*! \brief Set party array
+ *
+ * Implement setting the character objects in the
+ * party array. Set an element to nil to remove the relevant
+ * hero from the party.
+ * \param L::1 which party member (0..MAX-1)
+ * \param L::2 hero object
+ */
+static int party_setter(lua_State* L) {
+    int which=lua_tonumber(L, 2);
+    if (which>=0 && which <MAXCHRS) {
+/* check if it is a valid hero object */
+        if (lua_isnil(L, 3)) {
+            int i;
+            /* it was nil, erase a character */
+            for (i=which; i<MAXCHRS; ++i) {
+                pidx[i]=pidx[i+1];
+                memcpy(&g_ent[i], &g_ent[i+1], sizeof(s_entity));
+            }
+            --numchrs;
+        }
+        else if (lua_istable(L, 3)) {
+            s_player* tt;
+            lua_pushstring (L, LUA_PLR_KEY);
+            lua_rawget (L, -2);
+            tt=lua_touserdata(L, -1);
+            if (tt) {
+                /* OK so far */
+                if (which>numchrs) which=numchrs;
+                pidx[which]=tt-party;
+                if (which>=numchrs) {
+                    /* Added a character in */
+                    numchrs=which+1;
+                    memcpy(&g_ent[which], &g_ent[0], sizeof(s_entity));
+                    g_ent[which].x=g_ent[0].x;
+                    g_ent[which].y=g_ent[0].y;
+                    /* orient heroes */
+                    lastm[0]=lastm[1]=MOVE_NOT;
+                }
+                g_ent[which].chrx=0;
+                g_ent[which].eid=pidx[which];
+                 
+            }
+            /* else, it was a table but not a hero */
+        }
+        else {
+        /* else, it wasn't a table */
+        }
+    }
+    return 0;
+}
 
-/*! \brief Object interface for party
+
+/*! \brief Object interface for character
  *
  * This implements the settable tag method
+ * for either a party member, a player or an entity
  * \param L the lua state. See lua docs for the settable protocol
  */
-int KQ_party_setter (lua_State * L)
+static int KQ_char_setter (lua_State * L)
 {
    int prop;
    s_player *pl;
@@ -568,7 +640,7 @@ int KQ_party_setter (lua_State * L)
  *
  * This implements the gettable tag method
  */
-int KQ_party_getter (lua_State * L)
+static int KQ_char_getter (lua_State * L)
 {
    int prop;
    int top;
@@ -656,50 +728,6 @@ int KQ_party_getter (lua_State * L)
    return 1;
 }
 
-/*! \brief Interface to g_ent array
-*
-* This gets/sets elements in the g_ent array
-*
-*/
-static int KQ_entity_getter (lua_State * L)
-{
-   return 1;
-}
-static int KQ_entity_setter (lua_State * L)
-{
-   return 0;
-}
-
-/*! \brief refresh the mapping from C structs to lua tables
-*
-* If the party changes or the NPC entities change, call this function
-* to re-init the appropriate lua tables
-*/
-void KQ_refresh_mapping (lua_State * L)
-{
-   int i, j;
-   s_entity *ent;
-   lua_getglobal (L, "player");
-   for (i = 0; i < MAXCHRS; ++i) {
-      ent = NULL;
-      for (j = 0; j < numchrs; ++j) {
-         if (pidx[j] == i) {
-            ent = &g_ent[j];
-            break;
-         }
-      }
-      lua_rawgeti (L, -1, i);
-      lua_pushstring (L, LUA_ENT_KEY);
-      if (ent) {
-         lua_pushuserdata (L, ent);
-      } else {
-         lua_pushnil (L);
-      }
-      lua_rawset (L, -3);
-   }
-   lua_pop (L, 1);
-
-}
 
 /*! \brief Initialise the object interface for heroes and entities
  *
@@ -715,6 +743,7 @@ static void init_obj (lua_State * L)
 {
    int i = 0;
    int tag = lua_newtag (L);
+   int ptag = lua_newtag(L);
 
    /* do all the players */
    for (i = 0; i < MAXCHRS; ++i) {
@@ -725,22 +754,27 @@ static void init_obj (lua_State * L)
       lua_rawset (L, -3);
       lua_setglobal (L, party[i].name);
    }
-   lua_pushcfunction (L, KQ_party_getter);
+   lua_pushcfunction (L, KQ_char_getter);
    lua_settagmethod (L, tag, "gettable");
-   lua_pushcfunction (L, KQ_party_setter);
+   lua_pushcfunction (L, KQ_char_setter);
    lua_settagmethod (L, tag, "settable");
-   /* party[] array */
-   lua_newtable (L);
+   /* party */
    for (i = 0; i < numchrs; ++i) {
       lua_getglobal (L, party[pidx[i]].name);
       /* also fill in the entity reference */
       lua_pushstring (L, LUA_ENT_KEY);
       lua_pushuserdata (L, &g_ent[i]);
       lua_rawset (L, -3);
-      /* and add to the array */
-      lua_rawseti (L, -2, i);
    }
-   lua_setglobal (L, "party");
+   /* party pseudo-array */
+   lua_newtable (L);
+   lua_settag(L, ptag);
+   lua_setglobal(L, "party");
+   lua_pushcfunction(L, party_getter);
+   lua_settagmethod(L, ptag, "gettable");
+   lua_pushcfunction(L, party_setter);
+   lua_settagmethod(L, ptag, "settable");
+   
    /* player[] array */
    lua_newtable (L);
    for (i = 0; i < MAXCHRS; ++i) {
@@ -783,16 +817,36 @@ int tmx, tmy, tmvx, tmvy, changing_map = 0;
  * Calculate what's the real entity number,
  * given an enemy number or HERO1 or HERO2
  *
- * \param   ee Input number
+ * 20040911 PH modified so now it will decode an object (e.g. entity[0] or party[0])
+ *
+ * \param   L Lua state
+ * \param   pos position on the lua stack
  * \returns real entity number
  */
-static int real_entity_num (int ee)
+static int real_entity_num (lua_State* L, int pos)
 {
-   if (ee == 255)
-      return 255;
-   if (ee == HERO1 || ee == HERO2)
-      return ee - 200;
-   return ee + PSIZE;
+    if (lua_isnumber(L, pos)) {
+        int ee= (int) lua_tonumber(L, pos);
+        switch(ee) {
+            case HERO1:
+                return 0;
+            case HERO2:
+                return 1;
+            case 255:
+                return 255;
+            default:
+                return ee+PSIZE;
+        }
+    }
+    if (lua_istable(L, pos)) {
+        s_entity* ent;
+        lua_pushstring (L, LUA_ENT_KEY);
+        lua_rawget (L, pos);
+        ent = (s_entity *) lua_touserdata (L, -1);
+        lua_pop (L, 1);
+        if (ent) return ent-g_ent;
+    }
+    return 255; /* means "nobody" */
 }
 
 
@@ -1289,7 +1343,7 @@ static int KQ_set_party_res (lua_State * L)
 
 static int KQ_get_ent_chrx (lua_State * L)
 {
-   int a = real_entity_num ((int) lua_tonumber (L, 1));
+   int a = real_entity_num (L, 1);
 
    lua_pushnumber (L, g_ent[a].chrx);
    return 1;
@@ -1299,7 +1353,7 @@ static int KQ_get_ent_chrx (lua_State * L)
 
 static int KQ_set_ent_chrx (lua_State * L)
 {
-   int a = real_entity_num ((int) lua_tonumber (L, 1));
+   int a = real_entity_num (L, 1);
 
    g_ent[a].chrx = (int) lua_tonumber (L, 2);
    return 0;
@@ -1319,7 +1373,7 @@ static int KQ_set_ent_chrx (lua_State * L)
  */
 static int KQ_set_ent_target (lua_State * L)
 {
-   int a = real_entity_num ((int) lua_tonumber (L, 1));
+   int a = real_entity_num (L, 1);
    g_ent[a].target_x = (int) lua_tonumber (L, 2);
    g_ent[a].target_y = (int) lua_tonumber (L, 3);
    g_ent[a].movemode = MM_TARGET;
@@ -1330,7 +1384,7 @@ static int KQ_set_ent_target (lua_State * L)
 
 static int KQ_get_ent_tilex (lua_State * L)
 {
-   int a = real_entity_num ((int) lua_tonumber (L, 1));
+   int a = real_entity_num (L, 1);
 
    lua_pushnumber (L, g_ent[a].tilex);
    return 1;
@@ -1340,7 +1394,7 @@ static int KQ_get_ent_tilex (lua_State * L)
 
 static int KQ_set_ent_tilex (lua_State * L)
 {
-   int a = real_entity_num ((int) lua_tonumber (L, 1));
+   int a = real_entity_num (L, 1);
 
    g_ent[a].tilex = (int) lua_tonumber (L, 2);
    g_ent[a].x = g_ent[a].tilex * 16;
@@ -1351,7 +1405,7 @@ static int KQ_set_ent_tilex (lua_State * L)
 
 static int KQ_get_ent_tiley (lua_State * L)
 {
-   int a = real_entity_num ((int) lua_tonumber (L, 1));
+   int a = real_entity_num(L, 1);
 
    lua_pushnumber (L, g_ent[a].tiley);
    return 1;
@@ -1361,7 +1415,7 @@ static int KQ_get_ent_tiley (lua_State * L)
 
 static int KQ_set_ent_tiley (lua_State * L)
 {
-   int a = real_entity_num ((int) lua_tonumber (L, 1));
+   int a = real_entity_num (L, 1);
 
    g_ent[a].tiley = (int) lua_tonumber (L, 2);
    g_ent[a].y = g_ent[a].tiley * 16;
@@ -1372,7 +1426,7 @@ static int KQ_set_ent_tiley (lua_State * L)
 
 static int KQ_get_ent_id (lua_State * L)
 {
-   int a = real_entity_num ((int) lua_tonumber (L, 1));
+   int a = real_entity_num (L, 1);
 
    lua_pushnumber (L, g_ent[a].eid);
    return 1;
@@ -1382,7 +1436,7 @@ static int KQ_get_ent_id (lua_State * L)
 
 static int KQ_set_ent_id (lua_State * L)
 {
-   int a = real_entity_num ((int) lua_tonumber (L, 1));
+   int a = real_entity_num (L, 1);
 
    g_ent[a].eid = (int) lua_tonumber (L, 2);
    return 0;
@@ -1392,7 +1446,7 @@ static int KQ_set_ent_id (lua_State * L)
 
 static int KQ_get_ent_active (lua_State * L)
 {
-   int a = real_entity_num ((int) lua_tonumber (L, 1));
+   int a = real_entity_num (L, 1);
 
    lua_pushnumber (L, g_ent[a].active);
    return 1;
@@ -1402,7 +1456,7 @@ static int KQ_get_ent_active (lua_State * L)
 
 static int KQ_set_ent_active (lua_State * L)
 {
-   int a = real_entity_num ((int) lua_tonumber (L, 1));
+   int a = real_entity_num (L, 1);
    int b = (int) lua_tonumber (L, 2);
 
    if (b == 0 || b == 1)
@@ -1414,7 +1468,7 @@ static int KQ_set_ent_active (lua_State * L)
 
 static int KQ_get_ent_facing (lua_State * L)
 {
-   int a = real_entity_num ((int) lua_tonumber (L, 1));
+   int a = real_entity_num (L, 1);
 
    lua_pushnumber (L, g_ent[a].facing);
    return 1;
@@ -1424,7 +1478,7 @@ static int KQ_get_ent_facing (lua_State * L)
 
 static int KQ_set_ent_facing (lua_State * L)
 {
-   int a = real_entity_num ((int) lua_tonumber (L, 1));
+   int a = real_entity_num (L, 1);
    int b = (int) lua_tonumber (L, 2);
 
    if (b >= FACE_DOWN && b <= FACE_RIGHT)
@@ -1436,7 +1490,7 @@ static int KQ_set_ent_facing (lua_State * L)
 
 static int KQ_get_ent_movemode (lua_State * L)
 {
-   int a = real_entity_num ((int) lua_tonumber (L, 1));
+   int a = real_entity_num (L, 1);
 
    lua_pushnumber (L, g_ent[a].movemode);
    return 1;
@@ -1446,7 +1500,7 @@ static int KQ_get_ent_movemode (lua_State * L)
 
 static int KQ_set_ent_movemode (lua_State * L)
 {
-   int a = real_entity_num ((int) lua_tonumber (L, 1));
+   int a = real_entity_num (L, 1);
    int b = (int) lua_tonumber (L, 2);
 
    if (b >= 0 && b <= 3)
@@ -1458,7 +1512,7 @@ static int KQ_set_ent_movemode (lua_State * L)
 
 static int KQ_get_ent_obsmode (lua_State * L)
 {
-   int a = real_entity_num ((int) lua_tonumber (L, 1));
+   int a = real_entity_num (L, 1);
 
    lua_pushnumber (L, g_ent[a].obsmode);
    return 1;
@@ -1468,7 +1522,7 @@ static int KQ_get_ent_obsmode (lua_State * L)
 
 static int KQ_set_ent_obsmode (lua_State * L)
 {
-   int a = real_entity_num ((int) lua_tonumber (L, 1));
+   int a = real_entity_num (L, 1);
    int b = (int) lua_tonumber (L, 2);
 
    if (b == 0 || b == 1)
@@ -1480,7 +1534,7 @@ static int KQ_set_ent_obsmode (lua_State * L)
 
 static int KQ_get_ent_speed (lua_State * L)
 {
-   int a = real_entity_num ((int) lua_tonumber (L, 1));
+   int a = real_entity_num (L, 1);
 
    lua_pushnumber (L, g_ent[a].speed);
    return 1;
@@ -1490,7 +1544,7 @@ static int KQ_get_ent_speed (lua_State * L)
 
 static int KQ_set_ent_speed (lua_State * L)
 {
-   int a = real_entity_num ((int) lua_tonumber (L, 1));
+   int a = real_entity_num (L, 1);
    int b = (int) lua_tonumber (L, 2);
 
    if (b >= 1 && b <= 7)
@@ -1502,7 +1556,7 @@ static int KQ_set_ent_speed (lua_State * L)
 
 static int KQ_get_ent_atype (lua_State * L)
 {
-   int a = real_entity_num ((int) lua_tonumber (L, 1));
+   int a = real_entity_num (L, 1);
 
    lua_pushnumber (L, g_ent[a].atype);
    return 1;
@@ -1512,7 +1566,7 @@ static int KQ_get_ent_atype (lua_State * L)
 
 static int KQ_set_ent_atype (lua_State * L)
 {
-   int a = real_entity_num ((int) lua_tonumber (L, 1));
+   int a = real_entity_num (L, 1);
 
    g_ent[a].snapback = (int) lua_tonumber (L, 2);
    return 0;
@@ -1522,7 +1576,7 @@ static int KQ_set_ent_atype (lua_State * L)
 
 static int KQ_get_ent_snapback (lua_State * L)
 {
-   int a = real_entity_num ((int) lua_tonumber (L, 1));
+   int a = real_entity_num (L, 1);
 
    lua_pushnumber (L, g_ent[a].snapback);
    return 1;
@@ -1532,7 +1586,7 @@ static int KQ_get_ent_snapback (lua_State * L)
 
 static int KQ_set_ent_snapback (lua_State * L)
 {
-   int a = real_entity_num ((int) lua_tonumber (L, 1));
+   int a = real_entity_num (L, 1);
    int b = (int) lua_tonumber (L, 2);
 
    if (b == 0 || b == 1)
@@ -1544,7 +1598,7 @@ static int KQ_set_ent_snapback (lua_State * L)
 
 static int KQ_get_ent_facehero (lua_State * L)
 {
-   int a = real_entity_num ((int) lua_tonumber (L, 1));
+   int a = real_entity_num (L, 1);
 
    lua_pushnumber (L, g_ent[a].facehero);
    return 1;
@@ -1554,7 +1608,7 @@ static int KQ_get_ent_facehero (lua_State * L)
 
 static int KQ_set_ent_facehero (lua_State * L)
 {
-   int a = real_entity_num ((int) lua_tonumber (L, 1));
+   int a = real_entity_num (L, 1);
    int b = (int) lua_tonumber (L, 2);
 
    if (b == 0 || b == 1)
@@ -1566,7 +1620,7 @@ static int KQ_set_ent_facehero (lua_State * L)
 
 static int KQ_get_ent_transl (lua_State * L)
 {
-   int a = real_entity_num ((int) lua_tonumber (L, 1));
+   int a = real_entity_num (L, 1);
 
    lua_pushnumber (L, g_ent[a].transl);
    return 1;
@@ -1576,7 +1630,7 @@ static int KQ_get_ent_transl (lua_State * L)
 
 static int KQ_set_ent_transl (lua_State * L)
 {
-   int a = real_entity_num ((int) lua_tonumber (L, 1));
+   int a = real_entity_num (L, 1);
    int b = (int) lua_tonumber (L, 2);
 
    if (b == 0 || b == 1)
@@ -1588,7 +1642,7 @@ static int KQ_set_ent_transl (lua_State * L)
 
 static int KQ_set_ent_script (lua_State * L)
 {
-   int a = real_entity_num ((int) lua_tonumber (L, 1));
+   int a = real_entity_num (L, 1);
 
    set_script (a, (char *) lua_tostring (L, 2));
    return 0;
@@ -2102,7 +2156,7 @@ static int KQ_prompt (lua_State * L)
    int a, b, nopts, nonblank;
 
    /* The B_TEXT or B_THOUGHT is ignored */
-   b = real_entity_num ((int) lua_tonumber (L, 1));
+   b = real_entity_num (L, 1);
    nopts = (int) lua_tonumber (L, 2);
 
    if (nopts > 4)
@@ -2137,8 +2191,8 @@ static int KQ_prompt (lua_State * L)
 
 static int KQ_copy_ent (lua_State * L)
 {
-   int a = real_entity_num ((int) lua_tonumber (L, 1));
-   int b = real_entity_num ((int) lua_tonumber (L, 2));
+   int a = real_entity_num (L, 1);
+   int b = real_entity_num (L, 2);
 
    g_ent[b] = g_ent[a];
    return 0;
@@ -2148,7 +2202,7 @@ static int KQ_copy_ent (lua_State * L)
 
 static int KQ_place_ent (lua_State * L)
 {
-   int a = real_entity_num ((int) lua_tonumber (L, 1));
+   int a = real_entity_num (L, 1);
 
    place_ent (a, (int) lua_tonumber (L, 2), (int) lua_tonumber (L, 3));
    return 0;
@@ -2158,8 +2212,8 @@ static int KQ_place_ent (lua_State * L)
 
 static int KQ_face_each_other (lua_State * L)
 {
-   int a = real_entity_num ((int) lua_tonumber (L, 1));
-   int b = real_entity_num ((int) lua_tonumber (L, 2));
+   int a = real_entity_num (L, 1);
+   int b = real_entity_num (L, 2);
 
    if (numchrs == 2) {
       if (g_ent[a].tilex == g_ent[b].tilex) {
@@ -2187,9 +2241,9 @@ static int KQ_face_each_other (lua_State * L)
 
 static int KQ_wait_for_entity (lua_State * L)
 {
-   int a = real_entity_num ((int) lua_tonumber (L, 1));
+   int a = real_entity_num (L, 1);
    int b =
-      lua_gettop (L) > 1 ? real_entity_num ((int) lua_tonumber (L, 2)) : a;
+      lua_gettop (L) > 1 ? real_entity_num (L, 2) : a;
 
    wait_for_entity (a, b);
    return 0;
@@ -2542,7 +2596,7 @@ static int KQ_move_camera (lua_State * L)
 
 static int KQ_in_forest (lua_State * L)
 {
-   int a = real_entity_num ((int) lua_tonumber (L, 1));
+   int a = real_entity_num (L, 1);
    lua_pushnumber (L, is_forestsquare (g_ent[a].tilex, g_ent[a].tiley));
    return 1;
 }
@@ -2850,7 +2904,7 @@ int KQ_bubble_ex (lua_State * L)
 
    switch (lua_type (L, 1)) {
    case LUA_TNUMBER:
-      entity = real_entity_num ((int) lua_tonumber (L, 1));
+      entity = real_entity_num (L, 1);
       break;
    case LUA_TTABLE:
       lua_pushstring (L, "_ent");
@@ -2870,7 +2924,7 @@ int KQ_bubble_ex (lua_State * L)
 
 int KQ_thought_ex (lua_State * L)
 {
-   int entity = real_entity_num ((int) lua_tonumber (L, 1));
+   int entity = real_entity_num (L, 1);
    const char *msg = lua_tostring (L, 2);
    text_ex (B_THOUGHT, entity, msg);
    return 0;
