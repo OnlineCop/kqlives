@@ -1345,7 +1345,7 @@ static int KQ_face_each_other (lua_State * L)
 static int KQ_wait_for_entity (lua_State * L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
-   int b = real_entity_num (lua_tonumber (L, 2));
+   int b = lua_gettop(L) > 1 ? real_entity_num (lua_tonumber (L, 2)) : a;
 
    wait_for_entity (a, b);
    return 0;
