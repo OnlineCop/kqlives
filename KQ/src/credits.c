@@ -12,9 +12,8 @@
 /*! Array of strings */
 static char *credits[] = {
    "(C) 2001 DoubleEdge Software",
-   "http://kqlives.sourceforge.net/",
-   "Press F1 for help",
    "(C) 2002,3 KQ Lives Team",
+   "http://kqlives.sourceforge.net/",
    "Peter Hull",
    "TeamTerradactyl",
    "Chris Barry",
@@ -23,10 +22,11 @@ static char *credits[] = {
    "Master Goodbytes",
    "Rey Brujo",
    "Matthew Leverton",
+   "Sam Hocevar",
    "Steven Fullmer",
-   "for Debian:Sam Hocevar",
    NULL
 };
+static char pressf1[] = "Press F1 for help";
 
 static char **cc = NULL;
 static short int etab[32];
@@ -85,6 +85,7 @@ void deallocate_credits (void)
 void display_credits (void)
 {
    int i, x0, e;
+   static int last_e = 999;
    if (wk == NULL)
      {
         allocate_credits ();
@@ -96,12 +97,18 @@ void display_credits (void)
         if (*(++cc) == NULL)
            cc = credits;
         print_font (wk, (wk->w - 8 * strlen (*cc)) / 2, 10, *cc, FNORMAL);
+        print_font (double_buffer, (320 - 8 * strlen (pressf1)) / 2, 218,
+                    pressf1, FNORMAL);
         ticks = 0;
      }
-   x0 = (320 - wk->w) / 2;
    e = 320 - ticks;
-   for (i = 0; i < wk->w; ++i)
+   if (e != last_e)
      {
-        blit (wk, double_buffer, i, ease (i + e), i + x0, 185, 1, 32);
+        x0 = (320 - wk->w) / 2;
+        for (i = 0; i < wk->w; ++i)
+          {
+             blit (wk, double_buffer, i, ease (i + e), i + x0, 185, 1, 32);
+          }
+        last_e = e;
      }
 }
