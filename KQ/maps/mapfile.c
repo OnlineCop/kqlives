@@ -187,13 +187,17 @@ void load_map (void)
    print_sfont (6, 18, "Filename: ", screen);
    ld = get_line (66, 18, fname, 40);
    if (ld == 0)
-     return;
+      return;
    blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
    rectfill (screen, 0, 0, 319, 16, 0);
    rect (screen, 2, 2, 317, 14, 255);
-// TODO: If the user doesn't specify a map name, assume that
-//       s/he wants to simply reload the current one.
-   sprintf (strbuf, "Load %s? (y/n)", fname);
+   if (strlen(fname) < 1)
+     {
+        strcpy(fname, map_fname);
+        sprintf (strbuf, "Reload %s? (y/n)", fname);
+     }
+   else
+      sprintf (strbuf, "Load %s? (y/n)", fname);
    print_sfont (6, 6, strbuf, screen);
    response = yninput ();
    if (response)
