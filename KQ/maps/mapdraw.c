@@ -1669,7 +1669,7 @@ void wipe_map (void)
 
    rectfill (screen, 0, 0, 319, 17, 0);
    rect (screen, 2, 2, 317, 15, 255);
-   print_sfont (6, 6, "Really clear the whole map? (y/n", screen);
+   print_sfont (6, 6, "Really clear the whole map? (y/n)", screen);
    r = yninput ();
    if (r)
      {
