@@ -2,40 +2,40 @@
 <html>
 <head>
   <title>KQ</title>
-                                                              
+                                                                     
   <meta http-equiv="content-type"
  content="text/html; charset=ISO-8859-1">
-                                   
+                                       
   <meta name="author" content="Peter Hull">
 </head>
   <body text="#c0c0c0" bgcolor="#000000" link="#ffffff" vlink="#ffffff"
  alink="#99ff99">
-                 
+                   
 <h1 align="center">KQ - Screenshots</h1>
-      Here are some screenshots for the current version of KQ.<br>
-          <br>
- <!--#include virtual="navigation_bar.html" -->                  <br>
-       <img src="gfx/shot1.png" alt="Shot1">
-      <img src="gfx/shot2.png" alt="Shot 2">
-      <img src="gfx/shot3.png" alt="Shot 3">
-      <br>
-Here are the new enemies, and the new Opal cave level:<br>
-<img src="tmp/new_enemies.jpg" alt="New enemies" width="240"
- height="180">
-&nbsp;<img src="gfx/cave5.jpg" alt="Opal cave" width="240" height="180">
+       Here are some screenshots for the current version of KQ.<br>
+           <br>
+  <!--#include virtual="navigation_bar.html" -->                  <br>
+        <img src="gfx/shot1.png" alt="Shot1">
+       <img src="gfx/shot2.png" alt="Shot 2">
+       <img src="gfx/shot3.png" alt="Shot 3">
+       <br>
+ Here are the new enemies, and the new Opal cave level:<br>
+ <img src="tmp/new_enemy.jpg" alt="New enemies" width="240" height="180">
+ &nbsp;<img src="gfx/cave5.jpg" alt="Opal cave" width="240" height="180">
+  <br>
  <br>
-<br>
-This is the KQ map editor:<br>
-<img src="gfx/mapeditor.jpg" alt="Map Editor" width="240" height="180">
-<br>
-    <small>  KQ was originally written by DoubleEdge software <br>
-        This page hosted by </small><br>
-    <a href="http://sourceforge.net"><img
+ This is the KQ map editor:<br>
+ <img src="gfx/mapeditor.jpg" alt="Map Editor" width="240" height="180">
+ <br>
+     <small>  KQ was originally written by DoubleEdge software <br>
+         This page hosted by </small><br>
+     <a href="http://sourceforge.net"><img
  src="http://sourceforge.net/sflogo.php?group_id=61344&amp;type=5"
  width="210" height="62" border="0" alt="SourceForge Logo">
-     </a> <br>
+      </a> <br>
+     <br>
     <br>
-   <br>
-   <br>
+    <br>
+ <br>
 </body>
 </html>
