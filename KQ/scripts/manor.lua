@@ -1,6 +1,6 @@
 -- manor - "Nostik's manor southwest of Ekla"
 
--- "{
+-- /*
 -- Which globals should we have for manor?
 --
 -- P_MANOR
@@ -46,7 +46,7 @@
 --  NOSLOM   7
 --  Nostik   8
 --  Hunert   9
--- }"
+-- */
 
 
 function autoexec()
@@ -87,8 +87,7 @@ function autoexec()
 
   -- You have recruited at least 1 other party member
   elseif (get_progress(P_MANOR) == 3) then
-    for a = 1, 7, 1 do
-
+     LOC_at_table()
 -- **HERE** is the trouble code:
 -- What is the best way that we want to keep track of which members have
 -- joined your party?  One way is to make use of a bitfield so you can have
@@ -96,28 +95,10 @@ function autoexec()
 -- way is to create a struct with '.in_party == 1' or something.  A third is
 -- to only set char_array[x] to the characters ID# if they joined, null if
 -- not.
-
-      -- You have not recruited this person into your team
-      if (in_party(get_ent_id(a)) == 0) then
-        -- Remove entity from the map
-        set_ent_active(a, 0);
-
-      -- This person has been recruited
-      else
-        -- Place around the table
-        set_ent_active(a, 1);
-      end
-    end
     -- Put Nostik to bed (he is old and feeble)
     place_ent(8, 9, 37);
 
   end
-end
-
-
--- Why are these 3 lines in here if immediately followed with another postexec() ?
-function postexec()
-  return
 end
 
 
@@ -262,6 +243,8 @@ function entity_handler(en)
     elseif (get_progress(P_MANOR) == 3) then
       bubble(9, "The others in your group are here. I'm sure if you talk to them, they will join your party.");
       bubble(9, "Welcome back. Nostik has retired to his room. Please don't wake him.");
+      select_manor()-- PH, this is where your script comes in?
+      LOC_at_table()
     end
   end
 
@@ -310,10 +293,30 @@ function LOC_chit_chat(a)
   elseif (b == NOSLOM) then
     bubble(a, "I am fortunate to have been selected.");
   end
--- TT debug add:
-  -- This causes some glitches that we are going to have to fix; it is perfect
-  -- here because everyone is conveniently located right here.  Now I need
-  -- to fix it so it properly handles multiple party members.
--- SLF remove:
---  add_chr(b);
+end
+
+function LOC_at_table()
+   local id,a
+   log("HERO1 "..get_pidx(0)..", HERO2 "..get_pidx(1))
+   for a=0,7 do
+      -- You have not recruited this person into your team
+      id=get_progress(a+P_MANORPARTY)-1
+      if (id==get_pidx(0)) then
+	 id=-1;
+      end
+      if (get_numchrs()==2 and id==get_pidx(1)) then
+	 id=-1;
+      end
+      log("Ent "..a.." with ID "..id)
+      if (id < 0) then
+        -- Remove entity from the map
+	 set_ent_active(a, 0);
+      else
+        -- Place around the table
+        set_ent_active(a, 1)
+	set_ent_id(a, id)
+	set_ent_chrx(a,255)
+	set_ent_obsmode(a,1)
+      end
+   end
 end
