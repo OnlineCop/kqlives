@@ -255,8 +255,8 @@ s_anim;
 /*! \brief Map definition */
 typedef struct
 {
-   unsigned char map_no;        /*!<Map identifier */
-   unsigned char zero_zone;     /*!<Non-zero if zone 0 triggers an event */
+   unsigned char map_no;        /*!< Map identifier */
+   unsigned char zero_zone;     /*!< Non-zero if zone 0 triggers an event */
    unsigned char map_mode;      /*!< Map mode (see draw_map()) */
    unsigned char can_save;      /*!< Non-zero if Save is allowed in this map */
    unsigned char tileset;       /*!< Which tile-set to use */
@@ -272,7 +272,7 @@ typedef struct
    int warpx;                   /*!< x-coord where warp spell takes you to (see special_spells()) */
    int warpy;                   /*!< y-coord where warp spell takes you to (see special_spells()) */
    int extra_sdword1;           /*!< Not used */
-   int extra_sdword2;           /*!<Not used */
+   int extra_sdword2;           /*!< Not used */
    char song_file[16];          /*!< Base file name for map song */
    char map_desc[40];           /*!< Map name (shown when map first appears) */
 }
@@ -282,20 +282,20 @@ s_map;
 /*! \brief Player */
 typedef struct
 {
-   char name[9];
-   int xp;
-   int next;
-   int lvl;
-   int mrp;
-   int hp;
-   int mhp;
-   int mp;
-   int mmp;
+   char name[9];                /*!< Entity name */
+   int xp;                      /*!< Entity experience */
+   int next;                    /*!< Experience needed for level-up */
+   int lvl;                     /*!< Entity's level */
+   int mrp;                     /*!<  */
+   int hp;                      /*!< Hit points */
+   int mhp;                     /*!< Maximum hit points */
+   int mp;                      /*!< Magic points */
+   int mmp;                     /*!< Maximum magic points */
    int stats[13];
    char res[16];
    unsigned char sts[24];
-   unsigned char eqp[6];
-   unsigned char spells[60];
+   unsigned char eqp[6];        /*!< Weapons, armor, etc. equipped */
+   unsigned char spells[60];    /*!< Known spells */
 }
 s_player;
 
@@ -336,7 +336,7 @@ typedef struct
    int csmem;
    int ctmem;
    int cwt;
-   int welem;
+   int welem;                    /*!< has the ability of 'White' spell element */
    int unl;
    int aux;
    int bonus;
