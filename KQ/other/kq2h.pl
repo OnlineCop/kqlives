@@ -1,16 +1,22 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w
 
 die "Need a file name!" if ($#ARGV != 0);
 
 $ft = 0;
-@vh = ("item","spell","nf","tnum");
+@vh = ("item","spell","nf","tnum", "mapno");
 
 open (IFILE,$ARGV[0]) or die "Could not open input file.";
 
+sub quote {
+    $_[0] =~ s/^\s+//;
+    $_[0] =~ s/\s+$//;
+    $_[0]="\"".$_[0]."\"";
+}
+
 while (<IFILE>)
 {
-  chomp($_);
-  @ff = split(",",$_);
+  chomp;
+  @ff = split(",");
   if ($ft == 0)
   {
     for $a (0 .. $#vh)
@@ -53,12 +59,20 @@ while (<IFILE>)
     $ff[0] = "  {".$ff[0];
     $ff[7] = "\"".$ff[7]."\"},\n";
   }
-  else
+  elsif ($ft==4)
   {
     next if ($#ff < 7);
     $ff[0] = "  {".$ff[0];
     $ff[3] = "{".$ff[3];
     $ff[7] = $ff[7]."}},\n";
+  }
+  elsif ($ft==5)
+  {
+      next if ($#ff<6);
+      $ff[0]=" {".$ff[0];
+      quote($ff[5]);
+      quote($ff[6]);
+      $ff[6]=$ff[6]."},\n";
   }
   print (join(",",@ff));
   $c++;
