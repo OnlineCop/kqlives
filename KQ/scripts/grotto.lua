@@ -107,7 +107,7 @@ function entity_handler(en)
                "the tunnel from Ekla to Randen.","");
        bubble(0,"From there, go east across the",
                "river to Andra. Once there talk",
-               "to a man named Tsornin.","");
+               "to a man named Tsorin.","");
        bubble(0,"He's the captain of the city",
                "guard and should be easy to",
                "find. He can guide you from",
@@ -115,13 +115,13 @@ function entity_handler(en)
       elseif (get_progress(P_EARLYPROGRESS)==2) then
        bubble(HERO1, "Have you had any dreams about where to search next?");
        bubble(0, "Yes! You need to return to Randen, and go east across the river to Andra");
-       bubble(0, "There, you will meet a man named Tsorinin. He's the captain of the city",
+       bubble(0, "There, you will meet a man named Tsorin. He's the captain of the city",
                "guard and should be easy to",
                "find. He can guide you from",
                "there.");
       elseif (get_progress(P_EARLYPROGRESS)>2) then
        bubble(HERO1, "I have searched all over, and I can't find the staff. Can you help me?");
-       bubble(0, "You should have come to see me earlier, $0. In the town of Andra you will meet a man called Tsornin. Tell him that I sent you.");
+       bubble(0, "You should have come to see me earlier, $0. In the town of Andra you will meet a man called Tsorin. Tell him that I sent you.");
        bubble(0, "He's the captain of the city",
                "guard and should be easy to",
                "find. He can guide you from",
