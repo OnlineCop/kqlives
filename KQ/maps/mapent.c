@@ -148,19 +148,19 @@ void place_entity (int ex, int ey)
      }
 
    /* Set its personality/attributes/stats */
-   gent[noe].chrx = cent;
-   gent[noe].tilex = ex;
-   gent[noe].tiley = ey;
-   gent[noe].x = ex * 16;
-   gent[noe].y = ey * 16;
-   gent[noe].active = 1;
-   gent[noe].id = 255;
-   gent[noe].movemode = 0;
-   gent[noe].delay = 50;
-   gent[noe].speed = 3;
-   gent[noe].obsmode = 1;
-   gent[noe].facing = 0;
-   strcpy (gent[noe].script, "");
+   gent[noe].chrx = cent;  /* What it looks like */
+   gent[noe].tilex = ex;   /* which tile it's standing on */
+   gent[noe].tiley = ey;   /* ..same.. */
+   gent[noe].x = ex * 16;  /* Will be the same as tilex unless moving */
+   gent[noe].y = ey * 16;  /* ..same.. */
+   gent[noe].active = 1;   /* Showing on map or not */
+   gent[noe].id = 255;     /* */
+   gent[noe].movemode = 0; /* 0=stand, 1=wander, 2=script, 3=chase */
+   gent[noe].delay = 50;   /* Length of time between commands */
+   gent[noe].speed = 3;    /* Walking speed */
+   gent[noe].obsmode = 1;  /* 0=not obstacle, 1=obstacle */
+   gent[noe].facing = 0;   /* 0=S, 1=N, 2=W, 3=E */
+   strcpy (gent[noe].script, "");  /* Pre-defined movement (pace, dance...) */
    noe++;
 } /* place_entity () */
 
