@@ -56,11 +56,18 @@ s_show;
 
 
 
+/* From mapdata.c */
+void getfont (void);
+
+/* From mapdump.c */
+void error_load (const char *);
+void usage (const char *);
+
 /* From mapedit.c */
 void animate (void);
-void bufferize (void);
+extern void bufferize (void);
 int check_last_zone (void);
-void cleanup (void);
+extern void cleanup (void);
 void clear_layer (void);
 void clear_obstructs (void);
 void clear_shadows (void);
@@ -68,23 +75,25 @@ void cmessage (char *);
 int confirm_exit (void);
 void copy_layer (void);
 void copy_region (void);
+int count_current_obstacles (void);
+int count_current_shadows (void);
 int count_current_zones (void);
 void describe_map (void);
-void draw_layer (short *, int);
+void draw_layer (short *, const int);
 void draw_map (void);
 void draw_menubars (void);
-int get_line (int, int, char *, int);
+int get_line (const int, const int, char *, const int);
 void get_tile (void);
 void global_change (void);
 void klog (char *);
 void normalize_view (void);
-void paste_region (int, int);
-void paste_region_special (int, int);
+void paste_region (const int, const int);
+void paste_region_special (const int, const int);
 void preview_map (void);
-void print_sfont (int, int, char *, BITMAP *);
-void process_keyboard (int);
-void process_menu_bottom (int, int);
-void process_menu_right (int, int);
+void print_sfont (const int, const int, const char *, BITMAP *);
+void process_keyboard (const int);
+void process_menu_bottom (const int, const int);
+void process_menu_right (const int, const int);
 void process_mouse (const int);
 void read_controls (void);
 void resize_map (const int);
@@ -92,46 +101,43 @@ void select_only (const int, const int);
 void show_help (void);
 void startup (void);
 void update_tileset (void);
-void visual_map (void);
 void wait_enter (void);
 void wipe_map (void);
 int yninput (void);
 
 /* From mapent.c */
 void displace_entities (void);
-void draw_entdata (int);
+void draw_entdata (const int);
 void draw_ents (void);
-void erase_entity (int, int);
+void erase_entity (const int, const int);
 void init_entities (void);
 void place_entity (int, int);
 void update_entities (void);
 
 /* From mapfile.c */
-void error_load (AL_CONST char *);
-void load_map (char *);
+void error_load (const char *);
 void make_mapfrompcx (void);
 void maptopcx (void);
 void new_map (void);
 void prompt_load_map (void);
 void save_map (void);
-void set_pcx (BITMAP **, char *, PALETTE, int);
 
-/* From mapdata.c */
-void getfont (void);
+/* From mapshared.c */
+void load_map (const char *);
+void set_pcx (BITMAP **, const char *, PALETTE, const int);
+void visual_map (const char *);
 
 
-extern BITMAP *double_buffer, *pcx_buffer;
-extern BITMAP *font6;
-extern BITMAP *icons[];
-extern PALETTE pal;
+BITMAP *double_buffer, *pcx_buffer, *icons[MAX_TILES], *eframes[MAX_EPICS][12];
+BITMAP *font6, *mesh;
+PALETTE pal;
 
-extern BITMAP *eframes[MAX_EPICS][12];
+char map_fname[40], *strbuf;
+short icon_set;
 
-extern char *icon_files[];
-extern char *strbuf;
-extern char map_fname[];
+extern char *icon_files[NUM_TILESETS];
 
-extern int draw_mode, htiles, vtiles;
+extern const int htiles, vtiles;
 extern int number_of_ents, current_ent;
 
 extern s_entity gent[];
@@ -140,7 +146,7 @@ extern s_show showing;
 extern s_anim adata[MAX_ANIM];
 
 extern short window_x, window_y;
-extern short icon_set, max_sets;
+extern short max_sets;
 
-extern unsigned short *map, *b_map, *f_map, *c_map, *cf_map, *cb_map;
-extern unsigned char *z_map, *sh_map, *o_map, *cz_map, *csh_map, *co_map;
+unsigned short *map, *b_map, *f_map, *c_map, *cf_map, *cb_map;
+unsigned char *z_map, *sh_map, *o_map, *cz_map, *csh_map, *co_map;

@@ -26,53 +26,23 @@
 
 /* globals */
 
-/* Selectable tiles on the right-hand menu */
-BITMAP *icons[MAX_TILES];
-
-/* Image and screen buffers */
-BITMAP *pcx_buffer, *double_buffer;
-
-/* White checker-board overlay for obstacle */
-BITMAP *mesh, *mesh2;
-
-/* Font and mouse images */
-BITMAP *font6, *mouse_pic;
-
-/* Entity frames: each of the entities have 12 frames: 3 in each direction */
-BITMAP *eframes[MAX_EPICS][12];
-
-/* Shadows are transparent and drawn over the top of ALL layers, regardless of
- * parallax
- */
-BITMAP *shadow[MAX_SHADOWS];
-
-/* These are for the Layers 1-3 */
-unsigned short *map, *b_map, *f_map, *c_map, *cb_map, *cf_map;
-
-/* These are for the Zone, Shadow and Obstacle Attributes */
-unsigned char *o_map, *sh_map, *z_map, *co_map, *csh_map, *cz_map;
+BITMAP *mesh2, *shadow[MAX_SHADOWS];
+static BITMAP *mouse_pic;
 
 /* Used for the right-hand menu, plus something for the mouse */
-short icon_set = 0, max_sets = 51, nomouse = 0;
-
-/* Stores the name of the currently loaded map */
-char map_fname[16] = "";
-
-/* Used everywhere for strings */
-char *strbuf;
+short max_sets = 51, nomouse = 0;
 
 /* window_x and window_y are view-window coords
  * x and y are everything else
  */
 short window_x = 0, window_y = 0, x = 0, y = 0;
 
-int draw_mode = MAP_LAYER123, curtile = 0, dmode = 0;
-
-int curzone = 0, curshadow = 0, curobs = 0;
-int copying = 0, copyx1 = -1, copyx2 = -1, copyy1 = -1, copyy2 = -1;
-int clipb = 0, cbh = 0, cbw = 0;
-int needupdate, highlight;
-const int COLUMN_WIDTH = 80;
+static int draw_mode = MAP_LAYER123, curtile = 0, dmode = 0;
+static int curzone = 0, curshadow = 0, curobs = 0;
+static int copying = 0, copyx1 = -1, copyx2 = -1, copyy1 = -1, copyy2 = -1;
+static int clipb = 0, cbh = 0, cbw = 0;
+static int needupdate, highlight;
+static const int COLUMN_WIDTH = 80;
 
 s_map gmap;
 s_entity gent[50];
@@ -118,12 +88,6 @@ unsigned char mousepic[] = {
    00, 00, 00, 15
 };
 
-/* Tileset images */
-char *icon_files[NUM_TILESETS] = {
-   "land.pcx", "newtown.pcx", "castle.pcx",
-   "Incave.pcx", "village.pcx", "mount.pcx",
-   "shrine.pcx"
-};
 
 /* The map modes (parallax and drawing order) are listed here in
  * coded format. The layers are listed as 1, 2, 3, E (entity) S (shadow)
@@ -138,19 +102,28 @@ static const char *map_mode_text[] = {
    "12E(3S",
 };
 
-int htiles = (SW - 80) / 16;
-int vtiles = (SH - 48) / 16;
+const int htiles = (SW - 80) / 16;
+const int vtiles = (SH - 48) / 16;
 
 
 /* Welcome to Mapdraw, folks! */
 int main (int argc, char *argv[])
 {
    int stop = 0, oldmouse_x = 0, oldmouse_y = 0;
+   int i;
+
    needupdate = 0;
 
    startup ();
    if (argc > 1) {
       load_map (argv[1]);
+      /* Recount the number of entities on the map */
+      number_of_ents = 0;
+
+      for (i = 0; i < 50; i++) {
+         if (gent[i].active == 1)
+            number_of_ents = i + 1;
+      }
    }
 
    while (!stop) {
@@ -167,7 +140,6 @@ int main (int argc, char *argv[])
          if (!nomouse) {
             unscare_mouse ();
             show_mouse (double_buffer);
-            // draw_sprite (double_buffer, mouse_pic, mouse_x, mouse_y);
          }
          blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
          if (!nomouse) {
@@ -224,10 +196,7 @@ void animate (void)
 
    for (i = 0; i < MAX_ANIM; i++)
       adata[i] = tanim[gmap.tileset][i];
-
 }                               /* animate */
-
-END_OF_FUNCTION (animate);
 
 
 /*! \brief Memory allocation
@@ -288,8 +257,6 @@ void bufferize (void)
    clipb = 0;
 }                               /* bufferize () */
 
-END_OF_FUNCTION (bufferize);
-
 
 /*! \brief Return the maximum zone used in the map
  *
@@ -306,8 +273,6 @@ int check_last_zone (void)
    return a;
 }                               /* check_last_zone () */
 
-END_OF_FUNCTION (check_last_zone);
-
 
 /*! \brief Code shutdown and memory deallocation
  *
@@ -317,15 +282,9 @@ void cleanup (void)
 {
    int k, j;
 
-   for (k = 0; k < MAX_TILES; k++)
-      destroy_bitmap (icons[k]);
-   for (k = 0; k < MAX_EPICS; k++)
-      for (j = 0; j < 12; j++)
-         destroy_bitmap (eframes[k][j]);
-   destroy_bitmap (double_buffer);
-   free (map);
    free (b_map);
    free (f_map);
+   free (map);
    free (o_map);
    free (sh_map);
    free (z_map);
@@ -336,13 +295,20 @@ void cleanup (void)
    free (csh_map);
    free (cz_map);
    free (strbuf);
-   destroy_bitmap (mesh);
-   destroy_bitmap (mesh2);
+
+   for (k = 0; k < MAX_TILES; k++)
+      destroy_bitmap (icons[k]);
+   for (k = 0; k < MAX_EPICS; k++)
+      for (j = 0; j < 12; j++)
+         destroy_bitmap (eframes[k][j]);
    for (k = 0; k < MAX_SHADOWS; k++)
       destroy_bitmap (shadow[k]);
+   destroy_bitmap (double_buffer);
+   destroy_bitmap (font6);
+   destroy_bitmap (mesh);
+   destroy_bitmap (mesh2);
+   destroy_bitmap (mouse_pic);
 }                               /* cleanup () */
-
-END_OF_FUNCTION (cleanup);
 
 
 /*! \brief Clears a layer from the map
@@ -351,38 +317,50 @@ END_OF_FUNCTION (cleanup);
  */
 void clear_layer (void)
 {
-   int rt, ml, a;
-   char ts[4];
+   int response, selected_layer, i;
+   int done;
 
-   rectfill (double_buffer, 0, 0, 319, 29, 0);
-   rect (double_buffer, 2, 2, 317, 27, 255);
+   rectfill (double_buffer, 0, 0, 94, 22, 0);
+   rect (double_buffer, 2, 2, 92, 20, 255);
    print_sfont (6, 6, "Clear Layer", double_buffer);
-   print_sfont (6, 12, "Layer (1-3):", double_buffer);
-   blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
-   rt = get_line (84, 12, ts, 2);
+   print_sfont (6, 12, "Layer (1-3): ", double_buffer);
 
-   /* Make sure the line isn't blank */
-   if (rt == 0 || strlen (ts) < 1)
-      return;
-   /* Make sure the value is valid */
-   if ((atoi (ts) < 1 || atoi (ts) > 3)) {
-      cmessage ("Invalid layer!");
-      wait_enter ();
-      return;
+   done = 0;
+   while (!done) {
+      blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+      response = get_line (84, 12, strbuf, 2);
+
+      /* If the user hits ESC, break out of the function entirely */
+      if (response == 0)
+         return;
+
+      /* Make sure this line isn't blank */
+      if (strlen (strbuf) > 0) {
+         selected_layer = atoi (strbuf);
+
+         /* Make sure the value is valid */
+         if (selected_layer < 1 || selected_layer > 3) {
+            cmessage ("Invalid layer!");
+            wait_enter ();
+         } else {
+            sprintf (strbuf, "Do you want to clear Layer %d? (y/n)",
+                     selected_layer);
+            cmessage (strbuf);
+            if (yninput ())
+               done = 1;
+         }
+      }
    }
 
-   ml = atoi (ts);
-   for (a = 0; a < gmap.xsize * gmap.ysize; a++) {
-      if (ml == 1)
-         map[a] = 0;
-      else if (ml == 2)
-         b_map[a] = 0;
-      else
-         f_map[a] = 0;
+   for (i = 0; i < gmap.xsize * gmap.ysize; i++) {
+      if (selected_layer == 1)
+         map[i] = 0;
+      else if (selected_layer == 2)
+         b_map[i] = 0;
+      else if (selected_layer == 3)
+         f_map[i] = 0;
    }
 }                               /* clear_layer () */
-
-END_OF_FUNCTION (clear_layer);
 
 
 /*! \brief Clear obstructions on map
@@ -391,15 +369,13 @@ END_OF_FUNCTION (clear_layer);
  */
 void clear_obstructs (void)
 {
-   int co;
+   int i;
 
    cmessage ("Do you want to clear Obstructions? (y/n)");
    if (yninput ())
-      for (co = 0; co < gmap.xsize * gmap.ysize; co++)
-         o_map[co] = 0;
+      for (i = 0; i < gmap.xsize * gmap.ysize; i++)
+         o_map[i] = 0;
 }                               /* clear_obstructs () */
-
-END_OF_FUNCTION (clear_obstructs);
 
 
 /*! \brief Clear shadows on the map
@@ -408,15 +384,13 @@ END_OF_FUNCTION (clear_obstructs);
  */
 void clear_shadows (void)
 {
-   int co;
+   int i;
 
    cmessage ("Do you want to clear Shadows? (y/n)");
    if (yninput ())
-      for (co = 0; co < gmap.xsize * gmap.ysize; co++)
-         sh_map[co] = 0;
+      for (i = 0; i < gmap.xsize * gmap.ysize; i++)
+         sh_map[i] = 0;
 }                               /* clear_shadows () */
-
-END_OF_FUNCTION (clear_shadows);
 
 
 /*! \brief Default method for displaying messages to screen
@@ -427,15 +401,13 @@ END_OF_FUNCTION (clear_shadows);
  */
 void cmessage (char *buff)
 {
-   int cx;
+   int msg_length;
 
-   cx = strlen (buff) * 3;
-   rectfill (screen, 154 - cx, 91, 165 + cx, 108, 0);
-   rect (screen, 154 - cx, 91, 165 + cx, 108, 255);
-   print_sfont (160 - cx, 97, buff, screen);
+   msg_length = strlen (buff) * 3;
+   rectfill (screen, 154 - msg_length, 89, 165 + msg_length, 105, 0);
+   rect (screen, 156 - msg_length, 91, 163 + msg_length, 103, 255);
+   print_sfont (160 - msg_length, 95, buff, screen);
 }                               /* cmessage () */
-
-END_OF_FUNCTION (cmessage);
 
 
 /*! \brief Confirm exit
@@ -450,8 +422,6 @@ int confirm_exit (void)
    return yninput ();
 }                               /* confirm_exit () */
 
-END_OF_FUNCTION (confirm_exit);
-
 
 /*! \brief Copy an entire layer into another
  *
@@ -459,60 +429,82 @@ END_OF_FUNCTION (confirm_exit);
  */
 void copy_layer (void)
 {
-   int rt, rt2, ff, tt, a, b;
-   char ts[4];
+   int response, from_layer, to_layer;
+   int a, b, done;
 
-   rectfill (double_buffer, 0, 0, 319, 29, 0);
-   rect (double_buffer, 2, 2, 317, 27, 255);
+   rectfill (double_buffer, 0, 0, 124, 28, 0);
+   rect (double_buffer, 2, 2, 122, 26, 255);
    print_sfont (6, 6, "Copy Layer to Layer", double_buffer);
    print_sfont (6, 12, "From (1-3):", double_buffer);
-   blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
-   rt = get_line (78, 12, ts, 2);
 
-   /* Make sure the line isn't blank */
-   if (rt == 0 || strlen (ts) < 1)
-      return;
-   /* Make sure the value is valid */
-   if ((atoi (ts) < 1 || atoi (ts) > 3)) {
-      cmessage ("Invalid layer!");
-      wait_enter ();
-      return;
-   }
+   done = 0;
+   while (!done) {
+      blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+      response = get_line (78, 12, strbuf, 2);
 
-   ff = atoi (ts);
-   print_sfont (6, 18, "To (1-3):", double_buffer);
-   blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
-   rt2 = get_line (78, 18, ts, 2);
+      /* If the user hits ESC, break out of the function entirely */
+      if (response == 0)
+         return;
 
-   /* Make sure the line isn't blank */
-   if (rt2 == 0 || strlen (ts) < 1)
-      return;
-   /* Make sure the value is valid */
-   if ((atoi (ts) < 1 || atoi (ts) > 3)) {
-      cmessage ("Invalid layer!");
-      wait_enter ();
-      return;
-   }
+      /* Make sure the line isn't blank */
+      if (strlen (strbuf) > 0) {
+         from_layer = atoi (strbuf);
 
-   tt = atoi (ts);
-   for (a = 0; a < gmap.xsize * gmap.ysize; a++) {
-      if (ff == 1)
-         b = map[a];
-      else
-         b = (ff == 2 ? b_map[a] : f_map[a]);
-
-      if (tt == 1)
-         map[a] = b;
-      else {
-         if (tt == 2)
-            b_map[a] = b;
-         else
-            f_map[a] = b;
+         /* Make sure the value is valid */
+         if (from_layer < 1 || from_layer > 3) {
+            cmessage ("Invalid layer!");
+            wait_enter ();
+         } else {
+            done = 1;
+         }
       }
    }
-}                               /* copy_layer () */
+   /* This is incase we need to redraw the map, the information will still be
+    * visible to the user
+    */
+   sprintf (strbuf, "%d", from_layer);
+   print_sfont (78, 12, strbuf, double_buffer);
+   print_sfont (6, 18, "To (1-3):", double_buffer);
 
-END_OF_FUNCTION (copy_layer);
+   done = 0;
+   while (!done) {
+      blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+      response = get_line (78, 18, strbuf, 2);
+
+      /* If the user hits ESC, break out of the function entirely */
+      if (response == 0)
+         return;
+
+      /* Make sure the line isn't blank */
+      if (strlen (strbuf) > 0) {
+         to_layer = atoi (strbuf);
+
+         /* Make sure the value is valid */
+         if (to_layer < 1 || to_layer > 3) {
+            cmessage ("Invalid layer!");
+            wait_enter ();
+         } else {
+            done = 1;
+         }
+      }
+   }
+
+   for (a = 0; a < gmap.xsize * gmap.ysize; a++) {
+      if (from_layer == 1)
+         b = map[a];
+      else if (from_layer == 2)
+         b = b_map[a];
+      else if (from_layer == 3)
+         b = f_map[a];
+
+      if (to_layer == 1)
+         map[a] = b;
+      else if (to_layer == 2)
+         b_map[a] = b;
+      else
+         f_map[a] = b;
+   }
+}                               /* copy_layer () */
 
 
 /*! \brief Copy all the layers in a block area
@@ -524,21 +516,22 @@ void copy_region (void)
    /* Area block coords */
    int zx, zy;
    /* Used to swap 'backward' copy areas */
-   int swapx, swapy;
+   int swapx, swapy, coord1, coord2;
 
    clipb = 0;
    cbh = copyy2 - copyy1;
    cbw = copyx2 - copyx1;
 
    /* Determines if 'copy start coords' < 'copy finish coords' and fixes it */
-   if (cbh < 1) {
+   if (cbh < 0) {
       /* This swaps the 'start' and 'finish' y-coords if backward */
       swapy = copyy2;
       copyy2 = copyy1;
       copyy1 = swapy;
       cbh = copyy2 - copyy1;
    }
-   if (cbw < 1) {
+
+   if (cbw < 0) {
       /* This swaps the x-coords if they are backward */
       swapx = copyx2;
       copyx2 = copyx1;
@@ -551,24 +544,18 @@ void copy_region (void)
    /* Proceed to copy all the layers in the area block */
    for (zy = 0; zy <= cbh; zy++) {
       for (zx = 0; zx <= cbw; zx++) {
-         c_map[zy * gmap.xsize + zx] =
-            map[(copyy1 + zy) * gmap.xsize + copyx1 + zx];
-         cb_map[zy * gmap.xsize + zx] =
-            b_map[(copyy1 + zy) * gmap.xsize + copyx1 + zx];
-         cf_map[zy * gmap.xsize + zx] =
-            f_map[(copyy1 + zy) * gmap.xsize + copyx1 + zx];
-         co_map[zy * gmap.xsize + zx] =
-            o_map[(copyy1 + zy) * gmap.xsize + copyx1 + zx];
-         csh_map[zy * gmap.xsize + zx] =
-            sh_map[(copyy1 + zy) * gmap.xsize + copyx1 + zx];
-         cz_map[zy * gmap.xsize + zx] =
-            z_map[(copyy1 + zy) * gmap.xsize + copyx1 + zx];
+         coord1 = zy * gmap.xsize + zx;
+         coord2 = (copyy1 + zy) * gmap.xsize + copyx1 + zx;
 
+         c_map[coord1] = map[coord2];
+         cb_map[coord1] = b_map[coord2];
+         cf_map[coord1] = f_map[coord2];
+         co_map[coord1] = o_map[coord2];
+         csh_map[coord1] = sh_map[coord2];
+         cz_map[coord1] = z_map[coord2];
       }
    }
 }                               /* copy_region () */
-
-END_OF_FUNCTION (copy_region);
 
 
 /*! \brief Return the number of times THIS obstacle is used on the map
@@ -586,8 +573,6 @@ int count_current_obstacles (void)
    return i;
 }                               /* count_current_obstacles () */
 
-END_OF_FUNCTION (count_current_obstacles);
-
 
 /*! \brief Return the number of times THIS shadow is used on the map
  *
@@ -603,8 +588,6 @@ int count_current_shadows (void)
    }
    return i;
 }                               /* count_current_shadows () */
-
-END_OF_FUNCTION (count_current_shadows);
 
 
 /*! \brief Return the number of times THIS zone is used on the map
@@ -622,8 +605,6 @@ int count_current_zones (void)
    return i;
 }                               /* count_current_zones () */
 
-END_OF_FUNCTION (count_current_zones);
-
 
 /*! \brief Set the map's description
  *
@@ -631,26 +612,35 @@ END_OF_FUNCTION (count_current_zones);
  */
 void describe_map (void)
 {
-   int ld;
-   char tcd[39];
+   int response, done;
 
-   rectfill (double_buffer, 0, 0, 319, 29, 0);
-   rect (double_buffer, 2, 2, 317, 27, 255);
+   rectfill (double_buffer, 0, 0, 346, 29, 0);
+   rect (double_buffer, 2, 2, 344, 27, 255);
    print_sfont (6, 6, "Enter map description", double_buffer);
    sprintf (strbuf, "Current: %s", gmap.map_desc);
    print_sfont (6, 12, strbuf, double_buffer);
    print_sfont (6, 18, "New description: ", double_buffer);
-   blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
-   ld = get_line (66, 18, tcd, 40);
 
-   /* Make sure the line isn't blank */
-   if (ld == 0 || strlen (tcd) < 1)
-      return;
+   done = 0;
+   while (!done) {
+      blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+      response = get_line (108, 18, strbuf, 40);
 
-   strcpy (gmap.map_desc, tcd);
+      /* If the user hits ESC, break out of the function entirely */
+      if (response == 0)
+         return;
+
+      /* Make sure this line isn't blank */
+      if (strlen (strbuf) == 0) {
+         cmessage ("Do you want the description to be blank? (y/n)");
+         if (yninput ())
+            done = 1;
+      } else {
+         done = 1;
+      }
+   }
+   strcpy (gmap.map_desc, strbuf);
 }                               /* describe_map () */
-
-END_OF_FUNCTION (describe_map);
 
 
 /*! \brief Update the screen
@@ -661,13 +651,11 @@ void draw_map (void)
 {
    /* Coordinates inside the view-window */
    int dx, dy;
-   /* Entity index */
-   int d;
    /* Index for tiles inside the view-window */
    int w;
    /* Size of the map or view-window, whichever is smaller */
    int maxx, maxy;
-   int drawlayer1 = 0, drawlayer2 = 0, drawlayer3 = 0;
+   int i, drawlayer1 = 0, drawlayer2 = 0, drawlayer3 = 0;
 
    /* Clear everything with black */
    rectfill (double_buffer, 0, 0, (SW - 81), (SH - 49), 0);
@@ -676,15 +664,8 @@ void draw_map (void)
     * view-window; we don't want to check/update anything that would be out of
     * bounds.
     */
-   if (vtiles > gmap.ysize)
-      maxy = gmap.ysize;
-   else
-      maxy = vtiles;
-
-   if (htiles > gmap.xsize)
-      maxx = gmap.xsize;
-   else
-      maxx = htiles;
+   maxx = htiles > gmap.xsize ? gmap.xsize : htiles;
+   maxy = vtiles > gmap.ysize ? gmap.ysize : vtiles;
 
    /* This loop will draw everything within the view-window */
    for (dy = 0; dy < maxy; dy++) {
@@ -722,7 +703,7 @@ void draw_map (void)
 
          /* Clear the background before drawing */
          if (draw_mode == MAP_LAYER1 || draw_mode == MAP_LAYER2
-             || draw_mode == MAP_LAYER3)
+             || draw_mode == MAP_LAYER3 || draw_mode == MAP_PREVIEW)
             rectfill (double_buffer, dx * 16, dy * 16, dx * 16 + 15,
                       dy * 16 + 15, 0);
 
@@ -741,7 +722,7 @@ void draw_map (void)
 
          /* Draw the Obstacles */
          if ((showing.obstacles) && (o_map[w] > 0)
-             && (o_map[w] < MAX_OBSTACLES)) {
+             && (o_map[w] <= MAX_OBSTACLES)) {
             switch (o_map[w]) {
             case 1:
                /* Block-all: blocks movement from every direction */
@@ -787,7 +768,8 @@ void draw_map (void)
             } else if (z_map[w] < 1000) {
                /* The zone's number is triple-digit.  Print the 100's digit in
                 * top-center of the square; the 10's and 1's digits on bottom
-                * of the square */
+                * of the square
+                */
                textprintf_ex (double_buffer, font, dx * 16 + 4, dy * 16,
                               makecol (255, 255, 255), 0, "%d",
                               (int) (z_map[w] / 100));
@@ -807,7 +789,8 @@ void draw_map (void)
             } else if (z_map[w] < 1000) {
                /* The zone's number is triple-digit.  Print the 100's digit in
                 * top-center of the square; the 10's and 1's digits on bottom
-                * of the square */
+                * of the square
+                */
                textprintf (double_buffer, font, dx * 16 + 4, dy * 16,
                            makecol (255, 255, 255), "%d",
                            (int) (z_map[w] / 100));
@@ -828,36 +811,54 @@ void draw_map (void)
                     && curzone > 0))
                draw_sprite (double_buffer, mesh2, dx * 16, dy * 16);
          }
-
-
       }                         /* for (dx) */
    }                            /* for (dy) */
 
    /* Draw the Entities */
    if (showing.entities == 1) {
-      for (d = 0; d < number_of_ents; d++) {
+      for (i = 0; i < number_of_ents; i++) {
          /* Draw only the entities within the view-screen */
-         if ((gent[d].tilex >= window_x) && (gent[d].tilex < window_x + htiles)
-             && (gent[d].tiley >= window_y)
-             && (gent[d].tiley < window_y + vtiles)) {
+         if ((gent[i].tilex >= window_x) && (gent[i].tilex < window_x + htiles)
+             && (gent[i].tiley >= window_y)
+             && (gent[i].tiley < window_y + vtiles)) {
             /* Draw either a normal sprite or a translucent one */
-            if (gent[d].transl == 0) {
+            if (gent[i].transl == 0) {
                draw_sprite (double_buffer,
-                            eframes[gent[d].chrx][gent[d].facing * 3],
-                            (gent[d].tilex - window_x) * 16,
-                            (gent[d].tiley - window_y) * 16);
+                            eframes[gent[i].chrx][gent[i].facing * 3],
+                            (gent[i].tilex - window_x) * 16,
+                            (gent[i].tiley - window_y) * 16);
             } else {
                draw_trans_sprite (double_buffer,
-                                  eframes[gent[d].chrx][gent[d].facing * 3],
-                                  (gent[d].tilex - window_x) * 16,
-                                  (gent[d].tiley - window_y) * 16);
+                                  eframes[gent[i].chrx][gent[i].facing * 3],
+                                  (gent[i].tilex - window_x) * 16,
+                                  (gent[i].tiley - window_y) * 16);
             }
          }
       }
-   }                            /* if (showing.entities == 1) */
-}                               /* draw_map () */
+   }
 
-END_OF_FUNCTION (draw_map);
+   /* if (showing.entities == 1) */
+   /* Displays the rectangle around the Block Copy coords */
+   if (draw_mode == BLOCK_COPY && copyx1 != -1 && copyy1 != -1) {
+      int rectx1, rectx2, recty1, recty2;
+      if (copyx1 < window_x + htiles && copyy1 < window_y + vtiles) {
+         rectx1 = (copyx1 - window_x) * 16;
+         recty1 = (copyy1 - window_y) * 16;
+         rectx2 = copyx2 < window_x + htiles ?
+            (copyx2 - window_x) * 16 + 15 : htiles * 16;
+         recty2 = copyy2 < window_y + vtiles ?
+            (copyy2 - window_y) * 16 + 15 : vtiles * 16;
+
+         if (copying == 0) {
+            /* Highlight the selected tile (takes into account window's coords) */
+            rect (double_buffer, rectx1, recty1, rectx2, recty2, 25);
+         } else {
+            /* Only the initial tile is selected */
+            rect (double_buffer, rectx1, recty1, rectx1 + 15, recty1 + 15, 25);
+         }
+      }
+   }
+}                               /* draw_map () */
 
 
 /*! \brief Draw the menus
@@ -878,7 +879,7 @@ void draw_menubars (void)
 
    /* Determine the views that we're currently using */
    draw_mode_display = 0;
-   draw_mode_last = 0;
+
    switch (draw_mode) {
    case MAP_LAYER1:
       draw_mode_display = 0;
@@ -929,6 +930,9 @@ void draw_menubars (void)
       draw_mode_display = 0;
       break;
    }                            /* switch (draw_mode) */
+
+   draw_mode_last = 0;
+
    switch (showing.last_layer) {
    case MAP_LAYER1:
       draw_mode_last = 0;
@@ -980,9 +984,6 @@ void draw_menubars (void)
       break;
    }                            /* switch (showing.last_layer) */
 
-   clear (double_buffer);
-   draw_map ();
-
    /* The white horizontal line that seperates the bottom menu */
    hline (double_buffer, 0, (SH - 48), (SW - 81), 255);
 
@@ -1006,27 +1007,6 @@ void draw_menubars (void)
       print_sfont (0, (SH - 28), "ZeroZone: NO", double_buffer);
    else
       print_sfont (0, (SH - 28), "ZeroZone: YES", double_buffer);
-
-   /* Displays the coordinates of the Block Copy */
-   if (draw_mode == BLOCK_COPY && copyx1 != -1 && copyy1 != -1) {
-      int rectx1, rectx2, recty1, recty2;
-
-      rectx1 = (copyx1 - window_x) * 16;
-      recty1 = (copyy1 - window_y) * 16;
-      rectx2 = (copyx2 - window_x) * 16 + 15;
-      recty2 = (copyy2 - window_y) * 16 + 15;
-
-      sprintf (strbuf, "Rect: %d,%d", copyx1 * 16, copyy1 * 16);
-      print_sfont ((COLUMN_WIDTH * 4), (SH - 24), strbuf, double_buffer);
-
-      if (copying == 0) {
-         /* Highlight the selected tile (takes into account window's coords) */
-         rect (double_buffer, rectx1, recty1, rectx2, recty2, 25);
-      } else {
-         /* Only the initial tile is selected */
-         rect (double_buffer, rectx1, recty1, rectx1 + 15, recty1 + 15, 25);
-      }
-   }
 
    /* Display the map number */
    sprintf (strbuf, "Map #: %d", gmap.map_no);
@@ -1240,27 +1220,26 @@ void draw_menubars (void)
    }
 }                               /* draw_menubars () */
 
-END_OF_FUNCTION (draw_menubars);
-
 
 /*! \brief Process keyboard input
  *
  * This allows the user to type in values, such as coords, names, etc.
  *
- * \param   window_x X-coord of the input "line"
- * \param   window_y Y-coord of the input "line"
+ * \param   line_x X-coord of the input "line"
+ * \param   line_y Y-coord of the input "line"
  * \param   buffer Where to sent the result
  * \param   max_len Maximum characters to accept
  * \returns 0 if user hits ESC (cancel)
  * \returns 1 if user hits ENTER
  */
-int get_line (int window_x, int window_y, char *buffer, int max_len)
+int get_line (const int line_x, const int line_y, char *buffer, const int max_len)
 {
    int index = 0, ch;
    BITMAP *under;
 
    under = create_bitmap (320, 6);
-   blit (screen, under, 0, window_y, 0, 0, 320, 6);
+
+   blit (screen, under, 0, line_y, 0, 0, 320, 6);
    while (1) {
       ch = (readkey () & 0xff);
 
@@ -1268,7 +1247,7 @@ int get_line (int window_x, int window_y, char *buffer, int max_len)
       if (ch >= 32 && ch <= 126 && index < max_len - 1) {
          buffer[index] = ch;
          buffer[index + 1] = 0;
-         print_sfont (window_x, window_y, buffer, screen);
+         print_sfont (line_x, line_y, buffer, screen);
          if (++index == max_len)
             index = max_len - 1;
       } else {
@@ -1276,7 +1255,7 @@ int get_line (int window_x, int window_y, char *buffer, int max_len)
          if (ch == 13) {
             buffer[index] = 0;
             destroy_bitmap (under);
-            return (1);
+            return 1;
          } else {
             /* Code for BACKSPACE */
             if (ch == 8) {
@@ -1284,22 +1263,23 @@ int get_line (int window_x, int window_y, char *buffer, int max_len)
                   index = 0;
                buffer[index] = ' ';
                buffer[index + 1] = 0;
-               blit (under, screen, 0, 0, 0, window_y, 320, 8);
-               print_sfont (window_x, window_y, buffer, screen);
+               blit (under, screen, 0, 0, 0, line_y, 320, 8);
+               print_sfont (line_x, line_y, buffer, screen);
                buffer[index] = 0;
             } else {
                /* Code for ESC */
                if (ch == 27) {
                   destroy_bitmap (under);
-                  return (0);
+                  return 0;
                }
             }
          }                      /* if (ch == 13) */
       }                         /* if (ch >= 32 && ch <= 126 && index < max_len - 1) */
    }                            /* while (1) */
+   /* Just to make sure, incase something wasn't working right... */
+   destroy_bitmap (under);
+   return 0;
 }                               /* get_line () */
-
-END_OF_FUNCTION (get_line);
 
 
 /*! \brief Gets the index of the tile under the mouse
@@ -1317,11 +1297,8 @@ void get_tile (void)
    else
       curtile = map[tile];
 
-   /* Set the iconset "page" to the one where the selected icon is found */
-   icon_set = curtile / ICONSET_SIZE;
+   icon_set = (curtile / ICONSET_SIZE) - ((curtile / ICONSET_SIZE) % 2);
 }                               /* get_tile () */
-
-END_OF_FUNCTION (get_tile);
 
 
 /*! \brief Change map tiles
@@ -1330,71 +1307,96 @@ END_OF_FUNCTION (get_tile);
  */
 void global_change (void)
 {
-   /* Keyboard input */
-   int user_input;
-   /* Current tile to change from */
-   int tile_from = 0;
-   /* Tile to change to */
-   int tile_to;
-   /* Temp counter */
-   int i;
+   int response, done;
+   int tile_from = 0, tile_to, i;
+
    /* Layers and attributes */
    int p1, p2, p3, ps, po, pz;
-   char opts[9];
 
-   rectfill (double_buffer, 0, 0, 319, 29, 0);
-   rect (double_buffer, 2, 2, 317, 27, 255);
-   print_sfont (6, 6, "From Tile", double_buffer);
-   print_sfont (6, 18, "Tile num:", double_buffer);
-   blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
-   user_input = get_line (66, 18, strbuf, 4);
+   rectfill (double_buffer, 0, 0, 130, 35, 0);
+   rect (double_buffer, 2, 2, 128, 33, 255);
+   print_sfont (6, 6, "From Tile: ", double_buffer);
 
-   /* Make sure the line isn't blank */
-   if (user_input == 0 || strlen (strbuf) < 1)
-      return;
-   /* Make sure the value is valid */
-   if (!(atoi (strbuf) >= 0 && atoi (strbuf) < ICONSET_SIZE * max_sets)) {
-      cmessage ("Invalid tile!");
-      wait_enter ();
-      return;
+   done = 0;
+   while (!done) {
+      blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+      response = get_line (72, 6, strbuf, 4);
+
+      /* If the user hits ESC, break out of the function entirely */
+      if (response == 0)
+         return;
+
+      /* Make sure this line isn't blank */
+      if (strlen (strbuf) > 0) {
+         tile_from = atoi (strbuf);
+
+         /* Make sure the value is valid */
+         if (!(tile_from >= 0 && tile_from < ICONSET_SIZE * max_sets)) {
+            cmessage ("Invalid tile!");
+            wait_enter ();
+         } else {
+            done = 1;
+         }
+      }
    }
-   tile_from = atoi (strbuf);
-   rectfill (double_buffer, 0, 0, 319, 29, 0);
-   rect (double_buffer, 2, 2, 317, 27, 255);
-   print_sfont (6, 6, "To Tile", double_buffer);
-   print_sfont (6, 18, "Tile num:", double_buffer);
-   blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
-   user_input = get_line (66, 18, strbuf, 4);
+   /* This is incase we need to redraw the map, the information will still be
+    * visible to the user
+    */
+   sprintf (strbuf, "%d", tile_from);
+   print_sfont (72, 6, strbuf, double_buffer);
+   print_sfont (6, 12, "To Tile:", double_buffer);
 
-   /* Make sure the line isn't blank */
-   if (user_input == 0 || strlen (strbuf) < 1)
-      return;
-   /* Make sure the value is valid */
-   if (!(atoi (strbuf) >= 0 && atoi (strbuf) < ICONSET_SIZE * max_sets)) {
-      cmessage ("Invalid tile!");
-      wait_enter ();
-      return;
+   done = 0;
+   while (!done) {
+      blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+      response = get_line (60, 12, strbuf, 4);
+
+      /* If the user hits ESC, break out of the function entirely */
+      if (response == 0)
+         return;
+
+      /* Make sure this line isn't blank */
+      if (strlen (strbuf) > 0) {
+         tile_to = atoi (strbuf);
+
+         /* Make sure the value is valid */
+         if (!(tile_to >= 0 && tile_to < ICONSET_SIZE * max_sets)) {
+            cmessage ("Invalid tile!");
+            wait_enter ();
+         } else {
+            done = 1;
+         }
+      }
    }
-   tile_to = atoi (strbuf);
-   rectfill (double_buffer, 0, 0, 319, 29, 0);
-   rect (double_buffer, 2, 2, 317, 27, 255);
-   print_sfont (6, 6, "Layer", double_buffer);
-   print_sfont (6, 18, "Layer num (123soz):", double_buffer);
-   blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
-   user_input = get_line (126, 18, opts, sizeof (opts) - 1);
+   /* This is incase we need to redraw the map, the information will still be
+    * visible to the user
+    */
+   sprintf (strbuf, "%d", tile_to);
+   print_sfont (60, 12, strbuf, double_buffer);
+   print_sfont (6, 18, "Layer (123soz):", double_buffer);
 
-   /* Make sure the line isn't blank */
-   if (user_input == 0 || strlen (opts) < 1)
-      return;
+   done = 0;
+   while (!done) {
+      blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+      response = get_line (18, 24, strbuf, 7);
 
-   p1 = strchr (opts, '1') ? 1 : 0;
-   p2 = strchr (opts, '2') ? 1 : 0;
-   p3 = strchr (opts, '3') ? 1 : 0;
-   ps = strchr (opts, 's') ? 1 : 0;
-   po = strchr (opts, 'o') ? 1 : 0;
-   pz = strchr (opts, 'z') ? 1 : 0;
+      /* If the user hits ESC, break out of the function entirely */
+      if (response == 0)
+         return;
 
-   for (i = 0; i < (gmap.xsize * gmap.ysize); i++) {
+      /* Make sure the line isn't blank */
+      if (strlen (strbuf) > 0) {
+         p1 = strchr (strbuf, '1') ? 1 : 0;
+         p2 = strchr (strbuf, '2') ? 1 : 0;
+         p3 = strchr (strbuf, '3') ? 1 : 0;
+         ps = strchr (strbuf, 's') ? 1 : 0;
+         po = strchr (strbuf, 'o') ? 1 : 0;
+         pz = strchr (strbuf, 'z') ? 1 : 0;
+         done = 1;
+      }
+   }
+
+   for (i = 0; i < gmap.xsize * gmap.ysize; i++) {
       if (p1)
          if (map[i] == tile_from)
             map[i] = tile_to;
@@ -1416,8 +1418,6 @@ void global_change (void)
    }
 }                               /* global_change () */
 
-END_OF_FUNCTION (global_change);
-
 
 /*! \brief Error reporting tool
  *
@@ -1427,10 +1427,10 @@ END_OF_FUNCTION (global_change);
  */
 void klog (char *msg)
 {
-   char internal_buffer[80];
-   strcat (strncpy (internal_buffer, msg, sizeof (internal_buffer) - 1), "\n");
-   TRACE ("%s\n", msg);
-   allegro_message (internal_buffer);
+   char err_msg[80];
+   strcat (strncpy (err_msg, msg, sizeof (err_msg) - 1), "\n");
+   TRACE ("%s\n%s\n", msg, allegro_error);
+   allegro_message (err_msg);
 
    FILE *ff;
 
@@ -1439,10 +1439,7 @@ void klog (char *msg)
       exit (-1);
    fprintf (ff, "%s\n", msg);
    fclose (ff);
-
 }                               /* klog () */
-
-END_OF_FUNCTION (klog);
 
 
 /*! \brief All this does is ensure that we are within the map boundaries */
@@ -1451,15 +1448,13 @@ void normalize_view (void)
    /* These prevent the user from moving past the map's edge */
    if (window_x > gmap.xsize - htiles)
       window_x = gmap.xsize - htiles;
-   if (window_x < 0)
-      window_x = 0;
    if (window_y > gmap.ysize - vtiles)
       window_y = gmap.ysize - vtiles;
+   if (window_x < 0)
+      window_x = 0;
    if (window_y < 0)
       window_y = 0;
-}
-
-END_OF_FUNCTION (normalize_view);
+}                               /* normalize_view () */
 
 
 /*! \brief Paste the copied selection to all Layers
@@ -1469,33 +1464,27 @@ END_OF_FUNCTION (normalize_view);
  * \param   tx Target x-coord
  * \param   ty Target y-coord
  */
-void paste_region (int tx, int ty)
+void paste_region (const int tx, const int ty)
 {
-   int zx, zy;
-
+   int zx, zy, coord1, coord2;
    if (clipb == 0)
       return;
    for (zy = 0; zy <= cbh; zy++) {
       for (zx = 0; zx <= cbw; zx++) {
          if (ty + zy < gmap.ysize && tx + zx < gmap.xsize) {
-            map[(ty + zy) * gmap.xsize + tx + zx] =
-               c_map[zy * gmap.xsize + zx];
-            b_map[(ty + zy) * gmap.xsize + tx + zx] =
-               cb_map[zy * gmap.xsize + zx];
-            f_map[(ty + zy) * gmap.xsize + tx + zx] =
-               cf_map[zy * gmap.xsize + zx];
-            z_map[(ty + zy) * gmap.xsize + tx + zx] =
-               cz_map[zy * gmap.xsize + zx];
-            sh_map[(ty + zy) * gmap.xsize + tx + zx] =
-               csh_map[zy * gmap.xsize + zx];
-            o_map[(ty + zy) * gmap.xsize + tx + zx] =
-               co_map[zy * gmap.xsize + zx];
+            coord1 = (ty + zy) * gmap.xsize + tx + zx;
+            coord2 = zy * gmap.xsize + zx;
+
+            map[coord1] = c_map[coord2];
+            b_map[coord1] = cb_map[coord2];
+            f_map[coord1] = cf_map[coord2];
+            z_map[coord1] = cz_map[coord2];
+            sh_map[coord1] = csh_map[coord2];
+            o_map[coord1] = co_map[coord2];
          }
       }
    }
 }                               /* paste_region () */
-
-END_OF_FUNCTION (paste_region);
 
 
 /*! \brief Pastes user-defined layer(s)
@@ -1506,71 +1495,66 @@ END_OF_FUNCTION (paste_region);
  * \param   tx Target x-coord to paste to
  * \param   ty Target y-coord to paste to
  */
-void paste_region_special (int tx, int ty)
+void paste_region_special (const int tx, const int ty)
 {
-   int zx, zy;
+   int response, done;
+   int zx, zy, coord1, coord2;
 
    /* Layers 1-3, Shadows, Obstacles, and Zones */
-   int ld, p1, p2, p3, ps, po, pz;
-
-   /* Holds the user input for which region(s) to paste to */
-   char opts[9];
+   int p1, p2, p3, ps, po, pz;
 
    /* Confirm that there is something in the clipboard; don't attempt if not */
    if (clipb == 0)
       return;
 
-   memset (opts, 0, sizeof (opts));
-   rectfill (double_buffer, 138, 89, 306, 120, 0);
-   print_sfont (140, 91, "Paste which layers? (123soz)", double_buffer);
-   rect (double_buffer, 138, 89, 306, 120, 255);
-   blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
-   ld = get_line (160, 110, opts, sizeof (opts) - 1);
+   rectfill (double_buffer, 0, 0, 178, 29, 0);
+   rect (double_buffer, 2, 2, 176, 27, 255);
+   print_sfont (6, 6, "Paste which layers? (123soz)", double_buffer);
 
-   /* Make sure the line isn't blank */
-   if (ld == 0 || strlen (opts) < 1)
-      return;
+   done = 0;
+   while (!done) {
+      blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+      response = get_line (6, 12, strbuf, 7);
 
-   p1 = strchr (opts, '1') ? 1 : 0;
-   p2 = strchr (opts, '2') ? 1 : 0;
-   p3 = strchr (opts, '3') ? 1 : 0;
-   ps = strchr (opts, 's') ? 1 : 0;
-   po = strchr (opts, 'o') ? 1 : 0;
-   pz = strchr (opts, 'z') ? 1 : 0;
+      /* If the user hits ESC, break out of the function entirely */
+      if (response == 0)
+         return;
 
-   for (zy = 0; zy <= cbh; zy++) {
-      for (zx = 0; zx <= cbw; zx++) {
-         if (ty + zy < gmap.ysize && tx + zx < gmap.xsize) {
-            if (p1) {
-               map[(ty + zy) * gmap.xsize + tx + zx] =
-                  c_map[zy * gmap.xsize + zx];
-            }
-            if (p2) {
-               b_map[(ty + zy) * gmap.xsize + tx + zx] =
-                  cb_map[zy * gmap.xsize + zx];
-            }
-            if (p3) {
-               f_map[(ty + zy) * gmap.xsize + tx + zx] =
-                  cf_map[zy * gmap.xsize + zx];
-            }
-            if (pz) {
-               z_map[(ty + zy) * gmap.xsize + tx + zx] =
-                  cz_map[zy * gmap.xsize + zx];
-            }
-            if (ps) {
-               sh_map[(ty + zy) * gmap.xsize + tx + zx] =
-                  csh_map[zy * gmap.xsize + zx];
-            }
-            if (po) {
-               o_map[(ty + zy) * gmap.xsize + tx + zx] =
-                  co_map[zy * gmap.xsize + zx];
-            }
-         }                      /* if (ty + zy < gmap.ysize && tx + zx < gmap.xsize) */
-      }                         /* for (zx = 0; zx <= cbw; zx++) */
-   }                            /* for (zy = 0; zy <= cbh; zy++) */
+      /* Make sure this line isn't blank */
+      if (strlen (strbuf) > 0) {
+
+         p1 = strchr (strbuf, '1') ? 1 : 0;
+         p2 = strchr (strbuf, '2') ? 1 : 0;
+         p3 = strchr (strbuf, '3') ? 1 : 0;
+         ps = strchr (strbuf, 's') ? 1 : 0;
+         po = strchr (strbuf, 'o') ? 1 : 0;
+         pz = strchr (strbuf, 'z') ? 1 : 0;
+
+         for (zy = 0; zy <= cbh; zy++) {
+            for (zx = 0; zx <= cbw; zx++) {
+               if (ty + zy < gmap.ysize && tx + zx < gmap.xsize) {
+                  coord1 = (ty + zy) * gmap.xsize + tx + zx;
+                  coord2 = zy * gmap.xsize + zx;
+
+                  if (p1)
+                     map[coord1] = c_map[coord2];
+                  if (p2)
+                     b_map[coord1] = cb_map[coord2];
+                  if (p3)
+                     f_map[coord1] = cf_map[coord2];
+                  if (pz)
+                     z_map[coord1] = cz_map[coord2];
+                  if (ps)
+                     sh_map[coord1] = csh_map[coord2];
+                  if (po)
+                     o_map[coord1] = co_map[coord2];
+               }                /* if () */
+            }                   /* for (zx) */
+         }                      /* for (zy) */
+      }
+      done = 1;
+   }
 }                               /* paste_region_special () */
-
-END_OF_FUNCTION (paste_region_special);
 
 
 /*! \brief Draw the shadows
@@ -1582,7 +1566,7 @@ END_OF_FUNCTION (paste_region_special);
  * \date    20031205
  * \param   parallax 0 draws with parallax off, else parallax on
  */
-static void draw_shadow (int parallax)
+static void draw_shadow (const int parallax)
 {
    int layer_x, j;
    int layer_x1, layer_y1, layer_x2, layer_y2;
@@ -1622,8 +1606,6 @@ static void draw_shadow (int parallax)
       }
    }
 }                               /* draw_shadow () */
-
-END_OF_FUNCTION (void draw_shadow);
 
 
 /*! \brief Preview map
@@ -1675,8 +1657,6 @@ void preview_map (void)
    }
 }                               /* preview_map () */
 
-END_OF_FUNCTION (preview_map);
-
 
 /*! \brief Draw the layers with parallax
  *
@@ -1690,7 +1670,7 @@ END_OF_FUNCTION (preview_map);
  * \param   layer Pointer to layer data array
  * \param   parallax ==0 draw with parallax off or !=0 on
  */
-void draw_layer (short *layer, int parallax)
+void draw_layer (short *layer, const int parallax)
 {
    int layer_x, j;
    int layer_x1, layer_x2, layer_y1, layer_y2;
@@ -1727,8 +1707,6 @@ void draw_layer (short *layer, int parallax)
    }
 }                               /* draw_layer () */
 
-END_OF_FUNCTION (draw_layer);
-
 
 /*! \brief Displays the text on the screen
  *
@@ -1739,7 +1717,7 @@ END_OF_FUNCTION (draw_layer);
  * \param   string A "thinner" version of yarn, made from cotton or wool
  * \param   where The destination, or where it will be drawn to
  */
-void print_sfont (int x, int y, char *string, BITMAP * where)
+void print_sfont (const int print_x, const int print_y, const char *string, BITMAP *where)
 {
    int i, c;
 
@@ -1751,11 +1729,9 @@ void print_sfont (int x, int y, char *string, BITMAP * where)
       c -= 32;
       if (c < 0)
          c = 0;
-      masked_blit (font6, where, 0, c * 6, i * 6 + x, y, 6, 6);
+      masked_blit (font6, where, 0, c * 6, i * 6 + print_x, print_y, 6, 6);
    }
 }                               /* print_sfont () */
-
-END_OF_FUNCTION (print_sfont);
 
 
 /*! \brief Keyboard input
@@ -1763,7 +1739,7 @@ END_OF_FUNCTION (print_sfont);
  *
  * \param   k The keyboard key to process
  */
-void process_keyboard (int k)
+void process_keyboard (const int k)
 {
    /* Process which key was pressed */
    switch (k) {
@@ -1914,7 +1890,7 @@ void process_keyboard (int k)
       break;
    case (KEY_V):
       /* Save whole map as a picture */
-      visual_map ();
+      visual_map ("vis_map.pcx");
       break;
    case (KEY_W):
       /* TT TODO: This looks like it does the exact same thing as KEY_N:
@@ -2070,7 +2046,7 @@ void process_keyboard (int k)
       case MAP_OBSTACLES:
          /* Select which Obstacle to set on the map */
          curobs++;
-         if (curobs > 5)
+         if (curobs > MAX_OBSTACLES)
             curobs = 0;
          break;
       case MAP_ZONES:
@@ -2130,8 +2106,6 @@ void process_keyboard (int k)
    normalize_view ();
 }                               /* process_keyboard () */
 
-END_OF_FUNCTION (process_keyboard);
-
 
 /*! \brief Select an option from the menu
  *
@@ -2140,7 +2114,7 @@ END_OF_FUNCTION (process_keyboard);
  * \param   cx X-coord of the mouse
  * \param   cy Y-coord of the mouse
  */
-void process_menu_bottom (int cx, int cy)
+void process_menu_bottom (const int cx, const int cy)
 {
    int a;
    scare_mouse ();
@@ -2176,6 +2150,7 @@ void process_menu_bottom (int cx, int cy)
       if (a == 0 || strlen (strbuf) < 1)
          return;
       strcpy (gmap.song_file, strbuf);
+      return;
    }
 
    /* The mouse is over 'ZeroZone' menu */
@@ -2204,6 +2179,7 @@ void process_menu_bottom (int cx, int cy)
          return;
       }
       gmap.map_no = atoi (strbuf);
+      return;
    }
 
    /* The mouse is over 'Mode' menu */
@@ -2250,6 +2226,7 @@ void process_menu_bottom (int cx, int cy)
          return;
       }
       gmap.warpx = atoi (strbuf);
+      return;
    }
 
    /* The mouse is over 'WarpY' menu */
@@ -2271,6 +2248,7 @@ void process_menu_bottom (int cx, int cy)
          return;
       }
       gmap.warpy = atoi (strbuf);
+      return;
    }
 
    /* The mouse is over 'Start X' menu */
@@ -2293,6 +2271,7 @@ void process_menu_bottom (int cx, int cy)
          return;
       }
       gmap.stx = atoi (strbuf);
+      return;
    }
 
    /* The mouse is over 'Start Y' menu */
@@ -2315,6 +2294,7 @@ void process_menu_bottom (int cx, int cy)
          return;
       }
       gmap.sty = atoi (strbuf);
+      return;
    }
 
    /* Mouse is over 'Mult' menu */
@@ -2339,6 +2319,7 @@ void process_menu_bottom (int cx, int cy)
          return;
       }
       gmap.pmult = atoi (strbuf);
+      return;
    }
 
    /* The mouse is over 'Div' menu */
@@ -2354,6 +2335,7 @@ void process_menu_bottom (int cx, int cy)
       /* Make sure the line isn't blank */
       if (a == 0 || strlen (strbuf) < 1)
          return;
+
       /* Make sure the value is valid (999 is a VERY extreme value!) and
          you CANNOT divide by zero.
        */
@@ -2363,19 +2345,24 @@ void process_menu_bottom (int cx, int cy)
          return;
       }
       gmap.pdiv = atoi (strbuf);
+      return;
    }
 
    /* The mouse is over the 'Width' menu */
    if (cx >= (COLUMN_WIDTH * 2) && cx < (COLUMN_WIDTH * 3) && cy >= (SH - 28)
-       && cy <= (SH - 23))
+       && cy <= (SH - 23)) {
       /* 1 means resize width */
       resize_map (1);
+      return;
+   }
 
    /* The mouse is over the 'Height' menu */
    if (cx >= (COLUMN_WIDTH * 2) && cx < (COLUMN_WIDTH * 3) && cy >= (SH - 22)
-       && cy <= (SH - 17))
+       && cy <= (SH - 17)) {
       /* 2 means resize height */
       resize_map (2);
+      return;
+   }
 
    /* The mouse is over 'SunStone' menu */
    if (cx >= (COLUMN_WIDTH * 2) && cx < (COLUMN_WIDTH * 3) && cy >= (SH - 16)
@@ -2386,8 +2373,6 @@ void process_menu_bottom (int cx, int cy)
    }
 }                               /* process_menu_bottom () */
 
-END_OF_FUNCTION (process_menu_bottom);
-
 
 /*! \brief Select an icon from the tileset
  *
@@ -2396,7 +2381,7 @@ END_OF_FUNCTION (process_menu_bottom);
  * \param   cx X-coord of the tile
  * \param   cy Y-coord of the tile
  */
-void process_menu_right (int cx, int cy)
+void process_menu_right (const int cx, const int cy)
 {
    int xp, yp;
 
@@ -2412,8 +2397,6 @@ void process_menu_right (int cx, int cy)
          curtile = icon_set * ICONSET_SIZE + (xp * (ICONSET_SIZE / 2) + yp);
    }
 }                               /* process_menu_right () */
-
-END_OF_FUNCTION (process_menu_right);
 
 
 /*! \brief Mouse input
@@ -2575,8 +2558,6 @@ void process_mouse (const int mouse_button)
       x = htiles - 1;
 }                               /* process_mouse () */
 
-END_OF_FUNCTION (process_mouse);
-
 
 /*! \brief Mouse and keyboard input
  *
@@ -2676,10 +2657,7 @@ void read_controls (void)
       process_mouse (mouse_button);
       return;
    }                            /* if (mouse_b & 2) */
-   return;
 }                               /* read_controls () */
-
-END_OF_FUNCTION (read_controls);
 
 
 /*! \brief Resize the current map
@@ -2691,73 +2669,90 @@ END_OF_FUNCTION (read_controls);
  */
 void resize_map (const int selection)
 {
-   /* User input */
-   int user_input;
-   /* New and old widths and heights */
-   int neww, oldw, newh, oldh;
-   int ix, iy;
+   int response, done;
+   int old_height, old_width, new_height, new_width;
+   int i, ix, iy, coord1, coord2;
 
    /* Set current and old map sizes, incase one will not change */
-   neww = oldw = gmap.xsize;
-   newh = oldh = gmap.ysize;
+   new_width = old_width = gmap.xsize;
+   new_height = old_height = gmap.ysize;
 
    if (selection == 0 || selection == 1) {
-      rectfill (double_buffer, 0, 0, 319, 29, 0);
-      rect (double_buffer, 2, 2, 317, 27, 255);
+      rectfill (double_buffer, 0, 0, 70, 29, 0);
+      rect (double_buffer, 2, 2, 68, 27, 255);
       print_sfont (6, 6, "Resize map", double_buffer);
       print_sfont (6, 18, "Width: ", double_buffer);
-      blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
-      user_input = get_line (48, 18, strbuf, 4);
 
-      /* Make sure the line isn't blank */
-      if (user_input == 0 || strlen (strbuf) < 1)
-         return;
-      /* Make sure the value is valid */
-      if ((atoi (strbuf) < 10 || atoi (strbuf) > SW)) {
-         cmessage ("Invalid width!");
-         wait_enter ();
-         return;
+      done = 0;
+      while (!done) {
+         blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+         response = get_line (48, 18, strbuf, 4);
+
+         /* If the user hits ESC, break out of the function entirely */
+         if (response == 0)
+            return;
+
+         /* Make sure the line isn't blank */
+         if (strlen (strbuf) > 0) {
+            new_width = atoi (strbuf);
+
+            /* Make sure the value is valid */
+            if (new_width < 10 || new_width > SW) {
+               cmessage ("Invalid width!");
+               wait_enter ();
+            } else {
+               done = 1;
+            }
+         }
       }
-
-      neww = atoi (strbuf);
    }
 
    if (selection == 0 || selection == 2) {
-      rectfill (double_buffer, 0, 0, 319, 29, 0);
-      rect (double_buffer, 2, 2, 317, 27, 255);
+      rectfill (double_buffer, 0, 0, 70, 29, 0);
+      rect (double_buffer, 2, 2, 68, 27, 255);
       print_sfont (6, 6, "Resize map", double_buffer);
       print_sfont (6, 18, "Height: ", double_buffer);
-      blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
-      user_input = get_line (54, 18, strbuf, 4);
 
-      /* Make sure the line isn't blank */
-      if (user_input == 0 || strlen (strbuf) < 1)
-         return;
-      /* Make sure the value is valid */
-      if ((atoi (strbuf) < 15 || atoi (strbuf) > SH)) {
-         cmessage ("Invalid height!");
-         wait_enter ();
-         return;
+      done = 0;
+      while (!done) {
+         blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+         response = get_line (54, 18, strbuf, 4);
+
+         /* If the user hits ESC, break out of the function entirely */
+         if (response == 0)
+            return;
+
+         /* Make sure the line isn't blank */
+         if (strlen (strbuf) > 0) {
+            new_height = atoi (strbuf);
+
+            /* Make sure the value is valid */
+            if (new_height < 15 || new_height > SH) {
+               cmessage ("Invalid height!");
+               wait_enter ();
+            } else {
+               done = 1;
+            }
+         }
       }
-
-      newh = atoi (strbuf);
    }
 
    /* Pre-copy the map info */
    for (iy = 0; iy < gmap.ysize; iy++) {
       for (ix = 0; ix < gmap.xsize; ix++) {
-         c_map[iy * gmap.xsize + ix] = map[iy * gmap.xsize + ix];
-         cb_map[iy * gmap.xsize + ix] = b_map[iy * gmap.xsize + ix];
-         cf_map[iy * gmap.xsize + ix] = f_map[iy * gmap.xsize + ix];
-         co_map[iy * gmap.xsize + ix] = o_map[iy * gmap.xsize + ix];
-         csh_map[iy * gmap.xsize + ix] = sh_map[iy * gmap.xsize + ix];
-         cz_map[iy * gmap.xsize + ix] = z_map[iy * gmap.xsize + ix];
+         coord1 = iy * gmap.xsize + ix;
+         c_map[coord1] = map[coord1];
+         cb_map[coord1] = b_map[coord1];
+         cf_map[coord1] = f_map[coord1];
+         co_map[coord1] = o_map[coord1];
+         csh_map[coord1] = sh_map[coord1];
+         cz_map[coord1] = z_map[coord1];
       }
    }
 
    /* Set map to new size */
-   gmap.xsize = neww;
-   gmap.ysize = newh;
+   gmap.xsize = new_width;
+   gmap.ysize = new_height;
 
    /* Set memory for new map size */
    free (map);
@@ -2780,15 +2775,18 @@ void resize_map (const int selection)
    memset (z_map, 0, gmap.xsize * gmap.ysize);
 
    /* Draw all the old map data into the new map size */
-   for (iy = 0; iy < oldh; iy++) {
-      for (ix = 0; ix < oldw; ix++) {
+   for (iy = 0; iy < old_height; iy++) {
+      for (ix = 0; ix < old_width; ix++) {
          if (iy < gmap.ysize && ix < gmap.xsize) {
-            map[iy * gmap.xsize + ix] = c_map[iy * oldw + ix];
-            b_map[iy * gmap.xsize + ix] = cb_map[iy * oldw + ix];
-            f_map[iy * gmap.xsize + ix] = cf_map[iy * oldw + ix];
-            o_map[iy * gmap.xsize + ix] = co_map[iy * oldw + ix];
-            sh_map[iy * gmap.xsize + ix] = csh_map[iy * oldw + ix];
-            z_map[iy * gmap.xsize + ix] = cz_map[iy * oldw + ix];
+            coord1 = iy * gmap.xsize + ix;
+            coord2 = iy * old_width + ix;
+
+            map[coord1] = c_map[coord2];
+            b_map[coord1] = cb_map[coord2];
+            f_map[coord1] = cf_map[coord2];
+            o_map[coord1] = co_map[coord2];
+            sh_map[coord1] = csh_map[coord2];
+            z_map[coord1] = cz_map[coord2];
          }
       }
    }
@@ -2818,9 +2816,15 @@ void resize_map (const int selection)
    /* Empty the clipboard */
    clipb = 0;
    normalize_view ();
-}                               /* resize_map () */
 
-END_OF_FUNCTION (resize_map);
+   /* Make sure entitites aren't outside the map's coords */
+   for (i = 0; i < number_of_ents; i++) {
+      if (gent[i].tilex >= gmap.xsize)
+         gent[i].tilex = gmap.xsize - 1;
+      if (gent[i].tiley >= gmap.ysize)
+         gent[i].tiley = gmap.ysize - 1;
+   }
+}                               /* resize_map () */
 
 
 /* When the user presses keys 1-7, we need to remove all the Attributes.
@@ -2838,8 +2842,6 @@ void select_only (const int lastlayer, const int which_layer)
    if (lastlayer)
       showing.last_layer = draw_mode;
 }
-
-END_OF_FUNCTION (select_only);
 
 
 /*! \brief Handy-dandy help screen
@@ -2921,8 +2923,6 @@ void show_help (void)
    yninput ();
 
 }                               /* show_help () */
-
-END_OF_FUNCTION (show_help);
 
 
 /*! \brief The opposite of shutdown, maybe?
@@ -3006,7 +3006,6 @@ void startup (void)
       for (kx = 1; kx < 16; kx += 2)
          putpixel (mesh, kx, ky + 1, 255);
    }
-   destroy_bitmap (mesh);
 
    /* Used for highlighting */
    unsigned char hilite[] = {
@@ -3032,10 +3031,9 @@ void startup (void)
    for (ky = 0; ky < 16; ky++)
       for (kx = 0; kx < 16; kx++)
          mesh2->line[ky][kx] = hilite[ky * 16 + kx];
-   destroy_bitmap (mesh2);
 
    /* Shadows */
-   set_pcx (&pcx_buffer, "misc.pcx", pal, 1);
+   set_pcx (&pcx_buffer, "Misc.pcx", pal, 1);
 
    for (a = 0; a < MAX_SHADOWS; a++) {
       shadow[a] = create_bitmap (16, 16);
@@ -3060,9 +3058,8 @@ void startup (void)
    showing.obstacles = 0;
    showing.zones = 0;
    showing.last_layer = draw_mode;
+   icon_set = 0;
 }                               /* startup () */
-
-END_OF_FUNCTION (startup);
 
 
 /*! \brief Update the tileset
@@ -3108,96 +3105,12 @@ void update_tileset (void)
    destroy_bitmap (pcx_buffer);
 }                               /* update_tileset () */
 
-END_OF_FUNCTION (update_tileset);
-
 
 /* TT: The creation of MAPDUMP supersedes the need for this function.
  * You may now call mapdump and specify which options to display.  HOWEVER,
  * this DOES seem to create the transparency effect correctly.  We'll have to
  * check out why this is happening.
  */
-
-/*! \brief Save the whole map as a pcx
- *
- * Make one giant bitmap and draw all the layers on it, so you can get an
- * overview of what's going on.  Doesn't draw entities, and doesn't work well
- * with parallax (any ideas how to handle parallax?).
- * \author PH
- * \date 20030412
- */
-void visual_map (void)
-{
-   int i, j, w;
-   BITMAP *bmp;
-   PALETTE pal;
-
-   /* Create a bitmap the same size as the map */
-   if ((bmp = create_bitmap (gmap.xsize * 16, gmap.ysize * 16)) != NULL) {
-      for (j = 0; j < gmap.ysize; j++) {
-         for (i = 0; i < gmap.xsize; i++) {
-            /* Which tile is currently being evaluated */
-            w = gmap.xsize * j + i;
-
-            blit (icons[map[w]], bmp, 0, 0, i * 16, j * 16, 16, 16);
-            draw_sprite (bmp, icons[b_map[w]], i * 16, j * 16);
-            draw_sprite (bmp, icons[f_map[w]], i * 16, j * 16);
-            draw_trans_sprite (bmp, shadow[sh_map[w]], i * 16, j * 16);
-
-            if (z_map[w] > 0 && z_map[w] < MAX_ZONES) {
-/* This check is here because of the differing versions of the Allegro library */
-#ifdef HAVE_TEXT_EX
-               if (z_map[w] < 10) {
-                  /* The zone's number is single-digit, center vert+horiz */
-                  textprintf_ex (bmp, font, i * 16 + 4, j * 16 + 4,
-                                 makecol (255, 255, 255), 0, "%d", z_map[w]);
-               } else if (z_map[w] < 100) {
-                  /* The zone's number is double-digit, center only vert */
-                  textprintf_ex (bmp, font, i * 16, j * 16 + 4,
-                                 makecol (255, 255, 255), 0, "%d", z_map[w]);
-               } else if (z_map[w] < 1000) {
-                  /* The zone's number is triple-digit.  Print the 100's digit
-                   * in top-center of the square; the 10's and 1's digits on
-                   * bottom of the square */
-                  textprintf_ex (bmp, font, i * 16 + 4, j * 16,
-                                 makecol (255, 255, 255), 0, "%d",
-                                 (int) (z_map[w] / 100));
-                  textprintf_ex (bmp, font, i * 16, j * 16 + 8,
-                                 makecol (255, 255, 255), 0, "%02d",
-                                 (int) (z_map[w] % 100));
-               }
-#else
-               if (z_map[w] < 10) {
-                  /* The zone's number is single-digit, center vert+horiz */
-                  textprintf (bmp, font, i * 16 + 4, j * 16 + 4,
-                              makecol (255, 255, 255), "%d", z_map[w]);
-               } else if (z_map[w] < 100) {
-                  /* The zone's number is double-digit, center only vert */
-                  textprintf (bmp, font, i * 16, j * 16 + 4,
-                              makecol (255, 255, 255), "%d", z_map[w]);
-               } else if (z_map[w] < 1000) {
-                  /* The zone's number is triple-digit.  Print the 100's digit
-                   * in top-center of the square; the 10's and 1's digits on
-                   * bottom of the square */
-                  textprintf (bmp, font, i * 16 + 4, j * 16,
-                              makecol (255, 255, 255), "%d",
-                              (int) (z_map[w] / 100));
-                  textprintf (bmp, font, i * 16, j * 16 + 8,
-                              makecol (255, 255, 255), "%02d",
-                              (int) (z_map[w] % 100));
-               }
-#endif
-            }
-         }
-      }
-
-      get_palette (pal);
-      save_bitmap ("vis_map.pcx", bmp, pal);
-      destroy_bitmap (bmp);
-   }
-}                               /* visual_map () */
-
-END_OF_FUNCTION (visual_map);
-
 
 /*! \brief Wait for ENTER key
  *
@@ -3213,8 +3126,6 @@ void wait_enter (void)
          done = 1;
    }
 }                               /* wait_enter () */
-
-END_OF_FUNCTION (wait_enter);
 
 
 /*! \brief Clear the contents of a map
@@ -3237,8 +3148,6 @@ void wipe_map (void)
    /* TT FIXED: Forgot to get rid of all the entities! */
    init_entities ();
 }                               /* wipe_map () */
-
-END_OF_FUNCTION (wipe_map);
 
 
 /*! \brief Keyboard input for yes/no question
@@ -3264,5 +3173,3 @@ int yninput (void)
    blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
    return done - 1;
 }                               /* yninput () */
-
-END_OF_FUNCTION (yninput);

@@ -104,8 +104,18 @@ PALETTE pal = {
 void getfont (void)
 {
    int a, b;
-   static int clr[] = { 0, 9, 15 };
-   static unsigned char tf[3276] = {
+   static int color_gray[] = { 0, 9, 15 };
+#if 0
+   /* TT: If you want to have uppercase letters in white and lowercase in grey,
+    * simply move the "#if 0...#endif" tags around this statement.
+    */
+   /* Letters are medium-gray color */
+   static int color_gray[] = { 0, 9, 15 };
+   /* Letters are white */
+   static int color_white[] = { 0, 255, 15 };
+#endif
+
+   static unsigned char kq_font[3276] = {
       /* space */
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       /* exclamation point */
@@ -290,12 +300,28 @@ void getfont (void)
       1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0,
    };
 
-   char *ptr = tf;
+   char *ptr = kq_font;
    for (a = 0; a < 546; a++)
       for (b = 0; b < 6; b++)
-         putpixel (font6, b, a, clr[(int) *ptr++]);
+        putpixel (font6, b, a, color_gray[(int) *ptr++]);
+
+#if 0
+   /* TT: If you want to have uppercase letters in white and lowercase in grey,
+    * simply move the "#if 0...#endif" tags around this statement.
+    */
+   for (a = 0; a < 198; a++)
+      for (b = 0; b < 6; b++)
+         putpixel (font6, b, a, color_gray[(int) *ptr++]);
+   
+   for (a = 198; a < 390; a++)
+      for (b = 0; b < 6; b++)
+         putpixel (font6, b, a, color_white[(int) *ptr++]);
+   
+   for (a = 390; a < 546; a++)
+      for (b = 0; b < 6; b++)
+         putpixel (font6, b, a, color_gray[(int) *ptr++]);
+#endif
+
 }                               /* getfont () */
 // This turns the other/indent.pro settings back on:
 // *INDENT-ON*
-
-END_OF_FUNCTION (getfont);

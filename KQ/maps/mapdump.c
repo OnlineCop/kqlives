@@ -9,8 +9,6 @@
  * from the map files                                                      *
 \***************************************************************************/
 
-// TT TODO: We still need to make a cleanup() function
-
 #include <stdio.h>
 #include <string.h>
 #include <allegro.h>
@@ -25,19 +23,8 @@
 
 /* globals */
 
-/* Image and screen buffers */
-BITMAP *pcx_buffer;
-char *strbuf;
-
 /* Shadows, obstacles, entities */
 BITMAP *shadow[MAX_SHADOWS];
-BITMAP *mesh;
-BITMAP *eframes[MAX_EPICS][12];
-
-/* These are for the Layers 1-3 */
-unsigned short *map, *b_map, *f_map;
-/* These are for the Zone, Shadow and Obstacle Attributes */
-unsigned char *z_map, *sh_map, *o_map;
 
 /* Selectable tiles on the right-hand menu */
 BITMAP *icons[MAX_TILES];
@@ -45,27 +32,19 @@ BITMAP *icons[MAX_TILES];
 /* Used for the icons */
 short max_sets = 51;
 
-/* Stores the name of the currently loaded map */
-char map_fname[16] = "";
-
 s_map gmap;
 s_entity gent[50];
 
-/* Number of entities, index of currently-selected entity */
-int noe = 0;
+/* Show details when parsing MAP files */
+int verbose = 0;
 
 /* Default values, incase an option is not specified */
-int d_layer1 = 1, d_layer2 = 1, d_layer3 = 1, d_shadows = 1,
+static int d_layer1 = 1, d_layer2 = 1, d_layer3 = 1, d_shadows = 1,
    d_zones = 0, d_obstacles = 0, d_entities = 1;
-int show_layer1, show_layer2, show_layer3, show_shadows,
+static int show_layer1, show_layer2, show_layer3, show_shadows,
    show_zones, show_obstacles, show_entities;
 
-char *icon_files[NUM_TILESETS] = {
-   "land.pcx", "newtown.pcx", "castle.pcx",
-   "Incave.pcx", "village.pcx", "mount.pcx"
-};
-
-PALETTE pal;
+char *filenames[PATH_MAX];
 
 
 /*! \brief Memory allocation
@@ -94,96 +73,48 @@ void bufferize (void)
    memset (o_map, 0, gmap.xsize * gmap.ysize);
 }                               /* bufferize () */
 
-END_OF_FUNCTION (bufferize);
 
-
-/*! \brief Load map to modify
+/*! \brief Code shutdown and memory deallocation
  *
- * \param   fname Name of the file we will open
+ * Called at the end of main(), closes everything
  */
-void load_map_batch (const char *fname)
+void cleanup (void)
 {
-   int p, q, i;
-   PACKFILE *pf;
+   int i;
 
-   pf = pack_fopen (fname, F_READ_PACKED);
-   if (!pf)
-      return;
+   free (map);
+   free (b_map);
+   free (f_map);
+   free (o_map);
+   free (sh_map);
+   free (z_map);
 
-   strcpy (map_fname, fname);
-   load_s_map (&gmap, pf);
+   for (i = 0; i < MAX_TILES; i++)
+      destroy_bitmap (icons[i]);
+   for (i = 0; i < MAX_SHADOWS; i++)
+      destroy_bitmap (shadow[i]);
+   destroy_bitmap (mesh);
+}                               /* cleanup () */
 
-   for (i = 0; i < 50; ++i) {
-      load_s_entity (gent + i, pf);
-   }
-   bufferize ();
-   for (q = 0; q < gmap.ysize; ++q) {
-      for (p = 0; p < gmap.xsize; ++p) {
-         map[q * gmap.xsize + p] = pack_igetw (pf);
-      }
-   }
-   for (q = 0; q < gmap.ysize; ++q) {
-      for (p = 0; p < gmap.xsize; ++p) {
-         b_map[q * gmap.xsize + p] = pack_igetw (pf);
-      }
-   }
-   for (q = 0; q < gmap.ysize; ++q) {
-      for (p = 0; p < gmap.xsize; ++p) {
-         f_map[q * gmap.xsize + p] = pack_igetw (pf);
-      }
-   }
 
-   pack_fread (z_map, (gmap.xsize * gmap.ysize), pf);
-   pack_fread (sh_map, (gmap.xsize * gmap.ysize), pf);
-   pack_fread (o_map, (gmap.xsize * gmap.ysize), pf);
-   pack_fclose (pf);
+/*! \brief Error in loading a map
+ *
+ * Display an error message for a file that doesn't exist.
+ *
+ */
+void error_load (const char *problem_file)
+{
+   ASSERT (problem_file);
+   char err_msg[80];
 
-   pcx_buffer = load_pcx (icon_files[gmap.tileset], pal);
-   max_sets = (pcx_buffer->h / 16);
-   for (p = 0; p < max_sets; p++) {
-      for (q = 0; q < ICONSET_SIZE; q++) {
-         blit (pcx_buffer, icons[p * ICONSET_SIZE + q], q * 16, p * 16, 0, 0,
-               16, 16);
-      }
-   }
-
-   /* Check for bogus map squares */
-   for (p = 0; p < gmap.xsize * gmap.ysize; ++p) {
-      /* Mid layer */
-      if (map[p] > MAX_TILES)
-         map[p] = 0;
-
-      /* Background layer */
-      if (b_map[p] > MAX_TILES)
-         b_map[p] = 0;
-
-      /* Foreground layer */
-      if (f_map[p] > MAX_TILES)
-         f_map[p] = 0;
-
-      /* Shadow layer */
-      if (sh_map[p] >= MAX_SHADOWS)
-         sh_map[p] = 0;
-
-      /* Zone layer */
-      if (z_map[p] > MAX_ZONES)
-         z_map[p] = 0;
-
-      /* Obstacles layer */
-      if (o_map[p] > MAX_OBSTACLES)
-         o_map[p] = 0;
-   }
-   destroy_bitmap (pcx_buffer);
-
-   return;
-
-}                               /* load_map () */
-
-END_OF_FUNCTION (load_map_batch);
+   strcat (strncpy (err_msg, problem_file, sizeof (err_msg) - 1), "\n");
+   TRACE ("%s: could not load %s\n", allegro_error, problem_file);
+   allegro_message (err_msg);
+}                               /* error_load () */
 
 
 /*! \brief Display help on the command syntax */
-static void usage (char *argv)
+void usage (const char *argv)
 {
    fprintf (stdout, "Map to PCX converter for KQ.\n");
    fprintf (stdout, "Usage: %s [+/-][options] [-v] filename(s)\n", argv);
@@ -209,126 +140,10 @@ static void usage (char *argv)
             "  Layers 2 and 3, entities, and shadows will NOT be included.\n");
 }                               /* usage () */
 
-END_OF_FUNCTION (usage);
-
-
-/*! \brief Perform visual affects to output PCX file according
- *         to arguments passed into main()
- *
- * \param   fname Name of the file we will open
- */
-void visual_map_ex (const char *op)
-{
-   int i, j, w;
-   BITMAP *bmp;
-   PALETTE pal;
-
-   /* Create a bitmap the same size as the map */
-   if ((bmp = create_bitmap (gmap.xsize * 16, gmap.ysize * 16)) != NULL) {
-      for (j = 0; j < gmap.ysize; j++) {
-         for (i = 0; i < gmap.xsize; i++) {
-            /* Which tile is currently being evaluated */
-            w = gmap.xsize * j + i;
-
-            if (show_layer1)
-               blit (icons[map[w]], bmp, 0, 0, i * 16, j * 16, 16, 16);
-            if (show_layer2)
-               draw_sprite (bmp, icons[b_map[w]], i * 16, j * 16);
-            if (show_layer3)
-               draw_sprite (bmp, icons[f_map[w]], i * 16, j * 16);
-            // TT TODO: We need to draw entities here
-
-            if (show_shadows)
-               draw_trans_sprite (bmp, shadow[sh_map[w]], i * 16, j * 16);
-
-            if ((show_zones) && (z_map[w] > 0) && (z_map[w] < MAX_ZONES)) {
-/* This check is here because of the differing versions of the Allegro library */
-#ifdef HAVE_TEXT_EX
-               if (z_map[w] < 10) {
-                  /* The zone's number is single-digit, center vert+horiz */
-                  textprintf_ex (bmp, font, i * 16 + 4, j * 16 + 4,
-                                 makecol (255, 255, 255), 0, "%d", z_map[w]);
-               } else if (z_map[w] < 100) {
-                  /* The zone's number is double-digit, center only vert */
-                  textprintf_ex (bmp, font, i * 16, j * 16 + 4,
-                                 makecol (255, 255, 255), 0, "%d", z_map[w]);
-               } else if (z_map[w] < 1000) {
-                  /* The zone's number is triple-digit.  Print the 100's digit
-                   * in top-center of the square; the 10's and 1's digits on
-                   * bottom of the square */
-                  textprintf_ex (bmp, font, i * 16 + 4, j * 16,
-                                 makecol (255, 255, 255), 0, "%d",
-                                 (int) (z_map[w] / 100));
-                  textprintf_ex (bmp, font, i * 16, j * 16 + 8,
-                                 makecol (255, 255, 255), 0, "%02d",
-                                 (int) (z_map[w] % 100));
-               }
-#else
-               if (z_map[w] < 10) {
-                  /* The zone's number is single-digit, center vert+horiz */
-                  textprintf (bmp, font, i * 16 + 4, j * 16 + 4,
-                              makecol (255, 255, 255), "%d", z_map[w]);
-               } else if (z_map[w] < 100) {
-                  /* The zone's number is double-digit, center only vert */
-                  textprintf (bmp, font, i * 16, j * 16 + 4,
-                              makecol (255, 255, 255), "%d", z_map[w]);
-               } else if (z_map[w] < 1000) {
-                  /* The zone's number is triple-digit.  Print the 100's digit
-                   * in top-center of the square; the 10's and 1's digits on
-                   * bottom of the square */
-                  textprintf (bmp, font, i * 16 + 4, j * 16,
-                              makecol (255, 255, 255), "%d",
-                              (int) (z_map[w] / 100));
-                  textprintf (bmp, font, i * 16, j * 16 + 8,
-                              makecol (255, 255, 255), "%02d",
-                              (int) (z_map[w] % 100));
-               }
-#endif
-            }
-
-            if (show_obstacles) {
-               switch (o_map[w]) {
-               case 1:
-                  /* Block-all: blocks movement from every direction */
-                  draw_sprite (bmp, mesh, i * 16, j * 16);
-                  break;
-               case 2:
-                  /* North-block: blocks movement up */
-                  hline (bmp, i * 16, j * 16, i * 16 + 15, 255);
-                  vline (bmp, i * 16 + 8, j * 16, j * 16 + 15, 255);
-                  break;
-               case 3:
-                  /* East-block: blocks movement right */
-                  hline (bmp, i * 16, j * 16 + 8, i * 16 + 15, 255);
-                  vline (bmp, i * 16 + 15, j * 16, j * 16 + 15, 255);
-                  break;
-               case 4:
-                  /* South-block: blocks movement down */
-                  hline (bmp, i * 16, j * 16 + 15, i * 16 + 15, 255);
-                  vline (bmp, i * 16 + 8, j * 16, j * 16 + 15, 255);
-                  break;
-               case 5:
-                  /* West-block: blocks movement left */
-                  hline (bmp, i * 16, j * 16 + 8, i * 16 + 15, 255);
-                  vline (bmp, i * 16, j * 16, j * 16 + 15, 255);
-                  break;
-               }
-            }
-         }
-      }
-
-      get_palette (pal);
-      save_bitmap (op, bmp, pal);
-      destroy_bitmap (bmp);
-   }
-}                               /* visual_map () */
-
-END_OF_FUNCTION (visual_map_ex);
-
 
 int main (int argc, char *argv[])
 {
-   // Make sure that we have some sort of input; exit with error if not
+   /* Make sure that we have some sort of input; exit with error if not */
    if (argc == 1) {
       usage (argv[0]);
       return 0;
@@ -359,7 +174,7 @@ int main (int argc, char *argv[])
    if (verbose)
       fprintf (stdout, "\nStarting %s...\n", argv[0]);
    for (i = 1; i < argc; i++) {
-      // Do not allow "--" options to be passed
+      /* Do not allow "--" options to be passed */
       if (argv[i][0] == '-' && argv[i][1] == '-') {
       } else if (argv[i][0] == '-') {
          /* This means to exclude an effect */
@@ -394,7 +209,7 @@ int main (int argc, char *argv[])
 
    /* Shadow images */
    if (show_shadows) {
-      pcx_buffer = load_pcx ("Misc.pcx", pal);
+      set_pcx (&pcx_buffer, "Misc.pcx", pal, 0);
       for (k = 0; k < MAX_SHADOWS; k++) {
          shadow[k] = create_bitmap (16, 16);
          blit (pcx_buffer, shadow[k], k * 16, 160, 0, 0, 16, 16);
@@ -423,29 +238,18 @@ int main (int argc, char *argv[])
          if (verbose)
             fprintf (stdout, "  - %s replaced by extension .PCX: %s\n",
                      filenames[i], fn);
-         load_map_batch (filenames[i]);
+         load_map (filenames[i]);
          if (verbose)
             fprintf (stdout, "  - Setting palette\n");
          set_palette (pal);
          if (verbose)
             fprintf (stdout, "  - Saving %s...\n", fn);
-         visual_map_ex (fn);
+         visual_map (fn);
          if (verbose)
             fprintf (stdout, "  - \"%s\" created with mode \"%d\"\n", fn,
                      gmap.map_mode);
       }
    }
-#if 0
-   for (i = 1; i < argc; i++) {
-      if (argv[i][0] != '-' && argv[i][0] != '+') {
-         replace_extension (fn, argv[i], "pcx", sizeof (fn));
-         load_map_batch (argv[i]);
-         set_palette (pal);
-         visual_map_ex (fn);
-         TRACE ("%s mode %d\n", argv[i], gmap.map_mode);
-      }
-   }
-#endif
 
    return 0;
 }                               /* main () */

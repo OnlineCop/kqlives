@@ -23,106 +23,23 @@
  * Display an error message for a file that doesn't exist.
  *
  */
-void error_load (AL_CONST char *fname)
+void error_load (const char *problem_file)
 {
-   ASSERT (fname);
-   rectfill (screen, 0, 0, 319, 24, 0);
-   rect (screen, 2, 2, 317, 22, 255);
-   sprintf (strbuf, "Could not load \"%s\"", fname);
+   int i = 0;
+   ASSERT (problem_file);
+
+   sprintf (strbuf, "Could not load \"%s\"", problem_file);
+   draw_map ();
+   blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+
+   i = (strlen (strbuf) + 1) * 6;
+   rectfill (screen, 0, 0, i + 4, 22, 0);
+   rect (screen, 2, 2, i + 2, 20, 255);
    print_sfont (6, 6, strbuf, screen);
    sprintf (strbuf, "[press enter]");
-   print_sfont (6, 14, strbuf, screen);
+   print_sfont (6, 12, strbuf, screen);
    wait_enter ();
-   return;
 }                               /* error_load () */
-
-END_OF_FUNCTION (error_load);
-
-
-/*! \brief Load a map
- *
- * A very useful function
- */
-void load_map (char *fname)
-{
-   int p, q, i;
-   PACKFILE *pf;
-
-   ASSERT (fname);
-   pf = pack_fopen (fname, F_READ_PACKED);
-   if (!pf) {
-      error_load (fname);
-      return;
-   }
-
-   strcpy (map_fname, fname);
-   load_s_map (&gmap, pf);
-
-   for (i = 0; i < 50; ++i)
-      load_s_entity (gent + i, pf);
-
-   bufferize ();
-
-   for (q = 0; q < gmap.ysize; ++q) {
-      for (p = 0; p < gmap.xsize; ++p) {
-         map[q * gmap.xsize + p] = pack_igetw (pf);
-      }
-   }
-   for (q = 0; q < gmap.ysize; ++q) {
-      for (p = 0; p < gmap.xsize; ++p) {
-         b_map[q * gmap.xsize + p] = pack_igetw (pf);
-      }
-   }
-   for (q = 0; q < gmap.ysize; ++q) {
-      for (p = 0; p < gmap.xsize; ++p) {
-         f_map[q * gmap.xsize + p] = pack_igetw (pf);
-      }
-   }
-
-   pack_fread (z_map, (gmap.xsize * gmap.ysize), pf);
-   pack_fread (sh_map, (gmap.xsize * gmap.ysize), pf);
-   pack_fread (o_map, (gmap.xsize * gmap.ysize), pf);
-   pack_fclose (pf);
-
-   if (!exists (icon_files[gmap.tileset])) {
-      error_load (icon_files[gmap.tileset]);
-      sprintf (strbuf, "%s could not be loaded!", icon_files[gmap.tileset]);
-      allegro_message (strbuf);
-      cleanup ();
-      exit (EXIT_FAILURE);
-   }
-
-   pcx_buffer = load_pcx (icon_files[gmap.tileset], pal);
-   max_sets = (pcx_buffer->h / 16);
-
-   for (q = 0; q < max_sets; q++)
-      for (p = 0; p < ICONSET_SIZE; p++)
-         blit (pcx_buffer, icons[q * ICONSET_SIZE + p], p * 16, q * 16, 0, 0,
-               16, 16);
-   icon_set = 0;
-   destroy_bitmap (pcx_buffer);
-
-   /* Check for bogus map squares */
-   for (p = 0; p < gmap.xsize * gmap.ysize; ++p) {
-      /* Shadow layer */
-      if (sh_map[p] >= MAX_SHADOWS)
-         sh_map[p] = 0;
-      /* Background layer */
-      if (b_map[p] > MAX_TILES)
-         b_map[p] = 0;
-   }
-
-   /* Recount the number of entities on the map */
-   number_of_ents = 0;
-
-   for (p = 0; p < 50; p++)
-      if (gent[p].active == 1)
-         number_of_ents = p + 1;
-
-   return;
-}                               /* load_map () */
-
-END_OF_FUNCTION (load_map);
 
 
 /*! \brief Convert a PCX image to a map
@@ -133,16 +50,19 @@ END_OF_FUNCTION (load_map);
  */
 void make_mapfrompcx (void)
 {
-   char fname[16];
-   char imp[16];
-   int response, done;
+   /* TT TODO: This is still very buggy, as the PCX image only as 255 values;
+    * the particular tile on the map may actually exceed this; when we import
+    * the PCX image, anything over the 255 boundary are mistaken for <= 255
+    */
+   char fname[40];
+   int response, destination, done;
    int w, h, ax, ay;
    BITMAP *pcx_bitmap;
    short *tm;
 
    draw_map ();
-   rectfill (double_buffer, 0, 0, 319, 21, 0);
-   rect (double_buffer, 2, 2, 317, 19, 255);
+   rectfill (double_buffer, 0, 0, 238, 29, 0);
+   rect (double_buffer, 2, 2, 236, 27, 255);
    print_sfont (6, 6, "Make map from pcx", double_buffer);
    print_sfont (6, 12, "Filename: ", double_buffer);
 
@@ -156,39 +76,34 @@ void make_mapfrompcx (void)
          return;
 
       /* Make sure this line isn't blank */
-      if (strlen (strbuf) > 0) {
+      if (strlen (fname) > 0) {
          if (!exists (fname)) {
-            error_load (fname);
-            return;
-            /* TT TODO: move the "Load %s?" (below) here, so the user can type
-             * it in correctly this time.
-             */
+            replace_extension (fname, fname, "pcx", sizeof (fname));
+            if (!exists (fname)) {
+               error_load (fname);
+               return;
+            }
          }
-         done = 1;
+
+         sprintf (strbuf, "Load %s? (y/n)", fname);
+         print_sfont (6, 18, strbuf, screen);
+         if (yninput ())
+            done = 1;
       }
    }
 
    draw_map ();
-   rectfill (double_buffer, 0, 0, 319, 15, 0);
-   rect (double_buffer, 2, 2, 317, 13, 255);
-   sprintf (strbuf, "Load %s? (y/n)", fname);
-   print_sfont (6, 6, strbuf, screen);
-
-   blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
-   if (!yninput ())
-      return;
-
-   draw_map ();
-   rectfill (double_buffer, 0, 0, 319, 21, 0);
-   rect (double_buffer, 2, 2, 317, 19, 255);
-   print_sfont (6, 6, "Put to (B)ack (M)id (F)ore?", double_buffer);
+   rectfill (double_buffer, 0, 0, 238, 29, 0);
+   rect (double_buffer, 2, 2, 236, 27, 255);
+   print_sfont (6, 6, "Which layer do you want to put it to:", double_buffer);
+   print_sfont (6, 12, "(1) (2) or (3)?", double_buffer);
 
    done = 0;
    while (!done) {
       blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
       tm = NULL;
 
-      response = get_line (6, 12, imp, sizeof (imp));
+      response = get_line (102, 12, strbuf, 2);
 
       /* If the user hits ESC, break out of the function entirely */
       if (response == 0)
@@ -196,25 +111,18 @@ void make_mapfrompcx (void)
 
       /* Make sure this line isn't blank */
       if (strlen (strbuf) > 0) {
-         if (*imp == 'm' || *imp == 'M') {
-            tm = b_map;
-            done = 1;
-         }
-         if (*imp == 'b' || *imp == 'B') {
+         destination = atoi (strbuf);
+         if (destination == 1) {
             tm = map;
             done = 1;
-         }
-         if (*imp == 'f' || *imp == 'F') {
+         } else if (destination == 2) {
+            tm = b_map;
+            done = 1;
+         } else if (destination == 3) {
             tm = f_map;
             done = 1;
          }
       }
-
-      if (!exists (fname)) {
-         error_load (fname);
-         return;
-      }
-
    }
 
    pcx_bitmap = load_bitmap (fname, pal);
@@ -236,8 +144,6 @@ void make_mapfrompcx (void)
    destroy_bitmap (pcx_bitmap);
 }                               /* make_mapfrompcx () */
 
-END_OF_FUNCTION (make_mapfrompcx);
-
 
 /*! \brief Convert map to PCX images
  *
@@ -258,19 +164,20 @@ void maptopcx (void)
    for (jy = 0; jy < gmap.ysize; jy++) {
       for (jx = 0; jx < gmap.xsize; jx++) {
          pcx_background->line[jy][jx] = map[jy * gmap.xsize + jx];
-         pcx_foreground->line[jy][jx] = b_map[jy * gmap.xsize + jx];
+         pcx_middleground->line[jy][jx] = b_map[jy * gmap.xsize + jx];
          pcx_foreground->line[jy][jx] = f_map[jy * gmap.xsize + jx];
       }
    }
    save_pcx ("mdback.pcx", pcx_background, pal);
-   save_pcx ("mdmid.pcx", pcx_foreground, pal);
+   save_pcx ("mdmid.pcx", pcx_middleground, pal);
    save_pcx ("mdfore.pcx", pcx_foreground, pal);
+   /* Confirmation message */
+   cmessage ("Saved to PCX!");
+   wait_enter ();
    destroy_bitmap (pcx_background);
-   destroy_bitmap (pcx_foreground);
+   destroy_bitmap (pcx_middleground);
    destroy_bitmap (pcx_foreground);
 }                               /* maptopcx () */
-
-END_OF_FUNCTION (maptopcx);
 
 
 /*! \brief Create a new map
@@ -412,8 +319,6 @@ void new_map (void)
    init_entities ();
 }                               /* new_map () */
 
-END_OF_FUNCTION (new_map);
-
 
 /*! \brief Confirm before loading a map
  *
@@ -421,8 +326,8 @@ END_OF_FUNCTION (new_map);
  */
 void prompt_load_map (void)
 {
-   char fname[16];
-   int ld;
+   char fname[40];
+   int i, ld;
 
    rectfill (screen, 0, 0, 319, 29, 0);
    rect (screen, 2, 2, 317, 27, 255);
@@ -443,31 +348,40 @@ void prompt_load_map (void)
    /* If the line was blank, simply reload the current map */
    if (strlen (fname) < 1) {
       strcpy (fname, map_fname);
-      if (exists (fname))
-         sprintf (strbuf, "Reload %s? (y/n)", fname);
-      else {
-         error_load (fname);
-         return;
+      if (!exists (fname)) {
+         replace_extension (fname, fname, "map", sizeof (fname));
+         if (!exists (fname)) {
+            error_load (fname);
+            return;
+         }
       }
+      sprintf (strbuf, "Reload %s? (y/n)", fname);
    } else {
-      if (exists (fname))
-         sprintf (strbuf, "Load %s? (y/n)", fname);
-      else {
-         error_load (fname);
-         return;
+      if (!exists (fname)) {
+         replace_extension (fname, fname, "map", sizeof (fname));
+         if (!exists (fname)) {
+            error_load (fname);
+            return;
+         }
       }
+      sprintf (strbuf, "Load %s? (y/n)", fname);
    }
 
    print_sfont (6, 6, strbuf, screen);
 
    if (yninput ()) {
+      draw_map ();
       load_map (fname);
-   }                            // if (yninput ())
 
-   return;
+      /* Recount the number of entities on the map */
+      number_of_ents = 0;
+
+      for (i = 0; i < 50; i++) {
+         if (gent[i].active == 1)
+            number_of_ents = i + 1;
+      }
+   }                            /* if (yninput ()) */
 }                               /* prompt_load_map () */
-
-END_OF_FUNCTION (prompt_load_map);
 
 
 /*! \brief Save the current map
@@ -476,7 +390,7 @@ END_OF_FUNCTION (prompt_load_map);
  */
 void save_map (void)
 {
-   char fname[16];
+   char fname[40];
    int ld, p, q;
    PACKFILE *pf;
 
@@ -503,6 +417,8 @@ void save_map (void)
       else
          strcpy (fname, map_fname);
    }
+
+   replace_extension (fname, fname, "map", sizeof (fname));
    sprintf (strbuf, "Save %s? (y/n)", fname);
    print_sfont (6, 6, strbuf, screen);
 
@@ -538,33 +454,3 @@ void save_map (void)
       wait_enter ();
    }
 }                               /* save_map () */
-
-END_OF_FUNCTION (save_map);
-
-
-/*! \brief Check to see if a requested PCX file is available
- *
- * Another very useful function
- * 
- * /param   pcx_buf Buffer to save the PCX image back into
- * /param   pcx_file PCX file to load
- * /param   pcx_pal Palette to set the image to
- * /param   critical If file cannot be found, exit the program with an error
- */
-void set_pcx (BITMAP **pcx_buf, char *pcx_file, PALETTE pcx_pal, int critical)
-{
-   if (exists (pcx_file))
-      *pcx_buf = load_pcx (pcx_file, pcx_pal);
-   else if (critical) {
-      /* This means that this file is critical to the program, so we need to
-       * exit the program completely, as this cannot be recovered from.
-       */
-      sprintf (strbuf, "PCX image could not be found: %s", pcx_file);
-      allegro_message (strbuf);
-      cleanup ();
-      exit (EXIT_FAILURE);
-   }
-   return;
-}                               /* set_pcx () */
-
-END_OF_FUNCTION (set_pcx)
