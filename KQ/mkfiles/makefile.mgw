@@ -1,4 +1,4 @@
-###############################################################################
+# -*- makefile -*- ############################################################
 #                                                                             #
 #  This is the MingW32 Makefile for compiling this package. Check also the    #
 #  base makefile for more options.                                            #
@@ -26,7 +26,7 @@
 COMPILER       := $(GCC)
 PREPROCESSOR   := $(GPP) -P -undef
 LINKER         := $(GCC)
-COMPILER_FLAGS := $(CFLAGS)
+COMPILER_FLAGS := $(CFLAGS) -DHAVE_LOADLIBRARY
 OBJDIR         := $(OBJ_DIR)/mingw
 
 
@@ -60,9 +60,8 @@ endif
 #  console when running the game.                                             #
 #                                                                             #
 COMPILER_FLAGS += -mwindows
-LFLAGS += -mwindows $(addprefix -l,$(LIBRARY))
-
-
+LDFLAGS += -mwindows $(addprefix -l,$(LIBRARY))
+FILES+=win.c
 
 #                                                                             #
 #  Generate the object files.                                                 #
@@ -71,13 +70,3 @@ OBJECTS  := $(addprefix $(OBJDIR)/, $(addsuffix .$(OBJ_SUFFIX), $(FILES)))
 
 
 
-#                                                                             #
-#  By default,  build the project and scripts.                                #
-#                                                                             #
-default : $(EXEC) scripting editor
-
-$(EXEC) : $(OBJECTS)
-	$(LINKER) $^ -o $@ $(LFLAGS)
-
-$(OBJDIR)/%.$(OBJ_SUFFIX) : $(SRC_DIR)/%.$(SRC_SUFFIX)
-	$(COMPILER) $(COMPILER_FLAGS) -c -o $@ $<

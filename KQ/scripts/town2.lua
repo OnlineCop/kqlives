@@ -48,7 +48,15 @@ function autoexec()
     set_ent_active(10, 1);
   else
     set_ent_active(10, 0);
-  end
+ end
+   if not LOC_manor_or_party(AJATHAR) then
+-- // Make one of the ents look like Ajathar if he's not been recruited yet.
+      set_ent_id(10, AJATHAR)
+      set_ent_active(10,1)
+      set_ent_tilex(10,15)
+      set_ent_tiley(10,15)
+   end
+
   refresh();
 end
 
@@ -288,7 +296,7 @@ function entity_handler(en)
   elseif (en == 5) then
     if (get_progress(P_WARPSTONE) == 1) then
       bubble(5, "Business is good.");
-      return;
+      return
     end
     if (get_progress(P_FIGHTONBRIDGE) > 4) then
       bubble(5, "Now that the bridge is repaired I'm back in business.");
@@ -348,8 +356,9 @@ function entity_handler(en)
       bubble(9, "How long does it take to build a bridge?");
     end
 
-  elseif (en == 10) then
-    if (get_progress(P_GETPARTNER) ~= 3) then
+ elseif (en == 10) then
+    LOC_meet_ajathar()
+/*    if (get_progress(P_GETPARTNER) ~= 3) then
       if (get_numchrs() == 1) then
         bubble(10, "Wow! You were great back there. I really appreciate what you did for me. In return, I shall accompany you.");
         bubble(10, "Oh... and here... take this.");
@@ -384,8 +393,9 @@ function entity_handler(en)
         set_progress(P_FOUNDMAYOR, 2);
         set_progress(P_GETPARTNER, 3);
       end
-    end
-  end
+   end
+*/
+ end
 end
 
 
@@ -410,3 +420,71 @@ function LOC_partner_check(who)
     bubble(who, "Oh... ok. Well maybe we'll run into each other again some time.");
   end
 end
+
+function LOC_manor_or_party(who)
+   local a
+   if get_pidx(0)==who then
+      return "party"
+   elseif get_numchrs()>1 and get_pidx(0)==who then
+      return party
+   end
+   for a=P_MANORPARTY,P_MANORPARTY7 do
+      if get_progress(a)-1==who then
+	 return "manor"
+      end
+   end
+   return nil
+end
+
+function LOC_meet_ajathar()
+   local ta, id;
+   ta=get_progress(P_TALK_AJATHAR);
+   if (get_progress(P_PORTALGONE)==0) then
+      if (ta==0) then
+	 bubble(HERO1, "Hello! You haven't ventured very far!")
+	 bubble(10, "I have been maintaining a constant prayer vigil at this point. It should discourage the monsters from emerging into the town.")
+	 bubble(HERO1, "And what if they DO come out?")
+	 bubble(10, "My training also included swordsmanship")
+	 set_progress(P_TALK_AJATHAR, 1)
+      elseif (ta==1) then
+	 bubble(10, "I hope I am doing the right thing here")
+      end
+   else
+      if (ta==0) then 
+	 bubble(10, "Be careful! That tunnel is infested with monsters")
+	 bubble(HERO1, "Fortunately, I been successful in closing the Portal. No more monsters will trouble us now")
+	 set_progress(P_TALK_AJATHAR, 1)
+      else
+	 bubble(HERO1, "You can rest easy now. I have closed the Portal that let the monsters through.")
+      end
+      bubble(10, "Great! Can I offer my services?")
+      id=select_team{AJATHAR}
+--// add the characters that weren't selected to the manor
+      add_to_manor(id)
+      if (id[1]) then
+	 set_ent_id(10, id[1])
+	 if (id[2]) then
+	    -- two heroes were de-selected
+	    set_ent_id(9,id[2])
+	    set_ent_active(9,1)
+	    set_ent_tilex(9,get_ent_tilex(10))
+	    set_ent_tiley(9, get_ent_tiley(10)+1)
+	    bubble(10, "If you need us, we'll be back at the manor")
+	    set_ent_script(10, "L1U1L1U2L2U1K")
+	    set_ent_script(9,  "L1U2L1U2L2U1K")
+	    wait_for_entity(9,10)
+--	    set_ent_active(10,0)
+--	    set_ent_script(9,"U1")
+--	    wait_for_entity(9,9)
+	    set_ent_active(9,0)
+	 else
+	    -- one hero was de-selected
+	    bubble(10, "If you need me, I'll be back at the manor")
+	    set_ent_script(10, "L1U2L2U1L1U1")
+	    wait_for_entity(10,10)
+	 end
+      end
+      set_ent_active(10, 0)
+   end
+end
+

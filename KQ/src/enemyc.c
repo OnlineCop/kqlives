@@ -319,8 +319,7 @@ void load_enemies (void)
      {
         program_death ("Could not load enemy sprites from datafile");
      }
-   sprintf (strbuf, "%s/allstat.mon", DATA_DIR);
-   edat = fopen (strbuf, "r");
+   edat = fopen (kqres (DATA_DIR, "allstat.mon"), "r");
    if (!edat)
       program_death ("Could not load 1st enemy datafile!");
    enemies_n = 0;
@@ -414,8 +413,7 @@ void load_enemies (void)
      }
    fclose (edat);
 
-   sprintf (strbuf, "%s/resabil.mon", DATA_DIR);
-   edat = fopen (strbuf, "r");
+   edat = fopen (kqres (DATA_DIR, "resabil.mon"), "r");
    if (!edat)
       program_death ("Could not load 2nd enemy datafile!");
    for (i = 0; i < enemies_n; i++)

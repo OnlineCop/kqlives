@@ -31,7 +31,9 @@
 
 #define ICONSET_SIZE    20 // Number of icons shown in the tile map
 
+#include "structs.h"
 
+/*
 typedef struct
 {
    unsigned char chrx;  // Entity's identity (what s/he looks like)
@@ -77,6 +79,7 @@ typedef struct
    char map_desc[40];
 }
 ss_map;
+*/
 
 typedef struct
 {
@@ -132,12 +135,13 @@ void update_tileset (void);
 void show_help (void);
 int check_last_zone (void);
 void get_tile (void);
-void visual_map (void);
+
+void visual_map(void);
 
 extern unsigned short *map, *b_map, *f_map, *c_map, *cf_map, *cb_map;
-extern unsigned char *z_map, *cz_map, *s_map, *cs_map, *o_map, *co_map;
+extern unsigned char *z_map, *cz_map, *sh_map, *cs_map, *o_map, *co_map;
 extern char *strbuf;
-extern ss_map gmap;
+extern s_map gmap;
 extern s_entity gent[];
 extern s_show showing;
 extern PALETTE pal;

@@ -8,7 +8,7 @@
  * December 2002 (and Jan 2003)
  */
 #include "mapdraw.h"
-
+#include "disk.h"
 
 /*! \brief Convert map to PCX images
  *
@@ -216,7 +216,7 @@ void make_mapfrompcx (void)
 void load_map (void)
 {
    char fname[16];
-   int ld, p, q;
+   int ld, p, q, i;
    PACKFILE *pf;
 
    rectfill (screen, 0, 0, 319, 29, 0);
@@ -261,15 +261,23 @@ void load_map (void)
              return;
           }
         strcpy (map_fname, fname);
+	/*
         pack_fread (&gmap, sizeof (ss_map), pf);
         pack_fread (&gent, sizeof (s_entity) * 50, pf);
+	*/
+	load_s_map(&gmap, pf);
+	for (i=0; i<50; ++i)
+	  {
+	    load_s_entity(gent+i, pf);
+	  }
         bufferize ();
         pack_fread (map, (gmap.xsize * gmap.ysize * 2), pf);
         pack_fread (b_map, (gmap.xsize * gmap.ysize * 2), pf);
         pack_fread (f_map, (gmap.xsize * gmap.ysize * 2), pf);
         pack_fread (z_map, (gmap.xsize * gmap.ysize), pf);
-        pack_fread (s_map, (gmap.xsize * gmap.ysize), pf);
+        pack_fread (sh_map, (gmap.xsize * gmap.ysize), pf);
         pack_fread (o_map, (gmap.xsize * gmap.ysize), pf);
+
         pack_fclose (pf);
         pcx_buffer = load_pcx (icon_files[gmap.tileset], pal);
         max_sets = (pcx_buffer->h / 16);
@@ -283,8 +291,8 @@ void load_map (void)
         for (p = 0; p < gmap.xsize * gmap.ysize; ++p)
           {
              /* Shadow layer */
-             if (s_map[p] >= MAX_SHADOWS)
-                s_map[p] = 0;
+             if (sh_map[p] >= MAX_SHADOWS)
+                sh_map[p] = 0;
           }
         destroy_bitmap (pcx_buffer);
      } /* if (yninput ()) */
@@ -338,13 +346,13 @@ void save_map (void)
      {
         strcpy (map_fname, fname);
         pf = pack_fopen (fname, F_WRITE_PACKED);
-        pack_fwrite (&gmap, sizeof (ss_map), pf);
+        pack_fwrite (&gmap, sizeof (s_map), pf);
         pack_fwrite (&gent, sizeof (s_entity) * 50, pf);
         pack_fwrite (map, (gmap.xsize * gmap.ysize * 2), pf);
         pack_fwrite (b_map, (gmap.xsize * gmap.ysize * 2), pf);
         pack_fwrite (f_map, (gmap.xsize * gmap.ysize * 2), pf);
         pack_fwrite (z_map, (gmap.xsize * gmap.ysize), pf);
-        pack_fwrite (s_map, (gmap.xsize * gmap.ysize), pf);
+        pack_fwrite (sh_map, (gmap.xsize * gmap.ysize), pf);
         pack_fwrite (o_map, (gmap.xsize * gmap.ysize), pf);
         pack_fclose (pf);
 

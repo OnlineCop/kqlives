@@ -67,6 +67,7 @@
 #include "scrnshot.h"
 #include "sgame.h"
 #include "shopmenu.h"
+#include "disk.h"
 #include "credits.h"
 
 /*! Name of the current map */
@@ -446,6 +447,10 @@ void readcontrols (void)
 #ifdef KQ_CHEATS
    if (key[KEY_F11])
       data_dump ();
+   /* PH add 20030805 */
+   /* Back to menu - by pretending all the heroes died.. hehe */
+   if (key[KEY_ALT] && key[KEY_M])
+      alldead = 1;
 #endif
 
    /* ML,2002.09.21: Saves sequential screen captures to disk. See scrnshot.c/h for more info. */
@@ -626,9 +631,9 @@ void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
    if (hold_fade == 0)
       do_transition (TRANS_FADE_OUT, 4);
 
-   sprintf (strbuf, "%s%s.map", MAP_DIR, map_name);
+   sprintf (strbuf, "%s.map", map_name);
 
-   pf = pack_fopen (strbuf, F_READ_PACKED);
+   pf = pack_fopen (kqres (MAP_DIR, strbuf), F_READ_PACKED);
 
    if (!pf)
      {
@@ -643,17 +648,23 @@ void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
         program_death (strbuf);
      }
 
-   pack_fread (&g_map, sizeof (s_map), pf);
-   pack_fread (&g_ent[PSIZE], sizeof (s_entity) * 50, pf);
+   /*pack_fread (&g_map, sizeof (s_map), pf); */
+   /*pack_fread (&g_ent[PSIZE], sizeof (s_entity) * 50, pf); */
+   load_s_map (&g_map, pf);
+   for (i = 0; i < 50; ++i)
+      load_s_entity (&g_ent[PSIZE + i], pf);
 
    free (map_seg);
-   map_seg = (unsigned short *) malloc (g_map.xsize * g_map.ysize * 2);
+   map_seg =
+      (unsigned short *) malloc (g_map.xsize * g_map.ysize * sizeof (short));
 
    free (b_seg);
-   b_seg = (unsigned short *) malloc (g_map.xsize * g_map.ysize * 2);
+   b_seg =
+      (unsigned short *) malloc (g_map.xsize * g_map.ysize * sizeof (short));
 
    free (f_seg);
-   f_seg = (unsigned short *) malloc (g_map.xsize * g_map.ysize * 2);
+   f_seg =
+      (unsigned short *) malloc (g_map.xsize * g_map.ysize * sizeof (short));
 
    free (z_seg);
    z_seg = (unsigned char *) malloc (g_map.xsize * g_map.ysize);
@@ -663,10 +674,16 @@ void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
 
    free (o_seg);
    o_seg = (unsigned char *) malloc (g_map.xsize * g_map.ysize);
+   for (i = 0; i < g_map.xsize * g_map.ysize; ++i)
+      map_seg[i] = pack_igetw (pf);
+   for (i = 0; i < g_map.xsize * g_map.ysize; ++i)
+      b_seg[i] = pack_igetw (pf);
+   for (i = 0; i < g_map.xsize * g_map.ysize; ++i)
+      f_seg[i] = pack_igetw (pf);
 
-   pack_fread (map_seg, (g_map.xsize * g_map.ysize * 2), pf);
-   pack_fread (b_seg, (g_map.xsize * g_map.ysize * 2), pf);
-   pack_fread (f_seg, (g_map.xsize * g_map.ysize * 2), pf);
+   /*pack_fread (map_seg, (g_map.xsize * g_map.ysize * 2), pf);
+      pack_fread (b_seg, (g_map.xsize * g_map.ysize * 2), pf);
+      pack_fread (f_seg, (g_map.xsize * g_map.ysize * 2), pf); */
    pack_fread (z_seg, (g_map.xsize * g_map.ysize), pf);
    pack_fread (s_seg, (g_map.xsize * g_map.ysize), pf);
    pack_fread (o_seg, (g_map.xsize * g_map.ysize), pf);
@@ -998,42 +1015,52 @@ void activate (void)
  *
  * This is used to wait and make sure that the user has
  * released a key before moving on.
+ * 20030728 PH re-implemented in IMHO a neater way
  *
  * \note Waits at most 20 'ticks'
 */
 void unpress (void)
 {
-   int cc = 0;
-
    timer_count = 0;
-
-   while (cc < 8)
+   while (timer_count < 20)
      {
-        cc = 0;
         readcontrols ();
-
-        if (up == 0)
-           cc++;
-        if (down == 0)
-           cc++;
-        if (right == 0)
-           cc++;
-        if (left == 0)
-           cc++;
-        if (balt == 0)
-           cc++;
-        if (bctrl == 0)
-           cc++;
-        if (benter == 0)
-           cc++;
-        if (besc == 0)
-           cc++;
-
-        if (timer_count > 19)
-           cc = 8;
+        if (!(balt || bctrl || benter || besc || up || down || right || left))
+           break;
      }
-
    timer_count = 0;
+
+/*    int cc = 0; */
+
+/*    timer_count = 0; */
+
+/*    while (cc < 8) */
+/*      { */
+/*         cc = 0; */
+/*         readcontrols (); */
+
+/*         if (up == 0) */
+/*            cc++; */
+/*         if (down == 0) */
+/*            cc++; */
+/*         if (right == 0) */
+/*            cc++; */
+/*         if (left == 0) */
+/*            cc++; */
+/*         if (balt == 0) */
+/*            cc++; */
+/*         if (bctrl == 0) */
+/*            cc++; */
+/*         if (benter == 0) */
+/*            cc++; */
+/*         if (besc == 0) */
+/*            cc++; */
+
+/*         if (timer_count > 19) */
+/*            cc = 8; */
+/*      } */
+
+/*    timer_count = 0; */
 }
 
 
@@ -1097,71 +1124,6 @@ static void startup (void)
    time_t t;
    DATAFILE *pcxb;
 
-#if defined(HAVE_GETPWUID)
-   struct passwd *pwd;
-   char *home = NULL;
-
-   if ((home = getenv ("HOME")) == NULL)
-     {
-        /* Try looking in password file for home dir. */
-        if ((pwd = getpwuid (getuid ())))
-           home = pwd->pw_dir;
-     }
-
-   /* Do not get fooled by a corrupted $HOME */
-   if (home != NULL && strlen (home) < PATH_MAX)
-     {
-        savedir = malloc (strlen (home) + strlen ("/.kq") + 1);
-        sprintf (savedir, "%s/.kq", home);
-        /* Always try to make the directory, just to be sure. */
-        mkdir (savedir, 0755);
-     }
-   else
-#elif defined(HAVE_LOADLIBRARY)
-   typedef HRESULT (WINAPI * SHGETFOLDERPATH) (HWND, int, HANDLE, DWORD,
-                                               LPTSTR);
-
-#  define CSIDL_FLAG_CREATE 0x8000
-#  define CSIDL_APPDATA 0x1A
-#  define SHGFP_TYPE_CURRENT 0
-
-   char home[MAX_PATH];
-   HINSTANCE SHFolder;
-   SHGETFOLDERPATH SHGetFolderPath;
-
-   *home = '\0';
-
-   /* Load the shfolder dll to retrieve SHGetFolderPath */
-   SHFolder = LoadLibrary ("shfolder.dll");
-   if (SHFolder != NULL)
-     {
-        SHGetFolderPath =
-           (void *) GetProcAddress (SHFolder, "SHGetFolderPathA");
-        if (SHGetFolderPath != NULL)
-          {
-             /* Get the "Application Data" folder for the current user */
-             if (SHGetFolderPath (NULL, CSIDL_APPDATA | CSIDL_FLAG_CREATE,
-                                  NULL, SHGFP_TYPE_CURRENT, home) == S_OK)
-                FreeLibrary (SHFolder);
-             else
-                *home = '\0';
-          }
-        FreeLibrary (SHFolder);
-     }
-
-   if (*home)
-     {
-        savedir = malloc (strlen (home) + strlen ("/kq") + 1);
-        sprintf (savedir, "%s/kq", home);
-        /* Always try to make the directory, just to be sure. */
-        mkdir (savedir);
-     }
-   else
-#endif
-     {
-        savedir = strdup (SAVE_DIR);
-     }
-   TRACE ("Storing app data in %s\n", savedir);
    allegro_init ();
 
 /*
@@ -1288,18 +1250,18 @@ static void startup (void)
 
    unload_datafile_object (pcxb);
    load_heroes ();
+#if 0
    pcxb = load_datafile_object (PCX_DATAFILE, "KQFACES_PCX");
 
    if (!pcxb)
       program_death ("Could not load kqfaces.pcx!");
-#if 0
    for (p = 0; p < 4; p++)
      {
         blit ((BITMAP *) pcxb->dat, portrait[p], 0, p * 40, 0, 0, 40, 40);
         blit ((BITMAP *) pcxb->dat, portrait[p + 4], 40, p * 40, 0, 0, 40, 40);
      }
-#endif
    unload_datafile_object (pcxb);
+#endif
    load_data ();
    init_players ();
 
@@ -1575,14 +1537,14 @@ void load_heroes (void)
    DATAFILE *pcxb;
    int i;
    /* Hero stats */
-   sprintf (strbuf, "%s/hero.kq", DATA_DIR);
-   if ((f = pack_fopen (strbuf, F_READ_PACKED)) == NULL)
+   if ((f = pack_fopen (kqres (DATA_DIR, "hero.kq"), F_READ_PACKED)) == NULL)
      {
         program_death ("Cannot open hero data file");
      }
    for (i = 0; i < MAXCHRS; ++i)
      {
-        pack_fread (&players[i].plr, sizeof (s_player), f);
+        /*        pack_fread (&players[i].plr, sizeof (s_player), f); */
+        load_s_player (&players[i].plr, f);
      }
    pack_fclose (f);
    /* portraits */
@@ -1632,7 +1594,7 @@ void init_players (void)
    pb = load_datafile_object (PCX_DATAFILE, "USCHRS_PCX");
 
    if (!pb)
-      program_death ("Could not load chr graphics!");
+      program_death ("Could not load character graphics!");
 
    set_palette (pal);
 
@@ -1705,56 +1667,24 @@ void kwait (int dtime)
  * to finish scripted movement rather than waiting for
  * a specific amount of time to pass.
  * Specify a range of entities to wait for.
+ * \note 20030810 PH implemented this in a neater way, need to check if it always works though.
  *
  * \param   est First entity
  * \param   efi Last entity
 */
 void wait_for_entity (int est, int efi)
 {
-   int ewatch, ecnt = 0, wait_ent[50], a;
-
-   if (efi < est)
-      return;
-   /* PH perverse code: */
-   ewatch = efi - est + 1;
-
-   for (a = est; a < est + ewatch; a++)
-     {
-        if (g_ent[a].active == 1 && g_ent[a].movemode == 2)
-          {
-             wait_ent[a] = 1;
-             ecnt++;
-          }
-        else
-           wait_ent[a] = 0;
-     }
-
+   int e, n;
    autoparty = 1;
-   timer_count = 0;
-
-   while (ecnt > 0)
+   do
      {
-        poll_music ();
         while (timer_count > 0)
           {
-             poll_music ();
              timer_count--;
              process_entities ();
              check_animation ();
-
-             for (a = est; a < est + ewatch; a++)
-               {
-                  if (wait_ent[a] == 1)
-                    {
-                       if (g_ent[a].movemode == 0)
-                         {
-                            wait_ent[a] = 0;
-                            ecnt--;
-                         }
-                    }
-               }
           }
-
+        poll_music ();
         drawmap ();
         blit2screen (xofs, yofs);
 
@@ -1763,11 +1693,80 @@ void wait_for_entity (int est, int efi)
 
         if (key[KEY_X] && key[KEY_ALT])
            program_death (strbuf);
-     }
 
-   timer_count = 0;
+        n = 0;
+        for (e = est; e <= efi; ++e)
+          {
+             if (g_ent[e].active == 1 && g_ent[e].movemode == 2)
+               {
+                  n = 1;
+                  break;
+               }
+          }
+     }
+   while (n);
    autoparty = 0;
 }
+
+/* void wait_for_entity (int est, int efi) */
+/* { */
+/*    int ewatch, ecnt = 0, wait_ent[50], a; */
+
+/*    if (efi < est) */
+/*       return; */
+/*    /\* PH perverse code: *\/ */
+/*    ewatch = efi - est + 1; */
+
+/*    for (a = est; a < est + ewatch; a++) */
+/*      { */
+/*         if (g_ent[a].active == 1 && g_ent[a].movemode == 2) */
+/*           { */
+/*              wait_ent[a] = 1; */
+/*              ecnt++; */
+/*           } */
+/*         else */
+/*            wait_ent[a] = 0; */
+/*      } */
+
+/*    autoparty = 1; */
+/*    timer_count = 0; */
+
+/*    while (ecnt > 0) */
+/*      { */
+/*         poll_music (); */
+/*         while (timer_count > 0) */
+/*           { */
+/*              poll_music (); */
+/*              timer_count--; */
+/*              process_entities (); */
+/*              check_animation (); */
+
+/*              for (a = est; a < est + ewatch; a++) */
+/*                { */
+/*                   if (wait_ent[a] == 1) */
+/*                     { */
+/*                        if (g_ent[a].movemode == 0) */
+/*                          { */
+/*                             wait_ent[a] = 0; */
+/*                             ecnt--; */
+/*                          } */
+/*                     } */
+/*                } */
+/*           } */
+
+/*         drawmap (); */
+/*         blit2screen (xofs, yofs); */
+
+/*         if (key[KEY_W] && key[KEY_ALT]) */
+/*            break; */
+
+/*         if (key[KEY_X] && key[KEY_ALT]) */
+/*            program_death (strbuf); */
+/*      } */
+
+/*    timer_count = 0; */
+/*    autoparty = 0; */
+/* } */
 
 
 
@@ -1808,7 +1807,6 @@ int in_party (int pn)
 
    return 0;
 }
-
 
 
 /*! \brief Main function

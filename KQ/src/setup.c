@@ -108,8 +108,7 @@ void parse_setup (void)
    jbenter = 2;
    jbesc = 3;
    /* PH Why in the world doesn't he use Allegro cfg functions here? */
-   sprintf (strbuf, "%s/setup.cfg", savedir);
-   if (!(s = fopen (strbuf, "r")))
+   if (!(s = fopen (kqres (SETTINGS_DIR, "setup.cfg"), "r")))
      {
         klog ("Could not open saves/setup.cfg - Using defaults.");
         return;
@@ -358,7 +357,8 @@ void config_menu (void)
              switch (ptr)
                {
                case 0:
-                  text_ex (B_TEXT, 255, "Changing the display mode to or from windowed view could have serious ramifications. It is advised that you save first.");
+                  text_ex (B_TEXT, 255,
+                           "Changing the display mode to or from windowed view could have serious ramifications. It is advised that you save first.");
                   if (windowed == 0)
                      sprintf (strbuf, "Switch to windowed mode?");
                   else
@@ -374,7 +374,8 @@ void config_menu (void)
                     }
                   break;
                case 1:
-                  text_ex (B_TEXT, 255, "Changing the stretched view option could have serious ramifications. It is advised that you save your game before trying this.");
+                  text_ex (B_TEXT, 255,
+                           "Changing the stretched view option could have serious ramifications. It is advised that you save your game before trying this.");
                   if (stretch_view == 0)
                      sprintf (strbuf, "Try to stretch the display?");
                   else

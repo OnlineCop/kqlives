@@ -2929,8 +2929,7 @@ int KQ_istable (lua_State * L)
 int KQ_select_team (lua_State * L)
 {
    static int team[8];
-   int i;
-   TRACE ("%d---", lua_gettop (L));
+   int i, t;
    for (i = 0; i < 8; ++i)
      {
         lua_rawgeti (L, 1, i + 1);
@@ -2939,17 +2938,22 @@ int KQ_select_team (lua_State * L)
              team[i] = -1;
           }
         else
-           team[i] = lua_tonumber (L, -1);
+          {
+             team[i] = lua_tonumber (L, -1);
+             lua_pushnil (L);
+             lua_rawseti (L, 1, i + 1);
+          }
         lua_pop (L, 1);
      }
    select_party (team, 8, 2);
+   t = 1;
    for (i = 0; i < 8; ++i)
      {
-        if (team[i] == -1)
-           lua_pushnil (L);
-        else
-           lua_pushnumber (L, team[i]);
-        lua_rawseti (L, 1, i + 1);
+        if (team[i] != -1)
+          {
+             lua_pushnumber (L, team[i]);
+             lua_rawseti (L, 1, t++);
+          }
      }
    return 1;
 }
@@ -2964,6 +2968,7 @@ int KQ_select_team (lua_State * L)
 void do_luainit (char *fname)
 {
    int oldtop;
+   char sname[32];
    const struct luaL_reg *rg = lrs;
    if (theL != NULL)
      {
@@ -2980,15 +2985,14 @@ void do_luainit (char *fname)
      }
    init_obj (theL);
    oldtop = lua_gettop (theL);
-   sprintf (strbuf, "%sglobal.lob", SCRIPT_DIR);
-   if (lua_dofile (theL, strbuf) != 0)
+   if (lua_dofile (theL, kqres (SCRIPT_DIR, "global.lob")) != 0)
      {
         sprintf (strbuf, "Could not open script: global.lob");
         program_death (strbuf);
      }
 
-   sprintf (strbuf, "%s%s.lob", SCRIPT_DIR, fname);
-   if (lua_dofile (theL, strbuf) != 0)
+   sprintf (sname, "%s.lob", fname);
+   if (lua_dofile (theL, kqres (SCRIPT_DIR, sname)) != 0)
      {
         sprintf (strbuf, "Could not open script:%s", fname);
         program_death (strbuf);
@@ -3018,8 +3022,7 @@ void do_luacheat (void)
    oldtop = lua_gettop (theL);
    if (cheat_loaded == 0)
      {
-        sprintf (strbuf, "%scheat.lob", SCRIPT_DIR);
-        lua_dofile (theL, strbuf);
+        lua_dofile (theL, kqres (SCRIPT_DIR, "cheat.lob"));
         /* PH FIXME cheat_loaded=1; here surely?? */
      }
    lua_getglobal (theL, "cheat");

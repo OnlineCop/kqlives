@@ -26,7 +26,7 @@ void init_entities (void)
         /* y-coord tile that entity is standing on */
         gent[p].tiley = 0;
         /* Entity type (fighter, enemy, normal) */
-        gent[p].id = 0;
+        gent[p].eid = 0;
         /* "Alive" and on-screen or not */
         gent[p].active = 0;
         /* Direction facing */
@@ -154,7 +154,7 @@ void place_entity (int ex, int ey)
    gent[noe].x = ex * 16;  /* Will be the same as tilex unless moving */
    gent[noe].y = ey * 16;  /* ..same.. */
    gent[noe].active = 1;   /* Showing on map or not */
-   gent[noe].id = 255;     /* */
+   gent[noe].eid = 255;     /* */
    gent[noe].movemode = 0; /* 0=stand, 1=wander, 2=script, 3=chase */
    gent[noe].delay = 50;   /* Length of time between commands */
    gent[noe].speed = 3;    /* Walking speed */

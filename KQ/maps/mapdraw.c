@@ -16,6 +16,7 @@
 #define SH            480
 #define WBUILD          1
 
+/*
 typedef struct
 {
    unsigned char chrx;
@@ -54,6 +55,7 @@ typedef struct
    char map_desc[40];
 }
 ss_map;
+*/
 
 /*
    A requirement for this program is that all icon-files have a blank icon in entry 0

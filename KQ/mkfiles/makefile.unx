@@ -1,4 +1,4 @@
-###############################################################################
+# -*- makefile -*- ############################################################
 #                                                                             #
 #  This is the Unix  Makefile for compiling this package. Check also the      #
 #  base makefile for more options.                                            #
@@ -20,11 +20,10 @@
 COMPILER       := $(GCC)
 PREPROCESSOR   := $(GPP) -P -undef
 LINKER         := $(GCC)
-COMPILER_FLAGS := $(CFLAGS)
+COMPILER_FLAGS := $(CFLAGS) -DHAVE_GETPWUID
 OBJDIR         := $(OBJ_DIR)/unix
 EXE_SUFFIX     :=
 EXEC           := $(BIN_DIR)/$(ID_SHORT)
-
 
 ###############################################################################
 #                                                                             #
@@ -46,24 +45,6 @@ endif
 #                                                                             #
 #  Convert all libraries needed so that GCC can understand them.              #
 #                                                                             #
-LFLAGS += $(addprefix -l, $(LIBRARY)) $(ALLEGRO)
+LDFLAGS += $(addprefix -l, $(LIBRARY)) $(ALLEGRO)
+FILES+=unix.c
 
-
-
-#                                                                             #
-#  Find out the objects we must generate.                                     #
-#                                                                             #
-OBJECTS := $(addprefix $(OBJDIR)/, $(addsuffix .$(OBJ_SUFFIX), $(FILES)))
-
-
-
-#                                                                             #
-#  By default,  build the project and scripts.                                #
-#                                                                             #
-default : $(EXEC) scripting editor
-
-$(EXEC) : $(OBJECTS)
-	$(LINKER) $^ -o $@ $(LFLAGS)
-
-$(OBJDIR)/%.$(OBJ_SUFFIX) : $(SRC_DIR)/%.$(SRC_SUFFIX)
-	$(COMPILER) $(COMPILER_FLAGS) -c -o $@ $<

@@ -1,4 +1,4 @@
-###############################################################################
+# -*- makefile -*- ############################################################
 #                                                                             #
 #  Makefile to build this package using MSVC. Check Makefile.all for a list   #
 #  of common targets.                                                         #
@@ -37,7 +37,7 @@ endif
 #  Just noticed that I needed to define -GR because MSVC get confused with a  #
 #  dynamic_cast ;)                                                            #
 #                                                                             #
-CXXFLAGS := -nologo -TP -W3 -GX -GA -GR -WX -Ox -I $(INC_DIR)
+CXXFLAGS := -nologo -TP -W3 -GX -GA -GR -WX -Ox -D "HAVE_LOADLIBRARY" -I $(INC_DIR)
 OBJECTS  := $(addprefix $(OBJDIR)/, $(addsuffix .$(OBJ_SUFFIX), $(FILES)))
 
 

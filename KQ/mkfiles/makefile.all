@@ -24,8 +24,17 @@
 ###############################################################################
 
 
-.PHONY: clean distclean veryclean tgz zip compress
+.PHONY: clean distclean veryclean tgz zip compress game scripting editor all
 
+#                                                                             #
+#  The default name of the executable to generate. By default, it should      #
+#  always be prefixed with $(BIN_DIR) (so that it is placed in the binary     #
+#  directory), and suffixed with the $(EXE_SUFFIX) variable. However, the     #
+#  name of the executable might not be the same of $(ID_SHORT).               #
+#                                                                             #
+#  EXEC := $(BIN_DIR)/mybinary$(EXE_SUFFIX)                                   #
+#                                                                             #
+EXEC := $(BIN_DIR)/$(ID_SHORT)$(EXE_SUFFIX)
 
 #                                                                             #
 #  The PACKAGE_TGZ and PACKAGE_ZIP declare the names of the final package.    #
@@ -55,8 +64,21 @@ PACKAGE_OBJ = fix.bat    \
 
 RES_C=src/res.c
 
+#                                                                             #
+#  Find out the objects we must generate.                                     #
+#                                                                             #
+OBJECTS = $(addprefix $(OBJDIR)/, $(addsuffix .$(OBJ_SUFFIX), $(basename $(FILES))))
+
 # export all our vars to sub-makes
 export
+
+game: $(EXEC)
+
+$(EXEC) : $(OBJECTS)
+	$(LINKER) $^ -o $@ $(LDFLAGS)
+
+$(OBJDIR)/%.$(OBJ_SUFFIX) : $(SRC_DIR)/%.$(SRC_SUFFIX)
+	$(COMPILER) $(COMPILER_FLAGS) -c -o $@ $<
 
 # Just go into the scripts directory and run the script there                 #
 scripting:
@@ -67,7 +89,7 @@ editor:
 	$(MAKE) -C maps
 
 
-$(RES_C): other/items.csv other/spells.csv other/effects.csv other/encount.csv
+$(RES_C): other/items.csv other/spells.csv other/effects.csv other/encount.csv other/battles.csv
 	cat other/res-skel.1.c > $(RES_C)
 	other/kq2h.pl other/items.csv >> $(RES_C)
 	cat other/res-skel.2.c >> $(RES_C)
@@ -77,6 +99,8 @@ $(RES_C): other/items.csv other/spells.csv other/effects.csv other/encount.csv
 	cat other/res-skel.4.c >> $(RES_C)
 	other/kq2h.pl other/encount.csv >> $(RES_C)
 	cat other/res-skel.5.c >> $(RES_C)
+	other/kq2h.pl other/battles.csv>> $(RES_C)
+	cat other/res-skel.6.c >> $(RES_C)
 
 #                                                                             #
 #  The clean target deletes the executable, the object files and the runner,  #

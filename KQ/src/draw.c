@@ -1291,14 +1291,14 @@ int prompt_ex (int who, const char *ptext, char *opt[], int n_opt)
         ptext = relay (ptext);
         if (ptext)
           {
-            /* print prompt pages prior to the last one */
+             /* print prompt pages prior to the last one */
              generic_text (who, B_TEXT);
           }
         else
           {
-            /* do prompt and options */ 
+             /* do prompt and options */
              int a;
-            /* calc the size of the prompt box */
+             /* calc the size of the prompt box */
              for (a = 0; a < 4; a++)
                {
                   int len = strlen (msgbuf[a]);
@@ -1331,7 +1331,7 @@ int prompt_ex (int who, const char *ptext, char *opt[], int n_opt)
                     {
                        drawmap ();
                        /* Draw the prompt text */
-                      set_textpos(who);
+                       set_textpos (who);
                        draw_textbox (B_TEXT);
                        /* Draw the  options text */
                        draw_kq_box (double_buffer, winx - 5, winy - 5,

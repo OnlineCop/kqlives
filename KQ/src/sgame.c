@@ -54,6 +54,7 @@
 #include "progress.h"
 #include "menu.h"
 #include "music.h"
+#include "disk.h"
 /*! \name Globals */
 /*\{*/
 int snc[NUMSG], sgp[NUMSG], shr[NUMSG], smin[NUMSG], sid[NUMSG][PSIZE],
@@ -89,8 +90,8 @@ void load_sgstats (void)
 
    for (a = 0; a < NUMSG; a++)
      {
-        sprintf (strbuf, "%s/sg%d.sav", savedir, a);
-        ldat = pack_fopen (strbuf, F_READ_PACKED);
+        sprintf (strbuf, "sg%d.sav", a);
+        ldat = pack_fopen (kqres (SAVE_DIR, strbuf), F_READ_PACKED);
         if (!ldat)
           {
              snc[a] = 0;
@@ -106,20 +107,31 @@ void load_sgstats (void)
           }
         else
           {
-             pack_fread (&vc, sizeof (vc), ldat);
+             /*             pack_fread (&vc, sizeof (vc), ldat); */
+             vc = pack_getc (ldat);
              if (vc != kq_version)
                 snc[a] = -1;
              else
                {
-                  pack_fread (&snc[a], sizeof (snc[a]), ldat);
-                  pack_fread (&sgp[a], sizeof (sgp[a]), ldat);
-                  pack_fread (&shr[a], sizeof (shr[a]), ldat);
-                  pack_fread (&smin[a], sizeof (smin[a]), ldat);
+                  /*
+                     pack_fread (&snc[a], sizeof (snc[a]), ldat);
+                     pack_fread (&sgp[a], sizeof (sgp[a]), ldat);
+                     pack_fread (&shr[a], sizeof (shr[a]), ldat);
+                     pack_fread (&smin[a], sizeof (smin[a]), ldat);
+                   */
+                  snc[a] = pack_igetl (ldat);
+                  sgp[a] = pack_igetl (ldat);
+                  shr[a] = pack_igetl (ldat);
+                  smin[a] = pack_igetl (ldat);
                   for (b = 0; b < PSIZE; b++)
-                     pack_fread (&sid[a][b], sizeof (sid[a][b]), ldat);
+                    {
+                       /*                     pack_fread (&sid[a][b], sizeof (sid[a][b]), ldat); */
+                       sid[a][b] = pack_igetl (ldat);
+                    }
                   for (b = 0; b < MAXCHRS; b++)
                     {
-                       pack_fread (&tpm, sizeof (tpm), ldat);
+                       /*                       pack_fread (&tpm, sizeof (tpm), ldat); */
+                       load_s_player (&tpm, ldat);
                        for (c = 0; c < PSIZE; c++)
                          {
                             if (b == sid[a][c])
@@ -247,48 +259,96 @@ static int save_game (void)
    sgp[save_ptr] = gp;
    smin[save_ptr] = kmin;
    shr[save_ptr] = khr;
-   sprintf (strbuf, "%s/sg%d.sav", savedir, save_ptr);
-   sdat = pack_fopen (strbuf, F_WRITE_PACKED);
+   sprintf (strbuf, "sg%d.sav", save_ptr);
+   sdat = pack_fopen (kqres (SAVE_DIR, strbuf), F_WRITE_PACKED);
    if (!sdat)
      {
         message ("Could not save game data.", 255, 0, 0, 0);
         return 0;
      }
-   pack_fwrite (&kq_version, sizeof (kq_version), sdat);
-   pack_fwrite (&numchrs, sizeof (numchrs), sdat);
-   pack_fwrite (&gp, sizeof (gp), sdat);
-   pack_fwrite (&shr[save_ptr], sizeof (shr[save_ptr]), sdat);
-   pack_fwrite (&smin[save_ptr], sizeof (smin[save_ptr]), sdat);
+   /*   pack_fwrite (&kq_version, sizeof (kq_version), sdat);
+      pack_fwrite (&numchrs, sizeof (numchrs), sdat);
+      pack_fwrite (&gp, sizeof (gp), sdat);
+      pack_fwrite (&shr[save_ptr], sizeof (shr[save_ptr]), sdat);
+      pack_fwrite (&smin[save_ptr], sizeof (smin[save_ptr]), sdat);
+    */
+   pack_putc (kq_version, sdat);
+   pack_iputl (numchrs, sdat);
+   pack_iputl (gp, sdat);
+   pack_iputl (shr[save_ptr], sdat);
+   pack_iputl (smin[save_ptr], sdat);
    for (a = 0; a < PSIZE; a++)
-      pack_fwrite (&pidx[a], sizeof (pidx[a]), sdat);
+     {
+        /*      pack_fwrite (&pidx[a], sizeof (pidx[a]), sdat); */
+        pack_iputl (pidx[a], sdat);
+     }
    for (a = 0; a < MAXCHRS; a++)
-      pack_fwrite (&party[a], sizeof (s_player), sdat);
+     {
+        /*
+           pack_fwrite (&party[a], sizeof (s_player), sdat);
+         */
+        save_s_player (&party[a], sdat);
+     }
    pack_fwrite (curmap, 16, sdat);
-   pack_fwrite (progress, 2000, sdat);
-   pack_fwrite (treasure, 1000, sdat);
-   pack_fwrite (shopq, NUMSHOPS * SHOPITEMS * sizeof (shopq[0][0]), sdat);
-   pack_fwrite (g_inv, MAX_INV * 2 * sizeof (g_inv[0][0]), sdat);
+/*    pack_fwrite (progress, 2000, sdat); */
+   for (a = 0; a < 2000; ++a)
+     {
+        pack_putc (progress[a], sdat);
+     }
+/*    pack_fwrite (treasure, 1000, sdat); */
+   for (a = 0; a < 1000; ++a)
+     {
+        pack_putc (treasure[a], sdat);
+     }
+/*    pack_fwrite (shopq, NUMSHOPS * SHOPITEMS * sizeof (shopq[0][0]), sdat); */
+   for (a = 0; a < NUMSHOPS; ++a)
+     {
+        for (b = 0; b < SHOPITEMS; ++b)
+          {
+             pack_iputw (shopq[a][b], sdat);
+          }
+     }
+/* pack_fwrite (g_inv, MAX_INV * 2 * sizeof (g_inv[0][0]), sdat); */
+   for (a = 0; a < MAX_INV; ++a)
+     {
+        pack_iputw (g_inv[a][0], sdat);
+        pack_iputw (g_inv[a][1], sdat);
+     }
    /* PH FIXME: do we _really_ want things like controls and screen */
    /* mode to be saved/loaded ? */
-   pack_fwrite (&gsvol, sizeof (gsvol), sdat);
-   pack_fwrite (&gmvol, sizeof (gmvol), sdat);
-   pack_fwrite (&windowed, sizeof (windowed), sdat);
-   pack_fwrite (&stretch_view, sizeof (stretch_view), sdat);
-   pack_fwrite (&wait_retrace, sizeof (wait_retrace), sdat);
-   pack_fwrite (&kup, sizeof (kup), sdat);
-   pack_fwrite (&kdown, sizeof (kdown), sdat);
-   pack_fwrite (&kleft, sizeof (kleft), sdat);
-   pack_fwrite (&kright, sizeof (kright), sdat);
-   pack_fwrite (&kalt, sizeof (kalt), sdat);
-   pack_fwrite (&kctrl, sizeof (kctrl), sdat);
-   pack_fwrite (&kenter, sizeof (kenter), sdat);
-   pack_fwrite (&kesc, sizeof (kesc), sdat);
-   pack_fwrite (&jbalt, sizeof (jbalt), sdat);
-   pack_fwrite (&jbctrl, sizeof (jbctrl), sdat);
-   pack_fwrite (&jbenter, sizeof (jbenter), sdat);
-   pack_fwrite (&jbesc, sizeof (jbesc), sdat);
-   pack_fwrite (&g_ent[0].tilex, sizeof (g_ent[0].tilex), sdat);
-   pack_fwrite (&g_ent[0].tiley, sizeof (g_ent[0].tiley), sdat);
+/*    pack_fwrite (&gsvol, sizeof (gsvol), sdat); */
+/*    pack_fwrite (&gmvol, sizeof (gmvol), sdat); */
+/*    pack_fwrite (&windowed, sizeof (windowed), sdat); */
+/*    pack_fwrite (&stretch_view, sizeof (stretch_view), sdat); */
+/*    pack_fwrite (&wait_retrace, sizeof (wait_retrace), sdat); */
+/*    pack_fwrite (&kup, sizeof (kup), sdat); */
+/*    pack_fwrite (&kdown, sizeof (kdown), sdat); */
+/*    pack_fwrite (&kleft, sizeof (kleft), sdat); */
+/*    pack_fwrite (&kright, sizeof (kright), sdat); */
+/*    pack_fwrite (&kalt, sizeof (kalt), sdat); */
+/*    pack_fwrite (&kctrl, sizeof (kctrl), sdat); */
+/*    pack_fwrite (&kenter, sizeof (kenter), sdat); */
+/*    pack_fwrite (&kesc, sizeof (kesc), sdat); */
+/*    pack_fwrite (&jbalt, sizeof (jbalt), sdat); */
+/*    pack_fwrite (&jbctrl, sizeof (jbctrl), sdat); */
+/*    pack_fwrite (&jbenter, sizeof (jbenter), sdat); */
+/*    pack_fwrite (&jbesc, sizeof (jbesc), sdat); */
+   pack_iputl (kup, sdat);
+   pack_iputl (kdown, sdat);
+   pack_iputl (kleft, sdat);
+   pack_iputl (kright, sdat);
+   pack_iputl (kalt, sdat);
+   pack_iputl (kctrl, sdat);
+   pack_iputl (kenter, sdat);
+   pack_iputl (kesc, sdat);
+   pack_iputl (jbalt, sdat);
+   pack_iputl (jbctrl, sdat);
+   pack_iputl (jbenter, sdat);
+   pack_iputl (jbesc, sdat);
+/*    pack_fwrite (&g_ent[0].tilex, sizeof (g_ent[0].tilex), sdat); */
+/*    pack_fwrite (&g_ent[0].tiley, sizeof (g_ent[0].tiley), sdat); */
+   pack_iputw (g_ent[0].tilex, sdat);
+   pack_iputw (g_ent[0].tiley, sdat);
    pack_fclose (sdat);
    return 1;
 }
@@ -298,38 +358,48 @@ static int save_game (void)
 /*! \brief Load game
  *
  * Uh-huh.
- *
+ * PH 20030805 Made endian-safe
  * \returns 1 if load succeeded, 0 otherwise
 */
 static int load_game (void)
 {
    PACKFILE *sdat;
-   int a, thr, tmin;
+   int a, b, thr, tmin;
    unsigned char tv, ww, ss;
 
    ww = windowed;
    ss = stretch_view;
-   sprintf (strbuf, "%s/sg%d.sav", savedir, save_ptr);
-   sdat = pack_fopen (strbuf, F_READ_PACKED);
+   sprintf (strbuf, "sg%d.sav", save_ptr);
+   sdat = pack_fopen (kqres (SAVE_DIR, strbuf), F_READ_PACKED);
    if (!sdat)
      {
         message ("Could not load saved game.", 255, 0, 0, 0);
         return 0;
      }
-   pack_fread (&tv, sizeof (tv), sdat);
+   /*   pack_fread (&tv, sizeof (tv), sdat); */
+   tv = pack_getc (sdat);
    if (tv != kq_version)
      {
         pack_fclose (sdat);
         message ("Saved game format is not current.", 255, 0, 0, 0);
         return 0;
      }
-   pack_fread (&numchrs, sizeof (numchrs), sdat);
-   pack_fread (&gp, sizeof (gp), sdat);
-   pack_fread (&thr, sizeof (thr), sdat);
-   pack_fread (&tmin, sizeof (tmin), sdat);
+   /*
+      pack_fread (&numchrs, sizeof (numchrs), sdat);
+      pack_fread (&gp, sizeof (gp), sdat);
+      pack_fread (&thr, sizeof (thr), sdat);
+      pack_fread (&tmin, sizeof (tmin), sdat);
+    */
+   numchrs = pack_igetl (sdat);
+   gp = pack_igetl (sdat);
+   thr = pack_igetl (sdat);
+   tmin = pack_igetl (sdat);
    for (a = 0; a < PSIZE; a++)
      {
-        pack_fread (&pidx[a], sizeof (pidx[a]), sdat);
+        /*
+           pack_fread (&pidx[a], sizeof (pidx[a]), sdat);
+         */
+        pidx[a] = pack_igetl (sdat);
         g_ent[a].active = 0;
         if (a < numchrs)
           {
@@ -338,31 +408,89 @@ static int load_game (void)
           }
      }
    for (a = 0; a < MAXCHRS; a++)
-      pack_fread (&party[a], sizeof (s_player), sdat);
+     {
+        /*
+           pack_fread (&party[a], sizeof (s_player), sdat);
+         */
+        load_s_player (&party[a], sdat);
+     }
    pack_fread (curmap, 16, sdat);
-   pack_fread (progress, 2000, sdat);
-   pack_fread (treasure, 1000, sdat);
-   pack_fread (shopq, NUMSHOPS * SHOPITEMS * sizeof (shopq[0][0]), sdat);
-   pack_fread (g_inv, MAX_INV * 2 * sizeof (g_inv[0][0]), sdat);
-   pack_fread (&gsvol, sizeof (gsvol), sdat);
-   pack_fread (&gmvol, sizeof (gmvol), sdat);
-   pack_fread (&windowed, sizeof (windowed), sdat);
-   pack_fread (&stretch_view, sizeof (stretch_view), sdat);
-   pack_fread (&wait_retrace, sizeof (wait_retrace), sdat);
-   pack_fread (&kup, sizeof (kup), sdat);
-   pack_fread (&kdown, sizeof (kdown), sdat);
-   pack_fread (&kleft, sizeof (kleft), sdat);
-   pack_fread (&kright, sizeof (kright), sdat);
-   pack_fread (&kalt, sizeof (kalt), sdat);
-   pack_fread (&kctrl, sizeof (kctrl), sdat);
-   pack_fread (&kenter, sizeof (kenter), sdat);
-   pack_fread (&kesc, sizeof (kesc), sdat);
-   pack_fread (&jbalt, sizeof (jbalt), sdat);
-   pack_fread (&jbctrl, sizeof (jbctrl), sdat);
-   pack_fread (&jbenter, sizeof (jbenter), sdat);
-   pack_fread (&jbesc, sizeof (jbesc), sdat);
-   pack_fread (&g_ent[0].tilex, sizeof (g_ent[0].tilex), sdat);
-   pack_fread (&g_ent[0].tiley, sizeof (g_ent[0].tiley), sdat);
+   for (a = 0; a < 2000; ++a)
+     {
+        /*
+           pack_fread (progress, 2000, sdat);
+         */
+        progress[a] = pack_getc (sdat);
+     }
+   for (a = 0; a < 1000; ++a)
+     {
+        /*
+           pack_fread (treasure, 1000, sdat);
+         */
+        treasure[a] = pack_getc (sdat);
+     }
+   /*
+      pack_fread (shopq, NUMSHOPS * SHOPITEMS * sizeof (shopq[0][0]), sdat);
+    */
+   for (a = 0; a < NUMSHOPS; ++a)
+     {
+        for (b = 0; b < SHOPITEMS; ++b)
+          {
+             shopq[a][b] = pack_igetw (sdat);
+          }
+     }
+   /*
+      pack_fread (g_inv, MAX_INV * 2 * sizeof (g_inv[0][0]), sdat);
+    */
+   for (a = 0; a < MAX_INV; ++a)
+     {
+        g_inv[a][0] = pack_igetw (sdat);
+        g_inv[a][1] = pack_igetw (sdat);
+     }
+   /*
+      pack_fread (&gsvol, sizeof (gsvol), sdat);
+      pack_fread (&gmvol, sizeof (gmvol), sdat);
+      pack_fread (&windowed, sizeof (windowed), sdat);
+      pack_fread (&stretch_view, sizeof (stretch_view), sdat);
+      pack_fread (&wait_retrace, sizeof (wait_retrace), sdat);
+    */
+   gsvol = pack_igetl (sdat);
+   gmvol = pack_igetl (sdat);
+   windowed = pack_getc (sdat);
+   stretch_view = pack_getc (sdat);
+   wait_retrace = pack_getc (sdat);
+   /*
+      pack_fread (&kup, sizeof (kup), sdat);
+      pack_fread (&kdown, sizeof (kdown), sdat);
+      pack_fread (&kleft, sizeof (kleft), sdat);
+      pack_fread (&kright, sizeof (kright), sdat);
+      pack_fread (&kalt, sizeof (kalt), sdat);
+      pack_fread (&kctrl, sizeof (kctrl), sdat);
+      pack_fread (&kenter, sizeof (kenter), sdat);
+      pack_fread (&kesc, sizeof (kesc), sdat);
+      pack_fread (&jbalt, sizeof (jbalt), sdat);
+      pack_fread (&jbctrl, sizeof (jbctrl), sdat);
+      pack_fread (&jbenter, sizeof (jbenter), sdat);
+      pack_fread (&jbesc, sizeof (jbesc), sdat);
+    */
+   kup = pack_igetl (sdat);
+   kdown = pack_igetl (sdat);
+   kleft = pack_igetl (sdat);
+   kright = pack_igetl (sdat);
+   kalt = pack_igetl (sdat);
+   kctrl = pack_igetl (sdat);
+   kenter = pack_igetl (sdat);
+   kesc = pack_igetl (sdat);
+   jbalt = pack_igetl (sdat);
+   jbctrl = pack_igetl (sdat);
+   jbenter = pack_igetl (sdat);
+   jbesc = pack_igetl (sdat);
+   /*
+      pack_fread (&g_ent[0].tilex, sizeof (g_ent[0].tilex), sdat);
+      pack_fread (&g_ent[0].tiley, sizeof (g_ent[0].tiley), sdat);
+    */
+   g_ent[0].tilex = pack_igetw (sdat);
+   g_ent[0].tiley = pack_igetw (sdat);
    pack_fclose (sdat);
    load_sgstats ();
    timer_count = 0;

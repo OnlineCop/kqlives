@@ -134,6 +134,7 @@
 
 #define P_MANOR           99
 #define P_PLAYERS         100
+#define P_TALK_AJATHAR    101
 
 /* 'specials' */
 #define P_SHOPSTART       1750

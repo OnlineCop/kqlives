@@ -791,6 +791,10 @@ static void getcommand (int n)
         g_ent[n].cmd = 10;
         parsems (n);
         break;
+        /* PH add: command K makes the ent disappear */
+     case 'K':
+        g_ent[n].active = 0;
+        break;
      default:
         program_death ("Invalid entity command!");
      }

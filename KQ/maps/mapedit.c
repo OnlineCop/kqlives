@@ -55,7 +55,7 @@ BITMAP *shadow[MAX_SHADOWS];
 /* These are for the Layers 1-3 */
 unsigned short *map, *b_map, *f_map, *c_map, *cf_map, *cb_map;
 /* These are for the Zone, Shadow and Obstacle Attributes */
-unsigned char *z_map, *cz_map, *s_map, *cs_map, *o_map, *co_map;
+unsigned char *z_map, *cz_map, *sh_map, *cs_map, *o_map, *co_map;
 
 /* Used for the right-hand menu, plus something for the mouse */
 short icon_set = 0, max_sets = 51, nomouse = 0;
@@ -85,7 +85,7 @@ int curzone = 0, curshadow = 0, curobs = 0;
 int copying = 0, copyx1 = -1, copyx2 = -1, copyy1 = -1, copyy2 = -1;
 int clipb = 0, cbh = 0, cbw = 0;
 
-ss_map gmap;
+s_map gmap;
 s_entity gent[50];
 s_show showing;
 
@@ -645,7 +645,7 @@ void process_controls (void)
 
              /* Add a Shadow to the map */
              if (draw_mode == MAP_SHADOWS)
-                s_map[((gy + y) * gmap.xsize) + gx + x] = curshadow;
+                sh_map[((gy + y) * gmap.xsize) + gx + x] = curshadow;
           } /* if (dmode == 1) */
 
         /* Begin area copy
@@ -713,7 +713,7 @@ void process_controls (void)
 
              /* Remove a Shadow */
              if (draw_mode == MAP_SHADOWS)
-                s_map[((gy + y) * gmap.xsize) + gx + x] = 0;
+                sh_map[((gy + y) * gmap.xsize) + gx + x] = 0;
 
              /* Remove an Obstacle */
              if (draw_mode == MAP_OBSTACLES)
@@ -1063,7 +1063,7 @@ void visual_map (void)
                   blit (icons[map[w]], bmp, 0, 0, i * 16, j * 16, 16, 16);
                   draw_sprite (bmp, icons[b_map[w]], i * 16, j * 16);
                   draw_sprite (bmp, icons[f_map[w]], i * 16, j * 16);
-                  draw_trans_sprite (bmp, shadow[s_map[w]], i * 16, j * 16);
+                  draw_trans_sprite (bmp, shadow[sh_map[w]], i * 16, j * 16);
                   /* TT: Which is better: set to 1 or increment? */
                   // zones[z_map[w]][0]++;
                   zones[z_map[w]][0] = 1; /* ==1 if there is a "zone" here */
@@ -1213,8 +1213,8 @@ void draw_map (void)
 
              /* Draw the Shadows */
              if (showing.shadows == 1)
-                if (s_map[w] > 0)
-                   draw_trans_sprite (double_buffer, shadow[s_map[w]],
+                if (sh_map[w] > 0)
+                   draw_trans_sprite (double_buffer, shadow[sh_map[w]],
                                     dx * 16, dy * 16);
 
              /* Draw the Obstacles */
@@ -1615,7 +1615,7 @@ void draw_menubars (void)
         yp = mouse_y / 16;
         if (xp < htiles && yp < vtiles)
           {
-             p = s_map[((gy + yp) * gmap.xsize) + gx + xp];
+             p = sh_map[((gy + yp) * gmap.xsize) + gx + xp];
              sprintf (strbuf, "-> %d", p);
              print_sfont (380, (SH - 46), strbuf, double_buffer);
           }
@@ -1641,8 +1641,8 @@ void bufferize (void)
    f_map = (unsigned short *) malloc (gmap.xsize * gmap.ysize * 2);
    free (z_map);
    z_map = (unsigned char *) malloc (gmap.xsize * gmap.ysize);
-   free (s_map);
-   s_map = (unsigned char *) malloc (gmap.xsize * gmap.ysize);
+   free (sh_map);
+   sh_map = (unsigned char *) malloc (gmap.xsize * gmap.ysize);
    free (o_map);
    o_map = (unsigned char *) malloc (gmap.xsize * gmap.ysize);
    free (c_map);
@@ -1661,7 +1661,7 @@ void bufferize (void)
    memset (b_map, 0, gmap.xsize * gmap.ysize * 2);
    memset (f_map, 0, gmap.xsize * gmap.ysize * 2);
    memset (z_map, 0, gmap.xsize * gmap.ysize);
-   memset (s_map, 0, gmap.xsize * gmap.ysize);
+   memset (sh_map, 0, gmap.xsize * gmap.ysize);
    memset (o_map, 0, gmap.xsize * gmap.ysize);
    memset (c_map, 0, gmap.xsize * gmap.ysize * 2);
    memset (cb_map, 0, gmap.xsize * gmap.ysize * 2);
@@ -1747,14 +1747,14 @@ void global_change (void)
            if (f_map[p] == ft)
               f_map[p] = tt;
         if (ps)
-           if (s_map[p] == ft)
-              s_map[p] = ft; /* Is this supposed to be 'tt'? */
+           if (sh_map[p] == ft)
+              sh_map[p] = tt; /* Is this supposed to be 'tt'? PH Yes I think so */
         if (po)
            if (o_map[p] == ft)
-              o_map[p] = ft; /* ...same... */
+              o_map[p] = tt; /* ...same... */
         if (pz)
            if (z_map[p] == ft)
-              z_map[p] = ft; /* ...same... */
+              z_map[p] = tt; /* ...same... */
      }
 } /* global_change () */
 
@@ -1785,7 +1785,7 @@ void clear_shadows (void)
    cmessage ("Do you want to clear Shadows? (y/n)");
    if (yninput ())
       for (co = 0; co < gmap.xsize * gmap.ysize; co++)
-         s_map[co] = 0;
+         sh_map[co] = 0;
 } /* clear_shadows () */
 
 
@@ -2030,7 +2030,7 @@ void cleanup (void)
    free (map);
    free (f_map);
    free (z_map);
-   free (s_map);
+   free (sh_map);
    free (o_map);
    free (c_map);
    free (cf_map);
@@ -2232,7 +2232,7 @@ void paste_region_special (int tx, int ty)
                   if (ps)
                     {
                        bf = cs_map[zy * gmap.xsize + zx];
-                       s_map[(ty + zy) * gmap.xsize + tx + zx] = bf;
+                       sh_map[(ty + zy) * gmap.xsize + tx + zx] = bf;
                     }
                   if (po)
                     {
@@ -2273,7 +2273,7 @@ void paste_region (int tx, int ty)
                   bf = cz_map[zy * gmap.xsize + zx];
                   z_map[(ty + zy) * gmap.xsize + tx + zx] = bf;
                   bf = cs_map[zy * gmap.xsize + zx];
-                  s_map[(ty + zy) * gmap.xsize + tx + zx] = bf;
+                  sh_map[(ty + zy) * gmap.xsize + tx + zx] = bf;
                   bf = co_map[zy * gmap.xsize + zx];
                   o_map[(ty + zy) * gmap.xsize + tx + zx] = bf;
                }
@@ -2344,7 +2344,7 @@ void copy_region (void)
              cf_map[zy * gmap.xsize + zx] = bf;
              bf = z_map[(copyy1 + zy) * gmap.xsize + copyx1 + zx];
              cz_map[zy * gmap.xsize + zx] = bf;
-             bf = s_map[(copyy1 + zy) * gmap.xsize + copyx1 + zx];
+             bf = sh_map[(copyy1 + zy) * gmap.xsize + copyx1 + zx];
              cs_map[zy * gmap.xsize + zx] = bf;
              bf = o_map[(copyy1 + zy) * gmap.xsize + copyx1 + zx];
              co_map[zy * gmap.xsize + zx] = bf;
@@ -2420,7 +2420,7 @@ void resize_map (void)
              cf_map[zy * gmap.xsize + zx] = bf;
              bf = z_map[zy * gmap.xsize + zx];
              cz_map[zy * gmap.xsize + zx] = bf;
-             bf = s_map[zy * gmap.xsize + zx];
+             bf = sh_map[zy * gmap.xsize + zx];
              cs_map[zy * gmap.xsize + zx] = bf;
              bf = o_map[zy * gmap.xsize + zx];
              co_map[zy * gmap.xsize + zx] = bf;
@@ -2442,15 +2442,15 @@ void resize_map (void)
    f_map = (unsigned short *) malloc (gmap.xsize * gmap.ysize * 2);
    free (z_map);
    z_map = (unsigned char *) malloc (gmap.xsize * gmap.ysize);
-   free (s_map);
-   s_map = (unsigned char *) malloc (gmap.xsize * gmap.ysize);
+   free (sh_map);
+   sh_map = (unsigned char *) malloc (gmap.xsize * gmap.ysize);
    free (o_map);
    o_map = (unsigned char *) malloc (gmap.xsize * gmap.ysize);
    memset (map, 0, gmap.xsize * gmap.ysize * 2);
    memset (b_map, 0, gmap.xsize * gmap.ysize * 2);
    memset (f_map, 0, gmap.xsize * gmap.ysize * 2);
    memset (z_map, 0, gmap.xsize * gmap.ysize);
-   memset (s_map, 0, gmap.xsize * gmap.ysize);
+   memset (sh_map, 0, gmap.xsize * gmap.ysize);
    memset (o_map, 0, gmap.xsize * gmap.ysize);
 
    /* Draw all the old map data into the new map size */
@@ -2469,7 +2469,7 @@ void resize_map (void)
                   bf = cz_map[zy * oldw + zx];
                   z_map[zy * gmap.xsize + zx] = bf;
                   bf = cs_map[zy * oldw + zx];
-                  s_map[zy * gmap.xsize + zx] = bf;
+                  sh_map[zy * gmap.xsize + zx] = bf;
                   bf = co_map[zy * oldw + zx];
                   o_map[zy * gmap.xsize + zx] = bf;
                }
@@ -2516,7 +2516,7 @@ void wipe_map (void)
    memset (b_map, 0, gmap.xsize * gmap.ysize * 2);
    memset (f_map, 0, gmap.xsize * gmap.ysize * 2);
    memset (z_map, 0, gmap.xsize * gmap.ysize);
-   memset (s_map, 0, gmap.xsize * gmap.ysize);
+   memset (sh_map, 0, gmap.xsize * gmap.ysize);
    memset (o_map, 0, gmap.xsize * gmap.ysize);
 
    /* TT FIXED: Forgot to get rid of all the entities! */

@@ -55,14 +55,20 @@
 #define MAX_INV            64
 #define STEPS_NEEDED       15
 
-#define DATA_DIR       "data/"
-#define MAP_DIR        "maps/"
-#define SAVE_DIR       "saves/"
-#define MUSIC_DIR      "music/"
-#define SCRIPT_DIR     "scripts/"
-#define PCX_DATAFILE   "data/mpcx.dat"
-#define SPELL_DATAFILE "data/ssprites.dat"
-#define SOUND_DATAFILE "data/kqsnd.dat"
+/* Get the directory for application data (music, gfx, etc.)
+or user data (screenshots, prefs, saved games) */
+const char *kqres (int dir_id, const char *file);
+#define DATA_DIR       0
+#define MAP_DIR        1
+#define SAVE_DIR       2
+#define MUSIC_DIR      3
+#define SCRIPT_DIR     4
+#define SETTINGS_DIR   5
+
+#define PCX_DATAFILE   kqres(DATA_DIR, "mpcx.dat")
+#define SPELL_DATAFILE kqres(DATA_DIR, "ssprites.dat")
+#define SOUND_DATAFILE kqres(DATA_DIR, "kqsnd.dat")
+
 
 /*! \name Map layer setters */
 /*\{*/
@@ -256,33 +262,7 @@ typedef struct
 }
 s_anim;
 
-
-/*! \brief Map definition */
-typedef struct
-{
-   unsigned char map_no;        /*!< Map identifier */
-   unsigned char zero_zone;     /*!< Non-zero if zone 0 triggers an event */
-   unsigned char map_mode;      /*!< Map mode (see draw_map()) */
-   unsigned char can_save;      /*!< Non-zero if Save is allowed in this map */
-   unsigned char tileset;       /*!< Which tile-set to use */
-   unsigned char use_sstone;    /*!< Non-zero if sunstone works on this map */
-   unsigned char can_warp;      /*!< Non-zero if Warp is allowed in this map */
-   unsigned char extra_byte;    /*!< Currently unused */
-   int xsize;                   /*!< Map width */
-   int ysize;                   /*!< Map height */
-   int pmult;                   /*!< Parallax multiplier */
-   int pdiv;                    /*!< Parallax divider */
-   int stx;                     /*!< Default start x-coord */
-   int sty;                     /*!< Default start y-coord */
-   int warpx;                   /*!< x-coord where warp spell takes you to (see special_spells()) */
-   int warpy;                   /*!< y-coord where warp spell takes you to (see special_spells()) */
-   int extra_sdword1;           /*!< Not used */
-   int extra_sdword2;           /*!< Not used */
-   char song_file[16];          /*!< Base file name for map song */
-   char map_desc[40];           /*!< Map name (shown when map first appears) */
-}
-s_map;
-
+#include "structs.h"
 
 /*! \brief Player */
 typedef struct

@@ -126,9 +126,9 @@ void play_music (const char *music_name, long position)
 {
    if (is_sound != 0)
      {
-        char filename[250];
+        char filename[PATH_MAX];
         stop_music ();
-        sprintf (filename, "%s/%s", MUSIC_DIR, music_name);
+        strcpy (filename, kqres (MUSIC_DIR, music_name));
         if (strstr (filename, ".mod"))
            mod_song[current_music_player] = dumb_load_mod (filename);
 
@@ -292,8 +292,7 @@ void play_music (const char *sngnme, long start_track)
       stop_mod ();
    if (gsong)
       destroy_mod (gsong);
-   sprintf (strbuf, "%s\%s", MUSIC_DIR, sngnme);
-   if (!(gsong = load_mod (strbuf)))
+   if (!(gsong = load_mod (kqres (MUSIC_DIR, sngname))))
      {
         sprintf (strbuf, "Could not load %s!", sngnme);
         klog (strbuf);

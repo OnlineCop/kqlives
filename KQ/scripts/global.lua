@@ -216,16 +216,30 @@ end
 
 
 -- Add this hero to the manor if not already there
+-- hero can be a single value or a table
+-- returns the number of heroes that were actually added
 function add_to_manor(hero)
-  for i = 0, 7 do
-    if (get_progress(i + P_MANORPARTY) == hero) then
-      return;
-    end
-  end
-  for i = 0, 7 do
-    if (get_progress(i + P_MANORPARTY) == 0) then
-      set_progress(i + P_MANORPARTY, hero + 1);
-      return;
-    end
-  end
+   local total;
+   if istable(hero) then
+      total=0
+      for i,v in hero do
+	 total=total+add_to_manor(v)
+      end
+      return total;
+   else
+      if hero<0 or hero>7 then
+	 return 0
+      end
+      for i = 0, 7 do
+	 if (get_progress(i + P_MANORPARTY) == hero) then
+	    return 0;
+	 end
+      end
+      for i = 0, 7 do
+	 if (get_progress(i + P_MANORPARTY) == 0) then
+	    set_progress(i + P_MANORPARTY, hero + 1);
+	    return 1;
+	 end
+      end
+   end
 end
