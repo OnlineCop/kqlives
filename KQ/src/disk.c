@@ -1,10 +1,32 @@
-/*! \file
-* \brief Functions to load/save to disk
-*
-* These functions are endian independent
-* \author PH
-* \date 20030629
+/*
+   KQ is Copyright (C) 2002 by Josh Bolduc
+
+   This file is part of KQ... a freeware RPG.
+
+   KQ is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published
+   by the Free Software Foundation; either version 2, or (at your
+   option) any later version.
+
+   KQ is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with KQ; see the file COPYING.  If not, write to
+   the Free Software Foundation,
+       675 Mass Ave, Cambridge, MA 02139, USA.
 */
+
+/*! \file
+ * \brief Functions to load/save to disk
+ *
+ * These functions are endian independent
+ * \author PH
+ * \date 20030629
+ */
+
 #include "disk.h"
 
 int load_s_map (s_map * sm, PACKFILE * f)
@@ -32,6 +54,8 @@ int load_s_map (s_map * sm, PACKFILE * f)
    return 0;
 }
 
+
+
 int save_s_map (s_map * sm, PACKFILE * f)
 {
    pack_putc (sm->map_no, f);
@@ -56,6 +80,8 @@ int save_s_map (s_map * sm, PACKFILE * f)
    pack_fwrite (sm->map_desc, sizeof (sm->map_desc), f);
    return 0;
 }
+
+
 
 int load_s_entity (s_entity * s, PACKFILE * f)
 {
@@ -91,6 +117,8 @@ int load_s_entity (s_entity * s, PACKFILE * f)
    return 0;
 }
 
+
+
 int save_s_entity (s_entity * s, PACKFILE * f)
 {
    pack_putc (s->chrx, f);
@@ -124,6 +152,8 @@ int save_s_entity (s_entity * s, PACKFILE * f)
    pack_fwrite (s->script, sizeof (s->script), f);
    return 0;
 }
+
+
 
 int load_s_player (s_player * s, PACKFILE * f)
 {
@@ -159,6 +189,8 @@ int load_s_player (s_player * s, PACKFILE * f)
    pack_getc (f);               /* alignment */
    return 0;
 }
+
+
 
 int save_s_player (s_player * s, PACKFILE * f)
 {

@@ -1,5 +1,5 @@
 /*
-   KQ is Copyright (C) 2002 - Josh Bolduc
+   KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
 
@@ -24,16 +24,13 @@
  *
  * \author ML
  * \date October 2002
-*/
+ */
 
 #include <string.h>
-
 #include <allegro.h>
 #include <allegro/internal/aintern.h>
-
 #include "kq.h"
 #include "fade.h"
-
 #include "draw.h"
 #include "music.h"
 #include "res.h"
@@ -63,11 +60,9 @@ static void _fade_from_range (AL_CONST PALETTE source, AL_CONST PALETTE dest,
       temp[c] = source[c];
    start = retrace_count;
    last = -1;
-   while ((c = (retrace_count - start) * speed / 2) < 64)
-   {
+   while ((c = (retrace_count - start) * speed / 2) < 64) {
       poll_music ();
-      if (c != last)
-      {
+      if (c != last) {
          fade_interpolate (source, dest, temp, c, from, to);
          set_palette_range (temp, from, to, TRUE);
          if (_color_depth > 8)
@@ -99,8 +94,7 @@ void do_transition (int type, int param)
       PALETTE temp, whp;
       int a;
       get_palette (temp);
-      for (a = 0; a < 256; a++)
-      {
+      for (a = 0; a < 256; a++) {
          whp[a].r = 63;
          whp[a].g = 63;
          whp[a].b = 63;

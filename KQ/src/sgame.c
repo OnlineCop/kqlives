@@ -1,5 +1,5 @@
 /*
-   KQ is Copyright (C) 2002 - Josh Bolduc
+   KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
 
@@ -30,7 +30,7 @@
  *
  * \todo PH Do we _really_ want things like controls and screen
  *          mode to be saved/loaded ?
-*/
+ */
 
 #include <stdio.h>
 #include <ctype.h>
@@ -56,22 +56,19 @@
 #include "music.h"
 #include "disk.h"
 /*! \name Globals */
-/*\{*/
+
 int snc[NUMSG], sgp[NUMSG], shr[NUMSG], smin[NUMSG], sid[NUMSG][PSIZE],
    slv[NUMSG][PSIZE];
 unsigned char shp[NUMSG][PSIZE], smp[NUMSG][PSIZE];
 int save_ptr = 0;
-/*\}*/
 
 
 /*! \name Internal functions  */
-/*\{*/
 static void show_sgstats (int);
 static int save_game (void);
 static int load_game (void);
 static int saveload (int);
 static int confirm_save (void);
-/*\}*/
 
 
 
@@ -80,7 +77,7 @@ static int confirm_save (void);
  * This loads the mini stats for each saved game.
  * These mini stats are just for displaying info about the save game on the
  * save/load game screen.
-*/
+ */
 void load_sgstats (void)
 {
    PACKFILE *ldat;
@@ -149,7 +146,7 @@ void load_sgstats (void)
  * each saved game for the save/load screen.
  *
  * \param saving 0 if loading, 1 if saving.
-*/
+ */
 static void show_sgstats (int saving)
 {
    int a, sg, hx, hy, b;
@@ -208,7 +205,7 @@ static void show_sgstats (int saving)
  * You guessed it... save the game.
  *
  * \returns 0 if save failed, 1 if success
-*/
+ */
 static int save_game (void)
 {
    PACKFILE *sdat;
@@ -330,7 +327,7 @@ static int save_game (void)
  * PH 20030805 Made endian-safe
  * PH 20030914 Now ignores keyboard settings etc in the save file
  * \returns 1 if load succeeded, 0 otherwise
-*/
+ */
 static int load_game (void)
 {
    PACKFILE *sdat;
@@ -475,7 +472,7 @@ static int load_game (void)
  *
  * \param   am_saving 0 if loading, 1 if saving
  * \returns 0 if an error occurred or save/load cancelled
-*/
+ */
 static int saveload (int am_saving)
 {
    int stop = 0, rd = 1;
@@ -540,7 +537,7 @@ static int saveload (int am_saving)
  * want to overwrite it.
  *
  * \returns 0 if cancelled, 1 if confirmed
-*/
+ */
 static int confirm_save (void)
 {
    int stop = 0;
@@ -567,7 +564,10 @@ static int confirm_save (void)
    return 0;
 }
 
+
 extern void display_credits (void);
+
+
 
 /*! \brief Main menu screen
  *
@@ -580,8 +580,11 @@ extern void display_credits (void);
  * \param   c Non-zero if the splash (the bit with the staff and the eight heroes)
  *            should be displayed.
  * \returns 0 if new game, 1 if continuing, 2 if exit
-*/
+ */
 extern int optionsbox (char *, int);
+
+
+
 int start_menu (int c)
 {
    int stop = 0, ptr = 0, rd = 1, a, b;
@@ -706,24 +709,15 @@ int start_menu (int c)
             else if (saveload (0) == 1)
                stop = 1;
             rd = 1;
-         }
-
-         else if (ptr == 1)
-         {
+         } else if (ptr == 1) {
             stop = 2;
-         }
-
-         else if (ptr == 2)
-         {
+         } else if (ptr == 2) {
             clear (double_buffer);
             config_menu ();
             rd = 1;
 
             /* TODO: Save Global Settings Here */
-         }
-
-         else if (ptr == 3)
-         {
+         } else if (ptr == 3) {
             unload_datafile_object (bg);
             klog ("Then exit you shall!");
             return 2;
@@ -762,7 +756,7 @@ int start_menu (int c)
  * exit the game altogether.
  *
  * \returns 0 if cancelled or nothing happened, 1 otherwise
-*/
+ */
 int system_menu (void)
 {
    int stop = 0, ptr = 0;

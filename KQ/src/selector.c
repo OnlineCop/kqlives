@@ -1,5 +1,5 @@
 /*
-   KQ is Copyright (C) 2002 - Josh Bolduc
+   KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
 
@@ -24,7 +24,7 @@
  *
  * \author Josh Bolduc
  * \date ????????
-*/
+ */
 #include <stdio.h>
 #include <string.h>
 
@@ -53,13 +53,14 @@ static int tmpd[NUM_FIGHTERS];
 #define MM_LEAD 4
 
 
+
 /*! \brief Select player from main menu
  *
  * This is used to select a player from the main menu.
  * Used in menu.c
  *
  * \returns Index of player (0..numchrs-1) or -1 if cancelled
-*/
+ */
 int select_player (void)
 {
    int stop = 0, ptr, rd = 1;
@@ -123,7 +124,7 @@ int select_player (void)
  * \param   msg prompt message
  * \returns Index of player (0..numchrs-1) or -1 if cancelled
  *          or SEL_ALL_ALLIES if 'all' was selected (by pressing L or R)
-*/
+ */
 int select_any_player (int csa, int icn, char *msg)
 {
    int stop = 0, ptr, rd = 1, shy, k, sa;
@@ -234,7 +235,7 @@ int select_any_player (int csa, int icn, char *msg)
  * \param   csd ==non-zero allows you to select a dead character
  * \returns Index of player (0..numchrs-1) or -1 if cancelled
  *          or SEL_ALL_ALLIES if 'all' was selected (by pressing U or D)
-*/
+ */
 int select_hero (int whom, int multi, int csd)
 {
    int cntr = 0, ptr = 0, stp = 0, rd = 1, sa, a;
@@ -336,7 +337,7 @@ int select_hero (int whom, int multi, int csd)
  * \param   multi Target(s)
  * \returns Enemy index (PSIZE..PSIZE+numens-1) or -1 if cancelled or
  *          SEL_ALL_ENEMIES if 'all' was selected (by pressing U or D)
-*/
+ */
 int select_enemy (int whom, int multi)
 {
    int a, cntr = 0, ptr, stp, rd, sa;
@@ -425,7 +426,7 @@ int select_enemy (int whom, int multi)
  * \param   csts Only select characters whose .sts[csts] ==0 or select any
  *             if csts ==NO_STS_CHECK
  * \returns Index of hero (0..numchrs-1)
-*/
+ */
 int auto_select_hero (int whom, int csts)
 {
    int a, cntr = 0;
@@ -474,7 +475,7 @@ int auto_select_hero (int whom, int csts)
  *               or select any if csts==NO_STS_CHECK
  *               (Never selects a dead enemy)
  * \returns Enemy index (PSIZE..PSIZE+numens-1) or -1 if no enemy found
-*/
+ */
 int auto_select_enemy (int whom, int csts)
 {
    int a, ne = 0;
@@ -525,7 +526,7 @@ int auto_select_enemy (int whom, int csts)
  *
  * \param   tgt Index into fighter array
  * \returns 0 if fighter is dead or has HP<1 or MHP<1, otherwise 1
-*/
+ */
 static int can_attack (int tgt)
 {
    if (fighter[tgt].mhp < 1 || fighter[tgt].hp < 1
@@ -710,6 +711,9 @@ int select_party (int *avail, int n_avail, int numchrs_max)
 
 #define MM_X 162
 #define MM_Y 180
+
+
+
 static int mini_menu (int omask)
 {
    int rd, cp;
@@ -781,6 +785,7 @@ static int mini_menu (int omask)
 }
 
 
+
 static void party_add (int id, int lead)
 {
    s_entity *t;
@@ -805,6 +810,8 @@ static void party_add (int id, int lead)
    }
 }
 
+
+
 static void party_remove (int id)
 {
    int i;
@@ -819,6 +826,7 @@ static void party_remove (int id)
       }
    }
 }
+
 
 
 static void party_newlead (int id)

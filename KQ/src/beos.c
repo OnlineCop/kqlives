@@ -28,8 +28,11 @@
  * This includes any bits which are specific for BeOS platforms
  * Take from diffs supplied by Edge (<hardedged@excite.com>)
  */
+
 #include "kq.h"
 #include <stdio.h>
+
+
 
 /*! \brief Return the name of 'significant' directories.
  *

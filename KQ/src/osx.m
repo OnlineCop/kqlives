@@ -44,6 +44,8 @@ static NSString *user_dir;
 static NSString *game_dir;
 static BOOL init_path = NO;
 
+
+
 /*! \brief Return the name of 'significant' directories.
  *
  * \param dir Enumerated constant for directory type  \sa DATA_DIR et al.
@@ -55,51 +57,48 @@ const char *kqres (int dir, const char *file)
    static char ans[PATH_MAX];
    NSString *base, *sub, *ff;
    NSArray *arr;
-   if (init_path == NO)
-     {
-        /* Get home directory */
+   if (init_path == NO) {
+      /* Get home directory */
 
-
-        arr =
-           NSSearchPathForDirectoriesInDomains (NSLibraryDirectory,
-                                                NSUserDomainMask, YES);
+      arr = NSSearchPathForDirectoriesInDomains (NSLibraryDirectory,
+                                                 NSUserDomainMask, YES);
       user_dir =[[arr objectAtIndex: 0] stringByAppendingPathComponent:@"KQ"];
         [user_dir retain];
       [[NSFileManager defaultManager] createDirectoryAtPath: user_dir attributes:nil];
 
-        /* Now the data directory */
-        game_dir =[[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent: @"Contents/Resources"];
+      /* Now the data directory */
+      game_dir =[[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent: @"Contents/Resources"];
         [game_dir retain];
-	NSLog(@"Putting user data in %@, game data in %@\n", user_dir, game_dir);
+	    NSLog(@"Putting user data in %@, game data in %@\n", user_dir, game_dir);
         init_path = YES;
-     }
+   }
 
-   switch (dir)
-     {
-     case DATA_DIR:
-        base = game_dir;
-        sub = @"data";
-        break;
-     case MUSIC_DIR:
-        base = game_dir;
-        sub = @"music";
-        break;
-     case MAP_DIR:
-        base = game_dir;
-        sub = @"maps";
-        break;
-     case SAVE_DIR:
-     case SETTINGS_DIR:
-        base = user_dir;
-        sub = @".";
-        break;
-     case SCRIPT_DIR:
-        base = game_dir;
-        sub = @"scripts";
-        break;
-     default:
-        return NULL;
-     }
+   switch (dir) {
+   case DATA_DIR:
+      base = game_dir;
+      sub = @"data";
+      break;
+   case MUSIC_DIR:
+      base = game_dir;
+      sub = @"music";
+      break;
+   case MAP_DIR:
+      base = game_dir;
+      sub = @"maps";
+      break;
+   case SAVE_DIR:
+   case SETTINGS_DIR:
+      base = user_dir;
+      sub = @".";
+      break;
+   case SCRIPT_DIR:
+      base = game_dir;
+      sub = @"scripts";
+      break;
+   default:
+      return NULL;
+   }
+
    ff = [NSString stringWithCString: file];
    arr = [NSArray arrayWithObjects: base, sub,ff, nil];
    return strncpy (ans,[[NSString pathWithComponents:arr] cString], sizeof

@@ -28,14 +28,18 @@
  * This includes any bits which are specific for Unix-like platforms
  * e.g. Linux
  */
+
 #include "kq.h"
 #include <pwd.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <stdio.h>
+
 static int init_path = 0;
 static char user_dir[PATH_MAX];
 static char game_dir[PATH_MAX];
+
+
 
 /*! \brief Return the name of 'significant' directories.
  *

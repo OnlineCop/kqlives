@@ -1,5 +1,5 @@
 /*
-   KQ is Copyright (C) 2002 - Josh Bolduc
+   KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
 
@@ -24,7 +24,7 @@
  *
  * \author JB
  * \date ???????
-*/
+ */
 
 #include <stdio.h>
 #include <string.h>
@@ -52,7 +52,7 @@
  * \param   tgt Target
  * \param   who Character attacking
  * \param   ma Multiple targets
-*/
+ */
 void fight_animation (int tgt, int who, int ma)
 {
    int a;
@@ -75,7 +75,7 @@ void fight_animation (int tgt, int who, int ma)
  * \param   tgt Target
  * \param   cl Color of text
  * \param   aflag Multiple target flag
-*/
+ */
 void display_amount (int tgt, int cl, int aflag)
 {
    int dx, dy, sz, c, f, n, g, k, p, z;
@@ -157,7 +157,7 @@ void display_amount (int tgt, int cl, int aflag)
  *
  * \param    guy Id of character to check (index into fighter[] array)
  * \returns 1 if alive, 0 if dead
-*/
+ */
 int is_active (int guy)
 {
    if (fighter[guy].sts[S_DEAD] == deadeffect)
@@ -184,7 +184,7 @@ int is_active (int guy)
  * \param   aflag Multiple target flag
  * \param   ef Effect (which spell is being cast)
  * \param   shows Show the spell cast
-*/
+ */
 void draw_spellsprite (int tgt, int aflag, int ef, int shows)
 {
    int a, f, dx, dy = 0, n, g;
@@ -259,7 +259,7 @@ void draw_spellsprite (int tgt, int aflag, int ef, int shows)
  * \param   hy y-coord
  * \param   ef Magic effect
  * \param   shows Show the magic sprite
-*/
+ */
 void draw_hugesprite (int tgt, int hx, int hy, int ef, int shows)
 {
    int a, f, n, g;
@@ -315,7 +315,7 @@ void draw_hugesprite (int tgt, int hx, int hy, int ef, int shows)
  * \param   aflag Multiple target flag
  * \param   ef Magic effect to draw
  * \param   shows Show the image
-*/
+ */
 void draw_attacksprite (int tgt, int aflag, int ef, int shows)
 {
    int a, dx, dy, g, n, f;
@@ -385,7 +385,7 @@ void draw_attacksprite (int tgt, int aflag, int ef, int shows)
  *
  * \param   cstr Caster
  * \param   cc Spell look/color
-*/
+ */
 void draw_castersprite (int cstr, int cc)
 {
    int a, b, dx, dy;
@@ -435,7 +435,7 @@ void draw_castersprite (int cstr, int cc)
  * \param   tgt Target, must be >=2
  * \param   aflag If ==1, then target all. If target <PSIZE then target all
  *          heroes, otherwise target all enemies.
-*/
+ */
 void death_animation (int tgt, int aflag)
 {
    int a, f, dx, dy, n, g, p;

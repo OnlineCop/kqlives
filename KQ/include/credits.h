@@ -21,8 +21,7 @@
 #ifndef __CREDITS_H__
 #define __CREDITS_H__
 
-/*! file
- */
+/*! file */
 
 /*! Allocate memory for credits display */
 void allocate_credits (void);

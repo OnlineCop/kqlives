@@ -1,5 +1,5 @@
 /*
-   KQ is Copyright (C) 2002 - Josh Bolduc
+   KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
 
@@ -58,6 +58,8 @@ static void geffect_all_allies (int, int);
  * \date ????????
  */
 
+
+
 /*! \brief Call spells for combat
  *
  * This function just calls the right magic routine based on the spell's
@@ -67,7 +69,7 @@ static void geffect_all_allies (int, int);
  * \param   whom Index of caster
  * \param   is_item 0 if regular spell, 1 if item (no MP used)
  * \returns 1 if spell cast/used successfully, 0 otherwise
-*/
+ */
 int combat_spell (int whom, int is_item)
 {
    int a, b, st, tgt, sn, tall = 0, nt = 1, ss = 0;
@@ -200,7 +202,7 @@ int combat_spell (int whom, int is_item)
  * \param   whom Index of caster
  * \param   is_item 0 if regular spell, 1 if item (no MP used)
  * \returns 1 if spell cast/used successfully, 0 otherwise
-*/
+ */
 int cast_spell (int whom, int is_item)
 {
    int sn = fighter[whom].csmem;
@@ -287,7 +289,7 @@ int cast_spell (int whom, int is_item)
  * \param   i Item for imbued spell
  * \param   d Value for SAG and INT when casting imbued
  * \param   t Target (defender)
-*/
+ */
 void cast_imbued_spell (int w, int i, int d, int t)
 {
    int a, ts[4];
@@ -317,7 +319,7 @@ void cast_imbued_spell (int w, int i, int d, int t)
  *
  * \param   cs Index of caster
  * \param   sn Index of spell
-*/
+ */
 static void special_spells (int cs, int sn)
 {
    if (cs >= PSIZE) {
@@ -364,7 +366,7 @@ static void special_spells (int cs, int sn)
  * \param   cs Caster
  * \param   tgt Target
  * \param   sn Spell number
-*/
+ */
 static void cure_oneall_allies (int cs, int tgt, int sn)
 {
    int a = 0, b = 0, z = 0, spwr;
@@ -408,7 +410,7 @@ static void cure_oneall_allies (int cs, int tgt, int sn)
    If you wonder why I do this separate like this, it's just for looks.
    This way, it displays the amounts on screen, then adds the hp after
    the visual effect has taken place... it just looks nicer that way.
-*/
+ */
    for (a = st; a < st + nt; a++) {
       if (fighter[a].sts[S_STONE] == 0 && fighter[a].sts[S_DEAD] == 0) {
          ta[a] = b;
@@ -427,7 +429,7 @@ static void cure_oneall_allies (int cs, int tgt, int sn)
  * \param   cs Caster
  * \param   tgt Target
  * \param   sn Spell number
-*/
+ */
 static void heal_one_ally (int cs, int tgt, int sn)
 {
    int a, b = 0;
@@ -486,12 +488,13 @@ static void heal_one_ally (int cs, int tgt, int sn)
  * \param   cs Caster
  * \param   tgt Target
  * \param   sn Spell number
-*/
+ */
 static void geffect_one_ally (int cs, int tgt, int sn)
 {
-/*  DS: The same problem of heal_one_ally(), this have been tested in */
-/*      cast_spell(), because the hit% of all magics with good effect */
-/*      are 0 */
+/*  DS: The same problem of heal_one_ally(), this have been tested in
+        cast_spell(), because the hit% of all magics with good effect
+        are 0
+ */
 #if 0
    if (rand () % 100 + 1 > fighter[cs].stats[A_AUR + magic[sn].stat]
        || fighter[tgt].sts[S_STONE] > 0) {
@@ -564,7 +567,7 @@ static void geffect_one_ally (int cs, int tgt, int sn)
  *
  * \param   cs Caster
  * \param   sn Spell Number
-*/
+ */
 static void geffect_all_allies (int cs, int sn)
 {
    int nt, st, a, b = 0;
@@ -641,7 +644,7 @@ static void geffect_all_allies (int cs, int sn)
  * \param   cs Caster
  * \param   tgt Target
  * \param   sn Spell number
-*/
+ */
 static void beffect_one_enemy (int cs, int tgt, int sn)
 {
    int r, a = 0, sp_hit;
@@ -785,7 +788,7 @@ static void beffect_one_enemy (int cs, int tgt, int sn)
  *
  * \param   cs Caster
  * \param   sn Spell number
-*/
+ */
 static void beffect_all_enemies (int cs, int sn)
 {
    int nt, st, a, sp_hit;
@@ -856,7 +859,7 @@ static void beffect_all_enemies (int cs, int sn)
  *
  * \param   cs Caster
  * \param   sn Spell number
-*/
+ */
 static void damage_all_enemies (int cs, int sn)
 {
    int nt, st;
@@ -880,7 +883,7 @@ static void damage_all_enemies (int cs, int sn)
  * \param   cs Caster
  * \param   tgt Traget
  * \param   sn Spell number
-*/
+ */
 static void damage_oneall_enemies (int cs, int tgt, int sn)
 {
    int nt, st;
@@ -913,7 +916,7 @@ static void damage_oneall_enemies (int cs, int tgt, int sn)
  * \param   rt Rune used
  * \param   tgt Target
  * \param   split Total damage, split among targets
-*/
+ */
 void special_damage_oneall_enemies (int cs, int sp_dmg, int rt, int tgt,
                                     int split)
 {
@@ -996,7 +999,7 @@ void special_damage_oneall_enemies (int cs, int sp_dmg, int rt, int tgt,
  * \param   sn Spell number
  * \param   st Starting target
  * \param   nt Ending target
-*/
+ */
 static void spell_damage (int cs, int sn, int st, int nt)
 {
    int a = 0, b = 0, ad = 0, rt = 0, ne = 0;
@@ -1066,7 +1069,7 @@ static void spell_damage (int cs, int sn, int st, int nt)
  * \param   rs Rune/element
  * \param   amt Amount of resistence to given rune
  * \returns difference of resistance to damage given by rune
-*/
+ */
 int res_adjust (int tgt, int rs, int amt)
 {
    int ad, b;
@@ -1097,7 +1100,7 @@ int res_adjust (int tgt, int rs, int amt)
  * \param   tgt Target
  * \param   rs Rune/spell used
  * \returns 0 if not resistant, 1 otherwise
-*/
+ */
 int res_throw (int tgt, int rs)
 {
    s_fighter tf;
@@ -1124,7 +1127,7 @@ int res_throw (int tgt, int rs)
  * \param   tgt Target
  * \param   per Damage percent inflicted (?)
  * \returns 0 if damage taken, 1 otherwise (or vise-versa?)
-*/
+ */
 int non_dmg_save (int tgt, int per)
 {
 /*  RB TODO:  */
@@ -1148,7 +1151,7 @@ int non_dmg_save (int tgt, int per)
  * \param   who Index of caster
  * \param   sn Spell number
  * \returns needed MP or 0 if insufficient MP
-*/
+ */
 int mp_needed (int who, int sn)
 {
    int amt;
@@ -1170,7 +1173,7 @@ int mp_needed (int who, int sn)
  *
  * \param who Index of character
  * \param amt Amount to adjust
-*/
+ */
 void adjust_hp (int who, int amt)
 {
    fighter[who].hp += amt;
@@ -1188,7 +1191,7 @@ void adjust_hp (int who, int amt)
  *
  * \param who Index of character
  * \param amt Amount to adjust
-*/
+ */
 void adjust_mp (int who, int amt)
 {
    fighter[who].mp += amt;
@@ -1206,7 +1209,7 @@ void adjust_mp (int who, int amt)
  * status-affecting spells.
  *
  * \returns a struct by value (PH: a good thing???)
-*/
+ */
 s_fighter status_adjust (int w)
 {
    s_fighter tf;
@@ -1267,7 +1270,7 @@ s_fighter status_adjust (int w)
  * \param   tgt Target
  * \param   amt Amount of damage to ricochet off shield
  * \returns the amount of damage that gets through to target
-*/
+ */
 int do_shell_check (int tgt, int amt)
 {
    int a = 0;
@@ -1290,7 +1293,7 @@ int do_shell_check (int tgt, int amt)
  * \param   tgt Target
  * \param   amt Amount of damage to ricochet off shield
  * \returns the amount of damage that gets through to target
-*/
+ */
 int do_shield_check (int tgt, int amt)
 {
    int a = 0;
@@ -1313,7 +1316,7 @@ int do_shield_check (int tgt, int amt)
  *
  * \param   who Index of character affected
  * \param   ss Which stat is being affected
-*/
+ */
 static void set_timed_sts_effect (int who, int ss)
 {
    fighter[who].sts[ss] = rcount + 1;

@@ -27,8 +27,11 @@
  *
  * This includes any bits which are specific for DOS platforms
  */
+
 #include "kq.h"
 #include <stdio.h>
+
+
 
 /*! \brief Return the name of 'significant' directories.
  *

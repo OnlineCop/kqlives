@@ -18,16 +18,16 @@
    the Free Software Foundation,
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
-/** \file
+
+/*! \file
  * \brief Constants that are included in the C and Lua scripts 
  */
 #ifndef __PROGRESS_H
 #define __PROGRESS_H
 
-/*! \name Progress indicators */
-/* PLEASE ADD TO THIS LIST IN ORDER!!! */
-/*\{*/
-
+/*! \name Progress indicators
+ * PLEASE ADD TO THIS LIST IN ORDER!!!
+ */
 #define P_START           0
 #define P_ODDWALL         1
 #define P_DARKIMPBOSS     2
@@ -110,6 +110,7 @@
 #define P_PASSDOOR2       79
 #define P_PASSDOOR3       80
 
+
 /* New indicators */
 #define P_BOMB1           81
 #define P_BOMB2           82
@@ -122,6 +123,7 @@
 #define P_OPALDRAGONOUT   89
 #define P_OPALARMOUR      90
 
+
 /* These are to store who's waiting in the manor */
 #define P_MANORPARTY      91
 #define P_MANORPARTY1     92
@@ -131,28 +133,26 @@
 #define P_MANORPARTY5     96
 #define P_MANORPARTY6     97
 #define P_MANORPARTY7     98
-
 #define P_MANOR           99
 #define P_PLAYERS         100
 #define P_TALK_AJATHAR    101
 #define P_BLADE           102
 #define P_AYLA_QUEST      103
 
+
 /* 'specials' */
 #define P_SHOPSTART       1750
 #define P_SKIPINTRO       1997
 #define P_REPULSE         1998
 #define P_TEMP            1999
-/*\}*/
+
 
 /*! \name Special identifiers for bubble() */
-/*\{*/
 #define HERO1             200
 #define HERO2             201
-/*\}*/
 
-/*!\name Hero identifiers*/
-/*\{*/
+
+/*! \name Hero identifiers */
 #define SENSAR            0
 #define SARINA            1
 #define CORIN             2
@@ -161,6 +161,5 @@
 #define TEMMIN            5
 #define AYLA              6
 #define NOSLOM            7
-/*\}*/
 
 #endif /*  __PROGRESS_H  */

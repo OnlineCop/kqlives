@@ -1,5 +1,5 @@
 /*
-   KQ is Copyright (C) 2002 - Josh Bolduc
+   KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
 
@@ -40,11 +40,13 @@ static DUH *mod_song[MAX_MUSIC_PLAYERS];
 static AL_DUH_PLAYER *mod_player[MAX_MUSIC_PLAYERS];
 static int current_music_player;
 
+
+
 /*! \brief Initiate music player (DUMB)
  *
  * Initializes the music players. Must be called before any other
  * music function. Needs to be shutdown when finished.
-*/
+ */
 void init_music ()
 {
    atexit (&dumb_exit);
@@ -53,8 +55,7 @@ void init_music ()
 
    /* initialize all music players */
    current_music_player = MAX_MUSIC_PLAYERS;
-   while (current_music_player--)
-   {
+   while (current_music_player--) {
       mod_song[current_music_player] = NULL;
       mod_player[current_music_player] = NULL;
    }
@@ -66,7 +67,7 @@ void init_music ()
 /*! \brief Clean up and shut down music (DUMB)
  *
  * Performs any cleanup needed. Must be called before the program exits.
-*/
+ */
 void shutdown_music (void)
 {
    if (is_sound != 0) {
@@ -84,7 +85,7 @@ void shutdown_music (void)
  * Sets the volume of the currently playing music.
  *
  * \param   volume 0 (silent) to 100 (loudest)
-*/
+ */
 void set_music_volume (float volume)
 {
    if (is_sound != 0 && mod_player[current_music_player]) {
@@ -98,7 +99,7 @@ void set_music_volume (float volume)
  *
  * Does whatever is needed to ensure the music keeps playing.
  * It's safe to call this too much, but shouldn't be called inside a timer.
-*/
+ */
 void poll_music ()
 {
    if (is_sound != 0) {
@@ -116,7 +117,7 @@ void poll_music ()
  *
  * \param   music_name The relative filename of the song to be played
  * \param   position The position of the file to begin at
-*/
+ */
 void play_music (const char *music_name, long position)
 {
    if (is_sound != 0) {
@@ -152,7 +153,7 @@ void play_music (const char *music_name, long position)
  * Stops any music being played. To start playing more music, you
  * must call play_music(), as the current music player will no longer
  * be available and the song unloaded from memory.
-*/
+ */
 void stop_music (void)
 {
    if (is_sound != 0 && mod_player[current_music_player]) {
@@ -170,7 +171,7 @@ void stop_music (void)
  * Pauses the currently playing music file. It may be resumed
  * by calling resume_music(). Pausing the music file may be used
  * to nest music (such as during a battle).
-*/
+ */
 void pause_music (void)
 {
    if (is_sound != 0) {
@@ -189,7 +190,7 @@ void pause_music (void)
  *
  * Resumes the most recently paused music file. If a call to
  * play_music() was made in between, that file will be stopped.
-*/
+ */
 void resume_music (void)
 {
    if (is_sound != 0 && current_music_player > 0) {
@@ -207,11 +208,13 @@ void resume_music (void)
 
 static JGMOD *gsong;
 
+
+
 /*! \brief Initiate music player (JGMOD)
  *
  * Initializes the mod player with 6 channels. Must be called before
  * any other music function. Needs to be shutdown when finished.
-*/
+ */
 void init_music ()
 {
    install_mod (6);
@@ -222,7 +225,7 @@ void init_music ()
 /*! \brief Clean up and shut down music (JGMOD)
  *
  * Performs any cleanup needed. Must be called before the program exits.
-*/
+ */
 void shutdown_music ()
 {
    stop_music ();
@@ -236,7 +239,7 @@ void shutdown_music ()
  * Sets the volume of the currently playing music.
  *
  * \param   vol 0 (silent) to 100 (loudest)
-*/
+ */
 void set_music_volume (float vol)
 {
    set_mod_volume ((int) (vol * 255.0));
@@ -249,7 +252,7 @@ void set_music_volume (float vol)
  * Stops any music being played. To start playing more music, you
  * must call play_music(), as the current music player will no longer
  * be available and the song unloaded from memory.
-*/
+ */
 void stop_music ()
 {
    if (is_sound == 0)
@@ -268,7 +271,7 @@ void stop_music ()
  *
  * \param   sngnme File with music
  * \param   start_track The position to start
-*/
+ */
 void play_music (const char *sngnme, long start_track)
 {
    if (is_sound == 0)
@@ -293,7 +296,7 @@ void play_music (const char *sngnme, long start_track)
  *
  * Does whatever is needed to ensure the music keeps playing.
  * It's safe to call this too much, but shouldn't be called inside a timer.
-*/
+ */
 void poll_music ()
 {
    /* JGMOD doesn't need polling */
@@ -306,7 +309,7 @@ void poll_music ()
  * Pauses the currently playing music file. It may be resumed
  * by calling resume_music(). Pausing the music file may be used
  * to nest music (such as during a battle).
-*/
+ */
 void pause_music ()
 {
    pause_mod ();
@@ -318,7 +321,7 @@ void pause_music ()
  *
  * Resumes the most recently paused music file. If a call to
  * play_music() was made in between, that file will be stopped.
-*/
+ */
 void resume_music ()
 {
    resume_mod ();

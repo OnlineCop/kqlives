@@ -36,7 +36,7 @@
  * 80 characters a line, and labels what few variables struck me as obvious
  *
  * Thanks due to Edge <hardedged@excite.com> and Caz Jones for BeOS joystick fixes
-*/
+ */
 
 #include <stdio.h>
 #include <time.h>
@@ -44,14 +44,17 @@
 #include <sys/time.h>
 #endif
 #include <string.h>
-/* #if defined(HAVE_GETPWUID) */
-/* #include <unistd.h> */
-/* #include <sys/stat.h> */
-/* #include <sys/types.h> */
-/* #include <pwd.h> */
-/* #elif defined(HAVE_LOADLIBRARY) */
-/* #include <direct.h> */
-/* #endif */
+
+#if 0
+ #if defined(HAVE_GETPWUID)
+ #include <unistd.h>
+ #include <sys/stat.h>
+ #include <sys/types.h>
+ #include <pwd.h>
+ #elif defined(HAVE_LOADLIBRARY)
+ #include <direct.h>
+ #endif
+#endif
 
 #include <allegro.h>
 
@@ -82,12 +85,14 @@ char icon_sets[6][16] = { "LAND_PCX", "NEWTOWN_PCX", "CASTLE_PCX",
    "INCAVE_PCX", "VILLAGE_PCX", "MOUNT_PCX"
 };
 
+
+
 /*! \brief Which keys are pressed.
  *
  * \note 23: apparently flags for determining keypresses and player movement.
  * Seems to use some kind of homebrew Hungarian notation; I assume 'b' means
  * bool.  Most if not all of these are updated in readcontrols() below ....
-*/
+ */
 int right, left, up, down, besc, balt, bctrl, benter, bhelp;
 /*!  Scan codes for the keys (help is always F1)*/
 int kright, kleft, kup, kdown, kesc, kenter, kalt, kctrl;
@@ -108,7 +113,7 @@ BITMAP *double_buffer, *fx_buffer, *map_icons[MAX_TILES],
    *menuptr, *mptr, *sptr, *stspics, *sicons, *bptr,
    *missbmp, *noway, *upptr, *dnptr, *shadow[MAX_SHADOWS], *kfonts;
 #if 0
-*shadow[MAX_SHADOWS], *kfonts, *portrait[MAXCHRS];
+   *shadow[MAX_SHADOWS], *kfonts, *portrait[MAXCHRS];
 #endif
 
 /*! Layers in the map */
@@ -149,9 +154,6 @@ int xofs, yofs;
 int gsvol = 250, gmvol = 250;
 /*! Is the party under 'automatic' (i.e. scripted) control */
 unsigned char autoparty = 0;
-/* Not used:
-unsigned char autofollow = 1;
-*/
 /*! Are all heroes dead? */
 unsigned char alldead = 0;
 /*! Is sound activated? */
@@ -187,7 +189,7 @@ char *strbuf = NULL;
  * on screen, e.g. party[pidx[0]] is the 'lead' character,
  * party[pidx[1]] is the follower, if there are 2 in the party.
  * We need to store all of them, because heroes join and leave during the game.
-*/
+ */
 s_player party[MAXCHRS];
 
 
@@ -196,7 +198,7 @@ s_player party[MAXCHRS];
  * \note 23: Self explanatory. This would all correspond to the s_player
  * structure. I had to invent my own little (somewhat ugly) layout since it
  * all shot past the 80-character mark by quite a ways :)
-*/
+ */
 s_heroinfo players[MAXCHRS];
 
 #if 0
@@ -285,6 +287,7 @@ s_player players[MAXCHRS] = {
 #endif
 
 
+
 /*! Table to manage stats for the level up process (see level_up()) */
 unsigned short lup[MAXCHRS][20] = {
    {10, 70, 9, 2, 190, 90, 150, 60, 70, 15, 20, 20, 50, 50, 0, 10, 0},
@@ -296,6 +299,7 @@ unsigned short lup[MAXCHRS][20] = {
    {10, 70, 7, 5, 110, 170, 90, 120, 70, 25, 50, 20, 25, 25, 0, 30, 0},
    {10, 70, 8, 6, 50, 100, 50, 160, 160, 10, 90, 90, 5, 0, 0, 20, 0}
 };
+
 
 
 /*! Characters when they are in combat */
@@ -327,7 +331,7 @@ static void load_heroes (void);
  * loop uses for logic (see int main()) and the rest track your playtime in
  * hours, minutes and seconds. They're all used in the my_counter() timer
  * function just below
-*/
+ */
 volatile int timer = 0, ksec = 0, kmin = 0, khr = 0, timer_count = 0;
 
 /*! Current colour map */
@@ -339,7 +343,7 @@ unsigned char can_run = 1;
 unsigned char display_desc = 0;
 /*! Which map layers should be drawn. These are set when the map is loaded;
     see change_map()
-*/
+ */
 unsigned char draw_background = 1, draw_middle = 1,
    draw_foreground = 1, draw_shadow = 1;
 /*! Items in inventory. g_inv[][0] is the item id, g_inv[][1] is the quantity */
@@ -363,10 +367,11 @@ int cheat = 0;
 #define KQ_FPS 100
 
 
+
 /*! \brief Allegro timer callback
  *
  * New interrupt handler set to keep game time.
-*/
+ */
 void my_counter (void)
 {
    timer++;
@@ -383,6 +388,8 @@ void my_counter (void)
 
 END_OF_FUNCTION (my_counter);
 
+
+
 static void time_counter (void)
 {
    kmin++;
@@ -395,6 +402,8 @@ static void time_counter (void)
 
 END_OF_FUNCTION (time_counter);
 
+
+
 #ifdef ALLEGRO_BEOS
 static inline long long gettime ()
 {
@@ -402,6 +411,8 @@ static inline long long gettime ()
    gettimeofday (&tv, 0);
    return (tv.tv_sec * 1000000) + (tv.tv_usec);
 }
+
+
 
 int maybe_poll_joystick ()
 {
@@ -419,6 +430,7 @@ int maybe_poll_joystick ()
 #endif
 
 
+
 /*! \brief Handle user input.
  *
  * Updates all of the game controls according to user input.
@@ -426,7 +438,7 @@ int maybe_poll_joystick ()
  * 2003-09-07 Edge <hardedged@excite.com> removed duplicate input, joystick code
  * 2003-09-07 Caz Jones lasttime code workaround pci-gameport bug
  * (should not affect non-buggy drivers - please report to edge)
-*/
+ */
 void readcontrols (void)
 {
    JOYSTICK_INFO *stk;
@@ -475,8 +487,7 @@ void readcontrols (void)
       }
    }
 
-   if (use_joy > 0 && maybe_poll_joystick () == 0)
-   {
+   if (use_joy > 0 && maybe_poll_joystick () == 0) {
       stk = &joy[use_joy - 1];
       left |= stk->stick[0].axis[0].d1;
       right |= stk->stick[0].axis[0].d2;
@@ -500,7 +511,7 @@ void readcontrols (void)
  * in text format to "treasure.log" and
  * "progress.log" respectively. This happens in
  * response to user hitting f11.
-*/
+ */
 void data_dump (void)
 {
    FILE *ff;
@@ -523,6 +534,7 @@ void data_dump (void)
 #endif
 
 
+
 /*! \brief Move the viewport if necessary to include the players
  *
  * This is used to determine what part of the map is
@@ -532,7 +544,7 @@ void data_dump (void)
  * such, so that the players start in the center of the screen.
  *
  * \param center Unused variable
-*/
+ */
 void calc_viewport (int center)
 {
    int sx, sy, bl, br, bu, bd, zx, zy;
@@ -547,24 +559,22 @@ void calc_viewport (int center)
       zy = vy;
    }
 
-/*
-  if (center)
-    {
-*/
+#if 0
+   if (center) {
+#endif
 
-   bl = 152;
-   br = 152;
-   bu = 112;
-   bd = 112;
-/*  }
-  else
-  {
-    bl = 64;
-    br = 240;
-    bu = 64;
-    bd = 164;
-  }
-*/
+      bl = 152;
+      br = 152;
+      bu = 112;
+      bd = 112;
+#if 0
+   } else {
+      bl = 64;
+      br = 240;
+      bu = 64;
+      bd = 164;
+   }
+#endif
    sx = zx - vx;
    sy = zy - vy;
    if (sx < bl) {
@@ -601,6 +611,8 @@ void calc_viewport (int center)
       vy = my;
 }
 
+
+
 /*! \brief allocate memory for map
  *
  * Allocate memory arrays for the map, shadows, obstacles etc 
@@ -629,6 +641,8 @@ static void map_alloc (void)
    o_seg = (unsigned char *) malloc (tiles);
 }
 
+
+
 /*! \brief Free old map data and load a new one
  *
  * This loads a new map and performs all of the functions
@@ -643,7 +657,7 @@ static void map_alloc (void)
  *              to use the default (also s_map::stx and
  *              s_map::sty)
  * \param   mvy New y-coord for camera
-*/
+ */
 void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
 {
    int i, o;
@@ -825,7 +839,7 @@ void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
  * that let's you call the event handler on 0 zones if you
  * wish.
  * This function also handles the Repulse functionality
-*/
+ */
 void zone_check (void)
 {
    unsigned short stc, zx, zy;
@@ -867,7 +881,7 @@ void zone_check (void)
  * \param wtx New x-coord
  * \param wty New y-coord
  * \param fspeed Speed of fading (See do_transition())
-*/
+ */
 void warp (int wtx, int wty, int fspeed)
 {
    int i, f;
@@ -906,7 +920,7 @@ void warp (int wtx, int wty, int fspeed)
 /*! \brief Do tile animation
  *
  * This updates tile indexes for animation threads.
-*/
+ */
 void check_animation (void)
 {
    int i, j;
@@ -935,7 +949,7 @@ void check_animation (void)
  * This function is called when the player presses the 'alt' key.
  * Things that can be activated are entities and zones that are
  * obstructed.
-*/
+ */
 void activate (void)
 {
    int zx, zy, lx = 0, ly = 0, p, q, cf = 0, tf, mb;
@@ -1007,7 +1021,7 @@ void activate (void)
  * 20030728 PH re-implemented in IMHO a neater way
  *
  * \note Waits at most 20 'ticks'
-*/
+ */
 void unpress (void)
 {
    timer_count = 0;
@@ -1057,7 +1071,7 @@ void unpress (void)
 /*! \brief Wait for ALT
  *
  * Simply wait for the 'alt' key to be pressed.
-*/
+ */
 void wait_enter (void)
 {
    int stop = 0;
@@ -1084,7 +1098,7 @@ void wait_enter (void)
  * \note klog is deprecated; use Allegro's TRACE instead.
  *
  * \param msg String to add to log file
-*/
+ */
 void klog (char *msg)
 {
    TRACE ("%s\n", msg);
@@ -1107,7 +1121,7 @@ void klog (char *msg)
  *
  * Set up allegro, set up variables, load stuff, blah...
  * This is called once per game.
-*/
+ */
 static void startup (void)
 {
    int p, i, q;
@@ -1117,16 +1131,18 @@ static void startup (void)
 
    allegro_init ();
 
-/*
-   buffers to allocate
-*/
+/* Buffers to allocate */
    strbuf = (char *) malloc (4096);
-/*    map_seg = (unsigned short *) malloc (560); */
-/*    b_seg = (unsigned short *) malloc (560); */
-/*    f_seg = (unsigned short *) malloc (560); */
-/*    z_seg = (unsigned char *) malloc (280); */
-/*    s_seg = (unsigned char *) malloc (280); */
-/*    o_seg = (unsigned char *) malloc (280); */
+
+#if 0
+   map_seg = (unsigned short *) malloc (560);
+   b_seg = (unsigned short *) malloc (560);
+   f_seg = (unsigned short *) malloc (560);
+   z_seg = (unsigned char *) malloc (280);
+   s_seg = (unsigned char *) malloc (280);
+   o_seg = (unsigned char *) malloc (280);
+#endif
+
    map_seg = b_seg = f_seg = NULL;
    s_seg = z_seg = o_seg = NULL;
    progress = (unsigned char *) malloc (2000);
@@ -1145,15 +1161,15 @@ static void startup (void)
    if (num_joysticks == 0)
       use_joy = 0;
    else {
-/*
-    sprintf(strbuf,"%d joysticks detected.",num_joysticks);
+#if 0
+    sprintf(strbuf, "%d joysticks detected.", num_joysticks);
     klog(strbuf);
-    for (i=0;i<num_joysticks;i++)
-    {
-      sprintf(strbuf,"joystick %d: %d sticks, %d buttons",i,joy[i].num_sticks,joy[i].num_buttons);
+    for (i = 0; i < num_joysticks; i++) {
+      sprintf(strbuf, "joystick %d: %d sticks, %d buttons", i,
+              joy[i].num_sticks, joy[i].num_buttons);
       klog(strbuf);
     }
-*/
+#endif
       use_joy = 0;
 
       if (poll_joystick () == 0) {
@@ -1237,6 +1253,7 @@ static void startup (void)
 
    if (!pcxb)
       program_death ("Could not load kqfaces.pcx!");
+
    for (p = 0; p < 4; p++) {
       blit ((BITMAP *) pcxb->dat, portrait[p], 0, p * 40, 0, 0, 40, 40);
       blit ((BITMAP *) pcxb->dat, portrait[p + 4], 40, p * 40, 0, 0, 40, 40);
@@ -1270,6 +1287,8 @@ static void startup (void)
    color_map = &cmap;
    load_sgstats ();
 }
+
+
 
 /*! \brief Load initial hero stuff from file
  *
@@ -1308,11 +1327,12 @@ void load_heroes (void)
 }
 
 
+
 /*! \brief Initialise all players
  *
  * Set up the player characters and load data specific
  * to them. This happens at the start of every game.
-*/
+ */
 void init_players (void)
 {
    DATAFILE *pb;
@@ -1349,7 +1369,6 @@ void init_players (void)
 
 
 
-
 #ifdef DEBUGMODE
 /*! \brief Create bitmap
  *
@@ -1362,7 +1381,7 @@ void init_players (void)
  * \param   by Height
  * \param   bname Name of bitmap
  * \returns the pointer to the created bitmap
-*/
+ */
 BITMAP *alloc_bmp (int bx, int by, char *bname)
 {
    BITMAP *tmp;
@@ -1381,10 +1400,11 @@ BITMAP *alloc_bmp (int bx, int by, char *bname)
 #endif
 
 
+
 /*! \brief Create bitmaps
  *
  * A separate function to create all global bitmaps needed in the game.
-*/
+ */
 static void allocate_stuff (void)
 {
    int i, p;
@@ -1459,10 +1479,11 @@ static void allocate_stuff (void)
 }
 
 
+
 /*! \brief Free allocated memory
  *
  * This frees memory and such things.
-*/
+ */
 static void deallocate_stuff (void)
 {
    int i, p;
@@ -1557,8 +1578,6 @@ static void deallocate_stuff (void)
 
 
 
-
-
 /*! \brief Pause for a time
  *
  * Why not just use rest() you ask?  Well, this function
@@ -1567,7 +1586,7 @@ static void deallocate_stuff (void)
  * party movement.
  *
  * \param   dtime Time in frames
-*/
+ */
 void kwait (int dtime)
 {
    int cnt = 0;
@@ -1619,7 +1638,7 @@ void kwait (int dtime)
  *
  * \param   est First entity
  * \param   efi Last entity
-*/
+ */
 void wait_for_entity (int est, int efi)
 {
    int e, n;
@@ -1651,6 +1670,7 @@ void wait_for_entity (int est, int efi)
    while (n);
    autoparty = 0;
 }
+
 
 
 #if 0
@@ -1707,12 +1727,13 @@ void wait_for_entity (int est, int efi)
 #endif
 
 
+
 /*! \brief End program due to fatal error
  *
  * Kill the program and spit out a message.
  *
  * \param   message Text to put into log
-*/
+ */
 void program_death (char *message)
 {
    char internal_buffer[80];
@@ -1733,7 +1754,7 @@ void program_death (char *message)
  *
  * \param   pn Character to ask about
  * \returns Where it is in the party list (1 or 2), or 0 if not
-*/
+ */
 int in_party (int pn)
 {
    int a;
@@ -1746,10 +1767,11 @@ int in_party (int pn)
 }
 
 
+
 /*! \brief Main function
  *
  * Well, this one is pretty obvious.
-*/
+ */
 int main (void)
 {
    int stop, game_on, skip_splash;
@@ -1858,4 +1880,4 @@ END_OF_MAIN ();
  * - 90..96: cave5
  *
  * The names given are the base names of the maps/lua scripts
-*/
+ */

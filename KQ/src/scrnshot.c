@@ -1,5 +1,5 @@
 /*
-   KQ is Copyright (C) 2002 - Josh Bolduc
+   KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
 
@@ -52,7 +52,7 @@ const char *ss_exit_msg[5] = {
  * \param   src_bmp The bitmap to save
  * \param   prefix The first 4 to 7 characters of the name
  * \returns 0 if success, non-zero if failure
-*/
+ */
 int save_screenshot (BITMAP * src_bmp, const char *prefix)
 {
    char filename[4096];

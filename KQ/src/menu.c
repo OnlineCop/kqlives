@@ -1,5 +1,5 @@
 /*
-   KQ is Copyright (C) 2002 - Josh Bolduc
+   KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
 
@@ -47,10 +47,11 @@ static int check_xp (int, int);
 static void status_screen (int);
 
 
+
 /*! \brief Main menu
  *
  * Main menu that calls all the other little menus :)
-*/
+ */
 void menu (void)
 {
    int st = 0, rd = 1, ptr = 0, z;
@@ -122,7 +123,7 @@ void menu (void)
 /*! \brief Draws the main menu
  *
  * Draw the menu when the player hits ENTER
-*/
+ */
 void draw_mainmenu (int swho)
 {
    int p;
@@ -164,7 +165,7 @@ void draw_mainmenu (int swho)
  * \param i player (index in party array) to show info for
  * \param dx x-coord of stats view
  * \param dy y-coord of stats view
-*/
+ */
 void draw_playerstat (BITMAP * where, int i, int dx, int dy)
 {
    int j;
@@ -199,7 +200,7 @@ void draw_playerstat (BITMAP * where, int i, int dx, int dy)
 /*! \brief Show special items
  *
  * List any special items that the party has.
-*/
+ */
 void spec_items (void)
 {
    int a, ii = 0, stop = 0, ptr = 0, rd = 1;
@@ -371,7 +372,7 @@ void spec_items (void)
  *
  * Draw the verbose stats of a single player.
  * \param ch character to draw (index in pidx array)
-*/
+ */
 static void status_screen (int ch)
 {
    int stop = 0;
@@ -500,7 +501,7 @@ static void status_screen (int ch)
  *
  * Just used to convert all characters in party from party structure
  * to fighter structure.
-*/
+ */
 void update_equipstats (void)
 {
    int i;
@@ -520,7 +521,7 @@ void update_equipstats (void)
  *
  * \param   who Index of player to convert
  * \returns tf (fighter structure)
-*/
+ */
 s_fighter *player2fighter (int who, s_fighter * pf)
 {
    int j, a, b;
@@ -658,7 +659,7 @@ s_fighter *player2fighter (int who, s_fighter * pf)
 /*! \brief Converts fighter-->character
  *
  * This converts from fighter to player structure.  Used when leaving combat.
-*/
+ */
 void revert_equipstats (void)
 {
    int i, j, g, nc;
@@ -697,7 +698,7 @@ void revert_equipstats (void)
  * \param   the_xp Amount of experience to give
  * \param   ls Learned new spell (always 1?)
  * \returns whether or not player raised levels
-*/
+ */
 int give_xp (int pl, int the_xp, int ls)
 {
    party[pl].xp += the_xp;
@@ -713,7 +714,7 @@ int give_xp (int pl, int the_xp, int ls)
  * \param   pl Player
  * \param   ls Learned new spell
  * \returns 1 if new spell learned, 0 otherwise
-*/
+ */
 static int check_xp (int pl, int ls)
 {
    int stp = 0, z = 0;
@@ -741,7 +742,7 @@ static int check_xp (int pl, int ls)
  * Performs a level-up.
  *
  * \param   pr Person leveling up
-*/
+ */
 static void level_up (int pr)
 {
    int a, b = 0;

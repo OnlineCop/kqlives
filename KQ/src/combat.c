@@ -1,5 +1,5 @@
 /*
-   KQ is Copyright (C) 2002 - Josh Bolduc
+   KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
 
@@ -48,7 +48,7 @@
 #include "setup.h"
 #include "timing.h"
 /*! \name global variables  */
-/*\{*/
+
 int combatend;
 int cact[NUM_FIGHTERS];
 int curx;
@@ -60,7 +60,6 @@ int rcount;
 unsigned char vspell;
 unsigned char ms;
 DATAFILE *backart;
-/*\}*/
 
 
 /*  internal variables  */
@@ -97,7 +96,7 @@ static int do_combat (char *gb, char *mus, int is_rnd);
  * \param   comy y-coord of player
  * \returns outcome of combat() or 0 if no combat
  *
-*/
+ */
 int combat_check (int comx, int comy)
 {
    int zn;
@@ -129,7 +128,7 @@ int combat_check (int comx, int comy)
  *
  * \param   bno combat identifier (index into battles[])
  * \returns 0 if no combat, 1 otherwise
-*/
+ */
 int combat (int bno)
 {
    int hero_level;
@@ -191,14 +190,15 @@ int combat (int bno)
                      battles[bno].eidx == 99);
 }
 
-   /*! \brief Really do combat once fighters have been inited
-    *
-    * \param bg Bckground image
-    * \param mus Music
-    * \param is_rnd if !=0 then this is a random combat
-    * \returns 1 if battle occurred
-    */
 
+
+/*! \brief Really do combat once fighters have been inited
+ *
+ * \param bg Bckground image
+ * \param mus Music
+ * \param is_rnd if !=0 then this is a random combat
+ * \returns 1 if battle occurred
+ */
 static int do_combat (char *bg, char *mus, int is_rnd)
 {
    int zoom_step;
@@ -226,16 +226,12 @@ static int do_combat (char *bg, char *mus, int is_rnd)
    pause_music ();
    set_music_volume ((gmvol / 250.0) * 0.75);
    play_music (mus, 0);
-   if (stretch_view == 2)
-   {
+   if (stretch_view == 2) {
       do_transition (TRANS_FADE_OUT, 2);
       clear_bitmap (double_buffer);
       do_transition (TRANS_FADE_IN, 64);
-   }
-
-   else
-      for (zoom_step = 0; zoom_step < 9; zoom_step++)
-      {
+   } else
+      for (zoom_step = 0; zoom_step < 9; zoom_step++) {
          poll_music ();
 
          /*  RB FIXME: stretching when 640x480, stretching when 320x240?  */
@@ -284,7 +280,7 @@ static int do_combat (char *bg, char *mus, int is_rnd)
  * \date Updated
  *
  * Pre-combat setup of fighter structures and initial vars.
-*/
+ */
 static void init_fighters (void)
 {
    int index;
@@ -312,7 +308,7 @@ static void init_fighters (void)
  * \date Updated
  *
  * Calculate where the fighters should be drawn.
-*/
+ */
 static void snap_togrid (void)
 {
    int index;
@@ -357,7 +353,7 @@ static void snap_togrid (void)
  * \date Updated
  *
  * Set up surprise vars, speeds, act vars, etc.
-*/
+ */
 static void roll_initiative (void)
 {
    int i, j;
@@ -398,14 +394,15 @@ static void roll_initiative (void)
     * slots that aren't used. Currently, no enemies use imbued stuff, but
     * this may change (?)
     */
-/*    for (i = 0; i < NUM_FIGHTERS; i++) */
-/*      { */
-/*         /\*  TODO: Unroll this loop  *\/ */
-/*         for (j = 0; j < 2; j++) */
-/*            if (fighter[i].imb[j] > 0) */
-/*               cast_imbued_spell (i, fighter[i].imb[j], 1, TGT_CASTER); */
-/*      } */
-/* PH: This should be ok */
+#if 0
+   for (i = 0; i < NUM_FIGHTERS; i++) {
+      /*  TODO: Unroll this loop  */
+      for (j = 0; j < 2; j++)
+         if (fighter[i].imb[j] > 0)
+            cast_imbued_spell (i, fighter[i].imb[j], 1, TGT_CASTER);
+   }
+#endif
+   /* PH: This should be ok */
    for (i = 0; i < NUM_FIGHTERS; i++) {
       if (i < numchrs || (i >= PSIZE && i < (PSIZE + numens))) {
          for (j = 0; j < 2; j++)
@@ -435,7 +432,7 @@ static void roll_initiative (void)
  * \param   plyr Player
  * \param   hl Highlighted
  * \param   sall Select all
-*/
+ */
 void battle_render (int plyr, int hl, int sall)
 {
    int a = 0;
@@ -456,7 +453,7 @@ void battle_render (int plyr, int hl, int sall)
    clear_bitmap (double_buffer);
    blit ((BITMAP *) backart->dat, double_buffer, 0, 0, 0, 0, 320, 240);
 #ifdef KQ_CHEATS
-   if (debugging > 2) {
+   if (debugging > 1) {
       rectfill (double_buffer, 0, 0, rcount / 2, 9, 15);
       sprintf (strbuf, "%d", rcount);
       print_font (double_buffer, 0, 20, strbuf, FNORMAL);
@@ -485,8 +482,7 @@ void battle_render (int plyr, int hl, int sall)
       }
 #ifdef KQ_CHEATS
       if (debugging > 2) {
-/*
-         RB TODO: Check this out.
+         /*  RB TODO: Check this out.  */
 
          sprintf(strbuf, "HP:%d (%d)", fighter[plyr-1].hp, fighter[plyr-1].mhp);
          print_font(double_buffer, 0,   8, strbuf, FNORMAL);
@@ -519,7 +515,6 @@ void battle_render (int plyr, int hl, int sall)
             sprintf(strbuf, "%d", fighter[plyr - 1].stats[t]);
             print_font(double_buffer, 40, t * 8 + 24, strbuf, FNORMAL);
          }
-*/
       }
 #endif
    }
@@ -610,7 +605,7 @@ void battle_render (int plyr, int hl, int sall)
  * This function controls the battle gauges and calls for action
  * when necessary. This is also where things like poison, sleep,
  * and what-not are checked.
-*/
+ */
 static void do_round (void)
 {
    int a;
@@ -748,7 +743,7 @@ static void do_round (void)
  * \date Updated
  *
  * Choose a fighter action.
-*/
+ */
 static void do_action (int dude)
 {
    int index;
@@ -796,7 +791,7 @@ static void do_action (int dude)
  * Display a single fighter on the screen. Checks for dead and
  * stone, and if the fighter is selected. Also displays 'Vision'
  * spell information.
-*/
+ */
 void draw_fighter (int dude, int dcur)
 {
    int xx;
@@ -852,7 +847,7 @@ void draw_fighter (int dude, int dcur)
  *
  * \returns 1 if the battle ended (either the heroes or the enemies won);
  *            0 otherwise.
-*/
+ */
 static int check_end (void)
 {
    int index;
@@ -898,7 +893,7 @@ static int check_end (void)
  * \param   dr Defender ID
  * \param   sk if non-zero, override the attacker's stats.
  * \returns 1 if damage done, 0 otherwise
-*/
+ */
 int fight (int ar, int dr, int sk)
 {
    int a;
@@ -1001,7 +996,7 @@ int fight (int ar, int dr, int sk)
  * are possible, but the screen doesn't flash.
  *
  * \param   ar Attacker
-*/
+ */
 void multi_fight (int ar)
 {
    int index;
@@ -1100,7 +1095,7 @@ void multi_fight (int ar)
  * \param   dr Defender
  * \returns 0 if attack was a miss, 1 if attack was successful,
  *          or 2 if attack was a critical hit).
-*/
+ */
 static int attack_result (int ar, int dr)
 {
    int c;
@@ -1240,7 +1235,7 @@ static int attack_result (int ar, int dr)
  *
  * Play some sad music and set the dead flag so that the game
  * will return to the main menu.
-*/
+ */
 static void enemies_win (void)
 {
    play_music ("rain.s3m", 0);
@@ -1266,7 +1261,7 @@ static void enemies_win (void)
  * \date Updated
  *
  * Distribute the booty!
-*/
+ */
 static void heroes_win (void)
 {
    int tgp = 0;
@@ -1422,7 +1417,7 @@ static void heroes_win (void)
  * Do what it takes to put a fighter out of commission.
  *
  * \param   victim The one who will die
-*/
+ */
 void fkill (int victim)
 {
    int index;

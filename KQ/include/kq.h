@@ -253,7 +253,7 @@ const char *kqres (int dir_id, const char *file);
  *
  * Marks a block of tiles that are interchanged to give
  * an animation effect. Used in check_animation()
-*/
+ */
 typedef struct
 {
    unsigned short start;        /*!< First tile in sequence  */
@@ -447,7 +447,7 @@ extern s_entity g_ent[MAX_ENT + PSIZE];
 extern s_anim tanim[6][MAX_ANIM];
 extern s_anim adata[MAX_ANIM];
 extern int noe, pidx[MAXCHRS], numchrs, gp, xofs, yofs, gsvol, gmvol;
-extern unsigned char autoparty, autofollow, alldead, is_sound, deadeffect,
+extern unsigned char autoparty, alldead, is_sound, deadeffect,
    vfollow, use_sstone;
 extern unsigned char kq_version, hold_fade, cansave, skip_intro, wait_retrace,
    windowed, stretch_view;

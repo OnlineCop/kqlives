@@ -1,5 +1,5 @@
 /*
-   KQ is Copyright (C) 2002 - Josh Bolduc
+   KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
 
@@ -26,7 +26,7 @@
  *
  * Includes functions to draw characters, text and maps.
  * Also some colour manipulation.
-*/
+ */
 
 #include <stdio.h>
 #include <string.h>
@@ -41,9 +41,7 @@
 #include "entity.h"
 #include "progress.h"
 
-/*
-   globals
-*/
+/* Globals */
 #define MSG_ROWS 4
 #define MSG_COLS 36
 char msgbuf[MSG_ROWS][MSG_COLS];
@@ -75,7 +73,7 @@ const char *parse_string (const char *);
  *
  * \param   xw x-coord in double_buffer of the top-left of the screen
  * \param   yw y-coord in double_buffer of the top-left of the screen
-*/
+ */
 extern int skips;
 void blit2screen (int xw, int yw)
 {
@@ -90,6 +88,8 @@ void blit2screen (int xw, int yw)
    else
       blit (double_buffer, screen, xw, yw, 0, 0, 320, 240);
 }
+
+
 
 /*! \brief Make a copy of a bitmap
  *
@@ -119,6 +119,7 @@ BITMAP *copy_bitmap (BITMAP * target, BITMAP * source)
 }
 
 
+
 /*! \brief Scale colours
  *
  * This takes a bitmap and scales it to fit in the color range specified.
@@ -135,7 +136,7 @@ BITMAP *copy_bitmap (BITMAP * target, BITMAP * source)
  * \param   dest Destination bitmap
  * \param   st Start of output color range
  * \param   fn End of output color range
-*/
+ */
 void color_scale (BITMAP * src, BITMAP * dest, int st, int fn)
 {
    int ix, iy, z, a;
@@ -165,7 +166,7 @@ void color_scale (BITMAP * src, BITMAP * dest, int st, int fn)
  * \param   st Start of output range
  * \param   fn End of output range
  * \param   aflag If ==1 then \p who<PSIZE means convert all heroes, otherwise all enemies
-*/
+ */
 void convert_cframes (int who, int st, int fn, int aflag)
 {
    int a, p, a1;
@@ -199,7 +200,7 @@ void convert_cframes (int who, int st, int fn, int aflag)
  *
  * \param   who Character to restore
  * \param   aflag If ==1 then convert all heroes if \p who < PSIZE, otherwise convert all enemies
-*/
+ */
 void revert_cframes (int who, int aflag)
 {
    int a, p;
@@ -239,7 +240,7 @@ void revert_cframes (int who, int aflag)
  * \param   ino Icon to draw
  * \param   icx x-coord
  * \param   icy y-coord
-*/
+ */
 void draw_icon (BITMAP * where, int ino, int icx, int icy)
 {
    masked_blit (sicons, where, 0, ino * 8, icx, icy, 8, 8);
@@ -261,7 +262,7 @@ void draw_icon (BITMAP * where, int ino, int icx, int icy)
  *          \p inum ==17 when in combat, ==8 otherwise.
  * \param   icx x-coord to draw to
  * \param   icy y-coord to draw to
-*/
+ */
 void draw_stsicon (BITMAP * where, int cc, int who, int inum, int icx, int icy)
 {
    int j, st = 0, s;
@@ -291,7 +292,7 @@ void draw_stsicon (BITMAP * where, int cc, int who, int inum, int icx, int icy)
  *
  * \param xw x-offset - always ==16
  * \param yw y-offset - always ==16
-*/
+ */
 static void drawchar (int xw, int yw)
 {
    int fr, dx, dy, i, f, fid;
@@ -313,9 +314,8 @@ static void drawchar (int xw, int yw)
       else {
          fr = g_ent[i].facing * 3 + (g_ent[i].framectr > 10 ? 1 : 0);
       }
-      if (i < PSIZE && i < numchrs)
+      if (i < PSIZE && i < numchrs) {
          /* It's a hero */
-      {
          /* Masquerade: if chrx!=0 then this hero is disguised as someone else... */
          sprite_base = g_ent[i].chrx ? eframes[g_ent[i].chrx] : frames[fid];
 
@@ -355,9 +355,8 @@ static void drawchar (int xw, int yw)
          else
             draw_trans_sprite (double_buffer, spr, dx, dy);
 
-      } else
+      } else {
          /* It's an NPC */
-      {
          if (g_ent[i].active && g_ent[i].tilex >= view_x1
              && g_ent[i].tilex <= view_x2 && g_ent[i].tiley >= view_y1
              && g_ent[i].tiley <= view_y2) {
@@ -381,6 +380,7 @@ static void drawchar (int xw, int yw)
 }
 
 
+
 /*! \brief Check for forest square
  *
  * Helper function for the drawchar routine.  Just returns whether or not
@@ -392,7 +392,7 @@ static void drawchar (int xw, int yw)
  * \param   fx x-coord to check
  * \param   fy y-coord to check
  * \returns 1 if it is a forest square, 0 otherwise
-*/
+ */
 int is_forestsquare (int fx, int fy)
 {
    int f;
@@ -422,7 +422,7 @@ int is_forestsquare (int fx, int fy)
  *  - 5 Order BCMFS, Foreground parallax
  *
  * Also handles the Repulse indicator and the map description display.
-*/
+ */
 void drawmap (void)
 {
    if (g_map.xsize <= 0) {
@@ -444,7 +444,7 @@ void drawmap (void)
    parallaxing code, that was no longer true.  So, instead of changing all
    my code, I just put this hack in place.  It's actually kind of handy in
    case I ever have to adjust stuff again.
-*/
+ */
    xofs = 16;
    yofs = 16;
    if (progress[P_REPULSE] > 0) {
@@ -466,7 +466,7 @@ void drawmap (void)
  *
  * Draw the background layer.  Accounts for parallaxing.
  * Parallax is on for modes 2 & 3
-*/
+ */
 static void draw_backlayer (void)
 {
    int dx, dy, pix, xtc, ytc;
@@ -512,7 +512,7 @@ static void draw_backlayer (void)
  *
  * Draw the middle layer.  Accounts for parallaxing.
  * Parallax is on for modes 3 & 4
-*/
+ */
 static void draw_midlayer (void)
 {
    int dx, dy, pix, xtc, ytc;
@@ -556,7 +556,7 @@ static void draw_midlayer (void)
  *
  * Draw the foreground layer.  Accounts for parallaxing.
  * Parallax is on for modes 4 & 5.
-*/
+ */
 static void draw_forelayer (void)
 {
    int dx, dy, pix, xtc, ytc;
@@ -601,7 +601,7 @@ static void draw_forelayer (void)
  * Draw the shadow layer... this beats making extra tiles.  This may be
  * moved in the future to fall between the background and foreground layers.
  * Shadows are never parallaxed.
-*/
+ */
 static void draw_shadows (void)
 {
    int dx, dy, pix, xtc, ytc;
@@ -645,7 +645,7 @@ static void draw_shadows (void)
  * \param   y Top-left y-coord
  * \param   x2 Bottom-right x-coord
  * \param   y2 Bottom-right y-coord
-*/
+ */
 static void border (BITMAP * where, int x, int y, int x2, int y2)
 {
    vline (where, x + 1, y + 3, y2 - 3, GREY2);
@@ -677,6 +677,8 @@ static void border (BITMAP * where, int x, int y, int x2, int y2)
    putpixel (where, x2 - 4, y + 4, WHITE);
    putpixel (where, x2 - 4, y2 - 4, WHITE);
 }
+
+
 
 /*! \brief Draw  box, with different backgrounds and borders
  *
@@ -734,6 +736,8 @@ static void draw_kq_box (BITMAP * where, int x1, int y1, int x2, int y2,
    }
 }
 
+
+
 /*! \brief Draw menu box
  *
  * Draw a menubox.  This is kinda hacked because of translucency, but it
@@ -745,7 +749,7 @@ static void draw_kq_box (BITMAP * where, int x1, int y1, int x2, int y2,
  * \param   w Width
  * \param   h Height
  * \param   c Colour (see note above)
-*/
+ */
 void menubox (BITMAP * where, int x, int y, int w, int h, int c)
 {
    draw_kq_box (where, x, y, x + w * 8 + 16, y + h * 8 + 16, c, B_TEXT);
@@ -763,7 +767,7 @@ void menubox (BITMAP * where, int x, int y, int w, int h, int c)
  * \param   sy y-coord
  * \param   msg String to draw
  * \param   cl Font index (0..6)
-*/
+ */
 void print_font (BITMAP * where, int sx, int sy, char *msg, int cl)
 {
    int z, cc, hgt = 8;
@@ -800,7 +804,7 @@ void print_font (BITMAP * where, int sx, int sy, char *msg, int cl)
  * \param   sy y-coord
  * \param   msg String to draw
  * \param   cl Font index (0..4)
-*/
+ */
 void print_num (BITMAP * where, int sx, int sy, char *msg, int cl)
 {
    int z, cc;
@@ -826,7 +830,7 @@ void print_num (BITMAP * where, int sx, int sy, char *msg, int cl)
  * should go in relation to the entity who is speaking.
  *
  * \param   who Character that is speaking
-*/
+ */
 static void set_textpos (int who)
 {
    if (who < MAX_ENT) {
@@ -899,7 +903,7 @@ static void set_textpos (int who)
  *
  * \date 20030417 PH This now draws the text as well as just the box
  * \param   bstyle Style (B_TEXT or B_THOUGHT)
-*/
+ */
 static void draw_textbox (int bstyle)
 {
    int wid, hgt, a;
@@ -937,7 +941,7 @@ static void draw_textbox (int bstyle)
  * \param   sp4 Line 4 of text
  *
  * \sa bubble_text_ex()
-*/
+ */
 void bubble_text (int who, char *sp1, char *sp2, char *sp3, char *sp4)
 {
    strcpy (msgbuf[0], parse_string (sp1));
@@ -970,7 +974,7 @@ enum m_mode
  * \param   buf The string to reformat
  * \returns the rest of the string that has not been processed, or NULL if
  *          it has all been processed.
-*/
+ */
 static const char *relay (const char *buf)
 {
    int lasts, lastc, i, cr, cc;
@@ -1066,7 +1070,7 @@ static const char *relay (const char *buf)
  * \param   fmt Format, B_TEXT or B_THOUGHT
  * \param   who Character that is speaking
  * \param   s The text to display
-*/
+ */
 void text_ex (int fmt, int who, const char *s)
 {
    s = parse_string (s);
@@ -1094,7 +1098,7 @@ void text_ex (int fmt, int who, const char *s)
  * \param   sp2 Line 2 of text
  * \param   sp3 Line 3 of text
  * \param   sp4 Line 4 of text
-*/
+ */
 void thought_text (int who, char *sp1, char *sp2, char *sp3, char *sp4)
 {
    strcpy (msgbuf[0], parse_string (sp1));
@@ -1112,7 +1116,7 @@ void thought_text (int who, char *sp1, char *sp2, char *sp3, char *sp4)
  *
  * \param   who Character that is speaking/thinking
  * \param   box_style Style (B_TEXT or B_THOUGHT)
-*/
+ */
 static void generic_text (int who, int box_style)
 {
    int a, stop = 0;
@@ -1163,7 +1167,7 @@ static void generic_text (int who, int box_style)
  * \param   the_string Input string
  * \returns processed string, in a static buffer \p strbuf
  *          or \p the_string, if it had no replacement chars.
-*/
+ */
 const char *parse_string (const char *the_string)
 {
    static char strbuf[1024];
@@ -1327,7 +1331,7 @@ int prompt_ex (int who, const char *ptext, char *opt[], int n_opt)
  * \param   sp3 Line 3 of text
  * \param   sp4 Line 4 of text
  * \returns index of option chosen (0..numopt-1)
-*/
+ */
 int prompt (int who, int numopt, int bstyle, char *sp1, char *sp2, char *sp3,
             char *sp4)
 {
@@ -1401,7 +1405,7 @@ int prompt (int who, int numopt, int bstyle, char *sp1, char *sp2, char *sp3,
  * \param   delay Time to wait (milliseconds?)
  * \param   x_m x-coord of top-left (like xofs)
  * \param   y_m y-coord of top-left
-*/
+ */
 void message (char *m, int icn, int delay, int x_m, int y_m)
 {
    char msg[41];
@@ -1443,7 +1447,7 @@ void message (char *m, int icn, int delay, int x_m, int y_m)
  * \param   y1 Top-left of view
  * \param   x2 Bottom-right of view
  * \param   y2 Bottom-right of view
-*/
+ */
 void set_view (int vw, int x1, int y1, int x2, int y2)
 {
    view_on = vw;

@@ -1,5 +1,5 @@
 /*
-   KQ is Copyright (C) 2002 - Josh Bolduc
+   KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
 
@@ -24,7 +24,7 @@
  *
  * \author JB
  * \date ??????
-*/
+ */
 
 #include <stdio.h>
 #include <string.h>
@@ -69,7 +69,7 @@ static void entscript (int);
  *
  * The main routine that loops through the entity list and processes each
  * one.
-*/
+ */
 void process_entities (void)
 {
    int i;
@@ -87,7 +87,7 @@ void process_entities (void)
  * 'Normal' speed appears to be 4.
  *
  * \param   i Index of entity
-*/
+ */
 static void speed_adjust (int i)
 {
    if (g_ent[i].speed < 4) {
@@ -144,7 +144,7 @@ static void speed_adjust (int i)
  * for player input.
  *
  * \param   i Index of entity
-*/
+ */
 static void process_entity (int i)
 {
    g_ent[i].scount = 0;
@@ -269,7 +269,7 @@ static void process_entity (int i)
  * \param   tgt Entity to test
  * \param   rad Radius to test within
  * \returns 1 if near, 0 otherwise
-*/
+ */
 static int entity_near (int eno, int tgt, int rad)
 {
    int ax, ay, ex, ey, b;
@@ -295,7 +295,7 @@ static int entity_near (int eno, int tgt, int rad)
  * Basically it's an implementation of a queue
  *
  * \param   lm Last moved direction
-*/
+ */
 static void lastm_check (int lm)
 {
    int i;
@@ -310,7 +310,7 @@ static void lastm_check (int lm)
 /*! \brief Party following leader
  *
  * This makes any characters (after the first) follow the leader.
-*/
+ */
 static void follow (void)
 {
    int i;
@@ -325,29 +325,21 @@ static void follow (void)
       g_ent[i].movcnt = 15;
       switch (lastm[i]) {
       case MOVE_RIGHT:
-         {
-            g_ent[i].x++;
-            g_ent[i].tilex++;
-            break;
-         }
+         g_ent[i].x++;
+         g_ent[i].tilex++;
+         break;
       case MOVE_DOWN:
-         {
-            g_ent[i].y++;
-            g_ent[i].tiley++;
-            break;
-         }
+         g_ent[i].y++;
+         g_ent[i].tiley++;
+         break;
       case MOVE_LEFT:
-         {
-            g_ent[i].x--;
-            g_ent[i].tilex--;
-            break;
-         }
+         g_ent[i].x--;
+         g_ent[i].tilex--;
+         break;
       case MOVE_UP:
-         {
-            g_ent[i].y--;
-            g_ent[i].tiley--;
-            break;
-         }
+         g_ent[i].y--;
+         g_ent[i].tiley--;
+         break;
       }
    }
 }
@@ -360,7 +352,7 @@ static void follow (void)
  * vars to do so.
  *
  * \param   i Index of entity to move
-*/
+ */
 static void wander (int i)
 {
    if (g_ent[i].delayctr < g_ent[i].delay) {
@@ -392,7 +384,7 @@ static void wander (int i)
  * I realized that all the work in process_controls was already being
  * done in process_entity... I just had to make this exception for the
  * player-controlled dude.
-*/
+ */
 static void player_move (void)
 {
    readcontrols ();
@@ -448,7 +440,7 @@ static void player_move (void)
  * Set up the entity vars to move upwards (if possible).
  *
  * \param   i Index of entity to move
-*/
+ */
 static void moveup (int i)
 {
    int tx, ty;
@@ -476,7 +468,7 @@ static void moveup (int i)
  * Set up the entity vars to move down (if possible).
  *
  * \param   i Index of entity to move
-*/
+ */
 static void movedown (int i)
 {
    int tx, ty;
@@ -504,7 +496,7 @@ static void movedown (int i)
  * Set up the entity vars to move right (if possible).
  *
  * \param   i Index of entity to move
-*/
+ */
 static void moveright (int i)
 {
    int tx, ty;
@@ -532,7 +524,7 @@ static void moveright (int i)
  * Set up the entity vars to move left (if possible).
  *
  * \param   i Index of entity to move
-*/
+ */
 static void moveleft (int i)
 {
    int tx, ty;
@@ -553,6 +545,8 @@ static void moveleft (int i)
    emoved = 1;
 }
 
+
+
 /*! \brief Check for obstruction
  *
  * Check for any map-based obstructions in the specified co-ordinates.
@@ -562,7 +556,7 @@ static void moveleft (int i)
  * \param   mx Amount to move
  * \param   my Amount to move
  * \returns 1 if path is obstructed, 0 otherwise
-*/
+ */
 static int obstruction (int ox, int oy, int mx, int my)
 {
    int son, sto, tox, toy;
@@ -613,7 +607,7 @@ static int obstruction (int ox, int oy, int mx, int my)
  * \param   oy y-coord to check
  * \param   who Id of entity doing the checking
  * \returns index of entity found+1 or 0 if none found
-*/
+ */
 int entityat (int ox, int oy, int who)
 {
    int i;
@@ -650,7 +644,7 @@ int entityat (int ox, int oy, int who)
  * to a command.  This is from Verge1.
  *
  * \param   n Entity to process
-*/
+ */
 static void parsems (int n)
 {
    int p = 0;
@@ -684,7 +678,7 @@ static void parsems (int n)
  * - F+param: face direction param
  *
  * \param   n Entity to process
-*/
+ */
 static void getcommand (int n)
 {
    char s;
@@ -751,7 +745,7 @@ static void getcommand (int n)
  * This executes script commands.  This is from Verge1.
  *
  * \param   n Entity to process
-*/
+ */
 static void entscript (int n)
 {
    if (g_ent[n].cmd == 0)
@@ -820,7 +814,7 @@ static void entscript (int n)
  *
  * \param   n Entity to process
  * \param   movestring The script
-*/
+ */
 void set_script (int n, char *movestring)
 {
    g_ent[n].active = 1;
@@ -842,7 +836,7 @@ void set_script (int n, char *movestring)
  * \param   en Entity to position
  * \param   ex x-coord
  * \param   ey y-coord
-*/
+ */
 void place_ent (int en, int ex, int ey)
 {
    g_ent[en].tilex = ex;
@@ -856,7 +850,7 @@ void place_ent (int en, int ex, int ey)
 /*! \brief Count active entities
  *
  * Force calculation of the 'noe' variable.
-*/
+ */
 void count_entities (void)
 {
    int p;

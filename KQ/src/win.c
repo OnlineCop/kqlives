@@ -27,9 +27,11 @@
  *
  * This includes any bits which are specific for Windows platforms
  */
+
 #include <allegro.h>
 #include <winalleg.h>
 #include "kq.h"
+
 static int init_path = 0;
 static char user_dir[PATH_MAX];
 static char game_dir[PATH_MAX];
@@ -38,6 +40,8 @@ typedef HRESULT (WINAPI * SHGETFOLDERPATH) (HWND, int, HANDLE, DWORD, LPTSTR);
 #  define CSIDL_FLAG_CREATE 0x8000
 #  define CSIDL_APPDATA 0x1A
 #  define SHGFP_TYPE_CURRENT 0
+
+
 
 /*! \brief Return the name of 'significant' directories.
  *

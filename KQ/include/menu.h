@@ -26,14 +26,14 @@
 
 #include "kq.h"
 
-void menu (void);               /*  only in entity.c  */
+void menu (void);               /*  entity.c  */
 void draw_mainmenu (int);       /*  selector.c  */
-void draw_playerstat (BITMAP *, int, int, int); /*  masmenu.c, menu.c, intrface.c  */
-void spec_items (void);
+void draw_playerstat (BITMAP *, int, int, int); /*  intrface.c, masmenu.c, menu.c  */
+void spec_items (void);         /*  only in menu.c  */
 void update_equipstats (void);  /*  (eqp|item|mas)menu.c, heroc.c  */
 s_fighter *player2fighter (int, s_fighter *);   /*  combat.c  */
 void revert_equipstats (void);  /*  heroc.c, (item|mas)menu.c,  */
-                                 /*  magic.c, combat.c           */
+                                /*  magic.c, combat.c           */
 int give_xp (int, int, int);    /*  intrface.c, combat.c  */
 
 

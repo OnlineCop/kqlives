@@ -1,5 +1,5 @@
 /*
-   KQ is Copyright (C) 2002 - Josh Bolduc
+   KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
 
@@ -38,12 +38,17 @@
 #include "music.h"
 #include "res.h"
 #include "timing.h"
+
+
 /*! \name Globals */
-/*\{*/
+
+
 /*! Debug level 0..3 */
 char debugging = 0;
+
 /*! Speed-up for slower machines */
 char slow_computer = 0;
+
 /*! Look up table of names for keys */
 char *keynames[115] = {
    "",
@@ -66,7 +71,7 @@ char *keynames[115] = {
    "ALTGR", "LWIN", "RWIN",
    "MENU", "SCRLOCK", "NUMLOCK", "CAPSLOCK"
 };
-/*\}*/
+
 
 
 /*  internal variables  */
@@ -81,23 +86,27 @@ static int getakey (void);
 static void parse_allegro_setup (void);
 static void parse_jb_setup (void);
 
-/*! Parse setup file
-*
-* \date 20030831
-* \author PH
-*/
+
+
+/*! \brief Parse setup file
+ *
+ * \date 20030831
+ * \author PH
+ */
 void parse_setup (void)
 {
    parse_allegro_setup ();
 }
 
+
+
 /*! \brief Parse allegro file kq.cfg
-*
-* This is like parse_setup(), but using Allegro format files
-*
-* \author PH
-* \date 20030831
-*/
+ *
+ * This is like parse_setup(), but using Allegro format files
+ *
+ * \author PH
+ * \date 20030831
+ */
 static void parse_allegro_setup (void)
 {
    const char *cfg = kqres (SETTINGS_DIR, "kq.cfg");
@@ -155,6 +164,8 @@ static void parse_allegro_setup (void)
    pop_config_state ();
 }
 
+
+
 /*! \brief Parse setup.cfg
  *
  * Read settings from file
@@ -163,7 +174,7 @@ static void parse_allegro_setup (void)
  * isn't necessary right now.
  *
  * Remember that setup.cfg is found in the /saves dir!
-*/
+ */
 static void parse_jb_setup (void)
 {
    FILE *s;
@@ -275,6 +286,7 @@ static void parse_jb_setup (void)
 }
 
 
+
 /*! \brief Draw a setting and its title
  *
  * Helper function for the config menu.
@@ -293,12 +305,13 @@ static void citem (int y, char *caption, char *value)
 }
 
 
+
 /*! \brief Display configuration menu
  *
  * This is the config menu that is called from the system
  * menu.  Here you can adjust the music or sound volume, or
  * the speed that the battle gauge moves at.
-*/
+ */
 void config_menu (void)
 {
    int stop = 0, ptr = 0, rd = 1, p;
@@ -572,7 +585,7 @@ void config_menu (void)
  * PH 20030527 Removed call to keypressed() and added poll_music()
  *
  * \returns the key being pressed, 0 if error (or cancel?)
-*/
+ */
 static int getakey (void)
 {
    int a;
@@ -597,12 +610,11 @@ static int getakey (void)
 /* TT: looks like a hack to me! :-) */
 /* PH: I cannot tell a lie: it was Matthew... */
 #define IF_VOLUME_ALERT() \
-   if (!strcmp (capt, "Sound Volume")){\
-   set_volume (cv * 10, 0);\
-   play_effect (1, 127);\
-}\
-else if (!strcmp (capt, "Music Volume"))\
-set_music_volume (cv / 25.5);
+   if (!strcmp (capt, "Sound Volume")) {\
+      set_volume (cv * 10, 0);\
+      play_effect (1, 127);\
+   } else if (!strcmp (capt, "Music Volume"))\
+      set_music_volume (cv / 25.5);
 
 
 
@@ -616,7 +628,7 @@ set_music_volume (cv / 25.5);
  * \param   cv Current value (initial value)
  * \param   sp Show percent. If sp==1, show as a percentage of maxu
  * \returns the new value for option, or -1 if cancelled.
-*/
+ */
 static int getavalue (char *capt, int minu, int maxu, int cv, int sp)
 {
    int stop = 0, a, b, rd = 1;
@@ -678,6 +690,7 @@ static int getavalue (char *capt, int minu, int maxu, int cv, int sp)
 }
 
 
+
 /*! \brief Show keys help
  * Show a screen with the keys listed, and other helpful info
  * \author PH
@@ -708,11 +721,12 @@ void show_help (void)
 }
 
 
+
 /*! \brief Set mode
  *
  * Set the graphics mode, taking into account the Windowed and Stretched
- * settings
-*/
+ * settings.
+ */
 void set_graphics_mode (void)
 {
    if (stretch_view == 1) {
@@ -742,15 +756,13 @@ void set_graphics_mode (void)
  * \remark 20020914 - 05:28 RB : Updated
  *  20020922 - ML : updated to use DUMB
  *  20020922 - ML : Changed to only reserving 8 voices. (32 seemed over-kill?)
-*/
+ */
 void sound_init (void)
 {
    if (is_sound == 1) {
-      if (install_sound (DIGI_AUTODETECT, MIDI_AUTODETECT, NULL) == -1)
-      {
+      if (install_sound (DIGI_AUTODETECT, MIDI_AUTODETECT, NULL) == -1) {
          is_sound = 0;
       } else {
-
          reserve_voices (8, 0);
          set_volume_per_voice (2);
          init_music ();
@@ -778,7 +790,7 @@ void sound_init (void)
  * \remark ML 2002-09-22: altered this so it returns an error on failure
  *
  * \returns 0 on success, 1 on failure.
-*/
+ */
 static int load_samples (void)
 {
    AL_CONST char *sndfiles[MAX_SAMPLES] = {
@@ -817,7 +829,7 @@ static int load_samples (void)
  * \date ????????
  *
  *  Duh.
-*/
+ */
 void free_samples (void)
 {
    int index;
@@ -840,7 +852,7 @@ void free_samples (void)
  *
  * \param   efc Effect to play (index in sfx[])
  * \param   panning Left/right pan - see Allegro's play_sample()
-*/
+ */
 void play_effect (int efc, int panning)
 {
    int a, s, xo = 1, yo = 1;

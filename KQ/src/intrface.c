@@ -1,5 +1,5 @@
 /*
-   KQ is Copyright (C) 2002 - Josh Bolduc
+   KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
 
@@ -33,9 +33,7 @@
 
 #include <stdio.h>
 #include <string.h>
-
 #include "lua.h"
-
 #include "intrface.h"
 #include "setup.h"
 #include "effects.h"
@@ -203,8 +201,13 @@ static int KQ_log (lua_State *);
 static int KQ_wait_enter (lua_State *);
 static int KQ_istable (lua_State *);
 static void check_map_change (void);
+
 /* New functions */
-/*static int KQ_get_tile_all(lua_State*);*/
+#if 0
+/* Not used yet */
+static int KQ_get_tile_all(lua_State*);
+#endif
+
 static int KQ_copy_tile_all (lua_State *);
 static int KQ_use_up (lua_State *);
 static int KQ_battle (lua_State *);
@@ -362,7 +365,7 @@ static const struct luaL_reg lrs[] = {
    {NULL, NULL}
 };
 
-/*! \brief holds a reference to the zone handler function */
+/*! \brief Holds a reference to the zone handler function */
 int ref_zone_handler;
 
 /*! \brief Maps a text field name to an identifier */
@@ -373,29 +376,20 @@ static struct s_field
 }
 
 
-fields[] =
-{
-   {
-   "name", 0}
-   , {
-   "xp", 1}
-   , {
-   "next", 2}
-   , {
-   "lvl", 3}
-   , {
-   "mrp", 4}
-   , {
-   "hp", 5}
-   , {
-   "mhp", 6}
-   , {
-   "mp", 7}
-   , {
-   "mmp", 8}
-   , {
-   "id", 9}
-,};
+
+fields[] = {
+   {"name", 0},
+   {"xp", 1},
+   {"next", 2},
+   {"lvl", 3},
+   {"mrp", 4},
+   {"hp", 5},
+   {"mhp", 6},
+   {"mp", 7},
+   {"mmp", 8},
+   {"id", 9}
+};
+
 
 
 static int fieldcmp (const void *pa, const void *pb)
@@ -404,6 +398,7 @@ static int fieldcmp (const void *pa, const void *pb)
    const struct s_field *b = (const struct s_field *) pb;
    return strcmp (a->name, b->name);
 }
+
 
 
 /*! \brief Sort field array
@@ -417,6 +412,7 @@ static void fieldsort (void)
    qsort (fields, sizeof (fields) / sizeof (*fields), sizeof (struct s_field),
           fieldcmp);
 }
+
 
 
 /*! \brief Get the field number from a name.
@@ -435,17 +431,18 @@ static int get_field (const char *n)
       bsearch (&st, fields, sizeof (fields) / sizeof (*fields),
                sizeof (struct s_field), fieldcmp);
    return ans ? ans->id : -1;
-/*    int i = 0; */
-/*    while (fields[i].name) */
-/*      { */
-/*         if (strcmp (fields[i].name, n) == 0) */
-/*           { */
-/*              return fields[i].id; */
-/*           } */
-/*         ++i; */
-/*      } */
-/*    return -1; */
+#if 0
+   int i = 0;
+   while (fields[i].name) {
+      if (strcmp (fields[i].name, n) == 0) {
+         return fields[i].id;
+      }
+      ++i;
+   }
+   return -1;
+#endif
 }
+
 
 
 /*! \brief Object interface for party
@@ -500,6 +497,7 @@ int KQ_party_setter (lua_State * L)
 }
 
 
+
 /*! \brief Object interface for party
  *
  * This implements the gettable tag method
@@ -550,6 +548,7 @@ int KQ_party_getter (lua_State * L)
    }
    return 1;
 }
+
 
 
 /*! \brief Initialise the object interface for heroes and entities
@@ -623,6 +622,7 @@ char tmap_name[16];
 int tmx, tmy, tmvx, tmvy, changing_map = 0;
 
 
+
 /*! \brief Process HERO1 and HERO2 pseudo-entity numbers
  *
  * Calculate what's the real entity number,
@@ -641,6 +641,7 @@ static int real_entity_num (int ee)
 }
 
 
+
 /*! \brief Get player ID
  *
  * This just gets the player's ID
@@ -655,6 +656,7 @@ static int KQ_get_pidx (lua_State * L)
    lua_pushnumber (L, pidx[a]);
    return 1;
 }
+
 
 
 /*! \brief Get player progress
@@ -672,6 +674,7 @@ static int KQ_get_progress (lua_State * L)
       lua_pushnumber (L, progress[a]);
    return 1;
 }
+
 
 
 /*! \brief Set player progress
@@ -692,6 +695,7 @@ static int KQ_set_progress (lua_State * L)
 }
 
 
+
 /*! \brief Get person's name
  *
  * This gets the name of one of the people in the party
@@ -709,6 +713,7 @@ static int KQ_get_party_name (lua_State * L)
 }
 
 
+
 /*! \brief Get person's experience
  *
  * This gets the selected player's experience
@@ -724,6 +729,7 @@ static int KQ_get_party_xp (lua_State * L)
       lua_pushnumber (L, party[a].xp);
    return 1;
 }
+
 
 
 /*! \brief Set person's experience
@@ -744,6 +750,7 @@ static int KQ_set_party_xp (lua_State * L)
 }
 
 
+
 /*! \brief Get person's needed experience
  *
  * This gets the experience still needed to get a level-up for a person
@@ -759,6 +766,7 @@ static int KQ_get_party_next (lua_State * L)
       lua_pushnumber (L, party[a].next);
    return 1;
 }
+
 
 
 /*! \brief Set person's needed experience
@@ -779,6 +787,7 @@ static int KQ_set_party_next (lua_State * L)
 }
 
 
+
 /*! \brief Get person's level
  *
  * This gets the person's current level
@@ -794,6 +803,7 @@ static int KQ_get_party_lvl (lua_State * L)
       lua_pushnumber (L, party[a].lvl);
    return 1;
 }
+
 
 
 /*! \brief Set person's level
@@ -814,6 +824,7 @@ static int KQ_set_party_lvl (lua_State * L)
 }
 
 
+
 /*! \brief Get person's mrp
  *
  * This gets the person's current mrp
@@ -829,6 +840,7 @@ static int KQ_get_party_mrp (lua_State * L)
       lua_pushnumber (L, party[a].mrp);
    return 1;
 }
+
 
 
 /*! \brief Set person's mrp
@@ -849,6 +861,7 @@ static int KQ_set_party_mrp (lua_State * L)
 }
 
 
+
 /*! \brief Get person's HP
  *
  * This gets the person's current hit points
@@ -864,6 +877,7 @@ static int KQ_get_party_hp (lua_State * L)
       lua_pushnumber (L, party[a].hp);
    return 1;
 }
+
 
 
 /*! \brief Set person's HP
@@ -884,6 +898,7 @@ static int KQ_set_party_hp (lua_State * L)
 }
 
 
+
 /*! \brief Get person's MHP
  *
  * This gets the person's maximum hit points
@@ -899,6 +914,7 @@ static int KQ_get_party_mhp (lua_State * L)
       lua_pushnumber (L, party[a].mhp);
    return 1;
 }
+
 
 
 /*! \brief Set person's level
@@ -919,6 +935,7 @@ static int KQ_set_party_mhp (lua_State * L)
 }
 
 
+
 /*! \brief Get person's MP
  *
  * This gets the person's current magic points
@@ -934,6 +951,7 @@ static int KQ_get_party_mp (lua_State * L)
       lua_pushnumber (L, party[a].mp);
    return 1;
 }
+
 
 
 /*! \brief Set person's MP
@@ -954,6 +972,7 @@ static int KQ_set_party_mp (lua_State * L)
 }
 
 
+
 /*! \brief Get person's MMP
  *
  * This gets the person's maximum magic points
@@ -969,6 +988,7 @@ static int KQ_get_party_mmp (lua_State * L)
       lua_pushnumber (L, party[a].mmp);
    return 1;
 }
+
 
 
 /*! \brief Set person's MMP
@@ -989,6 +1009,7 @@ static int KQ_set_party_mmp (lua_State * L)
 }
 
 
+
 /*! \brief Get person's equipment (unused)
  *
  * This gets the person's current equipment
@@ -1006,6 +1027,7 @@ static int KQ_get_party_eqp (lua_State * L)
       lua_pushnumber (L, party[a].eqp[b]);
    return 1;
 }
+
 
 
 /*! \brief Set person's equipment (unused)
@@ -1028,6 +1050,7 @@ static int KQ_set_party_eqp (lua_State * L)
 }
 
 
+
 /*! \brief Get person's stats
  *
  * This gets the person's stats
@@ -1045,6 +1068,7 @@ static int KQ_get_party_stats (lua_State * L)
       lua_pushnumber (L, party[a].stats[b]);
    return 1;
 }
+
 
 
 /*! \brief Set person's stats (unused)
@@ -1067,6 +1091,7 @@ static int KQ_set_party_stats (lua_State * L)
 }
 
 
+
 /*! \brief Get person's res
  *
  * This gets the person's resistance
@@ -1084,6 +1109,7 @@ static int KQ_get_party_res (lua_State * L)
       lua_pushnumber (L, party[a].res[b]);
    return 1;
 }
+
 
 
 /*! \brief Set person's res
@@ -1106,6 +1132,7 @@ static int KQ_set_party_res (lua_State * L)
 }
 
 
+
 static int KQ_get_ent_chrx (lua_State * L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
@@ -1113,6 +1140,7 @@ static int KQ_get_ent_chrx (lua_State * L)
    lua_pushnumber (L, g_ent[a].chrx);
    return 1;
 }
+
 
 
 static int KQ_set_ent_chrx (lua_State * L)
@@ -1124,6 +1152,7 @@ static int KQ_set_ent_chrx (lua_State * L)
 }
 
 
+
 static int KQ_get_ent_tilex (lua_State * L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
@@ -1131,6 +1160,7 @@ static int KQ_get_ent_tilex (lua_State * L)
    lua_pushnumber (L, g_ent[a].tilex);
    return 1;
 }
+
 
 
 static int KQ_set_ent_tilex (lua_State * L)
@@ -1143,6 +1173,7 @@ static int KQ_set_ent_tilex (lua_State * L)
 }
 
 
+
 static int KQ_get_ent_tiley (lua_State * L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
@@ -1150,6 +1181,7 @@ static int KQ_get_ent_tiley (lua_State * L)
    lua_pushnumber (L, g_ent[a].tiley);
    return 1;
 }
+
 
 
 static int KQ_set_ent_tiley (lua_State * L)
@@ -1162,6 +1194,7 @@ static int KQ_set_ent_tiley (lua_State * L)
 }
 
 
+
 static int KQ_get_ent_id (lua_State * L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
@@ -1169,6 +1202,7 @@ static int KQ_get_ent_id (lua_State * L)
    lua_pushnumber (L, g_ent[a].eid);
    return 1;
 }
+
 
 
 static int KQ_set_ent_id (lua_State * L)
@@ -1180,6 +1214,7 @@ static int KQ_set_ent_id (lua_State * L)
 }
 
 
+
 static int KQ_get_ent_active (lua_State * L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
@@ -1187,6 +1222,7 @@ static int KQ_get_ent_active (lua_State * L)
    lua_pushnumber (L, g_ent[a].active);
    return 1;
 }
+
 
 
 static int KQ_set_ent_active (lua_State * L)
@@ -1200,6 +1236,7 @@ static int KQ_set_ent_active (lua_State * L)
 }
 
 
+
 static int KQ_get_ent_facing (lua_State * L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
@@ -1207,6 +1244,7 @@ static int KQ_get_ent_facing (lua_State * L)
    lua_pushnumber (L, g_ent[a].facing);
    return 1;
 }
+
 
 
 static int KQ_set_ent_facing (lua_State * L)
@@ -1220,6 +1258,7 @@ static int KQ_set_ent_facing (lua_State * L)
 }
 
 
+
 static int KQ_get_ent_movemode (lua_State * L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
@@ -1227,6 +1266,7 @@ static int KQ_get_ent_movemode (lua_State * L)
    lua_pushnumber (L, g_ent[a].movemode);
    return 1;
 }
+
 
 
 static int KQ_set_ent_movemode (lua_State * L)
@@ -1240,6 +1280,7 @@ static int KQ_set_ent_movemode (lua_State * L)
 }
 
 
+
 static int KQ_get_ent_obsmode (lua_State * L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
@@ -1247,6 +1288,7 @@ static int KQ_get_ent_obsmode (lua_State * L)
    lua_pushnumber (L, g_ent[a].obsmode);
    return 1;
 }
+
 
 
 static int KQ_set_ent_obsmode (lua_State * L)
@@ -1260,6 +1302,7 @@ static int KQ_set_ent_obsmode (lua_State * L)
 }
 
 
+
 static int KQ_get_ent_speed (lua_State * L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
@@ -1267,6 +1310,7 @@ static int KQ_get_ent_speed (lua_State * L)
    lua_pushnumber (L, g_ent[a].speed);
    return 1;
 }
+
 
 
 static int KQ_set_ent_speed (lua_State * L)
@@ -1280,6 +1324,7 @@ static int KQ_set_ent_speed (lua_State * L)
 }
 
 
+
 static int KQ_get_ent_atype (lua_State * L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
@@ -1287,6 +1332,7 @@ static int KQ_get_ent_atype (lua_State * L)
    lua_pushnumber (L, g_ent[a].atype);
    return 1;
 }
+
 
 
 static int KQ_set_ent_atype (lua_State * L)
@@ -1298,6 +1344,7 @@ static int KQ_set_ent_atype (lua_State * L)
 }
 
 
+
 static int KQ_get_ent_snapback (lua_State * L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
@@ -1305,6 +1352,7 @@ static int KQ_get_ent_snapback (lua_State * L)
    lua_pushnumber (L, g_ent[a].snapback);
    return 1;
 }
+
 
 
 static int KQ_set_ent_snapback (lua_State * L)
@@ -1318,6 +1366,7 @@ static int KQ_set_ent_snapback (lua_State * L)
 }
 
 
+
 static int KQ_get_ent_facehero (lua_State * L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
@@ -1325,6 +1374,7 @@ static int KQ_get_ent_facehero (lua_State * L)
    lua_pushnumber (L, g_ent[a].facehero);
    return 1;
 }
+
 
 
 static int KQ_set_ent_facehero (lua_State * L)
@@ -1338,6 +1388,7 @@ static int KQ_set_ent_facehero (lua_State * L)
 }
 
 
+
 static int KQ_get_ent_transl (lua_State * L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
@@ -1345,6 +1396,7 @@ static int KQ_get_ent_transl (lua_State * L)
    lua_pushnumber (L, g_ent[a].transl);
    return 1;
 }
+
 
 
 static int KQ_set_ent_transl (lua_State * L)
@@ -1358,6 +1410,7 @@ static int KQ_set_ent_transl (lua_State * L)
 }
 
 
+
 static int KQ_set_ent_script (lua_State * L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
@@ -1365,6 +1418,7 @@ static int KQ_set_ent_script (lua_State * L)
    set_script (a, (char *) lua_tostring (L, 2));
    return 0;
 }
+
 
 
 static int KQ_get_treasure (lua_State * L)
@@ -1377,11 +1431,13 @@ static int KQ_get_treasure (lua_State * L)
 }
 
 
+
 static int KQ_get_gp (lua_State * L)
 {
    lua_pushnumber (L, gp);
    return 1;
 }
+
 
 
 static int KQ_set_gp (lua_State * L)
@@ -1391,11 +1447,13 @@ static int KQ_set_gp (lua_State * L)
 }
 
 
+
 static int KQ_get_vx (lua_State * L)
 {
    lua_pushnumber (L, vx);
    return 1;
 }
+
 
 
 static int KQ_set_vx (lua_State * L)
@@ -1405,11 +1463,13 @@ static int KQ_set_vx (lua_State * L)
 }
 
 
+
 static int KQ_get_vy (lua_State * L)
 {
    lua_pushnumber (L, vy);
    return 1;
 }
+
 
 
 static int KQ_set_vy (lua_State * L)
@@ -1419,11 +1479,13 @@ static int KQ_set_vy (lua_State * L)
 }
 
 
+
 static int KQ_get_alldead (lua_State * L)
 {
    lua_pushnumber (L, alldead);
    return 1;
 }
+
 
 
 static int KQ_set_alldead (lua_State * L)
@@ -1436,11 +1498,13 @@ static int KQ_set_alldead (lua_State * L)
 }
 
 
+
 static int KQ_get_autoparty (lua_State * L)
 {
    lua_pushnumber (L, autoparty);
    return 1;
 }
+
 
 
 static int KQ_set_autoparty (lua_State * L)
@@ -1453,11 +1517,13 @@ static int KQ_set_autoparty (lua_State * L)
 }
 
 
+
 static int KQ_get_numchrs (lua_State * L)
 {
    lua_pushnumber (L, numchrs);
    return 1;
 }
+
 
 
 static int KQ_set_all_equip (lua_State * L)
@@ -1476,12 +1542,14 @@ static int KQ_set_all_equip (lua_State * L)
 }
 
 
+
 static int KQ_set_btile (lua_State * L)
 {
    set_btile ((int) lua_tonumber (L, 1), (int) lua_tonumber (L, 2),
               (int) lua_tonumber (L, 3));
    return 0;
 }
+
 
 
 static int KQ_set_mtile (lua_State * L)
@@ -1492,12 +1560,14 @@ static int KQ_set_mtile (lua_State * L)
 }
 
 
+
 static int KQ_set_ftile (lua_State * L)
 {
    set_ftile ((int) lua_tonumber (L, 1), (int) lua_tonumber (L, 2),
               (int) lua_tonumber (L, 3));
    return 0;
 }
+
 
 
 static int KQ_set_obs (lua_State * L)
@@ -1508,6 +1578,7 @@ static int KQ_set_obs (lua_State * L)
 }
 
 
+
 static int KQ_set_zone (lua_State * L)
 {
    set_zone ((int) lua_tonumber (L, 1), (int) lua_tonumber (L, 2),
@@ -1516,12 +1587,14 @@ static int KQ_set_zone (lua_State * L)
 }
 
 
+
 static int KQ_set_shadow (lua_State * L)
 {
    set_shadow ((int) lua_tonumber (L, 1), (int) lua_tonumber (L, 2),
                (int) lua_tonumber (L, 3));
    return 0;
 }
+
 
 
 static int KQ_set_tile_all (lua_State * L)
@@ -1546,6 +1619,7 @@ static int KQ_set_tile_all (lua_State * L)
 }
 
 
+
 /* PH: not used (yet?), therefore commented out */
 #if 0
 static int KQ_get_tile_all (lua_State * L)
@@ -1563,6 +1637,7 @@ static int KQ_get_tile_all (lua_State * L)
    return 6;
 }
 #endif
+
 
 
 /*! \brief Copy tile block
@@ -1607,6 +1682,7 @@ static int KQ_copy_tile_all (lua_State * L)
 }
 
 
+
 static int KQ_set_desc (lua_State * L)
 {
    int a = lua_tonumber (L, 1);
@@ -1615,6 +1691,7 @@ static int KQ_set_desc (lua_State * L)
       display_desc = a;
    return 0;
 }
+
 
 
 static int KQ_set_foreground (lua_State * L)
@@ -1627,6 +1704,7 @@ static int KQ_set_foreground (lua_State * L)
 }
 
 
+
 static int KQ_set_holdfade (lua_State * L)
 {
    int a = lua_tonumber (L, 1);
@@ -1637,11 +1715,13 @@ static int KQ_set_holdfade (lua_State * L)
 }
 
 
+
 static int KQ_get_noe (lua_State * L)
 {
    lua_pushnumber (L, noe);
    return 1;
 }
+
 
 
 static int KQ_set_noe (lua_State * L)
@@ -1654,6 +1734,7 @@ static int KQ_set_noe (lua_State * L)
 }
 
 
+
 static int KQ_set_run (lua_State * L)
 {
    int a = lua_tonumber (L, 1);
@@ -1662,6 +1743,7 @@ static int KQ_set_run (lua_State * L)
       can_run = a;
    return 0;
 }
+
 
 
 static int KQ_set_save (lua_State * L)
@@ -1674,6 +1756,7 @@ static int KQ_set_save (lua_State * L)
 }
 
 
+
 static int KQ_set_sstone (lua_State * L)
 {
    int a = lua_tonumber (L, 1);
@@ -1682,6 +1765,7 @@ static int KQ_set_sstone (lua_State * L)
       use_sstone = a;
    return 0;
 }
+
 
 
 static int KQ_set_warp (lua_State * L)
@@ -1696,6 +1780,7 @@ static int KQ_set_warp (lua_State * L)
 }
 
 
+
 static int KQ_set_vfollow (lua_State * L)
 {
    int a = lua_tonumber (L, 1);
@@ -1706,11 +1791,13 @@ static int KQ_set_vfollow (lua_State * L)
 }
 
 
+
 static int KQ_create_df (lua_State * L)
 {
    g_df = load_datafile_object (lua_tostring (L, 1), lua_tostring (L, 2));
    return 0;
 }
+
 
 
 static int KQ_destroy_df (lua_State * L)
@@ -1721,6 +1808,7 @@ static int KQ_destroy_df (lua_State * L)
    unload_datafile_object (g_df);
    return 0;
 }
+
 
 
 static int KQ_create_bmp (lua_State * L)
@@ -1734,6 +1822,7 @@ static int KQ_create_bmp (lua_State * L)
 }
 
 
+
 static int KQ_destroy_bmp (lua_State * L)
 {
    int a = lua_tonumber (L, 1);
@@ -1742,6 +1831,7 @@ static int KQ_destroy_bmp (lua_State * L)
       destroy_bitmap (g_bmp[a]);
    return 0;
 }
+
 
 
 static int KQ_df2bmp (lua_State * L)
@@ -1756,6 +1846,7 @@ static int KQ_df2bmp (lua_State * L)
 }
 
 
+
 static int KQ_blit (lua_State * L)
 {
    int a = lua_tonumber (L, 1);
@@ -1766,6 +1857,7 @@ static int KQ_blit (lua_State * L)
             lua_tonumber (L, 6), lua_tonumber (L, 7));
    return 0;
 }
+
 
 
 static int KQ_maskblit (lua_State * L)
@@ -1779,6 +1871,7 @@ static int KQ_maskblit (lua_State * L)
                    lua_tonumber (L, 7));
    return 0;
 }
+
 
 
 static int KQ_drawsprite (lua_State * L)
@@ -1802,6 +1895,7 @@ static int KQ_screen_dump (lua_State * L)
 }
 
 
+
 static int KQ_drawmap (lua_State * L)
 {
 /*  RB: TODO  */
@@ -1810,6 +1904,7 @@ static int KQ_drawmap (lua_State * L)
    drawmap ();
    return 0;
 }
+
 
 
 /*! \brief Implement Lua prompt dialog
@@ -1863,31 +1958,35 @@ static int KQ_prompt (lua_State * L)
 }
 
 
+
 /* These are now handled by lua scripts */
+#if 0
+static int KQ_bubble (lua_State * L)
+{
+   char *txt[4];
+   int a, b = real_entity_num (lua_tonumber (L, 1));
 
-/* static int KQ_bubble (lua_State * L) */
-/* { */
-/*    char *txt[4]; */
-/*    int a, b = real_entity_num (lua_tonumber (L, 1)); */
-
-/*    for (a = 0; a < 4; a++) */
-/*       txt[a] = (char *) lua_tostring (L, a + 2); */
-/*    bubble_text (b, txt[0], txt[1], txt[2], txt[3]); */
-/*    return 0; */
-/* } */
+   for (a = 0; a < 4; a++)
+      txt[a] = (char *) lua_tostring (L, a + 2);
+   bubble_text (b, txt[0], txt[1], txt[2], txt[3]);
+   return 0;
+}
+#endif
 
 
-/* static int KQ_thought (lua_State * L)
- * {
- *    char *txt[4];
- *    int a, b = real_entity_num (lua_tonumber (L, 1));
- *
- *    for (a = 0; a < 4; a++)
- *       txt[a] = (char *) lua_tostring (L, a + 2);
- *    thought_text (b, txt[0], txt[1], txt[2], txt[3]);
- *    return 0;
- * }
- */
+
+#if 0
+static int KQ_thought (lua_State * L)
+{
+   char *txt[4];
+   int a, b = real_entity_num (lua_tonumber (L, 1));
+
+   for (a = 0; a < 4; a++)
+      txt[a] = (char *) lua_tostring (L, a + 2);
+   thought_text (b, txt[0], txt[1], txt[2], txt[3]);
+   return 0;
+}
+#endif
 
 
 static int KQ_copy_ent (lua_State * L)
@@ -1900,6 +1999,7 @@ static int KQ_copy_ent (lua_State * L)
 }
 
 
+
 static int KQ_place_ent (lua_State * L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
@@ -1907,6 +2007,7 @@ static int KQ_place_ent (lua_State * L)
    place_ent (a, lua_tonumber (L, 2), lua_tonumber (L, 3));
    return 0;
 }
+
 
 
 static int KQ_face_each_other (lua_State * L)
@@ -1937,6 +2038,7 @@ static int KQ_face_each_other (lua_State * L)
 }
 
 
+
 static int KQ_wait_for_entity (lua_State * L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
@@ -1945,6 +2047,7 @@ static int KQ_wait_for_entity (lua_State * L)
    wait_for_entity (a, b);
    return 0;
 }
+
 
 
 static int KQ_add_chr (lua_State * L)
@@ -1960,6 +2063,7 @@ static int KQ_add_chr (lua_State * L)
    }
    return 0;
 }
+
 
 
 static int KQ_remove_chr (lua_State * L)
@@ -1986,6 +2090,7 @@ static int KQ_remove_chr (lua_State * L)
 }
 
 
+
 static int KQ_krnd (lua_State * L)
 {
    int a = lua_tonumber (L, 1);
@@ -1998,262 +2103,250 @@ static int KQ_krnd (lua_State * L)
 }
 
 
-/* /\*! \brief Response for touching a fire. */
-/*  * */
-/*  * This gives one of three random responses per character for when the */
-/*  * player faces a fire and presses ALT. */
-/*  * */
-/*  * \param   L::1 Which person is touching the fire */
-/*  * \returns 0 when done */
-/* *\/ */
-/* static int KQ_touch_fire (lua_State * L) */
-/* { */
-/*    switch ((int) lua_tonumber (L, 1)) */
-/*      { */
-/*      case 0:                   // SENSAR */
-/*         switch (rand () % 3) */
-/*           { */
-/*           case 0: */
-/*              text_ex (B_TEXT, 0, "What th..? Ouch! That's hot!"); */
-/*              break; */
-/*           case 1: */
-/*              text_ex (B_TEXT, 0, */
-/*                       "There's no way I'm sticking my hand in that fire!"); */
-/*              break; */
-/*           case 2: */
-/*              text_ex (B_TEXT, 0, "This feels pretty nice."); */
-/*              break; */
-/*           } */
-/*         break; */
-/*      case 1:                   // SARINA */
-/*         switch (rand () % 3) */
-/*           { */
-/*           case 0: */
-/*              text_ex (B_TEXT, 0, "Mmm, wood smoke."); */
-/*              break; */
-/*           case 1: */
-/*              text_ex (B_TEXT, 0, */
-/*                       "Smells like burnt hair. Hey wait... that's MY hair!"); */
-/*              break; */
-/*           case 2: */
-/*              text_ex (B_TEXT, 0, "Ooh, cozy."); */
-/*              break; */
-/*           } */
-/*         break; */
-/*      case 2:                   // CORIN */
-/*         switch (rand () % 3) */
-/*           { */
-/*           case 0: */
-/*              text_ex (B_TEXT, 0, "I sure like fire."); */
-/*              break; */
-/*           case 1: */
-/*              text_ex (B_TEXT, 0, "Watching this is relaxing."); */
-/*              break; */
-/*           case 2: */
-/*              text_ex (B_TEXT, 0, "This is making me sleepy."); */
-/*              break; */
-/*           } */
-/*         break; */
-/*      case 3:                   // AJATHAR */
-/*         switch (rand () % 3) */
-/*           { */
-/*           case 0: */
-/*              text_ex (B_TEXT, 0, "Hmm... I want marshmallows."); */
-/*              break; */
-/*           case 1: */
-/*              text_ex (B_TEXT, 0, "You call this a fire?!"); */
-/*           case 2: */
-/*              text_ex (B_TEXT, 0, "Ah, relaxing."); */
-/*           } */
-/*         break; */
-/*      case 4:                   // CASANDRA */
-/*         switch (rand () % 3) */
-/*           { */
-/*           case 0: */
-/*              text_ex (B_TEXT, 0, */
-/*                       "Something's burning. I hope it's one of those stupid books!"); */
-/*              break; */
-/*           case 1: */
-/*              text_ex (B_TEXT, 0, "The fire is getting low."); */
-/*              break; */
-/*           case 2: */
-/*              text_ex (B_TEXT, 0, "Yessir, this is a fire."); */
-/*              break; */
-/*           } */
-/*         break; */
-/*      case 5:                   // TEMMIN */
-/*         switch (rand () % 3) */
-/*           { */
-/*           case 0: */
-/*              text_ex (B_TEXT, 0, "Ah, the age-old fire."); */
-/*              break; */
-/*           case 1: */
-/*              text_ex (B_TEXT, 0, "This needs more coal."); */
-/*           case 2: */
-/*              text_ex (B_TEXT, 0, "This would be great to read a book next to."); */
-/*              break; */
-/*           } */
-/*         break; */
-/*      case 6:                   // AYLA */
-/*         switch (rand () % 3) */
-/*           { */
-/*           case 0: */
-/*              text_ex (B_TEXT, 0, "I wonder how hot this is?"); */
-/*              break; */
-/*           case 1: */
-/*              text_ex (B_TEXT, 0, */
-/*                       "Someone should clean all this soot out of here."); */
-/*              break; */
-/*           case 2: */
-/*              text_ex (B_TEXT, 0, */
-/*                       "Well, my face is warm now, but my butt is still freezing!"); */
-/*              break; */
-/*           } */
-/*         break; */
-/*      case 7:                   // NOSLOM */
-/*         switch (rand () % 3) */
-/*           { */
-/*           case 0: */
-/*              text_ex (B_TEXT, 0, "I prefer torches."); */
-/*              break; */
-/*           case 1: */
-/*              text_ex (B_TEXT, 0, "I love the crackle of a good fire."); */
-/*              break; */
-/*           case 2: */
-/*              text_ex (B_TEXT, 0, */
-/*                       "I wonder if a spell would make this burn brighter?"); */
-/*              break; */
-/*           } */
-/*         break; */
-/*      } */
-/*    return 0; */
-/* } */
+
+#if 0
+/*! \brief Response for touching a fire.
+ *
+ * This gives one of three random responses per character for when the
+ * player faces a fire and presses ALT.
+ *
+ * \param   L::1 Which person is touching the fire
+ * \returns 0 when done
+ */
+static int KQ_touch_fire (lua_State * L)
+{
+   switch ((int) lua_tonumber (L, 1)) {
+   case 0:                   // SENSAR
+      switch (rand () % 3) {
+      case 0:
+         text_ex (B_TEXT, 0, "What th..? Ouch! That's hot!");
+         break;
+      case 1:
+         text_ex (B_TEXT, 0,
+                  "There's no way I'm sticking my hand in that fire!");
+         break;
+      case 2:
+         text_ex (B_TEXT, 0, "This feels pretty nice.");
+         break;
+      }
+      break;
+   case 1:                   // SARINA
+      switch (rand () % 3) {
+      case 0:
+         text_ex (B_TEXT, 0, "Mmm, wood smoke.");
+         break;
+      case 1:
+         text_ex (B_TEXT, 0,
+                  "Smells like burnt hair. Hey wait... that's MY hair!");
+         break;
+      case 2:
+         text_ex (B_TEXT, 0, "Ooh, cozy.");
+         break;
+      }
+      break;
+   case 2:                   // CORIN
+      switch (rand () % 3) {
+      case 0:
+         text_ex (B_TEXT, 0, "I sure like fire.");
+         break;
+      case 1:
+         text_ex (B_TEXT, 0, "Watching this is relaxing.");
+         break;
+      case 2:
+         text_ex (B_TEXT, 0, "This is making me sleepy.");
+         break;
+      }
+      break;
+   case 3:                   // AJATHAR
+      switch (rand () % 3) {
+      case 0:
+         text_ex (B_TEXT, 0, "Hmm... I want marshmallows.");
+         break;
+      case 1:
+         text_ex (B_TEXT, 0, "You call this a fire?!");
+      case 2:
+         text_ex (B_TEXT, 0, "Ah, relaxing.");
+      }
+      break;
+   case 4:                   // CASANDRA
+      switch (rand () % 3) {
+      case 0:
+         text_ex (B_TEXT, 0,
+                  "Something's burning. I hope it's one of those stupid books!");
+         break;
+      case 1:
+         text_ex (B_TEXT, 0, "The fire is getting low.");
+         break;
+      case 2:
+         text_ex (B_TEXT, 0, "Yessir, this is a fire.");
+         break;
+      }
+      break;
+   case 5:                   // TEMMIN
+      switch (rand () % 3) {
+      case 0:
+         text_ex (B_TEXT, 0, "Ah, the age-old fire.");
+         break;
+      case 1:
+         text_ex (B_TEXT, 0, "This needs more coal.");
+      case 2:
+         text_ex (B_TEXT, 0, "This would be great to read a book next to.");
+         break;
+      }
+      break;
+   case 6:                   // AYLA
+      switch (rand () % 3) {
+      case 0:
+         text_ex (B_TEXT, 0, "I wonder how hot this is?");
+         break;
+      case 1:
+         text_ex (B_TEXT, 0,
+                  "Someone should clean all this soot out of here.");
+         break;
+      case 2:
+         text_ex (B_TEXT, 0,
+                  "Well, my face is warm now, but my butt is still freezing!");
+         break;
+      }
+      break;
+   case 7:                   // NOSLOM
+      switch (rand () % 3) {
+      case 0:
+         text_ex (B_TEXT, 0, "I prefer torches.");
+         break;
+      case 1:
+         text_ex (B_TEXT, 0, "I love the crackle of a good fire.");
+         break;
+      case 2:
+         text_ex (B_TEXT, 0,
+                  "I wonder if a spell would make this burn brighter?");
+         break;
+      }
+      break;
+   }
+   return 0;
+}
+#endif
 
 
 
-/* /\*! \brief Response for reading a book. */
-/*  * */
-/*  * This gives one of three random responses per character for when the */
-/*  * player faces a bookshelf and presses ALT. */
-/*  * */
-/*  * \param   L::1 Which person is reading the book */
-/*  * \returns 0 when done */
-/* *\/ */
-/* static int KQ_book_talk (lua_State * L) */
-/* { */
-/*    switch ((int) lua_tonumber (L, 1)) */
-/*      { */
-/*      case 0: */
-/*         switch (rand () % 3) */
-/*           { */
-/*           case 0: */
-/*              text_ex (B_TEXT, 0, "Reading makes me sleepy..."); */
-/*              break; */
-/*           case 1: */
-/*              text_ex (B_TEXT, 0, "So many books..."); */
-/*              break; */
-/*           case 2: */
-/*              text_ex (B_TEXT, 0, "Reading is for wimps."); */
-/*           } */
-/*         break; */
-/*      case 1: */
-/*         switch (rand () % 3) */
-/*           { */
-/*           case 0: */
-/*              text_ex (B_TEXT, 0, "Ugh... this would take me forever to read."); */
-/*              break; */
-/*           case 1: */
-/*              text_ex (B_TEXT, 0, "I never liked reading."); */
-/*              break; */
-/*           case 2: */
-/*              text_ex (B_TEXT, 0, "Who wrote this trash?"); */
-/*              break; */
-/*           } */
-/*         break; */
-/*      case 2: */
-/*         switch (rand () % 3) */
-/*           { */
-/*           case 0: */
-/*              text_ex (B_TEXT, 0, */
-/*                       "Doesn't anybody leave spellbooks lying around?"); */
-/*              break; */
-/*           case 1: */
-/*              text_ex (B_TEXT, 0, "Why would I read this?"); */
-/*              break; */
-/*           case 2: */
-/*              text_ex (B_TEXT, 0, "Can't talk... reading."); */
-/*              break; */
-/*           } */
-/*         break; */
-/*      case 3: */
-/*         switch (rand () % 3) */
-/*           { */
-/*           case 0: */
-/*              text_ex (B_TEXT, 0, "Hmmm... I don't approve of that."); */
-/*              break; */
-/*           case 1: */
-/*              text_ex (B_TEXT, 0, "I'm too busy to read now."); */
-/*              break; */
-/*           case 2: */
-/*              text_ex (B_TEXT, 0, */
-/*                       "How many books can you write that start with 'The Joy of...'?"); */
-/*              break; */
-/*           } */
-/*         break; */
-/*      case 4: */
-/*         switch (rand () % 3) */
-/*           { */
-/*           case 0: */
-/*              text_ex (B_TEXT, 0, "Boring."); */
-/*           case 1: */
-/*              text_ex (B_TEXT, 0, "Somebody should burn these."); */
-/*           case 2: */
-/*              text_ex (B_TEXT, 0, "Terrible... just terrible."); */
-/*           } */
-/*         break; */
-/*      case 5: */
-/*         switch (rand () % 3) */
-/*           { */
-/*           case 0: */
-/*              text_ex (B_TEXT, 0, "If only I had more time..."); */
-/*              break; */
-/*           case 1: */
-/*              text_ex (B_TEXT, 0, "So many books..."); */
-/*              break; */
-/*           case 2: */
-/*              text_ex (B_TEXT, 0, "Some of these are pretty old."); */
-/*           } */
-/*         break; */
-/*      case 6: */
-/*         switch (rand () % 3) */
-/*           { */
-/*           case 0: */
-/*              text_ex (B_TEXT, 0, "I don't have time for this."); */
-/*              break; */
-/*           case 1: */
-/*              text_ex (B_TEXT, 0, "What language is this written in?"); */
-/*              break; */
-/*           case 2: */
-/*              text_ex (B_TEXT, 0, "The pages are stuck together!?"); */
-/*              break; */
-/*           } */
-/*         break; */
-/*      case 7: */
-/*         switch (rand () % 3) */
-/*           { */
-/*           case 0: */
-/*              text_ex (B_TEXT, 0, "Fascinating."); */
-/*              break; */
-/*           case 1: */
-/*              text_ex (B_TEXT, 0, "I have this one."); */
-/*              break; */
-/*           case 2: */
-/*              text_ex (B_TEXT, 0, "Romance novels... gack!"); */
-/*           } */
-/*         break; */
-/*      } */
-/*    return 0; */
-/* } */
+#if 0
+/*! \brief Response for reading a book.
+ *
+ * This gives one of three random responses per character for when the
+ * player faces a bookshelf and presses ALT.
+ *
+ * \param   L::1 Which person is reading the book
+ * \returns 0 when done
+ */
+static int KQ_book_talk (lua_State * L)
+{
+   switch ((int) lua_tonumber (L, 1)) {
+   case 0:
+      switch (rand () % 3) {
+      case 0:
+         text_ex (B_TEXT, 0, "Reading makes me sleepy...");
+         break;
+      case 1:
+         text_ex (B_TEXT, 0, "So many books...");
+         break;
+      case 2:
+         text_ex (B_TEXT, 0, "Reading is for wimps.");
+      }
+      break;
+   case 1:
+      switch (rand () % 3) {
+      case 0:
+         text_ex (B_TEXT, 0, "Ugh... this would take me forever to read.");
+         break;
+      case 1:
+         text_ex (B_TEXT, 0, "I never liked reading.");
+         break;
+      case 2:
+         text_ex (B_TEXT, 0, "Who wrote this trash?");
+         break;
+      }
+      break;
+   case 2:
+      switch (rand () % 3) {
+      case 0:
+         text_ex (B_TEXT, 0,
+                  "Doesn't anybody leave spellbooks lying around?");
+         break;
+      case 1:
+         text_ex (B_TEXT, 0, "Why would I read this?");
+         break;
+      case 2:
+         text_ex (B_TEXT, 0, "Can't talk... reading.");
+         break;
+      }
+      break;
+   case 3:
+      switch (rand () % 3) {
+      case 0:
+         text_ex (B_TEXT, 0, "Hmmm... I don't approve of that.");
+         break;
+      case 1:
+         text_ex (B_TEXT, 0, "I'm too busy to read now.");
+         break;
+      case 2:
+         text_ex (B_TEXT, 0,
+                  "How many books can you write that start with 'The Joy of...'?");
+         break;
+      }
+      break;
+   case 4:
+      switch (rand () % 3) {
+      case 0:
+         text_ex (B_TEXT, 0, "Boring.");
+      case 1:
+         text_ex (B_TEXT, 0, "Somebody should burn these.");
+      case 2:
+         text_ex (B_TEXT, 0, "Terrible... just terrible.");
+      }
+      break;
+   case 5:
+      switch (rand () % 3) {
+      case 0:
+         text_ex (B_TEXT, 0, "If only I had more time...");
+         break;
+      case 1:
+         text_ex (B_TEXT, 0, "So many books...");
+         break;
+      case 2:
+         text_ex (B_TEXT, 0, "Some of these are pretty old.");
+      }
+     break;
+   case 6:
+      switch (rand () % 3) {
+      case 0:
+         text_ex (B_TEXT, 0, "I don't have time for this.");
+         break;
+      case 1:
+         text_ex (B_TEXT, 0, "What language is this written in?");
+         break;
+      case 2:
+         text_ex (B_TEXT, 0, "The pages are stuck together!?");
+         break;
+      }
+      break;
+   case 7:
+      switch (rand () % 3) {
+      case 0:
+         text_ex (B_TEXT, 0, "Fascinating.");
+         break;
+      case 1:
+         text_ex (B_TEXT, 0, "I have this one.");
+         break;
+      case 2:
+         text_ex (B_TEXT, 0, "Romance novels... gack!");
+      }
+      break;
+   }
+   return 0;
+}
+#endif
+
 
 
 static int KQ_do_fadeout (lua_State * L)
@@ -2263,11 +2356,13 @@ static int KQ_do_fadeout (lua_State * L)
 }
 
 
+
 static int KQ_do_fadein (lua_State * L)
 {
    do_transition (TRANS_FADE_IN, lua_tonumber (L, 1));
    return 0;
 }
+
 
 
 static int KQ_shop (lua_State * L)
@@ -2277,11 +2372,13 @@ static int KQ_shop (lua_State * L)
 }
 
 
+
 static int KQ_inn (lua_State * L)
 {
    inn ((char *) lua_tostring (L, 1), lua_tonumber (L, 2), lua_tonumber (L, 3));
    return 0;
 }
+
 
 
 static int KQ_door_in (lua_State * L)
@@ -2318,6 +2415,7 @@ static int KQ_door_in (lua_State * L)
 }
 
 
+
 static int KQ_door_out (lua_State * L)
 {
    use_sstone = 1;
@@ -2327,11 +2425,13 @@ static int KQ_door_out (lua_State * L)
 }
 
 
+
 static int KQ_calc_viewport (lua_State * L)
 {
    calc_viewport (lua_tonumber (L, 1));
    return 0;
 }
+
 
 
 static int KQ_change_map (lua_State * L)
@@ -2346,11 +2446,13 @@ static int KQ_change_map (lua_State * L)
 }
 
 
+
 static int KQ_give_item (lua_State * L)
 {
    check_inventory (lua_tonumber (L, 1), lua_tonumber (L, 2));
    return 0;
 }
+
 
 
 static int KQ_warp (lua_State * L)
@@ -2360,11 +2462,13 @@ static int KQ_warp (lua_State * L)
 }
 
 
+
 static int KQ_give_xp (lua_State * L)
 {
    give_xp (lua_tonumber (L, 1), lua_tonumber (L, 2), lua_tonumber (L, 3));
    return 0;
 }
+
 
 
 static int KQ_chest (lua_State * L)
@@ -2419,11 +2523,13 @@ static int KQ_chest (lua_State * L)
 }
 
 
+
 static int KQ_combat (lua_State * L)
 {
    combat (lua_tonumber (L, 1));
    return 0;
 }
+
 
 
 static int KQ_wait (lua_State * L)
@@ -2433,11 +2539,13 @@ static int KQ_wait (lua_State * L)
 }
 
 
+
 static int KQ_rest (lua_State * L)
 {
    wait (lua_tonumber (L, 1));
    return 0;
 }
+
 
 
 static int KQ_msg (lua_State * L)
@@ -2446,6 +2554,7 @@ static int KQ_msg (lua_State * L)
             lua_tonumber (L, 3), xofs, yofs);
    return 0;
 }
+
 
 
 static int KQ_move_camera (lua_State * L)
@@ -2499,12 +2608,14 @@ static int KQ_move_camera (lua_State * L)
 }
 
 
+
 static int KQ_in_forest (lua_State * L)
 {
    int a = real_entity_num (lua_tonumber (L, 1));
    lua_pushnumber (L, is_forestsquare (g_ent[a].tilex, g_ent[a].tiley));
    return 1;
 }
+
 
 
 static int KQ_orient_heroes (lua_State * L)
@@ -2537,6 +2648,7 @@ static int KQ_orient_heroes (lua_State * L)
 }
 
 
+
 static int KQ_pause_song (lua_State * L)
 {
 /*  RB: TODO  */
@@ -2545,6 +2657,7 @@ static int KQ_pause_song (lua_State * L)
    pause_music ();
    return 0;
 }
+
 
 
 static int KQ_unpause_map_song (lua_State * L)
@@ -2557,6 +2670,7 @@ static int KQ_unpause_map_song (lua_State * L)
 }
 
 
+
 static int KQ_play_map_song (lua_State * L)
 {
 /*  RB: TODO  */
@@ -2567,11 +2681,13 @@ static int KQ_play_map_song (lua_State * L)
 }
 
 
+
 static int KQ_play_song (lua_State * L)
 {
    play_music ((char *) lua_tostring (L, 1), 0);
    return 0;
 }
+
 
 
 static int KQ_stop_song (lua_State * L)
@@ -2582,6 +2698,7 @@ static int KQ_stop_song (lua_State * L)
    stop_music ();
    return 0;
 }
+
 
 
 static int KQ_view_range (lua_State * L)
@@ -2595,6 +2712,7 @@ static int KQ_view_range (lua_State * L)
 }
 
 
+
 static int KQ_sfx (lua_State * L)
 {
    int a = lua_tonumber (L, 1);
@@ -2602,6 +2720,7 @@ static int KQ_sfx (lua_State * L)
    play_effect (a, 128);
    return 0;
 }
+
 
 
 static int KQ_clear_buffer (lua_State * L)
@@ -2614,6 +2733,7 @@ static int KQ_clear_buffer (lua_State * L)
 }
 
 
+
 static int KQ_mbox (lua_State * L)
 {
    menubox (double_buffer, lua_tonumber (L, 1) + xofs,
@@ -2622,6 +2742,7 @@ static int KQ_mbox (lua_State * L)
             BLUE);
    return 0;
 }
+
 
 
 static int KQ_dark_mbox (lua_State * L)
@@ -2634,6 +2755,7 @@ static int KQ_dark_mbox (lua_State * L)
 }
 
 
+
 static int KQ_light_mbox (lua_State * L)
 {
    menubox (double_buffer, lua_tonumber (L, 1) + xofs,
@@ -2642,6 +2764,7 @@ static int KQ_light_mbox (lua_State * L)
             DARKRED);
    return 0;
 }
+
 
 
 static int KQ_drawframe (lua_State * L)
@@ -2655,6 +2778,7 @@ static int KQ_drawframe (lua_State * L)
 }
 
 
+
 static int KQ_draw_pstat (lua_State * L)
 {
    int a = lua_tonumber (L, 1);
@@ -2666,6 +2790,7 @@ static int KQ_draw_pstat (lua_State * L)
 }
 
 
+
 static int KQ_ptext (lua_State * L)
 {
    print_font (double_buffer, lua_tonumber (L, 1) + xofs,
@@ -2673,6 +2798,7 @@ static int KQ_ptext (lua_State * L)
                lua_tonumber (L, 4));
    return 0;
 }
+
 
 
 static int KQ_pnum (lua_State * L)
@@ -2684,6 +2810,7 @@ static int KQ_pnum (lua_State * L)
                lua_tonumber (L, 2) + yofs, strbuf, lua_tonumber (L, 4));
    return 0;
 }
+
 
 
 static int KQ_read_controls (lua_State * L)
@@ -2738,6 +2865,7 @@ static int KQ_read_controls (lua_State * L)
 }
 
 
+
 static int KQ_check_key (lua_State * L)
 {
    int a = lua_tonumber (L, 1);
@@ -2750,11 +2878,13 @@ static int KQ_check_key (lua_State * L)
 }
 
 
+
 static int KQ_log (lua_State * L)
 {
    klog ((char *) lua_tostring (L, 1));
    return 0;
 }
+
 
 
 static int KQ_wait_enter (lua_State * L)
@@ -2774,6 +2904,7 @@ static int KQ_use_up (lua_State * L)
    lua_pushnumber (L, useup_item (i));
    return 1;
 }
+
 
 
 /* The text_ex function just takes one string, and does the line breaks automatically.
@@ -2817,6 +2948,7 @@ int KQ_thought_ex (lua_State * L)
 }
 
 
+
 /*! \brief Do a battle
  *
  * Usage: battle (bg_name, mus_name, encounter, encounter, ...);
@@ -2836,6 +2968,7 @@ int KQ_battle (lua_State * L)
 }
 
 
+
 int KQ_istable (lua_State * L)
 {
    if (lua_istable (L, 1)) {
@@ -2845,6 +2978,7 @@ int KQ_istable (lua_State * L)
    }
    return 1;
 }
+
 
 
 int KQ_select_team (lua_State * L)
@@ -2872,6 +3006,7 @@ int KQ_select_team (lua_State * L)
    }
    return 1;
 }
+
 
 
 /*! \brief Initialise scripting engine
@@ -2913,6 +3048,7 @@ void do_luainit (char *fname)
    ref_zone_handler = lua_ref (theL, 1);
    lua_settop (theL, oldtop);
 }
+
 
 
 #ifdef KQ_CHEATS
@@ -2962,6 +3098,7 @@ void do_luakill (void)
 }
 
 
+
 /*! \brief Run initial code
  *
  * Calls the function autoexec() which should contain some initial start-up
@@ -2980,6 +3117,7 @@ void do_autoexec (void)
 }
 
 
+
 /*! \brief Run initial graphical code
  *
  * This function is called after the map is faded back in.  It's possible to
@@ -2994,6 +3132,7 @@ void do_postexec (void)
    lua_settop (theL, oldtop);
    check_map_change ();
 }
+
 
 
 /*! \brief Trigger zone action
@@ -3020,6 +3159,7 @@ void do_zone (int zn_num)
 }
 
 
+
 /*! \brief Trigger entity action
  *
  * Run the lua function entity_handler(int) to take action based on the entity
@@ -3037,6 +3177,7 @@ void do_entity (int en_num)
    lua_settop (theL, oldtop);
    check_map_change ();
 }
+
 
 
 /*! \brief Check to change the map

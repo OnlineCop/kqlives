@@ -1,13 +1,36 @@
+/*
+   KQ is Copyright (C) 2002 by Josh Bolduc
+
+   This file is part of KQ... a freeware RPG.
+
+   KQ is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published
+   by the Free Software Foundation; either version 2, or (at your
+   option) any later version.
+
+   KQ is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with KQ; see the file COPYING.  If not, write to
+   the Free Software Foundation,
+       675 Mass Ave, Cambridge, MA 02139, USA.
+*/
+
+/*! \file
+ * \brief Stuff relating to credits display:
+ *        The original authors, new team etc are name-checked
+ * \author PH
+ * \date 20030526
+ */
+
 #include <string.h>
 #include "kq.h"
 #include "draw.h"
 #include "credits.h"
-/*! file
- * Stuff relating to credits display:
- * The original authors, new team etc are name-checked
- * \author PH
- * \date 20030526
- */
+
 
 /*! Array of strings */
 static char *credits[] = {
@@ -25,6 +48,7 @@ static char *credits[] = {
    "Sam Hocevar",
    NULL
 };
+
 static char pressf1[] = "Press F1 for help";
 
 static char **cc = NULL;
@@ -38,6 +62,7 @@ static void ticker (void)
 }
 
 END_OF_FUNCTION (ticker);
+
 
 
 /*! \brief An S-shaped curve
@@ -60,6 +85,7 @@ static int ease (int x)
 }
 
 
+
 void allocate_credits (void)
 {
    unsigned int tlen = 0;
@@ -78,12 +104,14 @@ void allocate_credits (void)
 }
 
 
+
 void deallocate_credits (void)
 {
    destroy_bitmap (wk);
    wk = NULL;
    remove_int (ticker);
 }
+
 
 
 void display_credits (void)
@@ -113,7 +141,7 @@ void display_credits (void)
 /*
  Put an un-ignorable cheat message; this should stop
  PH releasing versions with cheat mode compiled in ;)
-*/
+ */
       print_font (double_buffer, 80, 40,
                   cheat ? "*CHEAT MODE ON*" : "*CHEAT MODE OFF*", FGOLD);
 #endif

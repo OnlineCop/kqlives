@@ -1,5 +1,5 @@
 /*
-   KQ is Copyright (C) 2002 - Josh Bolduc
+   KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
 
@@ -51,6 +51,7 @@ static void infusion (int, int);
 void reveal (int);
 
 
+
 /*! \brief Is hero's special skill available?
  *
  * Check if the hero can use his/her special
@@ -58,7 +59,7 @@ void reveal (int);
  *
  * \param   dude Hero to check (index into pidx[])
  * \returns 1 if skill is available, 0 otherwise
-*/
+ */
 int hero_skillcheck (int dude)
 {
    int a, b = 0;
@@ -151,7 +152,7 @@ int hero_skillcheck (int dude)
  *
  * \param   who Hero to process
  * \returns 1 if the skill was used, otherwise 0
-*/
+ */
 int skill_use (int who)
 {
    int tgt, fitm, a, b, c, p, cts, tx, ty, g = 0, nt = 0, nn[NUM_FIGHTERS];
@@ -416,6 +417,8 @@ int skill_use (int who)
    return 1;
 }
 
+
+
 void reveal (int tgt)
 {
    int c, d = 0, g = 0, b;
@@ -461,6 +464,8 @@ void reveal (int tgt)
    wait_enter ();
 }
 
+
+
 /*! \brief Do infusion skill
  *
  * This function is only used for Corin when he
@@ -468,7 +473,7 @@ void reveal (int tgt)
  *
  * \param   c Hero (index in fighter[] array)
  * \param   sn Thing to infuse
-*/
+ */
 static void infusion (int c, int sn)
 {
    int j;

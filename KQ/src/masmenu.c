@@ -1,5 +1,5 @@
 /*
-   KQ is Copyright (C) 2002 - Josh Bolduc
+   KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
 
@@ -54,6 +54,8 @@ static void camp_draw_spell_menu (int, int, int);
 static void camp_spell_targeting (int, int);
 static int camp_castable (int, int);
 
+
+
 /*! \brief Does target need spell?
  *
  * Does the target even need the spell that's been selected?
@@ -62,7 +64,7 @@ static int camp_castable (int, int);
  * \param   ta Target
  * \param   sn Index of spell
  * \returns 0 if spell failed, 1 if success
-*/
+ */
 static int need_spell (int ca, int ta, int sn)
 {
    int a, b, vc = 0, cs;
@@ -107,10 +109,13 @@ static int need_spell (int ca, int ta, int sn)
       }
       break;
    case M_WARP:
-/* RB FIXME What was this supposed to do?
-      if (g_map.can_warp == 0);
-*/
-      return 0;
+/* RB FIXME What was this supposed to do? */
+/* TT: This means that if you're on a map where you can warp from (main.map)
+       you can get away from this battle.  But if you're somewhere that the
+       map is defined as 'can_warp = 0', you can't use the warp spell there.
+ */
+      if (g_map.can_warp == 0)
+         return 0;
       break;
    case M_REPULSE:
       return 1;
@@ -130,7 +135,7 @@ static int need_spell (int ca, int ta, int sn)
  *
  * \param   who Character's index
  * \returns 0 if no spell learned, else spell(s) learned
-*/
+ */
 int learn_new_spells (int who)
 {
    int a, p, i, nog, g = 0;
@@ -179,7 +184,7 @@ int learn_new_spells (int who)
  * \param   c Index of caster
  * \param   pg Page that spell is found on
  * \param   ptr Cursor on current page
-*/
+ */
 static void camp_draw_spell_menu (int c, int pg, int ptr)
 {
    int l, z, j, b, a;
@@ -220,13 +225,10 @@ static void camp_draw_spell_menu (int c, int pg, int ptr)
  * arrange or cast spells.
  *
  * \param   c Index of caster
-*/
+ */
 void camp_spell_menu (int c)
 {
-   int stop = 0, pg[2] = { 0, 0 }, ptr[2] =
-   {
-   0, 0}
-   , a, b = 0;
+   int stop = 0, pg[2] = { 0, 0 }, ptr[2] = { 0, 0 }, a, b = 0;
    int rd = 1, smove = 0, tsn;
 
    if (party[pidx[c]].sts[S_MUTE] > 0) {
@@ -337,7 +339,7 @@ void camp_spell_menu (int c)
  *
  * \param   mc Index of spell caster
  * \param   sn Spell number
-*/
+ */
 static void camp_spell_targeting (int mc, int sn)
 {
    int tg = 0, a;
@@ -391,7 +393,7 @@ static void camp_spell_targeting (int mc, int sn)
  * \param   who Index of caster
  * \param   sno Spell number
  * \returns 1 if spell was cast, 0 otherwise
-*/
+ */
 static int camp_castable (int who, int sno)
 {
    if (sno == M_VISION || (sno == M_WARP && g_map.can_warp == 0))

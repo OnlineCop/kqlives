@@ -1,5 +1,5 @@
 /*
-   KQ is Copyright (C) 2002 - Josh Bolduc
+   KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
 
@@ -63,7 +63,7 @@ static void sort_inventory (void);
  * \param   ptr Location of the cursor
  * \param   pg Item menu page number
  * \param   sl 1 if selecting an action, 0 if selecting an item to use/drop
-*/
+ */
 static void draw_itemmenu (int ptr, int pg, int sl)
 {
    int z, j, k, a, ck;
@@ -118,7 +118,7 @@ static void draw_itemmenu (int ptr, int pg, int sl)
  *
  * This screen displays the list of items that the character has, then
  * waits for the player to select one.
-*/
+ */
 void camp_item_menu (void)
 {
    int stop = 0, ptr = 0, rd = 1, pptr = 0, sel = 0;
@@ -218,7 +218,7 @@ void camp_item_menu (void)
 /*! \brief Sort the items in inventory
  *
  * This runs through all the items in your inventory and sorts them.
-*/
+ */
 static void sort_items (void)
 {
    unsigned short t_inv[MAX_INV][2];
@@ -253,7 +253,7 @@ static void sort_items (void)
 /*! \brief Combine items quantities
  *
  * Join like items into groups of nine or less.
-*/
+ */
 static void join_items (void)
 {
    unsigned short t_inv[NUM_ITEMS + 1];
@@ -272,13 +272,12 @@ static void join_items (void)
    for (a = 1; a < NUM_ITEMS; a++) {
       // While there is something in the temp inventory
       while (t_inv[a] > 0) {
-         // Portion out 9 items per slot
          if (t_inv[a] > 9) {
+            // Portion out 9 items per slot
             check_inventory (a, 9);
             t_inv[a] -= 9;
-         }
-         // Portion out remaining items into another slot
-         else {
+         } else {
+            // Portion out remaining items into another slot
             check_inventory (a, t_inv[a]);
             t_inv[a] = 0;
          }
@@ -293,7 +292,7 @@ static void join_items (void)
  * Make sure the player really wants to drop the item specified.
  *
  * \returns 1 if confirm, 0 if cancel
-*/
+ */
 static int confirm_drop (void)
 {
    int stop = 0;
@@ -323,7 +322,7 @@ static int confirm_drop (void)
  * Do target selection for using an item and then use it.
  *
  * \param   pp Item index
-*/
+ */
 static void camp_item_targetting (int pp)
 {
    int t1, tg, z;
@@ -369,7 +368,7 @@ static void camp_item_targetting (int pp)
  * \returns 1 if it was possible, but that we added to an item slot that
  *            already had some of that item
  * \returns 2 if we put the item in a brand-new slot
-*/
+ */
 int check_inventory (int ii, int qq)
 {
    // v == "last empty inventory slot"
@@ -414,7 +413,7 @@ int check_inventory (int ii, int qq)
  *
  * \param   item_id The identifier (I_* constant) of the item.
  * \returns 1 if we had it, 0 otherwise
-*/
+ */
 int useup_item (int item_id)
 {
    int i;
@@ -428,13 +427,14 @@ int useup_item (int item_id)
 }
 
 
+
 /*! \brief Remove item from inventory
  *
  * Remove an item from inventory and re-sort the list.
  *
  * \param   ii Index of item to remove
  * \param   qi Quantity of item
-*/
+ */
 void remove_item (int ii, int qi)
 {
    // Remove a certain quantity (qi) of this item
@@ -457,7 +457,7 @@ void remove_item (int ii, int qi)
 /*! \brief Re-arrange the items in our inventory
  *
  * This simply re-arranges the group inventory to remove blank rows.
-*/
+ */
 static void sort_inventory (void)
 {
    int a, b, stop;
@@ -503,7 +503,7 @@ static void sort_inventory (void)
  * \returns 0 if ineffective (cannot use item)
  * \returns 1 if success (1 target)
  * \returns 2 if success (multiple targets)
-*/
+ */
 int item_effects (int sa, int t, int ti)
 {
    int tmp = 0, i, a, b, z, san = 0, se = 0, sen = 0;

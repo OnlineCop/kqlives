@@ -19,8 +19,8 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-/*! \file */
-/* \brief Defines for all items 
+/*! \file
+ * \brief Defines for all items 
  * \author JB
  * \date ??????
  */

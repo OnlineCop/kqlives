@@ -33,6 +33,8 @@
 
 #include "../include/structs.h"
 
+
+
 /*
 typedef struct
 {
@@ -66,6 +68,8 @@ typedef struct
 }
 s_entity;
 
+
+
 typedef struct
 {
    unsigned char map_no, zero_zone, map_mode, can_save;
@@ -81,12 +85,16 @@ typedef struct
 ss_map;
 */
 
+
+
 typedef struct
 {
    int entities, shadows, obstacles, zones;
    int last_layer;              // tracks last-used layer
 }
 s_show;
+
+
 
 /*
    A requirement for this program is that all icon-files have a blank icon in entry 0

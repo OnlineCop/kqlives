@@ -1,5 +1,5 @@
 /*
-   KQ is Copyright (C) 2002 - Josh Bolduc
+   KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
 
@@ -24,7 +24,7 @@
  *
  * \author JB
  * \date ??????
-*/
+ */
 
 #include <stdio.h>
 #include <string.h>
@@ -73,7 +73,7 @@ static void enemy_attack (int);
  * \param   etid If =99, select a random row with that encounter number,
  *          otherwise select row etid.
  * \returns number of random encounter
-*/
+ */
 int select_encounter (int en, int etid)
 {
    int i, p, j;
@@ -120,173 +120,171 @@ int select_encounter (int en, int etid)
 
 
 
-/* /\*! \brief Load from file */
-/*  * */
-/*  * Load enemy data from files. */
-/*  * The format of allstat.mon is a space-separated sequence of rows. */
-/*  * Within a row, the column order is: */
-/*  *  */
-/*  * -# Name */
-/*  * -# ignored (index number) */
-/*  * -# x-coord of image (in the datafile) */
-/*  * -# y-coord of image */
-/*  * -# width of image  */
-/*  * -# height of image */
-/*  * -# xp */
-/*  * -# gold */
-/*  * -# level */
-/*  * -# max hp */
-/*  * -# max mp */
-/*  * -# dip Defeat Item Probability. */
-/*  * -# ditmc Defeat ITeM Common. */
-/*  * -# ditmr Defeat ITeM Rare. */
-/*  * -# sitmc Steal ITeM Common. */
-/*  * -# sitmr Steal ITeM Rare. */
-/*  * -# strength (agility and vitality are set to 0) */
-/*  * -# intelligence AND sagacity (both set to same) */
-/*  * -# stat[5] (A_SPD) */
-/*  * -# stat[6] (A_AUR) */
-/*  * -# stat[7] (A_SPI) */
-/*  * -# stat[8] (A_ATT) */
-/*  * -# stat[9] (A_HIT) */
-/*  * -# stat[10] (A_DEF) */
-/*  * -# stat[11] (A_EVD) */
-/*  * -# stat[12] (A_MAG) */
-/*  * -# bonus (bstat set to 0) */
-/*  * -# cwt (current weapon type) */
-/*  * -# welem Weapon elemental power */
-/*  * -# unl (?) */
-/*  * -# crit (?) */
-/*  * -# imb_s Item for imbued spell */
-/*  * -# imb_a New value for SAG and INT when casting imbued. */
-/*  * -# imb[0] (?) */
-/*  * -# imb[1] (?) */
-/* *\/ */
-/* void enemy_init (void) */
-/* { */
-/*    FILE *edat; */
-/*    int i, p, j, a, tmp, lx, ly; */
-
-/*    sprintf (strbuf, "%s/allstat.mon", DATA_DIR); */
-/*    edat = fopen (strbuf, "r"); */
-/*    if (!edat) */
-/*       program_death ("Could not load 1st enemy datafile!"); */
-/*    for (i = 0; i < numens; i++) */
-/*      { */
-/*         j = i + PSIZE; */
-/*         fseek (edat, 0, SEEK_SET); */
-/*         for (a = 0; a < cf[i]; a++) */
-/*            fgets (strbuf, 254, edat); */
-/*         fscanf (edat, "%s", fighter[j].name); */
-/*         fscanf (edat, "%d", &tmp); */
-/*         fscanf (edat, "%d", &tmp); */
-/*         lx = tmp; */
-/*         fscanf (edat, "%d", &tmp); */
-/*         ly = tmp; */
-/*         fscanf (edat, "%d", &tmp); */
-/*         fighter[j].cw = tmp; */
-/*         fscanf (edat, "%d", &tmp); */
-/*         fighter[j].cl = tmp; */
-/*         fscanf (edat, "%d", &tmp); */
-/*         fighter[j].xp = tmp; */
-/*         fscanf (edat, "%d", &tmp); */
-/*         fighter[j].gp = tmp; */
-/*         fscanf (edat, "%d", &tmp); */
-/*         fighter[j].lvl = tmp; */
-/*         fscanf (edat, "%d", &tmp); */
-/*         fighter[j].mhp = tmp; */
-/*         fscanf (edat, "%d", &tmp); */
-/*         fighter[j].mmp = tmp; */
-/*         fscanf (edat, "%d", &tmp); */
-/*         fighter[j].dip = tmp; */
-/*         fscanf (edat, "%d", &tmp); */
-/*         fighter[j].ditmc = tmp; */
-/*         fscanf (edat, "%d", &tmp); */
-/*         fighter[j].ditmr = tmp; */
-/*         fscanf (edat, "%d", &tmp); */
-/*         fighter[j].sitmc = tmp; */
-/*         fscanf (edat, "%d", &tmp); */
-/*         fighter[j].sitmr = tmp; */
-/*         fscanf (edat, "%d", &tmp); */
-/*         fighter[j].stats[A_STR] = tmp; */
-/*         fighter[j].stats[A_AGI] = 0; */
-/*         fighter[j].stats[A_VIT] = 0; */
-/*         fscanf (edat, "%d", &tmp); */
-/*         fighter[j].stats[A_INT] = tmp; */
-/*         fighter[j].stats[A_SAG] = tmp; */
-/*         for (p = 5; p < 13; p++) */
-/*           { */
-/*              fscanf (edat, "%d", &tmp); */
-/*              fighter[j].stats[p] = tmp; */
-/*           } */
-/*         fscanf (edat, "%d", &tmp); */
-/*         fighter[j].bonus = tmp; */
-/*         fighter[j].bstat = 0; */
-/*         fscanf (edat, "%d", &tmp); */
-/*         fighter[j].cwt = tmp; */
-/*         fscanf (edat, "%d", &tmp); */
-/*         fighter[j].welem = tmp; */
-/*         fscanf (edat, "%d", &tmp); */
-/*         fighter[j].unl = tmp; */
-/*         fscanf (edat, "%d", &tmp); */
-/*         fighter[j].crit = tmp; */
-/*         fscanf (edat, "%d", &tmp); */
-/*         fighter[j].imb_s = tmp; */
-/*         fscanf (edat, "%d", &tmp); */
-/*         fighter[j].imb_a = tmp; */
-/*         load_enemyframes (j, lx, ly); */
-/*         for (p = 0; p < 2; p++) */
-/*           { */
-/*              fscanf (edat, "%d", &tmp); */
-/*              fighter[j].imb[p] = tmp; */
-/*           } */
-/*      } */
-/*    fclose(edat); */
-/*    sprintf (strbuf, "%s/resabil.mon", DATA_DIR); */
-/*    edat = fopen (strbuf, "r"); */
-/*    if (!edat) */
-/*       program_death ("Could not load 2nd enemy datafile!"); */
-/*    for (i = 0; i < numens; i++) */
-/*      { */
-/*         j = i + PSIZE; */
-/*         fseek (edat, 0, SEEK_SET); */
-/*         for (a = 0; a < cf[i]; a++) */
-/*            fgets (strbuf, 254, edat); */
-/*         fscanf (edat, "%s", fighter[j].name); */
-/*         fscanf (edat, "%d", &tmp); */
-/*         for (p = 0; p < 16; p++) */
-/*           { */
-/*              fscanf (edat, "%d", &tmp); */
-/*              fighter[j].res[p] = tmp; */
-/*           } */
-/*         for (p = 0; p < 8; p++) */
-/*           { */
-/*              fscanf (edat, "%d", &tmp); */
-/*              fighter[j].ai[p] = tmp; */
-/*           } */
-/*         for (p = 0; p < 8; p++) */
-/*           { */
-/*              fscanf (edat, "%d", &tmp); */
-/*              fighter[j].aip[p] = tmp; */
-/*              fighter[j].atrack[p] = 0; */
-/*           } */
-/*         fighter[j].hp = fighter[j].mhp; */
-/*         fighter[j].mp = fighter[j].mmp; */
-/*         for (p = 0; p < 24; p++) */
-/*            fighter[j].sts[p] = 0; */
-/*         fighter[j].aux = 0; */
-/*         fighter[j].mrp = 100; */
-/*      } */
-/*    fclose (edat); */
-/* } */
-
-
-/*! \brief Array of enemy 'fighters' 
+#if 0
+/*! \brief Load from file
+ *
+ * Load enemy data from files.
+ * The format of allstat.mon is a space-separated sequence of rows.
+ * Within a row, the column order is:
+ * 
+ * -# Name
+ * -# ignored (index number)
+ * -# x-coord of image (in the datafile)
+ * -# y-coord of image
+ * -# width of image 
+ * -# height of image
+ * -# xp
+ * -# gold
+ * -# level
+ * -# max hp
+ * -# max mp
+ * -# dip Defeat Item Probability.
+ * -# ditmc Defeat ITeM Common.
+ * -# ditmr Defeat ITeM Rare.
+ * -# sitmc Steal ITeM Common.
+ * -# sitmr Steal ITeM Rare.
+ * -# strength (agility and vitality are set to 0)
+ * -# intelligence AND sagacity (both set to same)
+ * -# stat[5] (A_SPD)
+ * -# stat[6] (A_AUR)
+ * -# stat[7] (A_SPI)
+ * -# stat[8] (A_ATT)
+ * -# stat[9] (A_HIT)
+ * -# stat[10] (A_DEF)
+ * -# stat[11] (A_EVD)
+ * -# stat[12] (A_MAG)
+ * -# bonus (bstat set to 0)
+ * -# cwt (current weapon type)
+ * -# welem Weapon elemental power
+ * -# unl (?)
+ * -# crit (?)
+ * -# imb_s Item for imbued spell
+ * -# imb_a New value for SAG and INT when casting imbued.
+ * -# imb[0] (?)
+ * -# imb[1] (?)
  */
+void enemy_init (void)
+{
+   FILE *edat;
+   int i, p, j, a, tmp, lx, ly;
+
+   sprintf (strbuf, "%s/allstat.mon", DATA_DIR);
+   edat = fopen (strbuf, "r");
+   if (!edat)
+      program_death ("Could not load 1st enemy datafile!");
+   for (i = 0; i < numens; i++) {
+      j = i + PSIZE;
+      fseek (edat, 0, SEEK_SET);
+      for (a = 0; a < cf[i]; a++)
+         fgets (strbuf, 254, edat);
+      fscanf (edat, "%s", fighter[j].name);
+      fscanf (edat, "%d", &tmp);
+      fscanf (edat, "%d", &tmp);
+      lx = tmp;
+      fscanf (edat, "%d", &tmp);
+      ly = tmp;
+      fscanf (edat, "%d", &tmp);
+      fighter[j].cw = tmp;
+      fscanf (edat, "%d", &tmp);
+      fighter[j].cl = tmp;
+      fscanf (edat, "%d", &tmp);
+      fighter[j].xp = tmp;
+      fscanf (edat, "%d", &tmp);
+      fighter[j].gp = tmp;
+      fscanf (edat, "%d", &tmp);
+      fighter[j].lvl = tmp;
+      fscanf (edat, "%d", &tmp);
+      fighter[j].mhp = tmp;
+      fscanf (edat, "%d", &tmp);
+      fighter[j].mmp = tmp;
+      fscanf (edat, "%d", &tmp);
+      fighter[j].dip = tmp;
+      fscanf (edat, "%d", &tmp);
+      fighter[j].ditmc = tmp;
+      fscanf (edat, "%d", &tmp);
+      fighter[j].ditmr = tmp;
+      fscanf (edat, "%d", &tmp);
+      fighter[j].sitmc = tmp;
+      fscanf (edat, "%d", &tmp);
+      fighter[j].sitmr = tmp;
+      fscanf (edat, "%d", &tmp);
+      fighter[j].stats[A_STR] = tmp;
+      fighter[j].stats[A_AGI] = 0;
+      fighter[j].stats[A_VIT] = 0;
+      fscanf (edat, "%d", &tmp);
+      fighter[j].stats[A_INT] = tmp;
+      fighter[j].stats[A_SAG] = tmp;
+      for (p = 5; p < 13; p++) {
+         fscanf (edat, "%d", &tmp);
+         fighter[j].stats[p] = tmp;
+      }
+      fscanf (edat, "%d", &tmp);
+      fighter[j].bonus = tmp;
+      fighter[j].bstat = 0;
+      fscanf (edat, "%d", &tmp);
+      fighter[j].cwt = tmp;
+      fscanf (edat, "%d", &tmp);
+      fighter[j].welem = tmp;
+      fscanf (edat, "%d", &tmp);
+      fighter[j].unl = tmp;
+      fscanf (edat, "%d", &tmp);
+      fighter[j].crit = tmp;
+      fscanf (edat, "%d", &tmp);
+      fighter[j].imb_s = tmp;
+      fscanf (edat, "%d", &tmp);
+      fighter[j].imb_a = tmp;
+      load_enemyframes (j, lx, ly);
+      for (p = 0; p < 2; p++) {
+         fscanf (edat, "%d", &tmp);
+         fighter[j].imb[p] = tmp;
+      }
+   }
+   fclose(edat);
+   sprintf (strbuf, "%s/resabil.mon", DATA_DIR);
+   edat = fopen (strbuf, "r");
+   if (!edat)
+      program_death ("Could not load 2nd enemy datafile!");
+   for (i = 0; i < numens; i++) {
+      j = i + PSIZE;
+      fseek (edat, 0, SEEK_SET);
+      for (a = 0; a < cf[i]; a++)
+         fgets (strbuf, 254, edat);
+      fscanf (edat, "%s", fighter[j].name);
+      fscanf (edat, "%d", &tmp);
+      for (p = 0; p < 16; p++) {
+         fscanf (edat, "%d", &tmp);
+         fighter[j].res[p] = tmp;
+      }
+      for (p = 0; p < 8; p++) {
+         fscanf (edat, "%d", &tmp);
+         fighter[j].ai[p] = tmp;
+      }
+      for (p = 0; p < 8; p++) {
+         fscanf (edat, "%d", &tmp);
+         fighter[j].aip[p] = tmp;
+         fighter[j].atrack[p] = 0;
+      }
+      fighter[j].hp = fighter[j].mhp;
+      fighter[j].mp = fighter[j].mmp;
+      for (p = 0; p < 24; p++)
+         fighter[j].sts[p] = 0;
+      fighter[j].aux = 0;
+      fighter[j].mrp = 100;
+   }
+   fclose (edat);
+}
+#endif
+
+
+
+/*! \brief Array of enemy 'fighters'  */
 static s_fighter **enemies = NULL;
 static int enemies_n = 0;
 static int enemies_cap = 0;
 static DATAFILE *enemy_pcx = NULL;
+
+
+
 /*! \brief Load all enemies from disk
  *
  * Loads up enemies from the *.mon files and fills the enemies[] array.
@@ -428,6 +426,7 @@ void load_enemies (void)
 }
 
 
+
 /*! \brief Unload the data loaded by load_enemies()
  * 
  * JB would have said 'duh' here! Not much explanation required.
@@ -447,6 +446,7 @@ void unload_enemies (void)
       unload_datafile_object (enemy_pcx);
    }
 }
+
 
 
 /*! \brief Prepare an enemy for battle
@@ -472,6 +472,7 @@ static s_fighter *make_enemy (int who, s_fighter * en)
       return NULL;
    }
 }
+
 
 
 #if 0
@@ -501,6 +502,7 @@ static s_fighter *make_enemy_by_name (const char *who, s_fighter * en)
    return NULL;
 }
 #endif
+
 
 
 /*! \brief Initialise enemy & sprites for combat
@@ -534,6 +536,7 @@ void enemy_init (void)
 }
 
 
+
 #if 0
 /*! \brief Copy frames from main bitmap
  *
@@ -543,7 +546,7 @@ void enemy_init (void)
  * \param   who Enemy id
  * \param   locx x-coord of frame
  * \param   locy y-coord of frame
-*/
+ */
 static void load_enemyframes (int who, int locx, int locy)
 {
    int p;
@@ -565,6 +568,7 @@ static void load_enemyframes (int who, int locx, int locy)
 #endif
 
 
+
 /*! \brief Choose action for enemy
  *
  * There is the beginning of some intelligence to this... however, the
@@ -572,7 +576,7 @@ static void load_enemyframes (int who, int locx, int locy)
  * \todo PH would be good to have this script-enabled.
  *
  * \param   who Target action will be performed on
-*/
+ */
 void enemy_chooseaction (int who)
 {
    int a, ap;
@@ -629,7 +633,7 @@ void enemy_chooseaction (int who)
  * \param   wh Which enemy
  * \param   sp Spell to cast
  * \returns 1 if spell can be cast, 0 otherwise
-*/
+ */
 static int enemy_cancast (int wh, int sp)
 {
    int a, z = 0;
@@ -653,7 +657,7 @@ static int enemy_cancast (int wh, int sp)
  * If the caster has a cure/drain spell, use it to cure itself.
  *
  * \param   w Caster
-*/
+ */
 static void enemy_curecheck (int w)
 {
    int a;
@@ -686,7 +690,7 @@ static void enemy_curecheck (int w)
  *
  * \param   w Caster
  * \param   ws Target
-*/
+ */
 static void enemy_spellcheck (int w, int ws)
 {
    int z, cs = 0, aux, yes = 0;
@@ -817,7 +821,7 @@ static void enemy_spellcheck (int w, int ws)
  *
  * \param   ws Which stat to consider
  * \param   s Starting target for multiple targets
-*/
+ */
 static int enemy_stscheck (int ws, int s)
 {
    int z, a = 0;
@@ -846,7 +850,7 @@ static int enemy_stscheck (int ws, int s)
  *
  * \param   w Enemy index
  * \param   ws Enemy skill index
-*/
+ */
 static void enemy_skillcheck (int w, int ws)
 {
    int sk;
@@ -879,7 +883,7 @@ static void enemy_skillcheck (int w, int ws)
  *
  * \sa auto_herochooseact()
  * \param   who Target
-*/
+ */
 void enemy_charmaction (int who)
 {
    int a;
@@ -917,7 +921,7 @@ void enemy_charmaction (int who)
  * \param   whom Caster
  * \param   z Which spell will be cast
  * \returns 0 if spell ineffective, 1 otherwise
-*/
+ */
 static int spell_setup (int whom, int z)
 {
    int zst = NO_STS_CHECK, aux, a;
@@ -1001,7 +1005,7 @@ static int spell_setup (int whom, int z)
  * \param   whom Caster
  * \param   sn Which skill
  * \returns 1 for success, 0 otherwise
-*/
+ */
 static int skill_setup (int whom, int sn)
 {
    int sk = fighter[whom].ai[sn] - 100;
@@ -1031,7 +1035,7 @@ static int skill_setup (int whom, int sn)
  * a different function, but it all starts here.
  *
  * \param   whom Target
-*/
+ */
 static void enemy_attack (int whom)
 {
    int a, b, c;
@@ -1083,9 +1087,9 @@ static void enemy_attack (int whom)
  *
  * \param   whom Which enemy is going to run
  * \warning RB Unused until now
-*/
+ */
 void enemy_run (int whom)
 {
    whom = whom;
 }
-#endif /*  0  */
+#endif

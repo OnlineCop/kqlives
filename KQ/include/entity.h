@@ -28,7 +28,7 @@
  * An entity is a hero, or an NPC.
  * \author JB
  * \date ??????
-*/
+ */
 
 #define MAX_ENT     50
 #define ID_ENEMY    254

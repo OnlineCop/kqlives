@@ -1,5 +1,5 @@
 /*
-   KQ is Copyright (C) 2002 - Josh Bolduc
+   KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
 
@@ -37,9 +37,9 @@
 #include "res.h"
 #include "progress.h"
 
-/* \file 
+/*! \file 
  * \brief Enemy skills 
-*/
+ */
 
 
 /*! \brief Process each enemy skill
@@ -47,7 +47,7 @@
  * Just a function to process each enemy skill by index number.
  *
  * \param   who Index of attacker
-*/
+ */
 void combat_skill (int who)
 {
    int sk = fighter[who].ai[fighter[who].csmem] - 100;

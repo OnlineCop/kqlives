@@ -22,7 +22,7 @@
 #ifndef __SETUP_H
 #define __SETUP_H
 
-/*! \file*/
+/*! \file */
 
 #include <allegro.h>
 
@@ -41,23 +41,20 @@
 #define SND_EXPLODE 42
 
 
-void parse_setup (void);        /*  kq.c  */
+                                /*  This is in addition to setup.c:  */
+void parse_setup (void);        /*  kq.c,  */
 void config_menu (void);        /*  sgame.c  */
-void show_help (void);
-void set_graphics_mode (void);  /*  kq.c  */
+void show_help (void);          /*  sgame.c  */
+void set_graphics_mode (void);  /*  kq.c, sgame.c  */
 void sound_init (void);         /*  kq.c  */
 void free_samples (void);       /*  kq.c  */
-                                 /*  sgame.c                               */
 void play_effect (int, int);    /*  draw.c, effects.c, entity.c, heroc.c, */
-                                 /*  (eqp|item|mas|shop)menu.c, hskill.c,  */
-                                 /*  intrface.c, menu.c, selector.c,       */
-                                 /*  sgame.c                               */
+                                /*  (eqp|item|mas|shop)menu.c, hskill.c,  */
+                                /*  intrface.c, menu.c, selector.c,       */
+                                /*  sgame.c                               */
 
-extern char debugging;          /*  combat.c, setup.c, sgame.c  */
-extern char slow_computer;      /*  effects.c, heroc.c, setup.c  */
-
-
-
+extern char debugging;          /*  combat.c, kq.c, sgame.c  */
+extern char slow_computer;      /*  effects.c, heroc.c  */
 
 
 #endif /*  __SETUP_H  */

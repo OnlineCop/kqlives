@@ -1,5 +1,5 @@
 /*
-   KQ is Copyright (C) 2002 - Josh Bolduc
+   KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
 
@@ -18,6 +18,7 @@
    the Free Software Foundation,
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
+
 #include "res.h"
 #include "kq.h"
 #include "allegro.h"
@@ -359,6 +360,9 @@ PALETTE pal = {
    , {50, 63, 63, 0}
    , {63, 63, 63, 0}
 };
+
+
+
 s_item items[NUM_ITEMS] = {
    {"", 0, 0, "", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0},
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -1126,6 +1130,8 @@ s_item items[NUM_ITEMS] = {
                                               0, 0, 0, 0, 0}},
 };
 
+
+
 s_spell magic[NUM_SPELLS] = {
    {"", 0, "", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0}},
    {"Cure1", 45, "Light cure", 1, 4, 2, 2, 30, 100, 0, 16, 1, 15,
@@ -1251,6 +1257,7 @@ s_spell magic[NUM_SPELLS] = {
 };
 
 
+
 s_effect eff[NUM_EFFECTS] = {
    {0, 0, 0, 0, 0, 0, 0, "_"},
    {3, 24, 24, 1, 50, 0, 10, "AAXE_PCX"},
@@ -1305,6 +1312,7 @@ s_effect eff[NUM_EFFECTS] = {
    {3, 24, 24, 1, 50, 0, 31, "AAXE_PCX"},
    {11, 32, 32, 1, 120, 6, 7, "GENERIC_PCX"},
 };
+
 
 
 s_erow erows[NUM_ETROWS] = {
@@ -1420,6 +1428,8 @@ s_erow erows[NUM_ETROWS] = {
    {23, 20, 100, {57, 0, 0, 0, 0}},
    {23, 15, 100, {58, 58, 58, 58, 0}},
 };
+
+
 
 s_encounter battles[NUM_BATTLES] = {
    {MAP_BRIDGE, 255, 1, 2, 5, "walk.s3m", "BACK3_PCX"},

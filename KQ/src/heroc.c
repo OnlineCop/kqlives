@@ -1,5 +1,5 @@
 /*
-   KQ is Copyright (C) 2002 - Josh Bolduc
+   KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
 
@@ -29,7 +29,7 @@
  * \todo PH Make sure we understand the two methods of referring to a
  *          hero - either as an index in the pidx array or an index in
  *          the party array
-*/
+ */
 
 #include <stdio.h>
 #include <string.h>
@@ -53,8 +53,8 @@
 
 /* Text names of hero skills */
 char sk_names[MAXCHRS][7] =
-   { "Rage", "Sweep", "Infuse", "Prayer", "Boost", "Cover", "Steal",
-   "Sense"
+{
+   "Rage", "Sweep", "Infuse", "Prayer", "Boost", "Cover", "Steal", "Sense"
 };
 
 
@@ -92,7 +92,7 @@ static int combat_castable (int, int);
  * These colours are replaced by the 'true' weapon colours as 
  * determined by s_item::kol .
  * The shape is chosen by s_fighter::cwt
-*/
+ */
 void hero_init (void)
 {
    int z, i, p, n;
@@ -150,7 +150,7 @@ void hero_init (void)
  * allow him/her to choose an action.
  *
  * \param   who Index of player (see constants in progress.h)
-*/
+ */
 void hero_choose_action (int who)
 {
    int stop = 0, sptr = 1, ptr = 0, rd = 1, a, amy;
@@ -171,11 +171,12 @@ void hero_choose_action (int who)
          strcpy (ca[my], "Attack");
          chi[my] = C_ATTACK;
          my++;
-/*
-      strcpy(ca[my],"Combo");
-      chi[my] = C_COMBO;
-      my++;
-*/
+#if 0
+
+         strcpy(ca[my],"Combo");
+         chi[my] = C_COMBO;
+         my++;
+#endif
          if (hero_skillcheck (who)) {
             strcpy (ca[my], sk_names[pidx[who]]);
             chi[my] = C_SKILL;
@@ -313,7 +314,7 @@ void hero_choose_action (int who)
  * \todo    Incorporate enemy_charmaction
  *
  * \param   who Index of player (see constants in progress.h)
-*/
+ */
 void auto_herochooseact (int who)
 {
    int eact;
@@ -349,7 +350,7 @@ void auto_herochooseact (int who)
  *
  * \param   whom Index of player (see constants in progress.h)
  * \returns Index of target
-*/
+ */
 static int hero_attack (int whom)
 {
    int tgt;
@@ -383,7 +384,7 @@ static int hero_attack (int whom)
  * This displays a list of the heroes items for use in combat.
  *
  * \param   pg The item list's current page
-*/
+ */
 static void combat_draw_items (int pg)
 {
    int a, b, c, k;
@@ -418,7 +419,7 @@ static void combat_draw_items (int pg)
  *
  * \param   whom Index of character who is doing the choosing
  * \returns 0 if cancelled, 1 if item was chosen
-*/
+ */
 static int combat_item_menu (int whom)
 {
    int z, rd = 1, stp = 0, ptr = 0, pptr = 0;
@@ -504,7 +505,7 @@ static int combat_item_menu (int whom)
  *
  * \param   itno Index of item
  * \returns 1 item can be used, otherwise 0
-*/
+ */
 static int combat_item_usable (int itno)
 {
    if (items[itno].type != 6 || items[itno].tgt == TGT_NONE)
@@ -525,7 +526,7 @@ static int combat_item_usable (int itno)
  * \param   t1 Item to use
  * \param   tg Index of target
  * \returns 1 if anything happened, 0 otherwise
-*/
+ */
 static int combat_item (int ss, int t1, int tg)
 {
    int a, b, r, st = tg, tt = 0, tl = 0;
@@ -572,7 +573,7 @@ static int combat_item (int ss, int t1, int tg)
  * Draw the character's list of equipment.
  *
  * \param   dud Index of party member to draw
-*/
+ */
 static void draw_invokable (int dud)
 {
    int a, tt, grd;
@@ -594,7 +595,7 @@ static void draw_invokable (int dud)
  *
  * \param   t1 Index of item
  * \returns 1 if item can be invoked, 0 otherwise
-*/
+ */
 static int can_invoke_item (int t1)
 {
    if (items[t1].type > 5)
@@ -613,7 +614,7 @@ static int can_invoke_item (int t1)
  *
  * \param   whom Index of character
  * \returns 1 if item was selected, 0 if cancelled
-*/
+ */
 static int hero_invoke (int whom)
 {
    int rd = 1, stp = 0, ptr = 0;
@@ -674,7 +675,7 @@ static int hero_invoke (int whom)
  * \param   whom Index of target in Hero's party
  * \param   eno Item that is being invoked
  * \returns 1 if item was successfully used, 0 otherwise
-*/
+ */
 static int hero_invokeitem (int whom, int eno)
 {
    int tg = 0, a, b;
@@ -726,7 +727,7 @@ static int hero_invokeitem (int whom, int eno)
  *
  * Check whether or not the heroes can run, and then display
  * the little running-away sequence.
-*/
+ */
 static void hero_run (void)
 {
    int a, b = 0, c = 0, bt = 0, ct = 0, p, fr, fx, fy, g = 0;
@@ -820,7 +821,7 @@ static void hero_run (void)
  *
  * \param   who Index of Hero in your party
  * \returns the number of available spells
-*/
+ */
 int available_spells (int who)
 {
    int a, b, e, l, numsp = 0;
@@ -854,7 +855,7 @@ int available_spells (int who)
  * \param   c Character id
  * \param   ptr The current line of the menu pointer
  * \param   pg The current page in the spell list
-*/
+ */
 static void combat_draw_spell_menu (int c, int ptr, int pg)
 {
    int z, j, b;
@@ -887,7 +888,7 @@ static void combat_draw_spell_menu (int c, int ptr, int pg)
  *
  * \param   c Character id
  * \returns 0 if cancelled or 1 if something happened
-*/
+ */
 int combat_spell_menu (int c)
 {
    int rd = 1, ptr = 0, pgno = 0, stop = 0;
@@ -972,7 +973,7 @@ int combat_spell_menu (int c)
  * \returns -1 if the spell has no targetting,
  *          0 if cancelled
  *          1 if target selected
-*/
+ */
 static int combat_spell_targeting (int whom)
 {
    int a, tg;
@@ -999,6 +1000,8 @@ static int combat_spell_targeting (int whom)
    return 1;
 }
 
+
+
 /*! \brief Check spell is castable
  *
  * Perform the necessary checking to determine if a spell can be
@@ -1007,7 +1010,7 @@ static int combat_spell_targeting (int whom)
  * \param   who Character id
  * \param   sno Spell id
  * \returns 1 if spell can be cast, 0 if not
-*/
+ */
 static int combat_castable (int who, int sno)
 {
    int b, c = 0;

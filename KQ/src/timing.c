@@ -1,5 +1,5 @@
 /*
-   KQ is Copyright (C) 2002 - Josh Bolduc
+   KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
 
@@ -39,7 +39,7 @@
  * call poll_music() to ensure that music plays
  * \remark PH does this need locking with LOCK_FUNCTION
  *            like a timer function does?
-*/
+ */
 static void _kq_rest_callback (void)
 {
    poll_music ();
@@ -52,7 +52,7 @@ static void _kq_rest_callback (void)
  * Calls _kq_rest_callback() continuously to ensure all actions are running
  *
  * \param   ms Time to pause in milliseconds
-*/
+ */
 void wait (long ms)
 {
    rest_callback (ms, _kq_rest_callback);

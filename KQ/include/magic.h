@@ -27,7 +27,7 @@
  *
  * This includes the M_* defines
  * and some function prototypes.
-*/
+ */
 
 #include "kq.h"
 

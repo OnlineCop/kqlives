@@ -1,5 +1,5 @@
 /*
-   KQ is Copyright (C) 2002 - Josh Bolduc
+   KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
 
@@ -24,7 +24,7 @@
  *
  * \author JB
  * \date ????????
-*/
+ */
 
 #include <stdio.h>
 #include <string.h>
@@ -40,6 +40,7 @@
 #include "fade.h"
 #include "music.h"
 #include "timing.h"
+
 
 
 /* TT add: */
@@ -60,7 +61,7 @@
  * the code says 
  * that the shop will replenish its stock
  * to [1], after a time-out of [2] minutes.
-*/
+ */
 unsigned short shops[NUMSHOPS][SHOPITEMS][3] = {
    {{I_SHIELD1, 6, 10},
     {I_CAP1, 4, 10},
@@ -430,7 +431,7 @@ static void do_inn_effects (void);
  * improve their stats (if applicable).
  *
  * \param   itm Item being looked at.
-*/
+ */
 static void draw_sideshot (int itm)
 {
    int a, j, ownd = 0, eqp = 0, wx, wy, slot;
@@ -521,7 +522,7 @@ static void draw_sideshot (int itm)
 /*! \brief Display amount of gold
  *
  * Display the party's funds.
-*/
+ */
 void draw_shopgold (void)
 {
    menubox (double_buffer, 248 + xofs, 208 + yofs, 7, 2, BLUE);
@@ -540,7 +541,7 @@ void draw_shopgold (void)
  *
  * \param   shop_num Index of this shop
  * \returns 1 if shop has no items, 0 otherwise
-*/
+ */
 int shop (int shop_num)
 {
    int ptr = 0, stop = 0, rd = 1, a;
@@ -619,7 +620,7 @@ int shop (int shop_num)
  *
  * Show the player a list of items which can be bought
  * and wait for him/her to choose something or exit.
-*/
+ */
 static void buy_menu (void)
 {
    int stop = 0, cost;
@@ -727,7 +728,7 @@ static void buy_menu (void)
  *
  * \param   how_many Quantity
  * \param   item_no Index of item
-*/
+ */
 static void buy_item (int how_many, int item_no)
 {
    int z = 0, l, stop = 0, cost, rd = 1;
@@ -775,7 +776,7 @@ static void buy_item (int how_many, int item_no)
  *
  * Display a list of items that are in inventory and ask which
  * one(s) to sell.
-*/
+ */
 static void sell_menu (void)
 {
    int yptr = 0, stop = 0, z, rd = 1, p, k, sp, pg = 0;
@@ -812,15 +813,14 @@ static void sell_menu (void)
          }
          sp = items[g_inv[pg * 16 + yptr][0]].price * 50 / 100;
          if (items[g_inv[pg * 16 + yptr][0]].price > 0) {
-            // Check if there is more than one item
             if (g_inv[pg * 16 + yptr][1] > 1) {
+               // Check if there is more than one item
                sprintf (strbuf, "%d gp for each one.", sp);
                print_font (double_buffer,
                            160 - (strlen (strbuf) * 4) + xofs,
                            176 + yofs, strbuf, FNORMAL);
-            }
-            // There is only one of this item
-            else {
+            } else {
+               // There is only one of this item
                sprintf (strbuf, "That's worth %d gp.", sp);
                print_font (double_buffer,
                            160 - (strlen (strbuf) * 4) + xofs,
@@ -892,7 +892,7 @@ static void sell_menu (void)
  *
  * \param   itm_no Index of item in inventory
  * \param   pg Page of the inventory
-*/
+ */
 static void sell_howmany (int itm_no, int pg)
 {
    int l, maxi, prc, my = 1, stop, rd = 1;
@@ -964,7 +964,7 @@ static void sell_howmany (int itm_no, int pg)
  *
  * \param   itno Index of item
  * \param   ni Quantity being sold
-*/
+ */
 static void sell_item (int itno, int ni)
 {
    int l, stop = 0, sp, a;
@@ -1009,7 +1009,7 @@ static void sell_item (int itno, int ni)
  * \param   iname Name of Inn
  * \param   gpc Gold per character (base price)
  * \param   pay If 0, staying is free.
-*/
+ */
 void inn (char *iname, int gpc, int pay)
 {
    int a, b, my = 0, stop = 0, gpts;
@@ -1102,7 +1102,7 @@ void inn (char *iname, int gpc, int pay)
  *
  * This is separate so that these effects can be done
  * from anywhere.
-*/
+ */
 static void do_inn_effects (void)
 {
    int a, b, c;

@@ -1,5 +1,5 @@
 /*
-   KQ is Copyright (C) 2002 - Josh Bolduc
+   KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
 
@@ -26,7 +26,7 @@
  *
  * This file contains code to handle the equipment menu
  * including dropping and optimizing the items carried.
-*/
+ */
 
 #include <stdio.h>
 #include <string.h>
@@ -72,7 +72,7 @@ static int deequip (int, int);
  *              Remove, Empty)
  *              Otherwise just show Equip if eqp_act is 0 or Remove if it is 2.
  *              (This is when you're selecting the item to Equip/Remove)
-*/
+ */
 static void draw_equipmenu (int c, int sel)
 {
    int l, j, k;
@@ -122,7 +122,7 @@ static void draw_equipmenu (int c, int sel)
  * \param   c Character to equip
  * \param   slot Which 'part of the body' to equip
  * \param   pptr Which page of the inventory to draw
-*/
+ */
 static void draw_equippable (int c, int slot, int pptr)
 {
    int z, j, k;
@@ -166,7 +166,7 @@ static void draw_equippable (int c, int slot, int pptr)
  *
  * \param   c Character to equip
  * \param   slot Which body part to equip
-*/
+ */
 static void calc_possible_equip (int c, int slot)
 {
    int k;
@@ -195,7 +195,7 @@ static void calc_possible_equip (int c, int slot)
  * selected.
  *
  * \param   c Which character to operate on
-*/
+ */
 static void optimize_equip (int c)
 {
    int a, b, z, maxx, maxi, v = 0;
@@ -259,7 +259,7 @@ static void optimize_equip (int c)
  * Draw the equip menu stuff and let the user select an equip slot.
  *
  * \param   c Character to process
-*/
+ */
 void equip_menu (int c)
 {
    int stop = 0, yptr = 0, sl = 1;
@@ -379,7 +379,7 @@ void equip_menu (int c)
  *
  * \param   c Character to equip
  * \param   slot Which part of the body to process
-*/
+ */
 static void choose_equipment (int c, int slot)
 {
    int stop = 0, yptr = 0, rd = 1, pptr = 0, sm = 0, ym = 15;
@@ -455,7 +455,7 @@ static void choose_equipment (int c, int slot)
  * \param   aa Character to process
  * \param   p2 Slot to consider changing
  * \param   ii New piece of equipment to compare/use
-*/
+ */
 static void calc_equippreview (int aa, int p2, int ii)
 {
    int c, z;
@@ -482,7 +482,7 @@ static void calc_equippreview (int aa, int p2, int ii)
  * \param   ch Character to process
  * \param   ptr Slot to change, or <0 to switch to new stats
  * \param   pp New item to use
-*/
+ */
 static void draw_equippreview (int ch, int ptr, int pp)
 {
    int z, c1, c2;
@@ -557,7 +557,7 @@ static void draw_equippreview (int ch, int ptr, int pp)
  * \param   itm Item to add
  * \param   forced Non-zero if character doesn't already have the item (see above)
  * \returns 1 if equip was successful, 0 otherwise
-*/
+ */
 static int equip (int c, int itm, int forced)
 {
    int a, d, b, z, n = 0, i;
@@ -613,7 +613,7 @@ static int equip (int c, int itm, int forced)
  * \param   c Character to process
  * \param   ptr Slot to de-equip
  * \returns 0 if unsuccessful, 1 if successful
-*/
+ */
 static int deequip (int c, int ptr)
 {
    int a, b = 0;
