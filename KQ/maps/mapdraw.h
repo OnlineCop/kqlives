@@ -31,7 +31,7 @@
 
 #define ICONSET_SIZE    20 // Number of icons shown in the tile map
 
-#include "structs.h"
+#include "../include/structs.h"
 
 /*
 typedef struct

@@ -8,7 +8,7 @@
  * December 2002 (and Jan 2003)
  */
 #include "mapdraw.h"
-#include "disk.h"
+#include "../include/disk.h"
 
 /*! \brief Convert map to PCX images
  *
