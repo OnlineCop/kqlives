@@ -3,14 +3,20 @@
 
    This file is part of KQ... a freeware RPG.
 
-   KQ is free software, but is no longer under the GPL as of
-   version 0.82.  Version 0.82 and all versions to follow
-   will no longer be under the GPL.  For complete
-   information on licensing with regards to KQ, please see
-   the license.txt file that comes with this source.
+   KQ is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published
+   by the Free Software Foundation; either version 2, or (at your
+   option) any later version.
 
-   Version 0.81 is the last version available under the GNU
-   public license.
+   KQ is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with KQ; see the file COPYING.  If not, write to
+   the Free Software Foundation,
+       675 Mass Ave, Cambridge, MA 02139, USA.
 */
 /** \file
  * \brief Constants that are included in the C and Lua scripts 
@@ -19,10 +25,8 @@
 #define __PROGRESS_H
 
 /*! \name Progress indicators */
+/* PLEASE ADD TO THIS LIST IN ORDER!!! */
 /*\{*/
-
-#define P_MANOR           91
-#define P_PLAYERS         92
 
 #define P_START           0
 #define P_ODDWALL         1
@@ -127,6 +131,9 @@
 #define P_MANORPARTY5     96
 #define P_MANORPARTY6     97
 #define P_MANORPARTY7     98
+
+#define P_MANOR           99
+#define P_PLAYERS         100
 
 /* 'specials' */
 #define P_SHOPSTART       1750
