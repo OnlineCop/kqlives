@@ -697,7 +697,69 @@ static void border (BITMAP * where, int x, int y, int x2, int y2)
    putpixel (where, x2 - 4, y2 - 4, WHITE);
 }
 
-
+/*! \brief Draw  box, with different backgrounds and borders
+ *
+ * Draw the box as described. This was suggested by CB as 
+ * a better alternative to the old create bitmap/blit trans/destroy bitmap
+ * method.
+ *
+ * \author PH
+ * \date 20030616
+ *
+ * \param where Bitmap to draw to
+ * \param x1 x-coord of top left
+ * \param y1 y-coord of top left
+ * \param x2 x-coord of bottom right
+ * \param y2 y-coord of bottom right
+ * \param bg colour/style of background
+ * \param bstyle style of border
+ */
+static void draw_kq_box (BITMAP * where, int x1, int y1, int x2, int y2,
+                            int bg, int bstyle)
+{
+  int a;
+  /* Draw a maybe-translucent background */
+  if (bg==BLUE) {   drawing_mode (DRAW_MODE_TRANS, NULL, 0, 0); }
+  else {
+    bg=(bg==DARKBLUE) ? DBLUE: DRED;
+  }
+   rectfill (where, x1+2, y1+2, x2-3, y2-3, bg);
+   drawing_mode (DRAW_MODE_SOLID, NULL, 0, 0);
+   /* Now the border */
+   switch (bstyle) {
+   case B_TEXT:
+     border(where, x1,y1,x2-1,y2-1);
+     break;
+   case B_THOUGHT:
+     /* top and bottom */
+        for (a = x1+8; a < x2-8; a+=8)
+          {
+             draw_sprite (where, bord[1], a,
+                          y1);
+             draw_sprite (where, bord[6], a ,
+                          y2 - 8);
+          }
+	/* sides */
+        for (a = y1+8; a < y2-8; a+=12)
+          {
+             draw_sprite (where, bord[3], x1,
+                          a);
+             draw_sprite (where, bord[4], x2-8 ,
+                          a);
+          }
+	/* corners */
+     draw_sprite (where, bord[0], x1 , y1 );
+        draw_sprite (where, bord[2], x2 - 8,
+                     y1 );
+        draw_sprite (where, bord[5], x1,
+                     y2 - 8);
+        draw_sprite (where, bord[7], x2 - 8,
+                     y2 - 8);
+     break;
+   default: /* no border */
+     break;
+   }
+}
 
 /*! \brief Draw menu box
  *
@@ -713,33 +775,7 @@ static void border (BITMAP * where, int x, int y, int x2, int y2)
 */
 void menubox (BITMAP * where, int x, int y, int w, int h, int c)
 {
-   int wid, hgt;
-   BITMAP *tm;
-
-   wid = (w + 2) * 8;
-   hgt = (h + 2) * 8;
-   if (c == BLUE)
-     {
-        tm = create_bitmap (wid - 5, hgt - 5);
-        rectfill (tm, 0, 0, wid - 5, hgt - 5, c);
-        draw_trans_sprite (where, tm, x + 2, y + 2);
-        border (where, x, y, x + wid - 1, y + hgt - 1);
-        destroy_bitmap (tm);
-     }
-   else
-     {
-        rectfill (where, x + 2, y + 2, x + wid - 3, y + hgt - 3,
-                  (c == DARKBLUE ? DBLUE : DRED));
-// TT: edit
-#if 0
-        if (c == DARKBLUE)
-           rectfill (where, x + 2, y + 2, x + wid - 3, y + hgt - 3, DBLUE);
-        else
-           rectfill (where, x + 2, y + 2, x + wid - 3, y + hgt - 3, DRED);
-#endif
-
-        border (where, x, y, x + wid - 1, y + hgt - 1);
-     }
+  draw_kq_box(where, x, y, x+w*8+16, y+h*8+16, c, B_TEXT);
 }
 
 
@@ -910,56 +946,20 @@ static void set_textpos (int who)
 static void draw_textbox (int bstyle)
 {
    int wid, hgt, a;
-   BITMAP *tm;
+   BITMAP* stem;
+/*    BITMAP *tm; */
 
    wid = gbbw * 8 + 16;
    hgt = gbbh * 12 + 16;
-   if (bstyle == B_TEXT)
-     {
-        tm = create_bitmap (wid - 5, hgt - 5);
-        /* PH clear_to_color() is better here
-           rectfill (tm, 0, 0, wid - 5, hgt - 5, BLUE);
-         */
-        clear_to_color (tm, BLUE);
-        draw_trans_sprite (double_buffer, tm, gbbx + 2 + xofs, gbby + 2 + yofs);
-        border (double_buffer, gbbx + xofs, gbby + yofs,
-                gbbx + xofs + wid - 1, gbby + yofs + hgt - 1);
-        destroy_bitmap (tm);
-        if (gbt != -1)
-           draw_sprite (double_buffer, bub[gbt], gbx + xofs, gby + yofs);
-     }
-   else if (bstyle == B_THOUGHT)
-     {
-        tm = create_bitmap (wid - 5, hgt - 5);
-        rectfill (tm, 0, 0, wid - 5, hgt - 5, BLUE);
-        draw_trans_sprite (double_buffer, tm, gbbx + 2 + xofs, gbby + 2 + yofs);
-        draw_sprite (double_buffer, bord[0], gbbx + xofs, gbby + yofs);
-        draw_sprite (double_buffer, bord[2], gbbx + xofs + wid - 8,
-                     gbby + yofs);
-        draw_sprite (double_buffer, bord[5], gbbx + xofs,
-                     gbby + yofs + hgt - 8);
-        draw_sprite (double_buffer, bord[7], gbbx + xofs + wid - 8,
-                     gbby + yofs + hgt - 8);
-        for (a = 0; a < gbbw; a++)
-          {
-             draw_sprite (double_buffer, bord[1], a * 8 + gbbx + xofs + 8,
-                          gbby + yofs);
-             draw_sprite (double_buffer, bord[6], a * 8 + gbbx + xofs + 8,
-                          gbby + yofs + hgt - 8);
-          }
-        for (a = 0; a < gbbh; a++)
-          {
-             draw_sprite (double_buffer, bord[3], gbbx + xofs,
-                          a * 12 + gbby + yofs + 8);
-             draw_sprite (double_buffer, bord[4], gbbx + xofs + wid - 8,
-                          a * 12 + gbby + yofs + 8);
-          }
-        destroy_bitmap (tm);
-        if (gbt != -1)
-           draw_sprite (double_buffer, bub[gbt + 4], gbx + xofs, gby + yofs);
-     }
-   else
-      return;
+
+        draw_kq_box (double_buffer, gbbx + xofs , gbby + yofs ,
+                        gbbx + xofs + wid , gbby + yofs + hgt , BLUE, bstyle);
+        if (gbt != -1) {
+	  /* select the correct stem-thingy that comes out of the speech bubble */
+	  stem=bub[gbt+(bstyle==B_THOUGHT ? 4 : 0)];
+	  /* and draw it */
+           draw_sprite (double_buffer, stem, gbx + xofs, gby + yofs);
+	}
 
    for (a = 0; a < gbbh; a++)
      {
@@ -1140,26 +1140,6 @@ void text_ex (int fmt, int who, const char *s)
 
 
 
-/* /\*! \brief Display thought bubble */
-/*  * \author PH */
-/*  * \date 20021220 */
-/*  * */
-/*  * Displays text, like thought_text, but passing the args */
-/*  * through relay() first */
-/*  * */
-/*  * \sa thought_text() */
-/*  * \param   who Character that is thinking */
-/*  * \param   s The text to display */
-/* *\/ */
-/* void thought_text_ex (int who, const char *s) */
-/* { */
-/*    while (s) */
-/*      { */
-/*         s = relay (s); */
-/*         generic_text (who, B_THOUGHT); */
-/*      } */
-/* } */
-
 
 
 /*! \brief Draw thought bubble
@@ -1223,11 +1203,6 @@ static void generic_text (int who, int box_style)
           }
         drawmap ();
         draw_textbox (box_style);
-/*         for (a = 0; a < gbbh; a++) */
-/*           { */
-/*                 print_font (double_buffer, gbbx + 8 + xofs, */
-/*                             a * 12 + gbby + 8 + yofs, msgbuf[a], FBIG); */
-/*           } */
         blit2screen (xofs, yofs);
         readcontrols ();
         if (balt)
@@ -1309,7 +1284,6 @@ int prompt_ex (int who, const char *ptext, char *opt[], int n_opt)
    int winx, winy;
    int i, w, redraw, running;
 
-   BITMAP *blank;
    ptext = parse_string (ptext);
    while (1)
      {
@@ -1346,8 +1320,6 @@ int prompt_ex (int who, const char *ptext, char *opt[], int n_opt)
                      winwidth = w;
                }
              winheight = n_opt > 4 ? 4 : n_opt;
-             blank = create_bitmap (winwidth * 8 + 8, winheight * 12);
-             clear_to_color (blank, BLUE);
              winx = xofs + (320 - winwidth * 8) / 2;
              winy = yofs + 230 - winheight * 12;
              running = redraw = 1;
@@ -1356,11 +1328,10 @@ int prompt_ex (int who, const char *ptext, char *opt[], int n_opt)
                   if (redraw)
                     {
                        drawmap ();
+		       /* Draw the prompt text */
                        draw_textbox (B_TEXT);
-                       /* Draw the  box itself */
-                       border (double_buffer, winx - 5, winy - 5,
-                               winx + blank->w + 5, winy + blank->h + 5);
-                       draw_trans_sprite (double_buffer, blank, winx, winy);
+                       /* Draw the  options text */
+		       draw_kq_box(double_buffer, winx-5, winy-5, winx+winwidth*8+13,winy+winheight*12+5, BLUE, B_TEXT);
                        for (i = 0; i < winheight; ++i)
                          {
                             print_font (double_buffer, winx + 8, winy + i * 12,
@@ -1418,7 +1389,6 @@ int prompt_ex (int who, const char *ptext, char *opt[], int n_opt)
 
                     }
                }
-             destroy_bitmap (blank);
              return curopt;
           }
      }
