@@ -140,6 +140,7 @@
 #define P_AYLA_QUEST      103
 
 #define P_BANGTHUMB       104
+#define P_WALKING         105
 
 
 /* 'specials' */

@@ -107,6 +107,7 @@ s_anim;
 #ifndef MAX_ANIM
 #define MAX_ANIM 5
 #endif
+
 /*! \brief Tileset definition 
  *
  * This encapulates a tile set: graphics and animation.
@@ -119,4 +120,4 @@ typedef struct
    s_anim tanim[MAX_ANIM];
 } s_tileset;
 
-#endif/*__STRUCTS_H__*/
+#endif /*__STRUCTS_H__*/

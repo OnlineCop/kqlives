@@ -31,4 +31,4 @@ int load_s_player (s_player * s, PACKFILE * f);
 int save_s_player (s_player * s, PACKFILE * f);
 int load_s_tileset (s_tileset * s, PACKFILE * f);
 int save_s_tileset (s_tileset * s, PACKFILE * f);
-#endif/*__DISK_H*/
+#endif /*__DISK_H*/
