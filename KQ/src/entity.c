@@ -665,22 +665,27 @@ static void getcommand (int target_entity)
    else
       s = '\0';
    switch (s) {
+   case 'u':
    case 'U':
       g_ent[target_entity].cmd = 1;
       parsems (target_entity);
       break;
+   case 'd':
    case 'D':
       g_ent[target_entity].cmd = 2;
       parsems (target_entity);
       break;
+   case 'l':
    case 'L':
       g_ent[target_entity].cmd = 3;
       parsems (target_entity);
       break;
+   case 'r':
    case 'R':
       g_ent[target_entity].cmd = 4;
       parsems (target_entity);
       break;
+   case 'w':
    case 'W':
       g_ent[target_entity].cmd = 5;
       parsems (target_entity);
@@ -691,22 +696,27 @@ static void getcommand (int target_entity)
       g_ent[target_entity].cmdnum = 0;
       g_ent[target_entity].sidx = 0;
       break;
+   case 'b':
    case 'B':
       g_ent[target_entity].cmd = 7;
       break;
+   case 'x':
    case 'X':
       g_ent[target_entity].cmd = 8;
       parsems (target_entity);
       break;
+   case 'y':
    case 'Y':
       g_ent[target_entity].cmd = 9;
       parsems (target_entity);
       break;
+   case 'f':
    case 'F':
       g_ent[target_entity].cmd = 10;
       parsems (target_entity);
       break;
       /* PH add: command K makes the ent disappear */
+   case 'k':
    case 'K':
       g_ent[target_entity].active = 0;
       break;
