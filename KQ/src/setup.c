@@ -78,8 +78,83 @@ static DATAFILE *sfx[MAX_SAMPLES];
 static int load_samples (void);
 static int getavalue (char *, int, int, int, int);
 static int getakey (void);
+static void parse_allegro_setup (void);
+static void parse_jb_setup (void);
 
+/*! Parse setup file
+*
+* \date 20030831
+* \author PH
+*/
+void parse_setup (void)
+{
+   parse_allegro_setup ();
+}
 
+/*! \brief Parse allegro file kq.cfg
+*
+* This is like parse_setup(), but using Allegro format files
+*
+* \author PH
+* \date 20030831
+*/
+static void parse_allegro_setup (void)
+{
+   const char *cfg = kqres (SETTINGS_DIR, "kq.cfg");
+   if (!exists (cfg))
+     {
+        /* config file does not exist. Fall back to setup.cfg */
+        /* Transitional code */
+        parse_jb_setup ();
+        push_config_state ();
+        set_config_file (cfg);
+
+        set_config_int (NULL, "skip_intro", skip_intro);
+        set_config_int (NULL, "windowed", windowed);
+
+        set_config_int (NULL, "stretch_view", stretch_view);
+        set_config_int (NULL, "show_frate", show_frate);
+        set_config_int (NULL, "is_sound", is_sound);
+        set_config_int (NULL, "use_joy", use_joy);
+        set_config_int (NULL, "slow_computer", slow_computer);
+
+        set_config_int (NULL, "kup", kup);
+        set_config_int (NULL, "kdown", kdown);
+        set_config_int (NULL, "kleft", kleft);
+        set_config_int (NULL, "kright", kright);
+        set_config_int (NULL, "kesc", kesc);
+        set_config_int (NULL, "kalt", kalt);
+        set_config_int (NULL, "kctrl", kctrl);
+        set_config_int (NULL, "kenter", kenter);
+        pop_config_state ();
+        return;
+     }
+   push_config_state ();
+   set_config_file (cfg);
+#ifdef KQ_CHEATS
+   cheat = get_config_int (NULL, "cheat", 0);
+#endif
+   debugging = get_config_int (NULL, "debugging", 0);
+   /* NB. JB's config file uses intro=yes --> skip_intro=0 */
+   skip_intro = get_config_int (NULL, "skip_intro", 0);
+   windowed = get_config_int (NULL, "windowed", 1);
+
+   stretch_view = get_config_int (NULL, "stretch_view", 1);
+   show_frate = get_config_int (NULL, "show_frate", 0);
+   is_sound = get_config_int (NULL, "is_sound", 1);
+   use_joy = get_config_int (NULL, "use_joy", 0);
+   slow_computer = get_config_int (NULL, "slow_computer", 0);
+
+   kup = get_config_int (NULL, "kup", KEY_UP);
+   kdown = get_config_int (NULL, "kdown", KEY_DOWN);
+   kleft = get_config_int (NULL, "kleft", KEY_LEFT);
+   kright = get_config_int (NULL, "kright", KEY_RIGHT);
+   kesc = get_config_int (NULL, "kesc", KEY_ESC);
+   kalt = get_config_int (NULL, "kalt", KEY_ALT);
+   kctrl = get_config_int (NULL, "kctrl", KEY_LCONTROL);
+   kenter = get_config_int (NULL, "kenter", KEY_ENTER);
+   pop_config_state ();
+}
 
 /*! \brief Parse setup.cfg
  *
@@ -90,7 +165,7 @@ static int getakey (void);
  *
  * Remember that setup.cfg is found in the /saves dir!
 */
-void parse_setup (void)
+static void parse_jb_setup (void)
 {
    FILE *s;
    int dab = 0;
@@ -249,7 +324,7 @@ void config_menu (void)
    int stop = 0, ptr = 0, rd = 1, p;
    int temp_key = 0;
    /* helper strings */
-   char *dc[16] = {
+   static char *dc[16] = {
       "Display KQ in a window.",
       "Stretch to fit 640x480 resolution.",
       "Display the frame rate during play.",
@@ -269,6 +344,8 @@ void config_menu (void)
    };
 
    unpress ();
+   push_config_state ();
+   set_config_file (kqres (SETTINGS_DIR, "kq.cfg"));
    while (!stop)
      {
         if (rd)
@@ -370,6 +447,7 @@ void config_menu (void)
                           windowed = 1;
                        else
                           windowed = 0;
+                       set_config_int (NULL, "windowed", windowed);
                        set_graphics_mode ();
                     }
                   break;
@@ -387,6 +465,7 @@ void config_menu (void)
                           stretch_view = 1;
                        else
                           stretch_view = 0;
+                       set_config_int (NULL, "stretch_view", stretch_view);
                        set_graphics_mode ();
                     }
                   break;
@@ -395,60 +474,70 @@ void config_menu (void)
                      show_frate = 1;
                   else
                      show_frate = 0;
+                  set_config_int (NULL, "show_frate", show_frate);
                   break;
                case 3:
                   if (wait_retrace == 0)
                      wait_retrace = 1;
                   else
                      wait_retrace = 0;
+                  set_config_int (NULL, "wait_retrace", wait_retrace);
                   break;
                case 4:
                   while ((temp_key = getakey ()) == 0);
                   kup = temp_key;
                   unpress ();
                   temp_key = 0;
+                  set_config_int (NULL, "kup", kup);
                   break;
                case 5:
                   while ((temp_key = getakey ()) == 0);
                   kdown = temp_key;
                   unpress ();
                   temp_key = 0;
+                  set_config_int (NULL, "kdown", kdown);
                   break;
                case 6:
                   while ((temp_key = getakey ()) == 0);
                   kleft = temp_key;
                   unpress ();
                   temp_key = 0;
+                  set_config_int (NULL, "kleft", kleft);
                   break;
                case 7:
                   while ((temp_key = getakey ()) == 0);
                   kright = temp_key;
                   unpress ();
                   temp_key = 0;
+                  set_config_int (NULL, "kright", kright);
                   break;
                case 8:
                   while ((temp_key = getakey ()) == 0);
                   kalt = temp_key;
                   unpress ();
                   temp_key = 0;
+                  set_config_int (NULL, "kalt", kalt);
                   break;
                case 9:
                   while ((temp_key = getakey ()) == 0);
                   kctrl = temp_key;
                   unpress ();
                   temp_key = 0;
+                  set_config_int (NULL, "kctrl", kctrl);
                   break;
                case 10:
                   while ((temp_key = getakey ()) == 0);
                   kenter = temp_key;
                   unpress ();
                   temp_key = 0;
+                  set_config_int (NULL, "kenter", kenter);
                   break;
                case 11:
                   while ((temp_key = getakey ()) == 0);
                   kesc = temp_key;
                   unpress ();
                   temp_key = 0;
+                  set_config_int (NULL, "kesc", kesc);
                   break;
                case 12:
                   if (is_sound == 2)
@@ -466,6 +555,7 @@ void config_menu (void)
                             play_music (g_map.song_file, 0);
                          }
                     }
+                  set_config_int (NULL, "is_sound", is_sound != 0);
                   break;
                case 13:
                   if (is_sound == 2)
@@ -476,8 +566,9 @@ void config_menu (void)
 
                        /* make sure to set it no matter what */
                        set_volume (gsvol, 0);
+                       set_config_int (NULL, "gsvol", gsvol);
                     }
-                  else
+                  else          /* Not as daft as it seems, SND_BAD also wobbles the screen */
                      play_effect (SND_BAD, 128);
                   break;
                case 14:
@@ -489,13 +580,15 @@ void config_menu (void)
 
                        /* make sure to set it no matter what */
                        set_music_volume (gmvol / 250.0);
+                       set_config_int (NULL, "gmvol", gmvol);
                     }
                   else
                      play_effect (SND_BAD, 128);
                   break;
                case 15:
                   /* TT: toggle slow_computer */
-                  slow_computer = (slow_computer == 0 ? 1 : 0);
+                  slow_computer = !slow_computer;
+                  set_config_int (NULL, "slow_computer", slow_computer);
                   break;
                }
              rd = 1;
@@ -506,6 +599,7 @@ void config_menu (void)
              stop = 1;
           }
      }
+   pop_config_state ();
 }
 
 
@@ -639,7 +733,7 @@ void show_help (void)
 {
    menubox (double_buffer, 116 + xofs, yofs, 9, 1, BLUE);
    print_font (double_buffer, 132 + xofs, 8 + yofs, "KQ Help", FGOLD);
-   menubox (double_buffer, 32 + xofs, 24 + yofs, 30, 20, BLUE);
+   menubox (double_buffer, 32 + xofs, 32 + yofs, 30, 20, BLUE);
    menubox (double_buffer, xofs, 216 + yofs, 38, 1, BLUE);
    print_font (double_buffer, 16 + xofs, 224 + yofs,
                "Press CONFIRM to exit this screen", FNORMAL);

@@ -364,6 +364,7 @@ static int save_game (void)
  *
  * Uh-huh.
  * PH 20030805 Made endian-safe
+ * PH 20030914 Now ignores keyboard settings etc in the save file
  * \returns 1 if load succeeded, 0 otherwise
 */
 static int load_game (void)
@@ -444,40 +445,19 @@ static int load_game (void)
              shopq[a][b] = pack_igetw (sdat);
           }
      }
-   /*
-      pack_fread (g_inv, MAX_INV * 2 * sizeof (g_inv[0][0]), sdat);
-    */
    for (a = 0; a < MAX_INV; ++a)
      {
         g_inv[a][0] = pack_igetw (sdat);
         g_inv[a][1] = pack_igetw (sdat);
      }
-   /*
-      pack_fread (&gsvol, sizeof (gsvol), sdat);
-      pack_fread (&gmvol, sizeof (gmvol), sdat);
-      pack_fread (&windowed, sizeof (windowed), sdat);
-      pack_fread (&stretch_view, sizeof (stretch_view), sdat);
-      pack_fread (&wait_retrace, sizeof (wait_retrace), sdat);
-    */
-   gsvol = pack_igetl (sdat);
+   /* PH: I've decided that I'm going to ignore 
+    * these things in the save file. and use
+    * the global values instead.
+    gsvol = pack_igetl (sdat);
    gmvol = pack_igetl (sdat);
    windowed = pack_getc (sdat);
    stretch_view = pack_getc (sdat);
    wait_retrace = pack_getc (sdat);
-   /*
-      pack_fread (&kup, sizeof (kup), sdat);
-      pack_fread (&kdown, sizeof (kdown), sdat);
-      pack_fread (&kleft, sizeof (kleft), sdat);
-      pack_fread (&kright, sizeof (kright), sdat);
-      pack_fread (&kalt, sizeof (kalt), sdat);
-      pack_fread (&kctrl, sizeof (kctrl), sdat);
-      pack_fread (&kenter, sizeof (kenter), sdat);
-      pack_fread (&kesc, sizeof (kesc), sdat);
-      pack_fread (&jbalt, sizeof (jbalt), sdat);
-      pack_fread (&jbctrl, sizeof (jbctrl), sdat);
-      pack_fread (&jbenter, sizeof (jbenter), sdat);
-      pack_fread (&jbesc, sizeof (jbesc), sdat);
-    */
    kup = pack_igetl (sdat);
    kdown = pack_igetl (sdat);
    kleft = pack_igetl (sdat);
@@ -490,10 +470,25 @@ static int load_game (void)
    jbctrl = pack_igetl (sdat);
    jbenter = pack_igetl (sdat);
    jbesc = pack_igetl (sdat);
-   /*
-      pack_fread (&g_ent[0].tilex, sizeof (g_ent[0].tilex), sdat);
-      pack_fread (&g_ent[0].tiley, sizeof (g_ent[0].tiley), sdat);
-    */
+*/
+     pack_igetl (sdat);
+     pack_igetl (sdat);
+     pack_getc (sdat);
+     pack_getc (sdat);
+     pack_getc (sdat);
+     pack_igetl (sdat);
+     pack_igetl (sdat);
+     pack_igetl (sdat);
+     pack_igetl (sdat);
+     pack_igetl (sdat);
+     pack_igetl (sdat);
+     pack_igetl (sdat);
+     pack_igetl (sdat);
+     pack_igetl (sdat);
+     pack_igetl (sdat);
+     pack_igetl (sdat);
+     pack_igetl (sdat);
+   
    g_ent[0].tilex = pack_igetw (sdat);
    g_ent[0].tiley = pack_igetw (sdat);
    pack_fclose (sdat);
