@@ -1,6 +1,14 @@
 -- pass - "Karnok's pass, between Sunarin and Pulcannen"
 
 function autoexec()
+  if (get_progress(P_SAVEBREANNE) > 0) then
+    -- Move guard on left side of pass
+    place_ent(0, get_ent_tilex(0) - 1, get_ent_tiley(0));
+    set_ent_facing(0, 3);
+    -- Move guard on right side of pass
+    place_ent(1, get_ent_tilex(1) + 1, get_ent_tiley(1));
+    set_ent_facing(1, 2);
+  end
   refresh();
 end
 
@@ -18,15 +26,6 @@ end
 
 
 function refresh()
-  if (get_progress(P_SAVEBREANNE) > 0) then
-    -- Move guard on left side of pass
-    place_ent(0, get_ent_tilex(0) - 1, get_ent_tiley(0));
-    set_ent_facing(0, 3);
-    -- Move guard on right side of pass
-    place_ent(1, get_ent_tilex(1) + 1, get_ent_tiley(1));
-    set_ent_facing(1, 2);
-  end
-
   if (get_progress(P_CAVEKEY)>0) then
     -- Move Rufus into his house
     place_ent(2, 152, 12);
