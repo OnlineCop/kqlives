@@ -1,7 +1,8 @@
-/* 
- * This is the KQ map editor 
+/*
+ * This is the KQ map editor
  * (Pete's hacked version)
- * December 2002
+ * (TT's edited hacked version)
+ * December 2002 (and Jan 2003)
  */
 
 #define MAX_TILES    1024
@@ -12,6 +13,26 @@
 #define SW            640
 #define SH            480
 #define WBUILD          1
+
+#define LAYER1                      0   // map (sea-level)
+#define LAYER2                      1   // background (ground-level)
+#define LAYER3                      2   // foreground (tree-tops, etc.)
+#define LAYER_VIEW1_2               3   // map + background
+#define LAYER_VIEW1_3               4   // map + foreground
+#define LAYER_VIEW2_3               5   // background + foreground
+#define LAYER_VIEW1_2_3             6   // map + background + foreground
+#define A_ENTITIES                  7   // Entities Attribute
+#define A_SHADOWS                   8   // Shadows Attribute
+#define A_OBSTACLES                 9   // Obstacles Attribute
+#define A_ZONES                     10  // Zones Attribute
+#define LAYERS_ENTITY_SHADOW_VIEW   11  // Layers 1-3 + Entities + Shadows
+#define VIEW_ALL                    12  // Layers 1-3 + Attributes 1-4
+#define VIEW_NONE                   13  // No Layers, no Attributes, cannot add/remove
+#define BLOCK_COPY                  14  // Mode to start copying an area
+#define BLOCK_PASTE                 15  // Mode to paste the copied area
+
+#define ICONSET_SIZE    20 // Number of icons shown in the tile map
+
 
 typedef struct
 {
@@ -52,26 +73,32 @@ typedef struct
 }
 ss_map;
 
+typedef struct
+{
+   int entities, shadows, obstacles, zones;
+   int last_layer;   // tracks last-used layer
+}
+s_show;
+
 /*
    A requirement for this program is that all icon-files have a blank icon in entry 0
 */
 
 /* prototypes */
-void my_counter (void);
 void klog (char *);
 void process_controls (void);
 int confirm_exit (void);
 void check_tilesel (int, int);
 void check_mdupdate (int, int);
 void draw_map (void);
-void draw_sidebar (void);
+void draw_menubars (void);
 void bufferize (void);
 void load_map (void);
 void save_map (void);
 void make_mapfrompcx (void);
 void global_change (void);
-void clear_obstruct (void);
-void clear_foreground (void);
+void clear_obstructs (void);
+void clear_shadows (void);
 int get_line (int, int, char *, int);
 int yninput (void);
 void startup (void);
@@ -82,7 +109,7 @@ void wait_enter (void);
 void cmessage (char *);
 void paste_region_special (int, int);
 void paste_region (int, int);
-void copy_region (int, int);
+void copy_region (void);
 void resize_map (void);
 void displace_entities (void);
 void wipe_map (void);
@@ -92,19 +119,21 @@ void erase_entity (int, int);
 void update_entities (void);
 void draw_entdata (int);
 void describe_map (void);
-void swap_layers (void);
+void copy_layer (void);
 void clear_layer (void);
 void print_sfont (int, int, char *, BITMAP *);
 void getfont (void);
+void update_tileset (void);
 
 extern unsigned short *map, *b_map, *f_map, *c_map, *cf_map, *cb_map;
 extern unsigned char *z_map, *cz_map, *s_map, *cs_map, *o_map, *co_map;
 extern char *strbuf;
 extern ss_map gmap;
+extern s_entity gent[];
+extern s_show showing;
+extern PALETTE pal;
 extern BITMAP *double_buffer, *pcx_buffer;
 extern BITMAP *icons[];
-extern s_entity gent[];
-extern PALETTE pal;
 extern char *icon_files[];
 extern short icon_set, max_sets;
 extern int noe, cent;

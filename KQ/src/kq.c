@@ -68,7 +68,7 @@ char icon_sets[6][16] = { "LAND_PCX", "NEWTOWN_PCX", "CASTLE_PCX",
 
 /*! \brief Which keys are pressed.
  *
- *   23: apparently flags for determiining keypresses and player movement. Seems
+ *   23: apparently flags for determining keypresses and player movement. Seems
  * to use some kind of homebrew Hungarian notation; I assume 'b' means bool.
  * Most if not all of these are updated in readcontrols() below ....
  */
@@ -110,8 +110,8 @@ s_anim tanim[6][MAX_ANIM] = {
     {262, 263, 25}},
    {{57, 58, 50}, {62, 63, 25}, {205, 206, 50}, {250, 253, 25}, {0, 0, 0}},
    {{30, 35, 30}, {176, 179, 25}, {323, 328, 40}, {380, 385, 40}, {0, 0, 0}},
-   {{38, 39, 25}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}},
-   {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}}
+   {{38, 39, 25}, {80, 83, 25}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}},
+   {{58, 59, 50}, {40, 42, 50}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}}
 };
 
 /*! Tile animation specifiers for the current tileset */

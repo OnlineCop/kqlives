@@ -232,6 +232,12 @@ function zone_handler(zn)
   elseif (zn == 40) then
     change_map("cult",0,0,0,0);
 
+  elseif (zn == 41) then
+    change_map("unfinished",0,0,0,0);
+
+  elseif (zn == 42) then
+    change_map("unfinished",0,0,0,0);
+
   end
 end
 

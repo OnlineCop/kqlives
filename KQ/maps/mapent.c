@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include "mapdraw.h"
 
+
+// Give each of the entities a purpose
 void init_entities (void)
 {
    int p;
@@ -34,7 +36,11 @@ void init_entities (void)
         gent[p].atype = 0;
         strcpy (gent[p].script, "");
      }
+   noe=0;
 }
+
+
+// Move the entities
 void displace_entities (void)
 {
    int ld, nx, ny, a;
@@ -44,26 +50,27 @@ void displace_entities (void)
    print_sfont (6, 6, "Displace entities", screen);
    print_sfont (6, 18, "X adjust: ", screen);
    ld = get_line (66, 18, strbuf, 4);
-   if (ld != 0)
-      nx = atoi (strbuf);
-   else
+   if (ld == 0)
       return;
+   nx = atoi (strbuf);
    rectfill (screen, 0, 0, 319, 29, 0);
    rect (screen, 2, 2, 317, 27, 255);
    print_sfont (6, 6, "Displace entities", screen);
    print_sfont (6, 18, "Y adjust: ", screen);
    ld = get_line (66, 18, strbuf, 4);
-   if (ld != 0)
-      ny = atoi (strbuf);
-   else
+   if (ld == 0)
       return;
+   ny = atoi (strbuf);
+
    for (a = 0; a < noe; a++)
      {
+        // Confirm that the input x-coords are within the map
         if (gent[a].tilex + nx < gmap.xsize && gent[a].tilex + nx >= 0)
           {
              gent[a].tilex += nx;
              gent[a].x = gent[a].tilex * 16;
           }
+        // Confirm that the input x-coords are within the map
         if (gent[a].tiley + ny < gmap.ysize && gent[a].tiley + ny >= 0)
           {
              gent[a].tiley += ny;
@@ -71,12 +78,17 @@ void displace_entities (void)
           }
      }
 }
+
+
+// Give the little lemming a home
 void place_entity (int ex, int ey)
 {
    int a;
 
+   // Yea, can't have to many lemmings on the map at once
    if (noe >= 50)
       return;
+   // Wait for the over-zealous user to let go of the mouse button
    while (mouse_b & 1)
      {
         a++;
@@ -98,67 +110,83 @@ void place_entity (int ex, int ey)
    noe++;
 }
 
+
+// Rub the useless guy out
 void erase_entity (int pex, int pey)
 {
    int a, enn = -1;
 
    if (noe == 0)
       return;
+   // Be careful not to delete everyone standing here
    while (mouse_b & 2)
      {
         a++;
         a--;
      }
+   // Could you imaging a 3D game?  pex, pey and Pez!  Yum-yum.
    for (a = 0; a < noe; a++)
+      // Get the index number of the last-drawn entity from this spot
       if (gent[a].tilex == pex && gent[a].tiley == pey)
          enn = a;
    if (enn == -1)
       return;
    gent[enn].active = 0;
+   // This shifts all entity indexes 'above' the selected one, down one
    for (a = enn + 1; a < noe; a++)
      {
         gent[a - 1] = gent[a];
         gent[a].active = 0;
      }
+   // Oh yea, and do this too
    noe--;
 }
 
+
+// Allow the user to give each entity its own personality
 void update_entities (void)
 {
-   int stop = 0, et = 0, c, a;
-   int tgx = gx, tgy = gy, tdm = draw_mode;
-   draw_mode = 7;
+   int stop = 0;  // Well, it doesn't mean GO...
+   int et = 0; // Index of entity
+   int c;   // Key press
+   int a;   // User input
+   int tgx = gx, tgy = gy; // Temporary window coordinates
+   int tdm = draw_mode; // Temporary draw_mode
+
+   draw_mode = A_ENTITIES;
+
    if (noe == 0)
      {
         cmessage ("No entities!");
         wait_enter ();
         return;
      }
+
    while (!stop)
      {
         draw_entdata (et);
         c = (readkey () >> 8);
         if (c == KEY_ESC)
            stop = 1;
-        if (c == KEY_UP)
-          {
-             et++;
-             if (et == noe)
-                et = 0;
-          }
         if (c == KEY_DOWN)
           {
              et--;
              if (et < 0)
                 et = noe - 1;
           }
-        if (c == KEY_1)
+        if (c == KEY_UP)
+          {
+             et++;
+             if (et == noe)
+                et = 0;
+          }
+        if (c == KEY_1) // Entity's sprite (what it looks like)
           {
              gent[et].chrx++;
              if (gent[et].chrx == MAX_EPICS)
                 gent[et].chrx = 0;
           }
-        if (c == KEY_2)
+        if (c == KEY_2) // Change the x-coordinate
           {
              rectfill (screen, 48, SH - 46, 71, SH - 41, 0);
              hline (screen, 48, SH - 41, 71, 255);
@@ -169,7 +197,7 @@ void update_entities (void)
                   gent[et].x = gent[et].tilex * 16;
                }
           }
-        if (c == KEY_3)
+        if (c == KEY_3) // Change the y-coordinate
           {
              rectfill (screen, 48, SH - 40, 71, SH - 35, 0);
              hline (screen, 48, SH - 35, 71, 255);
@@ -180,13 +208,13 @@ void update_entities (void)
                   gent[et].y = gent[et].tiley * 16;
                }
           }
-        if (c == KEY_4)
+        if (c == KEY_4) // Stand-Wander-Script-Chase mode
           {
              gent[et].movemode++;
              if (gent[et].movemode > 3)
                 gent[et].movemode = 0;
           }
-        if (c == KEY_5)
+        if (c == KEY_5) // Delay
           {
              rectfill (screen, 72, SH - 28, 95, SH - 23, 0);
              hline (screen, 72, SH - 23, 95, 255);
@@ -194,20 +222,15 @@ void update_entities (void)
              if (a != 0)
                 gent[et].delay = atoi (strbuf);
           }
-        if (c == KEY_6)
+        if (c == KEY_6) // Speed
           {
              gent[et].speed++;
              if (gent[et].speed > 7)
                 gent[et].speed = 1;
           }
-        if (c == KEY_7)
-          {
-             if (gent[et].obsmode == 0)
-                gent[et].obsmode = 1;
-             else
-                gent[et].obsmode = 0;
-          }
-        if (c == KEY_8)
+        if (c == KEY_7) // Obstructive
+           gent[et].obsmode = 1 - gent[et].obsmode;
+        if (c == KEY_8) // Change direction
           {
              gent[et].facing++;
              if (gent[et].facing > 3)
@@ -215,9 +238,14 @@ void update_entities (void)
           }
         if (c == KEY_9)
           {
+             gent[et].atype = 1 - gent[et].atype;
+
+             // This does the same as:
+             /*
              gent[et].atype++;
              if (gent[et].atype > 1)
                 gent[et].atype = 0;
+             */
           }
         if (c == KEY_0)
           {
@@ -229,21 +257,36 @@ void update_entities (void)
           }
         if (c == KEY_S)
           {
+             gent[et].snapback = 1 - gent[et].snapback;
+
+             // This does the same as:
+             /*
              gent[et].snapback++;
              if (gent[et].snapback > 1)
                 gent[et].snapback = 0;
+             */
           }
         if (c == KEY_F)
           {
+             gent[et].facehero = 1 - gent[et].facehero;
+
+             // This does the same as:
+             /*
              gent[et].facehero++;
              if (gent[et].facehero > 1)
                 gent[et].facehero = 0;
+             */
           }
         if (c == KEY_T)
           {
+             gent[et].transl = 1 - gent[et].transl;
+
+             // This does the same as:
+             /*
              gent[et].transl++;
              if (gent[et].transl > 1)
                 gent[et].transl = 0;
+             */
           }
      }
    gx = tgx;
@@ -251,10 +294,13 @@ void update_entities (void)
    draw_mode = tdm;
 }
 
+
+// Fill in the options at the bottom of the screen
 void draw_entdata (int en)
 {
    int a, tdx, tdy;
 
+   // Make sure we're not out of the boundaries
    gx = gent[en].tilex - (htiles / 2);
    gy = gent[en].tiley - (vtiles / 2);
    if (gx > gmap.xsize - 1 - htiles)
@@ -265,6 +311,7 @@ void draw_entdata (int en)
       gx = 0;
    if (gy < 0)
       gy = 0;
+
    clear (double_buffer);
    draw_map ();
    tdx = (gent[en].tilex - gx) * 16;

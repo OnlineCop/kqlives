@@ -183,7 +183,7 @@ function entity_handler(en)
              "get to them.","","");
     drawmap();
     set_run(0);
---    combat(5);
+    combat(5);
     set_run(1);
     if (get_alldead() == 1) then
       return
@@ -277,11 +277,8 @@ function entity_handler(en)
     set_autoparty(1);
     set_ent_script(HERO1,"D2R1F2");
     if (get_numchrs() == 2) then
--- BUG: This fixes the lock-up when player 2 is on the right
---      side of player 1 (player 2 gets stuck).  Not even
---      necessary if someone adds a bush or tree there... :)
       if (get_ent_tilex(HERO2) == get_ent_tilex(HERO1)+1) then
-        set_ent_script(HERO2,"L1D3R2U1F2");
+        set_ent_script(HERO2,"L1D3R1F2");
         wait_for_entity(HERO1,HERO2);
       else
         set_ent_script(HERO2,"D2R1F2");
@@ -291,6 +288,7 @@ function entity_handler(en)
       wait_for_entity(HERO1,HERO1);
     end
     set_autoparty(0);
+    orient_heroes();
     set_ent_script(37,"D5");
     wait_for_entity(37,37);
     set_ent_script(3,"L1D4");

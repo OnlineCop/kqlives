@@ -21,7 +21,7 @@ function autoexec()
   set_ent_active(22,0);
   refresh();
 end
-  
+
 function refresh()
   if (get_treasure(75) == 1) then
     set_ftile(31,4,65);
@@ -52,43 +52,43 @@ function zone_handler(zn)
 
   elseif (zn == 1) then
     change_map("main",225,104,225,104);
-  
+
   elseif (zn == 2) then
     view_range(1,24,0,46,25);
     warp(25,13,8);
-  
+
   elseif (zn == 3) then
     view_range(1,0,0,22,25);
     warp(21,13,8);
-  
+
   elseif (zn == 4) then
     view_range(1,48,0,69,24);
     warp(49,12,8);
-  
+
   elseif (zn == 5) then
     view_range(1,24,0,46,25);
     warp(45,13,8);
-  
+
   elseif (zn == 6) then
     view_range(1,0,28,24,45);
     warp(12,32,8);
-  
+
   elseif (zn == 7) then
     view_range(1,0,0,22,25);
     warp(1,13,8);
-  
+
   elseif (zn == 8) then
     view_range(1,26,31,58,45);
     warp(27,41,8);
-  
+
   elseif (zn == 9) then
     view_range(1,0,28,24,45);
     warp(1,40,8);
-  
+
   elseif (zn == 10) then
     view_range(1,60,31,72,48);
     warp(61,35,8);
-  
+
   elseif (zn == 11) then
     if (get_progress(P_AVATARDEAD) == 2) then
       set_ent_active(20,1);
@@ -171,25 +171,25 @@ function zone_handler(zn)
       set_progress(P_AVATARDEAD,3);
       set_progress(P_SAVEBREANNE,3);
     end
-  
+
   elseif (zn == 12) then
     LOC_open_door(8,15);
-  
+
   elseif (zn == 13) then
     LOC_open_door(14,15);
-  
+
   elseif (zn == 14) then
     LOC_open_door(11,11);
-  
+
   elseif (zn == 15) then
     LOC_open_door(35,10);
-  
+
   elseif (zn == 16) then
     LOC_open_door(35,16);
-  
+
   elseif (zn == 17) then
     LOC_open_door(6,37);
-  
+
   elseif (zn == 18) then
     if (get_progress(P_IRONKEY) == 0) then
       bubble(HERO1,"Locked tight.","","","");
@@ -200,46 +200,46 @@ function zone_handler(zn)
       end
       LOC_open_door(12,37);
     end
-  
+
   elseif (zn == 19) then
     LOC_open_door(18,37);
-  
+
   elseif (zn == 20) then
     chest(75,I_ARMOR6,1);
     refresh();
-  
+
   elseif (zn == 21) then
     chest(76,0,900);
     refresh();
-  
+
   elseif (zn == 22) then
     chest(77,I_ROBE4,1);
     refresh();
-  
+
   elseif (zn == 23) then
     chest(78,I_SHIELD5,1);
     refresh();
-  
+
   elseif (zn == 24) then
     chest(79,I_AGRAN,1);
     refresh();
-  
+
   elseif (zn == 25) then
     bubble(HERO1,"Egad, these books are horrible!","","","");
-  
+
   elseif (zn == 26) then
     bubble(HERO1,"These are just sick!","","","");
-  
+
   elseif (zn == 27) then
     bubble(HERO1,"These books are just plain bad.","","","");
-  
+
   elseif (zn == 28) then
     bubble(HERO1,"There is nothing here but",
                  "common supplies.","","");
-  
+
   elseif (zn == 29) then
     if (get_progress(P_AVATARDEAD) == 0) then
-    
+
       bubble(HERO1,"Breanne... are you in here?","","","");
       wait(50);
       bubble(23,"Huh?","","","");
@@ -264,15 +264,15 @@ function zone_handler(zn)
     elseif (get_progress(P_AVATARDEAD) == 1) then
       bubble(23,"What are you waiting for?","","","");
     end
-  
+
   elseif (zn == 30) then
-    bubble(15,"Hey! Who is that?","","","");
-    bubble(15,"You three take care of them!","","","");
+    bubble(5,"Hey! Who is that?","","","");
+    bubble(5,"You three take care of them!","","","");
     wait(50);
-    set_ent_script(5,"D1L1");
-    set_ent_script(6,"D1L2");
-    set_ent_script(7,"L1D1");
-    wait_for_entity(5,7);
+    set_ent_script(17,"L1D1");
+    set_ent_script(18,"D1L1");
+    set_ent_script(19,"D1L2");
+    wait_for_entity(17,19);
     wait(50);
     set_run(0);
     combat(20);
@@ -282,9 +282,9 @@ function zone_handler(zn)
     end
     set_zone(63,44,31);
     set_zone(63,45,31);
-    set_ent_active(5,0);
-    set_ent_active(6,0);
-    set_ent_active(7,0);
+    set_ent_active(17,0);
+    set_ent_active(18,0);
+    set_ent_active(19,0);
     set_ftile(67,39,250);
     set_autoparty(1);
     if (get_ent_tiley(HERO1) == 44) then
@@ -338,14 +338,14 @@ function zone_handler(zn)
     set_progress(P_AVATARDEAD,2);
     set_obs(11,24,0);
     set_zone(11,24,1);
-  
+
   elseif (zn == 32) then
     bubble(HERO1,"Hey! The door is sealed!","","","");
 
   end
 end
 
-function entity_handler(en)  
+function entity_handler(en)
   if (en == 0) then
     if (get_progress(P_IRONKEY) == 0) then
       bubble(0,"What the...","","","");
@@ -371,11 +371,11 @@ function entity_handler(en)
       set_progress(P_IRONKEY,1);
       sfx(5);
       msg("Iron key procured",255,0);
-    end    
+    end
 
   end
 end
-  
+
 function LOC_open_door(a,b)
   sfx(26);
   set_ftile(a,b,175);
@@ -383,7 +383,7 @@ function LOC_open_door(a,b)
   set_zone(a,b,0);
   set_btile(a,b+1,176);
 end
-  
+
 function LOC_avatar_abounds()
   local a,b,dx,dy;
   local ax,ay,z;
