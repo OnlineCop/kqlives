@@ -22,7 +22,7 @@
 #ifndef __SETUP_H
 #define __SETUP_H
 
-
+/*! \file*/
 
 #include <allegro.h>
 

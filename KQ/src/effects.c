@@ -152,7 +152,6 @@ void display_amount (int tgt, int cl, int aflag)
 * \param guy id of character to check (index into fighter[] array)
 * \returns 1 if alive, 0 if dead
 *
-* \sa M_LIFE M_FULLLIFE combatspell() deadeffect
 */
 int is_active (int guy)
 {

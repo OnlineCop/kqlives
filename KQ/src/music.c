@@ -231,7 +231,7 @@ static JGMOD *gsong;
 
 void init_music ()
 {
-   install_mod (8);
+   install_mod (6);
 }
 
 void shutdown_music ()

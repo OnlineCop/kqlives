@@ -19,6 +19,13 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+/*! \file
+ * \brief Item menu code
+ *
+ * \author JB
+ * \date ????????
+ */
+
 #include <stdio.h>
 #include <string.h>
 
@@ -49,8 +56,13 @@ static void sort_inventory (void);
 
 
 
-/*
-   This displays the party's list of items.
+/*! \brief Display menu
+ *
+ * This displays the party's list of items.
+ * \param ptr
+ * \param pg Page number
+ * \param sl If 1, selecting an action,
+ *           otherwise selecting an item to use/drop
 */
 static void draw_itemmenu (int ptr, int pg, int sl)
 {

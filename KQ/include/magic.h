@@ -22,7 +22,12 @@
 #ifndef __MAGIC_H
 #define __MAGIC_H
 
-
+/*! \file 
+ * \brief Stuff to work with magic.
+ *
+ * This includes the M_* defines
+ * and some function prototypes.
+*/
 
 #include "kq.h"
 

@@ -652,6 +652,8 @@ void set_graphics_mode (void)
  *
  *  \author JB
  *  \date ????????
+ *  \remark On entry is_sound=1 to initialise, on exit is_sound=0 (failure) or 2 (success)   
+ *                   is_sound=2 to shutdown, on exit is_sound=0 
  *  \remark 20020914 - 05:28 RB : Updated
  *   20020922 - ML : updated to use DUMB
  *   20020922 - ML : Changed to only reserving 8 voices. (32 seemed over-kill?) 
@@ -770,7 +772,10 @@ void play_effect (int efc, int panning)
    if (efc == SND_BAD)
      {
         blit (double_buffer, back, 0, 0, 0, 0, 352, 280);
+
+        /* PH What is this line for? */
         blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
+
         clear_bitmap (double_buffer);
         blit (back, double_buffer, xofs, yofs, xofs, yofs, 320, 240);
         if (in_combat == 0)

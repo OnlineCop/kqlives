@@ -18,6 +18,15 @@
    the Free Software Foundation,
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
+/*! \file
+ * \brief Equipment menu stuff 
+ *
+ * This file contains code to handle the equipment menu
+ * including dropping and optimizing the items carried.
+ *
+ * \author JB
+ * \date ????????
+ */
 
 #include <stdio.h>
 #include <string.h>
@@ -32,7 +41,7 @@
 
 
 
-/*  globals  */
+/* globals  */
 int tstats[13], tres[16];
 unsigned short t_inv[MAX_INV], tot, sm;
 char eqp_act;
@@ -52,10 +61,17 @@ static int deequip (int, int);
 
 
 
-/*
-   This is simply a function to display the equip menu screen.
-   It's kept separate from the equip_menu routine for the sake
-   of code cleanliness... better late than never :P
+/*!
+ * \brief Draw the equipment menu
+ *
+ * This is simply a function to display the equip menu screen.
+ * It's kept separate from the equip_menu routine for the sake
+ * of code cleanliness... better late than never :P
+ * \param c Index of chanracter to equip
+ * \param sel If sel==1, show the full range of options (Equip, Optimize,
+ *            Remove, Empty)
+ *            Otherwise just show Equip if eqp_act is 0 or Remove if it is 2.
+ *            (This is when you're selecting the item to Equip/Remove)
 */
 static void draw_equipmenu (int c, int sel)
 {
@@ -99,10 +115,15 @@ static void draw_equipmenu (int c, int sel)
      }
 }
 
-/*
-   This displays the list of items that the character posesses.
-   However, items that the character can't equip in the slot
-   specified, are greyed out.
+/*! \brief Draw list of items that can be used to equip this slot
+ *
+ * This displays the list of items that the character posesses.
+ * However, items that the character can't equip in the slot
+ * specified, are greyed out.
+ *
+ * \param c character to equip
+ * \param slot which 'part of the body' to equip
+ * \param pptr which page of the inventory to draw
 */
 static void draw_equippable (int c, int slot, int pptr)
 {
@@ -138,9 +159,12 @@ static void draw_equippable (int c, int slot, int pptr)
          draw_sprite (double_buffer, dnptr, 180 + xofs, 206 + yofs);
 }
 
-/*
-   Create a list of equipment that can be equipped in a particular
-   slot for a particular hero.
+/*! \brief List equipment that can go in a slot
+ *
+ * Create a list of equipment that can be equipped in a particular
+ * slot for a particular hero.
+ * \param c character to equip
+ * \param slot which body part to equip
 */
 static void calc_possible_equip (int c, int slot)
 {
@@ -161,12 +185,15 @@ static void calc_possible_equip (int c, int slot)
      }
 }
 
-/*
-   This calculates what equipment is optimum for a particular hero.
-   The weapon that does the most damage is chosen and the armor with
-   the best combination of defense+magic_defense is chosen.  As for a
-   relic, the one that offers the greatest overall bonus to stats is
-   selected.
+/*! \brief Calculate optimum equipment
+ *
+ * This calculates what equipment is optimum for a particular hero.
+ * The weapon that does the most damage is chosen and the armor with
+ * the best combination of defense+magic_defense is chosen.  As for a
+ * relic, the one that offers the greatest overall bonus to stats is
+ * selected.
+ *
+ * \param c which character to operate on
 */
 static void optimize_equip (int c)
 {
@@ -231,8 +258,11 @@ static void optimize_equip (int c)
    play_effect (SND_EQUIP, 128);
 }
 
-/*
-   Draw the equip menu stuff and let the user select an equip slot.
+/*! \brief Handle equip menu
+ *
+ * Draw the equip menu stuff and let the user select an equip slot.
+ *
+ * \param c character to process
 */
 void equip_menu (int c)
 {
@@ -368,8 +398,12 @@ void equip_menu (int c)
      }
 }
 
-/*
-   After choosing an equipment slot select an item to equip
+/*! \brief Handle selecting an equipment item
+ *
+ * After choosing an equipment slot select an item to equip
+ *
+ * \param c character to equip
+ * \param slot which part of the body to process
 */
 static void choose_equipment (int c, int slot)
 {
@@ -453,9 +487,14 @@ static void choose_equipment (int c, int slot)
    return;
 }
 
-/*
-   This is used to calculate the difference in stats due to 
-   (de)equipping a piece of equipment.
+/*! \brief show the effect on stats if this piece were selected
+ *
+ * This is used to calculate the difference in stats due to 
+ * (de)equipping a piece of equipment.
+ *
+ * \param aa character to process
+ * \param p2 slot to consider changing
+ * \param ii new piece of equipment to use
 */
 static void calc_equippreview (int aa, int p2, int ii)
 {
@@ -472,10 +511,15 @@ static void calc_equippreview (int aa, int p2, int ii)
    update_equipstats ();
 }
 
-/*
-   This displays the results of the above function so that
-   players can tell how a piece of equipment will affect
-   their stats.
+/*! \brief display changed stats
+ *
+ * This displays the results of the above function so that
+ * players can tell how a piece of equipment will affect
+ * their stats.
+ *
+ * \param ch character to process
+ * \param ptr slot to change, or <0 to switch to new stats
+ * \param pp new item to use
 */
 static void draw_equippreview (int ch, int ptr, int pp)
 {
@@ -541,13 +585,19 @@ static void draw_equippreview (int ch, int ptr, int pp)
      }
 }
 
-/*
-   Do the actual equip.  Of course, it will de-equip anything that
-   is currently in the specified slot.  The 'forced' var is used to
-   give the character an item and equip it all in one shot.  This is
-   typically only used for scripted events, but could be added to the
-   shop menu processing, so that things are equipped as soon as you
-   buy them.
+/*! \brief change a character's equipment
+ *
+ * Do the actual equip.  Of course, it will de-equip anything that
+ * is currently in the specified slot.  The 'forced' var is used to
+ * give the character an item and equip it all in one shot.  This is
+ * typically only used for scripted events, but could be added to the
+ * shop menu processing, so that things are equipped as soon as you
+ * buy them.
+ *
+ * \param c character to process
+ * \param itm item to add
+ * \param forced non zero if character doesn't already have the item (see above)
+ * \returns zero if equip didn't work
 */
 static int equip (int c, int itm, int forced)
 {
@@ -596,9 +646,14 @@ static int equip (int c, int itm, int forced)
    return 1;
 }
 
-/*
-   Hmm... this is hard to describe :)  The functions makes sure you have
-   room to de-equip before it actual does anything.
+/*! \brief check if item can be de-equipped, then do it.
+ *
+ * Hmm... this is hard to describe :)  The functions makes sure you have
+ * room to de-equip before it actual does anything.
+ *
+ * \param c character to process
+ * \param ptr slot to de-equip
+ * \returns 0 if unsuccessful, 1 if successful
 */
 static int deequip (int c, int ptr)
 {

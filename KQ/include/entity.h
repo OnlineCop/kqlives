@@ -22,7 +22,7 @@
 #ifndef __ENTITY_H
 #define __ENTITY_H
 
-
+/*! \file */
 
 #define MAX_ENT     50
 #define ID_ENEMY    254

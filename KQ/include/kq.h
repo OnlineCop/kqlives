@@ -19,7 +19,11 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-/*! \file */
+/*! \file 
+ * \brief Main include file for KQ
+ * \author JB
+ * \date ??????
+ */
 
 #ifndef __KQ_H
 #define __KQ_H
@@ -156,7 +160,9 @@
 #define W_CHENDIGAL    29
 /*\}*/
 
-/*! \name Use modes */
+/*!\name Use modes 
+ * Specify how an item can be used.  
+ */
 /*\{*/
 #define USE_NOT          0
 #define USE_ANY_ONCE     1
@@ -190,7 +196,7 @@
 #define MOVE_RIGHT   4
 /*\}*/
 
-/*! \name facing directions */
+/*! \name Facing directions */
 /*\{*/
 #define FACE_DOWN    0
 #define FACE_UP      1
@@ -231,12 +237,16 @@
 #define MAP_CULT           28
 /*\}*/
 
-/*! \brief Animation specifier */
+/*! \brief Animation specifier 
+ *
+ * Marks a block of tiles that are interchanged to give
+ * an animation effect. Used in check_animation()
+*/
 typedef struct
 {
-   unsigned short start;
-   unsigned short end;
-   unsigned short delay;
+  unsigned short start; /*!< First tile in sequence  */
+  unsigned short end; /*!< Last tile in sequence */
+  unsigned short delay; /*!< Frames to wait between tile changes */ 
 }
 s_anim;
 

@@ -32,6 +32,7 @@
 #include "itemdefs.h"
 #include "fade.h"
 #include "music.h"
+#include "timing.h"
 
 unsigned short shops[NUMSHOPS][12][3] = {
    {{I_SHIELD1, 6, 10},

@@ -18,7 +18,22 @@
    the Free Software Foundation,
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
-/* $Id: kq.c,v 1.6 2002-10-25 17:19:56 peterhull90 Exp $ */
+/*! \file
+ * \brief Main file for KQ
+ *
+ * This file includes the main() function,
+ * most of the global variables, and some other stuff,
+ * for example, controls, some initialisation and
+ * timing.
+ *
+ * \note 23: I don't know if we're going to do anything to lessen the number of
+ * globals, but I tried to lay them out as attractivly as possible until we
+ * figure out what all of them are for. Plus I tried to keep everything below
+ * 80 characters a line, and labels what few variables struck me as obvious
+ *
+ * \author JB
+ * \date ????????
+ */
 
 #include <stdio.h>
 #include <time.h>
@@ -42,48 +57,53 @@
 #include "setup.h"
 #include "scrnshot.h"
 #include "sgame.h"
-/*
-   globals - and there's plenty of them!
-*/
 
-/*
-   23: I don't know if we're going to do anything to lessen the number of
-   globals, but I tried to lay them out as attractivly as possible until we
-   figure out what all of them are for. Plus I tried to keep everything below
-   80 characters a line, and labels what few variables struck me as obvious
-*/
-
+/*! Name of the current map */
 char curmap[16];
+/*! Names of the tile sets (in the datafile) */
 char icon_sets[6][16] = { "LAND_PCX", "NEWTOWN_PCX", "CASTLE_PCX",
    "INCAVE_PCX", "VILLAGE_PCX", "MOUNT_PCX"
 };
 
-/*
-   23: apparently flags for determiining keypresses and player movement. Seems
-   to use some kind of homebrew Hungarian notation; I assume 'b' means bool.
-   Most if not all of these are updated in readcontrols() below ....
-*/
+/*! \brief Which keys are pressed.
+ *
+ *   23: apparently flags for determiining keypresses and player movement. Seems
+ * to use some kind of homebrew Hungarian notation; I assume 'b' means bool.
+ * Most if not all of these are updated in readcontrols() below ....
+ */
 int right, left, up, down, besc, balt, bctrl, benter;
+/*!  Scan codes for the keys */
 int kright, kleft, kup, kdown, kesc, kenter, kalt, kctrl;
+/*! Joystick buttons (currently not used) */
 int jbalt, jbctrl, jbenter, jbesc;
-int vx, vy, mx, my, steps = 0, lastm[PSIZE];
 
-/* 23: various global bitmaps */
-BITMAP *double_buffer, *map_icons[MAX_TILES];
-BITMAP *back, *tc, *tc2, *bub[8], *b_shield, *b_shell, *b_repulse, *b_mp;
-BITMAP *cframes[NUM_FIGHTERS][MAXCFRAMES], *tcframes[NUM_FIGHTERS][MAXCFRAMES];
-BITMAP *frames[MAXCHRS][MAXFRAMES];
-BITMAP *eframes[MAXE][MAXEFRAMES], *pgb[9], *sfonts[5], *bord[8];
-BITMAP *menuptr, *mptr, *sptr, *stspics, *sicons, *bptr;
-BITMAP *missbmp, *noway, *upptr, *dnptr;
-BITMAP *shadow[MAX_SHADOWS];
-BITMAP *kfonts, *portrait[MAXCHRS];
+/*! View and character positions */
+int vx, vy, mx, my;
+/*! What was the last direction each player moved in */
+int steps = 0, lastm[PSIZE];
 
+/*! 23: various global bitmaps */
+BITMAP *double_buffer, *map_icons[MAX_TILES],
+  *back, *tc, *tc2, *bub[8], *b_shield, *b_shell, *b_repulse, *b_mp,
+*cframes[NUM_FIGHTERS][MAXCFRAMES], *tcframes[NUM_FIGHTERS][MAXCFRAMES],
+*frames[MAXCHRS][MAXFRAMES],
+*eframes[MAXE][MAXEFRAMES], *pgb[9], *sfonts[5], *bord[8],
+*menuptr, *mptr, *sptr, *stspics, *sicons, *bptr,
+*missbmp, *noway, *upptr, *dnptr,
+*shadow[MAX_SHADOWS],
+ *kfonts, *portrait[MAXCHRS];
+
+/*! Layers in the map */
 unsigned short *map_seg, *b_seg, *f_seg;
-unsigned char *progress, *z_seg, *s_seg, *o_seg, *treasure;
-
+/*! Zone, shadow and obstacle layers */
+unsigned char  *z_seg, *s_seg, *o_seg;
+/*! keeps track of tasks completed and treasure chests opened */
+unsigned char *progress, *treasure;
+/*! Current map */
 s_map g_map;
+/*! Current entities (players+NPCs) */
 s_entity g_ent[MAX_ENT + PSIZE];
+/*! Tile animation specifiers for each tile set */
 s_anim tanim[6][MAX_ANIM] = {
    {{2, 5, 25}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}},
    {{158, 159, 50}, {160, 163, 25}, {176, 179, 25}, {257, 258, 50},
@@ -94,22 +114,62 @@ s_anim tanim[6][MAX_ANIM] = {
    {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}}
 };
 
+/*! Tile animation specifiers for the current tileset */
 s_anim adata[MAX_ANIM];
 
-int noe = 0, pidx[PSIZE], numchrs = 0, gp = 0, xofs, yofs;
+/*! Number of enemies */
+int noe = 0;
+/*! Identifies characters in the party */
+int pidx[PSIZE];
+/*! Number of characters in the party */
+int numchrs = 0;
+/*! Current gold */
+int gp = 0;
+/*! pixel offset in the current map view */
+int xofs, yofs;
+/*! Sound and music volume */
 int gsvol = 250, gmvol = 250;
-unsigned char autoparty = 0, autofollow = 1, alldead = 0, is_sound = 1;
-unsigned char deadeffect = 0, vfollow = 1, use_sstone = 0;
-unsigned char kq_version = 91, hold_fade = 0, cansave = 0, skip_intro = 0;
+/*! Is the party under 'automatic' (i.e. scripted) control */ 
+unsigned char autoparty = 0;
+/* Not used:
+unsigned char autofollow = 1;
+*/
+/*! Are all heroes dead? */
+unsigned char alldead = 0;
+/*! Is sound activated? */
+unsigned char is_sound = 1;
+/*! Makes is_active() return TRUE even if the character is dead */
+unsigned char deadeffect = 0;
+/*! Does the viewport follow the characters?*/
+unsigned char vfollow = 1;
+/*! Whether the sun stone can be used in this map*/
+unsigned char use_sstone = 0;
+/*! Version number (used for version control in sgame.c) */
+unsigned char kq_version = 91;
+/*! If non-zero, don't do fade effects. The only place this is 
+ * set is in scripts. */
+unsigned char hold_fade = 0;
+/*! True if player can save at this point */
+unsigned char cansave = 0;
+/*! True if the intro is to be skipped (the bit where the heroes learn of the quest) */ 
+unsigned char skip_intro = 0;
+/*! Graphics mode settings */
 unsigned char wait_retrace = 0, windowed = 0, stretch_view = 0;
-unsigned short tilex[MAX_TILES], adelay[MAX_ANIM];
+/*! Current sequence position of animated tiles */
+unsigned short tilex[MAX_TILES];
+/*! Current 'time' for animated tiles. When this increments to adata[].delay,
+ * the next tile is shown */
+unsigned short adelay[MAX_ANIM];
+/*! Temporary buffer for string operations (used everywhere!) */
 char *strbuf;
+/*! Charcters actually in play */
 s_player party[MAXCHRS];
 
-/*
-   23: Self explanitory. This would all correspond to the s_player structure.
-   I had to invent my own little (somewhat ugly) layout since it all shot past
-   the 80-character mark by quite a ways :)
+/*! Initial character data
+ *
+ * 23: Self explanatory. This would all correspond to the s_player structure.
+ * I had to invent my own little (somewhat ugly) layout since it all shot past
+ * the 80-character mark by quite a ways :)
 */
 s_player players[MAXCHRS] = {
    {
@@ -193,7 +253,7 @@ s_player players[MAXCHRS] = {
      0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
     }
 };
-
+/*! Table to manage stats for the level up process (see level_up()) */
 unsigned short lup[MAXCHRS][20] = {
    {10, 70, 9, 2, 190, 90, 150, 60, 70, 15, 20, 20, 50, 50, 0, 10, 0},
    {10, 70, 8, 4, 120, 120, 120, 90, 80, 10, 50, 45, 25, 45, 0, 25, 0},
@@ -204,41 +264,73 @@ unsigned short lup[MAXCHRS][20] = {
    {10, 70, 7, 5, 110, 170, 90, 120, 70, 25, 50, 20, 25, 25, 0, 30, 0},
    {10, 70, 8, 6, 50, 100, 50, 160, 160, 10, 90, 90, 5, 0, 0, 20, 0}
 };
+/*! Characters when they arein combat */
 s_fighter fighter[NUM_FIGHTERS];
+/*! Temp store for adjusted stats */
 s_fighter tempa, tempd;
 
-int noi, shin[12], dct = 0;
-char sname[39], ctext[39];
+/*! Name of current shop */
+char sname[39];
+/*! Number of items in a shop */
+int noi;
+/*! Items in a shop */
+int shin[12];
+/*! Should we display a box with ctext in it (used in combat) */
+int  dct = 0;
+/*! Name of current spell or special ability */
+char ctext[39];
 
 /* PH: needed these fwd declarations */
+#ifdef KQ_CHEATS
 static void data_dump (void);
+#endif
 static BITMAP *alloc_bmp (int, int, char *);
 static void allocate_stuff (void);
 static void load_data (void);
 
 
-/* 23: for keeping time. timer_counter is the game timer the main game loop uses
-   for logic (see int main()) and the rest track your playtime in hours, minutes
-   and seconds. They're all used in the my_counter timer function just below*/
+/*! 23: for keeping time. timer_counter is the game timer the main game loop uses
+ *  for logic (see int main()) and the rest track your playtime in hours, minutes
+ * and seconds. They're all used in the my_counter() timer function just below
+*/
 volatile int timer = 0, ksec = 0, kmin = 0, khr = 0, timer_count = 0;
 
+/*! Current colour map */
 COLOR_MAP cmap;
 
-unsigned char can_run = 1, display_desc = 0;
-unsigned char draw_background = 1, draw_middle = 1, draw_foreground =
-   1, draw_shadow = 1;
+/*! Party can run away from combat? */
+unsigned char can_run = 1;
+/*! Is the map description is displayed on screen? */
+unsigned char display_desc = 0;
+/*! Which map layers should be drawn. These are set when the map is loaded; see change_map()*/
+unsigned char draw_background = 1, draw_middle = 1, 
+  draw_foreground = 1, draw_shadow = 1;
+/*! Items in inventory. g_inv[][0] is the item id, g_inv[][1] is the quantity */
 unsigned short g_inv[MAX_INV][2];
-
-int view_x1, view_y1, view_x2, view_y2, view_on = 0, in_combat = 0;
-int frate, mfrate = 0, show_frate = 0, use_joy = 1, cheat_loaded = 0;
-
+/*! View coordinates; the view is a way of selecting a subset of th emap to show. */
+int view_x1, view_y1, view_x2, view_y2, view_on = 0;
+/*! Are we in combat mode? */
+int in_combat = 0;
+/*! Frame rate stuff */
+int frate, mfrate = 0, show_frate = 0;
+/*! Should we use the joystick \note Not implemented at the moment */
+int use_joy = 1;
+#ifdef KQ_CHEATS
+/*! Has the 'cheat' script been loaded? */
+int cheat_loaded = 0;
+/*! Is cheat mode activated? */
 int cheat = 0;
-int warx = 0, wary = 0;
+#endif
+
+/* These are unused: 
+ * int warx = 0, wary = 0;
+*/
 
 
 
-/*
-   New interrupt handler set to keep game time.
+/*! \brief Allegro timer callback
+ *
+ *  New interrupt handler set to keep game time.
 */
 void my_counter (void)
 {
@@ -267,13 +359,13 @@ void my_counter (void)
 
    timer_count++;
 }
-
 END_OF_FUNCTION (my_counter);
 
 
 
-/*
-   Updates all of the game controls according to user input.
+/*! \brief Handle user input.
+ *
+ *  Updates all of the game controls according to user input.
 */
 void readcontrols (void)
 {
@@ -316,8 +408,10 @@ void readcontrols (void)
 
    if (key[KEY_ALT] && key[KEY_X])
       program_death ("X-ALT pressed... exiting.");
+#ifdef KQ_CHEATS
    if (key[KEY_F11])
       data_dump ();
+#endif
 
    /* ML,2002.09.21: Saves sequential screen captures to disk. See scrnshot.c/h for more info. */
    if (key[KEY_F12])
@@ -352,9 +446,14 @@ void readcontrols (void)
 }
 
 
-
-/* 23: I kinda made up my own rules here. How are we handling one-statement
-   if's like that? */
+#ifdef KQ_CHEATS
+/*! \brief Write debug data to disk
+ *
+ * Writes out the treasure and progress arrays
+ * in text format to "treasure.log" and 
+ * "progress.log" respectively. This happens in
+ * response to user hitting f11.
+ */
 void data_dump (void)
 {
    FILE *ff;
@@ -369,20 +468,23 @@ void data_dump (void)
 
    ff = fopen ("progress.log", "w");
    if (!ff)
-      program_death ("could not open treasure.log!");
+      program_death ("could not open progress.log!");
+   /* PH FIXME (wrong filename!)  program_death ("could not open treasure.log!"); */
    for (a = 0; a < 200; a++)
       fprintf (ff, "%d = %d\n", a, progress[a]);
    fclose (ff);
 }
+#endif
 
 
-
-/*
-   This is used to determine what part of the map is
-   visible on the screen.  Usually, the party can walk around
-   in the center of the screen a bit without causing it to
-   scroll.  The centre parameter is mostly used for warps and
-   such, so that the players start in the centre of the screen.
+/*! \brief Move the viewport if necessary to include the players
+ *
+ * This is used to determine what part of the map is
+ * visible on the screen.  Usually, the party can walk around
+ * in the center of the screen a bit without causing it to
+ * scroll.  The centre parameter is mostly used for warps and
+ * such, so that the players start in the centre of the screen.
+ * \param centre Unused variable
 */
 void calc_viewport (int centre)
 {
@@ -459,9 +561,20 @@ void calc_viewport (int centre)
 
 
 
-/*
-   This loads a new map and performs all of the functions
-   that accompany the loading of a new map.
+/*! \brief Free old map data and load a new one
+ *
+ * This loads a new map and performs all of the functions
+ * that accompany the loading of a new map.
+ *
+ * \param map_name Base name of map (xxx -> maps/xxx.map)
+ * \param msx New x-coord for player. Pass 0 for msx and msy 
+ *            to use the 'default' position stored in the 
+ *            map file (s_map::stx and s_map::sty)
+ * \param msy New y-coord for player
+ * \param mvx New x-coord for camera. Pass 0 for mvx and mvy 
+ *            to use the default (also s_map::stx and
+ *            s_map::sty)
+ * \param mvy New y-coord for camera
 */
 void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
 {
@@ -638,14 +751,16 @@ void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
 
 
 
-/*
-   This routine is called after every final step onto
-   a new tile (not after warps or such things).  It
-   just checks if the zone value for this co-ordinate is
-   not zero and then it calls the event handler.  However,
-   there is a member of the map structure called zero_zone
-   that let's you call the event handler on 0 zones if you
-   wish.
+/*! \brief Zone event handler
+ *
+ * This routine is called after every final step onto
+ * a new tile (not after warps or such things).  It
+ * just checks if the zone value for this co-ordinate is
+ * not zero and then it calls the event handler.  However,
+ * there is a member of the map structure called zero_zone
+ * that let's you call the event handler on 0 zones if you
+ * wish.
+ * This function also handles the Repulse functionality
 */
 void zone_check (void)
 {
@@ -682,10 +797,14 @@ void zone_check (void)
 
 
 
-/*
-   Fade out... change co-ordinates... fade in.
-   The wtx/wty co-ordinates indicate where to put the player.
-   The wvx/wvy co-ordinates indicate where to put the camera.
+/*! \brief Move player(s) to new coordinates
+ *
+ * Fade out... change co-ordinates... fade in.
+ * The wtx/wty co-ordinates indicate where to put the player.
+ * The wvx/wvy co-ordinates indicate where to put the camera.
+ * \param wtx New x-coord
+ * \param wty New y-coord
+ * \param fspeed Speed of fading (See do_transition())
 */
 void warp (int wtx, int wty, int fspeed)
 {
@@ -723,8 +842,9 @@ void warp (int wtx, int wty, int fspeed)
 
 
 
-/*
-   This updates tile indexes for animation threads.
+/*! \brief Do tile animation
+ *
+ * This updates tile indexes for animation threads.
 */
 void check_animation (void)
 {
@@ -752,10 +872,11 @@ void check_animation (void)
 
 
 
-/*
-   This function is called when the player presses the 'alt' key.
-   Things that can be activated are entities and zones that are
-   obstructed.
+/*! \brief Alt key handler 
+ *
+ * This function is called when the player presses the 'alt' key.
+ * Things that can be activated are entities and zones that are
+ * obstructed.
 */
 void activate (void)
 {
@@ -823,9 +944,11 @@ void activate (void)
 
 
 
-/*
-   This is used to wait and make sure that the user has
-   released a key before moving on.
+/*! \brief wait for key release 
+ *
+ * This is used to wait and make sure that the user has
+ * released a key before moving on.
+ * \note Waits at most 20 'ticks'
 */
 void unpress (void)
 {
@@ -864,8 +987,9 @@ void unpress (void)
 
 
 
-/*
-   Simply wait for the 'alt' key to be pressed.
+/*! \brief Wait for ALT 
+ *
+ *   Simply wait for the 'alt' key to be pressed.
 */
 void wait_enter (void)
 {
@@ -888,9 +1012,11 @@ void wait_enter (void)
 
 
 
-/*
-   This is for logging events within the program.  Very
-   useful for debugging and tracing.
+/*! \brief Log events
+ *
+ * This is for logging events within the program.  Very
+ * useful for debugging and tracing.
+ * \param msg String to add to log file
 */
 void klog (char *msg)
 {
@@ -907,10 +1033,11 @@ void klog (char *msg)
 
 
 
-/*
-   Set up allegro, set up variables, load stuff, blah...
+/*! \brief Application start-up code 
+ *
+ *   Set up allegro, set up variables, load stuff, blah...
 */
-void startup (void)
+static void startup (void)
 {
    int p, i;
    time_t t;
@@ -1071,12 +1198,13 @@ void startup (void)
 
 
 
-/*
-   Real descriptive huh?  This loads and sets up the
-   fonts and entity frames and calls the functions to
-   loads items and spells.
+/*! \brief data loading process 
+ *
+ *   Real descriptive huh?  This loads and sets up the
+ * fonts and entity frames and calls the functions to
+ * loads items and spells.
 */
-void load_data (void)
+static void load_data (void)
 {
    int p, q;
    DATAFILE *pb;
@@ -1092,10 +1220,11 @@ void load_data (void)
    unload_datafile_object (pb);
 }
 
-/*
-   A separate function to create all global bitmaps needed in the game.
+/*! \brief Create bitmaps
+ *
+ * A separate function to create all global bitmaps needed in the game.
 */
-void allocate_stuff (void)
+static void allocate_stuff (void)
 {
    int i, p;
 
@@ -1166,8 +1295,16 @@ void allocate_stuff (void)
 }
 
 
-
-BITMAP *alloc_bmp (int bx, int by, char *bname)
+/*! \brief Create bitmap
+ *
+ * This function allocates a bitmap and kills the 
+ * program if it fails. The name you supply is 
+ * shown if this happens.
+ * \param bx Width
+ * \param by Height
+ * \param bname Name of bitmap 
+ */
+static BITMAP *alloc_bmp (int bx, int by, char *bname)
 {
    BITMAP *tmp;
 
@@ -1184,10 +1321,11 @@ BITMAP *alloc_bmp (int bx, int by, char *bname)
 
 
 
-/*
-   This frees memory and such things.
+/*! \brief Free allocated memory
+ *
+ * This frees memory and such things.
 */
-void deallocate_stuff (void)
+static void deallocate_stuff (void)
 {
    int i, p;
 
@@ -1280,9 +1418,10 @@ void deallocate_stuff (void)
 
 
 
-/*
-   Set up the player characters and load data specific
-   to them.
+/*! \brief Initialise all players 
+ *
+ * Set up the player characters and load data specific
+ * to them.
 */
 void init_players (void)
 {
@@ -1319,11 +1458,13 @@ void init_players (void)
 
 
 
-/*
-   Why not just use rest() you ask?  Well, this function
-   kills time, but it also processes entities.  This function
-   is basically used to run entity scripts and for automatic
-   party movement.
+/*! \brief Pause for a time
+ *
+ *   Why not just use rest() you ask?  Well, this function
+ * kills time, but it also processes entities.  This function
+ * is basically used to run entity scripts and for automatic
+ * party movement.
+ * \param dtime Time in frames
 */
 void kwait (int dtime)
 {
@@ -1346,7 +1487,7 @@ void kwait (int dtime)
 
         drawmap ();
         blit2screen (xofs, yofs);
-
+#ifdef KQ_CHEATS
         if (key[KEY_W] && key[KEY_ALT])
           {
              sprintf (strbuf, "kwait(); cnt = %d, dtime = %d, timer_count = %d",
@@ -1354,7 +1495,7 @@ void kwait (int dtime)
              klog (strbuf);
              break;
           }
-
+#endif
         if (key[KEY_X] && key[KEY_ALT])
           {
              sprintf (strbuf, "kwait(); cnt = %d, dtime = %d, timer_count = %d",
@@ -1369,11 +1510,15 @@ void kwait (int dtime)
 
 
 
-/*
-   This does like wait() and processes entities...
-   however, this function waits for particular entities
-   to finish scripted movement rather than waiting for
-   a specific amount of time to pass.
+/*! \brief Wait for scripted movement to finish
+ *
+ * This does like wait() and processes entities...
+ * however, this function waits for particular entities
+ * to finish scripted movement rather than waiting for
+ * a specific amount of time to pass.
+ * Specify a range of entities to wait for.
+ * \param est First entity
+ * \param efi Last entity 
 */
 void wait_for_entity (int est, int efi)
 {
@@ -1381,7 +1526,7 @@ void wait_for_entity (int est, int efi)
 
    if (efi < est)
       return;
-
+   /* PH perverse code: */
    ewatch = efi - est + 1;
 
    for (a = est; a < est + ewatch; a++)
@@ -1437,8 +1582,10 @@ void wait_for_entity (int est, int efi)
 
 
 
-/*
-   Kill the program and spit out a message.
+/*! \brief End program due to fatal error
+ *
+ *   Kill the program and spit out a message.
+ * \param message Text to put into log
 */
 void program_death (char *message)
 {
@@ -1447,7 +1594,13 @@ void program_death (char *message)
    exit (-1);
 }
 
-
+/*! \brief Is this character in the party? 
+ *
+ * Determine if a given character is currently
+ * in play.
+ * \param pn Character to ask about
+ * \returns Where it is in the party list (1 or 2), or 0 if not
+ */
 int in_party (int pn)
 {
    int a;
@@ -1461,8 +1614,9 @@ int in_party (int pn)
 
 
 
-/*
-   Well, this one is pretty obvious.
+/*! \brief Main function
+ *
+ * Well, this one is pretty obvious.
 */
 int main (void)
 {
@@ -1509,5 +1663,4 @@ int main (void)
    deallocate_stuff ();
    return 0;
 }
-
 END_OF_MAIN ();

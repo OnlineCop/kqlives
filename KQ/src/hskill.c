@@ -19,6 +19,13 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+/*! \file 
+ * \brief Hero skills
+ *
+ * \author JB
+ * \date ????????
+ */
+
 #include <stdio.h>
 #include <string.h>
 
@@ -43,7 +50,13 @@
 static void infusion (int, int);
 
 
-
+/*! \brief Is hero's special skill available
+ *
+ * Check if the hero can use his/her special
+ * skill at this point in combat
+ * \param dude hero to check (index into pidx[])
+ * \returns 1 if skill is available, 0 otherwise
+ */
 int hero_skillcheck (int dude)
 {
    int a, b = 0;
@@ -132,6 +145,13 @@ int hero_skillcheck (int dude)
    return 0;
 }
 
+/*! \brief Activate the special skill 
+ *
+ * This function activates the special skill for a hero,
+ * including targetting etc. if required.
+ * \param who Hero to process
+ * \returns 1 if the skill was used, otherwise 0
+ */
 int skill_use (int who)
 {
    int tgt, fitm, a, b, c, p, d = 0, cts, tx, ty, g = 0, nt =
@@ -485,9 +505,12 @@ int skill_use (int who)
    return 1;
 }
 
-/*
-   This function is only used for Corin when he
-   uses his Infuse ability.
+/*! \brief Do infusion skill
+ *
+ * This function is only used for Corin when he
+ * uses his Infuse ability.
+ * \param c Hero (index in fighter[] array)
+ * \param sn Thing to infuse
 */
 static void infusion (int c, int sn)
 {
