@@ -32,6 +32,31 @@ int load_s_map (s_map * sm, PACKFILE * f)
    return 0;
 }
 
+int save_s_map (s_map * sm, PACKFILE * f)
+{
+   pack_putc (sm->map_no, f);
+   pack_putc (sm->zero_zone, f);
+   pack_putc (sm->map_mode, f);
+   pack_putc (sm->can_save, f);
+   pack_putc (sm->tileset, f);
+   pack_putc (sm->use_sstone, f);
+   pack_putc (sm->can_warp, f);
+   pack_putc (sm->extra_byte, f);
+   pack_iputl (sm->xsize, f);
+   pack_iputl (sm->ysize, f);
+   pack_iputl (sm->pmult, f);
+   pack_iputl (sm->pdiv, f);
+   pack_iputl (sm->stx, f);
+   pack_iputl (sm->sty, f);
+   pack_iputl (sm->warpx, f);
+   pack_iputl (sm->warpy, f);
+   pack_iputl (sm->extra_sdword1, f);
+   pack_iputl (sm->extra_sdword2, f);
+   pack_fwrite (sm->song_file, sizeof (sm->song_file), f);
+   pack_fwrite (sm->map_desc, sizeof (sm->map_desc), f);
+   return 0;
+}
+
 int load_s_entity (s_entity * s, PACKFILE * f)
 {
    s->chrx = pack_getc (f);
@@ -63,6 +88,40 @@ int load_s_entity (s_entity * s, PACKFILE * f)
    s->facehero = pack_getc (f);
    s->transl = pack_getc (f);
    pack_fread (s->script, sizeof (s->script), f);
+   return 0;
+}
+
+int save_s_entity (s_entity * s, PACKFILE * f)
+{
+   pack_putc (s->chrx, f);
+   pack_putc (0, f);            /* alignment */
+   pack_iputw (s->x, f);
+   pack_iputw (s->y, f);
+   pack_iputw (s->tilex, f);
+   pack_iputw (s->tiley, f);
+   pack_putc (s->eid, f);
+   pack_putc (s->active, f);
+   pack_putc (s->facing, f);
+   pack_putc (s->moving, f);
+   pack_putc (s->movcnt, f);
+   pack_putc (s->framectr, f);
+   pack_putc (s->movemode, f);
+   pack_putc (s->obsmode, f);
+   pack_putc (s->delay, f);
+   pack_putc (s->delayctr, f);
+   pack_putc (s->speed, f);
+   pack_putc (s->scount, f);
+   pack_putc (s->cmd, f);
+   pack_putc (s->sidx, f);
+   pack_putc (s->extra, f);
+   pack_putc (s->chasing, f);
+   pack_iputw (0, f);           /* alignment */
+   pack_iputl (s->cmdnum, f);
+   pack_putc (s->atype, f);
+   pack_putc (s->snapback, f);
+   pack_putc (s->facehero, f);
+   pack_putc (s->transl, f);
+   pack_fwrite (s->script, sizeof (s->script), f);
    return 0;
 }
 

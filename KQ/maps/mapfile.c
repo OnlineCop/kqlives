@@ -271,9 +271,19 @@ void load_map (void)
              load_s_entity(gent+i, pf);
           }
         bufferize ();
-        pack_fread (map, (gmap.xsize * gmap.ysize * 2), pf);
-        pack_fread (b_map, (gmap.xsize * gmap.ysize * 2), pf);
-        pack_fread (f_map, (gmap.xsize * gmap.ysize * 2), pf);
+	for (q=0; q<gmap.ysize; ++q)
+	  for (p=0; p<gmap.xsize; ++p)
+	    map[q*gmap.xsize+p]=pack_igetw(pf);
+        for (q=0; q<gmap.ysize; ++q)
+          for (p=0; p<gmap.xsize; ++p)
+            b_map[q*gmap.xsize+p]=pack_igetw(pf);
+        for (q=0; q<gmap.ysize; ++q)
+          for (p=0; p<gmap.xsize; ++p)
+            f_map[q*gmap.xsize+p]=pack_igetw(pf);
+
+/*         pack_fread (map, (gmap.xsize * gmap.ysize * 2), pf); */
+/*         pack_fread (b_map, (gmap.xsize * gmap.ysize * 2), pf); */
+/*         pack_fread (f_map, (gmap.xsize * gmap.ysize * 2), pf); */
         pack_fread (z_map, (gmap.xsize * gmap.ysize), pf);
         pack_fread (sh_map, (gmap.xsize * gmap.ysize), pf);
         pack_fread (o_map, (gmap.xsize * gmap.ysize), pf);
@@ -312,7 +322,7 @@ void load_map (void)
 void save_map (void)
 {
    char fname[16];
-   int ld;
+   int ld,p,q;
    PACKFILE *pf;
 
    rectfill (screen, 0, 0, 319, 29, 0);
@@ -346,11 +356,24 @@ void save_map (void)
      {
         strcpy (map_fname, fname);
         pf = pack_fopen (fname, F_WRITE_PACKED);
-        pack_fwrite (&gmap, sizeof (s_map), pf);
-        pack_fwrite (&gent, sizeof (s_entity) * 50, pf);
-        pack_fwrite (map, (gmap.xsize * gmap.ysize * 2), pf);
-        pack_fwrite (b_map, (gmap.xsize * gmap.ysize * 2), pf);
-        pack_fwrite (f_map, (gmap.xsize * gmap.ysize * 2), pf);
+/*         pack_fwrite (&gmap, sizeof (s_map), pf); */
+/*         pack_fwrite (&gent, sizeof (s_entity) * 50, pf); */
+	save_s_map(&gmap, pf);
+	for (q=0; q<50; ++q) {
+	  save_s_entity(&gent[q], pf);
+	}
+ 	for (q=0; q<gmap.ysize; ++q)
+	  for (p=0; p<gmap.xsize; ++p)
+	    pack_iputw(map[q*gmap.xsize+p], pf);
+        for (q=0; q<gmap.ysize; ++q)
+          for (p=0; p<gmap.xsize; ++p)
+            pack_iputw(b_map[q*gmap.xsize+p], pf);
+        for (q=0; q<gmap.ysize; ++q)
+          for (p=0; p<gmap.xsize; ++p)
+            pack_iputw(f_map[q*gmap.xsize+p], pf);
+/*        pack_fwrite (map, (gmap.xsize * gmap.ysize * 2), pf); */
+/*         pack_fwrite (b_map, (gmap.xsize * gmap.ysize * 2), pf); */
+/*         pack_fwrite (f_map, (gmap.xsize * gmap.ysize * 2), pf); */
         pack_fwrite (z_map, (gmap.xsize * gmap.ysize), pf);
         pack_fwrite (sh_map, (gmap.xsize * gmap.ysize), pf);
         pack_fwrite (o_map, (gmap.xsize * gmap.ysize), pf);
