@@ -15,7 +15,8 @@
 
    You should have received a copy of the GNU General Public License
    along with KQ; see the file COPYING.  If not, write to
-   the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+   the Free Software Foundation,
+       675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
 #include "res.h"

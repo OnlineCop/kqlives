@@ -88,139 +88,140 @@ void process_entities (void)
  * This has to adjust for each entity's speed.
  * 'Normal' speed appears to be 4.
  *
- * \param   i Index of entity
+ * \param   target_entity Index of entity
  */
-static void speed_adjust (int i)
+static void speed_adjust (int target_entity)
 {
-   if (g_ent[i].speed < 4) {
-      switch (g_ent[i].speed) {
+   if (g_ent[target_entity].speed < 4) {
+      switch (g_ent[target_entity].speed) {
       case 1:
-         if (g_ent[i].scount < 3) {
-            g_ent[i].scount++;
+         if (g_ent[target_entity].scount < 3) {
+            g_ent[target_entity].scount++;
             return;
          }
          break;
       case 2:
-         if (g_ent[i].scount < 2) {
-            g_ent[i].scount++;
+         if (g_ent[target_entity].scount < 2) {
+            g_ent[target_entity].scount++;
             return;
          }
          break;
       case 3:
-         if (g_ent[i].scount < 1) {
-            g_ent[i].scount++;
+         if (g_ent[target_entity].scount < 1) {
+            g_ent[target_entity].scount++;
             return;
          }
          break;
       }
    }
-   if (g_ent[i].speed < 5)
-      process_entity (i);
-   switch (g_ent[i].speed) {
+   if (g_ent[target_entity].speed < 5)
+      process_entity (target_entity);
+   switch (g_ent[target_entity].speed) {
    case 5:
-      process_entity (i);
-      process_entity (i);
+      process_entity (target_entity);
+      process_entity (target_entity);
       break;
    case 6:
-      process_entity (i);
-      process_entity (i);
-      process_entity (i);
+      process_entity (target_entity);
+      process_entity (target_entity);
+      process_entity (target_entity);
       break;
    case 7:
-      process_entity (i);
-      process_entity (i);
-      process_entity (i);
-      process_entity (i);
+      process_entity (target_entity);
+      process_entity (target_entity);
+      process_entity (target_entity);
+      process_entity (target_entity);
       break;
    }
    /* TT: This is to see if the player is "running" */
-   if (key[kctrl] && i < PSIZE)
-      process_entity (i);
+   if (key[kctrl] && target_entity < PSIZE)
+      process_entity (target_entity);
 }
 
 
 
 /*! \brief Actions for one entity
+ * \date    20040310 PH added TARGET movemode, broke out chase into separate function
  *
  * Process an individual active entity.  If the entity in question
  * is #0 (main character) and the party is not automated, then allow
  * for player input.
  *
- * \param   i Index of entity
+ * \param   target_entity Index of entity
  * \date    20040310 PH added TARGET movemode, broke out chase into separate function
  */
-static void process_entity (int i)
+static void process_entity (int target_entity)
 {
-   g_ent[i].scount = 0;
-   if (g_ent[i].active) {
-      if (g_ent[i].moving == 0) {
-         if (i == 0 && !autoparty) {
+   g_ent[target_entity].scount = 0;
+   if (g_ent[target_entity].active) {
+      if (g_ent[target_entity].moving == 0) {
+         if (target_entity == 0 && !autoparty) {
             player_move ();
-            if (g_ent[i].moving > 0 && display_desc == 1)
+            if (g_ent[target_entity].moving > 0 && display_desc == 1)
                display_desc = 0;
             return;
          }
-         switch (g_ent[i].movemode) {
+         switch (g_ent[target_entity].movemode) {
          case MM_STAND:
             return;
          case MM_WANDER:
-            wander (i);
+            wander (target_entity);
             break;
          case MM_SCRIPT:
-            entscript (i);
+            entscript (target_entity);
             break;
          case MM_CHASE:
-            chase (i);
+            chase (target_entity);
             break;
          case MM_TARGET:
-            target (i);
+            target (target_entity);
             break;
          }
       } else {                  /* if (.moving==0) */
-         if (g_ent[i].moving == MOVE_DOWN) {
-            g_ent[i].y++;
-            g_ent[i].movcnt--;
-            g_ent[i].framectr++;
+         if (g_ent[target_entity].moving == MOVE_DOWN) {
+            g_ent[target_entity].y++;
+            g_ent[target_entity].movcnt--;
+            g_ent[target_entity].framectr++;
          }
-         if (g_ent[i].moving == MOVE_UP) {
-            g_ent[i].y--;
-            g_ent[i].movcnt--;
-            g_ent[i].framectr++;
+         if (g_ent[target_entity].moving == MOVE_UP) {
+            g_ent[target_entity].y--;
+            g_ent[target_entity].movcnt--;
+            g_ent[target_entity].framectr++;
          }
-         if (g_ent[i].moving == MOVE_LEFT) {
-            g_ent[i].x--;
-            g_ent[i].movcnt--;
-            g_ent[i].framectr++;
+         if (g_ent[target_entity].moving == MOVE_LEFT) {
+            g_ent[target_entity].x--;
+            g_ent[target_entity].movcnt--;
+            g_ent[target_entity].framectr++;
          }
-         if (g_ent[i].moving == MOVE_RIGHT) {
-            g_ent[i].x++;
-            g_ent[i].movcnt--;
-            g_ent[i].framectr++;
+         if (g_ent[target_entity].moving == MOVE_RIGHT) {
+            g_ent[target_entity].x++;
+            g_ent[target_entity].movcnt--;
+            g_ent[target_entity].framectr++;
          }
-         if (g_ent[i].framectr > 20)
-            g_ent[i].framectr = 0;
-         if (g_ent[i].movcnt == 0 && g_ent[i].moving > 0) {
-            g_ent[i].moving = MOVE_NOT;
-            if (i < PSIZE) {
+         if (g_ent[target_entity].framectr > 20)
+            g_ent[target_entity].framectr = 0;
+         if (g_ent[target_entity].movcnt == 0 && g_ent[target_entity].moving > 0) {
+            g_ent[target_entity].moving = MOVE_NOT;
+            if (target_entity < PSIZE) {
                steps++;
                if (steps >= STEPS_NEEDED)
                   steps = STEPS_NEEDED;
-               if (party[pidx[i]].sts[S_POISON] > 0) {
-                  party[pidx[i]].hp--;
-                  if (party[pidx[i]].hp < 1)
-                     party[pidx[i]].hp = 1;
+               if (party[pidx[target_entity]].sts[S_POISON] > 0) {
+                  party[pidx[target_entity]].hp--;
+                  if (party[pidx[target_entity]].hp < 1)
+                     party[pidx[target_entity]].hp = 1;
                   play_effect (21, 128);
                }
-               if (party[pidx[i]].eqp[5] == I_REGENERATOR) {
-                  party[pidx[i]].hp++;
-                  if (party[pidx[i]].hp > party[pidx[i]].mhp)
-                     party[pidx[i]].hp = party[pidx[i]].mhp;
+               if (party[pidx[target_entity]].eqp[5] == I_REGENERATOR) {
+                  party[pidx[target_entity]].hp++;
+                  if (party[pidx[target_entity]].hp > party[pidx[target_entity]].mhp)
+                     party[pidx[target_entity]].hp = party[pidx[target_entity]].mhp;
                }
             }
-            if (i == 0)
+            if (target_entity == 0)
                zone_check ();
          }
-         if (i == 0 && vfollow == 1)
+         if (target_entity == 0 && vfollow == 1)
             calc_viewport (0);
       }
    }
@@ -322,27 +323,27 @@ static void follow (void)
  * Choose a random direction for the entity to walk in and set up the
  * vars to do so.
  *
- * \param   i Index of entity to move
+ * \param   target_entity Index of entity to move
  */
-static void wander (int i)
+static void wander (int target_entity)
 {
-   if (g_ent[i].delayctr < g_ent[i].delay) {
-      g_ent[i].delayctr++;
+   if (g_ent[target_entity].delayctr < g_ent[target_entity].delay) {
+      g_ent[target_entity].delayctr++;
       return;
    }
-   g_ent[i].delayctr = 0;
+   g_ent[target_entity].delayctr = 0;
    switch (rand () % 8) {
    case 0:
-      moveup (i);
+      moveup (target_entity);
       break;
    case 1:
-      movedown (i);
+      movedown (target_entity);
       break;
    case 2:
-      moveleft (i);
+      moveleft (target_entity);
       break;
    case 3:
-      moveright (i);
+      moveright (target_entity);
       break;
    }
 }
@@ -410,25 +411,25 @@ static void player_move (void)
  *
  * Set up the entity vars to move upwards (if possible).
  *
- * \param   i Index of entity to move
+ * \param   target_entity Index of entity to move
  */
-static void moveup (int i)
+static void moveup (int target_entity)
 {
    int tx, ty;
 
    emoved = 0;
-   tx = g_ent[i].x / 16;
-   ty = g_ent[i].y / 16;
-   g_ent[i].facing = FACE_UP;
+   tx = g_ent[target_entity].x / 16;
+   ty = g_ent[target_entity].y / 16;
+   g_ent[target_entity].facing = FACE_UP;
    if (ty == 0)
       return;
-   if (g_ent[i].obsmode == 1
-       && (obstruction (tx, ty, 0, -1) || entityat (tx, ty - 1, i)))
+   if (g_ent[target_entity].obsmode == 1
+       && (obstruction (tx, ty, 0, -1) || entityat (tx, ty - 1, target_entity)))
       return;
-   g_ent[i].tiley--;
-   g_ent[i].moving = MOVE_UP;
-   g_ent[i].movcnt = 15;
-   g_ent[i].y--;
+   g_ent[target_entity].tiley--;
+   g_ent[target_entity].moving = MOVE_UP;
+   g_ent[target_entity].movcnt = 15;
+   g_ent[target_entity].y--;
    emoved = 1;
 }
 
@@ -438,25 +439,25 @@ static void moveup (int i)
  *
  * Set up the entity vars to move down (if possible).
  *
- * \param   i Index of entity to move
+ * \param   target_entity Index of entity to move
  */
-static void movedown (int i)
+static void movedown (int target_entity)
 {
    int tx, ty;
 
    emoved = 0;
-   tx = g_ent[i].x / 16;
-   ty = g_ent[i].y / 16;
-   g_ent[i].facing = FACE_DOWN;
+   tx = g_ent[target_entity].x / 16;
+   ty = g_ent[target_entity].y / 16;
+   g_ent[target_entity].facing = FACE_DOWN;
    if (ty == g_map.ysize - 1)
       return;
-   if (g_ent[i].obsmode == 1
-       && (obstruction (tx, ty, 0, 1) || entityat (tx, ty + 1, i)))
+   if (g_ent[target_entity].obsmode == 1
+       && (obstruction (tx, ty, 0, 1) || entityat (tx, ty + 1, target_entity)))
       return;
-   g_ent[i].tiley++;
-   g_ent[i].moving = MOVE_DOWN;
-   g_ent[i].movcnt = 15;
-   g_ent[i].y++;
+   g_ent[target_entity].tiley++;
+   g_ent[target_entity].moving = MOVE_DOWN;
+   g_ent[target_entity].movcnt = 15;
+   g_ent[target_entity].y++;
    emoved = 1;
 }
 
@@ -466,25 +467,25 @@ static void movedown (int i)
  *
  * Set up the entity vars to move right (if possible).
  *
- * \param   i Index of entity to move
+ * \param   target_entity Index of entity to move
  */
-static void moveright (int i)
+static void moveright (int target_entity)
 {
    int tx, ty;
 
    emoved = 0;
-   tx = g_ent[i].x / 16;
-   ty = g_ent[i].y / 16;
-   g_ent[i].facing = FACE_RIGHT;
+   tx = g_ent[target_entity].x / 16;
+   ty = g_ent[target_entity].y / 16;
+   g_ent[target_entity].facing = FACE_RIGHT;
    if (tx == g_map.xsize - 1)
       return;
-   if (g_ent[i].obsmode == 1
-       && (obstruction (tx, ty, 1, 0) || entityat (tx + 1, ty, i)))
+   if (g_ent[target_entity].obsmode == 1
+       && (obstruction (tx, ty, 1, 0) || entityat (tx + 1, ty, target_entity)))
       return;
-   g_ent[i].tilex++;
-   g_ent[i].moving = MOVE_RIGHT;
-   g_ent[i].movcnt = 15;
-   g_ent[i].x++;
+   g_ent[target_entity].tilex++;
+   g_ent[target_entity].moving = MOVE_RIGHT;
+   g_ent[target_entity].movcnt = 15;
+   g_ent[target_entity].x++;
    emoved = 1;
 }
 
@@ -494,25 +495,25 @@ static void moveright (int i)
  *
  * Set up the entity vars to move left (if possible).
  *
- * \param   i Index of entity to move
+ * \param   target_entity Index of entity to move
  */
-static void moveleft (int i)
+static void moveleft (int target_entity)
 {
    int tx, ty;
 
    emoved = 0;
-   tx = g_ent[i].x / 16;
-   ty = g_ent[i].y / 16;
-   g_ent[i].facing = FACE_LEFT;
+   tx = g_ent[target_entity].x / 16;
+   ty = g_ent[target_entity].y / 16;
+   g_ent[target_entity].facing = FACE_LEFT;
    if (tx == 0)
       return;
-   if (g_ent[i].obsmode == 1
-       && (obstruction (tx, ty, -1, 0) || entityat (tx - 1, ty, i)))
+   if (g_ent[target_entity].obsmode == 1
+       && (obstruction (tx, ty, -1, 0) || entityat (tx - 1, ty, target_entity)))
       return;
-   g_ent[i].tilex--;
-   g_ent[i].moving = MOVE_LEFT;
-   g_ent[i].movcnt = 15;
-   g_ent[i].x--;
+   g_ent[target_entity].tilex--;
+   g_ent[target_entity].moving = MOVE_LEFT;
+   g_ent[target_entity].movcnt = 15;
+   g_ent[target_entity].x--;
    emoved = 1;
 }
 
@@ -614,23 +615,23 @@ int entityat (int ox, int oy, int who)
  * This parses the movement script for a value that relates
  * to a command.  This is from Verge1.
  *
- * \param   n Entity to process
+ * \param   target_entity Entity to process
  */
-static void parsems (int n)
+static void parsems (int target_entity)
 {
    int p = 0;
    char tok[10];
    char s;
 
-   s = g_ent[n].script[g_ent[n].sidx];
+   s = g_ent[target_entity].script[g_ent[target_entity].sidx];
    while (s >= 48 && s <= 57) {
       tok[p] = s;
-      g_ent[n].sidx++;
-      s = g_ent[n].script[g_ent[n].sidx];
+      g_ent[target_entity].sidx++;
+      s = g_ent[target_entity].script[g_ent[target_entity].sidx];
       p++;
    }
    tok[p] = 0;
-   g_ent[n].cmdnum = atoi (tok);
+   g_ent[target_entity].cmdnum = atoi (tok);
 }
 
 
@@ -648,61 +649,61 @@ static void parsems (int n)
  * - Y+param: move to y-coord param
  * - F+param: face direction param (0=S, 1=N, 2=W, 3=E)
  *
- * \param   n Entity to process
+ * \param   target_entity Entity to process
  */
-static void getcommand (int n)
+static void getcommand (int target_entity)
 {
    char s;
    /* PH FIXME: prevented from running off end of string */
-   if (g_ent[n].sidx < sizeof (g_ent[n].script))
-      s = g_ent[n].script[g_ent[n].sidx++];
+   if (g_ent[target_entity].sidx < sizeof (g_ent[target_entity].script))
+      s = g_ent[target_entity].script[g_ent[target_entity].sidx++];
    else
       s = '\0';
    switch (s) {
    case 'U':
-      g_ent[n].cmd = 1;
-      parsems (n);
+      g_ent[target_entity].cmd = 1;
+      parsems (target_entity);
       break;
    case 'D':
-      g_ent[n].cmd = 2;
-      parsems (n);
+      g_ent[target_entity].cmd = 2;
+      parsems (target_entity);
       break;
    case 'L':
-      g_ent[n].cmd = 3;
-      parsems (n);
+      g_ent[target_entity].cmd = 3;
+      parsems (target_entity);
       break;
    case 'R':
-      g_ent[n].cmd = 4;
-      parsems (n);
+      g_ent[target_entity].cmd = 4;
+      parsems (target_entity);
       break;
    case 'W':
-      g_ent[n].cmd = 5;
-      parsems (n);
+      g_ent[target_entity].cmd = 5;
+      parsems (target_entity);
       break;
    case '\0':
-      g_ent[n].cmd = 6;
-      g_ent[n].movemode = MM_STAND;
-      g_ent[n].cmdnum = 0;
-      g_ent[n].sidx = 0;
+      g_ent[target_entity].cmd = 6;
+      g_ent[target_entity].movemode = MM_STAND;
+      g_ent[target_entity].cmdnum = 0;
+      g_ent[target_entity].sidx = 0;
       break;
    case 'B':
-      g_ent[n].cmd = 7;
+      g_ent[target_entity].cmd = 7;
       break;
    case 'X':
-      g_ent[n].cmd = 8;
-      parsems (n);
+      g_ent[target_entity].cmd = 8;
+      parsems (target_entity);
       break;
    case 'Y':
-      g_ent[n].cmd = 9;
-      parsems (n);
+      g_ent[target_entity].cmd = 9;
+      parsems (target_entity);
       break;
    case 'F':
-      g_ent[n].cmd = 10;
-      parsems (n);
+      g_ent[target_entity].cmd = 10;
+      parsems (target_entity);
       break;
       /* PH add: command K makes the ent disappear */
    case 'K':
-      g_ent[n].active = 0;
+      g_ent[target_entity].active = 0;
       break;
    default:
       program_death ("Invalid entity command!");
@@ -715,65 +716,65 @@ static void getcommand (int n)
  *
  * This executes script commands.  This is from Verge1.
  *
- * \param   n Entity to process
+ * \param   target_entity Entity to process
  */
-static void entscript (int n)
+static void entscript (int target_entity)
 {
-   if (g_ent[n].cmd == 0)
-      getcommand (n);
-   switch (g_ent[n].cmd) {
+   if (g_ent[target_entity].cmd == 0)
+      getcommand (target_entity);
+   switch (g_ent[target_entity].cmd) {
    case 1:
-      moveup (n);
+      moveup (target_entity);
       if (emoved)
-         g_ent[n].cmdnum--;
+         g_ent[target_entity].cmdnum--;
       break;
    case 2:
-      movedown (n);
+      movedown (target_entity);
       if (emoved)
-         g_ent[n].cmdnum--;
+         g_ent[target_entity].cmdnum--;
       break;
    case 3:
-      moveleft (n);
+      moveleft (target_entity);
       if (emoved)
-         g_ent[n].cmdnum--;
+         g_ent[target_entity].cmdnum--;
       break;
    case 4:
-      moveright (n);
+      moveright (target_entity);
       if (emoved)
-         g_ent[n].cmdnum--;
+         g_ent[target_entity].cmdnum--;
       break;
    case 5:
-      g_ent[n].cmdnum--;
+      g_ent[target_entity].cmdnum--;
       break;
    case 6:
       return;
    case 7:
-      g_ent[n].sidx = 0;
-      g_ent[n].cmdnum = 0;
+      g_ent[target_entity].sidx = 0;
+      g_ent[target_entity].cmdnum = 0;
       break;
    case 8:
-      if (g_ent[n].tilex < g_ent[n].cmdnum)
-         moveright (n);
-      if (g_ent[n].tilex > g_ent[n].cmdnum)
-         moveleft (n);
-      if (g_ent[n].tilex == g_ent[n].cmdnum)
-         g_ent[n].cmdnum = 0;
+      if (g_ent[target_entity].tilex < g_ent[target_entity].cmdnum)
+         moveright (target_entity);
+      if (g_ent[target_entity].tilex > g_ent[target_entity].cmdnum)
+         moveleft (target_entity);
+      if (g_ent[target_entity].tilex == g_ent[target_entity].cmdnum)
+         g_ent[target_entity].cmdnum = 0;
       break;
    case 9:
-      if (g_ent[n].tiley < g_ent[n].cmdnum)
-         movedown (n);
-      if (g_ent[n].tiley > g_ent[n].cmdnum)
-         moveup (n);
-      if (g_ent[n].tiley == g_ent[n].cmdnum)
-         g_ent[n].cmdnum = 0;
+      if (g_ent[target_entity].tiley < g_ent[target_entity].cmdnum)
+         movedown (target_entity);
+      if (g_ent[target_entity].tiley > g_ent[target_entity].cmdnum)
+         moveup (target_entity);
+      if (g_ent[target_entity].tiley == g_ent[target_entity].cmdnum)
+         g_ent[target_entity].cmdnum = 0;
       break;
    case 10:
-      g_ent[n].facing = g_ent[n].cmdnum;
-      g_ent[n].cmdnum = 0;
+      g_ent[target_entity].facing = g_ent[target_entity].cmdnum;
+      g_ent[target_entity].cmdnum = 0;
       break;
    }
-   if (g_ent[n].cmdnum == 0)
-      g_ent[n].cmd = 0;
+   if (g_ent[target_entity].cmdnum == 0)
+      g_ent[target_entity].cmd = 0;
 }
 
 
@@ -783,19 +784,19 @@ static void entscript (int n)
  * This is used to set up an entity with a movement script so that
  * it can be automatically controlled.
  *
- * \param   n Entity to process
+ * \param   target_entity Entity to process
  * \param   movestring The script
  */
-void set_script (int n, char *movestring)
+void set_script (int target_entity, char *movestring)
 {
-   g_ent[n].active = 1;
-   g_ent[n].moving = MOVE_NOT;
-   g_ent[n].movcnt = 0;
-   g_ent[n].cmd = 0;
-   g_ent[n].sidx = 0;
-   g_ent[n].cmdnum = 0;
-   g_ent[n].movemode = MM_SCRIPT;
-   strncpy (g_ent[n].script, movestring, sizeof (g_ent[n].script));
+   g_ent[target_entity].active = 1;
+   g_ent[target_entity].moving = MOVE_NOT;
+   g_ent[target_entity].movcnt = 0;
+   g_ent[target_entity].cmd = 0;
+   g_ent[target_entity].sidx = 0;
+   g_ent[target_entity].cmdnum = 0;
+   g_ent[target_entity].movemode = MM_SCRIPT;
+   strncpy (g_ent[target_entity].script, movestring, sizeof (g_ent[target_entity].script));
 }
 
 
@@ -835,23 +836,20 @@ void count_entities (void)
 
 
 /*! \brief Move entity towards target
- *
- * When entity is in target mode (MM_TARGET) move towards
- * the goal. This is fairly simple; it doesn't do clever
- * obstacle avoidance.
- * It simply moves either horizontally or vertically,
- * preferring the _closer_ one. In other words, it will
- * try to get on a vertical or horizontal line with its
- * target.
- *
- * \param e index of entity
  * \author PH
  * \date 20040310
+ *
+ * When entity is in target mode (MM_TARGET) move towards the goal.  This is
+ * fairly simple; it doesn't do clever obstacle avoidance.  It simply moves
+ * either horizontally or vertically, preferring the _closer_ one. In other
+ * words, it will try to get on a vertical or horizontal line with its target.
+ *
+ * \param   target_entity index of entity
  */
-static void target (int e)
+static void target (int target_entity)
 {
    int dx, dy, ax, ay;
-   s_entity *ent = &g_ent[e];
+   s_entity *ent = &g_ent[target_entity];
    ax = dx = ent->target_x - ent->tilex;
    ay = dy = ent->target_y - ent->tiley;
    if (ax < 0)
@@ -861,28 +859,28 @@ static void target (int e)
    if (ax < ay) {
       /* Try to move horizontally */
       if (dx < 0)
-         moveleft (e);
+         moveleft (target_entity);
       if (dx > 0)
-         moveright (e);
+         moveright (target_entity);
       /* Didn't move so try vertically */
       if (emoved == 0) {
          if (dy < 0)
-            moveup (e);
+            moveup (target_entity);
          if (dy > 0)
-            movedown (e);
+            movedown (target_entity);
       }
    } else {
       /* Try to move vertically */
       if (dy < 0)
-         moveup (e);
+         moveup (target_entity);
       if (dy > 0)
-         movedown (e);
+         movedown (target_entity);
       /* Didn't move so try horizontally */
       if (emoved == 0) {
          if (dx < 0)
-            moveleft (e);
+            moveleft (target_entity);
          if (dx > 0)
-            moveright (e);
+            moveright (target_entity);
       }
    }
    if (dx == 0 && dy == 0) {
@@ -899,46 +897,46 @@ static void target (int e)
  * Speed up until at maximum. If the player goes out
  * of range, wander for a bit.
  *
- * \param i index of entity
+ * \param   target_entity index of entity
  */
-static void chase (int i)
+static void chase (int target_entity)
 {
-   if (g_ent[i].chasing == 0) {
-      if (entity_near (i, 0, 3) == 1 && rand () % 100 <= g_ent[i].extra) {
-         g_ent[i].chasing = 1;
-         if (g_ent[i].speed < 7)
-            g_ent[i].speed++;
-         g_ent[i].delay = 0;
-         if (g_ent[0].tilex > g_ent[i].tilex)
-            moveright (i);
-         if (g_ent[0].tilex < g_ent[i].tilex && emoved == 0)
-            moveleft (i);
-         if (g_ent[0].tiley > g_ent[i].tiley && emoved == 0)
-            movedown (i);
-         if (g_ent[0].tiley < g_ent[i].tiley && emoved == 0)
-            moveup (i);
+   if (g_ent[target_entity].chasing == 0) {
+      if (entity_near (target_entity, 0, 3) == 1 && rand () % 100 <= g_ent[target_entity].extra) {
+         g_ent[target_entity].chasing = 1;
+         if (g_ent[target_entity].speed < 7)
+            g_ent[target_entity].speed++;
+         g_ent[target_entity].delay = 0;
+         if (g_ent[0].tilex > g_ent[target_entity].tilex)
+            moveright (target_entity);
+         if (g_ent[0].tilex < g_ent[target_entity].tilex && emoved == 0)
+            moveleft (target_entity);
+         if (g_ent[0].tiley > g_ent[target_entity].tiley && emoved == 0)
+            movedown (target_entity);
+         if (g_ent[0].tiley < g_ent[target_entity].tiley && emoved == 0)
+            moveup (target_entity);
          if (emoved == 0)
-            wander (i);
+            wander (target_entity);
       } else
-         wander (i);
+         wander (target_entity);
    } else {
-      if (entity_near (i, 0, 4) == 1) {
-         if (g_ent[0].tilex > g_ent[i].tilex)
-            moveright (i);
-         if (g_ent[0].tilex < g_ent[i].tilex && emoved == 0)
-            moveleft (i);
-         if (g_ent[0].tiley > g_ent[i].tiley && emoved == 0)
-            movedown (i);
-         if (g_ent[0].tiley < g_ent[i].tiley && emoved == 0)
-            moveup (i);
+      if (entity_near (target_entity, 0, 4) == 1) {
+         if (g_ent[0].tilex > g_ent[target_entity].tilex)
+            moveright (target_entity);
+         if (g_ent[0].tilex < g_ent[target_entity].tilex && emoved == 0)
+            moveleft (target_entity);
+         if (g_ent[0].tiley > g_ent[target_entity].tiley && emoved == 0)
+            movedown (target_entity);
+         if (g_ent[0].tiley < g_ent[target_entity].tiley && emoved == 0)
+            moveup (target_entity);
          if (emoved == 0)
-            wander (i);
+            wander (target_entity);
       } else {
-         g_ent[i].chasing = 0;
-         if (g_ent[i].speed > 1)
-            g_ent[i].speed--;
-         g_ent[i].delay = 25 + rand () % 25;
-         wander (i);
+         g_ent[target_entity].chasing = 0;
+         if (g_ent[target_entity].speed > 1)
+            g_ent[target_entity].speed--;
+         g_ent[target_entity].delay = 25 + rand () % 25;
+         wander (target_entity);
       }
    }
 }

@@ -175,6 +175,7 @@ unsigned char vfollow = 1;
 /*! Whether the sun stone can be used in this map*/
 unsigned char use_sstone = 0;
 /*! Version number (used for version control in sgame.c) */
+// TT: Shouldn't this be a const?
 unsigned char kq_version = 91;
 /*! If non-zero, don't do fade effects. The only place this is
  * set is in scripts. */
@@ -873,51 +874,57 @@ void check_animation (void)
  */
 void activate (void)
 {
-   int zx, zy, lx = 0, ly = 0, p, q, cf = 0, tf, mb;
+   int zx, zy, looking_at_x = 0, looking_at_y = 0, p, q,
+      target_char_facing = 0, tf, mb;
 
    unpress ();
 
+   /* Determine which direction the player's character is facing.  For
+    * 'looking_at_y', a negative value means "toward north" or "facing up",
+    * and a positive means that you are "facing down".  For 'looking_at_x',
+    * negative means to face left and positive means to face right.
+    */
+
    switch (g_ent[0].facing) {
-   case 0:
-      ly = 1;
-      cf = 1;
+   case FACE_DOWN:
+      looking_at_y = 1;
+      target_char_facing = FACE_UP;
       break;
 
-   case 1:
-      ly = -1;
-      cf = 0;
+   case FACE_UP:
+      looking_at_y = -1;
+      target_char_facing = FACE_DOWN;
       break;
 
-   case 2:
-      lx = -1;
-      cf = 3;
+   case FACE_LEFT:
+      looking_at_x = -1;
+      target_char_facing = FACE_RIGHT;
       break;
 
-   case 3:
-      lx = 1;
-      cf = 2;
+   case FACE_RIGHT:
+      looking_at_x = 1;
+      target_char_facing = FACE_LEFT;
       break;
    }
 
    zx = g_ent[0].x / 16;
    zy = g_ent[0].y / 16;
 
-   lx += zx;
-   ly += zy;
+   looking_at_x += zx;
+   looking_at_y += zy;
 
-   p = map_seg[ly * g_map.xsize + lx];
-   q = z_seg[ly * g_map.xsize + lx];
+   q = z_seg[looking_at_y * g_map.xsize + looking_at_x];
 
-   if (o_seg[ly * g_map.xsize + lx] != 0 && q > 0)
+   if (o_seg[looking_at_y * g_map.xsize + looking_at_x] != 0 && q > 0)
       do_zone (q);
 
-   p = entityat (lx, ly, 0);
+   p = entityat (looking_at_x, looking_at_y, 0);
 
    if (p >= PSIZE) {
       tf = g_ent[p - 1].facing;
 
       if (g_ent[p - 1].facehero == 0)
-         g_ent[p - 1].facing = cf;
+         g_ent[p - 1].facing = target_char_facing;
 
       drawmap ();
       blit2screen (xofs, yofs);
@@ -1482,7 +1489,8 @@ void kwait (int dtime)
       blit2screen (xofs, yofs);
 #ifdef KQ_CHEATS
       if (key[KEY_W] && key[KEY_ALT]) {
-         sprintf (strbuf, "kwait(); cnt = %d, dtime = %d, timer_count = %d",
+         klog ("Alt+W Pressed:");
+         sprintf (strbuf, "\tkwait(); cnt = %d, dtime = %d, timer_count = %d",
                   cnt, dtime, timer_count);
          klog (strbuf);
          break;

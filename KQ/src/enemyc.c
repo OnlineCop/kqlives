@@ -372,7 +372,7 @@ static s_fighter *make_enemy (int who, s_fighter * en)
 {
    if (enemies && who >= 0 && who < enemies_n) {
       memcpy (en, enemies[who], sizeof (s_fighter));
-      sprintf (strbuf, "Making enemy %d (%s)", who, en->name);
+      sprintf (strbuf, "\tMaking enemy %d (%s)", who, en->name);
       klog (strbuf);
       return en;
    } else {
