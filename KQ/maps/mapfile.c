@@ -114,11 +114,11 @@ void load_map (char *fname)
    pack_fread (o_map, (gmap.xsize * gmap.ysize), pf);
    pack_fclose (pf);
    pcx_buffer = load_pcx (icon_files[gmap.tileset], pal);
-   max_sets = (pcx_buffer->h / 16);
+   max_sets = (pcx_buffer->h / TH);
    for (p = 0; p < max_sets; p++) {
       for (q = 0; q < ICONSET_SIZE; q++) {
-         blit (pcx_buffer, icons[p * ICONSET_SIZE + q], q * 16, p * 16, 0, 0,
-               16, 16);
+         blit (pcx_buffer, icons[p * ICONSET_SIZE + q], q * TW, p * TH, 0, 0,
+               TW, TH);
       }
    }
    icon_set = 0;
@@ -385,11 +385,11 @@ void new_map (void)
    bufferize ();
 
    pcx_buffer = load_pcx (icon_files[gmap.tileset], pal);
-   max_sets = (pcx_buffer->h / 16);
+   max_sets = (pcx_buffer->h / TH);
    for (p = 0; p < max_sets; p++)
       for (q = 0; q < ICONSET_SIZE; q++)
-         blit (pcx_buffer, icons[p * ICONSET_SIZE + q], q * 16, p * 16, 0, 0,
-               16, 16);
+         blit (pcx_buffer, icons[p * ICONSET_SIZE + q], q * TW, p * TH, 0, 0,
+               TW, TH);
    icon_set = 0;
    destroy_bitmap (pcx_buffer);
    init_entities ();

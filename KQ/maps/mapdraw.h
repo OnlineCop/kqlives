@@ -10,6 +10,9 @@
 #define MAX_EPICS      40
 #define MAX_ZONES     256
 #define MAX_SHADOWS    12
+#define MAX_OBSTACLES   5
+#define TH             16       /* Tile height */
+#define TW             16       /* Tile width */
 #define SW            640
 #define SH            480
 #define WBUILD          1
@@ -30,7 +33,7 @@
 #define GRAB_TILE  512          /* Select a tile in the map to draw */
 #define MAP_PREVIEW 1024        /* Draw a proper preview with layer ordering and parallax */
 
-#define ICONSET_SIZE    20      /* Number of icons shown in the tile map */
+#define ICONSET_SIZE    20      /* Number of icons shown in the icon map */
 
 #include "../include/structs.h"
 
@@ -114,6 +117,7 @@ extern int number_of_ents, current_ent;
 extern s_entity gent[];
 extern s_map gmap;
 extern s_show showing;
+extern s_anim adata[MAX_ANIM];
 
 extern short window_x, window_y;
 extern short icon_set, max_sets;
