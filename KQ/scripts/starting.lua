@@ -74,12 +74,12 @@ function postexec()
   bubble(HERO1,"What?","","","");
   set_ent_script(HERO1,"F0W10");
   wait_for_entity(HERO1,HERO1);
-  thought(HERO1,"That wasn't there this morning.","","","");
+  thought(HERO1,"That wasn't there this morning.");
   set_ent_script(HERO1,"R2U1");
   wait_for_entity(HERO1,HERO1);
-  bubble(HERO1,"Wow, what a strange request.","","","");
+  bubble(HERO1,"Wow, what a strange request.");
   thought(HERO1,"Hey wait a minute. Perhaps this is what I need to help Mom and Dad.");
-  thought(HERO1,"I'll have to them know right away!");
+  thought(HERO1,"I'll have to let them know right away!");
   set_ent_speed(HERO1,5);
   set_ent_script(HERO1,"D1R15");
   wait_for_entity(HERO1,HERO1);
@@ -201,9 +201,10 @@ function postexec()
   bubble(HERO1,"Life is good.");
   set_ent_facing(HERO1,HERO1);
   wait(50);
-  thought(HERO1,"Hmm... I wonder where I am going",
-                "to be able to sell the secret of",
-                "this Great Magic?");
+  thought(HERO1,"Hmm... I wonder how much I could",
+                "get for selling the secret of the",
+                "Great Magic?",
+                "Who would be my highest bidder..?");
   wait(100);
   remove_chr(AYLA);
 
@@ -215,12 +216,11 @@ function postexec()
   wait(50);
   thought(HERO1,"This does not look good. There",
                 "is a really good chance that it",
-                "could be the same man.","");
+                "could be the same man.");
   set_ent_facing(HERO1,HERO1);
   wait(50);
-  thought(HERO1,"I have no choice but",
-                "to check it out. I'd best be",
-                "on my way.");
+  thought(HERO1,"I have no choice but to check",
+                "it out. I'd best be on my way.");
   set_ent_script(HERO1,"D12");
   wait_for_entity(HERO1,HERO1);
   set_autoparty(0);
@@ -250,8 +250,9 @@ function postexec()
 -- some of the entities, fade back in; say more, fade out/in again, repeat).
 -- The Great Magic is not a freebie; only those willing to work will be
 -- considered (some leave).  It will require months of work and training (more
--- leave).  You will fight in many battles and may not survive (most everyone
--- leaves).  It is possible that no one will ever return (only heroes remain).
+-- leave).  You will fight in many battles against bloodthirsty monsters (most
+-- everyone leaves).  It is possible that no one will ever return (only heroes
+-- remain).
   bubble(255,"Very well, I have decided...");
   wait(100);
   do_fadeout(4);
