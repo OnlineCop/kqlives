@@ -68,9 +68,9 @@ const char *kqres (int dir, const char *file)
 
       /* Now the data directory */
       game_dir =[[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent: @"Contents/Resources"];
-        [game_dir retain];
-	    NSLog(@"Putting user data in %@, game data in %@\n", user_dir, game_dir);
-        init_path = YES;
+      [game_dir retain];
+	/*    NSLog(@"Putting user data in %@, game data in %@\n", user_dir, game_dir);*/
+      init_path = YES;
    }
 
    switch (dir) {
