@@ -55,19 +55,28 @@ function autoexec()
   else
     set_ent_active(10, 0)
   end
+
+  -- Move the guard so we can see the mayor
+  if (get_progress(P_WARPSTONE) == 1) then
+    set_ent_tilex(6, 57)
+    if (get_progress(P_FOUNDMAYOR) == 1) then
+      set_progress(P_FOUNDMAYOR, 2)
+    end
+  end
+
   refresh()
 end
 
 
 function refresh()
   if (get_treasure(3) == 1) then
-    set_mtile(110, 14, 265)
+    set_mtile(110, 19, 265)
   end
   if (get_treasure(4) == 1) then
-    set_mtile(111, 14, 265)
+    set_mtile(111, 19, 265)
   end
   if (get_treasure(5) == 1) then
-    set_mtile(112, 14, 265)
+    set_mtile(112, 19, 265)
   end
   if (get_treasure(7) == 1) then
     set_obs(14, 47, 0)
@@ -76,14 +85,18 @@ function refresh()
     set_obs(35, 38, 0)
   end
   if (get_treasure(31) == 1) then
-    set_mtile(115, 33, 265)
+    set_mtile(115, 36, 265)
   end
   if (get_treasure(46) == 1) then
-    set_mtile(116, 33, 265)
+    set_mtile(116, 36, 265)
   end
   if (get_progress(P_WARPSTONE) == 1) then
     set_mtile(35, 15, 0)
   end
+  if (get_treasure(97) == 1) then
+    set_mtile(135, 10, 265)
+  end
+  
 end
 
 
@@ -97,25 +110,25 @@ function zone_handler(zn)
     change_map("cave1", 47, 47, 47, 47)
 
   elseif (zn == 2) then
-    door_in(85, 7, 80, 0, 90, 10)
+    door_in(85, 13, 80, 6, 90, 15)
 
   elseif (zn == 3) then
-    door_in(86, 21, 80, 12, 92, 24)
+    door_in(86, 26, 80, 17, 92, 28)
 
   elseif (zn == 4) then
-    door_in(102, 7, 93, 0, 105, 10)
+    door_in(102, 13, 93, 6, 105, 15)
 
   elseif (zn == 5) then
-    door_in(97, 20, 94, 12, 107, 23)
+    door_in(97, 25, 94, 17, 107, 27)
 
   elseif (zn == 6) then
-    door_in(96, 35, 80, 26, 102, 49)
+    door_in(96, 39, 80, 30, 102, 50)
 
   elseif (zn == 7) then
-    door_in(112, 7, 107, 0, 117, 10)
+    door_in(112, 13, 107, 6, 117, 15)
 
   elseif (zn == 8) then
-    door_in(114, 37, 104, 25, 118, 40)
+    door_in(114, 40, 104, 28, 117, 42)
 
   elseif (zn == 9) then
     bubble(HERO1, "Locked.")
@@ -163,20 +176,20 @@ function zone_handler(zn)
     shop(5)
 
   elseif (zn == 20) then
-    view_range(1, 119, 0, 122, 24)
-    warp(121, 3, 8)
+    view_range(1, 119, 6, 122, 28)
+    warp(121, 9, 8)
 
   elseif (zn == 21) then
-    view_range(1, 109, 12, 117, 21)
-    warp(116, 15, 8)
+    view_range(1, 109, 17, 117, 24)
+    warp(116, 20, 8)
 
   elseif (zn == 22) then
-    view_range(1, 94, 12, 107, 23)
-    warp(106, 16, 8)
+    view_range(1, 94, 17, 107, 27)
+    warp(106, 21, 8)
 
   elseif (zn == 23) then
-    view_range(1, 119, 0, 122, 24)
-    warp(121, 21, 8)
+    view_range(1, 119, 6, 122, 29)
+    warp(121, 27, 8)
 
   elseif (zn == 24) then
     chest(3, I_KNIFE2, 1)
@@ -229,12 +242,12 @@ function zone_handler(zn)
     touch_fire(party[0])
 
   elseif (zn == 38) then
-    view_range(1, 104, 25, 118, 40)
-    warp(116, 29, 8)
+    view_range(1, 104, 28, 117, 43)
+    warp(116, 32, 8)
 
   elseif (zn == 39) then
-    view_range(1, 109, 12, 117, 21)
-    warp(113, 19, 8)
+    view_range(1, 109, 17, 117, 25)
+    warp(113, 23, 8)
 
   elseif (zn == 40) then
     chest(31, 0, 150)
@@ -243,6 +256,49 @@ function zone_handler(zn)
   elseif (zn == 41) then
     chest(46, I_STRSEED, 2)
     refresh()
+
+  elseif (zn == 42) then
+    chest(96, 0, 250)
+    refresh()
+
+  elseif (zn == 43) then
+    if (get_progress(MAYORGUARD2) == 1) then
+      bubble(11, "Thank you for rescuing me!")
+    else
+      bubble(11, "I shouldn't be showing up if you haven't rescued me yet. It hasn't been programmed in to remove my NPC sprite.")
+    end
+  
+  elseif (zn == 44) then
+    set_btile(139, 8, 0)
+    set_ftile(139, 8, 518)
+    set_mtile(139, 9, 519)
+    set_obs(139, 8, 0)
+    set_zone(139, 8, 0)
+    sfx(25)
+
+  elseif (zn == 45) then
+    set_btile(134, 8, 0)
+    set_ftile(134, 8, 518)
+    set_mtile(134, 9, 519)
+    set_obs(134, 8, 0)
+    set_zone(134, 8, 0)
+    sfx(25)
+
+  elseif (zn == 46) then
+    chest(97, 0, 1500)
+    refresh()
+  
+  elseif (zn == 47) then
+    door_in(129, 16, 124, 6, 140, 18)
+
+  elseif (zn == 48) then
+    door_out(48, 18)
+
+  elseif (zn == 49) then
+    door_in(137, 16, 124, 6, 140, 18)
+
+  elseif (zn == 50) then
+    door_out(52, 18)
 
   end
 end
@@ -254,6 +310,9 @@ function entity_handler(en)
       bubble(en, "Back again, are you?")
     else
       bubble(en, "You must be an adventurer. There has been an unusual number of you people around lately.")
+    end
+    if (get_progress(P_FOUNDMAYOR) > 0) then
+      bubble(en, "Oh, and thank you for finding the mayor.")
     end
 
   elseif (en == 1) then
@@ -339,7 +398,7 @@ function entity_handler(en)
 
   elseif (en == 6) then
     if (get_progress(P_WARPSTONE) == 1) then
-      bubble(en, "I'm sorry, the mayor isn't seeing any visitors at present.")
+      bubble(en, "The mayor isn't seeing any visitors at present.")
     else
       if (get_progress(P_FOUNDMAYOR) == 0) then
         if (get_progress(P_FIGHTONBRIDGE) > 4) then
@@ -375,32 +434,32 @@ function entity_handler(en)
     bubble(en, "How long does it take to build a bridge?")
 
   elseif (en == 10) then
-    LOC_meet_ajathar(en)
+    LOC_join_ajathar(en)
 
   elseif (en == 11) then
-    LOC_meet_casandra(en)
+    bubble(en, "Hey, you can't be back here! What are you trying to do, steal from me?")
 
   elseif (en == 12) then
-    LOC_meet_temmin(en)
+    bubble(en, "Thanks for rescuing me back there!")
+
   end
 end
 
 
-function LOC_meet_ajathar(en)
-  local ta, id
-  ta = get_progress(P_TALK_AJATHAR)
+function LOC_join_ajathar(en)
+  local id
   if (get_progress(P_PORTALGONE) == 0) then
-    if (ta == 0) then
+    if (get_progress(P_TALK_AJATHAR) == 0) then
       bubble(HERO1, "Hello! You haven't ventured very far!")
       bubble(en, "I have been maintaining a constant prayer vigil at this point. It should discourage the monsters from emerging into the town.")
       bubble(HERO1, "And what if they DO come out?")
       bubble(en, "My training also included swordsmanship.")
       set_progress(P_TALK_AJATHAR, 1)
-    elseif (ta == 1) then
+    elseif (get_progress(P_TALK_AJATHAR) == 1) then
       bubble(en, "I hope I am doing the right thing here.")
     end
   else
-    if (ta == 0) then
+    if (get_progress(P_TALK_AJATHAR) == 0) then
       bubble(en, "Be careful! That tunnel is infested with monsters.")
       bubble(HERO1, "Fortunately, I have been successful in closing the Portal. No more monsters will trouble us now.")
       set_progress(P_TALK_AJATHAR, 1)
@@ -436,5 +495,6 @@ function LOC_meet_ajathar(en)
       end
     end
     set_ent_active(en, 0)
+    set_progress(P_PLAYERS, get_progress(P_PLAYERS) + 1)
   end
 end

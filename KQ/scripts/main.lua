@@ -17,7 +17,7 @@ function autoexec()
     set_obs(263, 52, 0)
   end
 
-  if (get_progress(P_FOUNDMAYOR) == 0) then
+  if (get_progress(P_FOUNDMAYOR) == 1) then
     set_zone(235, 37, 0)
   end
 

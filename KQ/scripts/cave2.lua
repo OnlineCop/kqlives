@@ -1,8 +1,33 @@
 -- cave2 - "Pit in grotto north of Ekla"
 
+-- /*
+-- {
+-- P_UCOIN: Spoke to Jen, the granddaughter in Ekla
+--   0 - You don't know Derig is here; you "somehow" get out
+--   1 - You know Derig can help you out
+--   2 - (not used)
+--   3 - Derig is back; he can help you out again
+-- P_TALKDERIG: When you make contact with Derig
+--   0 - (not used)
+--   1 - Haven't met Derig; have never gotten out of Pit before
+--   2 - Got out of Pit (DIDN'T meet Derig)
+--   3 - Got out of Pit (DID meet Derig)
+--   4 - (not used)
+--   5 - (not used)
+--   6 - Derig is back; he can help you out again.
+-- P_FELLINPIT: Set when you fall down the pit
+--   0 - Haven't fallen down the pit
+--   1 - Fell into the pit, did NOT speak to Derig
+--   2 - Fell into the pit, DID speak to Derig
+--   3 - You won't be able to fall down into the Pit
+--   4 - You may fall down into the pit again
+-- }
+-- */
+
+
 function autoexec()
   if (get_progress(P_FELLINPIT) > 0) then
-    set_mtile(15, 19, 360)
+    set_btile(15, 19, 30)
     set_zone(15, 19, 3)
   end
   return

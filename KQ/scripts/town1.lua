@@ -2,35 +2,27 @@
 
 -- /*
 -- {
+-- P_CANCELROD: Possession of Rod of Cancellation
+--   0 - Do not have it
+--   1 - Got it
+--   2 - Returned it to Derig
+-- P_DARKIMPBOSS: Dark Imp is in the tunnel from Ekla to Randen
+--   0 - It is blocking the stairway
+--   1 - You defeated it and the pathway is now clear
 -- P_EARLYPROGRESS: Used when talking to Derig in the Grotto.
 --   0 - Have not yet entered Ekla
 --   1 - Entered Ekla
 --   2 - Entered Randen
 --   3 - Entered Andra
--- P_START: Monsters will not attack you until you enter and leave Ekla
---   0 - Haven't entered Ekla yet
---   1 - Entered Ekla; monsters will now attack randomly on world map
--- P_WARPSTONE: The teleporter from Ajantara <-> Randen
---   0 - Haven't used it yet
---   1 - Stepped on the warp stone and created its counterpart in Randen
 -- P_EKLAWELCOME: Corny welcome message when you talk to the man in Ekla
 --   0 - He hasn't yet given you his corny "Yes! This makes 8!" speech
 --   1 - Now he likes cheese
--- P_DARKIMPBOSS: Dark Imp is in the tunnel from Ekla to Randen
---   0 - It is blocking the stairway
---   1 - You defeated it and the pathway is now clear
 -- P_PORTALGONE: Whether the portal in the tunnel is still working
 --   0 - Still letting monsters through
 --   1 - The Portal is sealed shut
--- P_UCOIN: Unadium Coin from Jen
---   0 - Have not yet spoken with the granddaughter, Jen
---   1 - Spoke to Jen
---   2 - Received coin
---   3 - Returned coin
--- P_CANCELROD: Possession of Rod of Cancellation
---   0 - Do not have it
---   1 - Got it
---   2 - Returned it to Derig
+-- P_START: Monsters will not attack you until you enter and leave Ekla
+--   0 - Haven't entered Ekla yet
+--   1 - Entered Ekla; monsters will now attack randomly on world map
 -- P_TALKDERIG: If you've spoken to Derig
 --   0 - Never entered grotto
 --   1 - Entered grotto; didn't fall down pit
@@ -38,6 +30,14 @@
 --   3 - Fell down pit, spoke with Derig
 --   4 - Derig told you about the Rod of Cancellation
 --   5 - Returned Unadium coin and Rod of Cancellation to Derig
+-- P_UCOIN: Unadium Coin from Jen
+--   0 - Have not yet spoken with the granddaughter, Jen
+--   1 - Spoke to Jen
+--   2 - Received coin
+--   3 - Returned coin
+-- P_WARPSTONE: The teleporter from Ajantara <-> Randen
+--   0 - Haven't used it yet
+--   1 - Stepped on the warp stone and created its counterpart in Randen
 -- }
 -- */
 
@@ -49,16 +49,16 @@ function autoexec()
   end
 
   -- Remove Derig from the screen
-  if (get_progress(P_TALKDERIG) < 3) or (get_progress(P_TALKDERIG) > 4) then
+  if (get_progress(P_TALKDERIG) < 4) or (get_progress(P_TALKDERIG) > 5) then
     set_ent_active(4, 0)
   else
-    -- Move daughter to the chair next to the table
+    -- Move granddaughter to the chair next to the table
     set_ent_tilex(2, 64)
     set_ent_tiley(2, 50)
     set_ent_facing(2, FACE_DOWN)
     set_ent_facing(4, FACE_DOWN)
     set_ent_facing(HERO1, 1)
-    if (get_progress(P_TALKDERIG) == 3) then
+    if (get_progress(P_TALKDERIG) == 4) then
       set_desc(0)
     end
   end
@@ -82,19 +82,32 @@ function refresh()
   -- Chest in magic shop
   if (get_treasure(0) == 1) then
     set_mtile(63, 27, 265)
+    set_zone(63, 27, 0)
+  end
+
+  -- Cauldron next to item shop
+  if (get_treasure(6) == 1) then
+    set_zone(30, 36, 0)
+  end
+
+  -- Patch of flowers behind houses
+  if (get_treasure(98) == 1) then
+    set_obs(34, 11, 0)
+    set_zone(34, 11, 0)
   end
 end
 
 
 function postexec()
-  if (get_progress(P_TALKDERIG) == 3) then
+  if (get_progress(P_TALKDERIG) == 4) then
+    view_range(1, 52, 40, 69, 56)
     bubble(4, "I'm Derig. If I'm here, then you found me in the Grotto.")
-    bubble(4, "I am old and I saw how they sealed the portal. It was the Rod of Cancellation. It is in another part of the grotto.")
-    bubble(4, "I would go get it but I am old and monsters are there in the forest around the grotto.")
-    bubble(4, "My daughter will give you the Unadium Coin, which is the key to the rune on the ground in the clearing.")
-    set_progress(P_TALKDERIG, 4)
+    bubble(4, "To stop the monsters in our underground tunnel, you must seal the portal.")
+    bubble(4, "In order to do that, you can use a Rod of Cancellation to melt it shut.")
+    bubble(4, "I brought you to town to get the Unadium Coin from my granddaughter, which will open the rune back at the Grotto.")
+    bubble(4, "That will transport you to the place where the Rod of Cancellation is.")
+    set_progress(P_TALKDERIG, 5)
   end
-  return
 end
 
 
@@ -160,6 +173,7 @@ function zone_handler(zn)
 
   elseif (zn == 20) then
     chest(6, I_NLEAF, 1)
+    refresh()
 
   elseif (zn == 21) then
     book_talk(party[0])
@@ -172,6 +186,58 @@ function zone_handler(zn)
 
   elseif (zn == 24) then
     touch_fire(party[0])
+
+  elseif (zn == 25) then
+    chest(98, 0, 155)
+    refresh()
+
+  elseif (zn == 26) then
+    thought(HERO1, "`Erupting Volcano'")
+
+  elseif (zn == 27) then
+    thought(HERO1, "`Mountain Nightscape'")
+
+  elseif (zn == 28) then
+    thought(HERO1, "`My Barn Chimney'")
+
+  elseif (zn == 29) then
+    thought(HERO1, "`The Beach Front'")
+
+  elseif (zn == 30) then
+    thought(HERO1, "`The Eye of Sardine'", "Hmm, sounds strangely familiar.")
+
+  elseif (zn == 31) then
+    thought(HERO1, "`The Battle Is Over'")
+
+  elseif (zn == 32) then
+    thought(HERO1, "`Forgotten Barn'")
+
+  elseif (zn == 33) then
+    thought(HERO1, "`Fire Sunset'")
+
+  elseif (zn == 34) then
+    bubble(5, "This is my art collection. Any piece of work starting at only 300000 GP!")
+
+  elseif (zn == 35) then
+    bubble(HERO1, "This armor has been highly polished. I can see myself in it!")
+
+  elseif (zn == 36) then
+    bubble(HERO1, "Nothing in here but antique junk.")
+
+  elseif (zn == 37) then
+    bubble(HERO1, "The drawers are locked.")
+
+  elseif (zn == 38) then
+    bubble(HERO1, "This is the pricelist for all of these items.")
+
+  elseif (zn == 39) then
+    bubble(HERO1, "None of these potions or herbs are useful.")
+
+  elseif (zn == 40) then
+    door_in(78, 49, 73, 40, 83, 51)
+
+  elseif (zn == 41) then
+    door_out(20, 33)
 
   end
 end
@@ -207,7 +273,7 @@ function entity_handler(en)
         -- You entered the grotto, but did not fall in the pit.
         bubble(en, "Jen:", "I'm Derig's granddaughter. Go find Derig in the grotto north of here. You've been there once before.")
       elseif (get_progress(P_TALKDERIG) == 2) then
-        -- You entered grotto and fell in pit (you had NOT spoken to Jen first, though.  Someone helped you get out.
+        -- You entered the grotto and fell in pit (you had NOT spoken to Jen first, though).  Someone helped you get out.
         bubble(en, "You've already been to the grotto.")
         bubble(HERO1, "Yes, we fell down a hole and someone pulled us out.")
         bubble(en, "That is Derig, my grandfather. Go back and look for him.")
@@ -223,15 +289,20 @@ function entity_handler(en)
         bubble(en, "You must find Derig in the grotto. He's there somewhere.")
       elseif (get_progress(P_TALKDERIG) == 2) then
         bubble(en, "Well? Go find Derig in the grotto!")
+      elseif (get_progress(P_TALKDERIG) == 3) then
+        bubble(en, "Okay, that was stupid. You saw him by the fire and you didn't talk to him.")
+        bubble(en, "GO BACK AND TALK TO HIM! HE'S SITTING BY THE FIRE YOU MORON!")
       elseif (get_progress(P_TALKDERIG) == 4) then
-         -- Met Derig
-         bubble(en, "Good. Now that you found Derig, here is the Unadium Coin.")
-         set_progress(P_UCOIN, 2)
-         msg("Unadium coin procured", 255, 0)
+        -- This should never occur
+      elseif (get_progress(P_TALKDERIG) == 5) then
+        -- Met Derig
+        bubble(en, "Good. Now that you found Derig, here is the Unadium Coin.")
+        set_progress(P_UCOIN, 2)
+        msg("Unadium coin procured", 255, 0)
       end -- P_TALKDERIG
     elseif (get_progress(P_UCOIN) == 2) then
       -- You now have the Unadium coin
-      if (get_progress(P_TALKDERIG) == 4) then
+      if (get_progress(P_TALKDERIG) == 5) then
         if (get_progress(P_CANCELROD) == 0) then
           -- You do not have the rod
           bubble(en, "Go get the Rod of Cancellation.")
@@ -245,7 +316,7 @@ function entity_handler(en)
             bubble(en, "You got rid of the portal! Give my father the coin and rod back and I'll give you a SunStone.")
           end -- P_PORTALGONE
         end -- P_CANCELROD
-      end -- P_TALKDERIG == 4
+      end -- P_TALKDERIG == 5
     elseif (get_progress(P_UCOIN) == 3) then
       -- Returned Rod of Cancellation to Derig
       if (get_treasure(45) == 0) then
@@ -269,7 +340,7 @@ function entity_handler(en)
     end
 
   elseif (en == 4) then
-    if (get_progress(P_TALKDERIG) == 4) then
+    if (get_progress(P_TALKDERIG) == 5) then
       if (get_progress(P_UCOIN) == 1) then
         bubble(en, "Talk to Jen to get the Unadium coin.")
       elseif (get_progress(P_UCOIN) == 2) then
@@ -282,16 +353,25 @@ function entity_handler(en)
             bubble(en, "You've done it! The portal is gone, and you have returned the Unadium coin and Rod of Cancellation.")
             set_progress(P_UCOIN, 3)
             set_progress(P_CANCELROD, 2)
-            set_progress(P_TALKDERIG, 5)
+            set_progress(P_TALKDERIG, 6)
             msg("Derig takes the Rod of Cancellation and Unadium Coin.")
             bubble(en, "I'll take these back to the grotto for safe keeping. Thank you.")
           end
         end
       end
-    elseif (get_progress(P_TALKDERIG) == 5) then
-      -- Although TALKDERIG==5, Derig will still be on the screen until you leave Ekla and return
+    elseif (get_progress(P_TALKDERIG) == 6) then
+      -- Although TALKDERIG==6, Derig will still be on the screen until you leave Ekla and return
       bubble(en, "I will take these back to the grotto. Thanks again.")
     end -- P_TALKDERIG
+
+  elseif (en == 5) then
+    bubble(en, "I hid these works of art from Malkaron's forces. When they had come through here, they tried to destroy everything...")
+
+  elseif (en == 6) then
+    bubble(en, "Ever since monsters started appearing, my mother doesn't want me to go outdoors alone. It's so boring in here, though! I want to go out and play!")
+
+  elseif (en == 7) then
+    bubble(en, "My, my. This is beautiful work. How rare! How exquisite! How affordable!")
 
   end
 end
