@@ -129,14 +129,14 @@ function postexec()
 
     -- SLF: Hey, I want to add some contributions here. They will be as simple as
     -- possible and whoever wants to do more can make them actually sound good.
-    bubble(8, "Alright everyone, let me hit all of the major points.");
-    bubble(8, "You eight are interested in helping rid the monsters that sprang up. I don't know where they came from, and I don't know how to get rid of them.");
-    bubble(8, "I want you to go out and discover where they came from. Get rid of them so we can enjoy peace once again. I have two hunches as to where they came from.");
-    if (prompt(8, 2, 1, "Do you want to hear about",
-                        "my theories?", "  yes", "  no") == 0) then
+    bubble(8, "Alright everyone, I welcome you. Let me get right to the major points of why you're here.");
+    bubble(8, "Monsters have started attacking us from out of nowhere. We need your help to find their origins and put a stop to it!");
+    bubble(8, "Go out, discover where they came from, and get rid of them so we can enjoy peace once again. I have two hunches as to where they came from.");
+    if (prompt(8, 2, 1, "Do you want to hear what",
+                        "they are?", "  yes", "  no") == 0) then
       -- yes
       while (not done_talking) do
-        player_response = prompt(8, 3, 0, "Which do you want to hear?",
+        player_response = prompt(8, 3, 0, "These are my ideas:",
                                           "  Staff of Xenarum",
                                           "  Malkaron",
                                           "  Done");
@@ -147,18 +147,36 @@ function postexec()
           bubble(8, "I had learned of the staff from years of study, read about its amazing power, and found it in ancient ruins.");
           bubble(8, "I never tapped its full potential but know it has been a very powerful tool for good or evil.");
           bubble(8, "It may be in Malkaron's hands, and he may be controlling the monsters.");
-        elseif (player_repsonse == 1) then
+        elseif (player_response == 1) then
           -- Malkaron
           bubble(8, "A corrupt man, Malkaron was a power-hungry nobleman in a frozen country. Because of that, many have dubbed him the Ice Lord.");
           bubble(8, "15 years ago, he captured me and took my Staff of Xenarum. He mysteriously became very powerful very quickly. I believe it was the staff that gave him such great power.");
-          bubble(8, "Rebels in his army found me and helped me escape. I lost my eyes fleeing and Hunert has stayed with me from that time.");
-          bubble(8, "I cannot help you by going out myself, but I shall be here if you would need me.");
+          bubble(8, "Rebels in his army found me and helped me escape. Sadly, I lost one of my eyes during the ordeal, but Hunert, my butler, has been able to help me a great deal. He is very useful, and he will be a valuable resource for you.");
+        elseif (player_response == 2) then
+          done_talking = 1;
         else
           -- We should never reach this one; it is just error-checking:
           bubble(8, "That's not an option, Einstein!");
         end
       end
 	end
+
+    bubble(8, "I cannot help you by going out myself, but I shall be here if you would need me.");
+    bubble(8, "Good luck all of you.");
+
+    -- TT: make everyone else walk out the door
+    set_ent_script(0, "R3D1L1D6R3");
+    set_ent_script(1, "R2D1L1D6R4");
+    set_ent_script(2, "R1D1L1D6R4D1");
+    set_ent_script(3, "D1L1D6R4D2");
+    set_ent_script(4, "R1D2L1D1L1D6R2");
+    set_ent_script(5, "R2D2L1D1L1D6R1");
+    set_ent_script(6, "R3D2L1D1L1D6");
+    wait_for_entity(0, 6);
+
+    for a = 0, 6, 1 do
+      set_ent_active(a, 0);
+    end
 
     bubble(8, "When you are ready to go, talk to Hunert and he will get you started on your journey.");
     set_progress(P_MANOR, 1);
