@@ -18,59 +18,24 @@
 #include "../include/disk.h"
 
 
-/*! \brief Confirm before loading a map
+/*! \brief Error in loading a map
  *
+ * Display an error message for a file that doesn't exist.
  *
  */
-void prompt_load_map (void)
+void error_load (char *fname)
 {
-   char fname[16];
-   int ld;
-
-   rectfill (screen, 0, 0, 319, 29, 0);
-   rect (screen, 2, 2, 317, 27, 255);
-   print_sfont (6, 6, "Load a map", screen);
-   sprintf (strbuf, "Current: %s", map_fname);
-   print_sfont (6, 12, strbuf, screen);
-   print_sfont (6, 18, "Filename: ", screen);
-   ld = get_line (66, 18, fname, 40);
-
-   /* Return if the user hit ESC to cancel the dialog box */
-   if (ld == 0)
-      return;
-
-   blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
-   rectfill (screen, 0, 0, 319, 16, 0);
-   rect (screen, 2, 2, 317, 14, 255);
-
-   /* If the line was blank, simply reload the current map */
-   if (strlen (fname) < 1) {
-      strcpy (fname, map_fname);
-      if (exists (fname))
-         sprintf (strbuf, "Reload %s? (y/n)", fname);
-      else {
-         error_load (fname);
-         return;
-      }
-   } else {
-      if (exists (fname))
-         sprintf (strbuf, "Load %s? (y/n)", fname);
-      else {
-         error_load (fname);
-         return;
-      }
-   }
-
+   rectfill (screen, 0, 0, 319, 24, 0);
+   rect (screen, 2, 2, 317, 22, 255);
+   sprintf (strbuf, "Could not load \"%s\"", fname);
    print_sfont (6, 6, strbuf, screen);
-
-   if (yninput ()) {
-      load_map (fname);
-   }                            // if (yninput ())
-
+   sprintf (strbuf, "[press enter]");
+   print_sfont (6, 14, strbuf, screen);
+   wait_enter ();
    return;
-}                               /* prompt_load_map () */
+}                               /* error_load () */
 
-END_OF_FUNCTION (prompt_load_map);
+END_OF_FUNCTION (error_load);
 
 
 /*! \brief Load a map
@@ -116,11 +81,11 @@ void load_map (char *fname)
    pack_fread (o_map, (gmap.xsize * gmap.ysize), pf);
    pack_fclose (pf);
    pcx_buffer = load_pcx (icon_files[gmap.tileset], pal);
-   max_sets = (pcx_buffer->h / TH);
+   max_sets = (pcx_buffer->h / 16);
    for (p = 0; p < max_sets; p++) {
       for (q = 0; q < ICONSET_SIZE; q++) {
-         blit (pcx_buffer, icons[p * ICONSET_SIZE + q], q * TW, p * TH, 0, 0,
-               TW, TH);
+         blit (pcx_buffer, icons[p * ICONSET_SIZE + q], q * 16, p * 16, 0, 0,
+               16, 16);
       }
    }
    icon_set = 0;
@@ -149,26 +114,6 @@ void load_map (char *fname)
 END_OF_FUNCTION (load_map);
 
 
-/*! \brief Error in loading a map
- *
- * Display an error message for a file that doesn't exist.
- *
- */
-void error_load (char *fname)
-{
-   rectfill (screen, 0, 0, 319, 24, 0);
-   rect (screen, 2, 2, 317, 22, 255);
-   sprintf (strbuf, "Could not load \"%s\"", fname);
-   print_sfont (6, 6, strbuf, screen);
-   sprintf (strbuf, "[press enter]");
-   print_sfont (6, 14, strbuf, screen);
-   wait_enter ();
-   return;
-}                               /* error_load () */
-
-END_OF_FUNCTION (error_load);
-
-
 /*! \brief Convert a PCX image to a map
  *
  * Take a PCX image and convert its values to make a map
@@ -191,7 +136,7 @@ void make_mapfrompcx (void)
    ld = get_line (66, 12, fname, 40);
 
    /* Make sure the line isn't blank */
-   if (ld == 0)
+   if (ld == 0 || strlen (fname) < 1)
       return;
 
    blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
@@ -308,7 +253,7 @@ void new_map (void)
    response = get_line (48, 18, strbuf, 4);
 
    /* Make sure the line isn't blank */
-   if (response == 0)
+   if (response == 0 || strlen (strbuf) < 1)
       return;
 
    new_width = atoi (strbuf);
@@ -324,7 +269,7 @@ void new_map (void)
    response = get_line (54, 26, strbuf, 4);
 
    /* Make sure the line isn't blank */
-   if (response == 0)
+   if (response == 0 || strlen (strbuf) < 1)
       return;
 
    new_height = atoi (strbuf);
@@ -353,7 +298,7 @@ void new_map (void)
       response = get_line (156, 34, strbuf, 2);
 
       /* Make sure the line isn't blank */
-      if (response == 0)
+      if (response == 0 || strlen (strbuf) < 1)
          return;
 
       new_tileset = atoi (strbuf);
@@ -394,11 +339,11 @@ void new_map (void)
    bufferize ();
 
    pcx_buffer = load_pcx (icon_files[gmap.tileset], pal);
-   max_sets = (pcx_buffer->h / TH);
+   max_sets = (pcx_buffer->h / 16);
    for (p = 0; p < max_sets; p++)
       for (q = 0; q < ICONSET_SIZE; q++)
-         blit (pcx_buffer, icons[p * ICONSET_SIZE + q], q * TW, p * TH, 0, 0,
-               TW, TH);
+         blit (pcx_buffer, icons[p * ICONSET_SIZE + q], q * 16, p * 16, 0, 0,
+               16, 16);
    icon_set = 0;
    destroy_bitmap (pcx_buffer);
    init_entities ();
@@ -410,6 +355,61 @@ void new_map (void)
 }                               /* new_map () */
 
 END_OF_FUNCTION (new_map);
+
+
+/*! \brief Confirm before loading a map
+ *
+ *
+ */
+void prompt_load_map (void)
+{
+   char fname[16];
+   int ld;
+
+   rectfill (screen, 0, 0, 319, 29, 0);
+   rect (screen, 2, 2, 317, 27, 255);
+   print_sfont (6, 6, "Load a map", screen);
+   sprintf (strbuf, "Current: %s", map_fname);
+   print_sfont (6, 12, strbuf, screen);
+   print_sfont (6, 18, "Filename: ", screen);
+   ld = get_line (66, 18, fname, 40);
+
+   /* Return if the user hit ESC to cancel the dialog box */
+   if (ld == 0)
+      return;
+
+   blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+   rectfill (screen, 0, 0, 319, 16, 0);
+   rect (screen, 2, 2, 317, 14, 255);
+
+   /* If the line was blank, simply reload the current map */
+   if (strlen (fname) < 1) {
+      strcpy (fname, map_fname);
+      if (exists (fname))
+         sprintf (strbuf, "Reload %s? (y/n)", fname);
+      else {
+         error_load (fname);
+         return;
+      }
+   } else {
+      if (exists (fname))
+         sprintf (strbuf, "Load %s? (y/n)", fname);
+      else {
+         error_load (fname);
+         return;
+      }
+   }
+
+   print_sfont (6, 6, strbuf, screen);
+
+   if (yninput ()) {
+      load_map (fname);
+   }                            // if (yninput ())
+
+   return;
+}                               /* prompt_load_map () */
+
+END_OF_FUNCTION (prompt_load_map);
 
 
 /*! \brief Save the current map

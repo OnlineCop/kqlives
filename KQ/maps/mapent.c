@@ -57,51 +57,17 @@ void displace_entities (void)
       /* Confirm that the input x-coords are within the map */
       if (gent[a].tilex + nx < gmap.xsize && gent[a].tilex + nx >= 0) {
          gent[a].tilex += nx;
-         gent[a].x = gent[a].tilex * TW;
+         gent[a].x = gent[a].tilex * 16;
       }
       /* Confirm that the input x-coords are within the map */
       if (gent[a].tiley + ny < gmap.ysize && gent[a].tiley + ny >= 0) {
          gent[a].tiley += ny;
-         gent[a].y = gent[a].tiley * TH;
+         gent[a].y = gent[a].tiley * 16;
       }
    }
 }                               /* displace_entities () */
 
 END_OF_FUNCTION (displace_entities);
-
-
-/*! \brief Draw the entities
- *
- * Draws the entities onto the screen and takes into consideration any layer
- * effects that need to take place (see map_mode_text[] for details).
- * \author PH
- * \date 20031205
- */
-void draw_ents (void)
-{
-   int d, x0, y0;
-   BITMAP *ent;
-   x0 = window_x * TW;
-   y0 = window_y * TH;
-
-   for (d = 0; d < number_of_ents; d++) {
-      /* Draw only the entities within the view-screen */
-      if ((gent[d].tilex >= window_x) && (gent[d].tilex < window_x + htiles)
-          && (gent[d].tiley >= window_y)
-          && (gent[d].tiley < window_y + vtiles)) {
-         ent = eframes[gent[d].chrx][gent[d].facing * 3];
-         /* Draw either a normal sprite or a translucent one */
-         if (gent[d].transl == 0)
-            draw_sprite (double_buffer, ent, gent[d].tilex * TW - x0,
-                         gent[d].tiley * TH - y0);
-         else
-            draw_trans_sprite (double_buffer, ent, gent[d].tilex * TW - x0,
-                               gent[d].tiley * TH - y0);
-      }
-   }
-}                               /* draw_ents () */
-
-END_OF_FUNCTION (draw_ents);
 
 
 /* \brief Display the entity menu
@@ -130,9 +96,9 @@ void draw_entdata (int en)
 
    clear (double_buffer);
    draw_map ();
-   tdx = (gent[en].tilex - window_x) * TW;
-   tdy = (gent[en].tiley - window_y) * TH;
-   rect (double_buffer, tdx - 1, tdy - 1, tdx + TW, tdy + TH, 255);
+   tdx = (gent[en].tilex - window_x) * 16;
+   tdy = (gent[en].tiley - window_y) * 16;
+   rect (double_buffer, tdx - 1, tdy - 1, tdx + 16, tdy + 16, 255);
    hline (double_buffer, 0, SH - 48, SW - 80, 255);
    vline (double_buffer, SW - 80, 0, SH - 48, 255);
 
@@ -215,6 +181,40 @@ void draw_entdata (int en)
 }                               /* draw_entdata () */
 
 END_OF_FUNCTION (draw_entdata);
+
+
+/*! \brief Draw the entities
+ *
+ * Draws the entities onto the screen and takes into consideration any layer
+ * effects that need to take place (see map_mode_text[] for details).
+ * \author PH
+ * \date 20031205
+ */
+void draw_ents (void)
+{
+   int d, x0, y0;
+   BITMAP *ent;
+   x0 = window_x * 16;
+   y0 = window_y * 16;
+
+   for (d = 0; d < number_of_ents; d++) {
+      /* Draw only the entities within the view-screen */
+      if ((gent[d].tilex >= window_x) && (gent[d].tilex < window_x + htiles)
+          && (gent[d].tiley >= window_y)
+          && (gent[d].tiley < window_y + vtiles)) {
+         ent = eframes[gent[d].chrx][gent[d].facing * 3];
+         /* Draw either a normal sprite or a translucent one */
+         if (gent[d].transl == 0)
+            draw_sprite (double_buffer, ent, gent[d].tilex * 16 - x0,
+                         gent[d].tiley * 16 - y0);
+         else
+            draw_trans_sprite (double_buffer, ent, gent[d].tilex * 16 - x0,
+                               gent[d].tiley * 16 - y0);
+      }
+   }
+}                               /* draw_ents () */
+
+END_OF_FUNCTION (draw_ents);
 
 
 /*! \brief Remove an entity from the map
@@ -356,8 +356,8 @@ void place_entity (int ex, int ey)
    gent[number_of_ents].chrx = current_ent;     /* What it looks like */
    gent[number_of_ents].tilex = ex;     /* which tile it's standing on */
    gent[number_of_ents].tiley = ey;     /* ..same.. */
-   gent[number_of_ents].x = ex * TW;    /* Will be the same as tilex unless moving */
-   gent[number_of_ents].y = ey * TH;    /* ..same.. */
+   gent[number_of_ents].x = ex * 16;    /* Will be the same as tilex unless moving */
+   gent[number_of_ents].y = ey * 16;    /* ..same.. */
    gent[number_of_ents].active = 1;     /* Showing on map or not */
    gent[number_of_ents].eid = 255;      /* */
    gent[number_of_ents].movemode = 0;   /* 0=stand, 1=wander, 2=script, 3=chase */
@@ -440,7 +440,7 @@ void update_entities (void)
             return;
 
          gent[et].tilex = atoi (strbuf);
-         gent[et].x = gent[et].tilex * TW;
+         gent[et].x = gent[et].tilex * 16;
       }
 
       /* Change the y-coord */
@@ -454,7 +454,7 @@ void update_entities (void)
             return;
 
          gent[et].tiley = atoi (strbuf);
-         gent[et].y = gent[et].tiley * TH;
+         gent[et].y = gent[et].tiley * 16;
       }
 
       /* Change the method of movement (Stand, Wander, Script, Chase) */

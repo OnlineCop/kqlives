@@ -11,8 +11,6 @@
 #define MAX_ZONES     256
 #define MAX_SHADOWS    12
 #define MAX_OBSTACLES   5
-#define TH             16       /* Tile height */
-#define TW             16       /* Tile width */
 #define SW            640
 #define SH            480
 #define WBUILD          1
@@ -47,58 +45,73 @@ s_show;
 
 
 /*
-   A requirement for this program is that all icon-files have a blank icon in entry 0
+ * A requirement for this program is that all icon-files have a blank icon in
+ * entry 0
  */
 
-/* prototypes */
-int check_last_zone (void);
-int confirm_exit (void);
-int get_line (int, int, char *, int);
-int yninput (void);
 
+
+/* From mapedit.c */
+void animate (void);
 void bufferize (void);
-void check_mdupdate (int, int);
-void check_tilesel (int, int);
+int check_last_zone (void);
 void cleanup (void);
 void clear_layer (void);
 void clear_obstructs (void);
 void clear_shadows (void);
 void cmessage (char *);
+int confirm_exit (void);
 void copy_layer (void);
 void copy_region (void);
 void describe_map (void);
-void displace_entities (void);
-void draw_entdata (int);
-void draw_ents (void);
+void draw_layer (short *, int);
 void draw_map (void);
 void draw_menubars (void);
-void erase_entity (int, int);
-void error_load (char *);
+int get_line (int, int, char *, int);
 void get_tile (void);
-void getfont (void);
 void global_change (void);
-void init_entities (void);
 void klog (char *);
-void load_map (char *);
-void make_mapfrompcx (void);
-void maptopcx (void);
-void new_map (void);
+void normalize_view (void);
 void paste_region (int, int);
 void paste_region_special (int, int);
-void place_entity (int, int);
 void preview_map (void);
 void print_sfont (int, int, char *, BITMAP *);
-void process_controls (void);
-void prompt_load_map (void);
-void resize_map (void);
-void save_map (void);
+void process_keyboard (int);
+void process_menu_bottom (int, int);
+void process_menu_right (int, int);
+void process_mouse (const int);
+void read_controls (void);
+void resize_map (const int);
+void select_only (const int, const int);
 void show_help (void);
 void startup (void);
-void update_entities (void);
 void update_tileset (void);
 void visual_map (void);
 void wait_enter (void);
 void wipe_map (void);
+int yninput (void);
+
+/* From mapent.c */
+void displace_entities (void);
+void draw_entdata (int);
+void draw_ents (void);
+void erase_entity (int, int);
+void init_entities (void);
+void place_entity (int, int);
+void update_entities (void);
+
+/* From mapfile.c */
+void error_load (char *);
+void load_map (char *);
+void make_mapfrompcx (void);
+void maptopcx (void);
+void new_map (void);
+void prompt_load_map (void);
+void save_map (void);
+
+/* From mapdata.c */
+void getfont (void);
+
 
 extern BITMAP *double_buffer, *pcx_buffer;
 extern BITMAP *font6;

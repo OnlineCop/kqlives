@@ -132,11 +132,11 @@ void load_map_batch (const char *fname)
    pack_fclose (pf);
 
    pcx_buffer = load_pcx (icon_files[gmap.tileset], pal);
-   max_sets = (pcx_buffer->h / TH);
+   max_sets = (pcx_buffer->h / 16);
    for (p = 0; p < max_sets; p++) {
       for (q = 0; q < ICONSET_SIZE; q++) {
-         blit (pcx_buffer, icons[p * ICONSET_SIZE + q], q * TW, p * TH, 0, 0,
-               TW, TH);
+         blit (pcx_buffer, icons[p * ICONSET_SIZE + q], q * 16, p * 16, 0, 0,
+               16, 16);
       }
    }
 
@@ -212,39 +212,39 @@ void visual_map_ex (const char *op)
    PALETTE pal;
 
    /* Create a bitmap the same size as the map */
-   if ((bmp = create_bitmap (gmap.xsize * TW, gmap.ysize * TH)) != NULL) {
+   if ((bmp = create_bitmap (gmap.xsize * 16, gmap.ysize * 16)) != NULL) {
       for (j = 0; j < gmap.ysize; j++) {
          for (i = 0; i < gmap.xsize; i++) {
             /* Which tile is currently being evaluated */
             w = gmap.xsize * j + i;
 
             if (show_layer1)
-               blit (icons[map[w]], bmp, 0, 0, i * TW, j * TH, TW, TH);
+               blit (icons[map[w]], bmp, 0, 0, i * 16, j * 16, 16, 16);
             if (show_layer2)
-               draw_sprite (bmp, icons[b_map[w]], i * TW, j * TH);
+               draw_sprite (bmp, icons[b_map[w]], i * 16, j * 16);
             if (show_layer3)
-               draw_sprite (bmp, icons[f_map[w]], i * TW, j * TH);
+               draw_sprite (bmp, icons[f_map[w]], i * 16, j * 16);
             if (show_shadows)
-               draw_trans_sprite (bmp, shadow[sh_map[w]], i * TW, j * TH);
+               draw_trans_sprite (bmp, shadow[sh_map[w]], i * 16, j * 16);
 
             if (show_zones) {
                if (z_map[w] > 0 && z_map[w] < MAX_ZONES) {
                   if (z_map[w] < 10) {
                      /* The zone's number is single-digit */
-                     textprintf_ex (bmp, font, i * TW + 4, j * TH + 4,
+                     textprintf_ex (bmp, font, i * 16 + 4, j * 16 + 4,
                                     makecol (255, 255, 255), 0, "%d",
                                     z_map[w]);
                   } else if (z_map[w] < 100) {
                      /* The zone's number is double-digit */
-                     textprintf_ex (bmp, font, i * TW, j * TH + 4,
+                     textprintf_ex (bmp, font, i * 16, j * 16 + 4,
                                     makecol (255, 255, 255), 0, "%d",
                                     z_map[w]);
                   } else if (i < 1000) {
                      /* The zone's number is triple-digit */
-                     textprintf_ex (bmp, font, i * TW + 4, j * TH,
+                     textprintf_ex (bmp, font, i * 16 + 4, j * 16,
                                     makecol (255, 255, 255), 0, "%d",
                                     (int) (z_map[w] / 100));
-                     textprintf_ex (bmp, font, i * TW, j * TH + 8,
+                     textprintf_ex (bmp, font, i * 16, j * 16 + 8,
                                     makecol (255, 255, 255), 0, "%02d",
                                     (int) (z_map[w] % 100));
                   }
@@ -255,27 +255,27 @@ void visual_map_ex (const char *op)
                switch (o_map[w]) {
                case 1:
                   /* Block-all: blocks movement from every direction */
-                  draw_sprite (bmp, mesh, i * TW, j * TH);
+                  draw_sprite (bmp, mesh, i * 16, j * 16);
                   break;
                case 2:
                   /* North-block: blocks movement up */
-                  hline (bmp, i * TW, j * TH, i * TW + 15, 255);
-                  vline (bmp, i * TW + 8, j * TH, j * TH + 15, 255);
+                  hline (bmp, i * 16, j * 16, i * 16 + 15, 255);
+                  vline (bmp, i * 16 + 8, j * 16, j * 16 + 15, 255);
                   break;
                case 3:
                   /* East-block: blocks movement right */
-                  hline (bmp, i * TW, j * TH + 8, i * TW + 15, 255);
-                  vline (bmp, i * TW + 15, j * TH, j * TH + 15, 255);
+                  hline (bmp, i * 16, j * 16 + 8, i * 16 + 15, 255);
+                  vline (bmp, i * 16 + 15, j * 16, j * 16 + 15, 255);
                   break;
                case 4:
                   /* South-block: blocks movement down */
-                  hline (bmp, i * TW, j * TH + 15, i * TW + 15, 255);
-                  vline (bmp, i * TW + 8, j * TH, j * TH + 15, 255);
+                  hline (bmp, i * 16, j * 16 + 15, i * 16 + 15, 255);
+                  vline (bmp, i * 16 + 8, j * 16, j * 16 + 15, 255);
                   break;
                case 5:
                   /* West-block: blocks movement left */
-                  hline (bmp, i * TW, j * TH + 8, i * TW + 15, 255);
-                  vline (bmp, i * TW, j * TH, j * TH + 15, 255);
+                  hline (bmp, i * 16, j * 16 + 8, i * 16 + 15, 255);
+                  vline (bmp, i * 16, j * 16, j * 16 + 15, 255);
                   break;
                }
             }
@@ -333,7 +333,7 @@ int main (int argc, char *argv[])
    }
 
    for (k = 0; k < MAX_TILES; k++) {
-      icons[k] = create_bitmap (TW, TH);
+      icons[k] = create_bitmap (16, 16);
       clear (icons[k]);
    }
 
@@ -341,20 +341,20 @@ int main (int argc, char *argv[])
    if (show_shadows) {
       pcx_buffer = load_pcx ("Misc.pcx", pal);
       for (k = 0; k < MAX_SHADOWS; k++) {
-         shadow[k] = create_bitmap (TW, TH);
-         blit (pcx_buffer, shadow[k], k * TW, 160, 0, 0, TW, TH);
+         shadow[k] = create_bitmap (16, 16);
+         blit (pcx_buffer, shadow[k], k * 16, 160, 0, 0, 16, 16);
       }
       destroy_bitmap (pcx_buffer);
    }
 
    /* Obstacles */
    if (show_obstacles) {
-      mesh = create_bitmap (TW, TH);
+      mesh = create_bitmap (16, 16);
       clear (mesh);
-      for (i = 0; i < TW; i += 2) {
-         for (k = 0; k < TH; k += 2)
+      for (i = 0; i < 16; i += 2) {
+         for (k = 0; k < 16; k += 2)
             putpixel (mesh, k, i, 255);
-         for (k = 1; k < TH; k += 2)
+         for (k = 1; k < 16; k += 2)
             putpixel (mesh, k, i + 1, 255);
       }
    }
