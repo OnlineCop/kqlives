@@ -354,7 +354,7 @@ void new_map (void)
 /* TT TODO:
  * We need to clear 'map_fname'
  */
-   *map_fname = "";
+   //*map_fname = "";
 }                               /* new_map () */
 
 

@@ -663,7 +663,7 @@ void copy_region (void)
    if (cbw < 1) {
       /* This swaps the x-coords if they are backward */
       swapx = copyx2;
-      copyx2 = swapx;
+      copyx2 = copyx1;
       copyx1 = swapx;
       cbw = copyx2 - copyx1;
    }
@@ -944,7 +944,7 @@ void draw_menubars (void)
       rectx2 = (copyx2 - window_x) * 16 + 15;
       recty2 = (copyy2 - window_y) * 16 + 15;
 
-      sprintf (strbuf, "Rect: %d,%d", copyx1*16, copyy1*16);
+      sprintf (strbuf, "Rect: %d,%d", copyx1 * 16, copyy1 * 16);
       print_sfont (320, (SH - 24), strbuf, double_buffer);
 
       if (copying == 0) {
@@ -1168,8 +1168,8 @@ void draw_menubars (void)
    if (draw_mode == MAP_ENTITIES) {
       sprintf (strbuf, "%d", current_ent);
       print_sfont ((SW - 14), (SH - 38), strbuf, double_buffer);
-      blit (eframes[current_ent][0], double_buffer, 0, 0, (SW - 16), (SH - 32), 16,
-            16);
+      blit (eframes[current_ent][0], double_buffer, 0, 0, (SW - 16),
+            (SH - 32), 16, 16);
       sprintf (strbuf, "%d", number_of_ents);
       print_sfont ((SW - 14), (SH - 12), strbuf, double_buffer);
    }
@@ -1355,7 +1355,7 @@ void global_change (void)
             f_map[p] = tt;
       if (ps)
          if (sh_map[p] == ft)
-            sh_map[p] = tt;     /* Is this supposed to be 'tt'? PH Yes I think so */
+            sh_map[p] = tt;     /* Is this supposed to be 'tt'? */
       if (po)
          if (o_map[p] == ft)
             o_map[p] = tt;      /* ...same... */
@@ -1497,24 +1497,24 @@ void preview_map (void)
    clear_bitmap(double_buffer);
    switch (gmap.map_mode) {
    case 0:
-      draw_layer(map, 0);
-      draw_layer(b_map, 0);
+      draw_layer((short int*)map, 0);
+      draw_layer((short int*)b_map, 0);
       draw_ents();
-      draw_layer(f_map, 0);
+      draw_layer((short int*)f_map, 0);
       draw_shadow(0);
       break;
    case 1:
-      draw_layer(map, 0);
+      draw_layer((short int*)map, 0);
       draw_ents();
-      draw_layer(b_map, 0);
-      draw_layer(f_map, 0);
+      draw_layer((short int*)b_map, 0);
+      draw_layer((short int*)f_map, 0);
       draw_shadow(0);
       break;
    case 2:
-      draw_layer(map, 1);
-      draw_layer(b_map, 0);
+      draw_layer((short int*)map, 1);
+      draw_layer((short int*)b_map, 0);
       draw_ents();
-      draw_layer(f_map, 0);
+      draw_layer((short int*)f_map, 0);
       draw_shadow(0);
       break;
    default:

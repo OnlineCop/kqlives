@@ -40,7 +40,9 @@
 #define PSIZE               2
 #define MAXFRAMES          12
 #define MAXEFRAMES         12
-/* PH: MAXCFRAMES never seems to be used properly - all frames are identical for enemies? */
+/* PH: MAXCFRAMES never seems to be used properly -
+   all frames are identical for enemies?
+ */
 #define MAXCFRAMES          8
 #define NUM_FIGHTERS        7
 #define NUM_STATS          13
@@ -56,7 +58,8 @@
 #define STEPS_NEEDED       15
 
 /* Get the directory for application data (music, gfx, etc.)
-or user data (screenshots, prefs, saved games) */
+   or user data (screenshots, prefs, saved games)
+ */
 const char *kqres (int dir_id, const char *file);
 #define DATA_DIR       0
 #define MAP_DIR        1
@@ -183,7 +186,7 @@ const char *kqres (int dir_id, const char *file);
 #define USE_IMBUED       8
 /*\}*/
 
-/*! \name Weapon/Spell targetting modes */
+/*! \name Weapon/Spell targeting modes */
 /*\{*/
 #define TGT_CASTER        -1
 #define TGT_NONE          0

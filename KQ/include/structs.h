@@ -30,7 +30,7 @@
 /*! \brief Map definition */
 typedef struct
 {
-   unsigned char map_no;        /*!< Map identifier */
+   signed char map_no;          /*!< Map identifier */
    unsigned char zero_zone;     /*!< Non-zero if zone 0 triggers an event */
    unsigned char map_mode;      /*!< Map mode (see draw_map()) */
    unsigned char can_save;      /*!< Non-zero if Save is allowed in this map */
