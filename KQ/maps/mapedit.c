@@ -961,11 +961,10 @@ void draw_menubars (void)
    int p, xp, yp, a;
 
    // Description for the current draw_mode (could use work)
-   char dt[17][12] =
+   char dt[14][12] =
       { "Layer1", "Layer2", "Layer3",
         "View L1+2", "View L1+3", "View L2+3", "View L1+2+3",
         "Entities", "Shadows", "Obstacles", "Zones",
-        "L1-3, E, S", "View-All", "View-None",
         "Block Copy", "Block Paste",
         "Grab Tile"
       };
