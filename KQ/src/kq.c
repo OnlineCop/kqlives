@@ -1295,8 +1295,22 @@ static void allocate_stuff (void)
    for (p = 0; p < 8; p++)
       bub[p] = alloc_bmp (16, 16, "bub[x]");
 
+// TT fix for thought bubble
+#if 0
    for (p = 0; p < 8; p++)
       bord[p] = alloc_bmp (8, 8, "bord[x]");
+#endif
+
+// TT add {
+   for (p = 0; p < 3; p++)
+     {
+        bord[p] = alloc_bmp (8, 8, "bord[x]");
+        bord[p + 5] = alloc_bmp (8, 8, "bord[x]");
+     }
+
+   for (p = 3; p < 5; p++)
+     bord[p] = alloc_bmp (8,12, "bord[x]");
+// } TT add
 
    for (p = 0; p < 8; p++)
       portrait[p] = alloc_bmp (40, 40, "portrait[x]");
