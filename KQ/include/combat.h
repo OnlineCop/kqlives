@@ -19,6 +19,16 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+/*! \file
+ * \brief Combat header file
+ *
+ * This file contains prototype for functions
+ * related to drawing characters in combat and 
+ * to calculating the outcomes of combat
+ * \author JB
+ * \date ????????
+ */
+
 #ifndef __COMBAT_H
 #define __COMBAT_H
 
@@ -30,7 +40,8 @@
 
 
 
-/*  combat function prototypes  */
+/*! \name combat function prototypes  */
+/*\{*/
 int combat_check (int, int);    /*  entity.c  */
 int combat (int);               /*  intrface.c  */
 void battle_render (int, int, int);     /*  effects.c, [eh]skill.c, heroc.c,  */
@@ -39,10 +50,11 @@ void draw_fighter (int, int);   /*  effects.c, hskill.c  */
 int fight (int, int, int);      /*  enemyc.c, [eh]skill.c, heroc.c  */
 void multi_fight (int);         /*  hskill.c  */
 void fkill (int);               /*  heroc.c, hskill.c, magic.c  */
+/*\}*/
 
 
-
-/*  global combat related variables  */
+/*!  global combat related variables  */
+/*\{*/
 extern int combatend;           /*  heroc.c, magic.c  */
 extern int cact[NUM_FIGHTERS];  /*  enemyc.c, heroc.c, hskill.c  */
 extern int curx;                /*  effects.c, heroc.c, hskill.c  */
@@ -55,8 +67,7 @@ extern int rcount;              /*  magic.c  */
 extern unsigned char vspell;    /*  magic.c  */
 extern unsigned char ms;        /*  heroc.c  */
 extern struct DATAFILE *backart;        /*  hskill.c  */
-
-
+/*\}*/
 
 #if 0
 void init_fighters (void);      /*  staticed  */

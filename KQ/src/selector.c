@@ -105,7 +105,7 @@ int select_player (void)
  *            items/spells.
  *            Used in itemmenu.c and masmenu.c
  * \param   csa mode (target one, one/all or all)
- * \param   icn icon to draw (see draw_icon() in draw.c)
+ * \param   icn icon to draw (see also draw_icon() in draw.c)
  * \param   msg prompt message
  * \returns  Index of player (0..numchrs-1) or -1 if cancelled
  *           or SEL_ALL_ALLIES if 'all' was selected (by pressing L or R)
@@ -114,6 +114,8 @@ int select_player (void)
  * \todo PH  This seems awfully complicated for what it does. Is there
  * any visual clue as to whether you can select all or not?
  * Should there be?
+ * \sa draw_icon()
+ * \sa camp_item_targetting()
 */
 int select_any_player (int csa, int icn, char *msg)
 {

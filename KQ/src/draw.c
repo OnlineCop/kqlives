@@ -18,6 +18,14 @@
    the Free Software Foundation,
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
+/*! \file
+ * \brief Character and Map drawing
+ *
+ * Includes functions to draw characters, text and maps.
+ * Also some colour manipulation.
+ * \author JB
+ * \date ??????
+ */
 
 #include <stdio.h>
 #include <string.h>
@@ -53,10 +61,14 @@ static char *parse_string (char *);
 
 
 
-/*
-   This does the copy from the double_buffer to the screen... for the
-   longest time I called blit in every location (over 80 places) instead
-   of having a central function... am I a moron or what?
+/*! \brief Blit from double buffer to the screen
+ *
+ * This does the copy from the double_buffer to the screen... for the
+ * longest time I called blit in every location (over 80 places) instead
+ * of having a central function... am I a moron or what?
+ * Handles frame-rate display, stretching and vsync waiting.
+ * \param xw x-coordinate in double_buffer of the top-left of the screen
+ * \param yw y-coordinate in double_buffer of the top-left of the screen
 */
 void blit2screen (int xw, int yw)
 {
@@ -73,9 +85,21 @@ void blit2screen (int xw, int yw)
       blit (double_buffer, screen, xw, yw, 0, 0, 320, 240);
 }
 
-/*
-   This takes a bitmap and scales it to fit in the color range specified.
-   Output goes to a new bitmap.
+/*! \brief Scale colours
+ *
+ * This takes a bitmap and scales it to fit in the color range specified.
+ * Output goes to a new bitmap.
+ * This is used to make a monochrome version of a bitmap, for example to
+ * display a green, poisoned character, or the red 'rage' effect for 
+ * Sensar. This relies on the palette having continuous lightness ranges
+ * of one colour (as the KQ palette does!).
+ * An alternative would be to use makecol(), though this would incur
+ * a speed penalty.
+ *
+ * \param src Source bitmap
+ * \param dest Destination bitmap
+ * \param st start of output color range
+ * \param fn end of output color range
 */
 void color_scale (BITMAP * src, BITMAP * dest, int st, int fn)
 {
@@ -99,8 +123,13 @@ void color_scale (BITMAP * src, BITMAP * dest, int st, int fn)
      }
 }
 
-/*
-   This is used to color_scale one or more fighter frames.
+/*! \brief Convert multiple frames
+ *
+ * This is used to color_scale one or more fighter frames.
+ * \param who Character to convert
+ * \param st Start of output range
+ * \param fn End of output range
+ * \param aflag if ==1 then ignore \p who and covert all
 */
 void convert_cframes (int who, int st, int fn, int aflag)
 {
@@ -128,8 +157,11 @@ void convert_cframes (int who, int st, int fn, int aflag)
      }
 }
 
-/*
-   Restore specified fighter frames to normal color.
+/*! \brief Restore colours
+ *
+ * Restore specified fighter frames to normal color.
+ * \param who Character to restore
+ * \param aflag if ==1 then ignore \p who and convert all frames
 */
 void revert_cframes (int who, int aflag)
 {
@@ -160,18 +192,35 @@ void revert_cframes (int who, int aflag)
      }
 }
 
-/*
-   Just a helper function... reduces the number of places that 'sicons'
-   has to be referenced.
+/*! \brief Draw small  icon
+ *
+ * Just a helper function... reduces the number of places that 'sicons'
+ * has to be referenced.
+ * Icons are 8x8 sub-bitmaps of sicons, representing items (sword, etc.)
+ *
+ * \param where bitmap to draw to
+ * \param ico icon to draw
+ * \param icx x-coord
+ * \param icy y-coord
 */
 void draw_icon (BITMAP * where, int ino, int icx, int icy)
 {
    masked_blit (sicons, where, 0, ino * 8, icx, icy, 8, 8);
 }
 
-/*
-   Just a helper function... reduces the number of places that 'stspics'
-   has to be referenced.
+/*! \brief Draw status icon
+ *
+ * Just a helper function... reduces the number of places that 'stspics'
+ * has to be referenced.
+ * Status icons are 8x8 sub-bitmaps of \p stspics, representing poisoned, etc.
+ * \param where bitmap to draw to
+ * \param cc non-zero if in combat mode (draw
+ *        using info  \p fighter[] rather than \p party[]
+ * \param who Charcter to draw status for
+ * \param inum the maximum number of status icons to draw.
+ *        \p inum ==17 when in combat, ==8 otherwise.
+ * \param icx x-coord to draw to
+ * \param icy y-coord to draw to
 */
 void draw_stsicon (BITMAP * where, int cc, int who, int inum, int icx, int icy)
 {
@@ -194,9 +243,14 @@ void draw_stsicon (BITMAP * where, int cc, int who, int inum, int icx, int icy)
       masked_blit (stspics, where, 0, 0, icx, icy, 8, 8);
 }
 
-/*
-   Draw the heroes on the map.  It's kind of clunky, but this is also where
-   it takes care of walking in forests and only showing a disembodied head.
+/*! \brief Draw heroes on map
+ *
+ * Draw the heroes on the map.  It's kind of clunky, but this is also where
+ * it takes care of walking in forests and only showing a disembodied head.
+ * Does not seem to do any parallaxing. (?)
+ *  
+ * \param xw x-offset - always ==16
+ * \param yw y-offset - always ==16
 */
 static void drawchar (int xw, int yw)
 {
@@ -320,10 +374,15 @@ static void drawchar (int xw, int yw)
      }
 }
 
-/*
-   Helper function for the drawchar routine.  Just returns whether or not
-   the tile at the specified co-ordinates is a forest tile.  This could be
-   a headache if the tileset changes!
+/*! \brief Check for forest square
+ *
+ * Helper function for the drawchar routine.  Just returns whether or not
+ * the tile at the specified co-ordinates is a forest tile.  This could be
+ * a headache if the tileset changes!
+ * Looks in the \p map_seg[] array
+ * \param fx x-coord to check
+ * \param fy y-coord to check
+ * \returns 1 if it is a forest square
 */
 int is_forestsquare (int fx, int fy)
 {
@@ -337,8 +396,20 @@ int is_forestsquare (int fx, int fy)
       return 0;
 }
 
-/*
-   Umm... yeah.
+/*! \brief Draw the map
+ *
+ * Umm... yeah.
+ * Draws the background, character, middle, foreground and shadow layers.
+ * The order, and the parallaxing, is specified by the mode.
+ * There are 6 modes, as set in the .map file
+ *  - 0 Order BMCFS, 
+ *  - 1 Order BCMFS, 
+ *  - 2 Order BMCFS, Background parallax
+ *  - 3 Order BCMFS, Background & middle parallax
+ *  - 4 Order BMCFS, Middle & foreground parallax
+ *  - 5 Order BCMFS, Foreground parallax
+ *
+ * Also handles the Repulse indicator and the map description display.
 */
 void drawmap (void)
 {
@@ -380,8 +451,10 @@ void drawmap (void)
      }
 }
 
-/*
-   Draw the background layer.  Accounts for parallaxing.
+/*! \brief Draw background
+ *
+ * Draw the background layer.  Accounts for parallaxing.
+ * Parallax is on for modes 2 & 3
 */
 static void draw_backlayer (void)
 {
@@ -430,8 +503,10 @@ static void draw_backlayer (void)
      }
 }
 
-/*
-   Draw the middle layer.  Accounts for parallaxing.
+/*! \brief Draw middle layer
+ *
+ * Draw the middle layer.  Accounts for parallaxing.
+ * Parallax is on for modes 3 & 4
 */
 static void draw_midlayer (void)
 {
@@ -477,8 +552,10 @@ static void draw_midlayer (void)
      }
 }
 
-/*
-   Draw the foreground layer.  Accounts for parallaxing.
+/*! \brief Draw foreground
+ *
+ * Draw the foreground layer.  Accounts for parallaxing.
+ * Parallax is on for modes 4 & 5.
 */
 static void draw_forelayer (void)
 {
@@ -524,9 +601,11 @@ static void draw_forelayer (void)
      }
 }
 
-/*
-   Draw the shadow layer... this beats making extra tiles.  This may be
-   moved in the future to fall between the background and foreground layers.
+/*! \brief Draw shadows
+ *
+ * Draw the shadow layer... this beats making extra tiles.  This may be
+ * moved in the future to fall between the background and foreground layers.
+ * Shadows are never parallaxed.
 */
 static void draw_shadows (void)
 {
@@ -561,10 +640,17 @@ static void draw_shadows (void)
      }
 }
 
-/*
-   Draw the fancy pants border that I use.  I hard draw the border instead
-   of using bitmaps, because that's just the way I am.  It doesn't degrade
-   performance, so who cares :)
+/*! \brief Draw border box
+ *
+ * Draw the fancy pants border that I use.  I hard draw the border instead
+ * of using bitmaps, because that's just the way I am.  It doesn't degrade
+ * performance, so who cares :)
+ * Border is about 4 pixels thick, fitting inside (x,y)-(x2,y2)
+ * \param where bitmap to draw to
+ * \param x top-left x-coord
+ * \param y top-left y-coord
+ * \param x2 bottom-right x-coord
+ * \param y2  bottom-right y-coord
 */
 static void border (BITMAP * where, int x, int y, int x2, int y2)
 {
@@ -598,9 +684,17 @@ static void border (BITMAP * where, int x, int y, int x2, int y2)
    putpixel (where, x2 - 4, y2 - 4, WHITE);
 }
 
-/*
-   Draw a menubox.  This is kinda hacked because of translucency, but it
-   works.  I use the DARKBLUE define to draw a non-translucent box.
+/*! \briefDraw menu box
+ *
+ * Draw a menubox.  This is kinda hacked because of translucency, but it
+ * works.  I use the DARKBLUE define to draw a non-translucent box.
+ *
+ * \param where bitmap to draw to
+ * \param x x-coord
+ * \param y y-coord
+ * \param w width
+ * \param h height
+ * \param c colour (see note above)
 */
 void menubox (BITMAP * where, int x, int y, int w, int h, int c)
 {
@@ -627,9 +721,16 @@ void menubox (BITMAP * where, int x, int y, int w, int h, int c)
      }
 }
 
-/*
-   Display a string in a particular font on a bitmap at the specified
-   co-ordinates.
+/*! \brief Display string
+ *
+ * Display a string in a particular font on a bitmap at the specified
+ * co-ordinates.
+ *
+ * \param where bitmap to draw to
+ * \param sx x-coord
+ * \param sy y-coord
+ * \param msg string to draw
+ * \param cl font index (0..6)
 */
 void print_font (BITMAP * where, int sx, int sy, char *msg, int cl)
 {
@@ -655,11 +756,18 @@ void print_font (BITMAP * where, int sx, int sy, char *msg, int cl)
      }
 }
 
-/*
-   Display a number using the small font on a bitmap at the specified
-   co-ordinates and using the specified color.  This still expects the
-   number to be in a string... the functions real purpose is to use
-   a different font for numerical display in combat.
+/*! \brief Display number
+ *
+ * Display a number using the small font on a bitmap at the specified
+ * co-ordinates and using the specified color.  This still expects the
+ * number to be in a string... the functions real purpose is to use
+ * a different font for numerical display in combat.
+ *
+ * \param where bitmap to draw to
+ * \param sx x-coord
+ * \param sy y-coord
+ * \param msg string to draw
+ * \param cl font index (0..4)
 */
 void print_num (BITMAP * where, int sx, int sy, char *msg, int cl)
 {
@@ -680,9 +788,12 @@ void print_num (BITMAP * where, int sx, int sy, char *msg, int cl)
      }
 }
 
-/*
-   The purpose of this function is to calculate where a text bubble
-   should go in relation to the entity who is speaking.
+/*! \brief Calculate bubble position
+ *
+ * The purpose of this function is to calculate where a text bubble
+ * should go in relation to the entity who is speaking.
+ *
+ * \param who character that is speaking
 */
 static void set_textpos (int who)
 {
@@ -752,8 +863,10 @@ static void set_textpos (int who)
      }
 }
 
-/*
-   Hmm... I think this function draws the textbox :p
+/*! \brief Draw text box
+ *
+ * Hmm... I think this function draws the textbox :p
+ * \param bstyle style (B_TEXT or B_THOUGHT)
 */
 static void draw_textbox (int bstyle)
 {
@@ -805,10 +918,18 @@ static void draw_textbox (int bstyle)
      }
 }
 
-/*
-   Draw a regular text bubble and display the text.
+/*! \brief Draw text bubble
+ *
+ * Draw a regular text bubble and display the text.
+ *
+ * \param who entity that is speaking
+ * \param sp1 Line 1 of text
+ * \param sp2 Line 2 of text
+ * \param sp3 Line 3 of text
+ * \param sp4 Line 4 of text
+ *
+ * \todo PH I'd like to make this divide a long string into lines/pages automatically 
 */
-/* PH I'd like to make this divide a long string into lines/pages automatically */
 void bubble_text (int who, char *sp1, char *sp2, char *sp3, char *sp4)
 {
    strcpy (msgbuf[0], parse_string (sp1));
@@ -818,9 +939,18 @@ void bubble_text (int who, char *sp1, char *sp2, char *sp3, char *sp4)
    generic_text (who, B_TEXT);
 }
 
-/*
-   Draw a thought bubble and display the text.
-*/
+/*! \brief Draw though bubble
+ *
+ *  Draw a thought bubble and display the text.
+ *
+ * \param who entity that is speaking
+ * \param sp1 Line 1 of text
+ * \param sp2 Line 2 of text
+ * \param sp3 Line 3 of text
+ * \param sp4 Line 4 of text
+ *
+ * \todo PH I'd like to make this divide a long string into lines/pages automatically 
+ */
 void thought_text (int who, char *sp1, char *sp2, char *sp3, char *sp4)
 {
    strcpy (msgbuf[0], parse_string (sp1));
@@ -830,8 +960,12 @@ void thought_text (int who, char *sp1, char *sp2, char *sp3, char *sp4)
    generic_text (who, B_THOUGHT);
 }
 
-/*
-   Generic routine to actually display a text box and wait for a keypress.
+/*! Text box drawing
+ *
+ * Generic routine to actually display a text box and wait for a keypress.
+ *
+ * \param who character that is speaking/thinking
+ * \param box_style style (B_TEXT or B_THOUGHT)
 */
 static void generic_text (int who, int box_style)
 {
@@ -880,8 +1014,13 @@ static void generic_text (int who, int box_style)
    timer_count = 0;
 }
 
-/*
-   This checks a string for $0, or $1 and replaces with player names.
+/*! \brief Insert character names
+ *
+ * This checks a string for $0, or $1 and replaces with player names.
+ * 
+ * \param the_string input string
+ * \returns processed string, in a static buffer \p strbuf
+ *          or \p the_string, if it had no replacement chars.
 */
 static char *parse_string (char *the_string)
 {
@@ -922,9 +1061,19 @@ static char *parse_string (char *the_string)
       return the_string;
 }
 
-/*
-   Draw a text box and wait for a response.  It is possible to offer up to four
-   choices in a prompt box.
+/*! \brief Do user prompt
+ *
+ * Draw a text box and wait for a response.  It is possible to offer up to four
+ * choices in a prompt box.
+ *
+ * \param who entity that is speaking
+ * \param numopt number of choices
+ * \param bstyle textbox style (B_TEXT or B_THOUGHT)
+ * \param sp1 Line 1 of text
+ * \param sp2 Line 2 of text
+ * \param sp3 Line 3 of text
+ * \param sp4 Line 4 of text
+ * \returns index of option chosen (0..numopt-1)
 */
 int prompt (int who, int numopt, int bstyle, char *sp1, char *sp2, char *sp3,
             char *sp4)
@@ -994,9 +1143,16 @@ int prompt (int who, int numopt, int bstyle, char *sp1, char *sp2, char *sp3,
    return ptr;
 }
 
-/*
-   Draw a single line message in the center of the screen and wait for
-   the confirm key to be pressed or for a specific amount of time.
+/*! \brief Alert player
+ *
+ * Draw a single line message in the center of the screen and wait for
+ * the confirm key to be pressed or for a specific amount of time.
+ * 
+ * \param m message text
+ * \param icn icon to display
+ * \param delay time to wait (milliseconds?)
+ * \param x_m x-coord
+ * \param y_m y-coord
 */
 void message (char *m, int icn, int delay, int x_m, int y_m)
 {
@@ -1028,9 +1184,20 @@ void message (char *m, int icn, int delay, int x_m, int y_m)
    blit (back, double_buffer, 0, 0, x_m, y_m, 352, 280);
 }
 
-/*
-   This merely sets the view variables for use in
-   other functions that rely on the view.
+/*! \brief Adjust view
+ *
+ * This merely sets the view variables for use in
+ * other functions that rely on the view.
+ * The view defines a subset of the map,
+ * for example when you move to a house in a town,
+ * the view contracts to display only the interior.
+ *
+ * \param vw Non-zero to enable view, otherwise show the whole
+ *        map
+ * \param x1 top-left of view
+ * \param y1 top-left of view
+ * \param x2 bottom-right of view
+ * \param y2 bottom-right of view
 */
 void set_view (int vw, int x1, int y1, int x2, int y2)
 {

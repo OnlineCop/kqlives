@@ -18,6 +18,15 @@
    the Free Software Foundation,
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
+/*! \file 
+ * \brief Interface functions
+ *
+ * This file implements the interface between
+ * the C code and the Lua scripts.
+ *
+ * \author JB
+ * \date ??????
+ */
 
 #include <stdio.h>
 #include <string.h>
@@ -345,7 +354,7 @@ lua_State *theL;
 char tmap_name[16];
 int tmx, tmy, tmvx, tmvy, changing_map = 0;
 
-int real_entity_num (int ee)
+static int real_entity_num (int ee)
 {
    if (ee == 255)
       return 255;
@@ -1955,6 +1964,17 @@ static int KQ_wait_enter (lua_State * L)
    return 0;
 }
 
+/*! \brief Initialise scripting engine
+ *
+ * Initialise the Lua scripting engine
+ * by loading from a file. A new VM is
+ * created each time.
+ * \param fname Base name of script; xxxxx loads script scripts/xxxxx.lob
+ * \todo PH Check the return value for errors 
+ * a buggy (or missing) compiled script is a common source of error 
+ * \todo PH check that \p theL does not already point to a VM
+ * (otherwise leaks will occur)
+ */
 void do_luainit (char *fname)
 {
    int i, oldtop;
@@ -1964,12 +1984,21 @@ void do_luainit (char *fname)
    for (i = 0; i < NUM_IFUNCS; i++)
       lua_register (theL, lrs[i].name, lrs[i].func);
    oldtop = lua_gettop (theL);
-   /* PH TODO check the return value for errors */
-   /* a buggy (or missing) compiled script is a common source of error */
    lua_dofile (theL, strbuf);
    lua_settop (theL, oldtop);
 }
 
+/*! \brief Load cheat code
+ *
+ * Load the contents of scripts/cheat.lob, usually
+ * in response to f10 being pressed.
+ * This can contain any scripting code,  
+ * in the function cheat().
+ * The variable \p cheat_loaded appears to 
+ * be provided to ensure the cheat code is loaded
+ * once only. However it is never set, so the check
+ * never fails. 
+ */
 void do_luacheat (void)
 {
    int oldtop;
@@ -1988,6 +2017,11 @@ void do_luacheat (void)
    message ("Cheating complete.", 255, 50, xofs, yofs);
 }
 
+/*! \brief Kill the Lua VM
+ *
+ * Close the Lua virtual machine, and note that
+ * the cheat code should be reloaded if called.
+ */
 void do_luakill (void)
 {
    if (theL)
@@ -1995,6 +2029,15 @@ void do_luakill (void)
    cheat_loaded = 0;
 }
 
+/*! \brief Run initial code 
+ * 
+ * Calls the function autoexec() which
+ * should contain some initial start-up routines
+ * for this map. This occurs while the map is faded out.
+ * This code should NOT call any graphical functions
+ * because this causes KQ to lock. Instead,
+ * use postexec()
+ */
 void do_autoexec (void)
 {
    int oldtop = lua_gettop (theL);
@@ -2005,6 +2048,13 @@ void do_autoexec (void)
    check_map_change ();
 }
 
+/*! \brief Run initial graphical code
+ *
+ * This function is called after the 
+ * map is faded back in. It's possible
+ * to show speech, move entities, etc.
+ * here.
+ */
 void do_postexec (void)
 {
    int oldtop = lua_gettop (theL);
@@ -2015,6 +2065,15 @@ void do_postexec (void)
    check_map_change ();
 }
 
+/*! \brief Trigger zone action 
+ *
+ * Run the lua function zone_handler(int)
+ * to take action based on the zone that the 
+ * hero has just stepped on. 
+ * This function is not called for zone 0,
+ * unless the map property zero_zone is non-zero.
+ * \param zn_num Zone number
+ */
 void do_zone (int zn_num)
 {
    int oldtop = lua_gettop (theL);
@@ -2026,6 +2085,13 @@ void do_zone (int zn_num)
    check_map_change ();
 }
 
+/*! \brief Trigger entity action 
+ *
+ * Run the lua function entity_handler(int)
+ * to take action based on the entity that the 
+ * hero has just approached and pressed ALT. 
+ * \param en_num Entity number
+ */
 void do_entity (int en_num)
 {
    int oldtop = lua_gettop (theL);
@@ -2037,6 +2103,7 @@ void do_entity (int en_num)
    check_map_change ();
 }
 
+/*! \brief Change map, unless already in the map-change process */
 static void check_map_change (void)
 {
    if (changing_map == 0)
