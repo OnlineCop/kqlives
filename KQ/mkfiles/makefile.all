@@ -49,10 +49,16 @@ PACKAGE_OBJ = fix.bat    \
 #                                                                             #
 ###############################################################################
 
+# export all our vars to sub-makes
+export
 
 # Just go into the scripts directory and run the script there                 #
 scripting:
 	$(MAKE) -C scripts
+
+editor:
+	@echo This could take a long time, please wait.
+	$(MAKE) -C maps
 
 #                                                                             #
 #  The clean target deletes the executable, the object files and the runner,  #
