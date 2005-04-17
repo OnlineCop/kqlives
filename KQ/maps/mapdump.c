@@ -107,8 +107,8 @@ void cleanup (void)
  */
 void error_load (const char *problem_file)
 {
-   char err_msg[80];
    ASSERT (problem_file);
+   char err_msg[80];
 
    strcat (strncpy (err_msg, problem_file, sizeof (err_msg) - 1), "\n");
    TRACE ("%s: could not load %s\n", allegro_error, problem_file);
