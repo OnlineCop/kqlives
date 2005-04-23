@@ -738,7 +738,7 @@ static void do_round (void)
 
          timer_count = 0;
       }
-      yield_timeslice ();
+      kq_yield ();
    }
 }
 

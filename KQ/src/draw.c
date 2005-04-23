@@ -1172,7 +1172,7 @@ static void generic_text (int who, int box_style)
          unpress ();
          stop = 1;
       }
-      yield_timeslice ();
+      kq_yield ();
    }
    timer_count = 0;
 }
@@ -1332,7 +1332,7 @@ int prompt_ex (int who, const char *ptext, char *opt[], int n_opt)
                topopt = curopt - winheight + 1;
 
             }
-            yield_timeslice ();
+            kq_yield ();
          }
          return curopt;
       }
@@ -1412,7 +1412,7 @@ int prompt (int who, int numopt, int bstyle, char *sp1, char *sp2, char *sp3,
          unpress ();
          stop = 1;
       }
-      yield_timeslice ();
+      kq_yield ();
    }
    return ptr;
 }

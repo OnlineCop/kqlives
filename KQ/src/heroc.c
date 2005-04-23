@@ -298,7 +298,7 @@ void hero_choose_action (int who)
             }
          }
       }
-      yield_timeslice ();
+      kq_yield ();
    }
 }
 
@@ -492,7 +492,7 @@ static int combat_item_menu (int whom)
          unpress ();
          stop = 1;
       }
-      yield_timeslice ();
+      kq_yield ();
    }
    return stop - 1;
 }
@@ -659,7 +659,7 @@ static int hero_invoke (int whom)
          unpress ();
          stop = 1;
       }
-      yield_timeslice ();
+      kq_yield ();
    }
    return stop - 1;
 }
@@ -949,7 +949,7 @@ int combat_spell_menu (int c)
          unpress ();
          stop = 1;
       }
-      yield_timeslice ();
+      kq_yield ();
    }
    if (stop == 2) {
       if ((fighter[c].csmem == M_LIFE || fighter[c].csmem == M_FULLLIFE)

@@ -586,7 +586,7 @@ void config_menu (void)
          unpress ();
          stop = 1;
       }
-      yield_timeslice ();
+      kq_yield ();
    }
    pop_config_state ();
 }
@@ -700,7 +700,7 @@ static int getavalue (char *capt, int minu, int maxu, int cv, int sp)
          unpress ();
          return -1;
       }
-      yield_timeslice ();
+      kq_yield ();
    }
    return cv;
 }
@@ -731,7 +731,7 @@ void show_help (void)
    do {
       blit2screen (xofs, yofs);
       readcontrols ();
-      yield_timeslice ();
+      kq_yield ();
    }
    while (!balt);
    unpress ();

@@ -720,7 +720,7 @@ static void buy_menu (void)
          unpress ();
          stop = 1;
       }
-      yield_timeslice ();
+      kq_yield ();
    }
 }
 
@@ -766,7 +766,7 @@ static void buy_item (int how_many, int item_no)
          unpress ();
          return;
       }
-      yield_timeslice ();
+      kq_yield ();
    }
    z = check_inventory (l, how_many);
    if (z > 0) {
@@ -1111,7 +1111,7 @@ void inn (char *iname, int gpc, int pay)
             stop = 2;
          }
       }
-      yield_timeslice ();
+      kq_yield ();
    }
    timer_count = 0;
 }

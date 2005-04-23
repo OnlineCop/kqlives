@@ -199,7 +199,7 @@ void camp_item_menu (void)
 
                      /* Make sure the player really wants to drop the item specified. */
                      while (!stop2) {
-                        yield_timeslice ();
+                        kq_yield ();
 
                         while (timer_count > 0) {
                            timer_count--;
@@ -240,7 +240,7 @@ void camp_item_menu (void)
          else
             stop = 1;
       }
-      yield_timeslice ();
+      kq_yield ();
    }
 }
 
@@ -353,7 +353,7 @@ static void camp_item_targetting (int pp)
          }
       } else
          return;
-      yield_timeslice ();
+      kq_yield ();
    }
 }
 

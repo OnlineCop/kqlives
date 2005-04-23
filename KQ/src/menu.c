@@ -114,7 +114,7 @@ void menu (void)
          close_menu = 0;
          stop = 1;
       }
-      yield_timeslice ();
+      kq_yield ();
    }
 }
 
@@ -363,7 +363,7 @@ void spec_items (void)
          unpress ();
          stop = 1;
       }
-      yield_timeslice ();
+      kq_yield ();
    }
 }
 
@@ -499,7 +499,7 @@ static void status_screen (int ch)
          play_effect (SND_MENU, 128);
          stop = 1;
       }
-      yield_timeslice ();
+      kq_yield ();
    }
 }
 

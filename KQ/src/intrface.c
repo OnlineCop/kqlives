@@ -2637,7 +2637,7 @@ static int KQ_move_camera (lua_State * L)
             ct2 = 0;
          }
          check_animation ();
-         yield_timeslice ();
+         kq_yield ();
       }
       drawmap ();
       blit2screen (xofs, yofs);

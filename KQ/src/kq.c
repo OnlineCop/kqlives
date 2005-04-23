@@ -963,7 +963,7 @@ void wait_enter (void)
          unpress ();
          stop = 1;
       }
-      yield_timeslice ();
+      kq_yield ();
    }
 
    timer_count = 0;
@@ -1550,7 +1550,7 @@ void wait_for_entity (int est, int efi)
             break;
          }
       }
-      yield_timeslice ();
+      kq_yield ();
    }
    while (n);
    autoparty = 0;
@@ -1634,7 +1634,7 @@ int main (void)
                drawmap ();
                blit2screen (xofs, yofs);
                while (timer_count < 1) {
-                  yield_timeslice ();
+                  kq_yield ();
                }
             }
             timer_count--;
@@ -1751,6 +1751,22 @@ char* get_timer_event() {
     return *buf ? buf : NULL;
 }
 
+/*! \brief Yield processor for other tasks
+ *
+ * This function calls rest() or yield_cpu() as appropriate for
+ * the platform and allegro version
+ *
+ * \author PH
+ * \date 20050423
+ */
+void kq_yield(void) {
+ #if (ALLEGRO_VERSION>=4 && ALLEGRO_SUB_VERSION>=2)
+  rest(1);
+#else
+  yield_timeslice();
+#endif
+}
+
 /*! \page treasure A Note on Treasure
  *
  * The treasure chests are allocated in this way:
@@ -1787,7 +1803,7 @@ char* get_timer_event() {
  * - 80: grotto
  * - 81: town4
  * - 82..83: pass
- * -
+ * - 84..89: free
  * - 90..96: cave5
  *
  * The names given are the base names of the maps/lua scripts

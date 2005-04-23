@@ -322,7 +322,7 @@ void camp_spell_menu (int c)
       }
       if (close_menu == 1)
          stop = 1;
-      yield_timeslice ();
+      kq_yield ();
    }
 }
 
@@ -375,7 +375,7 @@ static void camp_spell_targeting (int mc, int sn)
       } else
          play_effect (SND_TWINKLE, 128);        /* this should be a failure sound */
       revert_equipstats ();
-      yield_timeslice ();
+      kq_yield ();
    }
 }
 

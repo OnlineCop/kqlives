@@ -100,7 +100,7 @@ int select_player (void)
          unpress ();
          return -1;
       }
-      yield_timeslice ();
+      kq_yield ();
    }
    return ptr;
 }
@@ -208,7 +208,7 @@ int select_any_player (int csa, int icn, char *msg)
          unpress ();
          stop = 2;
       }
-      yield_timeslice ();
+      kq_yield ();
    }
    if (csa == TGT_ALLY_ALL || stop == 2)
       return -1;
@@ -303,7 +303,7 @@ int select_hero (int whom, int multi, int csd)
                sa = 0;
          }
       }
-      yield_timeslice ();
+      kq_yield ();
    }
    if (sa == 0)
       return tmpd[ptr];
@@ -400,7 +400,7 @@ int select_enemy (int whom, int multi)
                sa = 0;
          }
       }
-      yield_timeslice ();
+      kq_yield ();
    }
    if (sa == 0)
       return tmpd[ptr];
@@ -698,7 +698,7 @@ int select_party (int *avail, int n_avail, int numchrs_max)
       if (oldcur != cur)
          play_effect (SND_CLICK, 128);
 
-      yield_timeslice ();
+      kq_yield ();
    }
    return 0;
 }
@@ -775,7 +775,7 @@ static int mini_menu (int omask)
             play_effect (SND_BAD, 128);
          }
       }
-      yield_timeslice ();
+      kq_yield ();
    }
 }
 

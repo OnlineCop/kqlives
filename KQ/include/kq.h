@@ -475,7 +475,8 @@ extern int frate, mfrate, show_frate, use_joy, cheat_loaded;
 extern int cheat;
 extern int warx, wary;
 
-
+/*! Yield processor to other tasks */
+void kq_yield(void);
 
 #if 0
 void my_counter (void);         /*  staticed  */

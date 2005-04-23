@@ -524,7 +524,7 @@ static int saveload (int am_saving)
          unpress ();
          stop = 1;
       }
-      yield_timeslice ();
+      kq_yield ();
    }
    return stop - 1;
 }
@@ -560,7 +560,7 @@ static int confirm_save (void)
          unpress ();
          return 0;
       }
-      yield_timeslice ();
+      kq_yield ();
    }
    return 0;
 }
@@ -722,7 +722,7 @@ int start_menu (int c)
             return 2;
          }
       }
-      yield_timeslice ();
+      kq_yield ();
    }
    unload_datafile_object (bg);
    if (stop == 2) {
@@ -845,7 +845,7 @@ int system_menu (void)
          unpress ();
          return 0;
       }
-      yield_timeslice ();
+      kq_yield ();
    }
    return 0;
 }
