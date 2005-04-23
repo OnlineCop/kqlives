@@ -80,7 +80,7 @@ void menubox (BITMAP *, int, int, int, int, int);
 
 /*  combat.c, (eqp|item|mas|shop)menu.c, heroc.c, hskill.c,  */
 /*  intrface.c, selector.c, setup.c, sgame.c, menu.c,        */
-void print_font (BITMAP *, int, int, char *, int);
+void print_font (BITMAP *, int, int, const char *, int);
 
 /*  effects.c -> only place (RB IDEA: moving it there?)  */
 void print_num (BITMAP *, int, int, char *, int);

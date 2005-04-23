@@ -803,7 +803,7 @@ void menubox (BITMAP * where, int x, int y, int w, int h, int c)
  * \param   msg String to draw
  * \param   cl Font index (0..6)
  */
-void print_font (BITMAP * where, int sx, int sy, char *msg, int cl)
+void print_font (BITMAP * where, int sx, int sy, const char *msg, int cl)
 {
    int z, cc, hgt = 8;
 
