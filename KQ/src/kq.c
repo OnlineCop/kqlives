@@ -226,7 +226,6 @@ static void data_dump (void);
 
 static void allocate_stuff (void);
 static void load_heroes (void);
-static void reset_timer_events(void);
 
 /*! \note 23: for keeping time. timer_counter is the game timer the main game
  * loop uses for logic (see int main()) and the rest track your playtime in
@@ -1683,7 +1682,7 @@ static int next_event_time; /*!< The time the next event will trigger */
 *
 * This removes any events from the list
 */
-static void reset_timer_events(void) {
+void reset_timer_events(void) {
   int i;
   for(i=0; i<5; ++i)
     *timer_events[i].name='\0';

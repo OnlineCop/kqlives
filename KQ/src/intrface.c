@@ -3143,6 +3143,7 @@ void do_luacheat (void)
  */
 void do_luakill (void)
 {
+  reset_timer_events();
    if (theL) {
       lua_unref (theL, ref_zone_handler);
       lua_close (theL);
