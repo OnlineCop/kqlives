@@ -49,8 +49,15 @@ char debugging = 0;
 /*! Speed-up for slower machines */
 char slow_computer = 0;
 
+/* Allegro 4.2 has the scancode_to_name function,
+ * For previous versions, we must emulate that function
+ * with our own table of keynames
+ */
+#if (ALLEGRO_VERSION>=4 && ALLEGRO_SUB_VERSION>=2)
+#define kq_keyname scancode_to_name
+#else
 /*! Look up table of names for keys */
-char *keynames[115] = {
+static char *keynames[] = {
    "",
    "A", "B", "C", "D", "E", "F", "G", "H", "I", "J",
    "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T",
@@ -71,8 +78,14 @@ char *keynames[115] = {
    "ALTGR", "LWIN", "RWIN",
    "MENU", "SCRLOCK", "NUMLOCK", "CAPSLOCK"
 };
-
-
+#define N_KEYNAMES (sizeof(keynames)/sizeof(*keynames))
+const char* kq_keyname(int scancode) {
+  if (scancode>=0 && scancode<N_KEYNAMES)
+    return keynames[scancode];
+  else
+    return "???";
+}
+#endif
 
 /*  internal variables  */
 static DATAFILE *sfx[MAX_SAMPLES];
@@ -300,7 +313,7 @@ static void parse_jb_setup (void)
  * \param   caption Title of the setting (e.g. "Windowed mode:")
  * \param   value The setting (e.g. "Yes")
  */
-static void citem (int y, char *caption, char *value)
+static void citem (int y, const char *caption, const char *value)
 {
    print_font (double_buffer, 48 + xofs, y + yofs, caption, FNORMAL);
    print_font (double_buffer, 280 - 8 * strlen (value) + xofs, y + yofs, value,
@@ -356,14 +369,14 @@ void config_menu (void)
       citem (40, "Stretch Display:", stretch_view == 1 ? "YES" : "NO");
       citem (48, "Show Frame Rate:", show_frate == 1 ? "YES" : "NO");
       citem (56, "Wait for Retrace:", wait_retrace == 1 ? "YES" : "NO");
-      citem (72, "Up Key:", keynames[kup]);
-      citem (80, "Down Key:", keynames[kdown]);
-      citem (88, "Left Key:", keynames[kleft]);
-      citem (96, "Right Key:", keynames[kright]);
-      citem (104, "Confirm Key:", keynames[kalt]);
-      citem (112, "Cancel Key:", keynames[kctrl]);
-      citem (120, "Menu Key:", keynames[kenter]);
-      citem (128, "System Menu Key:", keynames[kesc]);
+      citem (72, "Up Key:", kq_keyname(kup));
+      citem (80, "Down Key:", kq_keyname(kdown));
+      citem (88, "Left Key:", kq_keyname(kleft));
+      citem (96, "Right Key:", kq_keyname(kright));
+      citem (104, "Confirm Key:", kq_keyname(kalt));
+      citem (112, "Cancel Key:", kq_keyname(kctrl));
+      citem (120, "Menu Key:", kq_keyname(kenter));
+      citem (128, "System Menu Key:", kq_keyname(kesc));
       citem (144, "Sound System:", is_sound ? "ON" : "OFF");
 
       if (is_sound == 2) {
@@ -720,14 +733,14 @@ void show_help (void)
    menubox (double_buffer, xofs, 216 + yofs, 38, 1, BLUE);
    print_font (double_buffer, 16 + xofs, 224 + yofs,
                "Press CONFIRM to exit this screen", FNORMAL);
-   citem (72, "Up Key:", keynames[kup]);
-   citem (80, "Down Key:", keynames[kdown]);
-   citem (88, "Left Key:", keynames[kleft]);
-   citem (96, "Right Key:", keynames[kright]);
-   citem (104, "Confirm Key:", keynames[kalt]);
-   citem (112, "Cancel Key:", keynames[kctrl]);
-   citem (120, "Menu Key:", keynames[kenter]);
-   citem (128, "System Menu Key:", keynames[kesc]);
+   citem (72, "Up Key:", kq_keyname(kup));
+   citem (80, "Down Key:", kq_keyname(kdown));
+   citem (88, "Left Key:", kq_keyname(kleft));
+   citem (96, "Right Key:", kq_keyname(kright));
+   citem (104, "Confirm Key:", kq_keyname(kalt));
+   citem (112, "Cancel Key:", kq_keyname(kctrl));
+   citem (120, "Menu Key:", kq_keyname(kenter));
+   citem (128, "System Menu Key:", kq_keyname(kesc));
    do {
       blit2screen (xofs, yofs);
       readcontrols ();
