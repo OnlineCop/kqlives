@@ -516,9 +516,12 @@ static void draw_backlayer (void)
                blit (map_icons[tilex[pix]], double_buffer, 0, 0,
                      dx * 16 + xofs, dy * 16 + yofs, 16, 16);
 
-            }                   /*else
-                                   blit (map_icons[0], double_buffer, 0, 0, dx * 16 + xofs,
-                                   dy * 16 + yofs, 16, 16); */
+            }
+            /*
+               else
+               blit (map_icons[0], double_buffer, 0, 0, dx * 16 + xofs,
+               dy * 16 + yofs, 16, 16);
+             */
          }
       }
    }
@@ -803,7 +806,7 @@ void menubox (BITMAP * where, int x, int y, int w, int h, int c)
  * \param   msg String to draw
  * \param   cl Font index (0..6)
  */
-void print_font (BITMAP * where, int sx, int sy, const char *msg, int cl)
+void print_font (BITMAP *where, int sx, int sy, const char *msg, int cl)
 {
    int z, cc, hgt = 8;
 

@@ -209,7 +209,7 @@ static int KQ_istable (lua_State *);
 static void check_map_change (void);
 static int KQ_set_map_mode (lua_State *);
 static int party_getter (lua_State *);
-static int KQ_add_timer(lua_State*);
+static int KQ_add_timer (lua_State *);
 
 /* New functions */
 #if 0
@@ -374,7 +374,7 @@ static const struct luaL_reg lrs[] = {
    {"select_team", KQ_select_team},
    {"set_map_mode", KQ_set_map_mode},
    {"set_ent_target", KQ_set_ent_target},
-{"add_timer", KQ_add_timer},
+   {"add_timer", KQ_add_timer},
    {NULL, NULL}
 };
 
@@ -3058,12 +3058,15 @@ int KQ_set_map_mode (lua_State * L)
    return 0;
 }
 
-int KQ_add_timer(lua_State* L) {
-    const char* funcname=lua_tostring(L, 1);
-    int delta=(int) lua_tonumber(L, 2);
-    lua_pushnumber(L, add_timer_event(funcname, delta));
-    return 1;
+
+int KQ_add_timer (lua_State * L) {
+   const char *funcname = lua_tostring (L, 1);
+   int delta = (int) lua_tonumber (L, 2);
+   lua_pushnumber (L, add_timer_event (funcname, delta));
+   return 1;
 }
+
+
 /*! \brief Initialise scripting engine
  *
  * Initialise the Lua scripting engine by loading from a file. A new VM is
@@ -3143,7 +3146,7 @@ void do_luacheat (void)
  */
 void do_luakill (void)
 {
-  reset_timer_events();
+   reset_timer_events();
    if (theL) {
       lua_unref (theL, ref_zone_handler);
       lua_close (theL);
@@ -3241,15 +3244,15 @@ void do_entity (int en_num)
  * when an event is triggered.
  * \param funcname the name of the function to call
  */
-void do_timefunc(const char* funcname)
+void do_timefunc(const char *funcname)
 {
-    int oldtop = lua_gettop (theL);
+   int oldtop = lua_gettop (theL);
 
-    lua_getglobal (theL, funcname);
-    if (!lua_isnil(theL, -1))
-        lua_call (theL, 0, 0);
-    lua_settop (theL, oldtop);
-    check_map_change ();
+   lua_getglobal (theL, funcname);
+   if (!lua_isnil(theL, -1))
+      lua_call (theL, 0, 0);
+   lua_settop (theL, oldtop);
+   check_map_change ();
 }
 
 

@@ -119,7 +119,7 @@ s_entity g_ent[MAX_ENT + PSIZE];
 
 #define MAX_TILESETS 10
 /*! The different tilesets allowed in the game (loaded in from tileset.kq) */
-s_tileset tilesets[10];
+s_tileset tilesets[MAX_TILESETS];
 int num_tilesets = 0;
 
 /*! Tile animation specifiers for the current tileset */
@@ -227,6 +227,7 @@ static void data_dump (void);
 static void allocate_stuff (void);
 static void load_heroes (void);
 
+
 /*! \note 23: for keeping time. timer_counter is the game timer the main game
  * loop uses for logic (see int main()) and the rest track your playtime in
  * hours, minutes and seconds. They're all used in the my_counter() timer
@@ -279,7 +280,7 @@ void my_counter (void)
 
    if (timer >= KQ_FPS) {
       timer = 0;
-       ksec++;
+      ksec++;
       mfrate = frate;
       frate = 0;
    }
@@ -440,6 +441,8 @@ void data_dump (void)
    if (!ff)
       program_death ("Could not open progress.log!");
    for (a = 0; a < 200; a++)
+      fprintf (ff, "%d = %d\n", a, progress[a]);
+   for (a = P_SHOPSTART; a < P_SHOPSTART + NUMSHOPS; a++)
       fprintf (ff, "%d = %d\n", a, progress[a]);
    fclose (ff);
 }
@@ -1136,7 +1139,8 @@ static void startup (void)
          blit ((BITMAP *) pb->dat, eframes[q][p], p * 16, q * 16, 0, 0, 16,
                16);
    unload_datafile_object (pb);
-   /* initialise tilesets */
+
+   /* Initialize tilesets */
    pf = pack_fopen (kqres (DATA_DIR, "tileset.kq"), F_READ_PACKED);
    if (!pf) {
       program_death ("Could not load tileset.kq");
@@ -1672,22 +1676,24 @@ END_OF_MAIN ();
  * Holds the information relating to a forthcoming event
  */
 static struct timer_event {
-  char name[32]; /*!< name of the event */
-  int when; /*!< time when it will trigger */
+   char name[32]; /*!< Name of the event */
+   int when;      /*!< Time when it will trigger */
 } timer_events[5];
 
 static int next_event_time; /*!< The time the next event will trigger */
+
 
 /*! \brief Delete any pending events
 *
 * This removes any events from the list
 */
 void reset_timer_events(void) {
-  int i;
-  for(i=0; i<5; ++i)
-    *timer_events[i].name='\0';
-  next_event_time=INT_MAX;
+   int i;
+   for(i = 0; i < 5; ++i)
+      *timer_events[i].name = '\0';
+   next_event_time = INT_MAX;
 }
+
 
 /* \brief Add a new timer event to the list 
  * 
@@ -1699,19 +1705,21 @@ void reset_timer_events(void) {
  *        five seconds in the future
  * \returns <0 if an error occurred (i.e. too many pending events)
  */ 
-int add_timer_event(const char* n, int delta) {
-    int w=delta+ksec;
-    int i;
-    for (i=0; i<5; ++i) {
-        if (*timer_events[i].name=='\0') {
-            memcpy(timer_events[i].name, n, sizeof(timer_events[i].name));
-            if (w<next_event_time) next_event_time=w;
-            timer_events[i].when=w;
-            return i;
-        }
-    }
-    return -1;
+int add_timer_event (const char *n, int delta) {
+   int w = delta + ksec;
+   int i;
+   for (i = 0; i < 5; ++i) {
+      if (*timer_events[i].name == '\0') {
+         memcpy (timer_events[i].name, n, sizeof (timer_events[i].name));
+         if (w < next_event_time)
+            next_event_time = w;
+         timer_events[i].when = w;
+         return i;
+      }
+   }
+   return -1;
 }
+
 
 /* \brief Get the next event if any
  *
@@ -1726,29 +1734,33 @@ int add_timer_event(const char* n, int delta) {
  *
  * \returns name of the next event or NULL if none is ready
  */
-char* get_timer_event() {
-    static char buf[32];
-    int now=ksec;
-    int i;
-    int next=INT_MAX;
-    struct timer_event* t;
-    if (now<next_event_time) return NULL;
-    *buf='\0';
-    for (i=0; i<5; ++i) {
-        t=&timer_events[i];
-        if (*t->name) {
-            if (t->when<=now) {
-                memcpy(buf, t->name, sizeof(buf));
-                *t->name='\0';
-            }
-            else {
-                if (t->when<next) next=t->when;
-            }
-        }
-    }
-    next_event_time=next;
-    return *buf ? buf : NULL;
+char *get_timer_event () {
+   static char buf[32];
+   int now = ksec;
+   int i;
+   int next = INT_MAX;
+   struct timer_event *t;
+
+   if (now < next_event_time)
+      return NULL;
+
+   *buf = '\0';
+   for (i = 0; i < 5; ++i) {
+      t = &timer_events[i];
+      if (*t->name) {
+         if (t->when <= now) {
+            memcpy (buf, t->name, sizeof(buf));
+            *t->name = '\0';
+         } else {
+            if (t->when < next)
+               next = t->when;
+         }
+      }
+   }
+   next_event_time = next;
+   return *buf ? buf : NULL;
 }
+
 
 /*! \brief Yield processor for other tasks
  *
@@ -1758,13 +1770,14 @@ char* get_timer_event() {
  * \author PH
  * \date 20050423
  */
-void kq_yield(void) {
- #if (ALLEGRO_VERSION>=4 && ALLEGRO_SUB_VERSION>=2)
-  rest(1);
-#else
-  yield_timeslice();
-#endif
+void kq_yield (void) {
+   #if (ALLEGRO_VERSION >= 4 && ALLEGRO_SUB_VERSION >= 2)
+      rest(1);
+   #else
+      yield_timeslice ();
+   #endif
 }
+
 
 /*! \page treasure A Note on Treasure
  *

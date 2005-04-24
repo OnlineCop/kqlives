@@ -155,7 +155,8 @@ int hero_skillcheck (int dude)
  */
 int skill_use (int who)
 {
-   int tgt, fitm, a, b, c, p, cts, tx, ty, g = 0, next_target = 0, nn[NUM_FIGHTERS];
+   int tgt, fitm, a, b, c, p, cts, tx, ty, g = 0, next_target = 0,
+       nn[NUM_FIGHTERS];
    BITMAP *temp;
 
    tempa = status_adjust (who);

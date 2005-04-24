@@ -181,7 +181,8 @@ static void show_sgstats (int saving)
                rectfill (double_buffer, hx + 33, hy + 9, hx + 65, hy + 15, 2);
                rectfill (double_buffer, hx + 32, hy + 8, hx + 64, hy + 14, 35);
                rectfill (double_buffer, hx + 33, hy + 17, hx + 65, hy + 23, 2);
-               rectfill (double_buffer, hx + 32, hy + 16, hx + 64, hy + 22, 19);
+               rectfill (double_buffer, hx + 32, hy + 16, hx + 64, hy + 22,
+                         19);
                b = shp[sg][a] * 32 / 100;
                rectfill (double_buffer, hx + 32, hy + 9, hx + 32 + b, hy + 13,
                          41);

@@ -75,13 +75,14 @@ static void chase (int);
 void process_entities (void)
 {
    int i;
-    const char* t_evt;
+   const char* t_evt;
    for (i = 0; i < MAX_ENT; i++)
       if (g_ent[i].active == 1)
          speed_adjust (i);
-   /* do timers */
-   t_evt=get_timer_event();
-   if (t_evt) do_timefunc(t_evt);
+   /* Do timers */
+   t_evt = get_timer_event ();
+   if (t_evt)
+      do_timefunc (t_evt);
 }
 
 
@@ -731,7 +732,7 @@ static void getcommand (int target_entity)
       break;
    default:
 #ifdef DEBUGMODE
-     sprintf(strbuf, "Invalid entity command (%c) at position %d for ent %d", s, g_ent[target_entity].sidx, target_entity);
+      sprintf(strbuf, "Invalid entity command (%c) at position %d for ent %d", s, g_ent[target_entity].sidx, target_entity);
       program_death (strbuf);
 #endif
       break;
