@@ -110,9 +110,12 @@ function entity_handler(en)
     if (get_progress(P_BANGTHUMB) == 0) then
       bubble(en, "Yes, wha...")
       msg("WHAM!", 255, 0)
-      set_ent_facing(en, FACE_LEFT)
       bubble(en, "Yow!! My thumb! I banged my thumb!")
-      set_ent_facing(en, FACE_DOWN)
+      if (get_ent_tilex(HERO1) > get_ent_tilex(en)) then
+        set_ent_facing(en, FACE_RIGHT)
+      elseif (get_ent_tiley(HERO1) > get_ent_tiley(en)) then
+        set_ent_facing(en, FACE_DOWN)
+      end
       bubble(en, "I hope that you're satisfied!")
     else
       bubble(en, "Owww, my poor thumb...")

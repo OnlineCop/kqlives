@@ -261,10 +261,10 @@ function entity_handler(en)
       if (party[0] == CASANDRA) then
         thought(HERO1, "Oh great. This guy sounds like another used-chariot salesman. Sign...");
       end
-      if (prompt(6, 2, 0, "You can have this lovely house",
-                          "for a mere 7500 GP. Sound good?",
-                          "  no",
-                          "  yes") == 0) then
+      if (prompt(en, 2, 0, "You can have this lovely house",
+                           "for a mere 7500 GP. Sound good?",
+                           "  no",
+                           "  yes") == 0) then
         bubble(en, "So be it. You know where I am if you change your mind.");
       else
         if (get_gp() >= 7500) then
@@ -299,14 +299,14 @@ function entity_handler(en)
         if (party[0] == CASANDRA) then
           thought(HERO1, "Oh, I can tell you where to put it that'll keep it really safe...");
         end
-        set_ent_movemode(6, 2);
-        set_ent_obsmode(6, 0);
-        if (get_ent_facing(6) == 3) then
-          set_ent_script(6, "D1R1");
+        set_ent_movemode(en, 2);
+        set_ent_obsmode(en, 0);
+        if (get_ent_facing(en) == 3) then
+          set_ent_script(en, "D1R1");
         else
-          set_ent_script(6, "R1D1");
+          set_ent_script(en, "R1D1");
         end
-        wait_for_entity(6, 6);
+        wait_for_entity(en, en);
         set_progress(P_BOUGHTHOUSE, 1);
       end
     else
@@ -322,7 +322,7 @@ function entity_handler(en)
         bubble(en, "If you get the Helmet, come back here and hopefully by then I can find out a little bit more about the other pieces.");
         set_progress(P_TALKGELIK, 1);
       else
-        bubble(en, "There isn't anything else I can tell you about opal armor right now.");
+        bubble(en, "There isn't anything else I can tell you about Opal Armor right now.");
       end
     end
     if (get_progress(P_OPALSHIELD) == 0 and get_progress(P_OPALHELMET) > 0) then

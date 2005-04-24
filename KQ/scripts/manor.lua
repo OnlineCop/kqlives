@@ -69,7 +69,8 @@ function autoexec()
     LOC_at_table()
 
     -- Put Nostik to bed (he is old and feeble)
-    place_ent(8, 12, 37)
+    place_ent(8, 9, 31)
+    set_ent_facing(8, FACE_DOWN)
   end
 end
 

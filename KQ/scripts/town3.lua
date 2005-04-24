@@ -15,7 +15,7 @@
 --   0 - You haven't spoken to him yet.
 --   1 - You have, and he gave you the seal.
 --   2 - You've shown the seal to the guards at the fort.
--- 
+--
 -- In this town, we are going to add the 3rd PM, which will include the sub-
 -- plot in the temple.
 --
@@ -24,7 +24,7 @@
 
 function autoexec()
   if (get_progress(P_TALKDERIG) > 2) then
--- // Deactivate the Tsorin character
+    -- // Deactivate the Tsorin character
     set_ent_active(1, 0)
   end
   refresh()
@@ -192,10 +192,11 @@ function entity_handler(en)
       bubble(en, "I can't send anyone to protect you - you must take the utmost care.")
       set_progress(P_TALK_TSORIN, 1)
     elseif (get_progress(P_TALK_TSORIN) == 1) then
-       bubble(en, "The guards at the Fort will give you directions to the Oracle")
+      bubble(en, "The guards at the Fort will give you directions to the Oracle.")
     else
       bubble(en, "You can find the Oracle to the south. She will help you seal the portal in the temple.")
     end
+
     -- TT: The Oracle will instruct you to get the GoblinItem, which works like the StaffOfCancellation, but for only this portal.
     if (get_progress(P_GOBLINITEM) == 0) then
       bubble(en, "Any luck at the temple yet?")

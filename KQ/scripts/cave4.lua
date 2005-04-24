@@ -22,7 +22,7 @@ function refresh()
     set_btile(36, 60, 256);
   end
   if (get_progress(P_DEMNASDEAD) > 0) then
-    set_ent_active(E_DEMNAS, 0);
+    set_ent_active(0, 0);
   end
   if (get_progress(P_BRONZEKEY) == 2) then
     set_obs(37, 66, 0);

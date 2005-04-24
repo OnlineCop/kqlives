@@ -91,33 +91,35 @@ function zone_handler(zn)
 
   elseif (zn == 12) then
     if (get_progress(P_TALKGELIK) < 4) then
+      local en = 1
+
       set_progress(P_TALKGELIK, 4)
-      set_ent_facing(1, FACE_DOWN)
-      bubble(1, "Oh $0!")
-      bubble(1, "I woke up because I thought I heard fighting in your room.")
-      bubble(1, "When I turned to wake Dungar, I realized that he was dead.")
-      bubble(1, "Someone stabbed him in his sleep!")
+      set_ent_facing(en, FACE_DOWN)
+      bubble(en, "Oh $0!")
+      bubble(en, "I woke up because I thought I heard fighting in your room.")
+      bubble(en, "When I turned to wake Dungar, I realized that he was dead.")
+      bubble(en, "Someone stabbed him in his sleep!")
       bubble(HERO1, "Oh no! You were right though, I was fighting an assassin who was sent here to kill me. He obviously was not alone.")
       bubble(HERO1, "This is all my fault!")
-      bubble(1, "No it's not... this is all because of that damn guild!")
+      bubble(en, "No it's not... this is all because of that damn guild!")
       bubble(HERO1, "Yes, but when I was there to get the Helmet back, it all seemed as though it was too easy.")
       bubble(HERO1, "They set me up. They wanted to follow me so that they could kill Dungar!")
-      bubble(1, "That may be true $0, but you were doing the right thing. You didn't know.")
+      bubble(en, "That may be true $0, but you were doing the right thing. You didn't know.")
       bubble(HERO1, "I'm so sorry Emma!")
-      bubble(1, "It's okay... I guess I've been expecting something like this to happen for a long time.")
-      bubble(1, "You can't marry an ex-thief and expect to have a normal life. I'll be alright.")
+      bubble(en, "It's okay... I guess I've been expecting something like this to happen for a long time.")
+      bubble(en, "You can't marry an ex-thief and expect to have a normal life. I'll be alright.")
       bubble(HERO1, "Are you sure... is there anything I can do?")
       bubble(HERO1, "I know... I'll take care of that guild once and for all!")
-      bubble(1, "No! Don't do that. You'll just get yourself killed! You have a quest to continue.")
-      bubble(1, "What you can do for me is take that damn Helmet far away from here... for good.")
+      bubble(en, "No! Don't do that. You'll just get yourself killed! You have a quest to continue.")
+      bubble(en, "What you can do for me is take that damn Helmet far away from here... for good.")
       bubble(HERO1, "Are you sure?")
-      bubble(1, "I'm very sure. As long as I have that thing I too will be in danger. You keep it.")
-      bubble(1, "And don't worry about the guild. They won't be able to find you if you keep moving around.")
+      bubble(en, "I'm very sure. As long as I have that thing I too will be in danger. You keep it.")
+      bubble(en, "And don't worry about the guild. They won't be able to find you if you keep moving around.")
       bubble(HERO1, "Okay... but what about you? It's not safe here. You have to leave!")
-      bubble(1, "I will. I'll gather my things and leave right after I give my husband a proper funeral.")
-      bubble(1, "You should leave right away. They know you're here.")
+      bubble(en, "I will. I'll gather my things and leave right after I give my husband a proper funeral.")
+      bubble(en, "You should leave right away. They know you're here.")
       bubble(HERO1, "Okay... you be careful alright?")
-      bubble(1, "Don't worry about me. I'll be fine. Now go!")
+      bubble(en, "Don't worry about me. I'll be fine. Now go!")
       bubble(HERO1, "Goodbye.")
     end
 
@@ -136,26 +138,25 @@ function entity_handler(en)
     bubble(0, "I'm the grounds keeper here.")
 
   elseif (en == 1) then
-    local a
-
     if (get_progress(P_OPALHELMET) == 0) then
-      a = get_progress(P_TALKGELIK)
-      if (a == 0) then
-        bubble(1, "Hello, are you a friend of my husband's?")
-      elseif (a == 1) then
-        bubble(1, "You need the Opal helmet? I'm afraid you are too late... It was stolen!")
-        bubble(1, "My husband left for Sunarin to try and get it back. If you go there you will probably find him.")
+      if (get_progress(P_TALKGELIK) == 0) then
+        bubble(en, "Hello, are you a friend of my husband's?")
+      elseif (get_progress(P_TALKGELIK) == 1) then
+        bubble(en, "You need the Opal helmet? I'm afraid you are too late... It was stolen!")
+        bubble(en, "My husband left for Sunarin to try and get it back. If you go there you will probably find him.")
         set_progress(P_TALKGELIK, 2)
-      elseif (a == 2) then
-        bubble(1, "Did you find my husband?")
-      elseif (a == 3) then
-        bubble(1, "Good luck!")
+      elseif (get_progress(P_TALKGELIK) == 2) then
+        bubble(en, "Did you find my husband?")
+      elseif (get_progress(P_TALKGELIK) == 3) then
+        bubble(en, "Good luck!")
+      else
+        bubble(en, "Hello, I'm Emma.")
       end
     else
       if (get_progress(P_TALKGELIK) == 3) then
-        bubble(1, "Fabulous!")
+        bubble(en, "Fabulous!")
       else
-        bubble(1, "...")
+        bubble(en, "...")
       end
     end
 
