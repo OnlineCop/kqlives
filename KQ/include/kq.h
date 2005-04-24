@@ -379,9 +379,9 @@ void kwait (int);               /*  intrface.c  */
 void program_death (char *);    /*  everywhere ;)  */
 int in_party (int);             /*  combat.c, intrface.c  */
 void wait_for_entity (int, int);        /*  intrface.c  */
-char* get_timer_event(void);
-int add_timer_event(const char*, int);
-void reset_timer_events(void);
+char *get_timer_event (void);
+int add_timer_event (const char *, int);
+void reset_timer_events (void);
 
 
 
@@ -477,7 +477,7 @@ extern int cheat;
 extern int warx, wary;
 
 /*! Yield processor to other tasks */
-void kq_yield(void);
+void kq_yield (void);
 
 #if 0
 void my_counter (void);         /*  staticed  */
