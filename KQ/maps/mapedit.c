@@ -113,7 +113,6 @@ s_marker markers[MAX_MARKERS];
 short num_markers;
 BITMAP *marker_image;
 int curmarker;
-void add_change_marker (int x, int y, int b);
 
 /* Welcome to Mapdraw, folks! */
 int main (int argc, char *argv[])
@@ -837,6 +836,11 @@ void draw_map (void)
                          (markers[i].y - window_y) * 16 - 8);
          }                      /* If marker is visible */
       }                         /* For each marker */
+      /* Put a rectangle around the selected one for clarity */
+      rect (double_buffer, (markers[curmarker].x - window_x) * 16,
+                           (markers[curmarker].y - window_y) * 16,
+                           (markers[curmarker].x - window_x) * 16 + 15,
+                           (markers[curmarker].y - window_y) * 16 + 15, 25);
    }
 
    /* If showing markers */
@@ -892,8 +896,8 @@ void draw_map (void)
  */
 void draw_menubars (void)
 {
-   int p, xp, yp;
-   int draw_mode_display, draw_mode_last;
+   int p, xp = 0, yp = 0;
+   int draw_mode_display, draw_mode_last, draw_the_rect;
 
    /* Description for the current draw_mode (could use work) */
    char dt[][12] = { "Layer1", "Layer2", "Layer3",
@@ -1114,24 +1118,30 @@ void draw_menubars (void)
             /* This loops the first 20 icons around when you're at the end of
              * the icon_set
              */
-            blit (icons[p], double_buffer, 0, 0, (SW - 40), p * 16 + 1, 16, 16);
+            blit (icons[p], double_buffer, 0, 0, (SW - 40), p * 16 + 1, 16,
+                  16);
             blit (icons[ICONSET_SIZE / 2 + p], double_buffer, 0, 0, (SW - 24),
                   p * 16 + 1, 16, 16);
          }                      // if..else ()
       }                         // for (p)
    }                            // if (icon_set)
 
+   draw_the_rect = 0;
    /* Calculate from the total 40 icons, which one the user selected */
    if (curtile >= icon_set * ICONSET_SIZE
        && curtile < (icon_set + 2) * ICONSET_SIZE) {
       /* These are the left 20: */
       xp = (curtile - (icon_set * ICONSET_SIZE)) / (ICONSET_SIZE / 2);
       yp = (curtile - (icon_set * ICONSET_SIZE)) % (ICONSET_SIZE / 2);
+
+      draw_the_rect = 1;
    } else if (curtile >= 0 && curtile < ICONSET_SIZE
               && (icon_set == max_sets - 1)) {
       /* These are the right 20: */
       xp = (curtile / (ICONSET_SIZE / 2)) + 2;
       yp = curtile % (ICONSET_SIZE / 2);
+
+      draw_the_rect = 1;
    }                            // if..elseif (curtile)
 
    /* Draw the rectangle around the selected icon */
@@ -1237,11 +1247,13 @@ void draw_menubars (void)
          print_sfont ((COLUMN_WIDTH * 4), (SH - 40), strbuf, double_buffer);
       }
    }
+
    if (draw_mode == MAP_MARKERS) {
       /* draw the currently selected marker */
       print_sfont ((COLUMN_WIDTH * 4) + 24, (SH - 16), markers[curmarker].name,
                    double_buffer);
    }
+
    if (draw_mode >= MAP_OBSTACLES && draw_mode <= MAP_ZONES) {
       if (highlight)
          sprintf (strbuf, "Highlight: ON");
@@ -2074,7 +2086,7 @@ void process_keyboard (const int k)
       /* Load a map */
       prompt_load_map ();
       if (gmap.revision == 1) {
-         /* copy out the markers */
+         /* Copy out the markers */
          memcpy (markers, gmap.markers,
                  (num_markers = gmap.num_markers) * sizeof (s_marker));
          curmarker = 0;
@@ -2086,6 +2098,11 @@ void process_keyboard (const int k)
       break;
    case (KEY_F3):
       /* Save the map you are working on */
+
+      if (gmap.map_no < 0) {
+         cmessage("Don't forget to assign a number to this map!");
+         yninput();
+      }
 
       /* Copy the markers back in */
       gmap.markers = realloc (gmap.markers, num_markers * sizeof (s_marker));
@@ -2159,43 +2176,55 @@ void process_keyboard (const int k)
    case (KEY_MINUS):
    case (KEY_MINUS_PAD):
       switch (draw_mode) {
-         /* Select an Entity to place on the map */
+
       case MAP_ENTITIES:
+         /* Select an Entity to place on the map */
          current_ent--;
          if (current_ent < 0)
             current_ent = MAX_EPICS - 1;
          break;
-         /* Select the Shadow to place on the map */
       case MAP_SHADOWS:
+         /* Select the Shadow to place on the map */
          curshadow--;
          if (curshadow < 0)
             curshadow = MAX_SHADOWS - 1;
          break;
-         /* Select which Obstacle to set on the map */
       case MAP_OBSTACLES:
+         /* Select which Obstacle to set on the map */
          curobs--;
          if (curobs < 0)
             curobs = 5;
          break;
-         /* Select a Zone to set on the map */
       case MAP_ZONES:
+         /* Select a Zone to set on the map */
          curzone--;
          if (curzone < 0)
             curzone = MAX_ZONES - 1;
          break;
-         /* Page through the markers on the map */
       case MAP_MARKERS:
+         /* Page through the Markers on the map */
          if (num_markers > 0) {
             curmarker--;
             if (curmarker < 0)
                curmarker = num_markers - 1;
-         }
-         window_x = markers[curmarker].x - htiles / 2;
-         window_y = markers[curmarker].y - vtiles / 2;
+         } else
+            break;
+
+         /* Move view-window enough to show marker */
+         if (markers[curmarker].x < window_x)
+            window_x = markers[curmarker].x;
+         else if (markers[curmarker].x > window_x + htiles - 1)
+            window_x = markers[curmarker].x - htiles + 1;
+
+         if (markers[curmarker].y < window_y)
+            window_y = markers[curmarker].y;
+         else if (markers[curmarker].y > window_y + vtiles - 1)
+            window_y = markers[curmarker].y - vtiles + 1;
+
          normalize_view ();
          break;
-         /* Change the iconset's "page" */
       default:
+         /* Change the iconset's "page" */
          icon_set--;
          if (icon_set < 0)
             icon_set = max_sets - 1;
@@ -2230,15 +2259,26 @@ void process_keyboard (const int k)
          if (curzone >= MAX_ZONES)
             curzone = 0;
          break;
-         /* Page through the markers on the map */
       case MAP_MARKERS:
+         /* Page through the Markers on the map */
          if (num_markers > 0) {
             curmarker++;
             if (curmarker >= num_markers)
                curmarker = 0;
-         }
-         window_x = markers[curmarker].x - htiles / 2;
-         window_y = markers[curmarker].y - vtiles / 2;
+         } else
+            break;
+
+         /* Move view-window enough to show marker */
+         if (markers[curmarker].x < window_x)
+            window_x = markers[curmarker].x;
+         else if (markers[curmarker].x > window_x + htiles - 1)
+            window_x = markers[curmarker].x - htiles + 1;
+
+         if (markers[curmarker].y < window_y)
+            window_y = markers[curmarker].y;
+         else if (markers[curmarker].y > window_y + vtiles - 1)
+            window_y = markers[curmarker].y - vtiles + 1;
+
          normalize_view ();
          break;
       default:
@@ -2654,7 +2694,8 @@ void process_mouse (const int mouse_button)
             break;
          case (MAP_ENTITIES):
             /* Draw to Entity layer */
-            place_entity ((mouse_x / 16) + window_x, (mouse_y / 16) + window_y);
+            place_entity ((mouse_x / 16) + window_x,
+                          (mouse_y / 16) + window_y);
             break;
          case (MAP_OBSTACLES):
             /* Draw to Obstacle layer */
@@ -2798,7 +2839,8 @@ void read_controls (void)
          needupdate = 1;
       }
       dmode = 0;
-   }                            // if (mouse_b)
+      return;
+   }                            // if (!mouse_b)
 
    /* Left mouse button */
    if (mouse_b & 1) {
@@ -3395,46 +3437,122 @@ int yninput (void)
    return done - 1;
 }                               /* yninput () */
 
+
 /* Action handler for clicking in marker mode button b; */
-void add_change_marker (int x, int y, int b)
+void add_change_marker (int marker_x, int marker_y, int b)
 {
    s_marker *m;
    s_marker *found = NULL;
+
    /* Does a marker exist here? */
    for (m = markers; m < markers + num_markers; ++m) {
-      if (m->x == x && m->y == y) {
+      if (m->x == marker_x && m->y == marker_y) {
          found = m;
          break;
       }
    }
+
    if (found) {
       /* There is a marker here */
       if (b == 1) {
          /* Rename it */
-         rect (screen, x * 16 - 2, y * 16 + 5, x * 16 + 8 * 32 + 1, y * 16 + 25,
+#if 0
+         rename_marker(*found, marker_x, marker_y);
+#endif
+         rect (screen, marker_x * 16 - 2, marker_y * 16 + 5,
+               marker_x * 16 + 8 * 32 + 1, marker_y * 16 + 25,
                makecol (255, 255, 255));
-         rectfill (screen, x * 16 - 1, y * 16 + 6, x * 16 + 8 * 32, y * 16 + 24,
+         rectfill (screen, marker_x * 16 - 1, marker_y * 16 + 6,
+                   marker_x * 16 + 8 * 32, marker_y * 16 + 24,
                    makecol (0, 0, 0));
-         print_sfont (x * 16, y * 16 + 8, found->name, screen);
-         print_sfont (x * 16, y * 16 + 16, ">", screen);
-         if ((get_line (x * 16 + 8, y * 16 + 16, strbuf, 31) != 0)
+         print_sfont (marker_x * 16, marker_y * 16 + 8, found->name, screen);
+         print_sfont (marker_x * 16, marker_y * 16 + 16, ">", screen);
+         if (!(get_line (marker_x * 16 + 8, marker_y * 16 + 16, strbuf, 31))
              && (strbuf[0] != '\0'))
             strcpy (found->name, strbuf);
       } else if (b == 2) {
-         /* delete it  and shuffle up */
+         /* Delete it and shuffle up */
          --num_markers;
          memcpy (found, found + 1,
                  (&markers[num_markers] - found) * sizeof (s_marker));
       }
-   } else {
+   }
+#if 0
+      {
+      if (b == 0) {
+         /* There is a marker here, but don't rename it */
+         return;
+      } else if (b == 1) {
+         /* There is a marker here and we need to rename it */
+         rename_marker (*found);
+      } else if (b == 2) {
+         /* Delete it and shuffle up */
+         for (m = markers + found;
+              m <= markers + num_markers;
+              m++) {
+/* TT TODO HERE */            
+         memcpy (found, found + 1,
+                 (&markers[num_markers] - found) * sizeof (s_marker));
+
+            markers[m - 1] = markers[m];
+            strcpy (markers[m].name, "");
+            markers[m].x = 0;
+            markers[m].y = 0;
+         }
+      }
+   }
+#endif
+   else {
       if (b == 1) {
          /* Add a marker with default name */
          if (num_markers < MAX_MARKERS) {
             m = &markers[num_markers++];
-            m->x = x;
-            m->y = y;
-            sprintf (m->name, "%d_%d", x, y);
+            m->x = marker_x;
+            m->y = marker_y;
+            sprintf (m->name, "Marker #%d: (%d, %d)", num_markers, marker_x, marker_y);
          }
       }
    }
+}
+
+
+void rename_marker (s_marker found)
+{
+   int response, done;
+
+   make_rect (double_buffer, 2, 32);
+   print_sfont (6, 6, found.name, double_buffer);
+   print_sfont (6, 12, ">", double_buffer);
+
+#if 0
+rect (screen, marker_x * 16 - 2, marker_y * 16 + 5, marker_x * 16 + 8 * 32 + 1,
+      marker_y * 16 + 25, makecol (255, 255, 255));
+rectfill (screen, marker_x * 16 - 1, marker_y * 16 + 6, marker_x * 16 + 8 * 32,
+          marker_y * 16 + 24, makecol (0, 0, 0));
+print_sfont (marker_x * 16, marker_y * 16 + 8, found->name, screen);
+print_sfont (marker_x * 16, marker_y * 16 + 16, ">", screen);
+if ((get_line (marker_x * 16 + 8, marker_y * 16 + 16, strbuf, 31) != 0)
+    && (strbuf[0] != '\0'))
+   strcpy (found->name, strbuf);
+#endif
+
+   done = 0;
+   while (!done) {
+      blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+      response = get_line (12, 6, strbuf, 31);
+
+      /* If the user hits ESC, break out of the function entirely */
+      if (response == 0)
+         return;
+
+      /* Make sure this line isn't blank */
+      if (strlen (strbuf) == 0) {
+         cmessage ("Do you want to clear the name of this marker? (y/n)");
+         if (yninput ())
+            done = 1;
+      } else {
+         done = 1;
+      }
+   }
+   strcpy (found.name, strbuf);
 }

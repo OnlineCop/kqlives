@@ -113,12 +113,14 @@ void wipe_map (void);
 int yninput (void);
 
 /* From mapent.c */
+void add_change_marker (int, int, int);
 void displace_entities (void);
 void draw_entdata (const int);
 void draw_ents (void);
 void erase_entity (const int, const int);
 void init_entities (void);
 void place_entity (int, int);
+void rename_marker (s_marker);
 void update_entities (void);
 
 /* From mapfile.c */
@@ -155,6 +157,8 @@ extern s_show showing;
 extern unsigned short tilex[MAX_TILES];
 extern s_anim tanim[NUM_TILESETS][MAX_ANIM];
 extern s_anim adata[MAX_ANIM];
+
+extern int draw_mode;
 
 extern short window_x, window_y;
 extern short max_sets;

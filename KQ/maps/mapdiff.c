@@ -15,8 +15,6 @@
 #include "mapdraw.h"
 #include "../include/disk.h"
 
-/* TT: #define DEBUGMODE 1 */
-
 /* Something for allegro version compatibility */
 /* ..can we use the textout_ex() and friends? */
 #if (ALLEGRO_VERSION>=4 && ALLEGRO_SUB_VERSION>=1)
@@ -100,32 +98,32 @@ void check_entities (void)
       _script;
 
    for (i = 0; i < 50; ++i) {
-      _chrx = gent1[i].chrx != gent2[i].chrx ? 1 : 0;
-      _x = gent1[i].x != gent2[i].x ? 1 : 0;
-      _y = gent1[i].y != gent2[i].y ? 1 : 0;
-      _tilex = gent1[i].tilex != gent2[i].tilex ? 1 : 0;
-      _tiley = gent1[i].tiley != gent2[i].tiley ? 1 : 0;
-      _eid = gent1[i].eid != gent2[i].eid ? 1 : 0;
-      _active = gent1[i].active != gent2[i].active ? 1 : 0;
-      _facing = gent1[i].facing != gent2[i].facing ? 1 : 0;
-      _moving = gent1[i].moving != gent2[i].moving ? 1 : 0;
-      _movcnt = gent1[i].movcnt != gent2[i].movcnt ? 1 : 0;
+      _chrx     = gent1[i].chrx     != gent2[i].chrx     ? 1 : 0;
+      _x        = gent1[i].x        != gent2[i].x        ? 1 : 0;
+      _y        = gent1[i].y        != gent2[i].y        ? 1 : 0;
+      _tilex    = gent1[i].tilex    != gent2[i].tilex    ? 1 : 0;
+      _tiley    = gent1[i].tiley    != gent2[i].tiley    ? 1 : 0;
+      _eid      = gent1[i].eid      != gent2[i].eid      ? 1 : 0;
+      _active   = gent1[i].active   != gent2[i].active   ? 1 : 0;
+      _facing   = gent1[i].facing   != gent2[i].facing   ? 1 : 0;
+      _moving   = gent1[i].moving   != gent2[i].moving   ? 1 : 0;
+      _movcnt   = gent1[i].movcnt   != gent2[i].movcnt   ? 1 : 0;
       _framectr = gent1[i].framectr != gent2[i].framectr ? 1 : 0;
       _movemode = gent1[i].movemode != gent2[i].movemode ? 1 : 0;
-      _obsmode = gent1[i].obsmode != gent2[i].obsmode ? 1 : 0;
-      _delay = gent1[i].delay != gent2[i].delay ? 1 : 0;
+      _obsmode  = gent1[i].obsmode  != gent2[i].obsmode  ? 1 : 0;
+      _delay    = gent1[i].delay    != gent2[i].delay    ? 1 : 0;
       _delayctr = gent1[i].delayctr != gent2[i].delayctr ? 1 : 0;
-      _speed = gent1[i].speed != gent2[i].speed ? 1 : 0;
-      _scount = gent1[i].scount != gent2[i].scount ? 1 : 0;
-      _cmd = gent1[i].cmd != gent2[i].cmd ? 1 : 0;
-      _sidx = gent1[i].sidx != gent2[i].sidx ? 1 : 0;
-      _extra = gent1[i].extra != gent2[i].extra ? 1 : 0;
-      _chasing = gent1[i].chasing != gent2[i].chasing ? 1 : 0;
-      _cmdnum = gent1[i].cmdnum != gent2[i].cmdnum ? 1 : 0;
-      _atype = gent1[i].atype != gent2[i].atype ? 1 : 0;
+      _speed    = gent1[i].speed    != gent2[i].speed    ? 1 : 0;
+      _scount   = gent1[i].scount   != gent2[i].scount   ? 1 : 0;
+      _cmd      = gent1[i].cmd      != gent2[i].cmd      ? 1 : 0;
+      _sidx     = gent1[i].sidx     != gent2[i].sidx     ? 1 : 0;
+      _extra    = gent1[i].extra    != gent2[i].extra    ? 1 : 0;
+      _chasing  = gent1[i].chasing  != gent2[i].chasing  ? 1 : 0;
+      _cmdnum   = gent1[i].cmdnum   != gent2[i].cmdnum   ? 1 : 0;
+      _atype    = gent1[i].atype    != gent2[i].atype    ? 1 : 0;
       _snapback = gent1[i].snapback != gent2[i].snapback ? 1 : 0;
       _facehero = gent1[i].facehero != gent2[i].facehero ? 1 : 0;
-      _transl = gent1[i].transl != gent2[i].transl ? 1 : 0;
+      _transl   = gent1[i].transl   != gent2[i].transl   ? 1 : 0;
 
       _script = 0;
       for (j = 0; j < 60; j++) {
@@ -146,6 +144,8 @@ void check_entities (void)
          for (j = 0; j < (signed) strlen (strbuf) + 4; j++)
             fprintf (stdout, "=");
          fprintf (stdout, "\n");
+      } else {
+         return;
       }
 
       if (_chrx)
@@ -289,7 +289,8 @@ void check_layers ()
             i = (j * gmap1.xsize + k);
             if ((unsigned short) b_map1[i] != (unsigned short) b_map2[i]) {
                sprintf (strbuf, "[(%d, %d) %d/%d]", k, j,
-                        (unsigned short) b_map1[i], (unsigned short) b_map2[i]);
+                        (unsigned short) b_map1[i],
+                        (unsigned short) b_map2[i]);
                if (strlen (strbuf) < 16)
                   fprintf (stdout, "%s\t\t", strbuf);
                else
@@ -316,7 +317,8 @@ void check_layers ()
             i = (j * gmap1.xsize + k);
             if ((unsigned short) f_map1[i] != (unsigned short) f_map2[i]) {
                sprintf (strbuf, "[(%d, %d) %d/%d]", k, j,
-                        (unsigned short) f_map1[i], (unsigned short) f_map2[i]);
+                        (unsigned short) f_map1[i],
+                        (unsigned short) f_map2[i]);
                if (strlen (strbuf) < 16)
                   fprintf (stdout, "%s\t\t", strbuf);
                else
@@ -527,7 +529,7 @@ void check_map (void)
    if (_warpy)
       fprintf (stdout, "  warpy:      \t%d\t\t%d\n", gmap1.warpy, gmap2.warpy);
    if (_revision)
-      fprintf (stdout, "  revision:%d\t\t%d\n", gmap1.revision, gmap2.revision);
+      fprintf (stdout, "  revision:   \t%d\t\t%d\n", gmap1.revision, gmap2.revision);
    if (_extra_sdword2)
       fprintf (stdout, "  extra_sdword2:%d\t\t%d\n", gmap1.extra_sdword2,
                gmap2.extra_sdword2);
