@@ -1927,7 +1927,7 @@ static int KQ_get_tile_all (lua_State * L)
  *
  * \param   L::1 The Lua VM
  * \returns 0 (no values returned to Lua)
- * \bugs    No error checking is done. Uses direct access to the struct s_map.
+ * \bug    No error checking is done. Uses direct access to the struct s_map.
  */
 static int KQ_copy_tile_all (lua_State * L)
 {
