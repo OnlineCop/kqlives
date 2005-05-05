@@ -50,7 +50,7 @@
  * \param   speed How fast to fade (1..64)
  * \param   from Starting palette index (0..255)
  * \param   to Ending palette index (0..255)
- * \datem   20040731 PH added check for out-of-range speed
+ * \date   20040731 PH added check for out-of-range speed
  */
 static void _fade_from_range (AL_CONST PALETTE source, AL_CONST PALETTE dest,
                               int speed, int from, int to)
