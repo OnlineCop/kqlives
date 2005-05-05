@@ -1687,7 +1687,8 @@ static int next_event_time; /*!< The time the next event will trigger */
 *
 * This removes any events from the list
 */
-void reset_timer_events(void) {
+void reset_timer_events (void)
+{
    int i;
    for(i = 0; i < 5; ++i)
       *timer_events[i].name = '\0';
@@ -1734,7 +1735,7 @@ int add_timer_event (const char *n, int delta) {
  *
  * \returns name of the next event or NULL if none is ready
  */
-char *get_timer_event () {
+char *get_timer_event (void) {
    static char buf[32];
    int now = ksec;
    int i;
