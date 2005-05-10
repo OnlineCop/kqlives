@@ -315,8 +315,6 @@ int select_hero (int whom, int multi, int csd)
 
 /*! \brief  Choose a target
  * \author  Josh Bolduc
- * \created ????????
- * \updated ????????
  *
  * Choose a target.  This is used for all combat enemy target selection,
  * whether selected one or all enemies this is the function to use.
@@ -327,7 +325,7 @@ int select_hero (int whom, int multi, int csd)
  *   2 indicates that we can only select all enemies.
  * Used in: heroc.c hskill.c
  *
- * \fixme PH Should use TGT_* constants (in kq.h) to compare to multi
+ * \note fixme PH Should use TGT_* constants (in kq.h) to compare to multi
  * \todo PH tmpd should be a local var?
  *
  * \param   whom Attacker (person doing the action)
@@ -412,8 +410,6 @@ int select_enemy (int whom, int multi)
 
 /*! \brief  Select a party member automatically
  * \author  Josh Bolduc
- * \created ????????
- * \updated ????????
  *
  * Automatically select a hero.
  * Used in: enemyc.c and heroc.c
@@ -456,8 +452,6 @@ int auto_select_hero (int whom, int csts)
 
 /*! \brief  Select an enemy automatically
  * \author  Josh Bolduc
- * \created ????????
- * \updated ????????
  *
  * Automatically select an enemy.
  * Used in: enemyc.c and heroc.c
@@ -515,8 +509,6 @@ int auto_select_enemy (int whom, int csts)
 
 /*! \brief  Check if attacker is able to attack
  * \author  Josh Bolduc
- * \created ????????
- * \updated ????????
  *
  * Just checks the status of a fighter for purposes of targetting.
  *
@@ -541,7 +533,7 @@ static int can_attack (int tgt)
  * \date 20030603
  * \param   avail[] Array of 'available' heroes
  * \param   n_avail Number of entries in avail
- * \param   party_max The maximum number of heroes allowed in the party
+ * \param   numchrs_max The maximum number of heroes allowed in the party
  * \returns 1 if the party changed, 0 if cancelled
  */
 int select_party (int *avail, int n_avail, int numchrs_max)
