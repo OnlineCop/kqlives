@@ -568,8 +568,7 @@ static int confirm_save (void)
 
 
 extern void display_credits (void);
-
-
+extern int optionsbox (char *, int);
 
 /*! \brief Main menu screen
  *
@@ -583,10 +582,6 @@ extern void display_credits (void);
  *            should be displayed.
  * \returns 0 if new game, 1 if continuing, 2 if exit
  */
-extern int optionsbox (char *, int);
-
-
-
 int start_menu (int c)
 {
    int stop = 0, ptr = 0, redraw = 1, a, b;
