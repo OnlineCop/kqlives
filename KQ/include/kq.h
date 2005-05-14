@@ -307,37 +307,37 @@ s_heroinfo;
  */
 typedef struct
 {
-   char name[25];               /*!< \brief Name */
-   int xp;                      /*!<\brief  eXperience Points */
-   int gp;                      /*!<\brief  Gold Points */
-   int lvl;                     /*!<\brief  LeVeL */
-   int cx;                      /*!<\brief  x-coord of image in datafile */
+   char name[25];               /*!<\brief Name */
+   int xp;                      /*!<\brief eXperience Points */
+   int gp;                      /*!<\brief Gold Points */
+   int lvl;                     /*!<\brief LeVeL */
+   int cx;                      /*!<\brief x-coord of image in datafile */
    int cy;                      /*!<\brief y-coord of image in datafile */
-   int cw;                      /*!<\brief  width in datafile */
-   int cl;                      /*!<\brief  height in datafile */
-   int hp;                      /*!<\brief  hit-points */
-   int mhp;                     /*!<\brief  max hit points */
-   int mp;                      /*!<\brief  magic points */
-   int mmp;                     /*!<\brief max magic points */
-   int dip;                     /*!<\brief defeat item probability.
+   int cw;                      /*!<\brief width in datafile */
+   int cl;                      /*!<\brief height in datafile */
+   int hp;                      /*!<\brief Hit Points */
+   int mhp;                     /*!<\brief Max Hit Points */
+   int mp;                      /*!<\brief Magic Points */
+   int mmp;                     /*!<\brief Max Magic Points */
+   int dip;                     /*!<\brief Defeat Item Probability
                                  * Probability in % that the enemy will yield an item when defeated.
                                  */
-   int ditmc;                   /*!<\brief defeat item common.
-                                 * If the enemy yields an item, it will be this 95% of the time.
+   int defeat_item_common;      /*!<\brief Defeat Item Common
+                                 * If the enemy yields an item, you will get this item 95% of the time.
                                  */
-   int ditmr;                   /*!<\brief defeat item rare.
-                                 * If the enemy yields an item, it will be this 5% of the time.
+   int defeat_item_rare;        /*!<\brief Defeat Item Rare
+                                 * If the enemy yields an item, you will get this item 5% of the time.
                                  */
-   int sitmc;                   /*!<\brief steal item common.
-                                 * If Ayla steals something, it will be this 95% of the time.
+   int steal_item_common;       /*!<\brief Steal Item Common
+                                 * If Ayla steals something, she will get this item 95% of the time.
                                  */
-   int sitmr;                   /*!<\brief steal item rare
-                                 * If Ayla steals something, it will be this 5% of the time.
+   int steal_item_rare;         /*!<\brief Steal Item Rare
+                                 * If Ayla steals something, she will get this item 5% of the time.
                                  */
    int stats[NUM_STATS];        /*!<\brief See A_* constants in kq.h */
    char res[16];                /*!<\brief See R_* constants in kq.h */
-   unsigned char facing;
-   unsigned char aframe;
+   unsigned char facing;        /*!<\brief Direction character's sprite faces */
+   unsigned char aframe;        /*!<\brief Battle sprite to display (standing, casting, attacking) */
    unsigned char crit;
    unsigned char sts[24];
    unsigned char defend;
@@ -346,11 +346,11 @@ typedef struct
    unsigned char atrack[8];
    int csmem;
    int ctmem;
-   int cwt;                     /*!< \brief Current weapon type
+   int cwt;                     /*!< \brief Current Weapon Type
                                  * The shape of the currently held weapon (sword, dagger, axe etc) \sa hero_init()
                                  */
-   int welem;                   /*!< \brief Which element type (sick, fire, water, etc.) */
-   int unl;                     /*!< \brief Unliving (undead), like zombies, skeletons, etc. */
+   int welem;                   /*!<\brief Which Element type (sick, fire, water, etc.) */
+   int unl;                     /*!<\brief UNLiving (undead), like zombies, skeletons, etc. */
    int aux;
    int bonus;
    int bstat;
@@ -471,13 +471,17 @@ extern unsigned char draw_background, draw_middle, draw_foreground,
    draw_shadow;
 extern unsigned short g_inv[MAX_INV][2];
 extern int view_x1, view_y1, view_x2, view_y2, view_on, in_combat;
-extern int frate, mfrate, show_frate, use_joy, cheat_loaded;
+extern int frate, mfrate, show_frate, use_joy;
 
 extern int cheat;
 extern int warx, wary;
 
 /*! Yield processor to other tasks */
 void kq_yield (void);
+
+#ifdef DEBUGMODE
+extern BITMAP *obj_mesh;
+#endif
 
 #if 0
 void my_counter (void);         /*  staticed  */

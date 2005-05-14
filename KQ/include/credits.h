@@ -18,8 +18,8 @@
    the Free Software Foundation,
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
-#ifndef __CREDITS_H__
-#define __CREDITS_H__
+#ifndef __CREDITS_H
+#define __CREDITS_H
 
 /*! file */
 

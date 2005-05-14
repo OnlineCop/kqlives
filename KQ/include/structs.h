@@ -25,8 +25,8 @@
  * \date 20030805
  */
 
-#ifndef __STRUCTS_H__
-#define __STRUCTS_H__
+#ifndef __STRUCTS_H
+#define __STRUCTS_H
 /*! \brief Position marker
  *
  * A marker is a named position on the map.
@@ -143,4 +143,4 @@ typedef struct
    s_anim tanim[MAX_ANIM];
 } s_tileset;
 
-#endif /*__STRUCTS_H__*/
+#endif /*__STRUCTS_H*/
