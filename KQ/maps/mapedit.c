@@ -134,8 +134,9 @@ int main (int argc, char *argv[])
       }
       if (gmap.revision == 1) {
          /* copy out the markers */
+         num_markers = gmap.num_markers;
          memcpy (markers, gmap.markers,
-                 (num_markers = gmap.num_markers) * sizeof (s_marker));
+                 gmap.num_markers * sizeof (s_marker));
          curmarker = 0;
       } else {
          num_markers = 0;
@@ -180,16 +181,11 @@ END_OF_MAIN ();
 
 /*! \brief Animation
  *
- * When the user is in MAP_PREVIEW mode, this will loop through all the tiles
- * which are designated to animate (water, fire, etc.)
+ * When the user is in MAP_PREVIEW mode and the user hits the spacebar,
+ * animate all appropriate tiles (water, fire, etc.).
  */
 void animate (void)
 {
-   /* TT TODO:
-    * Make the animation work when the user hits the spacebar
-    * I think the error is in here, that something isn't incrementing when it should
-    * so I just need to find what that would be and increment it.
-    */
    int i, j;
 
    if (draw_mode != MAP_PREVIEW)
@@ -276,9 +272,12 @@ void bufferize (void)
 int check_last_zone (void)
 {
    int a = 0, p;
-   for (p = 0; p < gmap.xsize * gmap.ysize; p++)
+
+   for (p = 0; p < gmap.xsize * gmap.ysize; p++) {
       if (z_map[p] > a)
          a = z_map[p];
+   }
+
    return a;
 }                               /* check_last_zone () */
 
@@ -317,6 +316,7 @@ void cleanup (void)
    destroy_bitmap (mesh);
    destroy_bitmap (mesh2);
    destroy_bitmap (mouse_pic);
+   destroy_bitmap (marker_image);
 }                               /* cleanup () */
 
 
@@ -2139,32 +2139,13 @@ void process_keyboard (const int k)
       describe_map ();
       break;
    case (KEY_F12):
-      /* TT TODO:
-       *
-       * Change the F12 function to be able to select the current Attribute.
-       *
-       * This would mean that F12 does not automatically go into the entity-stats
-       * mode; it will only go into it if entities was the active draw_mode.
-       * If zones were selected, you would be able to move through all of the
-       * current zone #s on the screen (meaning, if you had several Zone_5 on the
-       * map, pressing KEY_UP would move from the upper-left most Zone_5, to the
-       * right, all the way to the bottom of the map, and then repeat itself).
-       *
-       * This would give a very handy way of tracking down a "stray" zone.
-       *
-       * The error-check for "no zones" can follow the guidelines of the
-       * "no entities" error message.
-       *
-       */
       /* Enter the Modify Entity mode */
       showing.entities = 1;
       update_entities ();
       grab_tile = 0;
       break;
    case (KEY_ESC):
-      /* TT TODO: This currently cancels a Block Copy, but future use is
-       * intended to have it bring up a menu for easier navigation
-       */
+      /* Cancel a Block Copy */
       if (copying == 1)
          copying = 0;
       /* Clear coordinates of copy */
@@ -3368,12 +3349,6 @@ void update_tileset (void)
 }                               /* update_tileset () */
 
 
-/* TT: The creation of MAPDUMP supersedes the need for this function.
- * You may now call mapdump and specify which options to display.  HOWEVER,
- * this DOES seem to create the transparency effect correctly.  We'll have to
- * check out why this is happening.
- */
-
 /*! \brief Wait for ENTER key
  *
  * There's almost no point in explaining this function further :-)
@@ -3490,7 +3465,7 @@ void add_change_marker (int marker_x, int marker_y, int b)
          for (m = markers + found;
               m <= markers + num_markers;
               m++) {
-/* TT TODO HERE */            
+/* TT TODO HERE */
          memcpy (found, found + 1,
                  (&markers[num_markers] - found) * sizeof (s_marker));
 
