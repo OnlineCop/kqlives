@@ -381,6 +381,11 @@ function zone_handler(zn)
 
   elseif (zn == 79) then
     bubble(HERO1, "This is as far as the dock goes.")
+    warp(187, 141, 16)
+    
+  elseif (zn == 80) then
+    bubble(HERO1, "This is as far as the dock goes.")
+    warp(202, 147, 16)
 
   end
 end

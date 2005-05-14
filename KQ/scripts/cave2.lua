@@ -26,11 +26,7 @@
 
 
 function autoexec()
-  if (get_progress(P_FELLINPIT) > 0) then
-    set_btile(15, 19, 30)
-    set_zone(15, 19, 3)
-  end
-  return
+  refresh()
 end
 
 
@@ -42,15 +38,23 @@ function postexec()
 end
 
 
+function refresh()
+  -- Show the shiny, glowing rescue spot
+  if (get_progress(P_FELLINPIT) > 0) then
+    set_btile(15, 18, 30)
+    set_zone(15, 18, 3)
+  end
+end
+
+
 function zone_handler(zn)
   if (zn == 1) then
     -- // This is the first time you try the door
     if (get_progress(P_FELLINPIT) == 0) then
       bubble(HERO1, "There's some kind of barrier here. I can't get past it.")
-      set_btile(15, 19, 30)
-      set_zone(15, 19, 3)
-      bubble(HERO1, "Hey... What's that thing down there?")
       set_progress(P_FELLINPIT, 1)
+      refresh()
+      bubble(HERO1, "Hey... What's that thing down there?")
     -- // You have already tried the door
     else
       bubble(HERO1, "This barrier is still here. I can't get out.")
@@ -65,27 +69,28 @@ function zone_handler(zn)
         -- // I have never seen Derig; he has never helped me.
         bubble(HERO1, "This doesn't do anything; I can't get out of here. I'll give up and just go to sleep.")
         set_progress(P_TALKDERIG, 2)
-        set_ent_facing(HERO1, 3)
+        inn("You decide to sleep.", 0, 0)
+        set_ent_facing(HERO1, FACE_RIGHT)
         change_map("grotto", 19, 16, 19, 16)
       elseif (get_progress(P_TALKDERIG) == 2) then
         -- // Derig helped you out, when you were sleeping.  You re-entered the pit before speaking to Jen.
         bubble(HERO1, "Oops, I'm stuck down here again. I'll try sleeping again to get back out.")
-        inn("You decide to sleep", 0, 0)
-        set_ent_facing(HERO1, 3)
+        inn("You decide to sleep.", 0, 0)
+        set_ent_facing(HERO1, FACE_RIGHT)
         change_map("grotto", 19, 16, 19, 16)
       end
     elseif (get_progress(P_UCOIN) == 1) then
-      bubble(HERO1, "Hello? Is anyone there?")
-      bubble(255, "Hey, are you alright down there?")
-      bubble(HERO1, "Yeah... I'm okay.")
-      bubble(255, "Hang on, let me get you out of there.")
+      bubble(HERO1, "Hmm... this doesn't look like it does anything.")
+      msg("Hello? Who's there? Is that somebody down there?", 255, 0)
+      bubble(HERO1, "Yeah... I fell down here and the door's blocked.")
+      msg("Hang on, let me get you out of there.", 255, 0)
       set_progress(P_TALKDERIG, 3)
       change_map("grotto", 17, 14, 17, 14)
     else
       -- // Derig has helped you out of here before
       bubble(HERO1, "Derig, can you help me out of here?")
-      bubble(255, "Sure thing. Here you go.")
-      set_ent_facing(HERO1, 3)
+      msg("Sure thing. Here you go.", 255, 0)
+      set_ent_facing(HERO1, FACE_RIGHT)
       change_map("grotto", 19, 16, 19, 16)
     end
   end

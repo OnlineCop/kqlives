@@ -134,7 +134,7 @@ function zone_handler(zn)
     if (party[0] == Ayla) then
       if (get_progress(P_AYLA_QUEST) < 4 and get_progress(P_AYLA_QUEST) > 0) then
         sfx(5)
-        msg("Maid's outfit procured")
+        msg("Maid's outfit procured", 12, 0)
         wait(200)
         bubble(HERO1, "Do you mind? I'm getting undressed!")
         do_fadeout(4)

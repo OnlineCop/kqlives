@@ -220,14 +220,14 @@ end
 -- returns the number of heroes that were actually added
 function add_to_manor(hero)
   local total;
-  if istable(hero) then
+  if (istable(hero)) then
     total = 0;
     for i, v in hero do
       total = total + add_to_manor(v);
     end
     return total;
   else
-    if hero < 0 or hero > 7 then
+    if (hero < 0 or hero > 7) then
       return 0;
     end
     for i = 0, 7 do

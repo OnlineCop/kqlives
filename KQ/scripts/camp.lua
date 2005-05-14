@@ -1,5 +1,19 @@
 -- camp - "Orc forest encampment south of Randen"
 
+-- /*
+-- {
+-- P_FOUNDMAYOR:
+--   0 - Mayor is still behind bars
+--   1 - Mayor has been freed and is now home
+-- P_MAYORGUARD1:
+--   0 - The first of the mayor's guards is still being held
+--   1 - The first guard was released (and spoken to)
+-- P_MAYORGUARD2:
+--   0 - The second of the mayor's guards is still being held
+--   1 - The second guard was released (and spoken to)
+-- }
+-- */
+
 function autoexec()
   local a
 
@@ -212,20 +226,25 @@ end
 
 
 function entity_handler(en)
-  if (en == 28) then
-    bubble(en, "You have to get through us to get to them.")
-    drawmap()
-    set_run(0)
-    combat(5)
-    set_run(1)
-    if (get_alldead() == 1) then
-      return
-    end
-    set_ent_active(28, 0)
-    set_ent_active(25, 0)
-    set_ent_active(26, 0)
-    set_ent_active(27, 0)
+  if (en >= 0) and (en <= 4) then
+    bubble(en, "It sure it clammy in here...")
 
+  elseif (en == 5) then
+    if (get_progress(P_MAYORGUARD1) == 0) then
+      bubble(en, "Wow, thanks for helping me! When we get back to my place, feel free to stop by sometime!")
+      set_progress(P_MAYORGUARD1, 1)
+    else
+      bubble(en, "My place is right next to the mayor's.")
+    end
+
+  elseif (en == 6) then
+    if (get_progress(P_MAYORGUARD2) == 0) then
+      bubble(en, "Thanks for your help! I should be able to find my way out.")
+      set_progress(P_MAYORGUARD2, 1)
+    else
+      bubble(en, "Don't worry about me. I'm still looking for the exit...")
+    end
+    
   elseif (en == 9) then
     if (get_numchrs() > 1) then
       bubble(en, "Intruders!")
@@ -247,22 +266,37 @@ function entity_handler(en)
     set_ent_active(10, 0)
     set_ent_active(11, 0)
 
-  elseif (en == 5) then
-    if (get_progress(P_MAYORGUARD1) == 0) then
-      bubble(en, "Wow, thanks for helping me! When we get back to my place, feel free to stop by sometime!")
-      set_progress(P_MAYORGUARD1, 1)
+  elseif (en == 23 or en == 24 or (en >= 29 and en <= 36) or en == 38) then
+    if (get_numchrs() > 1) then
+      bubble(en, "Intruders!")
     else
-      bubble(en, "My place is right next to the mayor's.")
+      bubble(en, "Intruder!")
+    end
+    drawmap()
+
+    set_run(0)
+    combat(1)
+    set_run(1)
+
+    if (get_alldead() == 1) then
+      return
     end
 
-  elseif (en == 6) then
-    if (get_progress(P_MAYORGUARD2) == 0) then
-      bubble(en, "Thanks for your help! I should be able to find my way out.")
-      set_progress(P_MAYORGUARD2, 1)
-    else
-      bubble(en, "Don't worry about me. I'm still looking for the exit...")
+    set_ent_active(en, 0)
+
+  elseif (en == 28) then
+    bubble(en, "You have to get through us to get to them.")
+    drawmap()
+    set_run(0)
+    combat(5)
+    set_run(1)
+    if (get_alldead() == 1) then
+      return
     end
-    
+    set_ent_active(28, 0)
+    set_ent_active(25, 0)
+    set_ent_active(26, 0)
+    set_ent_active(27, 0)
 
   elseif (en == 37) then
     local a
@@ -344,22 +378,5 @@ function entity_handler(en)
       set_progress(P_PARTNER2, 1 + get_pidx(1))
     end
 
-  elseif (en == 23 or en == 24 or (en >= 29 and en <= 36) or en == 38) then
-    if (get_numchrs() > 1) then
-      bubble(en, "Intruders!")
-    else
-      bubble(en, "Intruder!")
-    end
-    drawmap()
-
-    set_run(0)
-    combat(1)
-    set_run(1)
-
-    if (get_alldead() == 1) then
-      return
-    end
-
-    set_ent_active(en, 0)
   end
 end

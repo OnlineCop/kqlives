@@ -15,8 +15,17 @@
 -- P_FOUNDMAYOR:
 --   0 - Have not found the mayor
 --   1 - Found the mayor, he does not want company
---   2 - Found mayor & used WARPSTONE to return; he wants your company
+--   2 - Found mayor & used WARPSTONE to return; he awaits your company
 --   3 - You have spoken to the mayor
+--
+-- P_MAYORGUARD1:
+--   0 - The first of the mayor's guards is still being held in the orc camp
+--   1 - The first guard was released: gives you money
+--   2 - The first guard already gave you money for releasing him
+--
+-- P_MAYORGUARD2:
+--   0 - The second of the mayor's guards is still being held in the orc camp
+--   1 - The second guard was released
 --
 -- P_PORTALGONE: Whether the portal in the tunnel is still working
 --   0 - Still letting monsters through
@@ -39,7 +48,7 @@
 
 
 function autoexec()
-  if not LOC_manor_or_party(AJATHAR) then
+  if (not LOC_manor_or_party(AJATHAR)) then
     -- // Make the NPC look like Ajathar if he hasn't been recruited yet
     set_ent_id(10, AJATHAR)
   else
@@ -47,17 +56,31 @@ function autoexec()
     set_ent_active(10, 0)
   end
 
+  -- // WARPSTONE is found late in the game, so some things are now available
+  -- // that weren't available earlier
   if (get_progress(P_WARPSTONE) == 1) then
-    -- // Move the guard next to the mayor's house over one space so we can now go in
+    -- // Move the guard guarding the houses in the north-east section of town
+    -- // over one tile so we can get in
     set_ent_tilex(6, 57)
 
+    -- // The bridge repairs will now be completed
     if (get_progress(P_SHOWBRIDGE) == 1) then
       set_progress(P_SHOWBRIDGE, 2)
     end
 
+    -- // If the Mayor had been found, he will now have recovered from his
+    -- // ordeal and will be willing to speak to you
     if (get_progress(P_FOUNDMAYOR) == 1) then
       set_progress(P_FOUNDMAYOR, 2)
     end
+  end
+
+  if (get_progress(P_FOUNDMAYOR) > 0 and
+      not LOC_manor_or_party(CASANDRA)) then
+    -- // Casandra should be available to join your party
+    set_ent_id(13, CASANDRA)
+  else
+    set_ent_active(13, 0)
   end
 
   -- // This NPC will only appear if you spoke with him in the camp
@@ -97,12 +120,12 @@ function refresh()
     set_zone(35, 38, 0)
   end
   if (get_treasure(31) == 1) then
-    set_mtile(115, 36, 265)
-    set_zone(115, 36, 0)
+    set_mtile(115, 38, 265)
+    set_zone(115, 38, 0)
   end
   if (get_treasure(46) == 1) then
-    set_mtile(116, 36, 265)
-    set_zone(116, 36, 0)
+    set_mtile(116, 38, 265)
+    set_zone(116, 38, 0)
   end
   if (get_treasure(97) == 1) then
     set_mtile(135, 10, 265)
@@ -128,25 +151,25 @@ function zone_handler(zn)
     change_map("cave1", 47, 47, 47, 47)
 
   elseif (zn == 2) then
-    door_in(85, 13, 80, 6, 90, 15)
+    door_in(85, 13, 80, 6, 90, 16)
 
   elseif (zn == 3) then
-    door_in(86, 26, 80, 17, 92, 28)
+    door_in(86, 26, 80, 17, 92, 29)
 
   elseif (zn == 4) then
-    door_in(102, 13, 93, 6, 105, 15)
+    door_in(102, 13, 93, 6, 105, 16)
 
   elseif (zn == 5) then
-    door_in(97, 25, 94, 17, 107, 27)
+    door_in(97, 25, 94, 17, 107, 28)
 
   elseif (zn == 6) then
-    door_in(96, 39, 80, 30, 102, 50)
+    door_in(96, 39, 80, 30, 102, 51)
 
   elseif (zn == 7) then
-    door_in(112, 13, 107, 6, 117, 15)
+    door_in(112, 13, 107, 6, 117, 16)
 
   elseif (zn == 8) then
-    door_in(114, 40, 104, 28, 117, 42)
+    door_in(114, 43, 104, 30, 117, 45)
 
   elseif (zn == 9) then
     bubble(HERO1, "Locked.")
@@ -193,15 +216,15 @@ function zone_handler(zn)
     shop(5)
 
   elseif (zn == 20) then
-    view_range(1, 119, 6, 122, 28)
+    view_range(1, 119, 6, 122, 29)
     warp(121, 9, 8)
 
   elseif (zn == 21) then
-    view_range(1, 109, 17, 117, 24)
+    view_range(1, 109, 17, 117, 25)
     warp(116, 20, 8)
 
   elseif (zn == 22) then
-    view_range(1, 94, 17, 107, 27)
+    view_range(1, 94, 17, 107, 28)
     warp(106, 21, 8)
 
   elseif (zn == 23) then
@@ -245,7 +268,11 @@ function zone_handler(zn)
     bubble(HERO1, "Hmmm... books about herbs.")
 
   elseif (zn == 34) then
-    bubble(HERO1, "How to make friends through hypnosis.")
+    if (get_progress(P_FOUNDMAYOR) > 1) then
+      door_in(129, 30, 124, 20, 140, 33)
+    else
+      bubble(HERO1, "Locked.")
+    end
 
   elseif (zn == 35) then
     bubble(HERO1, "Inns always have boring books.")
@@ -257,8 +284,8 @@ function zone_handler(zn)
     touch_fire(party[0])
 
   elseif (zn == 38) then
-    view_range(1, 104, 28, 117, 43)
-    warp(116, 32, 8)
+    view_range(1, 104, 30, 117, 45)
+    warp(116, 34, 8)
 
   elseif (zn == 39) then
     view_range(1, 109, 17, 117, 25)
@@ -302,16 +329,19 @@ function zone_handler(zn)
     refresh()
 
   elseif (zn == 47) then
-    door_in(129, 16, 124, 6, 140, 18)
+    door_in(129, 16, 124, 6, 140, 19)
 
   elseif (zn == 48) then
     door_out(48, 18)
 
   elseif (zn == 49) then
-    door_in(137, 16, 124, 6, 140, 18)
+    door_in(137, 16, 124, 6, 140, 19)
 
   elseif (zn == 50) then
     door_out(52, 18)
+
+  elseif (zn == 51) then
+    door_out(61, 18)
 
   end
 end
@@ -422,7 +452,13 @@ function entity_handler(en)
 
   elseif (en == 6) then
     if (get_progress(P_WARPSTONE) == 1) then
-      bubble(en, "The mayor isn't seeing any visitors at present.")
+      if (get_progress(P_FOUNDMAYOR) < 2) then
+        bubble(en, "The mayor isn't seeing any visitors at present.")
+      elseif (get_progress(P_FOUNDMAYOR) == 2) then
+        bubble(en, "$0! The mayor is back now, thank you! He wants to see you right away!")
+      else
+        bubble(en, "Thank you again for everything!")
+      end
     else
       if (get_progress(P_FOUNDMAYOR) == 0) then
         if (get_progress(P_FIGHTONBRIDGE) > 4) then
@@ -431,11 +467,11 @@ function entity_handler(en)
           bubble(en, "The mayor was going to Andra to talk to the Council there. I think that he should have been back by now.")
           bubble(en, "We may have to go and look for him soon. We need to make sure that he is safe.")
         end
-      elseif (get_progress(P_FOUNDMAYOR) < 3) then
+      elseif (get_progress(P_FOUNDMAYOR) < 2) then
         bubble(en, "The mayor is back now, thanks to you. However, the mayor is not seeing any visitors for a while.")
         bubble(en, "He is still recovering from his ordeal.")
       else
-        bubble(en, "The mayor is back now. He's been through quite a dramatic ordeal and is not seeing any visitors for awhile.")
+        bubble(en, "I have a scripting error.")
       end
     end
 
@@ -471,6 +507,19 @@ function entity_handler(en)
       set_progress(P_MAYORGUARD1, 2)
     else
       bubble(en, "Those forces of Malkaron's sure are tough!")
+    end
+
+  elseif (en == 13) then
+    LOC_join_casandra(en)
+
+  elseif (en == 14) then
+    if (get_progress(P_FOUNDMAYOR) < 2) then
+      bubble(en, "How did you get in here past my locked door?")
+    elseif (get_progress(P_FOUNDMAYOR) == 2) then
+      bubble(en, "Oh, $0, thank you for rescuing me!")
+      set_progress(P_FOUNDMAYOR, 3)
+    else
+      bubble(en, "I had a spa installed in my house! What do you think?")
     end
 
   end
@@ -521,11 +570,52 @@ function LOC_join_ajathar(en)
       else
         -- // One hero was de-selected
         bubble(en, "If you need me, I'll be back at the manor.")
-        set_ent_script(en, "L1U2L2U1L1U1")
+        set_ent_script(en, "L1U1L1U2L2U1K")
         wait_for_entity(en, en)
       end
     end
-    set_ent_active(en, 0)
     set_progress(P_PLAYERS, get_progress(P_PLAYERS) + 1)
   end
+end
+
+
+function LOC_join_casandra(en)
+  local id
+
+  bubble(en, "$0, thank you for helping us escape from the orc's camp!")
+  bubble(HERO1, "Don't mention it. How did you get caught up in that mess anyway?")
+  bubble(en, "Well, like I mentioned earlier, the mayor needed a bodyguard while he delivered an urgent message to some guy named Tsorin in Andra.")
+  bubble(en, "That's when we were caught by the orcs. They Mayor ate the note when we were under attack. I have no idea what it was about.")
+  bubble(HERO1, "Hmm, still sounds a bit fishy.")
+  bubble(en, "I'd gladly join you to find out what this is all about!")
+
+  -- // Give Casandra her default equipment
+  set_all_equip(CASANDRA, I_MACE2, I_SHIELD1, I_HELM1, I_ROBE2, I_BAND1, 0)
+  id = select_team{CASANDRA}
+  -- /* Add the characters that weren't selected to the manor */
+  add_to_manor(id)
+
+  if (id[1]) then
+    set_ent_id(en, id[1])
+
+    if (id[2]) then
+      -- // Two heroes were de-selected
+      set_ent_id(9, id[2])
+      set_ent_active(9, 1)
+      set_ent_tilex(9, get_ent_tilex(en))
+      set_ent_tiley(9, get_ent_tiley(en) - 1)
+      bubble(en, "If you need us, we'll be back at the manor.")
+      set_ent_script(en, "U8K")
+      set_ent_script(9,  "U9K")
+      wait_for_entity(9, en)
+      set_ent_active(9, 0)
+    else
+      -- // One hero was de-selected
+      bubble(en, "If you need me, I'll be back at the manor.")
+      set_ent_script(en, "U8K")
+      wait_for_entity(en, en)
+    end
+  end
+  set_ent_active(en, 0)
+  set_progress(P_PLAYERS, get_progress(P_PLAYERS) + 1)
 end

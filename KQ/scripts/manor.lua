@@ -175,21 +175,21 @@ end
 
 function entity_handler(en)
   -- You are talking to other party members
-  if (en == SENSAR) then
+  if (get_ent_id(en) == SENSAR) then
     bubble(en, "I would be useful to you, since I can use Rage in battle.")
-  elseif (en == SARINA) then
+  elseif (get_ent_id(en) == SARINA) then
     bubble(en, "In battle, I can attack multiple targets at once if I'm equipped with the right weapon.")
-  elseif (en == CORIN) then
+  elseif (get_ent_id(en) == CORIN) then
     bubble(en, "I can infuse weapons with magic during battle.")
-  elseif (en == AJATHAR) then
+  elseif (get_ent_id(en) == AJATHAR) then
     bubble(en, "I notice that chanting a prayer during battle can heal your party or dispells the undead monsters.")
-  elseif (en == CASANDRA) then
+  elseif (get_ent_id(en) == CASANDRA) then
     bubble(en, "I can use my Boost ability to strengthen spells when I am attacking.")
-  elseif (en == TEMMIN) then
+  elseif (get_ent_id(en) == TEMMIN) then
     bubble(en, "I am very protective of my team members and will take a beating in their place.")
-  elseif (en == AYLA) then
+  elseif (get_ent_id(en) == AYLA) then
     bubble(en, "I'm a thief by trade. You might be surprised what you can steal from enemies!")
-  elseif (en == NOSLOM) then
+  elseif (get_ent_id(en) == NOSLOM) then
     bubble(en, "I have a very keen eye. Not even enemies can hide their weaknesses from me!")
 
   -- Nostik
@@ -229,7 +229,7 @@ function entity_handler(en)
       LOC_talk_butler(en)
     elseif (get_progress(P_MANOR) == 2) then
       bubble(en, "Books are an amazing source of knowledge. Nostik has spent many years writing his own.")
-    elseif (get_progress(P_MANOR) == 3) then
+    elseif (get_progress(P_MANOR) >= 3) then
       bubble(en, "Welcome back, $0. The others are here waiting for you.")
       bubble(en, "You can exchange your party members here.")
 
@@ -281,7 +281,7 @@ function LOC_explain_mission(en)
       bubble(en, "Peace only lasted only until now, when monsters have begun to appear everywhere. They kill livestock, attack towns and ransack villages. They are looking for something.")
       wait(75)
       bubble(en, "The fact is, I had, until recently, been an advisor to him in his army. He is furious with me, however, and he's sent out scouts to find me.")
-      bubble(en, "Malkaron had a magical staff which gave him and his armies total invincibility. It turned anything made from Opal into a substance which couldn't be broken, merely by being in close proximity to the staff. That is why his army was unstoppable. They wore Opal armour.")
+      bubble(en, "Malkaron had a magical staff which gave him and his armies total invincibility. It turned the weapons and armour of his armies practically indestructible, merely by being in close proximity to the staff. That is why his army was unstoppable.")
       bubble(en, "Naturally, he kept this a well-guarded secret, but since he carried this staff with him everywhere his armies went, I began to piece the clues together. Malkaron became suspicious, and sent me to the dungeon.")
       LOC_explain_mission2(en)
     elseif (a == 1) then
@@ -289,8 +289,8 @@ function LOC_explain_mission(en)
       bubble(en, "Malkaron is a general whose armies became invincible. They practically tore the world apart until just recently.")
       bubble(en, "Their forces unexpectedly withdrew a few months ago and it's been peaceful until now.")
       bubble(en, "It appears that there are monsters springing up everywhere, looking for something.")
-      bubble(en, "Malkaron had a magical staff that hardened anything made from Opal into an unbreakable substance by mere proximity to the staff.")
-      bubble(en, "He found out that I knew about it, and threw me into the dungeon.")
+      bubble(en, "Malkaron had a magical staff that made his armies' weapons and armour practically indestructible by mere proximity to it.")
+      bubble(en, "He found out that I knew about this 'little secret', and threw me into the dungeon.")
       LOC_explain_mission2(en)
     else
       bubble(en, "Fine, I'll tell you the minimal amount. Malkaron captured me.")
@@ -325,9 +325,9 @@ function LOC_talk_butler(en)
   bubble(en, "Heh heh. Maybe so. Try sleeping in a town or village inn. Monsters avoid populated places for some reason.")
   bubble(en, "Here, I'll put a monster repellant on you that will last long enough for you to make it into town.")
   msg("Hunert sprinkles some strong-scented oils on you.", 255, 0)
-  bubble(en, "Hopefully, it will give you a chance to buy some better weapons and armour.")
   bubble(HERO1, "Whew! That reeks! Why does it have to smell so bad?")
   msg("Hunert shrugs", 255, 0)
+  bubble(en, "Hopefully, it will give you a chance to buy some better weapons and armour.")
   bubble(HERO1, "Well, thank you for the information.")
   set_progress(P_MANOR, 2)
 end
@@ -353,7 +353,7 @@ function LOC_at_table()
       set_ent_active(a, 1)
       set_ent_chrx(a, 255)
       set_ent_id(a, id)
-      set_ent_obsmode(a,1)
+      set_ent_obsmode(a, 1)
     end
   end
 end

@@ -5,8 +5,9 @@
 -- P_FELLINPIT: Set when you fall down the pit
 --   0 - Haven't fallen down the pit
 --   1 - Fell into the pit, Derig helped you out
---   2 - You can't fall down the pit since no one is there to help you back out
+--   2 - Can't fall down the pit since Derig isn't there to help you back out
 --   3 - You may fall down the pit again
+--
 -- P_TALKDERIG: Set when you make contact with Derig
 --   0 - If you've never entered the grotto (this will be set to 1 immediately when you enter)
 --   1 - Set as soon as you've been to the grotto at least once
@@ -15,6 +16,15 @@
 --   4 - Derig is taking you back to Ekla to meet Jen, his granddaughter (you change_map() immediately after this is set to '4')
 --   5 - Derig is still in Ekla
 --   6 - Derig is back, you have sealed the portal
+--
+-- P_TALK_TSORIN: If you've spoken to Tsorin in Andra (and got his seal)
+--   0 - You haven't spoken to him yet
+--   1 - Tsorin gave you a note to give to Derig
+--   2 - Derig gave you a note to return to Tsorin
+--   3 - Tsorin gave you his seal to get through the fort
+--   4 - You've shown the seal to the guards at the fort
+--   5 - You are free pass through the fort anytime (no contention in goblin lands)
+--
 -- P_UCOIN: Spoke to Jen, the granddaughter in Ekla
 --   0 - Have not yet spoken with Jen
 --   1 - Spoke to Jen
@@ -30,16 +40,6 @@ function autoexec()
     set_btile(16, 14, 153)
   end
 
-  -- Allows you to fall down the pit once Derig is back in the Grotto
-  if (get_progress(P_TALKDERIG) == 6) then
-    set_progress(P_FELLINPIT, 3)
-  end
-
-  -- // There will be some times when the player shouldn't go down in the pit
-  if (get_progress(P_FELLINPIT) == 2) then
-    set_obs(16, 14, 1)
-  end
-
   -- // You've entered the grotto at least once
   if (get_progress(P_TALKDERIG) == 0) then
     set_progress(P_TALKDERIG, 1)
@@ -51,12 +51,30 @@ function autoexec()
     set_zone(20, 16, 0)
   end
 
+  -- Allows you to fall down the pit once Derig is back in the Grotto
+  if (get_progress(P_TALKDERIG) == 6) then
+    set_progress(P_FELLINPIT, 3)
+  end
+
+  -- // There will be some times when the player shouldn't go down in the pit
+  if (get_progress(P_FELLINPIT) == 2) then
+    set_obs(16, 14, 1)
+  end
+
   -- Determine if Derig should be showing or not
-  if (get_progress(P_TALKDERIG) == 3) or (get_progress(P_TALKDERIG) == 6) then
+  if (get_progress(P_TALKDERIG) == 3 or
+      get_progress(P_TALKDERIG) == 6) then
     -- Derig WILL be in the Grotto in these two instances
   else
-    -- // He won't be there any other time, however
-    set_ent_active(0, 0)
+    -- // He won't be here unless Tsorin told you to find him here
+    if (get_progress(P_TALK_TSORIN) == 0 or
+        get_progress(P_TALK_TSORIN) > 2) then
+      set_ent_active(0, 0)
+    else
+      -- Light the fire if Derig is next to it
+      set_mtile(20, 16, 154)
+      set_zone(20, 16, 0)
+    end
   end
 
   refresh()
@@ -137,18 +155,44 @@ end
 
 function entity_handler(en)
   if (en == 0) then
-    -- TALKDERIG will always == 3 the first time you talk to him
-    if (get_progress(P_TALKDERIG) == 3) then
-      -- You have never spoken to him before
-      bubble(en, "Hello, I'm Derig. I presume that my granddaughter sent you here?")
-      bubble(en, "Let's go back to town.")
-      set_progress(P_FELLINPIT, 2)
-      set_progress(P_TALKDERIG, 4)
-      change_map("town1", 65, 52, 65, 52)
-    elseif (get_progress(P_TALKDERIG) == 6) then
-      -- // Derig would only be here after you've finished with the Rod of Cancellation
-      bubble(en, "Good job with the portal. I have returned the Rod of Cancellation.")
+    -- We've never spoken to Tsorin, or we've finished his quest already
+    if (get_progress(P_TALK_TSORIN) == 0 or
+        get_progress(P_TALK_TSORIN) > 2) then
+      -- TALKDERIG will always == 3 the first time you talk to him
+      if (get_progress(P_TALKDERIG) == 3) then
+        if (get_progress(P_TALK_TSORIN) > 2) then
+          -- You have spoken to Derig because of Tsorin
+          bubble(en, "Thank you for your assistance, $0. I have another request for you.")
+        else
+          -- You have never spoken to him before
+          bubble(en, "Hello, I'm Derig. I presume that my granddaughter sent you here?")
+        end
+        bubble(en, "Let's go back to town.")
+        set_progress(P_FELLINPIT, 2)
+        set_progress(P_TALKDERIG, 4)
+        change_map("town1", 65, 52, 65, 52)
+      elseif (get_progress(P_TALKDERIG) == 6) then
+        -- // Derig would only be here after you've finished with the Rod of Cancellation
+        bubble(en, "Good job with the portal. I have returned the Rod of Cancellation.")
+      end
+    elseif (get_progress(P_TALK_TSORIN) == 1) then
+      bubble(en, "That note you're carrying... I recognize the seal on there; let me see it!")
+      msg("You show Derig the note.", 255, 0)
+      bubble(en, "$0, Tsorin says that a special treasure of the goblins, the Oracle Statue, has been stolen.")
+      bubble(en, "Apparently, the goblins are so upset that he's sealed off any entrance to the goblin lands until this is resolved.")
+      if (get_numchrs() == 1) then
+        bubble(HERO1, "So what am I supposed to do?")
+      else
+        bubble(HERO1, "So what are we supposed to do?")
+      end
+      bubble(en, "I agree that you must get through there. Here, deliver this note to Tsorin so he'll let you proceed.")
+      msg("Derig hands you a sealed envelope.", 18, 0)
+      set_progress(P_TALK_TSORIN, 2)
+      set_progress(P_TALKDERIG, 3)
+    elseif (get_progress(P_TALK_TSORIN) == 2) then
+      bubble(en, "You must deliver that note to Tsorin so he'll let you through the fort.")
+    else
+      bubble(en, "Good luck.")
     end
-
   end
 end

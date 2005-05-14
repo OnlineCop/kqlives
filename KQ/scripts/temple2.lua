@@ -107,7 +107,7 @@ function zone_handler(zn)
       drawmap()
       set_ent_active(0, 0)
       set_progress(P_UNDEADJEWEL, 1)
-      msg("Goblin jewel procured",255,0);
+      msg("Goblin jewel procured", 19, 0);
       set_progress(P_TALK_TEMMIN, 3)
       set_ent_active(1, 0)
       return

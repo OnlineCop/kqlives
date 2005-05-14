@@ -11,19 +11,18 @@
 --   0 - Still letting monsters through
 --   1 - The Portal is sealed shut
 --
--- P_TALK_TSORIN: Have you spoken to Tsorin yet (and got his seal)
---   0 - You haven't spoken to him yet.
---   1 - You have, and he gave you the seal.
---   2 - You've shown the seal to the guards at the fort.
---
--- In this town, we are going to add the 3rd PM, which will include the sub-
--- plot in the temple.
---
+-- P_TALK_TSORIN: If you've spoken to Tsorin in Andra (and got his seal)
+--   0 - You haven't spoken to him yet
+--   1 - Tsorin gave you a note to give to Derig
+--   2 - Derig gave you a note to return to Tsorin
+--   3 - Tsorin gave you his seal to get through the fort
+--   4 - You've shown the seal to the guards at the fort
+--   5 - You are free pass through the fort anytime (no contention in goblin lands)
 -- }
 -- */
 
 function autoexec()
-  if (get_progress(P_TALKDERIG) > 2) then
+  if (get_progress(P_TALK_TSORIN) == 4) then
     -- // Deactivate the Tsorin character
     set_ent_active(1, 0)
   end
@@ -177,30 +176,45 @@ function entity_handler(en)
 
   elseif (en == 1) then
     if (get_progress(P_TALK_TSORIN) == 0) then
-      bubble(en, "Tsorin:", "Thank you for visiting our town. May I ask of your help?")
-      bubble(HERO1, "What do you need?")
-      bubble(en, "To the north of here is a temple. It is nearly impenetrable from the outside, even to Malkaron's armies.")
-      bubble(en, "However, monsters have somehow appeared INSIDE the temple. We need help in any way possible.")
-      bubble(HERO, "Sure, I can help. What should I do?")
-      bubble(en, "I heard that the monsters are coming through a portal in the cave under the temple. Seal it up and that should take care of everything.")
-      bubble(HERO1, "How do I seal the portal?")
-      bubble(en, "South of here, in the land of the Goblins, there is one who is called the Oracle. She lives in a tower and can help you find a way to seal it.")
-      bubble(en, "I should warn you that there is unrest in Goblin territory right now. My men have orders to turn everyone back a the fort.")
-      bubble(HERO1, "How can we get to the Oracle's Tower, then?")
-      bubble(en, "Present this Seal to the guards, and tell them that you're acting with my authority.")
-      msg("Tsorin's Seal procured!", 255, 0)
-      bubble(en, "I can't send anyone to protect you - you must take the utmost care.")
+      bubble(en, "Tsorin:", "Thank you for visiting our town. What do you need?")
+      bubble(HERO1, "I'm not sure. To get through the pass to the south, I guess.")
+      bubble(en, "I'm afraid I cannot allow that. There is a civil upheaval in the Goblin Lands and so cannot allow anyone to pass.")
+      if (get_numchrs() == 1) then
+        bubble(HERO1, "I'm pretty sure I need to get through there.")
+      else
+        bubble(HERO1, "We're pretty sure we need to get through there.")
+      end
+      msg("Tsorin eyes you warily.", 255, 0)
+      bubble(en, "Well, I have to know if I can trust you first. Here, take this note to Derig.")
+      msg("Tsorin hands you an envelope with his seal on it.", 18, 0)
+      bubble(en, "He lives back in Ekla, and if he says you can pass, I shall let you pass.")
       set_progress(P_TALK_TSORIN, 1)
     elseif (get_progress(P_TALK_TSORIN) == 1) then
-      bubble(en, "The guards at the Fort will give you directions to the Oracle.")
-    else
-      bubble(en, "You can find the Oracle to the south. She will help you seal the portal in the temple.")
-    end
-
-    -- TT: The Oracle will instruct you to get the GoblinItem, which works like the StaffOfCancellation, but for only this portal.
-    if (get_progress(P_GOBLINITEM) == 0) then
-      bubble(en, "Any luck at the temple yet?")
-    end
+      bubble(en, "If you have trouble finding Derig, ask around town. Someone's bound to know where he's wandered off to.")
+    elseif (get_progress(P_TALK_TSORIN) == 2) then
+      msg("You hand the note to Tsorin.", 18, 0)
+      bubble(en, "Hmm, I see. Since Derig says you are trustworthy, I can let you pass through the fort.")
+      if (get_numchrs() == 1) then
+        bubble(HERO1, "Can you tell me why I need this security clearance?")
+      else
+        bubble(HERO1, "Can you tell us why we need this security clearance?")
+      end
+      bubble(en, "The Oracle's Statue was stolen from a shrine south of here. It caused such problems that civil war has ensued. As a safety to our citizens, we have closed the border to try to capture the thief or thieves.")
+      if (get_numchrs() == 1) then
+        bubble(HERO1, "If you want, I can help find this missing statue.")
+      else
+        bubble(HERO1, "If you want, we can help you find this missing statue.")
+      end
+      bubble(en, "That would be wonderful! Find the Oracle to the south and ask her what she would like you to do.")
+      bubble(en, "Present this Seal to the guards, and tell them that you're acting with my authority.")
+      msg("Tsorin's Seal procured!", 25, 0)
+      bubble(en, "I'm fear I cannot send anyone to protect you - you must take the utmost care.")
+      set_progress(P_TALK_TSORIN, 3)
+    elseif (get_progress(P_TALK_TSORIN) == 3) then
+      bubble(en, "You can find the Oracle to the south. She will help you find this missing statue.")
+    elseif (get_progress(P_TALK_TSORIN) == 4) then
+      bubble(en, "Thank you for all you've done.")
+    end -- P_TALK_TSORIN
 
   elseif (en == 2) then
     bubble(en, "I wish the weapon shop sold slingshots.")
@@ -210,6 +224,20 @@ function entity_handler(en)
 
   elseif (en == 8) then
     bubble(en, "Caffeine, caffeine, caffeine, caffeine...")
+
+  elseif (en == 9) then
+    if (get_progress(P_GOBLINITEM) == 0) then
+      bubble(en, "To the north of here is a temple. It is nearly impenetrable from the outside, even to Malkaron's armies.")
+      bubble(en, "However, monsters have somehow appeared INSIDE the temple. They need help in any way possible.")
+      bubble(HERO1, "I can probably help. What can I do?")
+      bubble(en, "I hear that the monsters are coming through a portal in the caves under the temple. Seal it up to stop the monsters.")
+      bubble(HERO1, "How do I seal the portal?")
+      bubble(en, "I don't know. You should ask someone in the temple.")
+    elseif (get_progress(P_GOBLINITEM) == 1) then
+      bubble(en, "Use that Goblin Item to seal the portal in the temple.")
+    else
+      bubble(en, "Good work in the temple! We thank you most graciously!")
+    end
 
   end
 end
