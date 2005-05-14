@@ -587,7 +587,7 @@ int start_menu (int c)
    int stop = 0, ptr = 0, redraw = 1, a, b;
    DATAFILE *bg;
    BITMAP *staff, *dudes, *tdudes;
-#ifdef KQ_CHEATS
+#ifdef DEBUGMODE
    if (debugging == 0) {
 #endif
       play_music ("oxford.s3m", 0);
@@ -648,7 +648,7 @@ int start_menu (int c)
       }
       if (c == 0)
          wait (500);
-#ifdef KQ_CHEATS
+#ifdef DEBUGMODE
    } else {
       set_palette (pal);
       bg = load_datafile_object (PCX_DATAFILE, "TITLE_PCX");
@@ -659,10 +659,6 @@ int start_menu (int c)
       if (redraw) {
          clear_bitmap (double_buffer);
          masked_blit ((BITMAP *) bg->dat, double_buffer, 0, 0, 0, 0, 320, 124);
-#if 0
-         masked_blit ((BITMAP *) bg->dat, double_buffer, 0, 148, 0, 172, 320,
-                      52);
-#endif
          menubox (double_buffer, 112, 116, 10, 4, BLUE);
          print_font (double_buffer, 128, 124, "Continue", FNORMAL);
          print_font (double_buffer, 128, 132, "New Game", FNORMAL);

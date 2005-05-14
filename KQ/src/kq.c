@@ -106,6 +106,10 @@ BITMAP *double_buffer, *fx_buffer, *map_icons[MAX_TILES], *back, *tc, *tc2,
    *sfonts[5], *bord[8], *menuptr, *mptr, *sptr, *stspics, *sicons, *bptr,
    *missbmp, *noway, *upptr, *dnptr, *shadow[MAX_SHADOWS], *kfonts;
 
+#ifdef DEBUGMODE
+BITMAP *obj_mesh;
+#endif
+
 /*! Layers in the map */
 unsigned short *map_seg = NULL, *b_seg = NULL, *f_seg = NULL;
 /*! Zone, shadow and obstacle layers */
@@ -220,7 +224,7 @@ int dct = 0;
 char ctext[39];
 
 /* PH: needed these fwd declarations */
-#ifdef KQ_CHEATS
+#ifdef DEBUGMODE
 static void data_dump (void);
 #endif
 
@@ -259,8 +263,6 @@ int skips = 0, frate, mfrate = 0, show_frate = 0;
 int use_joy = 1;
 
 #ifdef KQ_CHEATS
-/*! Has the 'cheat' script been loaded? */
-int cheat_loaded = 0;
 /*! Is cheat mode activated? */
 int cheat = 0;
 #endif
@@ -379,13 +381,15 @@ void readcontrols (void)
          }
       }
    }
-#ifdef KQ_CHEATS
-   if (key[KEY_F11])
-      data_dump ();
-   /* PH add 20030805 */
-   /* Back to menu - by pretending all the heroes died.. hehe */
-   if (key[KEY_ALT] && key[KEY_M])
-      alldead = 1;
+#ifdef DEBUGMODE
+   if (debugging > 0) {
+      if (key[KEY_F11])
+         data_dump ();
+
+      /* Back to menu - by pretending all the heroes died.. hehe */
+      if (key[KEY_ALT] && key[KEY_M])
+         alldead = 1;
+   }
 #endif
 
    /* ML,2002.09.21: Saves sequential screen captures to disk. See scrnshot.c/h for more info. */
@@ -417,34 +421,35 @@ void readcontrols (void)
 
 
 
-#ifdef KQ_CHEATS
+#ifdef DEBUGMODE
 /*! \brief Write debug data to disk
  *
- * Writes out the treasure and progress arrays
- * in text format to "treasure.log" and
- * "progress.log" respectively. This happens in
- * response to user hitting f11.
+ * Writes the treasure and progress arrays in text format to "treasure.log"
+ * and "progress.log" respectively. This happens in response to user hitting
+ * the F11 key.
  */
 void data_dump (void)
 {
    FILE *ff;
    int a;
 
-   ff = fopen ("treasure.log", "w");
-   if (!ff)
-      program_death ("Could not open treasure.log!");
-   for (a = 0; a < 200; a++)
-      fprintf (ff, "%d = %d\n", a, treasure[a]);
-   fclose (ff);
+   if (debugging > 0) {
+      ff = fopen ("treasure.log", "w");
+      if (!ff)
+         program_death ("Could not open treasure.log!");
+      for (a = 0; a < 200; a++)
+         fprintf (ff, "%d = %d\n", a, treasure[a]);
+      fclose (ff);
 
-   ff = fopen ("progress.log", "w");
-   if (!ff)
-      program_death ("Could not open progress.log!");
-   for (a = 0; a < 200; a++)
-      fprintf (ff, "%d = %d\n", a, progress[a]);
-   for (a = P_SHOPSTART; a < P_SHOPSTART + NUMSHOPS; a++)
-      fprintf (ff, "%d = %d\n", a, progress[a]);
-   fclose (ff);
+      ff = fopen ("progress.log", "w");
+      if (!ff)
+         program_death ("Could not open progress.log!");
+      for (a = 0; a < 200; a++)
+         fprintf (ff, "%d = %d\n", a, progress[a]);
+      for (a = P_SHOPSTART; a < P_SHOPSTART + NUMSHOPS; a++)
+         fprintf (ff, "%d = %d\n", a, progress[a]);
+      fclose (ff);
+   }
 }
 #endif
 
@@ -530,7 +535,7 @@ void calc_viewport (int center)
 
 /*! \brief allocate memory for map
  *
- * Allocate memory arrays for the map, shadows, obstacles etc 
+ * Allocate memory arrays for the map, shadows, obstacles etc.
  * according to the size specified in g_map
  * \author  PH 20031010
  */
@@ -580,7 +585,7 @@ void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
    DATAFILE *pb;
    BITMAP *pcxb;
    unsigned char cc[4];
-   reset_timer_events();
+   reset_timer_events ();
    if (hold_fade == 0)
       do_transition (TRANS_FADE_OUT, 4);
 
@@ -1170,6 +1175,18 @@ static void startup (void)
    create_trans_table (&cmap, pal, 128, 128, 128, NULL);
    color_map = &cmap;
    load_sgstats ();
+
+#ifdef DEBUGMODE
+   /* TT: Create the mesh object to see 4-way obstacles (others ignored) */
+   obj_mesh = create_bitmap (16, 16);
+   clear (obj_mesh);
+   for (q = 0; q < 16; q += 2) {
+      for (p = 0; p < 16; p += 2)
+         putpixel (obj_mesh, p, q, 255);
+      for (p = 1; p < 16; p += 2)
+         putpixel (obj_mesh, p, q + 1, 255);
+   }
+#endif
 }
 
 
@@ -1459,6 +1476,10 @@ static void deallocate_stuff (void)
       free_samples ();
    }
    deallocate_credits ();
+
+#ifdef DEBUGMODE
+   destroy_bitmap (obj_mesh);
+#endif
 }
 
 
@@ -1491,18 +1512,24 @@ void kwait (int dtime)
 
       drawmap ();
       blit2screen (xofs, yofs);
-#ifdef KQ_CHEATS
-      if (key[KEY_W] && key[KEY_ALT]) {
-         klog ("Alt+W Pressed:");
-         sprintf (strbuf, "\tkwait(); cnt = %d, dtime = %d, timer_count = %d",
-                  cnt, dtime, timer_count);
-         klog (strbuf);
-         break;
+#ifdef DEBUGMODE
+      if (debugging > 0) {
+         if (key[KEY_W] && key[KEY_ALT]) {
+            klog ("Alt+W Pressed:");
+            sprintf (strbuf, "\tkwait(); cnt = %d, dtime = %d, timer_count = %d",
+                     cnt, dtime, timer_count);
+            klog (strbuf);
+            break;
+         }
       }
 #endif
       if (key[KEY_X] && key[KEY_ALT]) {
-         sprintf (strbuf, "kwait(); cnt = %d, dtime = %d, timer_count = %d",
-                  cnt, dtime, timer_count);
+         if (debugging > 0) {
+            sprintf (strbuf, "kwait(); cnt = %d, dtime = %d, timer_count = %d",
+                     cnt, dtime, timer_count);
+         } else {
+            sprintf (strbuf, "Program terminated: user pressed Alt+X");
+         }
          program_death (strbuf);
       }
    }
@@ -1675,12 +1702,13 @@ END_OF_MAIN ();
  *
  * Holds the information relating to a forthcoming event
  */
-static struct timer_event {
-   char name[32]; /*!< Name of the event */
-   int when;      /*!< Time when it will trigger */
+static struct timer_event
+{
+   char name[32];               /*!< Name of the event */
+   int when;                    /*!< Time when it will trigger */
 } timer_events[5];
 
-static int next_event_time; /*!< The time the next event will trigger */
+static int next_event_time;     /*!< The time the next event will trigger */
 
 
 /*! \brief Delete any pending events
@@ -1690,23 +1718,24 @@ static int next_event_time; /*!< The time the next event will trigger */
 void reset_timer_events (void)
 {
    int i;
-   for(i = 0; i < 5; ++i)
+   for (i = 0; i < 5; ++i)
       *timer_events[i].name = '\0';
    next_event_time = INT_MAX;
 }
 
 
-/* \brief Add a new timer event to the list 
- * 
+/* \brief Add a new timer event to the list
+ *
  * Up to five pending events can be stored
- * at once. 
+ * at once.
  * \param n the name of the event
- * \param delta the number of seconds before the 
+ * \param delta the number of seconds before the
  *        event will be called. For example 5 means
  *        five seconds in the future
  * \returns <0 if an error occurred (i.e. too many pending events)
- */ 
-int add_timer_event (const char *n, int delta) {
+ */
+int add_timer_event (const char *n, int delta)
+{
    int w = delta + ksec;
    int i;
    for (i = 0; i < 5; ++i) {
@@ -1735,7 +1764,8 @@ int add_timer_event (const char *n, int delta) {
  *
  * \returns name of the next event or NULL if none is ready
  */
-char *get_timer_event (void) {
+char *get_timer_event (void)
+{
    static char buf[32];
    int now = ksec;
    int i;
@@ -1750,7 +1780,7 @@ char *get_timer_event (void) {
       t = &timer_events[i];
       if (*t->name) {
          if (t->when <= now) {
-            memcpy (buf, t->name, sizeof(buf));
+            memcpy (buf, t->name, sizeof (buf));
             *t->name = '\0';
          } else {
             if (t->when < next)
@@ -1771,12 +1801,13 @@ char *get_timer_event (void) {
  * \author PH
  * \date 20050423
  */
-void kq_yield (void) {
-   #if (ALLEGRO_VERSION >= 4 && ALLEGRO_SUB_VERSION >= 2)
-      rest(1);
-   #else
-      yield_timeslice ();
-   #endif
+void kq_yield (void)
+{
+#if (ALLEGRO_VERSION >= 4 && ALLEGRO_SUB_VERSION >= 2)
+   rest (1);
+#else
+   yield_timeslice ();
+#endif
 }
 
 

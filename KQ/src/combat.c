@@ -458,7 +458,7 @@ void battle_render (int plyr, int hl, int sall)
 
    clear_bitmap (double_buffer);
    blit ((BITMAP *) backart->dat, double_buffer, 0, 0, 0, 0, 320, 240);
-#ifdef KQ_CHEATS
+#ifdef DEBUGMODE
    if (debugging > 1) {
       rectfill (double_buffer, 0, 0, rcount / 2, 9, 15);
       sprintf (strbuf, "%d", rcount);
@@ -486,8 +486,8 @@ void battle_render (int plyr, int hl, int sall)
                   BLUE);
          print_font (double_buffer, t, z + 8, fighter[plyr - 1].name, FNORMAL);
       }
-#ifdef KQ_CHEATS
-      if (debugging > 2) {
+#ifdef DEBUGMODE
+      if (debugging > 1) {
          /*  RB TODO: Check this out.  */
 
          sprintf (strbuf, "HP:%d (%d)", fighter[plyr - 1].hp,
@@ -1275,7 +1275,7 @@ static void heroes_win (void)
    int z;
    int nc = 0;
    int txp = 0;
-   int fitm = 0;
+   int found_item = 0;
    int nr = 0;
    int ent = 0;
    s_fighter t1;
@@ -1320,24 +1320,24 @@ static void heroes_win (void)
    blit2screen (0, 0);
    blit (double_buffer, back, 0, 0, 0, 0, 352, 280);
    for (index = 0; index < numens; index++) {
-      /* PH bug: (?) should fitm be reset to zero at the start of this loop?
+      /* PH bug: (?) should found_item be reset to zero at the start of this loop?
        * If you defeat 2 enemies, you should (possibly) get 2 items, right?
        */
       if ((rand () % 100) < fighter[index + PSIZE].dip) {
-         if (fighter[index + PSIZE].ditmc > 0)
-            fitm = fighter[index + PSIZE].ditmc;
+         if (fighter[index + PSIZE].defeat_item_common > 0)
+            found_item = fighter[index + PSIZE].defeat_item_common;
 
-         if (fighter[index + PSIZE].ditmr > 0) {
+         if (fighter[index + PSIZE].defeat_item_rare > 0) {
             if ((rand () % 100) < 5)
-               fitm = fighter[index + PSIZE].ditmr;
+               found_item = fighter[index + PSIZE].defeat_item_rare;
          }
 
-         if (fitm > 0) {
-            if (check_inventory (fitm, 1) != 0) {
-               sprintf (strbuf, "%s found!", items[fitm].name);
+         if (found_item > 0) {
+            if (check_inventory (found_item, 1) != 0) {
+               sprintf (strbuf, "%s found!", items[found_item].name);
                menubox (double_buffer, 148 - (strlen (strbuf) * 4),
                         nr * 24 + 48, strlen (strbuf) + 1, 1, BLUE);
-               draw_icon (double_buffer, items[fitm].icon,
+               draw_icon (double_buffer, items[found_item].icon,
                           156 - (strlen (strbuf) * 4), nr * 24 + 56);
                print_font (double_buffer, 164 - (strlen (strbuf) * 4),
                            nr * 24 + 56, strbuf, FNORMAL);
@@ -1425,21 +1425,24 @@ static void heroes_win (void)
 void fkill (int victim)
 {
    int index;
-   /* PH Combat cheat - when a hero dies s/he is mysteriously boosted back   */
-   /* to full HP */
+
 #ifdef KQ_CHEATS
+   /* PH Combat cheat - when a hero dies s/he is mysteriously boosted back
+    * to full HP.
+    */
    if (cheat && victim < 2) {
       fighter[victim].hp = fighter[victim].mhp;
       return;
    }
 #endif
+
    for (index = 0; index < 24; index++)
       fighter[victim].sts[index] = 0;
 
    fighter[victim].sts[S_DEAD] = 1;
    fighter[victim].hp = 0;
    if (victim < PSIZE)
-      fighter[victim].ditmc = 0;
+      fighter[victim].defeat_item_common = 0;
 
    deffect[victim] = 1;
    cact[victim] = 0;

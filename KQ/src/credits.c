@@ -138,12 +138,15 @@ void display_credits (void)
       print_font (double_buffer, (320 - 8 * strlen (pressf1)) / 2, 210,
                   pressf1, FNORMAL);
 #ifdef KQ_CHEATS
-/*
- Put an un-ignorable cheat message; this should stop
- PH releasing versions with cheat mode compiled in ;)
- */
+      /* Put an un-ignorable cheat message; this should stop
+       * PH releasing versions with cheat mode compiled in ;)
+       */
       print_font (double_buffer, 80, 40,
                   cheat ? "*CHEAT MODE ON*" : "*CHEAT MODE OFF*", FGOLD);
+#endif
+#ifdef DEBUGMODE
+      /* TT: Similarly, if we are in debug mode, we should be warned. */
+      print_font (double_buffer, 80, 48, "*DEBUG MODE ON*", FGOLD);
 #endif
       last_e = e;
    }

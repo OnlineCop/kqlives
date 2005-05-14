@@ -429,9 +429,9 @@ static void sell_item (int, int);
  * able to use/equip what is being looked at, and how it would
  * improve their stats (if applicable).
  *
- * \param   itm Item being looked at.
+ * \param   selected_item Item being looked at.
  */
-static void draw_sideshot (int itm)
+static void draw_sideshot (int selected_item)
 {
    int a, j, ownd = 0, eqp = 0, wx, wy, slot;
    int cs[13];
@@ -442,24 +442,24 @@ static void draw_sideshot (int itm)
       wy = 200 + yofs;
       draw_sprite (double_buffer, frames[pidx[a]][2], wx, wy);
    }
-   if (itm == -1)
+   if (selected_item == -1)
       return;
-   slot = items[itm].type;
+   slot = items[selected_item].type;
    for (a = 0; a < numchrs; a++) {
       wx = a * 72 + 88 + xofs;
       wy = 200 + yofs;
       for (j = 0; j < 6; j++)
-         if (party[pidx[a]].eqp[j] == itm)
+         if (party[pidx[a]].eqp[j] == selected_item)
             eqp++;
       if (slot < 6) {
          if (party[pidx[a]].eqp[slot] > 0) {
             for (j = 0; j < 13; j++)
                cs[j] =
-                  items[itm].stats[j] -
+                  items[selected_item].stats[j] -
                   items[party[pidx[a]].eqp[slot]].stats[j];
          } else {
             for (j = 0; j < 13; j++)
-               cs[j] = items[itm].stats[j];
+               cs[j] = items[selected_item].stats[j];
          }
          if (slot == 0) {
             draw_icon (double_buffer, 3, wx + 16, wy);
@@ -499,18 +499,19 @@ static void draw_sideshot (int itm)
                               FNORMAL);
             }
          }
-         if (items[itm].eq[pidx[a]] == 0)
+         if (items[selected_item].eq[pidx[a]] == 0)
             draw_sprite (double_buffer, noway, wx, wy);
       } else {
-         if (items[itm].icon == W_SBOOK || items[itm].icon == W_ABOOK) {
+         if (items[selected_item].icon == W_SBOOK
+             || items[selected_item].icon == W_ABOOK) {
             for (j = 0; j < 60; j++)
-               if (party[pidx[a]].spells[j] == items[itm].hnds)
+               if (party[pidx[a]].spells[j] == items[selected_item].hnds)
                   draw_sprite (double_buffer, noway, wx, wy);
          }
       }
    }
    for (j = 0; j < MAX_INV; j++)
-      if (g_inv[j][0] == itm)
+      if (g_inv[j][0] == selected_item)
          ownd += g_inv[j][1];   // quantity of this item
    sprintf (strbuf, "Own: %d", ownd);
    print_font (double_buffer, 88 + xofs, 224 + yofs, strbuf, FNORMAL);
@@ -789,7 +790,7 @@ static void buy_item (int how_many, int item_no)
  */
 static void sell_menu (void)
 {
-   int yptr = 0, stop = 0, z, p, k, sp, pg = 0;
+   int yptr = 0, stop = 0, z, p, k, sp, inv_page = 0;
 
    while (!stop) {
       while (timer_count > 0) {
@@ -807,7 +808,7 @@ static void sell_menu (void)
       menubox (double_buffer, 32 + xofs, 168 + yofs, 30, 1, BLUE);
       draw_shopgold ();
       for (p = 0; p < 16; p++) {
-         z = g_inv[pg * 16 + p][0];
+         z = g_inv[inv_page * 16 + p][0];
          if (items[z].price == 0)
             k = FDARK;
          else
@@ -817,16 +818,16 @@ static void sell_menu (void)
          print_font (double_buffer, 56 + xofs, p * 8 + 32 + yofs,
                      items[z].name, k);
          // Check if quantity of this item > 1
-         if (g_inv[pg * 16 + p][1] > 1) {
+         if (g_inv[inv_page * 16 + p][1] > 1) {
             // The '^' in this is an 'x' in allfonts.pcx
-            sprintf (strbuf, "^%d", g_inv[pg * 16 + p][1]);
+            sprintf (strbuf, "^%d", g_inv[inv_page * 16 + p][1]);
             print_font (double_buffer, 264 + xofs, p * 8 + 32 + yofs,
                         strbuf, k);
          }
       }
-      sp = items[g_inv[pg * 16 + yptr][0]].price * 50 / 100;
-      if (items[g_inv[pg * 16 + yptr][0]].price > 0) {
-         if (g_inv[pg * 16 + yptr][1] > 1) {
+      sp = items[g_inv[inv_page * 16 + yptr][0]].price * 50 / 100;
+      if (items[g_inv[inv_page * 16 + yptr][0]].price > 0) {
+         if (g_inv[inv_page * 16 + yptr][1] > 1) {
             // Check if there is more than one item
             sprintf (strbuf, "%d gp for each one.", sp);
             print_font (double_buffer, 160 - (strlen (strbuf) * 4) + xofs,
@@ -838,12 +839,12 @@ static void sell_menu (void)
                         176 + yofs, strbuf, FNORMAL);
          }
       } else {
-         if (g_inv[pg * 16 + yptr][0] > 0)
+         if (g_inv[inv_page * 16 + yptr][0] > 0)
             print_font (double_buffer, 76 + xofs, 192 + yofs,
                         "That can not be sold!", FNORMAL);
       }
       draw_sprite (double_buffer, menuptr, 32 + xofs, yptr * 8 + 32 + yofs);
-      draw_sprite (double_buffer, pgb[pg], 278 + xofs, 158 + yofs);
+      draw_sprite (double_buffer, pgb[inv_page], 278 + xofs, 158 + yofs);
       blit2screen (xofs, yofs);
 
       readcontrols ();
@@ -864,23 +865,23 @@ static void sell_menu (void)
       }
       if (left) {
          unpress ();
-         pg--;
-         if (pg < 0)
-            pg = MAX_INV / 16 - 1;
+         inv_page--;
+         if (inv_page < 0)
+            inv_page = MAX_INV / 16 - 1;
          play_effect (SND_CLICK, 128);
       }
       if (right) {
          unpress ();
-         pg++;
-         if (pg > (MAX_INV / 16 - 1))
-            pg = 0;
+         inv_page++;
+         if (inv_page > (MAX_INV / 16 - 1))
+            inv_page = 0;
          play_effect (SND_CLICK, 128);
       }
       if (balt) {
          unpress ();
-         if (g_inv[pg * 16 + yptr][0] > 0
-             && items[g_inv[pg * 16 + yptr][0]].price > 0)
-            sell_howmany (yptr, pg);
+         if (g_inv[inv_page * 16 + yptr][0] > 0
+             && items[g_inv[inv_page * 16 + yptr][0]].price > 0)
+            sell_howmany (yptr, inv_page);
       }
       if (bctrl) {
          unpress ();
@@ -896,28 +897,28 @@ static void sell_menu (void)
  * Inquire as to what quantity of the current item, the
  * character wishes to sell.
  *
- * \param   itm_no Index of item in inventory
- * \param   pg Page of the inventory
+ * \param   item_no Index of item in inventory
+ * \param   inv_page Page of the inventory
  */
-static void sell_howmany (int itm_no, int pg)
+static void sell_howmany (int item_no, int inv_page)
 {
-   int l, maxi, prc, my = 1, stop;
+   int l, max_items, prc, my = 1, stop;
 
    stop = 0;
-   l = g_inv[pg * 16 + itm_no][0];
+   l = g_inv[inv_page * 16 + item_no][0];
    prc = items[l].price;
    if (prc == 0) {
       play_effect (SND_BAD, 128);
       return;
    }
    // Maximum (total) number of items
-   maxi = g_inv[pg * 16 + itm_no][1];
-   if (maxi == 1) {
+   max_items = g_inv[inv_page * 16 + item_no][1];
+   if (max_items == 1) {
       menubox (double_buffer, 32 + xofs, 168 + yofs, 30, 1, DARKBLUE);
       sprintf (strbuf, "Sell for %d gp?", prc * 50 / 100);
       print_font (double_buffer, 160 - (strlen (strbuf) * 4) + xofs,
                   176 + yofs, strbuf, FNORMAL);
-      sell_item (pg * 16 + itm_no, 1);
+      sell_item (inv_page * 16 + item_no, 1);
       stop = 1;
    }
    while (!stop) {
@@ -928,19 +929,19 @@ static void sell_howmany (int itm_no, int pg)
       drawmap ();
       menubox (double_buffer, 32 + xofs, 168 + yofs, 30, 1, DARKBLUE);
       print_font (double_buffer, 124 + xofs, 176 + yofs, "How many?", FNORMAL);
-      menubox (double_buffer, 32 + xofs, itm_no * 8 + 24 + yofs, 30, 1,
+      menubox (double_buffer, 32 + xofs, item_no * 8 + 24 + yofs, 30, 1,
                DARKBLUE);
       draw_icon (double_buffer, items[l].icon, 48 + xofs,
-                 itm_no * 8 + 32 + yofs);
-      print_font (double_buffer, 56 + xofs, itm_no * 8 + 32 + yofs,
+                 item_no * 8 + 32 + yofs);
+      print_font (double_buffer, 56 + xofs, item_no * 8 + 32 + yofs,
                   items[l].name, FNORMAL);
-      sprintf (strbuf, "%d of %d", my, maxi);
+      sprintf (strbuf, "%d of %d", my, max_items);
       print_font (double_buffer, 280 - (strlen (strbuf) * 8) + xofs,
-                  itm_no * 8 + 32 + yofs, strbuf, FNORMAL);
+                  item_no * 8 + 32 + yofs, strbuf, FNORMAL);
       blit2screen (xofs, yofs);
 
       readcontrols ();
-      if ((up || right) && my < maxi) {
+      if ((up || right) && my < max_items) {
          unpress ();
          my++;
       }
@@ -954,7 +955,7 @@ static void sell_howmany (int itm_no, int pg)
          sprintf (strbuf, "Sell for %d gp?", (prc * 50 / 100) * my);
          print_font (double_buffer, 160 - (strlen (strbuf) * 4) + xofs,
                      176 + yofs, strbuf, FNORMAL);
-         sell_item (pg * 16 + itm_no, my);
+         sell_item (inv_page * 16 + item_no, my);
          stop = 1;
       }
       if (bctrl) {

@@ -1927,7 +1927,7 @@ static int KQ_get_tile_all (lua_State * L)
  *
  * \param   L::1 The Lua VM
  * \returns 0 (no values returned to Lua)
- * \bug    No error checking is done. Uses direct access to the struct s_map.
+ * \bug     No error checking is done. Uses direct access to the struct s_map.
  */
 static int KQ_copy_tile_all (lua_State * L)
 {
@@ -3023,7 +3023,7 @@ int KQ_istable (lua_State * L)
  * by selecting/changing some of the heroes.
  * \sa select_party()
  * \param L::1 Table containing IDs of heroes who might join the team
- * \returns Table containing heroes that were'nt selected.
+ * \returns Table containing heroes that weren't selected.
  * \author PH
  */
 int KQ_select_team (lua_State * L)
@@ -3059,7 +3059,8 @@ int KQ_set_map_mode (lua_State * L)
 }
 
 
-int KQ_add_timer (lua_State * L) {
+int KQ_add_timer (lua_State * L)
+{
    const char *funcname = lua_tostring (L, 1);
    int delta = (int) lua_tonumber (L, 2);
    lua_pushnumber (L, add_timer_event (funcname, delta));
@@ -3115,20 +3116,14 @@ void do_luainit (char *fname)
  *
  * Load the contents of scripts/cheat.lob, usually in response to F10 being
  * pressed.  This can contain any scripting code, in the function cheat().
- * The variable \p cheat_loaded appears to be provided to ensure the cheat
- * code is loaded once only. However it's never set, so the check never fails.
+ * The cheat can be used indefinitely.
  */
 void do_luacheat (void)
 {
    int oldtop;
 
    oldtop = lua_gettop (theL);
-   if (cheat_loaded == 0) {
-      lua_dofile (theL, kqres (SCRIPT_DIR, "cheat.lob"));
-      /* PH FIXME cheat_loaded=1; here surely?? */
-      /* TT: Sure, why not? */
-      cheat_loaded = 1;
-   }
+   lua_dofile (theL, kqres (SCRIPT_DIR, "cheat.lob"));
    lua_getglobal (theL, "cheat");
    lua_call (theL, 0, 0);
    lua_settop (theL, oldtop);
@@ -3146,15 +3141,12 @@ void do_luacheat (void)
  */
 void do_luakill (void)
 {
-   reset_timer_events();
+   reset_timer_events ();
    if (theL) {
       lua_unref (theL, ref_zone_handler);
       lua_close (theL);
       theL = NULL;
    }
-#ifdef KQ_CHEATS
-   cheat_loaded = 0;
-#endif
 }
 
 
@@ -3244,12 +3236,12 @@ void do_entity (int en_num)
  * when an event is triggered.
  * \param funcname the name of the function to call
  */
-void do_timefunc(const char *funcname)
+void do_timefunc (const char *funcname)
 {
    int oldtop = lua_gettop (theL);
 
    lua_getglobal (theL, funcname);
-   if (!lua_isnil(theL, -1))
+   if (!lua_isnil (theL, -1))
       lua_call (theL, 0, 0);
    lua_settop (theL, oldtop);
    check_map_change ();

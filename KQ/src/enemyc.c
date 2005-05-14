@@ -132,10 +132,10 @@ int select_encounter (int en, int etid)
  * -# max hp
  * -# max mp
  * -# dip Defeat Item Probability.
- * -# ditmc Defeat ITeM Common.
- * -# ditmr Defeat ITeM Rare.
- * -# sitmc Steal ITeM Common.
- * -# sitmr Steal ITeM Rare.
+ * -# defeat_item_common Defeat Item Common
+ * -# defeat_item_rare Defeat Item Rare
+ * -# steal_item_common Steal Item Common
+ * -# steal_item_rare Steal Item Rare
  * -# strength (agility and vitality are set to 0)
  * -# intelligence AND sagacity (both set to same)
  * -# stat[5] (A_SPD)
@@ -238,16 +238,16 @@ void load_enemies (void)
       f->dip = tmp;
       // Defeat Item Common: item found commonly of the time
       fscanf (edat, "%d", &tmp);
-      f->ditmc = tmp;
+      f->defeat_item_common = tmp;
       // Defeat Item Rare: item found rarely
       fscanf (edat, "%d", &tmp);
-      f->ditmr = tmp;
+      f->defeat_item_rare = tmp;
       // Steal Item Common: item found commonly from stealing
       fscanf (edat, "%d", &tmp);
-      f->sitmc = tmp;
+      f->steal_item_common = tmp;
       // Steal Item Rare: item found rarely when stealing
       fscanf (edat, "%d", &tmp);
-      f->sitmr = tmp;
+      f->steal_item_rare = tmp;
       // Enemy's strength (agility & vitality set to zero)
       fscanf (edat, "%d", &tmp);
       f->stats[A_STR] = tmp;

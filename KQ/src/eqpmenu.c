@@ -550,18 +550,18 @@ static void draw_equippreview (int ch, int ptr, int pp)
  * buy them.
  *
  * \param   c Character to process
- * \param   itm Item to add
+ * \param   selected_item Item to add
  * \param   forced Non-zero if character doesn't already have the item (see above)
  * \returns 1 if equip was successful, 0 otherwise
  */
-static int equip (int c, int itm, int forced)
+static int equip (int c, int selected_item, int forced)
 {
    int a, d, b, z, n = 0, i;
 
    if (forced == 0)
-      d = g_inv[itm][0];
+      d = g_inv[selected_item][0];
    else
-      d = itm;
+      d = selected_item;
    a = items[d].type;
    b = party[c].eqp[a];
    if (a > 5)
@@ -577,13 +577,13 @@ static int equip (int c, int itm, int forced)
    if (b > 0) {
       for (i = 0; i < MAX_INV; i++)
          // Check if we have any items at all
-         if (g_inv[itm][0] > 0 && g_inv[itm][1] > 0)
+         if (g_inv[selected_item][0] > 0 && g_inv[selected_item][1] > 0)
             n++;
       // this first argument checks to see if there's one of given item
-      if (g_inv[itm][1] == 1 && n == MAX_INV && forced == 0) {
+      if (g_inv[selected_item][1] == 1 && n == MAX_INV && forced == 0) {
          party[c].eqp[a] = d;
-         g_inv[itm][0] = b;
-         g_inv[itm][1] = 1;
+         g_inv[selected_item][0] = b;
+         g_inv[selected_item][1] = 1;
          return 1;
       } else {
          z = check_inventory (b, 1);
@@ -595,7 +595,7 @@ static int equip (int c, int itm, int forced)
    }
    party[c].eqp[a] = d;
    if (forced == 0)
-      remove_item (itm, 1);
+      remove_item (selected_item, 1);
    return 1;
 }
 

@@ -54,7 +54,7 @@ char slow_computer = 0;
  * with our own table of keynames
  */
 #if (ALLEGRO_VERSION >= 4 && ALLEGRO_SUB_VERSION >=2 )
-   #define kq_keyname scancode_to_name
+#define kq_keyname scancode_to_name
 #else
 /*! Look up table of names for keys */
 static char *keynames[] = {
@@ -80,8 +80,9 @@ static char *keynames[] = {
 };
 
 #define N_KEYNAMES (sizeof(keynames) / sizeof (*keynames))
-const char *kq_keyname (int scancode) {
-   if (scancode >= 0 && scancode < N_KEYNAMES)
+const char *kq_keyname (int scancode)
+{
+   if (scancode >= 0 && scancode < (signed) N_KEYNAMES)
       return keynames[scancode];
    else
       return "???";
@@ -156,7 +157,9 @@ static void parse_allegro_setup (void)
 #ifdef KQ_CHEATS
    cheat = get_config_int (NULL, "cheat", 0);
 #endif
+#ifdef DEBUGMODE
    debugging = get_config_int (NULL, "debugging", 0);
+#endif
    /* NB. JB's config file uses intro=yes --> skip_intro=0 */
    skip_intro = get_config_int (NULL, "skip_intro", 0);
 #ifdef __DJGPP__
@@ -333,8 +336,13 @@ void config_menu (void)
 {
    int stop = 0, ptr = 0, p;
    int temp_key = 0;
+#ifdef DEBUGMODE
+   #define MENU_SIZE 17
+#else
+   #define MENU_SIZE 16
+#endif
    /* helper strings */
-   static char *dc[16] = {
+   static char *dc[MENU_SIZE] = {
       "Display KQ in a window.",
       "Stretch to fit 640x480 resolution.",
       "Display the frame rate during play.",
@@ -350,7 +358,10 @@ void config_menu (void)
       "Toggle sound and music on/off.",
       "Overall sound volume (affects music).",
       "Music volume.",
-      "Animation speed-ups for slow machines."
+      "Animation speed-ups for slow machines.",
+#ifdef DEBUGMODE
+      "Things you can do only in DebugMode.",
+#endif
    };
 
    unpress ();
@@ -365,19 +376,20 @@ void config_menu (void)
       menubox (double_buffer, 88 + xofs, yofs, 16, 1, BLUE);
       print_font (double_buffer, 96 + xofs, 8 + yofs, "KQ Configuration",
                   FGOLD);
-      menubox (double_buffer, 32 + xofs, 24 + yofs, 30, 19, BLUE);
+      menubox (double_buffer, 32 + xofs, 24 + yofs, 30, MENU_SIZE + 3, BLUE);
+
       citem (32, "Windowed mode:", windowed == 1 ? "YES" : "NO");
       citem (40, "Stretch Display:", stretch_view == 1 ? "YES" : "NO");
       citem (48, "Show Frame Rate:", show_frate == 1 ? "YES" : "NO");
       citem (56, "Wait for Retrace:", wait_retrace == 1 ? "YES" : "NO");
-      citem (72, "Up Key:", kq_keyname(kup));
-      citem (80, "Down Key:", kq_keyname(kdown));
-      citem (88, "Left Key:", kq_keyname(kleft));
-      citem (96, "Right Key:", kq_keyname(kright));
-      citem (104, "Confirm Key:", kq_keyname(kalt));
-      citem (112, "Cancel Key:", kq_keyname(kctrl));
-      citem (120, "Menu Key:", kq_keyname(kenter));
-      citem (128, "System Menu Key:", kq_keyname(kesc));
+      citem (72, "Up Key:", kq_keyname (kup));
+      citem (80, "Down Key:", kq_keyname (kdown));
+      citem (88, "Left Key:", kq_keyname (kleft));
+      citem (96, "Right Key:", kq_keyname (kright));
+      citem (104, "Confirm Key:", kq_keyname (kalt));
+      citem (112, "Cancel Key:", kq_keyname (kctrl));
+      citem (120, "Menu Key:", kq_keyname (kenter));
+      citem (128, "System Menu Key:", kq_keyname (kesc));
       citem (144, "Sound System:", is_sound ? "ON" : "OFF");
 
       if (is_sound == 2) {
@@ -398,7 +410,13 @@ void config_menu (void)
 
       citem (176, "Slow Computer:", slow_computer ? "YES" : "NO");
 
-      /* this affects the VISUAL placement of the arrow */
+#ifdef DEBUGMODE
+      if (debugging)
+         sprintf (strbuf, "%d", debugging);
+      citem (184, "DebugMode Stuff:", debugging ? strbuf : "OFF");
+#endif
+
+      /* This affects the VISUAL placement of the arrow */
       p = ptr;
       if (ptr > 3)
          p++;
@@ -407,6 +425,7 @@ void config_menu (void)
       if (ptr > 14)
          p++;
       draw_sprite (double_buffer, menuptr, 32 + xofs, p * 8 + 32 + yofs);
+
       /* This is the bottom window, where the description goes */
       menubox (double_buffer, xofs, 216 + yofs, 38, 1, BLUE);
       print_font (double_buffer, 8 + xofs, 224 + yofs, dc[ptr], FNORMAL);
@@ -420,7 +439,7 @@ void config_menu (void)
             ptr -= 2;
          ptr--;
          if (ptr < 0)
-            ptr = 15;
+            ptr = MENU_SIZE - 1;
          play_effect (SND_CLICK, 128);
       }
       if (down) {
@@ -429,7 +448,7 @@ void config_menu (void)
          if (ptr == 12 && is_sound == 0)
             ptr += 2;
          ptr++;
-         if (ptr > 15)
+         if (ptr > MENU_SIZE - 1)
             ptr = 0;
          play_effect (SND_CLICK, 128);
       }
@@ -574,7 +593,8 @@ void config_menu (void)
                /* make sure to set it no matter what */
                set_volume (gsvol, 0);
                set_config_int (NULL, "gsvol", gsvol);
-            } else              /* Not as daft as it seems, SND_BAD also wobbles the screen */
+            } else
+               /* Not as daft as it seems, SND_BAD also wobbles the screen */
                play_effect (SND_BAD, 128);
             break;
          case 14:
@@ -594,6 +614,15 @@ void config_menu (void)
             slow_computer = !slow_computer;
             set_config_int (NULL, "slow_computer", slow_computer);
             break;
+#ifdef DEBUGMODE
+         case 16:
+            /* TT: Things we only have access to when we're in debug mode */
+            if (debugging < 4)
+               debugging++;
+            else
+               debugging = 0;
+            break;
+#endif
          }
       }
       if (bctrl) {
@@ -734,14 +763,14 @@ void show_help (void)
    menubox (double_buffer, xofs, 216 + yofs, 38, 1, BLUE);
    print_font (double_buffer, 16 + xofs, 224 + yofs,
                "Press CONFIRM to exit this screen", FNORMAL);
-   citem (72, "Up Key:", kq_keyname(kup));
-   citem (80, "Down Key:", kq_keyname(kdown));
-   citem (88, "Left Key:", kq_keyname(kleft));
-   citem (96, "Right Key:", kq_keyname(kright));
-   citem (104, "Confirm Key:", kq_keyname(kalt));
-   citem (112, "Cancel Key:", kq_keyname(kctrl));
-   citem (120, "Menu Key:", kq_keyname(kenter));
-   citem (128, "System Menu Key:", kq_keyname(kesc));
+   citem (72, "Up Key:", kq_keyname (kup));
+   citem (80, "Down Key:", kq_keyname (kdown));
+   citem (88, "Left Key:", kq_keyname (kleft));
+   citem (96, "Right Key:", kq_keyname (kright));
+   citem (104, "Confirm Key:", kq_keyname (kalt));
+   citem (112, "Cancel Key:", kq_keyname (kctrl));
+   citem (120, "Menu Key:", kq_keyname (kenter));
+   citem (128, "System Menu Key:", kq_keyname (kesc));
    do {
       blit2screen (xofs, yofs);
       readcontrols ();

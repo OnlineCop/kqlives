@@ -625,6 +625,13 @@ static void draw_forelayer (void)
                pix = f_seg[((ytc + dy) * g_map.xsize) + xtc + dx];
                draw_sprite (double_buffer, map_icons[tilex[pix]],
                             dx * 16 + xofs, dy * 16 + yofs);
+#ifdef DEBUGMODE
+               if (debugging > 3) {
+                  if (o_seg[((ytc + dy) * g_map.xsize) + xtc + dx] == 1)
+                     draw_sprite (double_buffer, obj_mesh, dx * 16 + xofs,
+                                  dy * 16 + yofs);
+               }
+#endif
             }
          }
       }

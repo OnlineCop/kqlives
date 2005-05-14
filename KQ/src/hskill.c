@@ -155,8 +155,8 @@ int hero_skillcheck (int dude)
  */
 int skill_use (int who)
 {
-   int tgt, fitm, a, b, c, p, cts, tx, ty, g = 0, next_target = 0,
-       nn[NUM_FIGHTERS];
+   int tgt, found_item, a, b, c, p, cts, tx, ty, g = 0, next_target = 0,
+      nn[NUM_FIGHTERS];
    BITMAP *temp;
 
    tempa = status_adjust (who);
@@ -377,24 +377,25 @@ int skill_use (int who)
       wait (500);
       dct = 0;
       battle_render (who, who, 0);
-      fitm = 0;
+      found_item = 0;
       if (rand () % 100 < cts) {
-         if (fighter[tgt].sitmr > 0 && (rand () % 100) < 5) {
+         if (fighter[tgt].steal_item_rare > 0 && (rand () % 100) < 5) {
             /* This steals a rare item from monster, if there is one */
-            fitm = fighter[tgt].sitmr;
-            fighter[tgt].sitmr = 0;
-         } else if (fighter[tgt].sitmc > 0 && (rand () % 100) < 95) {
-            /* This steals a common item from a monster */
-            fitm = fighter[tgt].sitmc;
-            fighter[tgt].sitmc = 0;
+            found_item = fighter[tgt].steal_item_rare;
+            fighter[tgt].steal_item_rare = 0;
+         } else if (fighter[tgt].steal_item_common > 0 && (rand () % 100) < 95) {
+            /* This steals a common item from a monster, if there is one */
+            found_item = fighter[tgt].steal_item_common;
+            fighter[tgt].steal_item_common = 0;
          }
-         if (fitm > 0) {
-            if (check_inventory (fitm, 1) != 0) {
-               sprintf (strbuf, "%s taken!", items[fitm].name);
-               message (strbuf, items[fitm].icon, 0, 0, 0);
+         if (found_item > 0) {
+            if (check_inventory (found_item, 1) != 0) {
+               sprintf (strbuf, "%s taken!", items[found_item].name);
+               message (strbuf, items[found_item].icon, 0, 0, 0);
             }
          } else {
-            if (fighter[tgt].sitmc == 0 && fighter[tgt].sitmr == 0)
+            if (fighter[tgt].steal_item_common == 0
+                && fighter[tgt].steal_item_rare == 0)
                message ("Nothing to steal!", 255, 0, 0, 0);
             else
                message ("Couldn't steal!", 255, 0, 0, 0);

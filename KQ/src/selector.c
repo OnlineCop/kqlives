@@ -42,7 +42,7 @@ static int can_attack (int);
 static int mini_menu (int mask);
 static void party_add (int id, int lead);
 static void party_remove (int id);
-static void party_newlead (int id);
+void party_newlead (int id);
 /*  internal variables  */
 static int tmpd[NUM_FIGHTERS];
 
@@ -745,6 +745,8 @@ static int mini_menu (int omask)
          if (cp > 0) {
             play_effect (SND_CLICK, 128);
             --cp;
+         } else {
+            cp = 2;
          }
       }
 
@@ -753,6 +755,8 @@ static int mini_menu (int omask)
          if (cp < 2) {
             play_effect (SND_CLICK, 128);
             ++cp;
+         } else {
+            cp = 0;
          }
       }
       if (bctrl) {
@@ -816,18 +820,18 @@ static void party_remove (int id)
 
 
 
-static void party_newlead (int id)
+void party_newlead (int id)
 {
+   (void) id;                   // TT,2004.05.03: unused variable right now, casting to void to prevent warnings
    int i, t;
-   for (i = 0; i < numchrs; ++i) {
-      if (pidx[i] == id) {
-         t = pidx[0];
-         pidx[0] = pidx[i];
-         pidx[i] = t;
-         t = g_ent[0].eid;
-         g_ent[0].eid = g_ent[i].eid;
-         g_ent[i].eid = t;
-         return;
-      }
+
+   for (i = 1; i < numchrs; ++i) {
+      t = pidx[0];
+      pidx[0] = pidx[i];
+      pidx[i] = t;
+
+      t = g_ent[0].eid;
+      g_ent[0].eid = g_ent[i].eid;
+      g_ent[i].eid = t;
    }
 }

@@ -54,7 +54,7 @@ static void status_screen (int);
  */
 void menu (void)
 {
-   int stop = 0, ptr = 0, z;
+   int stop = 0, ptr = 0, z = -1;
 
    play_effect (SND_MENU, 128);
    timer_count = 0;
@@ -81,6 +81,12 @@ void menu (void)
          if (ptr > 4)
             ptr = 0;
          play_effect (SND_CLICK, 128);
+      }
+      /* Allow player to rearrange the party at any time by pressing LEFT */
+      if (left) {
+         z = select_player ();
+         if (z > 0)
+            party_newlead (z);
       }
       if (balt) {
          unpress ();
@@ -310,6 +316,20 @@ void spec_items (void)
       strcpy (sidesc[ii], "Unlock stuff");
       siq[ii] = 1;
       spicon[ii] = 63;
+      ii++;
+   }
+   if (progress[P_TALK_TSORIN] == 1) {
+      strcpy (silist[ii], "Tsorin's Note");
+      strcpy (sidesc[ii], "Sealed envelope");
+      siq[ii] = 1;
+      spicon[ii] = 18;
+      ii++;
+   }
+   if (progress[P_TALK_TSORIN] == 2) {
+      strcpy (silist[ii], "Derig's Note");
+      strcpy (sidesc[ii], "Encrypted message");
+      siq[ii] = 1;
+      spicon[ii] = 18;
       ii++;
    }
    if (ii == 0) {
