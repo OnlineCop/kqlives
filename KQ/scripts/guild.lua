@@ -1,8 +1,14 @@
 -- guild - "Home of the Embers in Sunarin"
-
+-- /*
+-- P_GUILDSECRET - Have we discovered the secret passage into the Embers' base?
+-- (0) Not found it
+-- (1) Found it and it's open
+-- (2) Found it, gone through, and it's shut again (it will reopen as we approach)
+-- */
 function autoexec()
   refresh()
 end
+
 
 
 function refresh()
@@ -13,14 +19,27 @@ function refresh()
     set_zone(12, 26, 0)
     set_ftile(13, 25, 242)
     set_ftile(13, 26, 241)
-  end
+ elseif (get_progress(P_GUILDSECRET)==2) then
+    set_mtile(12, 25, 242)
+    set_mtile(12, 26, 241)
+    set_ftile(13, 25, 0)
+    set_ftile(13, 26, 0)
+    set_obs(12, 26, 1)
+end
   if (get_progress(P_FOUGHTGUILD) == 1) then
     set_ent_active(0, 0)
     set_ent_active(1, 0)
   end
   if (get_progress(P_OPALHELMET) == 1) then
     set_mtile(58, 24, 265)
-  end
+ end
+ -- Should Ayla appear or not?
+ if (LOC_manor_or_party(AYLA) or get_progress(P_FOUGHTGUILD)<1) then
+    set_ent_active(2, 0)
+ else
+    set_ent_active(2, 1)
+    set_ent_id(2, AYLA)
+ end
 end
 
 
@@ -48,6 +67,7 @@ function zone_handler(zn)
       bubble(HERO1, "Well I'll be...")
       bubble(HERO1, "The book really IS called 'How to Enter the Ember's Secret Hideout'. Heh... brilliant in its simplicity, I suppose.")
       set_progress(P_GUILDSECRET, 1)
+      sfx(26)
       refresh()
     end
 
@@ -142,11 +162,29 @@ function zone_handler(zn)
 
   elseif (zn == 14) then
     touch_fire(party[0])
-
-  end
+ elseif (zn==15) then
+-- Close the secret door
+    sfx(26)
+    set_progress(P_GUILDSECRET, 2)
+    refresh()
+ elseif (zn==16) then
+    -- Open the secret door (a second time)
+    sfx(26)
+    set_progress(P_GUILDSECRET, 1)
+    refresh()
+ end
 end
 
 
 function entity_handler(en)
-  return
+   if (en==2) then -- // You've met Ayla
+      bubble(en, "Wha...? Oh, it's you!")
+      bubble(HERO1, "Hello... I recognise you from Nostik's manor, don't I?")
+      bubble(en, "Yes, I broke into the house, but I couldn't find the secret passage.", "Can I join you now?")
+      set_ent_active(en,0)
+      set_all_equip(AYLA, I_SWORD4, I_SHIELD3, I_CAP3, I_SUIT3, I_BAND2, 0)
+      id = select_team{AYLA}
+      --  Add the characters that were deselected to the manor 
+      add_to_manor(id)
+   end
 end
