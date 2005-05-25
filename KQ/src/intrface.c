@@ -55,6 +55,7 @@
 #include "timing.h"
 #include "music.h"
 #include "selector.h"
+#include "movement.h"
 
 /* Defines */
 #define LUA_ENT_KEY "_ent"
@@ -144,6 +145,7 @@ static int KQ_set_noe (lua_State *);
 static int KQ_set_run (lua_State *);
 static int KQ_set_save (lua_State *);
 static int KQ_set_sstone (lua_State *);
+static int KQ_move_entity (lua_State *);
 static int KQ_set_warp (lua_State *);
 static int KQ_set_vfollow (lua_State *);
 static int KQ_create_df (lua_State *);
@@ -305,6 +307,7 @@ static const struct luaL_reg lrs[] = {
    {"set_run", KQ_set_run},
    {"set_save", KQ_set_save},
    {"set_sstone", KQ_set_sstone},
+   {"move_entity", KQ_move_entity},
    {"set_warp", KQ_set_warp},
    {"set_vfollow", KQ_set_vfollow},
    {"create_df", KQ_create_df},
@@ -2039,6 +2042,29 @@ static int KQ_set_sstone (lua_State * L)
 
    if (a == 0 || a == 1)
       use_sstone = a;
+   return 0;
+}
+
+
+
+static int KQ_move_entity (lua_State * L)
+{
+   int   entity_id = real_entity_num (L, 1);
+   int   target_x  = (int) lua_tonumber (L, 2);
+   int   target_y  = (int) lua_tonumber (L, 3);
+   int   kill      = (int) lua_tonumber (L, 4);
+   int   result;
+   char  buffer[1024];
+
+   result = find_path(entity_id, g_ent[entity_id].tilex,
+                      g_ent[entity_id].tiley, target_x, target_y, buffer,
+                      sizeof(buffer));
+
+   /*  FIXME: The fourth parameter is a ugly hack for now.  */
+   if (kill)
+       strcat(buffer, "K");
+
+   set_script (entity_id, buffer);
    return 0;
 }
 

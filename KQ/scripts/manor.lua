@@ -88,14 +88,14 @@ function postexec()
     bubble(en, "Good luck all of you.")
 
     -- TT: make everyone else walk out the door
-    set_ent_script(SENSAR,   "D1R5D1L3D6R4D1K")
-    set_ent_script(SARINA,   "D1R4D1L3D6R4D1K")
-    set_ent_script(CORIN,    "D1R3D1L3D6R4D1K")
-    set_ent_script(AJATHAR,  "D1R2D1L3D6R4D1K")
-    set_ent_script(CASANDRA, "U1R1D4R1D1L3D6R4D1K")
-    set_ent_script(TEMMIN,   "U1R2D4R1D1L3D6R4D1K")
-    set_ent_script(AYLA,     "U1R3D4R1D1L3D6R4D1K")
-    set_ent_script(NOSLOM,   "U1R4D4R1D1L3D6R4D1K")
+    move_entity(SENSAR,   10, 18, 1)
+    move_entity(SARINA,   10, 18, 1)
+    move_entity(CORIN,    10, 18, 1)
+    move_entity(AJATHAR,  10, 18, 1)
+    move_entity(CASANDRA, 10, 18, 1)
+    move_entity(TEMMIN,   10, 18, 1)
+    move_entity(AYLA,     10, 18, 1)
+    move_entity(NOSLOM,   10, 18, 1)
     for a = 0, 7, 1 do
       set_ent_speed(a, 4)
     end
