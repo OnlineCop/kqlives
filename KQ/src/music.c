@@ -28,7 +28,7 @@
  * Interfaces to wither JGMOD or DUMB, depending on #defines
  */
 
-#ifndef KQ_USE_JGMOD /* { */
+#ifndef KQ_USE_JGMOD            /* { */
 /* DUMB version of music */
 #include <aldumb.h>
 #include "kq.h"

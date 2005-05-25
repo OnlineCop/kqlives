@@ -36,14 +36,6 @@ void revert_equipstats (void);  /*  heroc.c, (item|mas)menu.c,  */
                                 /*  magic.c, combat.c           */
 int give_xp (int, int, int);    /*  intrface.c, combat.c  */
 
-
-
-#if 0
-void status_screen (int);       /*  staticed  */
-int check_xp (int, int);        /*  staticed  */
-void level_up (int);            /*  staticed  */
-#endif /*  0  */
-
-
+void add_questinfo (const char *key, const char *text);
 
 #endif /*  __MENU_H  */

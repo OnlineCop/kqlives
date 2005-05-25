@@ -264,3 +264,13 @@ function LOC_manor_or_party(who)
   end
   return nil;
 end
+
+function get_quest_info()
+   if LOC_add_quest_item then
+      LOC_add_quest_item()
+   end
+
+   add_quest_item("About...", "This doesn't do much yet")
+   add_quest_item("Test1", "Some test info")
+   add_quest_item("Sensar", "He rages!")
+end

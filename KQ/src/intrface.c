@@ -210,7 +210,7 @@ static void check_map_change (void);
 static int KQ_set_map_mode (lua_State *);
 static int party_getter (lua_State *);
 static int KQ_add_timer (lua_State *);
-
+static int KQ_add_quest_item (lua_State *);
 /* New functions */
 #if 0
 /* Not used yet */
@@ -375,6 +375,7 @@ static const struct luaL_reg lrs[] = {
    {"set_map_mode", KQ_set_map_mode},
    {"set_ent_target", KQ_set_ent_target},
    {"add_timer", KQ_add_timer},
+   {"add_quest_item", KQ_add_quest_item},
    {NULL, NULL}
 };
 
@@ -3067,6 +3068,13 @@ int KQ_add_timer (lua_State * L)
    return 1;
 }
 
+int KQ_add_quest_item (lua_State * L)
+{
+   const char *keyname = lua_tostring (L, 1);
+   const char *info = lua_tostring (L, 2);
+   add_questinfo (keyname, info);
+   return 0;
+}
 
 /*! \brief Initialise scripting engine
  *
@@ -3247,6 +3255,21 @@ void do_timefunc (const char *funcname)
    check_map_change ();
 }
 
+/*! \brief Get quest info items from script
+ *
+ * Call the get_quest_info function. This is called
+ * when quest info is selected from the menu
+ * \param funcname the name of the function to call
+ */
+void do_questinfo (void)
+{
+   int oldtop = lua_gettop (theL);
+
+   lua_getglobal (theL, "get_quest_info");
+   if (!lua_isnil (theL, -1))
+      lua_call (theL, 0, 0);
+   lua_settop (theL, oldtop);
+}
 
 /*! \brief Check to change the map
  *

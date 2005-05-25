@@ -826,7 +826,7 @@ void set_script (int target_entity, char *movestring)
    /* TT remove: I don't understand why we are making the entity active here;
     * this should be something that would come from a LUA script before it.
     */
-//   g_ent[target_entity].active = 1;
+  /*   g_ent[target_entity].active = 1; */
    g_ent[target_entity].moving = MOVE_NOT;
    g_ent[target_entity].movcnt = 0;
    g_ent[target_entity].cmd = 0;

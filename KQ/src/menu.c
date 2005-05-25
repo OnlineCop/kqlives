@@ -45,7 +45,8 @@
 static void level_up (int);
 static int check_xp (int, int);
 static void status_screen (int);
-
+static void quest_info (void);
+void do_questinfo (void);
 
 
 /*! \brief Main menu
@@ -72,13 +73,13 @@ void menu (void)
          unpress ();
          ptr--;
          if (ptr < 0)
-            ptr = 4;
+            ptr = 5;
          play_effect (SND_CLICK, 128);
       }
       if (down) {
          unpress ();
          ptr++;
-         if (ptr > 4)
+         if (ptr > 5)
             ptr = 0;
          play_effect (SND_CLICK, 128);
       }
@@ -90,12 +91,17 @@ void menu (void)
       }
       if (balt) {
          unpress ();
-         if (ptr == 0 || ptr == 3) {
-            if (ptr == 0)
-               camp_item_menu ();
-            else
-               spec_items ();
-         } else {
+         switch (ptr) {
+         case 0:
+            camp_item_menu ();
+            break;
+         case 3:
+            spec_items ();
+            break;
+         case 5:
+            quest_info ();
+            break;
+         default:
             z = select_player ();
             if (z >= 0) {
                switch (ptr) {
@@ -110,6 +116,7 @@ void menu (void)
                   break;
                }
             }
+            break;
          }
       }
       if (bctrl) {
@@ -129,6 +136,7 @@ void menu (void)
 /*! \brief Draws the main menu
  *
  * Draw the menu when the player hits ENTER
+ * 20040911 PH Added an extra line in the menu for "Quest Info"
  */
 void draw_mainmenu (int swho)
 {
@@ -136,30 +144,30 @@ void draw_mainmenu (int swho)
 
    timer_count = 0;
    for (p = 0; p < 2; p++)
-      menubox (double_buffer, 44 + xofs, p * 56 + 64 + yofs, 18, 5, BLUE);
-   menubox (double_buffer, 204 + xofs, 64 + yofs, 7, 5, BLUE);
-   menubox (double_buffer, 204 + xofs, 120 + yofs, 7, 5, BLUE);
+      menubox (double_buffer, 44 + xofs, p * 64 + 64 + yofs, 18, 6,
+               swho == p ? DARKBLUE : BLUE);
+   menubox (double_buffer, 204 + xofs, 64 + yofs, 7, 6, BLUE);
+   menubox (double_buffer, 204 + xofs, 128 + yofs, 7, 6, BLUE);
    print_font (double_buffer, 220 + xofs, 72 + yofs, "Items", FGOLD);
    print_font (double_buffer, 220 + xofs, 80 + yofs, "Magic", FGOLD);
    print_font (double_buffer, 220 + xofs, 88 + yofs, "Equip", FGOLD);
    print_font (double_buffer, 220 + xofs, 96 + yofs, "Spec.", FGOLD);
    print_font (double_buffer, 220 + xofs, 104 + yofs, "Stats", FGOLD);
-   print_font (double_buffer, 212 + xofs, 128 + yofs, "Time:", FGOLD);
+   print_font (double_buffer, 220 + xofs, 112 + yofs, "Quest", FGOLD);
+   print_font (double_buffer, 212 + xofs, 136 + yofs, "Time:", FGOLD);
+   print_font (double_buffer, 212 + xofs, 164 + yofs, "Gold:", FGOLD);
    /* PH: print time as h:mm */
-   sprintf (strbuf, ":%02d", kmin);
-   print_font (double_buffer, 244 + xofs, 136 + yofs, strbuf, FNORMAL);
-   sprintf (strbuf, "%d", khr);
-   print_font (double_buffer, 244 - (strlen (strbuf) * 8) + xofs, 136 + yofs,
+   sprintf (strbuf, "%d:%02d", khr, kmin);
+   print_font (double_buffer, 268 - (strlen (strbuf) * 8) + xofs, 144 + yofs,
                strbuf, FNORMAL);
-   print_font (double_buffer, 212 + xofs, 152 + yofs, "Gold:", FGOLD);
    sprintf (strbuf, "%d", gp);
-   print_font (double_buffer, 268 - (strlen (strbuf) * 8) + xofs, 160 + yofs,
+   print_font (double_buffer, 268 - (strlen (strbuf) * 8) + xofs, 172 + yofs,
                strbuf, FNORMAL);
    if (swho != -1)
       menubox (double_buffer, 44 + xofs, swho * 56 + 64 + yofs, 18, 5,
                DARKBLUE);
    for (p = 0; p < numchrs; p++)
-      draw_playerstat (double_buffer, pidx[p], 52 + xofs, p * 56 + 72 + yofs);
+      draw_playerstat (double_buffer, pidx[p], 52 + xofs, p * 64 + 76 + yofs);
 }
 
 
@@ -793,4 +801,147 @@ static void level_up (int pr)
    b += (tmpf.stats[A_INT] + tmpf.stats[A_SAG]) / 25;
    party[pr].mp += b;
    party[pr].mmp += b;
+}
+
+/*! \brief Contains one item of information about the quest 
+ *
+ * These are hints/reminders about the game - e.g
+ * something you have been told by an important character,
+ * or what you should do next,
+ * or some info about a hero
+ * ... anything, really!
+ * \author PH
+ * \date 20050429
+ */
+typedef struct info_item
+{
+   char *key;                   /*!< The identifying title */
+   char *text;                  /*!< The actual info */
+} IITEM;
+
+typedef struct info_list
+{
+   IITEM *root;                 /*! < The array of active  info items */
+   int count;                   /*!< The number of items currently in the  array */
+   int capacity;                /*!< The total capacity of the  array */
+} ILIST;
+
+static ILIST quest_list;
+
+void ilist_add (ILIST * l, const char *key, const char *text)
+{
+   if (l->count >= l->capacity) {
+      if (l->capacity == 0)
+         l->capacity = 10;
+      else
+         l->capacity *= 2;
+      l->root = realloc (l->root, l->capacity * sizeof (IITEM));
+   }
+   l->root[l->count].key = strcpy (malloc (strlen (key) + 1), key);
+   l->root[l->count].text = strcpy (malloc (strlen (text) + 1), text);
+   ++l->count;
+}
+
+/*! \brief Add a new quest item
+ *
+ * Add a Quest info item to the current set
+ * \sa ILIST
+ * \param key The title of the item
+ * \param text The text to associate with it
+ * \author PH
+ * \date 20050429
+ */
+void add_questinfo (const char *key, const char *text)
+{
+   ilist_add (&quest_list, key, text);
+}
+
+/*! \brief Remove all  items
+ *
+ * Remove all items from the array
+ * \sa ILIST
+ * \author PH
+ * \date 20050429
+ */
+void ilist_clear (ILIST * l)
+{
+   int i;
+   for (i = 0; i < l->count; ++i) {
+      free (l->root[i].key);
+      free (l->root[i].text);
+   }
+   l->count = 0;
+}
+
+/*! \brief Do the Quest Info menu
+ *
+ * Show the current list of quest information items
+ * \sa ILIST
+ * \author PH
+ * \date 20050429
+ */
+static void quest_info (void)
+{
+   int ii = 0;
+   int i, base;
+   /* Call into the script */
+   ilist_clear (&quest_list);
+   do_questinfo ();
+   if (quest_list.count == 0) {
+      /* There was nothing.. */
+      play_effect (SND_BAD, 128);
+      return;
+   }
+
+   while (1) {
+      if (timer_count > 0) {
+         check_animation ();
+         timer_count = 0;
+      }
+      drawmap ();
+      base = ii - ii % 10;
+      menubox (double_buffer, 88 + xofs, 92 + yofs, 18, 10, BLUE);
+      menubox (double_buffer, 88 + xofs, 188 + yofs, 18, 3, BLUE);
+      for (i = 0; i < 10; ++i) {
+         if (i + base < quest_list.count)
+            print_font (double_buffer, 104 + xofs, 100 + 8 * i + yofs,
+                        quest_list.root[i + base].key, FNORMAL);
+      }
+      draw_sprite (double_buffer, menuptr, 88 + xofs,
+                   100 + 8 * (ii - base) + yofs);
+      if (ii < quest_list.count) {
+         print_font (double_buffer, 96 + xofs, 196 + yofs,
+                     quest_list.root[ii].text, FNORMAL);
+      }
+      blit2screen (xofs, yofs);
+      readcontrols ();
+      if (up) {
+         --ii;
+         play_effect (SND_CLICK, 128);
+         unpress ();
+      }
+      if (down) {
+         ++ii;
+         play_effect (SND_CLICK, 128);
+         unpress ();
+      }
+      if (left) {
+         ii -= 10;
+         play_effect (SND_CLICK, 128);
+         unpress ();
+      }
+      if (right) {
+         ii += 10;
+         play_effect (SND_CLICK, 128);
+         unpress ();
+      }
+      if (ii < 0)
+         ii = quest_list.count - 1;
+      if (ii >= quest_list.count)
+         ii = 0;
+      if (balt || bctrl) {
+         unpress ();
+         return;
+      }
+   }
 }
