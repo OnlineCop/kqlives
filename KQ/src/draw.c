@@ -622,16 +622,75 @@ static void draw_forelayer (void)
       if (ytc + dy >= v_y1 && ytc + dy <= v_y2) {
          for (dx = 0; dx < 21; dx++) {
             if (xtc + dx >= v_x1 && xtc + dx <= v_x2) {
-               pix = f_seg[((ytc + dy) * g_map.xsize) + xtc + dx];
+               // Used in several places in this loop, so shortened the name
+               int here = ((ytc + dy) * g_map.xsize) + xtc + dx;
+               pix = f_seg[here];
                draw_sprite (double_buffer, map_icons[tilex[pix]],
                             dx * 16 + xofs, dy * 16 + yofs);
 #ifdef DEBUGMODE
                if (debugging > 3) {
-                  if (o_seg[((ytc + dy) * g_map.xsize) + xtc + dx] == 1)
+                  // Obstacles
+                  if (o_seg[here] == 1)
                      draw_sprite (double_buffer, obj_mesh, dx * 16 + xofs,
                                   dy * 16 + yofs);
+
+                  // Zones
+#if (ALLEGRO_VERSION >= 4 && ALLEGRO_SUB_VERSION >= 1)
+                  if (z_seg[here] == 0) {
+                     // Do nothing
+                  } else if (z_seg[here] < 10) {
+                     /* The zone's number is single-digit, center vert+horiz */
+                     textprintf_ex (double_buffer, font, dx * 16 + 4 + xofs,
+                                    dy * 16 + 4 + yofs,
+                                    makecol (255, 255, 255), 0, "%d",
+                                    z_seg[here]);
+                  } else if (z_seg[here] < 100) {
+                     /* The zone's number is double-digit, center only vert */
+                     textprintf_ex (double_buffer, font, dx * 16 + xofs,
+                                    dy * 16 + 4 + yofs,
+                                    makecol (255, 255, 255), 0, "%d",
+                                    z_seg[here]);
+                  } else if (z_seg[here] < 10) {
+                     /* The zone's number is triple-digit.  Print the 100's
+                      * digit in top-center of the square; the 10's and 1's
+                      * digits on bottom of the square
+                      */
+                     textprintf_ex (double_buffer, font, dx * 16 + 4 + xofs,
+                                    dy * 16 + yofs, makecol (255, 255, 255), 0,
+                                    "%d", (int) (z_seg[here] / 100));
+                     textprintf_ex (double_buffer, font, dx * 16 + xofs,
+                                    dy * 16 + 8 + yofs,
+                                    makecol (255, 255, 255), 0,
+                                    "%02d", (int) (z_seg[here] % 100));
+                  }
+#else
+                  if (z_seg[here] == 0) {
+                     // Do nothing
+                  } else if (z_seg[here] < 10) {
+                     /* The zone's number is single-digit, center vert+horiz */
+                     textprintf (double_buffer, font, dx * 16 + 4 + xofs,
+                                 dy * 16 + 4 + yofs, makecol (255, 255, 255),
+                                 "%d", z_seg[here]);
+                  } else if (z_seg[here] < 100) {
+                     /* The zone's number is double-digit, center only vert */
+                     textprintf (double_buffer, font, dx * 16 + xofs,
+                                 dy * 16 + 4 + yofs, makecol (255, 255, 255),
+                                 "%d", z_seg[here]);
+                  } else if (z_seg[here] < 10) {
+                     /* The zone's number is triple-digit.  Print the 100's
+                      * digit in top-center of the square; the 10's and 1's
+                      * digits on bottom of the square
+                      */
+                     textprintf (double_buffer, font, dx * 16 + 4 + xofs,
+                                 dy * 16 + yofs, makecol (255, 255, 255), "%d",
+                                 (int) (z_seg[here] / 100));
+                     textprintf (double_buffer, font, dx * 16 + xofs,
+                                 dy * 16 + 8 + yofs, makecol (255, 255, 255),
+                                 "%02d", (int) (z_seg[here] % 100));
+                  }
+#endif /* (ALLEGRO_VERSION) */
                }
-#endif
+#endif /* DEBUGMODE */
             }
          }
       }
