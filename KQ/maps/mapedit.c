@@ -12,7 +12,7 @@
 
 /* Something for allegro version compatibility */
 /* ..can we use the textout_ex() and friends? */
-#if (ALLEGRO_VERSION>=4 && ALLEGRO_SUB_VERSION>=1)
+#if (ALLEGRO_VERSION >= 4 && ALLEGRO_SUB_VERSION >= 1)
 #define HAVE_TEXT_EX
 #endif
 
@@ -173,7 +173,7 @@ int main (int argc, char *argv[])
       yield_timeslice ();
    }                            /* while (!main_stop) */
    cleanup ();
-   return 0;
+   return EXIT_SUCCESS;
 }                               /* main () */
 
 END_OF_MAIN ();
@@ -290,20 +290,6 @@ void cleanup (void)
 {
    int k, j;
 
-   free (b_map);
-   free (f_map);
-   free (map);
-   free (o_map);
-   free (sh_map);
-   free (z_map);
-   free (c_map);
-   free (cb_map);
-   free (cf_map);
-   free (co_map);
-   free (csh_map);
-   free (cz_map);
-   free (strbuf);
-
    for (k = 0; k < MAX_TILES; k++)
       destroy_bitmap (icons[k]);
    for (k = 0; k < MAX_EPICS; k++)
@@ -317,6 +303,20 @@ void cleanup (void)
    destroy_bitmap (mesh2);
    destroy_bitmap (mouse_pic);
    destroy_bitmap (marker_image);
+
+   free (b_map);
+   free (f_map);
+   free (map);
+   free (o_map);
+   free (sh_map);
+   free (z_map);
+   free (c_map);
+   free (cb_map);
+   free (cf_map);
+   free (co_map);
+   free (csh_map);
+   free (cz_map);
+   free (strbuf);
 }                               /* cleanup () */
 
 
@@ -1145,8 +1145,10 @@ void draw_menubars (void)
    }                            // if..elseif (curtile)
 
    /* Draw the rectangle around the selected icon */
-   rect (double_buffer, (xp * 16) + (SW - 72), (yp * 16),
-         (xp * 16) + (SW - 56), (yp * 16) + 16, 255);
+   if (draw_the_rect) {
+      rect (double_buffer, (xp * 16) + (SW - 72), (yp * 16),
+            (xp * 16) + (SW - 56), (yp * 16) + 16, 255);
+   }
 
    /* Determine which tile is going to be displayed */
    if (draw_mode == MAP_SHADOWS) {
