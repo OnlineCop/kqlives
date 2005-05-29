@@ -146,16 +146,11 @@ function zone_handler(zn)
       set_ent_speed(en, 5)
 
       -- Check location on map
-      if (get_ent_tilex(HERO1) == 16) then
-        -- Hero is in front of right door
-        set_ent_script(en, "D1R3D2L5D7L1D1")
-      else
-        -- Hero is in front of left door
-        set_ent_script(en, "D1R3D2L5D7L2D1")
-      end
+      move_entity(en, get_ent_tilex(HERO1), get_ent_tiley(HERO1) - 1, 0)
 
       -- Process movement script
       wait_for_entity(en, en)
+      set_ent_facing(en, FACE_DOWN)
 
       -- Butler normal speed
       set_ent_speed(en, 3)
