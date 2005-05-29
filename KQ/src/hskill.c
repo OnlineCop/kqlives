@@ -378,6 +378,31 @@ int skill_use (int who)
       dct = 0;
       battle_render (who, who, 0);
       found_item = 0;
+#ifdef DEBUGMODE
+      if (debugging > 2) {
+         if (fighter[tgt].steal_item_rare > 0) {
+            /* This steals a rare item from monster, if there is one */
+            found_item = fighter[tgt].steal_item_rare;
+            fighter[tgt].steal_item_rare = 0;
+         } else if (fighter[tgt].steal_item_common > 0) {
+            /* This steals a common item from a monster, if there is one */
+            found_item = fighter[tgt].steal_item_common;
+            fighter[tgt].steal_item_common = 0;
+         }
+         if (found_item > 0) {
+            if (check_inventory (found_item, 1) != 0) {
+               sprintf (strbuf, "%s taken!", items[found_item].name);
+               message (strbuf, items[found_item].icon, 0, 0, 0);
+            }
+         } else {
+            if (fighter[tgt].steal_item_common == 0
+                && fighter[tgt].steal_item_rare == 0)
+               message ("Nothing to steal!", 255, 0, 0, 0);
+            else
+               message ("Couldn't steal!", 255, 0, 0, 0);
+         }
+      }
+#else
       if (rand () % 100 < cts) {
          if (fighter[tgt].steal_item_rare > 0 && (rand () % 100) < 5) {
             /* This steals a rare item from monster, if there is one */
@@ -402,6 +427,7 @@ int skill_use (int who)
          }
       } else
          message ("Couldn't steal!", 255, 0, 0, 0);
+#endif
       fighter[who].cx = tx;
       fighter[who].cy = ty;
       dct = 0;
