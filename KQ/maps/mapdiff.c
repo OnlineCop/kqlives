@@ -283,7 +283,7 @@ void check_layers ()
    if (_bmap && _bmap < 120) {
       /* This variable is used to break after every 4th column */
       l = 0;
-      fprintf (stdout, "\nMap layer 2: [(x/y) map1/map2]\n\t");
+      fprintf (stdout, "\nMap layer 2: [(x,y) map1/map2]\n\t");
       for (j = 0; j < gmap1.ysize; j++) {
          for (k = 0; k < gmap1.xsize; k++) {
             i = (j * gmap1.xsize + k);
@@ -311,7 +311,7 @@ void check_layers ()
 
    if (_fmap && _fmap < 120) {
       l = 0;
-      fprintf (stdout, "\nMap layer 3: [(x/y) map1/map2]\n\t");
+      fprintf (stdout, "\nMap layer 3: [(x,y) map1/map2]\n\t");
       for (j = 0; j < gmap1.ysize; j++) {
          for (k = 0; k < gmap1.xsize; k++) {
             i = (j * gmap1.xsize + k);
@@ -339,7 +339,7 @@ void check_layers ()
 
    if (_omap && _omap < 120) {
       l = 0;
-      fprintf (stdout, "\nObstacle layer: [(x/y) map1/map2]\n\t");
+      fprintf (stdout, "\nObstacle layer: [(x,y) map1/map2]\n\t");
       for (j = 0; j < gmap1.ysize; j++) {
          for (k = 0; k < gmap1.xsize; k++) {
             i = (j * gmap1.xsize + k);
@@ -366,7 +366,7 @@ void check_layers ()
 
    if (_smap && _smap < 120) {
       l = 0;
-      fprintf (stdout, "\nShadow layer: [(x/y) map1/map2]\n\t");
+      fprintf (stdout, "\nShadow layer: [(x,y) map1/map2]\n\t");
       for (j = 0; j < gmap1.ysize; j++) {
          for (k = 0; k < gmap1.xsize; k++) {
             i = (j * gmap1.xsize + k);
@@ -393,7 +393,7 @@ void check_layers ()
 
    if (_zmap && _zmap < 120) {
       l = 0;
-      fprintf (stdout, "\nZone layer: [(x/y) map1/map2]\n\t");
+      fprintf (stdout, "\nZone layer: [(x,y) map1/map2]\n\t");
       for (j = 0; j < gmap1.ysize; j++) {
          for (k = 0; k < gmap1.xsize; k++) {
             i = (j * gmap1.xsize + k);
