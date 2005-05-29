@@ -145,6 +145,7 @@
 #define P_MAYORGUARD2     107
 
 #define P_TALK_TSORIN     108
+#define P_TALK_CORIN      109
 
 /* 'specials' */
 #define P_SHOPSTART       1750
