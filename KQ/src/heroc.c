@@ -1010,25 +1010,25 @@ static int combat_spell_targeting (int whom)
  * Perform the necessary checking to determine if a spell can be
  * cast in combat and if the mp exists to do so.
  *
- * \param   who Character id
- * \param   sno Spell id
+ * \param   spell_caster Character id
+ * \param   spell_number Spell id
  * \returns 1 if spell can be cast, 0 if not
  */
-static int combat_castable (int who, int sno)
+static int combat_castable (int spell_caster, int spell_number)
 {
    int b, c = 0;
 
-   b = party[pidx[who]].spells[sno];
+   b = party[pidx[spell_caster]].spells[spell_number];
    if (b == M_WARP && can_run == 0)
       return 0;
    if (magic[b].use == USE_ANY_INF || magic[b].use == USE_COMBAT_INF) {
-      if (pidx[who] == CORIN && fighter[c].aux == 2) {
-         c = mp_needed (who, b);
-         if (fighter[who].mp >= c && magic[b].elem < R_BLIND)
+      if (pidx[spell_caster] == CORIN && fighter[c].aux == 2) {
+         c = mp_needed (spell_caster, b);
+         if (fighter[spell_caster].mp >= c && magic[b].elem < R_BLIND)
             return 1;
       } else {
-         c = mp_needed (who, b);
-         if (fighter[who].mp >= c)
+         c = mp_needed (spell_caster, b);
+         if (fighter[spell_caster].mp >= c)
             return 1;
       }
    }
