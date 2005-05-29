@@ -108,7 +108,7 @@ void draw_entdata (const int ent_index)
 
    normalize_view ();
    clear (double_buffer);
-   preview_map ();
+   draw_map ();
 
    ent_x = (gent[ent_index].tilex - window_x) * 16;
    ent_y = (gent[ent_index].tiley - window_y) * 16;
