@@ -258,6 +258,8 @@ const char *kqres (int dir_id, const char *file);
 #define MAP_CAVE5          30
 #define MAP_ESTERIA        31
 #define MAP_TUNNEL         32
+#define MAP_TOWN8          33
+#define MAP_GOBLIN         34
 /*\}*/
 
 
