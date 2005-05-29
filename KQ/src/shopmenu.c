@@ -941,13 +941,23 @@ static void sell_howmany (int item_no, int inv_page)
       blit2screen (xofs, yofs);
 
       readcontrols ();
-      if ((up || right) && my < max_items) {
-         unpress ();
-         my++;
+      if (up || right) {
+         if (my < max_items) {
+            unpress ();
+            my++;
+         } else {
+            unpress ();
+            my = 1;
+         }
       }
-      if ((down || left) && my > 1) {
-         unpress ();
-         my--;
+      if (down || left) {
+         if (my > 1) {
+            unpress ();
+            my--;
+         } else {
+            unpress ();
+            my = max_items;
+         }
       }
       if (balt) {
          unpress ();
