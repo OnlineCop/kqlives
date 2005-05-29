@@ -279,7 +279,7 @@ void spec_items (void)
    }
    if (progress[P_DENORIAN] == 3 || progress[P_DENORIAN] == 4) {
       strcpy (silist[ii], "Denorian Statue");
-      strcpy (sidesc[ii], "An idol");
+      strcpy (sidesc[ii], "Broken in half");
       siq[ii] = 1;
       spicon[ii] = 58;
       ii++;
