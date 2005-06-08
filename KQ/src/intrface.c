@@ -2625,7 +2625,7 @@ static int KQ_msg (lua_State * L)
 
 static int KQ_move_camera (lua_State * L)
 {
-   int ct2 = 0, xinc = 0, yinc = 0, xtot = 0, ytot = 0;
+   int xinc = 0, yinc = 0, xtot = 0, ytot = 0;
    int mcx = (int) lua_tonumber (L, 1);
    int mcy = (int) lua_tonumber (L, 2);
    int dtime = (int) lua_tonumber (L, 3);
@@ -2649,26 +2649,24 @@ static int KQ_move_camera (lua_State * L)
    autoparty = 1;
    timer_count = 0;
    while (ytot > 0 || xtot > 0) {
-      while (timer_count > 0) {
-         timer_count--;
-         ct2++;
-         if (ct2 > dtime) {
-            if (xtot > 0) {
-               vx += xinc;
-               xtot--;
-            }
-            if (ytot > 0) {
-               vy += yinc;
-               ytot--;
-            }
-            ct2 = 0;
-         }
+      while (timer_count <= 0) {
          check_animation ();
          kq_yield ();
+         drawmap ();
+         blit2screen (xofs, yofs);
       }
-      drawmap ();
-      blit2screen (xofs, yofs);
+
+      timer_count -= dtime;
+      if (xtot > 0) {
+         vx += xinc;
+         xtot--;
+      }
+      if (ytot > 0) {
+         vy += yinc;
+         ytot--;
+      }
    }
+
    timer_count = 0;
    autoparty = 0;
    return 0;
