@@ -231,7 +231,7 @@ function add_to_manor(hero)
       return 0;
     end
     for i = 0, 7 do
-      if (get_progress(i + P_MANORPARTY) == hero) then
+      if (get_progress(i + P_MANORPARTY) == (hero + 1)) then
         return 0;
       end
     end
