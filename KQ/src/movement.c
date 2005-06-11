@@ -47,19 +47,19 @@ static int minimize_path (AL_CONST char *, char *, int);
  * Call this function to calculate the shortest path between a given
  * NPC and a target point.
  *
- * \param[in]  id        The ID of the entity moving around.
- * \param[in]  source_x  The x coordenate of the source point.
- * \param[in]  source_y  The y coordenate of the source point.
- * \param[in]  target_x  The x coordenate of the target point.
- * \param[in]  target_y  The y coordenate of the target point.
- * \param[out] buffer    A buffer where the result will be stored.
- * \param[in]  size      The size of the result buffer.
+ * \param id [in]        The ID of the entity moving around.
+ * \param source_x [in]  The x coordinate of the source point.
+ * \param source_y [in]  The y coordinate of the source point.
+ * \param target_x [in]  The x coordinate of the target point.
+ * \param target_y [in]  The y coordinate of the target point.
+ * \param buffer [out]   A buffer where the result will be stored.
+ * \param size [in]      The size of the result buffer.
  *
- * \return Whether it could or not find the path.
- * \retval 0 Success
- * \retval 1 No path found
- * \retval 2 Path found but result buffer too small to hold the answer.
- * \retval 3 Misc error
+ * \returns Whether it could or not find the path.
+ *          0 Success,
+ *          1 No path found,
+ *          2 Path found but result buffer too small to hold the answer.
+ *          3 Misc error.
  *
  * \sa copy_map compose_path search_paths minimize_path
  */
@@ -101,21 +101,21 @@ int find_path (int id, int source_x, int source_y, int target_x, int target_y,
  * This function uses recursivity to find the shortest path to the target
  * point. Once it returns 0, 
  *
- * \param[in]     id       The ID of the entity moving around.
- * \param[in,out] map      The map in where to write the paths.
- * \param[in]     step     The current step in recursivity.
- * \param[in]     source_x The x coordenate of the source point.
- * \param[in]     source_y The y coordenate of the source point.
- * \param[in]     target_x The x coordenate of the target point.
- * \param[in]     target_y The y coordenate of the target point.
- * \param[in]     start_x  The minimun value of the x axis.
- * \param[in]     start_y  The minimun value of the y axis.
- * \param[in]     limit_x  The maximun value of the x axis.
- * \param[in]     limit_y  The maximun value of the y axis.
+ * \param id  [in]     The ID of the entity moving around.
+ * \param map [in,out] The map in where to write the paths.
+ * \param step [in]    The current step in recursivity.
+ * \param source_x[in] The x coordinate of the source point.
+ * \param source_y [in]The y coordinate of the source point.
+ * \param target_x [in]The x coordinate of the target point.
+ * \param target_y[in] The y coordinate of the target point.
+ * \param start_x [in] The minimum value of the x axis.
+ * \param start_y [in] The minimum value of the y axis.
+ * \param limit_x [in] The maximum value of the x axis.
+ * \param limit_y [in] The maximum value of the y axis.
  *
- * \return If a path was found.
- * \retval 0 Success.
- * \retval 1 No path found.
+ * \returns If a path was found.
+ *          0 Success.
+ *          1 No path found.
  *
  * \sa copy_map compose_path find_path minimize_path
  */
@@ -166,9 +166,7 @@ static int search_paths (int id, int *map, int step, int source_x, int source_y,
  * The function generates a map setting to -1 any square that is blocked
  * by either an object or an entity.
  *
- * \param[out] map The map where the result will be copied
- *
- * \return Nothing.
+ * \param map [out] The map where the result will be copied
  *
  * \sa search_paths compose_path find_path minimize_path
  */
@@ -198,16 +196,16 @@ static void copy_map (int *map)
  * The only way of doing this is walking the path backwards, minimizing and
  * turning it the way around.
  *
- * \param[in]  map      The map with the paths.
- * \param[in]  target_x Target x coordenate.
- * \param[in]  target_y Target y coordenate.
- * \param[out] buffer   Buffer to store the solution.
- * \param[in]  size     Size of the solution buffer.
+ * \param map [in]       The map with the paths.
+ * \param target_x [in] Target x coordinate.
+ * \param target_y [in] Target y coordinate.
+ * \param buffer [out]  Buffer to store the solution.
+ * \param size [in]     Size of the solution buffer.
  *
- * \return If the solution was copied.
- * \retval 0 The solution was copied.
- * \retval 1 The buffer was too small for the solution to be copied.
- * \retval 2 There was no solution, or internal error.
+ * \returns If the solution was copied.
+ *          0 The solution was copied.
+ *          1 The buffer was too small for the solution to be copied.
+ *          2 There was no solution, or internal error.
  *
  * \sa search_paths copy_map find_path minimize_path
  */
@@ -268,13 +266,13 @@ static int compose_path (AL_CONST int *map, int target_x, int target_y,
  *
  * Given a path like "RRRRDRRDLU", this functions generates "R4D1R2D1L1U1".
  *
- * \param[in]  source The original string.
- * \param[out] target The buffer where the result will be stored.
- * \param[in]  size   The result buffer size.
+ * \param source [in] The original string.
+ * \param target [out]The buffer where the result will be stored.
+ * \param size   [in] The result buffer size.
  *
- * \return If the solution was copied.
- * \retval 0 The solution was copied.
- * \retval 1 The buffer was too small for the solution to be copied.
+ * \returns If the solution was copied.
+ *          0 The solution was copied.
+ *          1 The buffer was too small for the solution to be copied.
  *
  * \sa search_paths copy_map find_path compose_path
  */
