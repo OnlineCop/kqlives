@@ -86,13 +86,12 @@ function zone_handler(zn)
   elseif (zn == 11) then
     if (get_progress(P_TALKGELIK) < 4) then
       set_ent_script(HERO1, "U1F0")
-      wait_for_entity(HERO1, HERO1)
     end
 
   elseif (zn == 12) then
     if (get_progress(P_TALKGELIK) < 4) then
       local en = 1
-
+       
       set_progress(P_TALKGELIK, 4)
       set_ent_facing(en, FACE_DOWN)
       bubble(en, "Oh $0!")
@@ -104,8 +103,8 @@ function zone_handler(zn)
       bubble(en, "No it's not... this is all because of that damn guild!")
       bubble(HERO1, "Yes, but when I was there to get the Helmet back, it all seemed as though it was too easy.")
       bubble(HERO1, "They set me up. They wanted to follow me so that they could kill Dungar!")
-      bubble(en, "That may be true $0, but you were doing the right thing. You didn't know.")
-      bubble(HERO1, "I'm so sorry Emma!")
+      bubble(en, "That may be true, $0, but you were doing the right thing. You didn't know.")
+      bubble(HERO1, "I'm so sorry, Emma!")
       bubble(en, "It's okay... I guess I've been expecting something like this to happen for a long time.")
       bubble(en, "You can't marry an ex-thief and expect to have a normal life. I'll be alright.")
       bubble(HERO1, "Are you sure... is there anything I can do?")
@@ -118,9 +117,10 @@ function zone_handler(zn)
       bubble(HERO1, "Okay... but what about you? It's not safe here. You have to leave!")
       bubble(en, "I will. I'll gather my things and leave right after I give my husband a proper funeral.")
       bubble(en, "You should leave right away. They know you're here.")
-      bubble(HERO1, "Okay... you be careful alright?")
+      bubble(HERO1, "Okay... you be careful, alright?")
       bubble(en, "Don't worry about me. I'll be fine. Now go!")
       bubble(HERO1, "Goodbye.")
+      orient_heroes()
     end
 
   elseif (zn == 13) then
@@ -163,12 +163,20 @@ function entity_handler(en)
   elseif (en == 2) then
     if (get_progress(P_OPALHELMET) == 0) then
       bubble(2, "Just return here with the Helmet once you find it. I'd like to see it before you borrow it.")
-    else
+   else
+      local pp, os
+      if get_numchrs()==1 then
+	 pp="I"
+	 os=""
+      else
+	 pp="we"
+	 os="s"
+      end
       bubble(2, "Excellent work! The Helmet appears to be undamaged... this is wonderful.")
-      bubble(1, "Dungar, why don't you invite our young friend to stay the night? It's getting awfully late.")
-      bubble(HERO1, "Well, I'd love to, but I really should be going.")
+      bubble(1, "Dungar, why don't you invite our young friend"..os.." to stay the night? It's getting awfully late.")
+      bubble(HERO1, "Well, "..pp.."'d love to, but "..pp.." really should be going.")
       bubble(2, "Nonsense! I insist you spend the night with us and celebrate. ")
-      bubble(HERO1, "Well, alright... but I'll have to leave first thing in the morning.")
+      bubble(HERO1, "Well, alright... but "..pp.."'ll have to leave first thing in the morning.")
       bubble(2, "Stupendous! Now let's start the celebration.")
       do_fadeout(4)
       wait(100)
@@ -189,7 +197,12 @@ function entity_handler(en)
       msg("Later...", 255, 1000)
       bubble(HERO1, "Ugh... what a party!")
       set_ent_script(HERO1, "R3U1L1W50F1")
-      wait_for_entity(HERO1, HERO1)
+      if get_numchrs()==1 then
+	 wait_for_entity(HERO1, HERO1)
+      else
+	 set_ent_script(HERO2, "W50R4U1R1W60F3")
+	 wait_for_entity(HERO1, HERO2)
+      end
       bubble(HERO1, "Ah... sleep.")
       drawmap()
       screen_dump()
@@ -218,8 +231,17 @@ function entity_handler(en)
       bubble(3, "I'm an assassin, you moron.")
       bubble(HERO1, "So you're here to kill me?")
       bubble(3, "No, I'm selling tickets to the assassin's jamboree. Of course I'm here to kill you!")
-      bubble(HERO1, "Well there's no need to be so rude about it.")
-      bubble(3, "Shut up!")
+      if get_numchrs()==1 then
+	 bubble(HERO1, "Well there's no need to be so rude about it.")
+	 bubble(3, "Shut up!")
+      else
+	 bubble(HERO1, "$1! Wake up!")
+	 bubble(HERO2, "Wha...?")
+	 set_ent_script(HERO2, "L1D1L1")
+	 wait_for_entity(HERO2, HERO2)
+	 set_ent_facing(HERO2, FACE_RIGHT)
+	 orient_heroes()
+      end
       drawmap()
       screen_dump()
       set_run(0)
@@ -237,7 +259,11 @@ function entity_handler(en)
       drawmap()
       screen_dump()
       wait(50)
-      bubble(HERO1, "Gee... good thing I wore all my equipment to bed.")
+      if get_numchrs()==1 then
+	 bubble(HERO1, "Gee... good thing I wore all my equipment to bed.")
+      else
+	 bubble(HERO1, "Gee... good thing we wore all our equipment to bed.")
+      end
       wait(50)
       bubble(1, "Aaaahhhh!")
       set_ent_facing(HERO1, FACE_LEFT)
