@@ -34,7 +34,7 @@
 #include "entity.h"
 
 #define MAX_TILES        1024
-#define MAXE               40
+#define MAXE               41
 #define MAX_ANIM            5
 #define MAXCHRS             8
 #define PSIZE               2
