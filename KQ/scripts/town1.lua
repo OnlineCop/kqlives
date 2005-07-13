@@ -73,8 +73,6 @@ function autoexec()
       end
       drawmap()
       screen_dump()
-      do_fadein(4)
-      set_holdfade(0)
     end
   end
 

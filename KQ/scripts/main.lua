@@ -13,7 +13,7 @@ function autoexec()
     set_zone(242, 29, 71)
   end
 
-  if (get_progress(P_TOWEROPEN) > 0) then
+  if (get_progress(P_TOWEROPEN) == 1 or get_progress(P_TOWEROPEN) == 3) then
     set_obs(263, 52, 0)
   end
 
@@ -104,10 +104,14 @@ function zone_handler(zn)
       change_map("tower", 0, 0, 0, 0)
       return
     end
-    if (get_progress(P_GOBLINITEM) > 1 and get_progress(P_TOWEROPEN) == 0) then
+    if (get_progress(P_TOWEROPEN) == 0) then
       bubble(HERO1, "The tower is sealed.")
-    end
-    if (get_progress(P_TOWEROPEN) == 1) then
+    elseif (get_progress(P_TOWEROPEN) == 1 or get_progress(P_TOWEROPEN) == 3) then
+      change_map("tower", 0, 0, 0, 0)
+    elseif (get_progress(P_TOWEROPEN) == 2) then
+      bubble(HERO1, "I can't get in here anymore!")
+    else
+      bubble(HERO1, "The tower is open again.")
       change_map("tower", 0, 0, 0, 0)
     end
 

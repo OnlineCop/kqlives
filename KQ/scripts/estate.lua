@@ -85,13 +85,20 @@ function zone_handler(zn)
 
   elseif (zn == 11) then
     if (get_progress(P_TALKGELIK) < 4) then
-      set_ent_script(HERO1, "U1F0")
+      if (get_numchrs() == 1) then
+        set_ent_script(HERO1, "U1F0")
+        wait_for_entity(HERO1, HERO1)
+      else
+        set_ent_script(HERO1, "U1F0")
+        set_ent_script(HERO2, "U1F0")
+        wait_for_entity(HERO1, HERO2)
+      end
     end
 
   elseif (zn == 12) then
     if (get_progress(P_TALKGELIK) < 4) then
       local en = 1
-       
+
       set_progress(P_TALKGELIK, 4)
       set_ent_facing(en, FACE_DOWN)
       bubble(en, "Oh $0!")
@@ -163,14 +170,14 @@ function entity_handler(en)
   elseif (en == 2) then
     if (get_progress(P_OPALHELMET) == 0) then
       bubble(2, "Just return here with the Helmet once you find it. I'd like to see it before you borrow it.")
-   else
+    else
       local pp, os
-      if get_numchrs()==1 then
-	 pp="I"
-	 os=""
+      if (get_numchrs() == 1) then
+        pp = "I"
+        os = ""
       else
-	 pp="we"
-	 os="s"
+        pp = "we"
+        os = "s"
       end
       bubble(2, "Excellent work! The Helmet appears to be undamaged... this is wonderful.")
       bubble(1, "Dungar, why don't you invite our young friend"..os.." to stay the night? It's getting awfully late.")
@@ -197,11 +204,11 @@ function entity_handler(en)
       msg("Later...", 255, 1000)
       bubble(HERO1, "Ugh... what a party!")
       set_ent_script(HERO1, "R3U1L1W50F1")
-      if get_numchrs()==1 then
-	 wait_for_entity(HERO1, HERO1)
+      if (get_numchrs() == 1) then
+        wait_for_entity(HERO1, HERO1)
       else
-	 set_ent_script(HERO2, "W50R4U1R1W60F3")
-	 wait_for_entity(HERO1, HERO2)
+        set_ent_script(HERO2, "W50R4U1R1W60F3")
+        wait_for_entity(HERO1, HERO2)
       end
       bubble(HERO1, "Ah... sleep.")
       drawmap()
@@ -231,16 +238,16 @@ function entity_handler(en)
       bubble(3, "I'm an assassin, you moron.")
       bubble(HERO1, "So you're here to kill me?")
       bubble(3, "No, I'm selling tickets to the assassin's jamboree. Of course I'm here to kill you!")
-      if get_numchrs()==1 then
-	 bubble(HERO1, "Well there's no need to be so rude about it.")
-	 bubble(3, "Shut up!")
+      if (get_numchrs() == 1) then
+        bubble(HERO1, "Well there's no need to be so rude about it.")
+        bubble(3, "Shut up!")
       else
-	 bubble(HERO1, "$1! Wake up!")
-	 bubble(HERO2, "Wha...?")
-	 set_ent_script(HERO2, "L1D1L1")
-	 wait_for_entity(HERO2, HERO2)
-	 set_ent_facing(HERO2, FACE_RIGHT)
-	 orient_heroes()
+        bubble(HERO1, "$1! Wake up!")
+        bubble(HERO2, "Wha...?")
+        set_ent_script(HERO2, "L1D1L1")
+        wait_for_entity(HERO2, HERO2)
+        set_ent_facing(HERO2, FACE_RIGHT)
+        orient_heroes()
       end
       drawmap()
       screen_dump()
@@ -259,10 +266,10 @@ function entity_handler(en)
       drawmap()
       screen_dump()
       wait(50)
-      if get_numchrs()==1 then
-	 bubble(HERO1, "Gee... good thing I wore all my equipment to bed.")
+      if (get_numchrs() == 1) then
+        bubble(HERO1, "Gee... good thing I wore all my equipment to bed.")
       else
-	 bubble(HERO1, "Gee... good thing we wore all our equipment to bed.")
+        bubble(HERO1, "Gee... good thing we wore all our equipment to bed.")
       end
       wait(50)
       bubble(1, "Aaaahhhh!")

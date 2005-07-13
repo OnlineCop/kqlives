@@ -48,14 +48,6 @@
 
 
 function autoexec()
-  if (not LOC_manor_or_party(AJATHAR)) then
-    -- // Make the NPC look like Ajathar if he hasn't been recruited yet
-    set_ent_id(10, AJATHAR)
-  else
-    -- // Otherwise, remove him from screen
-    set_ent_active(10, 0)
-  end
-
   -- // WARPSTONE is found late in the game, so some things are now available
   -- // that weren't available earlier
   if (get_progress(P_WARPSTONE) == 1) then
@@ -73,25 +65,6 @@ function autoexec()
     if (get_progress(P_FOUNDMAYOR) == 1) then
       set_progress(P_FOUNDMAYOR, 2)
     end
-  end
-
-  if (get_progress(P_FOUNDMAYOR) > 0 and
-      not LOC_manor_or_party(CASANDRA)) then
-    -- // Casandra should be available to join your party
-    set_ent_id(13, CASANDRA)
-  else
-    set_ent_active(13, 0)
-  end
-
-  -- // This NPC will only appear if you spoke with him in the camp
-  if (get_progress(P_MAYORGUARD1) == 0) then
-    set_ent_active(12, 0)
-  end
-
-  -- // Ditto, plus make sure you can't speak to a "ghost" over the counter
-  if (get_progress(P_MAYORGUARD2) == 0) then
-    set_ent_active(11, 0)
-    set_zone(134, 11, 0)
   end
 
   refresh()
@@ -137,6 +110,39 @@ function refresh()
   else
     set_zone(35, 15, 0)
   end
+
+  -- // This NPC will only appear if you spoke with him in the camp
+  if (get_progress(P_MAYORGUARD1) == 0) then
+    set_ent_active(12, 0)
+  end
+
+  -- // Ditto, plus make sure you can't speak to a "ghost" over the counter
+  if (get_progress(P_MAYORGUARD2) == 0) then
+    set_ent_active(11, 0)
+    set_zone(134, 11, 0)
+  end
+
+  if (not LOC_manor_or_party(AJATHAR)) then
+    -- // Make the NPC look like Ajathar if he hasn't been recruited yet
+    set_ent_id(10, AJATHAR)
+  else
+    -- // Otherwise, remove him from screen
+    set_ent_active(10, 0)
+  end
+
+  if (get_progress(P_FOUNDMAYOR) > 0 and
+      not LOC_manor_or_party(CASANDRA)) then
+    -- // Casandra should be available to join your party
+    set_ent_id(13, CASANDRA)
+  else
+    set_ent_active(13, 0)
+  end
+
+  if (get_progress(P_FOUNDMAYOR) > 0 and
+      get_progress(P_SHOWBRIDGE) > 1) then
+    set_ent_active(8, 0)
+    set_ent_active(9, 0)
+  end    
 
 end
 
@@ -495,6 +501,7 @@ function entity_handler(en)
 
   elseif (en == 10) then
     LOC_join_ajathar(en)
+    refresh()
 
   elseif (en == 11) then
     bubble(en, "Hey, you can't be back here! What are you trying to do, steal from me?")
@@ -511,6 +518,7 @@ function entity_handler(en)
 
   elseif (en == 13) then
     LOC_join_casandra(en)
+    refresh()
 
   elseif (en == 14) then
     if (get_progress(P_FOUNDMAYOR) < 2) then
@@ -566,7 +574,6 @@ function LOC_join_ajathar(en)
         set_ent_script(en, "L1U1L1U2L2U1K")
         set_ent_script(9,  "L1U2L1U2L2U1K")
         wait_for_entity(9, en)
-        set_ent_active(9, 0)
       else
         -- // One hero was de-selected
         bubble(en, "If you need me, I'll be back at the manor.")
@@ -574,6 +581,8 @@ function LOC_join_ajathar(en)
         wait_for_entity(en, en)
       end
     end
+    set_ent_active(9, 0)
+    set_ent_active(en, 0)
     set_progress(P_PLAYERS, get_progress(P_PLAYERS) + 1)
   end
 end
@@ -600,15 +609,19 @@ function LOC_join_casandra(en)
 
     if (id[2]) then
       -- // Two heroes were de-selected
-      set_ent_id(9, id[2])
-      set_ent_active(9, 1)
-      set_ent_tilex(9, get_ent_tilex(en))
-      set_ent_tiley(9, get_ent_tiley(en) - 1)
+      set_ent_id(8, id[2])
+      set_ent_active(8, 1)
+      set_ent_tilex(8, get_ent_tilex(en))
+      set_ent_tiley(8, get_ent_tiley(en) - 1)
       bubble(en, "If you need us, we'll be back at the manor.")
+      set_ent_speed(8, 4)
+      set_ent_speed(en, 4)
+      move_entity(en, 32, 31, 1)
+      move_entity(8, 32, 31, 1)
       set_ent_script(en, "U8K")
-      set_ent_script(9,  "U9K")
-      wait_for_entity(9, en)
-      set_ent_active(9, 0)
+      set_ent_script(8,  "U9K")
+      wait_for_entity(8, en)
+      set_ent_active(8, 0)
     else
       -- // One hero was de-selected
       bubble(en, "If you need me, I'll be back at the manor.")
@@ -616,6 +629,7 @@ function LOC_join_casandra(en)
       wait_for_entity(en, en)
     end
   end
+  set_ent_active(8, 0)
   set_ent_active(en, 0)
   set_progress(P_PLAYERS, get_progress(P_PLAYERS) + 1)
 end
