@@ -26,7 +26,7 @@
 
 /* globals */
 
-BITMAP *mesh2, *shadow[MAX_SHADOWS];
+BITMAP *mesh2, *mesh3, *shadow[MAX_SHADOWS];
 static BITMAP *mouse_pic;
 
 /* Used for the right-hand menu, plus something for the mouse */
@@ -122,7 +122,9 @@ int main (int argc, char *argv[])
 
    needupdate = 0;
 
-   startup ();
+   if (!startup ())
+      return 1;
+
    if (argc > 1) {
       load_map (argv[1]);
       /* Recount the number of entities on the map */
@@ -141,7 +143,6 @@ int main (int argc, char *argv[])
       } else {
          num_markers = 0;
       }
-
    }
 
    while (!main_stop) {
@@ -170,7 +171,7 @@ int main (int argc, char *argv[])
 
       if (key[KEY_Q])
          main_stop = confirm_exit ();
-      yield_timeslice ();
+      kq_yield ();
    }                            /* while (!main_stop) */
    cleanup ();
    return EXIT_SUCCESS;
@@ -301,6 +302,7 @@ void cleanup (void)
    destroy_bitmap (font6);
    destroy_bitmap (mesh);
    destroy_bitmap (mesh2);
+   destroy_bitmap (mesh3);
    destroy_bitmap (mouse_pic);
    destroy_bitmap (marker_image);
 
@@ -825,6 +827,16 @@ void draw_map (void)
          }
       }                         /* for (dx) */
    }                            /* for (dy) */
+
+   /* Show the map boundary with red diag-lined tiles */
+   for (dy = 0; dy < vtiles; dy++) {
+      for (dx = 0; dx < htiles; dx++) {
+         if ((dy > maxy - 1) || (dx > maxx - 1)) {
+            draw_sprite (double_buffer, mesh3, dx * 16, dy * 16);
+         }
+      }
+   }
+
    /* Draw the Markers */
    if (showing.markers == 1) {
       for (i = 0; i < num_markers; ++i) {
@@ -1252,8 +1264,8 @@ void draw_menubars (void)
 
    if (draw_mode == MAP_MARKERS) {
       /* draw the currently selected marker */
-      print_sfont ((COLUMN_WIDTH * 4) + 24, (SH - 16), markers[curmarker].name,
-                   double_buffer);
+      sprintf (strbuf, "Marker #%d: %s", curmarker, markers[curmarker].name);
+      print_sfont ((COLUMN_WIDTH * 4), (SH - 16), strbuf, double_buffer);
    }
 
    if (draw_mode >= MAP_OBSTACLES && draw_mode <= MAP_ZONES) {
@@ -1851,7 +1863,7 @@ void print_sfont (const int print_x, const int print_y, const char *string,
  *
  * \param   k The keyboard key to process
  */
-void process_keyboard (const int k)
+int process_keyboard (const int k)
 {
    /* Process which key was pressed */
    switch (k) {
@@ -1961,6 +1973,27 @@ void process_keyboard (const int k)
       if (draw_mode == MAP_ZONES)
          curzone = check_last_zone ();
       break;
+   case (KEY_M):
+      /* Show markers or not */
+      if (showing.markers == 1) {
+         if (draw_mode == MAP_MARKERS) {
+            draw_mode = showing.last_layer;
+            showing.markers = 0;
+         } else {
+            if (draw_mode == MAP_PREVIEW)
+               showing.last_layer = MAP_LAYER123;
+            draw_mode = MAP_MARKERS;
+         }
+      } else {
+         if (draw_mode < MAP_ENTITIES)
+            showing.last_layer = draw_mode;
+         else if (draw_mode == MAP_PREVIEW)
+            showing.last_layer = MAP_LAYER123;
+         showing.markers = 1;
+         draw_mode = MAP_MARKERS;
+      }
+      grab_tile = 0;
+      break;
    case (KEY_N):
       /* Create a new map; you can choose the tileset to use for it */
       new_map ();
@@ -2033,27 +2066,6 @@ void process_keyboard (const int k)
       /* Clear the contents of the current map */
       wipe_map ();
       break;
-   case KEY_M:
-      /* Show markers or not */
-      if (showing.markers == 1) {
-         if (draw_mode == MAP_MARKERS) {
-            draw_mode = showing.last_layer;
-            showing.markers = 0;
-         } else {
-            if (draw_mode == MAP_PREVIEW)
-               showing.last_layer = MAP_LAYER123;
-            draw_mode = MAP_MARKERS;
-         }
-      } else {
-         if (draw_mode < MAP_ENTITIES)
-            showing.last_layer = draw_mode;
-         else if (draw_mode == MAP_PREVIEW)
-            showing.last_layer = MAP_LAYER123;
-         showing.markers = 1;
-         draw_mode = MAP_MARKERS;
-      }
-      grab_tile = 0;
-      break;
    case (KEY_Z):
       /* Toggle whether zones should be shown or turned off */
       if (showing.zones == 1) {
@@ -2102,8 +2114,8 @@ void process_keyboard (const int k)
       /* Save the map you are working on */
 
       if (gmap.map_no < 0) {
-         cmessage("Don't forget to assign a number to this map!");
-         yninput();
+         cmessage ("Don't forget to assign a number to this map!");
+         yninput ();
       }
 
       /* Copy the markers back in */
@@ -2298,7 +2310,26 @@ void process_keyboard (const int k)
       window_x = 0;
       window_y = 0;
       break;
+   case (KEY_1_PAD):
+   case (KEY_2_PAD):
+   case (KEY_3_PAD):
+   case (KEY_4_PAD):
+   case (KEY_6_PAD):
+   case (KEY_7_PAD):
+   case (KEY_8_PAD):
+   case (KEY_9_PAD):
+   case (KEY_DOWN):
+   case (KEY_LEFT):
+   case (KEY_RIGHT):
+   case (KEY_UP):
+      /* We will evaluate these outside of this switch() statement, but it's
+       * important to break out before "default:" returns a zero-value
+       */
+      break;
+   default:
+      return 0;
    }                            /* switch (k) */
+
    /* Move the view-window up one tile */
    if (k == KEY_UP || k == KEY_7_PAD || k == KEY_8_PAD || k == KEY_9_PAD)
       window_y--;
@@ -2313,6 +2344,7 @@ void process_keyboard (const int k)
       window_x--;
 
    normalize_view ();
+   return 1;
 }                               /* process_keyboard () */
 
 
@@ -2694,10 +2726,10 @@ void process_mouse (const int mouse_button)
             break;
          case MAP_MARKERS:
             /* Add or change a marker */
-            add_change_marker (x + window_x, y + window_y, 1);
+            add_change_marker (x + window_x, y + window_y, mouse_button);
             /* This isn't ideal, but just wait for the button to be released */
             while (mouse_b)
-               yield_timeslice ();
+               kq_yield ();
             break;
          default:
             break;
@@ -2762,7 +2794,7 @@ void process_mouse (const int mouse_button)
             break;
          case MAP_MARKERS:
             /* Remove a marker */
-            add_change_marker (x + window_x, y + window_y, 2);
+            add_change_marker (x + window_x, y + window_y, mouse_button);
             break;
          default:
             break;
@@ -2831,7 +2863,7 @@ void read_controls (void)
       needupdate = 1;
 
       /* Check if the mouse is over the menu at the bottom */
-      if (y > (vtiles - 1)) {
+      if (y > vtiles - 1) {
          /* Check if the user is already holding down the mouse button */
          if (dmode == 0)
             process_menu_bottom (mouse_x, mouse_y);
@@ -2839,12 +2871,15 @@ void read_controls (void)
       }
 
       /* Check if the mouse is over the iconset on the right */
-      if (x > (htiles - 1)) {
+      if (x > htiles - 1) {
          /* Check if the user is already holding down the mouse button */
          if (dmode == 0)
             process_menu_right (mouse_x, mouse_y);
          return;
       }
+
+      if ((y > gmap.ysize - 1) || (x > gmap.xsize - 1))
+         return;
 
       /* The mouse is inside the window */
       if (grab_tile) {
@@ -3159,40 +3194,34 @@ void show_help (void)
  *
  * Inits everything needed for user input, graphics, etc.
  */
-void startup (void)
+int startup (void)
 {
    int k, kx, ky, a, tmapx, tmapy;
    COLOR_MAP cmap;
 
-   /* Used for highlighting */
-   static unsigned char hilite[] = {
-      00, 00, 00, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 00, 00, 00,
-      00, 00, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 00, 00,
-      00, 25, 25, 25, 45, 45, 45, 45, 45, 45, 45, 45, 25, 25, 25, 00,
-      25, 25, 25, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 25, 25, 25,
-      25, 25, 45, 45, 45, 25, 25, 25, 25, 25, 25, 45, 45, 45, 25, 25,
-      25, 25, 45, 45, 25, 25, 25, 25, 25, 25, 25, 25, 45, 45, 25, 25,
-      25, 25, 45, 45, 25, 25, 25, 00, 00, 25, 25, 25, 45, 45, 25, 25,
-      25, 25, 45, 45, 25, 25, 00, 00, 00, 00, 25, 25, 45, 45, 25, 25,
-      25, 25, 45, 45, 25, 25, 00, 00, 00, 00, 25, 25, 45, 45, 25, 25,
-      25, 25, 45, 45, 25, 25, 25, 00, 00, 25, 25, 25, 45, 45, 25, 25,
-      25, 25, 45, 45, 25, 25, 25, 25, 25, 25, 25, 25, 45, 45, 25, 25,
-      25, 25, 45, 45, 45, 25, 25, 25, 25, 25, 25, 45, 45, 45, 25, 25,
-      25, 25, 25, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 25, 25, 25,
-      00, 25, 25, 25, 45, 45, 45, 45, 45, 45, 45, 45, 25, 25, 25, 00,
-      00, 00, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 00, 00,
-      00, 00, 00, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 00, 00, 00,
-   };
-
-   allegro_init ();
+   if (allegro_init () != 0)
+      return 0;
    install_keyboard ();
    install_timer ();
 
    /* Determine if user wants to use Windowed or Regular Mode */
-   if (WBUILD == 1)
-      set_gfx_mode (GFX_AUTODETECT_WINDOWED, SW, SH, 0, 0);
-   else
-      set_gfx_mode (GFX_AUTODETECT, SW, SH, 0, 0);
+   if (WBUILD == 1) {
+      if (set_gfx_mode (GFX_AUTODETECT_WINDOWED, SW, SH, 0, 0) != 0) {
+         if (set_gfx_mode (GFX_SAFE, SW, SH, 0, 0) != 0) {
+            set_gfx_mode (GFX_TEXT, 0, 0, 0, 0);
+            allegro_message ("Unable to set any graphic mode\n%s\n", allegro_error);
+            return 0;
+         }
+      }
+   } else {
+      if (set_gfx_mode (GFX_AUTODETECT, SW, SH, 0, 0) != 0) {
+         if (set_gfx_mode (GFX_SAFE, SW, SH, 0, 0) != 0) {
+            set_gfx_mode (GFX_TEXT, 0, 0, 0, 0);
+            allegro_message ("Unable to set any graphic mode\n%s\n", allegro_error);
+            return 0;
+         }
+      }                         // if (WBUILD)
+   }
 
    /* Check for the presence of a mouse */
    a = install_mouse ();
@@ -3264,10 +3293,57 @@ void startup (void)
          putpixel (mesh, kx, ky + 1, 255);
    }
 
+   /* Used for highlighting */
+   static unsigned char hilite[] = {
+      00, 00, 00, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 00, 00, 00,
+      00, 00, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 00, 00,
+      00, 25, 25, 25, 45, 45, 45, 45, 45, 45, 45, 45, 25, 25, 25, 00,
+      25, 25, 25, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 25, 25, 25,
+      25, 25, 45, 45, 45, 25, 25, 25, 25, 25, 25, 45, 45, 45, 25, 25,
+      25, 25, 45, 45, 25, 25, 25, 25, 25, 25, 25, 25, 45, 45, 25, 25,
+      25, 25, 45, 45, 25, 25, 25, 00, 00, 25, 25, 25, 45, 45, 25, 25,
+      25, 25, 45, 45, 25, 25, 00, 00, 00, 00, 25, 25, 45, 45, 25, 25,
+      25, 25, 45, 45, 25, 25, 00, 00, 00, 00, 25, 25, 45, 45, 25, 25,
+      25, 25, 45, 45, 25, 25, 25, 00, 00, 25, 25, 25, 45, 45, 25, 25,
+      25, 25, 45, 45, 25, 25, 25, 25, 25, 25, 25, 25, 45, 45, 25, 25,
+      25, 25, 45, 45, 45, 25, 25, 25, 25, 25, 25, 45, 45, 45, 25, 25,
+      25, 25, 25, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 25, 25, 25,
+      00, 25, 25, 25, 45, 45, 45, 45, 45, 45, 45, 45, 25, 25, 25, 00,
+      00, 00, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 00, 00,
+      00, 00, 00, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 00, 00, 00,
+   };
+
    mesh2 = create_bitmap (16, 16);
+   clear (mesh2);
    for (ky = 0; ky < 16; ky++)
       for (kx = 0; kx < 16; kx++)
          mesh2->line[ky][kx] = hilite[ky * 16 + kx];
+
+   /* Used to show map boundaries */
+   static unsigned char diag_bars[] = {
+      25, 25, 00, 00, 00, 00, 00, 00, 25, 25, 00, 00, 00, 00, 00, 00,
+      25, 00, 00, 00, 00, 00, 00, 25, 25, 00, 00, 00, 00, 00, 00, 25,
+      00, 00, 00, 00, 00, 00, 25, 25, 00, 00, 00, 00, 00, 00, 25, 25,
+      00, 00, 00, 00, 00, 25, 25, 00, 00, 00, 00, 00, 00, 25, 25, 00,
+      00, 00, 00, 00, 25, 25, 00, 00, 00, 00, 00, 00, 25, 25, 00, 00,
+      00, 00, 00, 25, 25, 00, 00, 00, 00, 00, 00, 25, 25, 00, 00, 00,
+      00, 00, 25, 25, 00, 00, 00, 00, 00, 00, 25, 25, 00, 00, 00, 00,
+      00, 25, 25, 00, 00, 00, 00, 00, 00, 25, 25, 00, 00, 00, 00, 00,
+      25, 25, 00, 00, 00, 00, 00, 00, 25, 25, 00, 00, 00, 00, 00, 00,
+      25, 00, 00, 00, 00, 00, 00, 25, 25, 00, 00, 00, 00, 00, 00, 25,
+      00, 00, 00, 00, 00, 00, 25, 25, 00, 00, 00, 00, 00, 00, 25, 25,
+      00, 00, 00, 00, 00, 25, 25, 00, 00, 00, 00, 00, 00, 25, 25, 00,
+      00, 00, 00, 00, 25, 25, 00, 00, 00, 00, 00, 00, 25, 25, 00, 00,
+      00, 00, 00, 25, 25, 00, 00, 00, 00, 00, 00, 25, 25, 00, 00, 00,
+      00, 00, 25, 25, 00, 00, 00, 00, 00, 00, 25, 25, 00, 00, 00, 00,
+      00, 25, 25, 00, 00, 00, 00, 00, 00, 25, 25, 00, 00, 00, 00, 00,
+   };
+
+   mesh3 = create_bitmap (16, 16);
+   clear (mesh3);
+   for (ky = 0; ky < 16; ky++)
+      for (kx = 0; kx < 16; kx++)
+         mesh3->line[ky][kx] = diag_bars[ky * 16 + kx];
 
    /* Shadows */
    set_pcx (&pcx_buffer, "Misc.pcx", pal, 1);
@@ -3296,6 +3372,8 @@ void startup (void)
    showing.zones = 0;
    showing.last_layer = draw_mode;
    icon_set = 0;
+
+   return 1;
 }                               /* startup () */
 
 
@@ -3416,7 +3494,7 @@ int yninput (void)
 
 
 /* Action handler for clicking in marker mode button b; */
-void add_change_marker (int marker_x, int marker_y, int b)
+void add_change_marker (int marker_x, int marker_y, int mouse_button)
 {
    s_marker *m;
    s_marker *found = NULL;
@@ -3431,56 +3509,18 @@ void add_change_marker (int marker_x, int marker_y, int b)
 
    if (found) {
       /* There is a marker here */
-      if (b == 1) {
+      if (mouse_button == 1) {
          /* Rename it */
-#if 0
-         rename_marker(*found, marker_x, marker_y);
-#endif
-         rect (screen, marker_x * 16 - 2, marker_y * 16 + 5,
-               marker_x * 16 + 8 * 32 + 1, marker_y * 16 + 25,
-               makecol (255, 255, 255));
-         rectfill (screen, marker_x * 16 - 1, marker_y * 16 + 6,
-                   marker_x * 16 + 8 * 32, marker_y * 16 + 24,
-                   makecol (0, 0, 0));
-         print_sfont (marker_x * 16, marker_y * 16 + 8, found->name, screen);
-         print_sfont (marker_x * 16, marker_y * 16 + 16, ">", screen);
-         if (!(get_line (marker_x * 16 + 8, marker_y * 16 + 16, strbuf, 31))
-             && (strbuf[0] != '\0'))
-            strcpy (found->name, strbuf);
-      } else if (b == 2) {
-         /* Delete it and shuffle up */
-         --num_markers;
+         rename_marker (found);
+      } else if (mouse_button == 2) {
+         /* Delete it */
          memcpy (found, found + 1,
-                 (&markers[num_markers] - found) * sizeof (s_marker));
+                 (&markers[--num_markers] - found) * sizeof (s_marker));
+         while (mouse_b & 2);
       }
-   }
-#if 0
-      {
-      if (b == 0) {
-         /* There is a marker here, but don't rename it */
-         return;
-      } else if (b == 1) {
-         /* There is a marker here and we need to rename it */
-         rename_marker (*found);
-      } else if (b == 2) {
-         /* Delete it and shuffle up */
-         for (m = markers + found;
-              m <= markers + num_markers;
-              m++) {
-/* TT TODO HERE */
-         memcpy (found, found + 1,
-                 (&markers[num_markers] - found) * sizeof (s_marker));
-
-            markers[m - 1] = markers[m];
-            strcpy (markers[m].name, "");
-            markers[m].x = 0;
-            markers[m].y = 0;
-         }
-      }
-   }
-#endif
-   else {
-      if (b == 1) {
+   } else {
+      /* There is no marker here */
+      if (mouse_button == 1) {
          /* Add a marker with default name */
          if (num_markers < MAX_MARKERS) {
             m = &markers[num_markers++];
@@ -3493,30 +3533,19 @@ void add_change_marker (int marker_x, int marker_y, int b)
 }
 
 
-void rename_marker (s_marker found)
+void rename_marker (s_marker *found)
 {
    int response, done;
+   s_marker *m;
 
    make_rect (double_buffer, 2, 32);
-   print_sfont (6, 6, found.name, double_buffer);
+   print_sfont (6, 6, (*found).name, double_buffer);
    print_sfont (6, 12, ">", double_buffer);
-
-#if 0
-rect (screen, marker_x * 16 - 2, marker_y * 16 + 5, marker_x * 16 + 8 * 32 + 1,
-      marker_y * 16 + 25, makecol (255, 255, 255));
-rectfill (screen, marker_x * 16 - 1, marker_y * 16 + 6, marker_x * 16 + 8 * 32,
-          marker_y * 16 + 24, makecol (0, 0, 0));
-print_sfont (marker_x * 16, marker_y * 16 + 8, found->name, screen);
-print_sfont (marker_x * 16, marker_y * 16 + 16, ">", screen);
-if ((get_line (marker_x * 16 + 8, marker_y * 16 + 16, strbuf, 31) != 0)
-    && (strbuf[0] != '\0'))
-   strcpy (found->name, strbuf);
-#endif
 
    done = 0;
    while (!done) {
       blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
-      response = get_line (12, 6, strbuf, 31);
+      response = get_line (12, 12, strbuf, 31);
 
       /* If the user hits ESC, break out of the function entirely */
       if (response == 0)
@@ -3530,6 +3559,35 @@ if ((get_line (marker_x * 16 + 8, marker_y * 16 + 16, strbuf, 31) != 0)
       } else {
          done = 1;
       }
+
+      /* Make sure no other markers have the same name */
+      for (m = markers; m < markers + num_markers; ++m) {
+         if (!strcmp(strbuf, m->name) && m != found) {
+            cmessage ("Another marker has that name. Use another name.");
+            yninput ();
+            done = 0;
+            break;
+         }
+      }
    }
-   strcpy (found.name, strbuf);
+   strcpy ((*found).name, strbuf);
+}                               /* rename_marker () */
+
+
+/*! \brief Yield processor for other tasks
+ *
+ * This function calls rest() or yield_cpu() as appropriate for
+ * the platform and allegro version
+ *
+ * \author PH
+ * \date 20050423
+ */
+void kq_yield (void)
+{
+#if (ALLEGRO_VERSION >= 4 && ALLEGRO_SUB_VERSION >= 2)
+   rest (0);
+#else
+   yield_timeslice ();
+#endif
 }
+

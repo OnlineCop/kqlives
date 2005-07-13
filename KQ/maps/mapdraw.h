@@ -13,7 +13,7 @@
 
 #define MAX_TILES    1024
 #define NUM_TILESETS    7
-#define MAX_EPICS      40
+#define MAX_EPICS      41
 #define MAX_ZONES     256
 #define MAX_SHADOWS    12
 #define MAX_OBSTACLES   5
@@ -92,13 +92,14 @@ int get_line (const int, const int, char *, const int);
 void get_tile (void);
 void global_change (void);
 void klog (char *);
+void kq_yield (void);
 void make_rect (BITMAP *, const int, const int);
 void normalize_view (void);
 void paste_region (const int, const int);
 void paste_region_special (const int, const int);
 void preview_map (void);
 void print_sfont (const int, const int, const char *, BITMAP *);
-void process_keyboard (const int);
+int process_keyboard (const int);
 void process_menu_bottom (const int, const int);
 void process_menu_right (const int, const int);
 void process_mouse (const int);
@@ -106,7 +107,7 @@ void read_controls (void);
 void resize_map (const int);
 void select_only (const int, const int);
 void show_help (void);
-void startup (void);
+int startup (void);
 void update_tileset (void);
 void wait_enter (void);
 void wipe_map (void);
@@ -120,7 +121,7 @@ void draw_ents (void);
 void erase_entity (const int, const int);
 void init_entities (void);
 void place_entity (int, int);
-void rename_marker (s_marker);
+void rename_marker (s_marker *);
 void update_entities (void);
 
 /* From mapfile.c */

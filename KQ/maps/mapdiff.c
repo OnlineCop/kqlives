@@ -686,12 +686,15 @@ void load_maps (const char *filename1, const char *filename2)
  *
  * Inits everything needed for user input, graphics, etc.
  */
-void startup (void)
+int startup (void)
 {
    allegro_init ();
 
    /* Buffer for all strings */
    strbuf = (char *) malloc (256);
+   if (!strbuf)
+      return 0;
+   return 1;
 }                               /* startup () */
 
 

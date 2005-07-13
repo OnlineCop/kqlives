@@ -118,6 +118,7 @@ static int KQ_get_ent_transl (lua_State *);
 static int KQ_set_ent_transl (lua_State *);
 static int KQ_set_ent_script (lua_State *);
 static int KQ_get_treasure (lua_State *);
+static int KQ_set_treasure (lua_State *);
 static int KQ_get_gp (lua_State *);
 static int KQ_set_gp (lua_State *);
 static int KQ_get_vx (lua_State *);
@@ -224,6 +225,10 @@ static int KQ_use_up (lua_State *);
 static int KQ_battle (lua_State *);
 static int KQ_select_team (lua_State *);
 static int KQ_set_ent_target (lua_State *);
+static int KQ_get_marker_tilex (lua_State *);
+static int KQ_get_marker_tiley (lua_State *);
+static int KQ_set_marker (lua_State *);
+static int KQ_take_stairs (lua_State *);
 
 static const struct luaL_reg lrs[] = {
    {"get_pidx", KQ_get_pidx},
@@ -280,6 +285,7 @@ static const struct luaL_reg lrs[] = {
    {"set_ent_transl", KQ_set_ent_transl},
    {"set_ent_script", KQ_set_ent_script},
    {"get_treasure", KQ_get_treasure},
+   {"set_treasure", KQ_set_treasure},
    {"get_gp", KQ_get_gp},
    {"set_gp", KQ_set_gp},
    {"get_vx", KQ_get_vx},
@@ -379,6 +385,10 @@ static const struct luaL_reg lrs[] = {
    {"set_ent_target", KQ_set_ent_target},
    {"add_timer", KQ_add_timer},
    {"add_quest_item", KQ_add_quest_item},
+   {"get_marker_tilex", KQ_get_marker_tilex},
+   {"get_marker_tiley", KQ_get_marker_tiley},
+   {"set_marker", KQ_set_marker},
+   {"take_stairs", KQ_take_stairs},
    {NULL, NULL}
 };
 
@@ -753,7 +763,7 @@ static int KQ_char_getter (lua_State * L)
 }
 
 
-/*! \brief Initialise marker support 
+/*! \brief Initialise marker support
  *
  * Add a table containing all the markers
  * \author PH
@@ -1708,6 +1718,18 @@ static int KQ_get_treasure (lua_State * L)
    if (a >= 0 && a <= 999)
       lua_pushnumber (L, treasure[a]);
    return 1;
+}
+
+
+
+static int KQ_set_treasure (lua_State * L)
+{
+   int a = (int) lua_tonumber (L, 1);
+   int b = (int) lua_tonumber (L, 2);
+
+   if (a >= 0 && a <= 999)
+      treasure[a] = lua_tonumber (L, b);
+   return 0;
 }
 
 
@@ -3262,6 +3284,8 @@ void do_entity (int en_num)
    check_map_change ();
 }
 
+
+
 /*! \brief trigger time events
  *
  * Call the named function. This is called
@@ -3279,6 +3303,8 @@ void do_timefunc (const char *funcname)
    check_map_change ();
 }
 
+
+
 /*! \brief Get quest info items from script
  *
  * Call the get_quest_info function. This is called
@@ -3295,6 +3321,8 @@ void do_questinfo (void)
    lua_settop (theL, oldtop);
 }
 
+
+
 /*! \brief Check to change the map
  *
  * Check to see if we can change the map.  Does nothing if we are already in
@@ -3306,4 +3334,101 @@ static void check_map_change (void)
       return;
    changing_map = 0;
    change_map (tmap_name, tmx, tmy, tmvx, tmvy);
+}
+
+
+
+/*! \brief Get the x-coord of marker
+ *
+ * \param   L::1 Marker name
+   \returns x-coord of marker
+ */
+static int KQ_get_marker_tilex (lua_State * L)
+{
+   s_marker *m;
+   const char *marker_name = lua_tostring (L, 1);
+
+   for (m = g_map.markers; m < g_map.markers + g_map.num_markers; ++m)
+      if (!strcmp(marker_name, m->name))
+         lua_pushnumber (L, m->x);
+   return 1;
+}
+
+
+
+/*! \brief Get the x-coord of marker
+ *
+ * \param   L::1 Marker name
+   \returns y-coord of marker
+ */
+static int KQ_get_marker_tiley (lua_State * L)
+{
+   s_marker *m;
+   const char *marker_name = lua_tostring (L, 1);
+
+   for (m = g_map.markers; m < g_map.markers + g_map.num_markers; ++m)
+      if (!strcmp(marker_name, m->name))
+         lua_pushnumber (L, m->y);
+   return 1;
+}
+
+
+/* Create a new marker, with whatever name is passed in, at desired coords
+ *
+ * \param   L::1 name to set marker to
+ * \param   L::2 x-coord of marker
+ * \param   L::3 y-coord of marker
+ */
+static int KQ_set_marker (lua_State * L)
+{
+   s_marker *m;
+
+   const char *marker_name = lua_tostring (L, 1);
+   const int x_coord = lua_tonumber (L, 2);
+   const int y_coord = lua_tonumber (L, 3);
+
+   for (m = g_map.markers; m < g_map.markers + g_map.num_markers; ++m) {
+      if (!strcmp(marker_name, m->name)) {
+         // This should not happen:
+         sprintf (strbuf, "Error in script: %s already defined.", marker_name);
+         message (strbuf, 255, 50, xofs, yofs);
+      } else {
+         strcpy(g_map.markers[g_map.num_markers++].name, (const char *) marker_name);
+         g_map.markers[g_map.num_markers++].x = x_coord;
+         g_map.markers[g_map.num_markers++].y = y_coord;
+      }
+   }
+
+   return 0;
+}
+
+/* TT TODO: This has not yet done all the error-checking (multiple markers
+ * with the same name, set the marker to the coords x/y (L::2, L::3), etc.
+ */
+
+
+/* This is going to make use of markers to simplify going up or down stairs.
+ * \param   L::1 marker_name Marker to warp to
+ * \param   L::2-5 range Will call set_view() with these coords
+ */
+static int KQ_take_stairs (lua_State * L)
+{
+   s_marker *m;
+   const char *marker_name = lua_tostring (L, 1);
+   int a, b[4];
+
+   for (m = g_map.markers; m < g_map.markers + g_map.num_markers; ++m) {
+      if (!strcmp(marker_name, m->name)) {
+         for (a = 0; a < 4; a++)
+            b[a] = (int) lua_tonumber (L, a + 2);
+         if (b[0] == 0 || b[1] == 0 || b[2] == 0 || b[3] == 0)
+            warp (0, 0, 8);
+         else {
+            set_view (1, b[0], b[1], b[2], b[3]);
+            warp (m->x, m->y, 8);
+         }
+      }
+   }
+
+   return 0;
 }
