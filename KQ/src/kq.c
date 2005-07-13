@@ -1750,6 +1750,7 @@ int add_timer_event (const char *n, int delta)
    return -1;
 }
 
+
 /* \brief Get the next event if any
  *
  * Checks the pending events and returns the name
@@ -1770,8 +1771,10 @@ char *get_timer_event (void)
    int i;
    int next = INT_MAX;
    struct timer_event *t;
+
    if (now < next_event_time)
       return NULL;
+
    *buf = '\0';
    for (i = 0; i < 5; ++i) {
       t = &timer_events[i];

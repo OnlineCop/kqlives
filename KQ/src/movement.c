@@ -129,7 +129,8 @@ static int search_paths (int id, int *map, int step, int source_x, int source_y,
 
    index = source_y * limit_x + source_x;
    value = map[index];
-   if ((value != -1) && (value == 0 || value > step) && (step == 1 || ! entityat(source_x, source_y, id))) {
+   if ((value != -1) && (value == 0 || value > step)
+       && (step == 1 || !entityat (source_x, source_y, id))) {
       map[index] = step;
 
       if ((source_x == target_x) && (source_y == target_y))
@@ -196,7 +197,7 @@ static void copy_map (int *map)
  * The only way of doing this is walking the path backwards, minimizing and
  * turning it the way around.
  *
- * \param map [in]       The map with the paths.
+ * \param map [in]      The map with the paths.
  * \param target_x [in] Target x coordinate.
  * \param target_y [in] Target y coordinate.
  * \param buffer [out]  Buffer to store the solution.

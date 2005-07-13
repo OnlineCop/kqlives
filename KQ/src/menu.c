@@ -164,7 +164,7 @@ void draw_mainmenu (int swho)
    print_font (double_buffer, 268 - (strlen (strbuf) * 8) + xofs, 172 + yofs,
                strbuf, FNORMAL);
    if (swho != -1)
-      menubox (double_buffer, 44 + xofs, swho * 56 + 64 + yofs, 18, 5,
+      menubox (double_buffer, 44 + xofs, swho * 64 + 64 + yofs, 18, 6,
                DARKBLUE);
    for (p = 0; p < numchrs; p++)
       draw_playerstat (double_buffer, pidx[p], 52 + xofs, p * 64 + 76 + yofs);
