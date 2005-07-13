@@ -1,4 +1,5 @@
 bridge
+bridge2
 camp
 cave1
 cave2
@@ -15,6 +16,7 @@ estate
 esteria
 fort
 global
+goblin
 grotto
 grotto2
 guild
