@@ -18,18 +18,6 @@
  */
 void getfont (void)
 {
-   int a, b;
-   static int color_gray[] = { 0, 9, 15 };
-#if 0
-   /* TT: If you want to have uppercase letters in white and lowercase in grey,
-    * simply move these "#if 0...#endif" tags.
-    */
-   /* Letters are medium-gray color */
-   static int color_gray[] = { 0, 9, 15 };
-   /* Letters are white */
-   static int color_white[] = { 0, 255, 15 };
-#endif
-
    // This turns the other/indent.pro settings off:
    // *INDENT-OFF*
    static unsigned char kq_font[3276] = {
@@ -219,15 +207,20 @@ void getfont (void)
 // This turns the other/indent.pro settings back on:
 // *INDENT-ON*
 
+   int a, b;
    char *ptr = kq_font;
-   for (a = 0; a < 546; a++)
-      for (b = 0; b < 6; b++)
-         putpixel (font6, b, a, color_gray[(int) *ptr++]);
+
+   /* Letters are medium-gray color */
+   static int color_gray[] = { 0, 9, 15 };
 
 #if 0
    /* TT: If you want to have uppercase letters in white and lowercase in grey,
-    * simply move these "#if 0...#endif" tags.
+    * simply change the "#if 0" to "#if 1".
     */
+
+   /* Letters are white */
+   static int color_white[] = { 0, 255, 15 };
+
    for (a = 0; a < 198; a++)
       for (b = 0; b < 6; b++)
          putpixel (font6, b, a, color_gray[(int) *ptr++]);
@@ -237,6 +230,10 @@ void getfont (void)
          putpixel (font6, b, a, color_white[(int) *ptr++]);
 
    for (a = 390; a < 546; a++)
+      for (b = 0; b < 6; b++)
+         putpixel (font6, b, a, color_gray[(int) *ptr++]);
+#else
+   for (a = 0; a < 546; a++)
       for (b = 0; b < 6; b++)
          putpixel (font6, b, a, color_gray[(int) *ptr++]);
 #endif
