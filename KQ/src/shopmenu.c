@@ -360,6 +360,7 @@ unsigned short shops[NUMSHOPS][SHOPITEMS][3] = {
     {0, 0, 0},
     {0, 0, 0},
     {0, 0, 0}},
+
    /* Rufus's shop */
    {{I_DYNAMITE, 20, 20},
     {0, 0, 0},
@@ -373,6 +374,19 @@ unsigned short shops[NUMSHOPS][SHOPITEMS][3] = {
     {0, 0, 0},
     {0, 0, 0},
     {0, 0, 0}},
+      
+   {{I_HAMMER3, 5, 12},
+    {I_ROD5, 5, 7},
+    {I_SPEAR3, 5, 13},
+    {I_STAFF4, 5, 4},
+    {0, 0, 0},
+    {0, 0, 0},
+    {0, 0, 0},
+    {0, 0, 0},
+    {0, 0, 0},
+    {0, 0, 0},
+    {0, 0, 0},
+    {0, 0, 0}}
 };
 
 /*! \brief Quantities in each shop */
@@ -407,7 +421,8 @@ static char shopn[NUMSHOPS][40] = {
    "Ezbaran's Items",
    "Agrasian's Armor",
    "The Colosseum Shop",
-   "Rufus's Cabin"
+   "Rufus's Cabin",
+   "Bentley's Armour"
 };
 
 
