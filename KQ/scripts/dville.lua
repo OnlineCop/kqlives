@@ -3,13 +3,13 @@
 -- /*
 -- {
 -- P_DENORIAN: Status of the stolen statue
---   0 - You just got there; statue is gone
---   1 - If you refuse after you hear their plea, you are kicked out of town
---   2 - You've agreed to help
---   3 - You found Demnas (but not the troll)
---   4 - You found the troll, too
---   5 - The broken statue is returned to the village
---   6 - The 2nd half of the statue is returned
+--   (0) You just got there; statue is gone
+--   (1) If you refuse after you hear their plea, you are kicked out of town
+--   (2) You've agreed to help
+--   (3) You found Demnas (but not the troll)
+--   (4) You found the troll, too
+--   (5) The broken statue is returned to the village
+--   (6) The 2nd half of the statue is returned
 -- }
 -- */
 

@@ -5,7 +5,7 @@
 -- Which globals should we have for the (incomplete) bridge?
 --
 -- P_FIGHTONBRIDGE
---   (0-4) [Not calculated]: when this is <=4, we will not use bridge2
+--   (0)..(4) [Not calculated]: when this is <=4, we will not use bridge2
 --   (5) Slept at the inn, bridge is pretty close to being done
 --   (6) [Not calculated]: when this is >= 6, we will not even enter the map
 --
@@ -25,21 +25,21 @@ function autoexec()
 end
 
 
-function refresh()
-  if (get_treasure(8) == 1) then
-    set_obs(19, 27, 0)
-    set_zone(19, 27, 0)
-  end
-
-  if (get_treasure(90) == 1) then
-    set_ftile(55, 12, 0)
-    set_zone(55, 12, 0)
-  end
+function postexec()
+  return
 end
 
 
-function postexec()
-  return
+function refresh()
+  if (get_treasure(8) == 1) then
+    set_obsm("treas_1", 0)
+    set_zonem("treas_1", 0)
+  end
+
+  if (get_treasure(90) == 1) then
+    set_ftilem("treas_2", 0)
+    set_zonem("treas_2", 0)
+  end
 end
 
 
@@ -51,7 +51,7 @@ function zone_handler(zn)
     -- // TT: This is still here incase the player didn't get it on the first
     -- //     (incomplete) bridge.  They can only get it once.
     chest(8, I_OSEED, 2)
-    autoexec()
+    refresh()
 
   elseif (zn == 3) then
     chest(90, I_REGENERATOR, 1)

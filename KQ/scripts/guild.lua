@@ -1,9 +1,9 @@
 -- guild - "Home of the Embers in Sunarin"
 -- /*
 -- P_GUILDSECRET - Have we discovered the secret passage into the Embers' base?
--- (0) Not found it
--- (1) Found it and it's open
--- (2) Found it, gone through, and it's shut again (it will reopen as we approach)
+--   (0) Not found it
+--   (1) Found it and it's open
+--   (2) Found it, gone through, and it's shut again (it will reopen as we approach)
 -- */
 function autoexec()
   refresh()
@@ -59,7 +59,8 @@ function zone_handler(zn)
     if (get_progress(P_OPALHELMET) == 1) then
       set_progress(P_FOUGHTGUILD, 2)
     end
-    change_map("town5", 18, 37, 18, 37)
+    change_mapm("town5", "guild_door")
+    -- change_map("town5", 18, 37, 18, 37)
 
   elseif (zn == 2) then
     warp(10, 5, 8)
@@ -82,6 +83,7 @@ function zone_handler(zn)
 
   elseif (zn == 5) then
     chest(47, 0, 500)
+    refresh()
 
   elseif (zn == 6) then
     warp(37, 7, 8)
@@ -91,6 +93,7 @@ function zone_handler(zn)
 
   elseif (zn == 8) then
     chest(50, I_SWORD4, 1)
+    refresh()
 
   elseif (zn == 9) then
     bubble(HERO1, "These look interesting.")

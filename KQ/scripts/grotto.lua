@@ -3,33 +3,33 @@
 -- /*
 -- {
 -- P_FELLINPIT: Set when you fall down the pit
---   0 - Haven't fallen down the pit
---   1 - Fell into the pit, Derig helped you out
---   2 - Can't fall down the pit since Derig isn't there to help you back out
---   3 - You may fall down the pit again
+--   (0) Haven't fallen down the pit
+--   (1) Fell into the pit, Derig helped you out
+--   (2) Can't fall down the pit since Derig isn't there to help you back out
+--   (3) You may fall down the pit again
 --
 -- P_TALKDERIG: Set when you make contact with Derig
---   0 - If you've never entered the grotto (this will be set to 1 immediately when you enter)
---   1 - Set as soon as you've been to the grotto at least once
---   2 - Fell into the pit before, DIDN'T meet Derig (but he helped you out)
---   3 - Fell into the pit before, DID meet Derig (and he helped you out)
---   4 - Derig is taking you back to Ekla to meet Jen, his granddaughter (you change_map() immediately after this is set to '4')
---   5 - Derig is still in Ekla
---   6 - Derig is back, you have sealed the portal
+--   (0) If you've never entered the grotto (this will be set to 1 immediately when you enter)
+--   (1) Set as soon as you've been to the grotto at least once
+--   (2) Fell into the pit before, DIDN'T meet Derig (but he helped you out)
+--   (3) Fell into the pit before, DID meet Derig (and he helped you out)
+--   (4) Derig is taking you back to Ekla to meet Jen, his granddaughter (you change_map() immediately after this is set to '4')
+--   (5) Derig is still in Ekla
+--   (6) Derig is back, you have sealed the portal
 --
 -- P_TALK_TSORIN: If you've spoken to Tsorin in Andra (and got his seal)
---   0 - You haven't spoken to him yet
---   1 - Tsorin gave you a note to give to Derig
---   2 - Derig gave you a note to return to Tsorin
---   3 - Tsorin gave you his seal to get through the fort
---   4 - You've shown the seal to the guards at the fort
---   5 - You are free pass through the fort anytime (no contention in goblin lands)
+--   (0) You haven't spoken to him yet
+--   (1) Tsorin gave you a note to give to Derig
+--   (2) Derig gave you a note to return to Tsorin
+--   (3) Tsorin gave you his seal to get through the fort
+--   (4) You've shown the seal to the guards at the fort
+--   (5) You are free pass through the fort anytime (no contention in goblin lands)
 --
 -- P_UCOIN: Spoke to Jen, the granddaughter in Ekla
---   0 - Have not yet spoken with Jen
---   1 - Spoke to Jen
---   2 - Jen gave you the Unadium Coin
---   3 - Returned the Unadium Coin to Jen
+--   (0) Have not yet spoken with Jen
+--   (1) Spoke to Jen
+--   (2) Jen gave you the Unadium Coin
+--   (3) Returned the Unadium Coin to Jen
 -- }
 -- */
 
@@ -170,7 +170,8 @@ function entity_handler(en)
         bubble(en, "Let's go back to town.")
         set_progress(P_FELLINPIT, 2)
         set_progress(P_TALKDERIG, 4)
-        change_map("town1", 65, 52, 65, 52)
+        change_mapm("town1", "by_derig")
+        -- change_map("town1", 65, 52, 65, 52)
       elseif (get_progress(P_TALKDERIG) == 6) then
         -- // Derig would only be here after you've finished with the Rod of Cancellation
         bubble(en, "Good job with the portal. I have returned the Rod of Cancellation.")

@@ -3,8 +3,8 @@
 -- /*
 -- {
 -- P_SKIPINTRO: Whether to show the entire starting again
---   0 - Show the entire starting
---   1 - Do not show everything
+--   (0) Show the entire starting
+--   (1) Do not show everything
 -- }
 -- */
 
@@ -164,7 +164,7 @@ function LOC_choose_hero()
   local ptr = NOSLOM
   add_chr(ptr)
   set_all_equip(ptr, I_KNIFE1, 0, 0, I_SUIT1, 0, 0)
-  change_map("manor", 37, 7, 37, 7)
+  change_map("manor", 0, 0, 0, 0)
 end
 
 

@@ -64,7 +64,8 @@ function zone_handler(zn)
     end
 
   elseif (zn == 1) then
-    change_map("temple1", 56, 36, 56, 36)
+    change_mapm("temple1", "dstairs1")
+    -- change_map("temple1", 56, 36, 56, 36)
 
   elseif (zn == 2) then
     warp(2, 45, 8)

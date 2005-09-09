@@ -303,16 +303,19 @@ function zone_handler(zn)
     set_save(1)
     warp(119, 132, 10)
   elseif (zn == 9) then
-    change_map("pass", 78, 39, 0, 0)
+    change_mapm("pass", "door1")
+    -- change_map("pass", 78, 39, 0, 0)
   elseif (zn == 10) then
-    change_map("pass", 106, 36, 0, 0)
+    change_mapm("pass", "door2")
+    -- change_map("pass", 106, 36, 0, 0)
   elseif (zn == 11) then
     -- Dragon
     sfx(26)
     warp(112, 49, 10)
     opaldragon()
   elseif (zn == 12) then
-    change_map("pass", 83, 28, 0, 0)
+    change_mapm("pass", "door3")
+    -- change_map("pass", 83, 28, 0, 0)
   elseif (zn == 13) then
     -- Behind pillar
     set_save(0)

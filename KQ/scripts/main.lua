@@ -84,16 +84,19 @@ function zone_handler(zn)
     change_map("grotto", 0, 0, 0, 0)
 
   elseif (zn == 10) then
-    change_map("fort", 15, 8, 10, 1)
+    change_mapm("fort", "exit1")
+    -- change_map("fort", 15, 8, 10, 1)
 
   elseif (zn == 11) then
-    change_map("fort", 15, 42, 10, 35)
+    change_mapm("fort", "exit2")
+    -- change_map("fort", 15, 42, 10, 35)
 
   elseif (zn == 12) then
     change_map("cave3a", 0, 0, 0, 0)
 
   elseif (zn == 13) then
-    change_map("cave3a", 24, 4, 24, 4)
+    change_mapm("cave3a", "urdoor1")
+    -- change_map("cave3a", 32, 12, 32, 12)
 
   elseif (zn == 14) then
     if (get_progress(P_GOBLINITEM) == 1 and get_progress(P_TOWEROPEN) == 0) then
@@ -231,7 +234,8 @@ function zone_handler(zn)
     change_map("pass", 0, 0, 0, 0)
 
   elseif (zn == 36) then
-    change_map("pass", 124, 35, 124, 35)
+    change_mapm("pass", "entrance_2")
+    -- change_map("pass", 124, 35, 124, 35)
 
   elseif (zn == 37) then
     change_map("town7", 0, 0, 0, 0)
@@ -346,7 +350,8 @@ function zone_handler(zn)
 
   elseif (zn == 71) then
     set_ent_facing(HERO1, FACE_LEFT)
-    change_map("bridge2", 63, 18, 63, 18)
+    change_mapm("bridge2", "exit")
+    -- change_map("bridge2", 63, 18, 63, 18)
 
   elseif (zn == 72) then
     if ((get_progress(P_OPALHELMET) == 1) and
@@ -366,12 +371,13 @@ function zone_handler(zn)
     change_map("cave6a", 0, 0, 0, 0)
 
   elseif (zn == 74) then
-    change_map("cave6b", 5, 7, 5, 7)
+    change_mapm("cave6b", "ustairs1")
+    -- change_map("cave6b", 5, 7, 5, 7)
 
   elseif (zn == 75) then
     bubble(HERO1, "The underwater tunnel should go here.")
     warp(203, 182, 16)
-  
+
   elseif (zn == 76) then
     bubble(HERO1, "The second part of the underwater tunnel should go here.")
     warp(262, 159, 16)
@@ -386,7 +392,7 @@ function zone_handler(zn)
   elseif (zn == 79) then
     bubble(HERO1, "This is as far as the dock goes.")
     warp(187, 141, 16)
-    
+
   elseif (zn == 80) then
     bubble(HERO1, "This is as far as the dock goes.")
     warp(202, 147, 16)

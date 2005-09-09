@@ -3,20 +3,20 @@
 -- /*
 -- {
 -- P_ODDWALL: Whether the player is told that the wall looks odd
---   0 - Have not yet seen the message
---   1 - Saw the message (only see it 1 time whenever you enter the map)
+--   (0) Have not yet seen the message
+--   (1) Saw the message (only see it 1 time whenever you enter the map)
 --
 -- P_DARKIMPBOSS: Defeated the monster blocking the tunnel
---   0 - Still there
---   1 - Defeated
+--   (0) Still there
+--   (1) Defeated
 --
 -- P_DYINGDUDE: Man in tunnel dying
---   0 - You have not spoken to him
---   1 - Now he is dead
+--   (0) You have not spoken to him
+--   (1) Now he is dead
 --
 -- P_PORTALGONE: Whether the portal in the tunnel is still working
---   0 - Still letting monsters through
---   1 - The Portal is sealed shut
+--   (0) Still letting monsters through
+--   (1) The Portal is sealed shut
 -- }
 -- */
 
@@ -76,10 +76,12 @@ function zone_handler(zn)
     end
 
   elseif (zn == 1) then
-    change_map("town1", 27, 57, 27, 57)
+    change_mapm("town1", "dstairs1")
+    -- change_map("town1", 27, 57, 27, 57)
 
   elseif (zn == 2) then
-    change_map("town2", 11, 11, 11, 11)
+    change_mapm("town2", "dstairs1")
+    -- change_map("town2", 11, 11, 11, 11)
 
   elseif (zn == 4) then
     chest(1, I_MHERB, 1)

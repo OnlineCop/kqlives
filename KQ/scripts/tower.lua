@@ -4,11 +4,17 @@
 -- {
 --
 -- P_ORACLE: Spoke to Oracle in the Tower
---   0 - Haven't spoken to her yet
---   1 - She told you your quest, requested help from monsters
---   2 - You helped with monsters
---   3 - You used her TravelPoint but haven't spoken to her yet
---   4 - You used her TravelPoint and spoke with her
+--   (0) Haven't spoken to her yet
+--   (1) She told you your quest, requested help from monsters
+--   (2) You helped with monsters (stopped them from getting to the portal)
+--   (3) You used her TravelPoint but haven't spoken to her yet
+--   (4) You used her TravelPoint and spoke with her
+--
+-- P_ORACLEMONSTERS: Status of the monsters in the caves below
+--   (0) You haven't even seen the monsters take the Statue thru the portal
+--   (1) Monsters thru portal: Haven't told Oracle about it
+--   (2) Monsters thru portal: Told Oracle about it
+--   (3) Followed monsters thru portal
 --
 -- P_FTOTAL: Total number of floor switches activated
 -- P_FLOOR1..P_FLOOR4: Status of this floor switch
@@ -23,21 +29,21 @@
 -- P_TREASUREROOM: (3: Treasure room, top)
 --
 -- P_TOWEROPEN: Whether you can return and talk to the Oracle
---   0 - Never spoke to Oracle, cannot enter Tower
---   1 - Never spoke to Oracle, can enter Tower
---   2 - Spoke to Oracle, cannot enter Tower
---   3 - Spoke to Oracle, can enter Tower
+--   (0) Never spoke to Oracle, cannot enter Tower
+--   (1) Never spoke to Oracle, can enter Tower
+--   (2) Spoke to Oracle, cannot enter Tower
+--   (3) Spoke to Oracle, can enter Tower
 --
 -- P_DRAGONDOWN: Whether the stone dragon is alive or not
 --
 -- P_DENORIAN: Status of the Denorian statue
---   0 - You have not entered dville or have not spoken to the town council
---   1 - If you refused to help the Denorians
---   2 - You've agreed to help, but haven't found Demnas
---   3 - You found Demnas (but not the troll)
---   4 - You found the troll, too
---   5 - The broken statue was returned to the village
---   6 - The 2nd half of the statue had been returned
+--   (0) You have not entered dville or have not spoken to the town council
+--   (1) If you refused to help the Denorians
+--   (2) You've agreed to help, but haven't found Demnas
+--   (3) You found Demnas (but not the troll)
+--   (4) You found the troll, too
+--   (5) The broken statue was returned to the village
+--   (6) The 2nd half of the statue had been returned
 --
 -- Pretty much done as it is; no real changes need to be made.
 -- }
@@ -45,11 +51,6 @@
 
 
 function autoexec()
-
--- set_progress(P_ORACLE, 0)
--- TT: This was changed so they only reset if you enter or exit
--- the front doors, not just enter the map (like load a game)
-
   refresh()
 end
 
@@ -441,7 +442,30 @@ function entity_handler(en)
       set_autoparty(0)
 
     elseif (get_progress(P_ORACLE) == 1) then
-      bubble(en, "You still need to get rid of the monsters in the caves below.")
+      if (get_progress(P_ORACLEMONSTERS) == 0) then
+        bubble(en, "You still need to get rid of the monsters in the caves below.")
+      elseif (get_progress(P_ORACLEMONSTERS) == 1) then
+        if (get_numchrs() == 1) then
+          bubble(HERO1, "Oracle! I saw the monsters take the statue through the portal below!")
+        else
+          bubble(HERO1, "Oracle! We saw the monsters take the statue through the portal below!")
+        end
+        bubble(en, "Then you must go after it! That statue is very important to my people.")
+        set_progress(P_ORACLEMONSTERS, 2)
+      elseif (get_progress(P_ORACLEMONSTERS) == 2) then
+        bubble(en, "Welcome back.")
+        bubble(HERO1, "Oracle! The monsters went through the portal below with your statue!")
+        if (get_numchrs() == 1) then
+          bubble(HERO1, "I went through the portal, but was sent to Maldea somehow.")
+        else
+          bubble(HERO1, "We went through the portal, but were was sent to Maldea somehow.")
+        end
+        bubble(en, "Yes, the statue probably disrupted the portal somehow. I'm glad to see you made it back safely.")
+        bubble(en, "By the way, could you still get rid of the monsters below?")
+        set_progress(P_ORACLEMONSTERS, 3)
+      elseif (get_progress(P_ORACLEMONSTERS) == 3) then
+        bubble(en, "Good luck with the monsters!")
+      end
     elseif (get_progress(P_ORACLE) == 2) then
       bubble(en, "You got rid of the monsters! Thank you.")
     elseif (get_progress(P_ORACLE) == 3) then

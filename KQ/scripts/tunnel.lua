@@ -1,15 +1,15 @@
 -- tunnel - "The tunnel leading to Esteria"
 
 function autoexec()
-  return;
+  return
 end
 
 
 function postexec()
-  return;
+  return
 end
 
 
-function entity_handler(id)
-  return;
+function entity_handler(en)
+  return
 end

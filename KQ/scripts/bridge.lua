@@ -4,7 +4,7 @@
 -- {
 -- Which globals should we have for the (incomplete) bridge?
 --
--- P_FIGHTONBRIDGE
+-- P_FIGHTONBRIDGE: Status of monsters infesting the partial bridge
 --   (0) Nothing happened on bridge (haven't spoken to worker)
 --   (1) Spoke with a worker, haven't tried to leave yet
 --   (2) Tried to leave, monster appeared (haven't fought it yet)
@@ -12,11 +12,11 @@
 --   (4) Left bridge and re-entered; bridge not completed yet
 --   (5) [Not calculated]: when this is >= 5, we will use bridge2
 --
--- P_LOSERONBRIDGE
+-- P_LOSERONBRIDGE: Guard who forgot his sword
 --   (0) Have not spoken to man who forgot his sword
 --   (1) Spoke to him after defeating the monsters
 --
--- P_ASLEEPONBRIDGE
+-- P_ASLEEPONBRIDGE: Man in the top of the bridge sleeping
 --   (0) Have not spoken to man sleeping on bridge
 --   (1) Man is asleep again
 -- }
@@ -24,15 +24,20 @@
 
 
 function autoexec()
-  if (get_treasure(8) == 1) then
-    set_obs(19, 27, 0)
-    set_zone(19, 27, 0)
-  end
+  refresh()
 end
 
 
 function postexec()
   return
+end
+
+
+function refresh()
+  if (get_treasure(8) == 1) then
+    set_obsm("treas_1", 0)
+    set_zonem("treas_1", 0)
+  end
 end
 
 
@@ -67,7 +72,7 @@ function zone_handler(zn)
 
   elseif (zn == 2) then
     chest(8, I_OSEED, 2)
-    autoexec()
+    refresh()
 
   elseif (zn == 3) then
     if (get_progress(P_FIGHTONBRIDGE) == 2) then

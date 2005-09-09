@@ -12,7 +12,8 @@ end
 
 function zone_handler(zn)
   if (zn == 1) then
-    change_map("cave6a", 15, 24, 15, 24)
+    change_mapm("cave6a", "ustairs1")
+    -- change_map("cave6a", 15, 24, 15, 24)
 
   elseif (zn == 2) then
     change_map("main", 262, 162, 262, 162)

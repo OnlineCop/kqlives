@@ -3,14 +3,14 @@
 -- /*
 -- {
 -- P_FOUNDMAYOR:
---   0 - Mayor is still behind bars
---   1 - Mayor has been freed and is now home
+--   (0) Mayor is still behind bars
+--   (1) Mayor has been freed and is now home
 -- P_MAYORGUARD1:
---   0 - The first of the mayor's guards is still being held
---   1 - The first guard was released (and spoken to)
+--   (0) The first of the mayor's guards is still being held
+--   (1) The first guard was released (and spoken to)
 -- P_MAYORGUARD2:
---   0 - The second of the mayor's guards is still being held
---   1 - The second guard was released (and spoken to)
+--   (0) The second of the mayor's guards is still being held
+--   (1) The second guard was released (and spoken to)
 -- }
 -- */
 

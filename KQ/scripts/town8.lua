@@ -5,8 +5,8 @@
 -- We're going to learn about the Xenars for the first time here.
 --
 -- P_WALKING: Layer which the player is walking on
---   0 - You're on an elevated cliff: you walk OVER bridges
---   1 - You're on ground level: you walk UNDER bridges
+--   (0) You're on an elevated cliff: you walk OVER bridges
+--   (1) You're on ground level: you walk UNDER bridges
 -- }
 -- */
 
@@ -18,23 +18,23 @@ end
 
 function refresh()
   if (get_treasure(91) == 1) then
-    set_obs(1, 48, 0)
-    set_zone(1, 48, 0)
+    set_obsm("treas_1", 0)
+    set_zonem("treas_1", 0)
   end
 
   if (get_treasure(92) == 1) then
-    set_obs(7, 48, 0)
-    set_zone(7, 48, 0)
+    set_obsm("treas_2", 0)
+    set_zonem("treas_1", 0)
   end
 
   if (get_treasure(93) == 1) then
-    set_obs(13, 48, 0)
-    set_zone(13, 48, 0)
+    set_obsm("treas_3", 0)
+    set_zonem("treas_3", 0)
   end
 
   if (get_treasure(95) == 1) then
-    set_obs(50, 7, 0)
-    set_zone(50, 7, 0)
+    set_obsm("treas_4", 0)
+    set_zonem("treas_4", 0)
   end
 end
 
@@ -46,7 +46,7 @@ end
 
 function zone_handler(zn)
   if (zn == 1) then
-    change_map("main", 230, 162, 230, 162)
+    change_map("main", 227, 159, 227, 159)
 
   elseif (zn == 2) then
     set_progress(P_WALKING, 0)
@@ -72,10 +72,10 @@ function zone_handler(zn)
     bubble(HERO1, "This appears to be a hologram of the Oracle!")
 
   elseif (zn == 8) then
-    warp(7, 43, 16)
+    warpm("dstairs1", 16)
 
   elseif (zn == 9) then
-    warp(35, 42, 16)
+    warpm("dstairs2", 16)
 
   elseif (zn == 10) then
     chest(94, I_ARMOR8, 1)
@@ -144,11 +144,11 @@ function zone_handler(zn)
 
   elseif (zn == 31) then
     view_range(1, 81, 31, 91, 42)
-    warp(89, 36, 8)
+    warpm("dstairs3", 8)
 
   elseif (zn == 32) then
     view_range(1, 101, 19, 111, 31)
-    warp(109, 24, 8)
+    warpm("ustairs1", 8)
 
   elseif (zn == 33) then
     thought(HERO1, "This spa is relaxing.")
@@ -184,6 +184,7 @@ function entity_handler(en)
 
   elseif (en == 7) then
     inn("Long Journey Inn", 65, 1)
+
   end
 end
 

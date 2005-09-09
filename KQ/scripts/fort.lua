@@ -3,21 +3,21 @@
 -- /*
 -- {
 -- P_GOBLINITEM: Possession of Goblin Item (which helps seal Monster Portal)
---   0 - Do not have it
---   1 - Got it
---   2 - Returned it to Oracle
+--   (0) Do not have it
+--   (1) Got it
+--   (2) Returned it to Oracle
 --
 -- P_PORTAL2GONE: Whether the portal in the temple is still working
---   0 - Still letting monsters through
---   1 - The Portal is sealed shut
+--   (0) Still letting monsters through
+--   (1) The Portal is sealed shut
 --
 -- P_TALK_TSORIN: If you've spoken to Tsorin in Andra (and got his seal)
---   0 - You haven't spoken to him yet
---   1 - Tsorin gave you a note to give to Derig
---   2 - Derig gave you a note to return to Tsorin
---   3 - Tsorin gave you his seal to get through the fort
---   4 - You've shown the seal to the guards at the fort
---   5 - You are free pass through the fort anytime (no contention in goblin lands)
+--   (0) You haven't spoken to him yet
+--   (1) Tsorin gave you a note to give to Derig
+--   (2) Derig gave you a note to return to Tsorin
+--   (3) Tsorin gave you his seal to get through the fort
+--   (4) You've shown the seal to the guards at the fort
+--   (5) You are free pass through the fort anytime (no contention in goblin lands)
 --
 -- In this town, we are going to add the 3rd PM, which will include the sub-
 -- plot in the temple.

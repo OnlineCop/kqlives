@@ -7,12 +7,12 @@
 --
 -- It is also the start of Ayla's quest - robbing the palace in the inner city.
 -- Controlled by P_AYLA_QUEST:
---   0: Nothing done
---   1: Talked to the girl near the gates
---   2: Talked to the folks in the bar
---   3: Talked to both
---   4: Got the disguise and ready to go
---   5: Finished/given up
+--   (0) Nothing done
+--   (1) Talked to the girl near the gates
+--   (2) Talked to the folks in the bar
+--   (3) Talked to both
+--   (4) Got the disguise and ready to go
+--   (5) Finished/given up
 --*/
 
 --/*
@@ -215,7 +215,8 @@ function entity_handler(en)
     bubble(en, "We can discuss that back at my place. It is not safe here.")
     bubble(HERO1, "Okay.")
     set_progress(P_EMBERSKEY, 1)
-    change_map("estate", 57, 17, 57, 17)
+    change_mapm("estate", "by_table")
+    -- change_map("estate", 57, 17, 57, 17)
   end
 
 end

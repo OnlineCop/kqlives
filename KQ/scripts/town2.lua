@@ -3,46 +3,46 @@
 -- /*
 -- {
 -- P_BLADE: Whether woman mentioned the Phoenix Blade
---   0 - You have not spoken to her
---   1 - She has now
+--   (0) You have not spoken to her
+--   (1) She has now
 --
 -- P_FIGHTONBRIDGE:
---   0 - Have not visited the bridge, not fought
---   1..3 - [Not calculated]: see bridge[2].lua for more
---   4 - Defeated monster on bridge, have not slept at Inn
---   5 - Slept at inn; bridge is passable
+--   (0) Have not visited the bridge, not fought
+--   (1)..(3) (not used) See bridge[2].lua for more
+--   (4) Defeated monster on bridge, have not slept at Inn
+--   (5) Slept at inn; bridge is passable
 --
 -- P_FOUNDMAYOR:
---   0 - Have not found the mayor
---   1 - Found the mayor, he does not want company
---   2 - Found mayor & used WARPSTONE to return; he awaits your company
---   3 - You have spoken to the mayor
+--   (0) Have not found the mayor
+--   (1) Found the mayor, he does not want company
+--   (2) Found mayor & used WARPSTONE to return; he awaits your company
+--   (3) You have spoken to the mayor
 --
 -- P_MAYORGUARD1:
---   0 - The first of the mayor's guards is still being held in the orc camp
---   1 - The first guard was released: gives you money
---   2 - The first guard already gave you money for releasing him
+--   (0) The first of the mayor's guards is still being held in the orc camp
+--   (1) The first guard was released: gives you money
+--   (2) The first guard already gave you money for releasing him
 --
 -- P_MAYORGUARD2:
---   0 - The second of the mayor's guards is still being held in the orc camp
---   1 - The second guard was released
+--   (0) The second of the mayor's guards is still being held in the orc camp
+--   (1) The second guard was released
 --
 -- P_PORTALGONE: Whether the portal in the tunnel is still working
---   0 - Still letting monsters through
---   1 - The Portal is sealed shut
+--   (0) Still letting monsters through
+--   (1) The Portal is sealed shut
 --
 -- P_SHOWBRIDGE:
---   0 - Bridge is incomplete
---   1 - Monsters on bridge defeated; slept at Inn: bridge is passable
---   2 - Bridge is totally complete, bridge(2).(lua|map) no longer used at all
+--   (0) Bridge is incomplete
+--   (1) Monsters on bridge defeated; slept at Inn: bridge is passable
+--   (2) Bridge is totally complete, bridge(2).(lua|map) no longer used at all
 --
 -- P_TALK_AJATHAR:
---   0 - Have not spoken to Ajathar when you entered the map
---   1 - You have spoken to him at least once already
+--   (0) Have not spoken to Ajathar when you entered the map
+--   (1) You have spoken to him at least once already
 --
 -- P_WARPSTONE: The teleporter from Ajantara <-> Randen
---   0 - Have not used it yet
---   1 - Stepped on the warp stone and created its counterpart in Randen
+--   (0) Have not used it yet
+--   (1) Stepped on the warp stone and created its counterpart in Randen
 -- }
 -- */
 
@@ -154,7 +154,8 @@ end
 
 function zone_handler(zn)
   if (zn == 1) then
-    change_map("cave1", 47, 47, 47, 47)
+    change_mapm("cave1", "ustairs2")
+    -- change_map("cave1", 47, 47, 47, 47)
 
   elseif (zn == 2) then
     door_in(85, 13, 80, 6, 90, 16)
@@ -284,7 +285,8 @@ function zone_handler(zn)
     bubble(HERO1, "Inns always have boring books.")
 
   elseif (zn == 36) then
-    change_map("town6", 38, 56, 38, 56)
+    change_mapm("town6", "travelpoint")
+    -- change_map("town6", 38, 56, 38, 56)
 
   elseif (zn == 37) then
     touch_fire(party[0])

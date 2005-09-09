@@ -3,25 +3,25 @@
 -- /*
 -- {
 -- P_ALTARSWITCH: Whether the switch on the alter has been flipped
---   0 - Not yet
---   1 - Switched; stairs showing
+--   (0) Not yet
+--   (1) Switched; stairs showing
 --
 -- P_GOBLINITEM:
---   0 - Have not put the Goblin Jewel back yet
---   1 - Have put the Goblin Jewel back and stopped the undead
+--   (0) Have not put the Goblin Jewel back yet
+--   (1) Have put the Goblin Jewel back and stopped the undead
 --
 -- P_PLAYERS:
 --
 -- P_TALK_TEMMIN: Whether you have spoken to Temmin when you entered the map
---   0 - Haven't spoken about him
---   1 - You spoke with the priest about Temmin
---   2 - You've spoken to him once
---   3 - He's back in the temple after the jewel was returned
---   4 - You've finished with Temmin
+--   (0) Haven't spoken about him
+--   (1) You spoke with the priest about Temmin
+--   (2) You've spoken to him once
+--   (3) He's back in the temple after the jewel was returned
+--   (4) You've finished with Temmin
 --
 -- P_UNDEADJEWEL: Whether you collected the Jewel needed to seal the portal
---   0 - Don't have it
---   1 - Have it
+--   (0) Don't have it
+--   (1) Have it
 -- }
 -- */
 

@@ -1,15 +1,15 @@
 -- shrine - "The water shrine, with the tunnel that leads to Esteria"
 
 function autoexec()
-  return;
+  return
 end
 
 
 function postexec()
-  return;
+  return
 end
 
 
-function entity_handler(id)
-  return;
+function entity_handler(en)
+  return
 end

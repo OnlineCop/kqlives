@@ -3,21 +3,21 @@
 -- /*
 -- {
 -- P_GOBLINITEM: Possession of Goblin Item (which helps seal Monster Portal)
---   0 - Do not have it
---   1 - Got it
---   2 - Returned it to Oracle
+--   (0) Do not have it
+--   (1) Got it
+--   (2) Returned it to Oracle
 --
 -- P_PORTAL2GONE: Whether the portal in the temple is still working
---   0 - Still letting monsters through
---   1 - The Portal is sealed shut
+--   (0) Still letting monsters through
+--   (1) The Portal is sealed shut
 --
 -- P_TALK_TSORIN: If you've spoken to Tsorin in Andra (and got his seal)
---   0 - You haven't spoken to him yet
---   1 - Tsorin gave you a note to give to Derig
---   2 - Derig gave you a note to return to Tsorin
---   3 - Tsorin gave you his seal to get through the fort
---   4 - You've shown the seal to the guards at the fort
---   5 - You are free pass through the fort anytime (no contention in goblin lands)
+--   (0) You haven't spoken to him yet
+--   (1) Tsorin gave you a note to give to Derig
+--   (2) Derig gave you a note to return to Tsorin
+--   (3) Tsorin gave you his seal to get through the fort
+--   (4) You've shown the seal to the guards at the fort
+--   (5) You are free pass through the fort anytime (no contention in goblin lands)
 -- }
 -- */
 
@@ -199,7 +199,7 @@ function entity_handler(en)
       else
         bubble(HERO1, "Can you tell us why we need this security clearance?")
       end
-      bubble(en, "The Oracle's Statue was stolen from a shrine south of here. It caused such problems that civil war has ensued. As a safety to our citizens, we have closed the border to try to capture the thief or thieves.")
+      bubble(en, "The Oracle's Statue was stolen from a village shrine south of here. It caused such problems that civil war has ensued. As a safety to our citizens, we have closed the border to try to capture the thief or thieves.")
       if (get_numchrs() == 1) then
         bubble(HERO1, "If you want, I can help find this missing statue.")
       else

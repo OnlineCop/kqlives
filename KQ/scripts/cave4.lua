@@ -3,26 +3,26 @@
 -- /*
 -- {
 -- P_BRONZEKEY: Key into the room with Corin and the troll
---   0 - Don't have the key yet
---   1 - Got the key from Demnas
---   2 - Used the key to open the bronze door
+--   (0) Don't have the key yet
+--   (1) Got the key from Demnas
+--   (2) Used the key to open the bronze door
 --
 -- P_C4DOORSOPEN: See-through ceilings or not
---   0 - Ceilings visible
---   1 - Ceilings invisible
+--   (0) Ceilings visible
+--   (1) Ceilings invisible
 --
 -- P_DEMNASDEAD: Whether you defeated Demnas
---   0 - Still kickin'
---   1 - Dead
+--   (0) Still kickin'
+--   (1) Dead
 --
 -- P_DENORIAN: Status of Denorian's statue
---   0..2 - Setup in dville.lua
---   3 - You have the Oracle's broken statue, haven't met troll
---   4 - Defeated troll
+--   (0)..(2) Setup in dville.lua
+--   (3) You have the Oracle's broken statue, haven't met troll
+--   (4) Defeated troll
 --
 -- P_TALK_CORIN: If you've spoken to Corin
---   0 - Haven't spoken to him yet
---   1 - He tells you about the connection of the troll and Malkaron's armies
+--   (0) Haven't spoken to him yet
+--   (1) He tells you about the connection of the troll and Malkaron's armies
 --
 -- }
 -- */

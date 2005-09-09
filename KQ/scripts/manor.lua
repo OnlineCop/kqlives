@@ -3,17 +3,17 @@
 -- /*
 -- {
 -- P_MANOR: Status of conversations when you are in the manor
---   0 - New game; you haven't spoken to the butler yet
---   1 - Nostik further explained your mission; you haven't spoken to butler
---   2 - Butler has spoken to you, or you have no new recruits yet
---   3 - You've recruited others and they're waiting around the table
+--   (0) New game; you haven't spoken to the butler yet
+--   (1) Nostik further explained your mission; you haven't spoken to butler
+--   (2) Butler has spoken to you, or you have no new recruits yet
+--   (3) You've recruited others and they're waiting around the table
 --
--- P_PLAYERS
---   0 - You haven't recruited anyone yet
---   1..7 - You have others in your party
+-- P_PLAYERS: Number of recruits in your party
+--   (0) You haven't recruited anyone yet
+--   (1)..(7) You have others in your party
 --
--- P_MANORPARTY[0-7]
---   0..7 - Whether this character has been recruited into your party
+-- P_MANORPARTY[0-7]: Which recruits have joined your party
+--   (0)..(7) Whether this character has been recruited into your party
 --
 --
 -- Details:
@@ -88,14 +88,14 @@ function postexec()
     bubble(en, "Good luck all of you.")
 
     -- TT: make everyone else walk out the door
-    move_entity(SENSAR,   10, 18, 1)
-    move_entity(SARINA,   10, 18, 1)
-    move_entity(CORIN,    10, 18, 1)
-    move_entity(AJATHAR,  10, 18, 1)
-    move_entity(CASANDRA, 10, 18, 1)
-    move_entity(TEMMIN,   10, 18, 1)
-    move_entity(AYLA,     10, 18, 1)
-    move_entity(NOSLOM,   10, 18, 1)
+    move_entity(SENSAR,   11, 20, 1)
+    move_entity(SARINA,   11, 20, 1)
+    move_entity(CORIN,    11, 20, 1)
+    move_entity(AJATHAR,  11, 20, 1)
+    move_entity(CASANDRA, 11, 20, 1)
+    move_entity(TEMMIN,   11, 20, 1)
+    move_entity(AYLA,     11, 20, 1)
+    move_entity(NOSLOM,   11, 20, 1)
     for a = 0, 7, 1 do
       set_ent_speed(a, 4)
     end

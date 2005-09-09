@@ -17,6 +17,11 @@ function autoexec()
 end
 
 
+function refresh()
+  return
+end
+
+
 function postexec()
   if (get_progress(P_EMBERSKEY) == 1) then
     wait(50)
@@ -58,6 +63,7 @@ function zone_handler(zn)
 
   elseif (zn == 4) then
     chest(54, I_EDROPS, 1)
+    refresh()
 
   elseif (zn == 5) then
     door_out(22, 23)

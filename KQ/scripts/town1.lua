@@ -3,52 +3,52 @@
 -- /*
 -- {
 -- P_CANCELROD: Possession of Rod of Cancellation
---   0 - Do not have it
---   1 - Got it
---   2 - Returned it to Derig
+--   (0) Do not have it
+--   (1) Got it
+--   (2) Returned it to Derig
 --
 -- P_DARKIMPBOSS: Dark Imp is in the tunnel from Ekla to Randen
---   0 - It is blocking the stairway
---   1 - You defeated it and the pathway is now clear
+--   (0) It is blocking the stairway to Randen
+--   (1) You defeated it and the pathway is now clear
 --
 -- P_EKLAWELCOME: Corny welcome message when you talk to the man in Ekla
---   0 - He hasn't yet given you his corny "Yes! This makes 8!" speech
---   1 - Now he likes cheese
+--   (0) He hasn't yet given you his corny "Yes! This makes 8!" speech
+--   (1) Now he likes cheese
 --
 -- P_PORTALGONE: Whether the portal in the tunnel is still working
---   0 - Still letting monsters through
---   1 - The Portal is sealed shut
+--   (0) Still letting monsters through
+--   (1) The Portal is sealed shut
 --
--- P_START: Monsters will not attack you until you enter and leave Ekla
---   0 - Haven't entered Ekla yet
---   1 - Entered Ekla; monsters will now attack randomly on world map
+-- P_START: Monsters will not attack you until you enter Ekla
+--   (0) (not used)
+--   (1) Entered Ekla; monsters will now attack randomly on world map
 --
 -- P_TALKDERIG: If you've spoken to Derig
---   0 - Never entered grotto
---   1 - Entered grotto; didn't fall down pit
---   2 - Fell down pit in grotto, didn't speak with Derig
---   3 - Fell down pit, spoke with Derig
---   4 - Derig told you about the Rod of Cancellation
---   5 - Returned Unadium coin and Rod of Cancellation to Derig
---   6 - Derig has left Ekla and is back in the Grotto
+--   (0) Never entered grotto
+--   (1) Entered grotto; didn't fall down pit
+--   (2) Fell down pit in grotto, didn't speak with Derig
+--   (3) Fell down pit, spoke with Derig
+--   (4) Derig told you about the Rod of Cancellation
+--   (5) Returned Unadium coin and Rod of Cancellation to Derig
+--   (6) Derig has left Ekla and is back in the Grotto
 --
 -- P_TALK_TSORIN: If you've spoken to Tsorin in Andra (and got his seal)
---   0 - You haven't spoken to him yet
---   1 - Tsorin gave you a note to give to Derig
---   2 - Derig gave you a note to return to Tsorin
---   3 - Tsorin gave you his seal to get through the fort
---   4 - You've shown the seal to the guards at the fort
---   5 - You are free pass through the fort anytime (no contention in goblin lands)
+--   (0) You haven't spoken to him yet
+--   (1) Tsorin gave you a note to give to Derig
+--   (2) Derig gave you a note to return to Tsorin
+--   (3) Tsorin gave you his seal to get through the fort
+--   (4) You've shown the seal to the guards at the fort
+--   (5) You are free pass through the fort anytime (no contention in goblin lands)
 --
 -- P_UCOIN: Unadium Coin from Jen
---   0 - Have not yet spoken with the granddaughter, Jen
---   1 - Spoke to Jen
---   2 - Received coin
---   3 - Returned coin
+--   (0) Have not yet spoken with the granddaughter, Jen
+--   (1) Spoke to Jen
+--   (2) Received coin
+--   (3) Returned coin
 --
 -- P_WARPSTONE: The teleporter from Ajantara <-> Randen
---   0 - Haven't used it yet
---   1 - Stepped on the warp stone and created its counterpart in Randen
+--   (0) Haven't used it yet
+--   (1) Stepped on the warp stone and created its counterpart in Randen
 -- }
 -- */
 
@@ -261,13 +261,19 @@ function entity_handler(en)
   if (en == 0) then
     if (get_progress(P_WARPSTONE) == 0) then
       if (get_progress(P_EKLAWELCOME) == 0) then
-        bubble(en, "I welcome people to Ekla.")
+        bubble(en, "Welcome to Ekla.")
+        bubble(en, "Yes! This makes 8!", "If I welcome enough people to town, I might get promoted to a job where I just sit around the house all day and say the same thing over and over. I should start practicing.")
         set_progress(P_EKLAWELCOME, 1)
+      elseif (get_progress(P_EKLAWELCOME) == 1) then
+        bubble(en, "I like cheese.")
+      end
+    else
+      if (get_progress(P_EKLAWELCOME) == 0) then
+        bubble(en, "I welcome people to Ekla.")
+        bubble(en, "Welcome back.")
       elseif (get_progress(P_EKLAWELCOME) == 1) then
         bubble(en, "I welcomed you already. You're in Ekla.")
       end
-    else
-      bubble(en, "Welcome back.")
     end
 
   elseif (en == 1) then

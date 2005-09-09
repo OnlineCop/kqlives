@@ -68,7 +68,8 @@ function zone_handler(zn)
       drawmap()
       screen_dump()
 
-      change_map("cave5", 4, 93, 0, 0)
+      change_mapm("cave5", "door1")
+      -- change_map("cave5", 4, 93, 0, 0)
     end
   elseif (zn == 4) then
     chest(73, I_VITSEED, 1)
@@ -90,7 +91,8 @@ function zone_handler(zn)
       drawmap()
       screen_dump()
 
-      change_map("cave5", 15, 147, 0, 0)
+      change_mapm("cave5", "door2")
+      -- change_map("cave5", 15, 147, 0, 0)
     end
 
   elseif (zn == 7) then
@@ -104,7 +106,8 @@ function zone_handler(zn)
       drawmap()
       screen_dump()
 
-      change_map("cave5", 84, 147, 0, 0)
+      change_mapm("cave5", "door3")
+      -- change_map("cave5", 84, 147, 0, 0)
     end
 
   -- Door into cabin

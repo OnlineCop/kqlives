@@ -151,7 +151,8 @@ function zone_handler(zn)
     if (get_progress(P_WARPSTONE) == 0) then
       set_progress(P_WARPSTONE, 1)
     end
-    change_map("town2", 35, 15, 35, 15)
+    change_mapm("town2", "travelpoint")
+    -- change_map("town2", 35, 15, 35, 15)
 
   elseif (zn == 31) then
     touch_fire(party[0])
