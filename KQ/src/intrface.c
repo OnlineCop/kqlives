@@ -132,11 +132,17 @@ static int KQ_set_autoparty (lua_State *);
 static int KQ_get_numchrs (lua_State *);
 static int KQ_set_all_equip (lua_State *);
 static int KQ_set_btile (lua_State *);
+static int KQ_set_btilem (lua_State *);
 static int KQ_set_mtile (lua_State *);
+static int KQ_set_mtilem (lua_State *);
 static int KQ_set_ftile (lua_State *);
+static int KQ_set_ftilem (lua_State *);
 static int KQ_set_obs (lua_State *);
+static int KQ_set_obsm (lua_State *);
 static int KQ_set_zone (lua_State *);
+static int KQ_set_zonem (lua_State *);
 static int KQ_set_shadow (lua_State *);
+static int KQ_set_shadowm (lua_State *);
 static int KQ_set_tile_all (lua_State *);
 static int KQ_set_desc (lua_State *);
 static int KQ_set_foreground (lua_State *);
@@ -147,6 +153,7 @@ static int KQ_set_run (lua_State *);
 static int KQ_set_save (lua_State *);
 static int KQ_set_sstone (lua_State *);
 static int KQ_move_entity (lua_State *);
+static int KQ_move_entitym (lua_State *);
 static int KQ_set_warp (lua_State *);
 static int KQ_set_vfollow (lua_State *);
 static int KQ_create_df (lua_State *);
@@ -178,8 +185,10 @@ static int KQ_door_in (lua_State *);
 static int KQ_door_out (lua_State *);
 static int KQ_calc_viewport (lua_State *);
 static int KQ_change_map (lua_State *);
+static int KQ_change_mapm (lua_State *);
 static int KQ_give_item (lua_State *);
 static int KQ_warp (lua_State *);
+static int KQ_warpm (lua_State *);
 static int KQ_give_xp (lua_State *);
 static int KQ_chest (lua_State *);
 static int KQ_combat (lua_State *);
@@ -299,11 +308,17 @@ static const struct luaL_reg lrs[] = {
    {"get_numchrs", KQ_get_numchrs},
    {"set_all_equip", KQ_set_all_equip},
    {"set_btile", KQ_set_btile},
+   {"set_btilem", KQ_set_btilem},
    {"set_mtile", KQ_set_mtile},
+   {"set_mtilem", KQ_set_mtilem},
    {"set_ftile", KQ_set_ftile},
+   {"set_ftilem", KQ_set_ftilem},
    {"set_obs", KQ_set_obs},
+   {"set_obsm", KQ_set_obsm},
    {"set_zone", KQ_set_zone},
+   {"set_zonem", KQ_set_zonem},
    {"set_shadow", KQ_set_shadow},
+   {"set_shadowm", KQ_set_shadowm},
    {"set_tile_all", KQ_set_tile_all},
    {"set_desc", KQ_set_desc},
    {"set_foreground", KQ_set_foreground},
@@ -314,6 +329,7 @@ static const struct luaL_reg lrs[] = {
    {"set_save", KQ_set_save},
    {"set_sstone", KQ_set_sstone},
    {"move_entity", KQ_move_entity},
+   {"move_entitym", KQ_move_entitym},
    {"set_warp", KQ_set_warp},
    {"set_vfollow", KQ_set_vfollow},
    {"create_df", KQ_create_df},
@@ -345,8 +361,10 @@ static const struct luaL_reg lrs[] = {
    {"door_out", KQ_door_out},
    {"calc_viewport", KQ_calc_viewport},
    {"change_map", KQ_change_map},
+   {"change_mapm", KQ_change_mapm},
    {"give_item", KQ_give_item},
    {"warp", KQ_warp},
+   {"warpm", KQ_warpm},
    {"give_xp", KQ_give_xp},
    {"chest", KQ_chest},
    {"combat", KQ_combat},
@@ -401,6 +419,7 @@ static struct s_field
    const char *name;
    int id;
 }
+
 
 
 // *INDENT-OFF*
@@ -483,6 +502,8 @@ static int get_field (const char *n)
    return ans ? ans->id : -1;
 }
 
+
+
 /*
  PH's own notes:
  party[] - chrs in play
@@ -513,6 +534,7 @@ static int party_getter (lua_State * L)
    }
    return 1;
 }
+
 
 
 /*! \brief Set party array
@@ -572,6 +594,7 @@ static int party_setter (lua_State * L)
    }
    return 0;
 }
+
 
 
 /*! \brief Object interface for character
@@ -763,6 +786,7 @@ static int KQ_char_getter (lua_State * L)
 }
 
 
+
 /*! \brief Initialise marker support
  *
  * Add a table containing all the markers
@@ -788,6 +812,8 @@ static void init_markers (lua_State * L)
    }
    lua_setglobal (L, "markers");
 }
+
+
 
 /*! \brief Initialise the object interface for heroes and entities
  *
@@ -863,12 +889,14 @@ static void init_obj (lua_State * L)
 }
 
 
+
 int g_trk, g_keys[8];
 BITMAP *g_bmp[5];
 DATAFILE *g_df;
 lua_State *theL;
 char tmap_name[16];
-int tmx, tmy, tmvx, tmvy, changing_map = 0;
+char marker_name[255];
+int tmx, tmy, tmvx, tmvy, changing_map = 0, changing_map_markers = 0;
 
 
 
@@ -1629,7 +1657,7 @@ static int KQ_set_ent_atype (lua_State * L)
 {
    int a = real_entity_num (L, 1);
 
-   g_ent[a].snapback = (int) lua_tonumber (L, 2);
+   g_ent[a].atype = (int) lua_tonumber (L, 2);
    return 0;
 }
 
@@ -1854,10 +1882,40 @@ static int KQ_set_btile (lua_State * L)
 
 
 
+static int KQ_set_btilem (lua_State * L)
+{
+   s_marker *m;
+   strcpy (marker_name, lua_tostring (L, 1));
+
+   for (m = g_map.markers; m < g_map.markers + g_map.num_markers; ++m) {
+      if (!strcmp (marker_name, m->name)) {
+         set_btile (m->x, m->y, (int) lua_tonumber (L, 2));
+      }
+   }
+   return 0;
+}
+
+
+
 static int KQ_set_mtile (lua_State * L)
 {
    set_mtile ((int) lua_tonumber (L, 1), (int) lua_tonumber (L, 2),
               (int) lua_tonumber (L, 3));
+   return 0;
+}
+
+
+
+static int KQ_set_mtilem (lua_State * L)
+{
+   s_marker *m;
+   strcpy (marker_name, lua_tostring (L, 1));
+
+   for (m = g_map.markers; m < g_map.markers + g_map.num_markers; ++m) {
+      if (!strcmp (marker_name, m->name)) {
+         set_mtile (m->x, m->y, (int) lua_tonumber (L, 2));
+      }
+   }
    return 0;
 }
 
@@ -1872,10 +1930,41 @@ static int KQ_set_ftile (lua_State * L)
 
 
 
+static int KQ_set_ftilem (lua_State * L)
+{
+   s_marker *m;
+   strcpy (marker_name, lua_tostring (L, 1));
+
+   for (m = g_map.markers; m < g_map.markers + g_map.num_markers; ++m) {
+      if (!strcmp (marker_name, m->name)) {
+         set_ftile (m->x, m->y, (int) lua_tonumber (L, 2));
+      }
+   }
+   return 0;
+}
+
+
+
 static int KQ_set_obs (lua_State * L)
 {
    set_obs ((int) lua_tonumber (L, 1), (int) lua_tonumber (L, 2),
             (int) lua_tonumber (L, 3));
+   return 0;
+}
+
+
+
+static int KQ_set_obsm (lua_State * L)
+{
+   s_marker *m;
+   strcpy (marker_name, lua_tostring (L, 1));
+
+   for (m = g_map.markers; m < g_map.markers + g_map.num_markers; ++m) {
+      if (!strcmp (marker_name, m->name)) {
+         set_obs (m->x, m->y, (int) lua_tonumber (L, 2));
+      }
+   }
+
    return 0;
 }
 
@@ -1890,10 +1979,42 @@ static int KQ_set_zone (lua_State * L)
 
 
 
+static int KQ_set_zonem (lua_State * L)
+{
+   s_marker *m;
+   strcpy (marker_name, lua_tostring (L, 1));
+
+   for (m = g_map.markers; m < g_map.markers + g_map.num_markers; ++m) {
+      if (!strcmp (marker_name, m->name)) {
+         set_zone (m->x, m->y, (int) lua_tonumber (L, 2));
+      }
+   }
+
+   return 0;
+}
+
+
+
 static int KQ_set_shadow (lua_State * L)
 {
    set_shadow ((int) lua_tonumber (L, 1), (int) lua_tonumber (L, 2),
                (int) lua_tonumber (L, 3));
+   return 0;
+}
+
+
+
+static int KQ_set_shadowm (lua_State * L)
+{
+   s_marker *m;
+   strcpy (marker_name, lua_tostring (L, 1));
+
+   for (m = g_map.markers; m < g_map.markers + g_map.num_markers; ++m) {
+      if (!strcmp (marker_name, m->name)) {
+         set_shadow (m->x, m->y, (int) lua_tonumber (L, 2));
+      }
+   }
+
    return 0;
 }
 
@@ -2069,6 +2190,15 @@ static int KQ_set_sstone (lua_State * L)
 
 
 
+/* Automatically find a path for the entity to take
+ * 
+ * \param L::1 Index of entity to move
+ * \param L::2 x-coord to go to
+ * \param L::3 y-coord to go to
+ * \param L::4 Kill entity after move is complete
+ *             0 - Keep entity alive
+ *             1 - Kill (remove) entity
+ */
 static int KQ_move_entity (lua_State * L)
 {
    int   entity_id = real_entity_num (L, 1);
@@ -2077,6 +2207,46 @@ static int KQ_move_entity (lua_State * L)
    int   kill      = (int) lua_tonumber (L, 4);
    int   result;
    char  buffer[1024];
+
+   result = find_path (entity_id, g_ent[entity_id].tilex,
+                       g_ent[entity_id].tiley, target_x, target_y, buffer,
+                       sizeof(buffer));
+
+   /*  FIXME: The fourth parameter is a ugly hack for now.  */
+   if (kill)
+       strcat (buffer, "K");
+
+   set_script (entity_id, buffer);
+   return 0;
+}
+
+
+
+/* Automatically find a path for the entity to take
+ * 
+ * \param L::1 Index of entity to move
+ * \param L::2 Marker name to move entity to
+ * \param L::3 Kill entity after move is complete
+ *             0 - Keep entity alive
+ *             1 - Kill (remove) entity
+ */
+static int KQ_move_entitym (lua_State * L)
+{
+   int entity_id = real_entity_num (L, 1);
+   const char *marker_name = lua_tostring (L, 2);
+   int kill      = (int) lua_tonumber (L, 3);
+   int target_x  = 0;
+   int target_y  = 0;
+   int result;
+   char buffer[1024];
+   s_marker *m;
+
+   for (m = g_map.markers; m < g_map.markers + g_map.num_markers; ++m) {
+      if (!strcmp(marker_name, m->name)) {
+         target_x = m->x;
+         target_y = m->y;
+      }
+   }
 
    result = find_path(entity_id, g_ent[entity_id].tilex,
                       g_ent[entity_id].tiley, target_x, target_y, buffer,
@@ -2105,6 +2275,7 @@ static int KQ_set_warp (lua_State * L)
 
 
 
+/* Whether the camera view follows the players as they walk around */
 static int KQ_set_vfollow (lua_State * L)
 {
    int a = (int) lua_tonumber (L, 1);
@@ -2209,6 +2380,8 @@ static int KQ_drawsprite (lua_State * L)
                    (int) lua_tonumber (L, 3) + yofs);
    return 0;
 }
+
+
 
 /*! \brief Update the screen */
 static int KQ_screen_dump (lua_State * L)
@@ -2400,9 +2573,6 @@ static int KQ_krnd (lua_State * L)
 
 
 
-
-
-
 static int KQ_do_fadeout (lua_State * L)
 {
    do_transition (TRANS_FADE_OUT, (int) lua_tonumber (L, 1));
@@ -2505,6 +2675,23 @@ static int KQ_change_map (lua_State * L)
    tmvx = (int) lua_tonumber (L, 4);
    tmvy = (int) lua_tonumber (L, 5);
    changing_map = 1;
+   changing_map_markers = 0;
+   return 0;
+}
+
+
+
+/* Change the map to the coordinates of the given marker
+ * The camera will also be set to the same coords
+ */
+static int KQ_change_mapm (lua_State * L)
+{
+   // *** TT TODO ***
+   strcpy (tmap_name, (char *) lua_tostring (L, 1));
+   strcpy (marker_name, lua_tostring (L, 2));
+
+   changing_map = 0;
+   changing_map_markers = 1;
    return 0;
 }
 
@@ -2517,10 +2704,11 @@ static int KQ_give_item (lua_State * L)
 }
 
 
+
 /*! \brief Warp to another part of the map
  *
  * Move the heroes to another part of the map, in
- * one 'jump' (e.g when going through a door)
+ * one transition (e.g when going through a door)
  * \param L::1 x-coord to go to
  * \param L::2 y-coord to go to
  * \param L::3 speed of the transition, defaults to '8'
@@ -2532,6 +2720,32 @@ static int KQ_warp (lua_State * L)
 {
    int warpspeed = lua_isnil (L, 3) ? 8 : (int) lua_tonumber (L, 3);
    warp ((int) lua_tonumber (L, 1), (int) lua_tonumber (L, 2), warpspeed);
+   return 0;
+}
+
+
+
+/*! \brief Warp to another marker on the map
+ *
+ * Move the heroes to a marker on the map, in
+ * one transition (e.g when going through a door)
+ * \param L::1 marker name to go to
+ * \param L::2 speed of the transition, defaults to '8'
+ * \author TT
+ * \date 20050822
+ */
+static int KQ_warpm (lua_State * L)
+{
+   s_marker *m;
+   strcpy (marker_name, lua_tostring (L, 1));
+   int warpspeed = lua_isnil (L, 2) ? 8 : (int) lua_tonumber (L, 2);
+
+   for (m = g_map.markers; m < g_map.markers + g_map.num_markers; ++m) {
+      if (!strcmp (marker_name, m->name)) {
+         warp (m->x, m->y, warpspeed);
+      }
+   }
+
    return 0;
 }
 
@@ -2620,6 +2834,7 @@ static int KQ_rest (lua_State * L)
    wait ((int) lua_tonumber (L, 1));
    return 0;
 }
+
 
 
 /*! \brief Show message on the screen
@@ -2991,6 +3206,7 @@ static int KQ_wait_enter (lua_State * L)
 }
 
 
+
 extern int useup_item (int);
 static int KQ_use_up (lua_State * L)
 {
@@ -3015,6 +3231,7 @@ int KQ_bubble_ex (lua_State * L)
    text_ex (B_TEXT, entity, msg);
    return 0;
 }
+
 
 
 int KQ_thought_ex (lua_State * L)
@@ -3047,6 +3264,7 @@ int KQ_battle (lua_State * L)
 }
 
 
+
 /*! \brief Is the argument a table or not?
  *
  * \param L::1 any Lua type
@@ -3062,6 +3280,7 @@ int KQ_istable (lua_State * L)
    }
    return 1;
 }
+
 
 
 /*! \brief Select your team
@@ -3099,11 +3318,14 @@ int KQ_select_team (lua_State * L)
    return 1;
 }
 
+
+
 int KQ_set_map_mode (lua_State * L)
 {
    g_map.map_mode = (int) lua_tonumber (L, 1);
    return 0;
 }
+
 
 
 int KQ_add_timer (lua_State * L)
@@ -3113,6 +3335,8 @@ int KQ_add_timer (lua_State * L)
    lua_pushnumber (L, add_timer_event (funcname, delta));
    return 1;
 }
+
+
 
 int KQ_add_quest_item (lua_State * L)
 {
@@ -3330,10 +3554,15 @@ void do_questinfo (void)
  */
 static void check_map_change (void)
 {
-   if (changing_map == 0)
+   if (changing_map == 0 && changing_map_markers == 0)
       return;
-   changing_map = 0;
-   change_map (tmap_name, tmx, tmy, tmvx, tmvy);
+   if (changing_map != 0) {
+      changing_map = 0;
+      change_map (tmap_name, tmx, tmy, tmvx, tmvy);
+   } else if (changing_map_markers != 0) {
+      changing_map_markers = 0;
+      change_mapm (tmap_name, marker_name);
+   }
 }
 
 
@@ -3346,17 +3575,17 @@ static void check_map_change (void)
 static int KQ_get_marker_tilex (lua_State * L)
 {
    s_marker *m;
-   const char *marker_name = lua_tostring (L, 1);
+   strcpy (marker_name, lua_tostring (L, 1));
 
    for (m = g_map.markers; m < g_map.markers + g_map.num_markers; ++m)
-      if (!strcmp(marker_name, m->name))
+      if (!strcmp (marker_name, m->name))
          lua_pushnumber (L, m->x);
    return 1;
 }
 
 
 
-/*! \brief Get the x-coord of marker
+/*! \brief Get the y-coord of marker
  *
  * \param   L::1 Marker name
    \returns y-coord of marker
@@ -3364,13 +3593,14 @@ static int KQ_get_marker_tilex (lua_State * L)
 static int KQ_get_marker_tiley (lua_State * L)
 {
    s_marker *m;
-   const char *marker_name = lua_tostring (L, 1);
+   strcpy (marker_name, lua_tostring (L, 1));
 
    for (m = g_map.markers; m < g_map.markers + g_map.num_markers; ++m)
-      if (!strcmp(marker_name, m->name))
+      if (!strcmp (marker_name, m->name))
          lua_pushnumber (L, m->y);
    return 1;
 }
+
 
 
 /* Create a new marker, with whatever name is passed in, at desired coords
@@ -3383,17 +3613,17 @@ static int KQ_set_marker (lua_State * L)
 {
    s_marker *m;
 
-   const char *marker_name = lua_tostring (L, 1);
+   strcpy (marker_name, lua_tostring (L, 1));
    const int x_coord = lua_tonumber (L, 2);
    const int y_coord = lua_tonumber (L, 3);
 
    for (m = g_map.markers; m < g_map.markers + g_map.num_markers; ++m) {
-      if (!strcmp(marker_name, m->name)) {
+      if (!strcmp (marker_name, m->name)) {
          // This should not happen:
          sprintf (strbuf, "Error in script: %s already defined.", marker_name);
          message (strbuf, 255, 50, xofs, yofs);
       } else {
-         strcpy(g_map.markers[g_map.num_markers++].name, (const char *) marker_name);
+         strcpy (g_map.markers[g_map.num_markers++].name, (const char *) marker_name);
          g_map.markers[g_map.num_markers++].x = x_coord;
          g_map.markers[g_map.num_markers++].y = y_coord;
       }
@@ -3402,28 +3632,25 @@ static int KQ_set_marker (lua_State * L)
    return 0;
 }
 
-/* TT TODO: This has not yet done all the error-checking (multiple markers
- * with the same name, set the marker to the coords x/y (L::2, L::3), etc.
- */
 
 
 /* This is going to make use of markers to simplify going up or down stairs.
  * \param   L::1 marker_name Marker to warp to
- * \param   L::2-5 range Will call set_view() with these coords
+ * \param   L::2-5 Area we wish the player to view: calls set_view()
  */
 static int KQ_take_stairs (lua_State * L)
 {
    s_marker *m;
-   const char *marker_name = lua_tostring (L, 1);
+   strcpy (marker_name, lua_tostring (L, 1));
    int a, b[4];
 
    for (m = g_map.markers; m < g_map.markers + g_map.num_markers; ++m) {
-      if (!strcmp(marker_name, m->name)) {
+      if (!strcmp (marker_name, m->name)) {
          for (a = 0; a < 4; a++)
             b[a] = (int) lua_tonumber (L, a + 2);
-         if (b[0] == 0 || b[1] == 0 || b[2] == 0 || b[3] == 0)
+         if (b[0] == 0 || b[1] == 0 || b[2] == 0 || b[3] == 0) {
             warp (0, 0, 8);
-         else {
+         } else {
             set_view (1, b[0], b[1], b[2], b[3]);
             warp (m->x, m->y, 8);
          }

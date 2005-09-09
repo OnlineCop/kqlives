@@ -838,7 +838,7 @@ void draw_map (void)
    }
 
    /* Draw the Markers */
-   if (showing.markers == 1) {
+   if (showing.markers == 1 && num_markers > 0) {
       for (i = 0; i < num_markers; ++i) {
          if ((markers[i].x >= window_x) && (markers[i].x < window_x + htiles)
              && (markers[i].y >= window_y)
@@ -848,11 +848,16 @@ void draw_map (void)
                          (markers[i].y - window_y) * 16 - 8);
          }                      /* If marker is visible */
       }                         /* For each marker */
-      /* Put a rectangle around the selected one for clarity */
-      rect (double_buffer, (markers[curmarker].x - window_x) * 16,
-                           (markers[curmarker].y - window_y) * 16,
-                           (markers[curmarker].x - window_x) * 16 + 15,
-                           (markers[curmarker].y - window_y) * 16 + 15, 25);
+
+      /* Only draw highlight around marker if the mode is correct */
+      if (draw_mode == MAP_MARKERS) {
+         /* Put a rectangle around the selected one for clarity */
+         rect (double_buffer, (markers[curmarker].x - window_x) * 16,
+                              (markers[curmarker].y - window_y) * 16,
+                              (markers[curmarker].x - window_x) * 16 + 15,
+                              (markers[curmarker].y - window_y) * 16 + 15,
+                              25);
+      }
    }
 
    /* If showing markers */
@@ -1262,9 +1267,11 @@ void draw_menubars (void)
       }
    }
 
-   if (draw_mode == MAP_MARKERS) {
+   if (draw_mode == MAP_MARKERS && num_markers > 0) {
       /* draw the currently selected marker */
-      sprintf (strbuf, "Marker #%d: %s", curmarker, markers[curmarker].name);
+      sprintf (strbuf, "Marker #%d: %s (%d, %d)", curmarker,
+               markers[curmarker].name, markers[curmarker].x,
+               markers[curmarker].y);
       print_sfont ((COLUMN_WIDTH * 4), (SH - 16), strbuf, double_buffer);
    }
 
@@ -1287,15 +1294,16 @@ void draw_menubars (void)
    if (mouse_y / 16 < vtiles && mouse_x / 16 < htiles)
       rect (double_buffer, x * 16, y * 16, x * 16 + 15, y * 16 + 15, 255);
 
-   if (draw_mode == BLOCK_COPY) {
-      sprintf (strbuf, "From: %d,%d", (copyx1 > -1 ? copyx1 : 0),
+   if (draw_mode == BLOCK_COPY || draw_mode == BLOCK_PASTE) {
+      sprintf (strbuf, "Copy From:: (%d, %d)", (copyx1 > -1 ? copyx1 : 0),
                (copyy1 > -1 ? copyy1 : 0));
       print_sfont ((COLUMN_WIDTH * 4), (SH - 46), strbuf, double_buffer);
-      if ((copying == 0) && ((copyx2 > -1) && (copyy2 > -1))) {
-         sprintf (strbuf, "To: %d,%d", copyx2, copyy2);
-         print_sfont (332, (SH - 40), strbuf, double_buffer);
-      }
+
+      sprintf (strbuf, "Copy To: (%d, %d)", (copyx2 > -1 ? copyx2 : 0),
+               (copyy2 > -1 ? copyy2 : 0));
+      print_sfont ((COLUMN_WIDTH * 4), (SH - 40), strbuf, double_buffer);
    }
+
 }                               /* draw_menubars () */
 
 
@@ -1591,6 +1599,26 @@ void normalize_view (void)
 void paste_region (const int tx, const int ty)
 {
    int zx, zy, coord1, coord2;
+   s_marker *m;
+   int moved_x, moved_y;
+
+   moved_x = tx - copyx1;   // copyx1 - tx < 0 ? tx - copyx1 : copyx1 - tx;
+   moved_y = ty - copyy1;   // copyy1 - ty < 0 ? ty - copyy1 : copyy1 - ty;
+
+   for (m = markers; m < markers + num_markers; ++m) {
+      if (!(m->x < copyx1 || m->x > copyx2 || m->y < copyy1 || m->y > copyy2)) {
+         /* Move the markers found within the Copy From block */
+         m->x = m->x + moved_x;
+         m->y = m->y + moved_y;
+      }
+   }
+
+   /* Set the new coords for the Copy From to the new Copy To
+    * location correctly handle moving the markers.
+    */
+   copyx1 = tx; copyx2 = copyx1 + cbw;
+   copyy1 = ty; copyy2 = copyy1 + cbh;
+
    if (clipb == 0)
       return;
    for (zy = 0; zy <= cbh; zy++) {
@@ -1902,6 +1930,7 @@ int process_keyboard (const int k)
       showing.shadows = 1;
       showing.obstacles = 1;
       showing.zones = 1;
+      showing.markers = 1;
       showing.last_layer = draw_mode;
       grab_tile = 0;
       break;
@@ -1914,6 +1943,7 @@ int process_keyboard (const int k)
       showing.shadows = 1;
       showing.obstacles = 0;
       showing.zones = 0;
+      showing.markers = 0;
       showing.last_layer = MAP_LAYER123;
       grab_tile = 0;
       break;
@@ -3514,8 +3544,15 @@ void add_change_marker (int marker_x, int marker_y, int mouse_button)
          rename_marker (found);
       } else if (mouse_button == 2) {
          /* Delete it */
+         
+         /* Move the selector to the previous marker if this was the last
+          * marker on the map
+          */
+         num_markers--;
+         if (curmarker == num_markers)
+            curmarker = num_markers - 1;
          memcpy (found, found + 1,
-                 (&markers[--num_markers] - found) * sizeof (s_marker));
+           (&markers[num_markers] - found) * sizeof (s_marker));
          while (mouse_b & 2);
       }
    } else {
@@ -3523,10 +3560,11 @@ void add_change_marker (int marker_x, int marker_y, int mouse_button)
       if (mouse_button == 1) {
          /* Add a marker with default name */
          if (num_markers < MAX_MARKERS) {
+            curmarker = num_markers;
             m = &markers[num_markers++];
             m->x = marker_x;
             m->y = marker_y;
-            sprintf (m->name, "Marker #%d: (%d, %d)", num_markers, marker_x, marker_y);
+            sprintf (m->name, "Marker #%d: (%d, %d)", num_markers, m->x, m->y);
          }
       }
    }
@@ -3539,7 +3577,7 @@ void rename_marker (s_marker *found)
    s_marker *m;
 
    make_rect (double_buffer, 2, 32);
-   print_sfont (6, 6, (*found).name, double_buffer);
+   print_sfont (6, 6, found->name, double_buffer);
    print_sfont (6, 12, ">", double_buffer);
 
    done = 0;
@@ -3570,7 +3608,7 @@ void rename_marker (s_marker *found)
          }
       }
    }
-   strcpy ((*found).name, strbuf);
+   strcpy (found->name, strbuf);
 }                               /* rename_marker () */
 
 
