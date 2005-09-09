@@ -367,6 +367,7 @@ s_fighter;
 
 
 void change_map (char *, int, int, int, int);   /*  intrface.c, magic.c  */
+void change_mapm (char *, const char *);  /*  intrface.c */
 void readcontrols (void);       /*  everywhere ;)  */
 void calc_viewport (int);       /*  entity.c, intrface.c  */
 void zone_check (void);         /*  entity.c  */

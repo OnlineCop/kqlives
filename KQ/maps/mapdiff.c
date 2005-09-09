@@ -442,7 +442,9 @@ void check_map (void)
    int i;
    int _map_no, _zero_zone, _map_mode, _can_save, _tileset, _use_sstone,
       _can_warp, _extra_byte, _xsize, _ysize, _pmult, _pdiv, _stx, _sty,
-      _warpx, _warpy, _revision, _extra_sdword2, _song_file, _map_desc;
+      _warpx, _warpy, _revision, _extra_sdword2, _song_file, _map_desc,
+      _num_markers, _num_markers1, _num_markers2, marker_num;
+   s_marker *_m1, *_m2;
 
    _map_no = gmap1.map_no != gmap2.map_no ? 1 : 0;
    _zero_zone = gmap1.zero_zone != gmap2.zero_zone ? 1 : 0;
@@ -479,11 +481,15 @@ void check_map (void)
       }
    }
 
+   _num_markers1 = gmap1.num_markers;
+   _num_markers2 = gmap2.num_markers;
+   _num_markers = _num_markers1 != _num_markers2 ? 1 : 0;
+
    if ((_map_no) || (_zero_zone) || (_map_mode) || (_can_save) || (_tileset)
        || (_use_sstone) || (_can_warp) || (_extra_byte) || (_xsize) || (_ysize)
        || (_pmult) || (_pdiv) || (_stx) || (_sty) || (_warpx) || (_warpy)
        || (_revision) || (_extra_sdword2) || (_song_file)
-       || (_map_desc)) {
+       || (_map_desc) || (_num_markers)) {
       fprintf (stdout,
                "\nStructure:\tmap 1:\t\tmap 2:\n======================================\n");
    }
@@ -540,6 +546,40 @@ void check_map (void)
       fprintf (stdout, "  map_desc:   \t%s\t\t%s\n", gmap1.map_desc,
                gmap2.map_desc);
 
+   _m1 = gmap1.markers;
+   _m2 = gmap2.markers;
+
+   marker_num = 0;
+   if (_num_markers1 != _num_markers2)
+      fprintf (stdout, "  num_markers:\t%d\t\t%d\n", _num_markers1, _num_markers2);
+
+   // Loop through every marker on whichever map which has more (if inequal).
+   while (marker_num <
+          (_num_markers1 > _num_markers2 ? _num_markers1 : _num_markers2)) {
+      if (marker_num < gmap1.num_markers && marker_num < gmap2.num_markers) {
+         // The other map has the same number of markers; compare the values.
+         if ((_m1[marker_num].x != _m2[marker_num].x) ||
+             (_m1[marker_num].y != _m2[marker_num].y) ||
+             (strcmp(_m1[marker_num].name, _m2[marker_num].name) != 0)) {
+            fprintf (stdout, "  - Map1: (%d, %d), \"%s\"\n", _m1[marker_num].x,
+                     _m1[marker_num].y, _m1[marker_num].name);
+            fprintf (stdout, "  - Map2: (%d, %d), \"%s\"\n", _m2[marker_num].x,
+                     _m2[marker_num].y, _m2[marker_num].name);
+         }
+      } else {
+         // The other map does not have that marker, print "only in map #"
+         if (gmap1.num_markers <= marker_num) {
+            fprintf (stdout, "  Marker #%d only in Map #2\n", marker_num + 1);
+            fprintf (stdout, "  - Map2: (%d, %d), \"%s\"\n", _m2[marker_num].x,
+                     _m2[marker_num].y, _m2[marker_num].name);
+         } else if (gmap2.num_markers <= marker_num) {
+            fprintf (stdout, "  Marker #%d only in Map #1\n", marker_num + 1);
+            fprintf (stdout, "  - Map1: (%d, %d), \"%s\"\n", _m1[marker_num].x,
+                     _m1[marker_num].y, _m1[marker_num].name);
+         }
+      }
+      marker_num++;
+   }
 }                               /* check_map () */
 
 
