@@ -340,6 +340,13 @@ void spec_items (void)
       spicon[ii] = 18;
       ii++;
    }
+   if (progress[P_TALKOLDMAN] > 3) {
+      strcpy (silist[ii], "Rusty Key");
+      strcpy (sidesc[ii], "Unlock grotto ruins");
+      siq[ii] = 1;
+      spicon[ii] = 64;
+      ii++;
+   }
    if (ii == 0) {
       play_effect (SND_BAD, 128);
       return;
