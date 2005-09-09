@@ -146,6 +146,8 @@
 
 #define P_TALK_TSORIN     108
 #define P_TALK_CORIN      109
+#define P_TALKOLDMAN      110
+#define P_ORACLEMONSTERS  111
 
 /* 'specials' */
 #define P_SHOPSTART       1750
