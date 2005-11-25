@@ -28,6 +28,7 @@
 -- */
 
 function autoexec()
+  copy_tile_all(39, 92, 21, 46, 5, 8)
   refresh()
 end
 
@@ -163,17 +164,29 @@ function zone_handler(zn)
     refresh()
 
   elseif (zn == 11) then
-    warp(48, 98, 8)
+    -- /* Before this, you saw the room where the troll was, but you couldn't
+    --  * look into it (a problem with set_foreground()). This copies the
+    --  * tiles from the bottom-right of the screen to the appropriate place.
+    --  */
+    copy_tile_all(45, 92, 21, 46, 5, 8)
+    view_range(1, 20, 46, 26, 54)
+    warpm("ustairs", 8)
 
+    -- /* Now, so you don't see this after you leave that room, send back
+    --  * the tiles it used to have in the appropriate place. (We'll just
+    --  * call autoexec() since it does it already.
+    --  */
   elseif (zn == 12) then
-    warp(39, 61, 8)
+    autoexec()
+    view_range(0, 0, 0, 0, 0)
+    warpm("dstairs", 8)
 
   elseif (zn == 13) then
-    if (get_progress(P_DENORIAN) == 3) then
+    if (get_progress(P_DENORIAN) < 4) then
       bubble(HERO1, "The Denorians were right. There really WAS a troll. Looks like it's already dead, though.")
       msg("The troll suddenly lunges at you... it was only asleep!", 0, 0)
       set_run(0)
-      msg("There needs to be a combat here...", 0, 0)
+      msg("TODO: There needs to be a combat here...", 0, 0)
       set_run(1)
 
       bubble(HERO1, "If this troll really DID steal the statue from the Denorians, it was probably being directed by that scumbag Demnas.")
@@ -222,7 +235,11 @@ function entity_handler(en)
         bubble(en, "$0! I saw you run down the stairs there before I could tell you about the troll!")
         bubble(HERO1, "Yea, the troll was asleep, but it wasn't much of a problem to beat.")
         bubble(en, "My, my. So modest.")
-        bubble(HERO1, "Well, what can I say? I'm just that good!")
+        if (get_numchrs() == 1) then
+          bubble(HERO1, "Well, what can I say? I'm just that good!")
+        else
+          bubble(HERO2, "Well, what can we say? We're just that good!")
+        end
         bubble(en, "If that's so, then let me join your party!")
         LOC_join_corin(en)
       end
@@ -306,13 +323,13 @@ function LOC_talk_demnas(en)
   bubble(HERO1, "Huh? Have we met before?")
   bubble(en, "Filthy swine! You cannot have this statue!")
   bubble(HERO1, "Does this mean you're the one responsible for the disappearance of the statue from a village near here?")
-  bubble(en, "Are you accusing me of stealing this statue?")
+  bubble(en, "Uh... Are... Are you accusing me of stealing this statue?!")
   bubble(HERO1, "Well, the thief was traced back to this cave.")
   bubble(en, "Oh, so now I'm a thief?!!")
   bubble(HERO1, "That depends... did you take the statue or not?")
   bubble(en, "What if I did?")
   bubble(HERO1, "Well, then you will give it back... or it will be taken by force!")
-  bubble(en, "That has been tried before already. You proven to be as stupid as you look.")
+  bubble(en, "That has been tried before already. You prove to be as stupid as you look.")
   bubble(en, "Now I, Demnas, will destroy you!")
   drawmap()
   screen_dump()
