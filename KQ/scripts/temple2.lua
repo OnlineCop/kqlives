@@ -219,9 +219,6 @@ function zone_handler(zn)
     set_save(0)
     set_sstone(0)
 
-  elseif (zn == 23) then
-    warp(90, 65, 8)
-
   end
 end
 
