@@ -74,6 +74,7 @@ end
 
 
 function entity_handler(en)
+  local CorinInParty = 0, cp
   -- Anyone except head of town council kicks you out if you refuse to help
   if (get_progress(P_DENORIAN) == 1 and en ~= 7) then
     bubble(en, "You're not welcome here!")
@@ -184,7 +185,38 @@ function entity_handler(en)
       if (get_progress(P_DENORIAN) == 3) then
         bubble(HERO1, "Well, him being crazy explains why he was rambling on about someone trying to steal the statue from him.")
       else
-        bubble(HERO1, "He was rambling on about someone trying to seal the statue from him, and it didn't make any sense until we met up with CORIN. I guess Malkaron's armies got to Demnas and the troll first because they were able to get away with half of the statue.")
+        bubble(HERO1, "He was rambling on about someone trying to seal the statue from him.")
+        if (get_progress(P_TALK_CORIN) == 0) then
+          bubble(HERO1, "It still doesn't make any sense.")
+          bubble(HERO1, "Wait a minute! I remember that CORIN was down there...")
+          if (get_numchrs() == 1) then
+            bubble(HERO1, "I might be able to go back there and talk to him.")
+          else
+            bubble(HERO1, "We might be able to go back there and talk to him.")
+          end
+          bubble(HERO1, "Maybe he'd know more about it.")
+        else
+          if (party[0] == CORIN) then
+            CorinInParty = HERO1
+            cp = "I thought"
+          elseif (get_numchrs() == 2 and party[1] == CORIN) then
+            CorinInParty = HERO2
+            cp = "I thought"
+          else
+            CorinInParty = HERO1
+            cp = "He thought"
+          end
+
+          -- // You met with Corin, but he's not in your party
+          if (CorinInParty == 0) then
+            if (get_numchrs() == 1) then
+              bubble(HERO1, "It didn't make any sense until I met up with CORIN.")
+            else
+              bubble(HERO1, "It didn't make any sense until we met up with CORIN.")
+            end
+          end
+          bubble(CorinInParty, cp.." that Malkaron's armies got to Demnas and the troll first because they were able to get away with half of the statue.")
+        end
       end
       bubble(en, "Well, I guess I'm a little relieved that we don't have a troll problem.")
       bubble(HERO1, "Well, yeah I guess that's good. And you don't have to worry about any crazed Nerakians for awhile either.")

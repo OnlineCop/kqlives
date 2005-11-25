@@ -202,16 +202,18 @@ function zone_handler(zn)
   elseif (zn == 29) then
     if (get_progress(P_DENORIAN) == 1) then
       bubble(255, "You are not allowed in the village.")
-    else
-      change_map("dville", 0, 0, 0, 0)
+      msg("You sneak in anyway.", 255, 0)
     end
+    change_map("dville", 0, 0, 0, 0)
 
   elseif (zn == 30) then
     change_map("cave4", 0, 0, 0, 0)
 
   elseif (zn == 31) then
-    if (get_progress(P_DENORIAN) < 2) then
+    if (get_progress(P_DENORIAN) == 0) then
       bubble(HERO1, "Hmm... there's a huge iron door blocking the entrance to this cave.")
+    elseif (get_progress(P_DENORIAN) == 1) then
+      bubble(HERO1, "This seems strange. I wonder if this has something to do with the Denorian's request.")
     else
       bubble(HERO1, "Stones 1, 4 then 3...")
       set_btile(244, 66, 54)
