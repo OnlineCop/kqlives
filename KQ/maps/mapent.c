@@ -110,49 +110,53 @@ void draw_entdata (const int ent_index)
    clear (double_buffer);
    draw_map ();
 
+   /* The white horizontal line that seperates the bottom menu */
+   hline (double_buffer, 0, vtiles * 16 + 1, htiles * 16 + 1, 255);
+
+   /* The white verticle bar that seperates the right tileset */
+   vline (double_buffer, htiles * 16 + 1, 0, vtiles * 16 + 1, 255);
+
    ent_x = (gent[ent_index].tilex - window_x) * 16;
    ent_y = (gent[ent_index].tiley - window_y) * 16;
    rect (double_buffer, ent_x - 1, ent_y - 1, ent_x + 16, ent_y + 16, 255);
-   hline (double_buffer, 0, SH - 48, SW - 80, 255);
-   vline (double_buffer, SW - 80, 0, SH - 48, 255);
 
    /* Print the number of entities and currently-selected one in right menu */
    sprintf (strbuf, "Total: %d", number_of_ents);
-   print_sfont (SW - 78, 0, strbuf, double_buffer);
+   print_sfont (htiles * 16 + 6, 0, strbuf, double_buffer);
    sprintf (strbuf, "Current: %d", ent_index);
-   print_sfont (SW - 78, 6, strbuf, double_buffer);
+   print_sfont (htiles * 16 + 6, 6, strbuf, double_buffer);
 
    /* Options in the first column */
    sprintf (strbuf, "1 - x = %d", gent[ent_index].tilex);
-   print_sfont (0, SH - 46, strbuf, double_buffer);
+   print_sfont (column[0], row[0], strbuf, double_buffer);
    sprintf (strbuf, "2 - y = %d", gent[ent_index].tiley);
-   print_sfont (0, SH - 40, strbuf, double_buffer);
+   print_sfont (column[0], row[1], strbuf, double_buffer);
    sprintf (strbuf, "3 - %s", ent_movemode[gent[ent_index].movemode]);
-   print_sfont (0, SH - 34, strbuf, double_buffer);
+   print_sfont (column[0], row[2], strbuf, double_buffer);
    sprintf (strbuf, "4 - delay = %d", gent[ent_index].delay);
-   print_sfont (0, SH - 28, strbuf, double_buffer);
+   print_sfont (column[0], row[3], strbuf, double_buffer);
    sprintf (strbuf, "5 - speed = %d", gent[ent_index].speed);
-   print_sfont (0, SH - 22, strbuf, double_buffer);
+   print_sfont (column[0], row[4], strbuf, double_buffer);
    sprintf (strbuf, "6 - atype = %d (%s)", gent[ent_index].atype,
             ent_atype[gent[ent_index].atype]);
-   print_sfont (0, SH - 16, strbuf, double_buffer);
+   print_sfont (column[0], row[5], strbuf, double_buffer);
    sprintf (strbuf, "0 - %s", gent[ent_index].script);
-   print_sfont (0, SH - 10, strbuf, double_buffer);
+   print_sfont (column[0], row[6], strbuf, double_buffer);
 
    /* Options in the second column */
    sprintf (strbuf, "7 - change entity sprite (%d)", gent[ent_index].chrx);
-   print_sfont (160, SH - 46, strbuf, double_buffer);
+   print_sfont (column[2], row[0], strbuf, double_buffer);
    sprintf (strbuf, "8 - direction facing (%s)",
             dir_facing[gent[ent_index].facing]);
-   print_sfont (160, SH - 40, strbuf, double_buffer);
+   print_sfont (column[2], row[1], strbuf, double_buffer);
    sprintf (strbuf, "9 - %s", ent_obsmode[gent[ent_index].obsmode]);
-   print_sfont (160, SH - 34, strbuf, double_buffer);
+   print_sfont (column[2], row[2], strbuf, double_buffer);
    sprintf (strbuf, "S - %ssnap back", do_dont[gent[ent_index].snapback]);
-   print_sfont (160, SH - 28, strbuf, double_buffer);
+   print_sfont (column[2], row[3], strbuf, double_buffer);
    sprintf (strbuf, "F - %sface hero", do_dont[gent[ent_index].facehero]);
-   print_sfont (160, SH - 22, strbuf, double_buffer);
+   print_sfont (column[2], row[4], strbuf, double_buffer);
    sprintf (strbuf, "T - %s", ent_transl[gent[ent_index].transl]);
-   print_sfont (160, SH - 16, strbuf, double_buffer);
+   print_sfont (column[2], row[5], strbuf, double_buffer);
 
    blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
 }                               /* draw_entdata () */
@@ -403,9 +407,9 @@ void update_entities (void)
 
       /* Change the x-coord */
       if (c == KEY_1) {
-         rectfill (screen, 48, SH - 46, 71, SH - 41, 0);
-         hline (screen, 48, SH - 41, 71, 255);
-         response = get_line (48, SH - 46, strbuf, 4);
+         rectfill (screen, 48, row[0], 71, row[1] - 1, 0);
+         hline (screen, 48, row[1] - 1, 71, 255);
+         response = get_line (48, row[0], strbuf, 4);
 
          /* Make sure the line isn't blank */
          if (response == 0)
@@ -417,9 +421,9 @@ void update_entities (void)
 
       /* Change the y-coord */
       if (c == KEY_2) {
-         rectfill (screen, 48, SH - 40, 71, SH - 35, 0);
-         hline (screen, 48, SH - 35, 71, 255);
-         response = get_line (48, SH - 40, strbuf, 4);
+         rectfill (screen, 48, row[1], 71, row[2] - 1, 0);
+         hline (screen, 48, row[2] - 1, 71, 255);
+         response = get_line (48, row[1], strbuf, 4);
 
          /* Make sure the line isn't blank */
          if (response == 0)
@@ -438,9 +442,9 @@ void update_entities (void)
 
       /* Change the movement delay */
       if (c == KEY_4) {
-         rectfill (screen, 72, SH - 28, 95, SH - 23, 0);
-         hline (screen, 72, SH - 23, 95, 255);
-         response = get_line (72, SH - 28, strbuf, 4);
+         rectfill (screen, 72, row[3], 95, row[4] - 1, 0);
+         hline (screen, 72, row[4] - 1, 95, 255);
+         response = get_line (72, row[3], strbuf, 4);
 
          /* Make sure the line isn't blank */
          if (response == 0)
@@ -483,9 +487,9 @@ void update_entities (void)
 
       /* Change the entity's scripted movement */
       if (c == KEY_0) {
-         rectfill (screen, 24, SH - 10, 319, SH - 5, 0);
+         rectfill (screen, 24, row[6], 319, SH - 5, 0);
          hline (screen, 24, SH - 5, 319, 255);
-         response = get_line (24, SH - 10, strbuf, 61);
+         response = get_line (24, row[6], strbuf, 61);
 
          /* Make sure the line isn't blank */
          if (response == 0)

@@ -11,6 +11,9 @@
 #ifndef __MAPDRAW_H
 #define __MAPDRAW_H
 
+#define MAX_WIDTH    1024
+#define MAX_HEIGHT   800
+
 #define MAX_TILES    1024
 #define NUM_TILESETS    7
 #define MAX_EPICS      41
@@ -88,6 +91,8 @@ void describe_map (void);
 void draw_layer (short *, const int);
 void draw_map (void);
 void draw_menubars (void);
+void draw_menu_bottom (int, int, char [][12]);
+void draw_menu_side (int, char [][12]);
 int get_line (const int, const int, char *, const int);
 void get_tile (void);
 void global_change (void);
@@ -159,7 +164,7 @@ extern unsigned short tilex[MAX_TILES];
 extern s_anim tanim[NUM_TILESETS][MAX_ANIM];
 extern s_anim adata[MAX_ANIM];
 
-extern int draw_mode;
+extern int draw_mode, column[5], row[8];
 
 extern short window_x, window_y;
 extern short max_sets;
