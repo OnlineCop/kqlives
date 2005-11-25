@@ -1,11 +1,30 @@
 -- cave3a - "First part of cave on way to Oracle's tower"
 
+-- // P_TRAVELPOINT: Whether we've just come through the TravelPoint
+
 function autoexec()
-  if (get_ent_tilex(HERO1) == 24 and get_ent_tiley(HERO1) == 3) then
+  if (get_ent_tilex(HERO1) == get_marker_tilex("urdoor1") and
+      get_ent_tiley(HERO1) == get_marker_tiley("urdoor1")) then
     set_warp(1, 264, 57)
-  elseif (get_ent_tilex(HERO1) == 8 and get_ent_tiley(HERO1) == 10) then
+  elseif (get_ent_tilex(HERO1) == get_marker_tilex("uldoor1") and
+          get_ent_tiley(HERO1) == get_marker_tiley("uldoor1")) then
     set_warp(1, 264, 60)
   end
+
+  if (get_progress(P_ORACLEMONSTERS) > 0) then
+    local a
+    for a = 0, 4, 1 do
+      set_ent_active(a, 0)
+    end
+  end
+
+  if (get_progress(P_TRAVELPOINT) == 1) then
+    view_range(1, 22, 23, 43, 39)
+    set_progress(P_TRAVELPOINT, 0)
+  else
+    set_desc(0)
+  end
+
   refresh()
 end
 
@@ -20,9 +39,9 @@ function refresh()
   if (get_treasure(19) == 1) then
     set_btile(53, 13, 95)
   end
-  if (get_progress(P_ORACLE) > 0) then
-    set_ftile(get_marker_tilex("dldoor1"), get_marker_tiley("dldoor1") - 1, 119)    -- set_ftile(5, 41, 119)
-    set_obs(get_marker_tilex("dldoor1"), get_marker_tiley("dldoor1") - 1, 0)    -- set_obs(5, 41, 0)
+  if (get_progress(P_WARPEDTOT4) > 0) then
+    set_ftile(get_marker_tilex("dldoor1"), get_marker_tiley("dldoor1") - 1, 119)    -- set_ftile(13, 49, 119)
+    set_obs(get_marker_tilex("dldoor1"), get_marker_tiley("dldoor1") - 1, 0)    -- set_obs(13, 49, 0)
   end
 end
 
@@ -74,13 +93,17 @@ function zone_handler(zn)
     -- warp(7, 3, 8)
 
   elseif (zn == 10) then
-    if (get_progress(P_ORACLE) == 0) then
-      bubble(HERO1, "The door is locked.")
+    if (get_progress(P_WARPEDTOT4) == 0) then
+      msg("The door creaks open noisily.", 255, 0)
+      set_progress(P_WARPEDTOT4, 1)
+      refresh()
     else
       view_range(1, 22, 23, 43, 39)
       warpm("mrdoor1", 8)
+      if (get_progress(P_ORACLEMONSTERS) == 0) then
+        LOC_monsters_statue()
+      end
     -- warp(27, 28, 8)
-      set_progress(P_ORACLEMONSTERS, 1)
     end
 
   -- zn == 11 is a no-combat zone
@@ -91,7 +114,13 @@ function zone_handler(zn)
     -- warp(5, 42, 8)
 
   elseif (zn == 13) then
-    change_mapm("town4", "bad_portal")
+    if (get_progress(P_WARPEDTOT4) < 3) then
+      set_progress(P_ORACLEMONSTERS, 3)
+      change_mapm("town4", "bad_portal")
+    else
+      set_progress(P_TRAVELPOINT, 1)
+      change_mapm("town7", "travelpoint")
+    end
     -- change_map("town4", 32, 21, 32, 21)
 
   elseif (zn == 14) then
@@ -115,6 +144,15 @@ function zone_handler(zn)
   elseif (zn == 18) then
     change_map("main", 264, 57, 264, 57)
 
+  elseif (zn == 19) then
+    if (get_progress(P_ORACLEMONSTERS) == 1) then
+      if (get_numchrs() == 1) then
+        bubble(HERO1, "No, really. I need to tell the Oracle about this before I go through this TravelPoint!")
+      else
+        bubble(HERO1, "No, really. We need to tell the Oracle about this before we go through this TravelPoint!")
+      end
+    end
+
   end
 end
 
@@ -131,5 +169,47 @@ function entity_handler(en)
   elseif (en == 4) then
     bubble(en, "A curse be upon you... a curse upon you all!")
   end
-  return
+end
+
+
+function LOC_monsters_statue()
+  local a
+  set_progress(P_ORACLEMONSTERS, 1)
+
+  set_ent_script(0, "R5K")
+  set_ent_script(1, "R6K")
+  set_ent_script(2, "R7K")
+  set_ent_script(3, "R8K")
+  set_ent_script(4, "U1R8K")
+
+  bubble(HERO1, "Hey, who's that?!")
+
+  if (get_numchrs() == 1) then
+    set_ent_script(HERO1, "U2")
+    wait_for_entity(HERO1, HERO1)
+  else
+    set_ent_script(HERO1, "U2")
+    set_ent_script(HERO2, "U1")
+    wait_for_entity(HERO1, HERO2)
+    orient_heroes()
+  end
+
+  wait_for_entity(0, 4)
+  for a = 0, 4, 1 do
+    set_ent_movemode(a, 2)
+  end
+
+  if (get_progress(P_DENORIAN) == 0) then
+    bubble(HERO1, "That looked like the missing statue Tsorin was talking about!")
+    bubble(HERO1, "And those were Malkaron's men!")
+  else
+    bubble(HERO1, "That looked like Malkaron's men with the Denorian's statue!")
+  end
+
+  if (get_numchrs() == 1) then
+    bubble(HERO1, "I've got to report this to the Oracle!")
+  else
+    bubble(HERO1, "We've got to report this to the Oracle!")
+  end
+
 end
