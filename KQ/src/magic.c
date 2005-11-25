@@ -348,8 +348,7 @@ static void special_spells (int caster, int spell_number)
              * the player can select WHERE to warp to, instead of just to the
              * house, etc.
              */
-            change_map ("town4", g_map.warpx, g_map.warpy, g_map.warpx,
-                        g_map.warpy);
+            change_mapm ("town4", "warp");
          } else {
             change_map ("main", g_map.warpx, g_map.warpy, g_map.warpx,
                         g_map.warpy);
