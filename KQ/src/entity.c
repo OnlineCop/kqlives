@@ -432,10 +432,10 @@ static void moveup (int target_entity)
    g_ent[target_entity].facing = FACE_UP;
    if (ty == 0)
       return;
-   if (g_ent[target_entity].obsmode == 1
-       && (obstruction (tx, ty, 0, -1)
-           || entityat (tx, ty - 1, target_entity)))
-      return;
+   if (g_ent[target_entity].obsmode == 1) {
+      if (obstruction (tx, ty, 0, -1) || entityat (tx, ty - 1, target_entity))
+         return;
+   }
    g_ent[target_entity].tiley--;
    g_ent[target_entity].moving = MOVE_UP;
    g_ent[target_entity].movcnt = 15;
@@ -521,10 +521,11 @@ static void moveleft (int target_entity)
    g_ent[target_entity].facing = FACE_LEFT;
    if (tx == 0)
       return;
-   if (g_ent[target_entity].obsmode == 1
-       && (obstruction (tx, ty, -1, 0)
-           || entityat (tx - 1, ty, target_entity)))
-      return;
+   if (g_ent[target_entity].obsmode == 1) {
+      if (obstruction (tx, ty, -1, 0)
+          || entityat (tx - 1, ty, target_entity)))
+         return;
+   }
    g_ent[target_entity].tilex--;
    g_ent[target_entity].moving = MOVE_LEFT;
    g_ent[target_entity].movcnt = 15;
@@ -663,6 +664,7 @@ static void parsems (int target_entity)
  * - X+param: move to x-coord param
  * - Y+param: move to y-coord param
  * - F+param: face direction param (0=S, 1=N, 2=W, 3=E)
+ * - K: kill (remove) entity
  *
  * \param   target_entity Entity to process
  */
@@ -725,16 +727,17 @@ static void getcommand (int target_entity)
       g_ent[target_entity].cmd = 10;
       parsems (target_entity);
       break;
-      /* PH add: command K makes the ent disappear */
    case 'k':
    case 'K':
+      /* PH add: command K makes the ent disappear */
       g_ent[target_entity].active = 0;
       break;
    default:
 #ifdef DEBUGMODE
       if (debugging > 0) {
-         sprintf (strbuf, "Invalid entity command (%c) at position %d for ent %d",
-                  s, g_ent[target_entity].sidx, target_entity);
+         sprintf (strbuf,
+                  "Invalid entity command (%c) at position %d for ent %d", s,
+                  g_ent[target_entity].sidx, target_entity);
          program_death (strbuf);
       }
 #endif
@@ -826,7 +829,7 @@ void set_script (int target_entity, char *movestring)
    /* TT remove: I don't understand why we are making the entity active here;
     * this should be something that would come from a LUA script before it.
     */
-  /*   g_ent[target_entity].active = 1; */
+   /*   g_ent[target_entity].active = 1; */
    g_ent[target_entity].moving = MOVE_NOT;
    g_ent[target_entity].movcnt = 0;
    g_ent[target_entity].cmd = 0;
