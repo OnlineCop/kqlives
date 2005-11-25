@@ -374,7 +374,7 @@ unsigned short shops[NUMSHOPS][SHOPITEMS][3] = {
     {0, 0, 0},
     {0, 0, 0},
     {0, 0, 0}},
-      
+
    {{I_HAMMER3, 5, 12},
     {I_ROD5, 5, 7},
     {I_SPEAR3, 5, 13},
