@@ -7,14 +7,14 @@
 --   (0) Haven't spoken to her yet
 --   (1) She told you your quest, requested help from monsters
 --   (2) You helped with monsters (stopped them from getting to the portal)
---   (3) You used her TravelPoint but haven't spoken to her yet
---   (4) You used her TravelPoint and spoke with her
 --
 -- P_ORACLEMONSTERS: Status of the monsters in the caves below
 --   (0) You haven't even seen the monsters take the Statue thru the portal
 --   (1) Monsters thru portal: Haven't told Oracle about it
 --   (2) Monsters thru portal: Told Oracle about it
---   (3) Followed monsters thru portal
+--   (3) Followed monsters thru portal: monsters still in cave
+--   (4) Oracle asks you to take care of monsters; they're still there
+--   (5) Monsters are gone
 --
 -- P_FTOTAL: Total number of floor switches activated
 -- P_FLOOR1..P_FLOOR4: Status of this floor switch
@@ -37,13 +37,13 @@
 -- P_DRAGONDOWN: Whether the stone dragon is alive or not
 --
 -- P_DENORIAN: Status of the Denorian statue
---   (0) You have not entered dville or have not spoken to the town council
+--   (0) You have not spoken to the Dville town council
 --   (1) If you refused to help the Denorians
---   (2) You've agreed to help, but haven't found Demnas
---   (3) You found Demnas (but not the troll)
---   (4) You found the troll, too
---   (5) The broken statue was returned to the village
---   (6) The 2nd half of the statue had been returned
+--   (2) You've agreed to help: haven't found Demnas
+--   (3) You found Demnas: haven't found the troll
+--   (4) You found the troll
+--   (5) Broken statue returned to the Denorians
+--   (6) 2nd half of broken statue returned to Denorians
 --
 -- Pretty much done as it is; no real changes need to be made.
 -- }
@@ -407,163 +407,293 @@ function entity_handler(en)
 
   -- Oracle
   if (en == 0) then
-    if (get_progress(P_ORACLE) == 0) then
-      bubble(en, "$0, thank you for coming. Please get rid of the monsters in the caves below.")
-      bubble(en, "You can also use my TravelPoint in the caves as well.")
-      set_progress(P_ORACLE, 1)
+    -- /*
+    -- {
+    -- When you talk to the Oracle, she will discuss the following situations with you:
+    --   1: Civil war in the goblin lands from the missing OracleStatue
+    --   2: Monsters are trying to get into the TravelPoint
+    -- These are actually all related, but she does not know that; she suspects as much, though
+    --
+    -- P_ORACLE: Spoke to Oracle in the Tower
+    --   (0) Have not spoken to her yet
+    --   (1) Spoke to her; she requested help from monsters
+    --   (2) You helped with monsters (stopped them from getting to the portal)
+    --
+    -- P_ORACLEMONSTERS: Status of the monsters in the caves below
+    --   (0) You haven't seen the monsters take the Statue thru the portal
+    --   (1) Monsters thru portal: Have not told Oracle about it yet
+    --   (2) Monsters thru portal: Told Oracle about it
+    --   (3) Followed monsters thru portal: monsters still in cave
+    --   (4) Oracle asks you to take care of monsters; they're still there
+    --   (5) Monsters are gone
+    --
+    -- P_DENORIAN: Status of the stolen statue
+    --   (0) You have not spoken to the Dville town council
+    --   (1) If you refused to help the Denorians
+    --   (2) You've agreed to help: haven't found Demnas
+    --   (3) You found Demnas: haven't found the troll
+    --   (4) You found the troll
+    --   (5) Broken statue returned to the Denorians
+    --   (6) 2nd half of broken statue returned to Denorians
+    -- }
+    -- */
 
-      set_autoparty(1)
-      move_entity(HERO1, get_marker_tilex("oracle"), get_marker_tiley("oracle"), 0)
+    if (get_progress(P_ORACLEMONSTERS) == 0) then
+      -- 0: // You haven't seen the monsters take the Statue thru the portal
+      if (get_progress(P_ORACLE) == 0) then
+        bubble(en, "$0, thank you for coming.")
+        if (get_numchrs() == 1) then
+          bubble(HERO1, "Hello, um... Oracle. How did you know I was coming?")
+        else
+          bubble(HERO1, "Hello, um... Oracle. How did you know we were coming?")
+        end
+        bubble(en, "Tsorin sent a messenger here, of course.")
+        bubble(en, "I'm surprised that you came up to see me, seeing as how the TravelPoint is back in the caves from whence you came.")
+        if (get_progress(P_DENORIAN) == 0) then
+          -- 0: // Haven't spoken to Denorian Council, so know nothing about
+          --    // where to look.
+          bubble(en, "I am glad you stopped by, though. There is civil unrest in the goblin lands to the south.")
+          bubble(en, "The Statue, which I gave to the Denorians as a gift, has been stolen. Because of that, there is much unrest.")
+          if (get_numchrs() == 1) then
+            bubble(HERO1, "I am a bit hurried in my quest to find... well, something of importance.")
+          else
+            bubble(HERO1, "We are a bit hurried in our quest to find... well...")
+            bubble(HERO2, "To find, um... something of importance.")
+          end
+          bubble(en, "Yes, but would you consider helping my people find their missing Statue?")
+          if (prompt(en, 2, 1, "Anything you can do would",
+                     "help.",
+                     "  yes",
+                     "  no") == 0) then
+            bubble(en, "Thank you so much. Please talk to the head of the Denorian Council to find out more information.")
+          else
+            bubble(en, "That is too bad. But if you would like to help in the future, please talk to the head of the Denorian Council.")
+          end
+          bubble(en, "The Denorian village is south of here, by the mountain stream.")
+        elseif (get_progress(P_DENORIAN) == 1) then
+          -- 1: // You refused the Denorian's plea and were kicked out of town
+          bubble(en, "I am glad you stopped by, though. There is civil unrest in the goblin lands to the south.")
+          if (get_numchrs() == 1) then
+            bubble(HERO1, "Yes, I know. The Denorian Council told me about the missing statue.")
+          else
+            bubble(HERO1, "Yes, we know. The Denorian Council told us about the missing statue.")
+          end
+          bubble(en, "Oh! So you've agreed to help?")
+          bubble(HERO1, "Well ...mumble... no...")
+          if (get_numchrs() == 1) then
+            bubble(HERO1, "I am a bit hurried in my quest to find... well, something of importance.")
+          else
+            bubble(HERO2, "Not exactly...")
+            bubble(HERO1, "We are a bit hurried in our quest to find... well, something of importance.")
+          end
+          bubble(en, "Oh, I see. Your quest must be very important, then. Very well, I shall ask someone else.")
+        elseif (get_progress(P_DENORIAN) == 2) then
+          -- 2: // You told the Denorian Council you would help (haven't found
+          --    // anything yet)
+          bubble(en, "I am glad you stopped by, though. There is civil unrest in the goblin lands to the south.")
+          if (get_numchrs() == 1) then
+            bubble(HERO1, "Yes, I know. The Denorian Council told me about the missing statue but I haven't found anything yet.")
+          else
+            bubble(HERO1, "Yes, we know. The Denorian Council told us about the missing statue.")
+            bubble(HERO2, "We haven't found anything yet, however.")
+          end
+          bubble(en, "Don't worry; I'm sure you'll find something. Good luck to you!")
+        elseif (get_progress(P_DENORIAN) == 3) then
+          -- 3: // You found Demnas (but not the troll), but didn't report it
+          --    // to the Denorians; you still have the the broken statue with
+          --    // you.
+          bubble(en, "I am glad you stopped by, though. I hear some of the civil unrest in the goblin lands has let up somewhat.")
+          bubble(HERO1, "Yes, a Narakian named Demnas supposedly stole the missing statue.")
+          bubble(en, "And did you get the statue back?")
+          bubble(HERO1, "Well, only half of it. It seems it was broken in half before we ever got to it.")
+          if (get_numchrs() == 1) then
+            bubble(en, "Which means someone may still have it.")
+          else
+            bubble(HERO2, "Which means someone probably still has it.")
+          end
+          bubble(en, "Could you do me a favor?")
+          if (prompt(en, 2, 0, "Could you find out who has",
+                     "the other half of the statue?",
+                     "  yes",
+                     "  no") == 0) then
+            bubble(en, "Thank you so very much.")
+          else
+            bubble(en, "Well, that's alright. You've done enough already. Thank you so very much.")
+          end
+        elseif (get_progress(P_DENORIAN) == 4) then
+          -- 4: You found the troll, too, but you did not return the broken
+          --    statue to the Denorians. You still have it with you.
+          bubble(en, "I am glad you stopped by, though. I hear...")
+          bubble(en, "...wait!", "What is that statue you have there?")
+          if (get_numchrs() == 1) then
+            bubble(HERO1, "This is the Denorian Statue. I rescued it from a guy named Demnas and his troll.")
+          else
+            bubble(HERO1, "This is the Denorian Statue. We rescued it from a guy named Demnas and his troll.")
+          end
+          bubble(en, "So you did... What happened to it? Part of it is missing.")
+          if (get_progress(P_TALK_CORIN) == 0) then
+            -- // You fought the troll but didn't talk to Corin, so still
+            -- // don't know about Malkaron. Which was stupid, since he was
+            -- // standing RIGHT THERE.
+            if (get_numchrs() == 1) then
+              bubble(HERO1, "I'm not too sure. He accused me of trying to steal the second half of it from him.")
+            else
+              bubble(HERO2, "We're not too sure. He accused us of trying to steal the second half of it from him.")
+            end
+            bubble(en, "Second half? It sounds as if someone else may have gotten to him first.")
+            if (get_numchrs() == 1) then
+              bubble(HERO1, "That's what I think as well.")
+            else
+              bubble(HERO2, "That's what we think as well.")
+            end
+            bubble(en, "Well, either way, if you could return that half back to the Denorian village, it will help with the unrest.")
+          else
+            -- // You fought the troll and Corin told you about Malkaron's
+            -- // army stealing the statue.
+            bubble(HERO1, "It was Malkaron's armies. They had a spat with Demnas and when the statue broke, they stole half of it.")
+            if (get_pidx(0) == CORIN) then
+              bubble(HERO1, "Demnas thought I was with them and locked me in with a troll.")
+            else
+              bubble(HERO1, "Demnas thought CORIN was with them and locked him in with a troll.")
+            end
+            bubble(en, "Oh, how awful!")
+            bubble(HERO1, "It's alright. Everything worked out. But now we have to consider Malkaron's involvement in this.")
+            bubble(en, "Yes, I certainly hope you get to the bottom of this.")
+            bubble(en, "Would you return the statue to the Denorian village? It is a very important treasure.")
+          end
+        elseif (get_progress(P_DENORIAN) == 5) then
+          -- 5: The broken statue was returned to the village
+          bubble(en, "I am glad you stopped by. The Denorians sent word that you returned part of their statue.")
+          bubble(HERO1, "Yea, well, someone had to do something about that whole mess...")
+          if (get_progress(P_TALK_CORIN) == 0) then
+            bubble(en, "An important question is, who has the other half?")
+            if (get_numchrs() == 1) then
+              bubble(HERO1, "That's a good question. I'm searching for the same person... or persons, for that matter.")
+            else
+              bubble(HERO1, "That's a good question. We're searching for the same person.")
+              bubble(HERO2, "Or persons, for that matter.")
+            end
+            bubble(en, "Be careful. Whoever is out there may do rash and unpredictable things if he thinks you are following him.")
+          else
+            bubble(en, "An important question is, what will we do about Malkaron's followers?")
+            if (get_numchrs() == 1) then
+              bubble(HERO1, "That's actually what I'm trying to find out.")
+            else
+              bubble(HERO1, "That's actually what we're trying to find out.")
+            end
+            bubble(en, "If Malkaron is responsible for all this upheaval, you must be careful.")
+            bubble(en, "One as strong as he may do rash and unpredictable things if he thinks you are following him.")
+          end
+          if (get_numchrs() == 1) then
+            bubble(HERO1, "Yes, I was warned to keep my party small.")
+          else
+            bubble(HERO1, "Yes, we were warned to keep our numbers small. That's why we're traveling in a party of only two.")
+          end
+          bubble(en, "Well, I wish you luck. Thank you for all you've done already.")
+        elseif (get_progress(P_DENORIAN) == 6) then
+          -- 6: // We can't get here with P_ORACLEMONSTERS == 0, as the player
+          --    // would have seen Malkaron's men take the statue thru the
+          --    // portal already.
+        end
 
+        set_autoparty(1)
+        move_entitym(HERO1, "oracle", 0)
+
+        if (get_numchrs() == 1) then
+          wait_for_entity(HERO1, HERO1)
+
+          bubble(HERO1, "This whole thing sure seems fishy. I hope I can figure out what's going on.")
+          bubble(HERO1, "I wonder if this statue has anything to do with this missing staff Nostik wants everyone to find?")
+          set_ent_facing(HERO1, FACE_DOWN)
+          drawmap()
+          screen_dump()
+          bubble(HERO1, "...I should probably stop talking to myself too.")
+        elseif (get_numchrs() == 2) then
+          move_entity(HERO2, get_marker_tilex("oracle"), get_marker_tiley("oracle") + 1, 0)
+          wait_for_entity(HERO1, HERO2)
+          orient_heroes()
+
+          bubble(HERO2, "Hey $0.")
+          set_ent_facing(HERO1, FACE_DOWN)
+          bubble(HERO1, "Yeah?")
+          bubble(HERO2, "Do you think that this statue could have something to with this missing staff Nostik wants us to find?")
+          bubble(HERO1, "Whoa, $1. Keep your voice down!")
+          bubble(HERO2, "Oh, right. Sorry.")
+          bubble(HERO2, "So... do you?")
+          bubble(HERO1, "I never thought of that. Let's hope that it doesn't. We have no choice but to go on anyways.")
+          bubble(HERO2, "Yeah, I guess you're right. Let's go.")
+        end
+
+        bubble(en, "Oh, one last thing. I have a request of you before you go.")
+        if (get_numchrs() == 2) then
+          set_ent_facing(HERO2, FACE_DOWN)
+        end
+        bubble(en, "If you can, please get rid of the monsters in the caves below. You can also use my TravelPoint in the caves as well.")
+        bubble(en, "Good luck. I hope to meet with you again.")
+
+        set_autoparty(0)
+        set_progress(P_ORACLE, 1)
+      elseif (get_progress(P_ORACLE) == 1) then
+        bubble(en, "The monsters in the caves below appeared out of nowhere. Please get rid of them so travelers who wish to use my TravelPoint may do so.")
+      else
+        -- We will never get P_ORACLE > 1 here since P_ORACLEMONSTERS will
+        -- modify that separately.
+      end
+    elseif (get_progress(P_ORACLEMONSTERS) == 1) then
+      -- 1: // Regardless of the status of P_ORACLE, you will tell her of
+      --    // Malkaron's monsters with the statue.
+      if (get_progress(P_DENORIAN) == 0) then
+        -- // You don't know what's going on with the Oracle's statue
+        if (get_numchrs() == 1) then
+          bubble(HERO1, "Oracle! I saw Malkaron's monsters take some statue that looked like you through the portal below!")
+          bubble(HERO1, "At least, it looked like part of a statue, anyway.")
+        else
+          bubble(HERO2, "Oracle! We saw Malkaron's monsters take some statue that looked like you through the portal below!")
+          bubble(HERO1, "At least, it looked like part of a statue, anyway.")
+        end
+        bubble(en, "That must have been the Denorian's statue; that has been stolen from the village to the south.")
+      else
+        -- // You know that the Oracle's statue had been stolen so you know to
+        -- // tell the Oracle
+        if (get_numchrs() == 1) then
+          bubble(HERO1, "Oracle! I saw Malkaron's monsters take the stolen statue through the portal below!")
+        else
+          bubble(HERO1, "Oracle! We saw Malkaron's monsters take your statue through the portal below!")
+        end
+      end
+      bubble(en, "You must go after it! That statue is very important to my people.")
+      set_progress(P_ORACLEMONSTERS, 2)
+    elseif (get_progress(P_ORACLEMONSTERS) == 2) then
+      -- 2: // You told the Oracle about the monsters going thru the portal
+      bubble(en, "Please hurry and get that statue back!")
+    elseif (get_progress(P_ORACLEMONSTERS) == 3) then
+      -- 3: // Followed Malkaron's men thru portal; monsters still in cave
+      bubble(en, "Welcome back.")
+      bubble(HERO1, "Oracle! The monsters went through the portal below with your statue!")
       if (get_numchrs() == 1) then
-        wait_for_entity(HERO1, HERO1)
-
-        bubble(HERO1, "I hope that this Binderak guy hasn't gotten a hold of the others.")
-        bubble(HERO1, "I don't even want to think about that!")
-        set_ent_facing(HERO1, FACE_DOWN)
-        drawmap()
-        screen_dump()
-        bubble(HERO1, "Heh... I should probably stop talking to myself too.")
-      elseif (get_numchrs() == 2) then
-        move_entity(HERO2, get_marker_tilex("oracle"), get_marker_tiley("oracle") + 1, 0)
-        wait_for_entity(HERO1, HERO2)
-        orient_heroes()
-
-        bubble(HERO2, "Hey $0.")
-        set_ent_facing(HERO1, FACE_DOWN)
-        bubble(HERO1, "Yeah?")
-        bubble(HERO2, "Do you think that this Binderak could have done something to the others?")
-        bubble(HERO1, "You mean capture them?")
-        bubble(HERO2, "Or worse. What if he knows about our quest and is slowly knocking us off?")
-        bubble(HERO1, "I never thought of that. Let's hope that he doesn't know about it. We have no choice but to go on anyways.")
-        bubble(HERO2, "Yeah, I guess you're right. Let's go.")
+        bubble(HERO1, "I went through the portal, but was sent to Maldea somehow.")
+      else
+        bubble(HERO1, "We went through the portal, but were was sent to Maldea somehow.")
       end
-
-      set_autoparty(0)
-
-    elseif (get_progress(P_ORACLE) == 1) then
-      if (get_progress(P_ORACLEMONSTERS) == 0) then
-        bubble(en, "You still need to get rid of the monsters in the caves below.")
-      elseif (get_progress(P_ORACLEMONSTERS) == 1) then
-        if (get_numchrs() == 1) then
-          bubble(HERO1, "Oracle! I saw the monsters take the statue through the portal below!")
-        else
-          bubble(HERO1, "Oracle! We saw the monsters take the statue through the portal below!")
-        end
-        bubble(en, "Then you must go after it! That statue is very important to my people.")
-        set_progress(P_ORACLEMONSTERS, 2)
-      elseif (get_progress(P_ORACLEMONSTERS) == 2) then
-        bubble(en, "Welcome back.")
-        bubble(HERO1, "Oracle! The monsters went through the portal below with your statue!")
-        if (get_numchrs() == 1) then
-          bubble(HERO1, "I went through the portal, but was sent to Maldea somehow.")
-        else
-          bubble(HERO1, "We went through the portal, but were was sent to Maldea somehow.")
-        end
-        bubble(en, "Yes, the statue probably disrupted the portal somehow. I'm glad to see you made it back safely.")
-        bubble(en, "By the way, could you still get rid of the monsters below?")
-        set_progress(P_ORACLEMONSTERS, 3)
-      elseif (get_progress(P_ORACLEMONSTERS) == 3) then
-        bubble(en, "Good luck with the monsters!")
+      bubble(en, "Yes, the statue probably disrupted the portal somehow. I'm glad to see you made it back safely.")
+      if (get_progress(P_ORACLE) == 0) then
+        bubble(en, "I ask you to find the missing statue, if you possibly can.")
+      else
+        bubble(en, "Please continue your search for the statue. It is very important to my people.")
       end
-    elseif (get_progress(P_ORACLE) == 2) then
-      bubble(en, "You got rid of the monsters! Thank you.")
-    elseif (get_progress(P_ORACLE) == 3) then
-      bubble(en, "Welcome, $0. You didn't come in and speak with me the first time you came through here.")
-    elseif (get_progress(P_ORACLE) == 4) then
-      bubble(en, "Welcome back. You've used my TravelPoint, and have spoken to me before.")
+      bubble(en, "And would you be able to take care of the monsters in the caves below?")
+      set_progress(P_ORACLEMONSTERS, 4)
+    elseif (get_progress(P_ORACLEMONSTERS) == 4) then
+      -- 4: // Oracle asked you to take care of monsters; they're still there
+      bubble(en, "I thank you for looking into the missing statue situation.")
+      bubble(en, "There are still monsters lurking around in the caves below. Please get rid of them.")
+    elseif (get_progress(P_ORACLEMONSTERS) == 5) then
+      -- 5: // Monsters are gone
+      bubble(en, "The monsters are gone! Thank you so much!")
     end
 
   end
 end
-
-
--- /*
--- {
-  local player_response, done_talking
-
-    if (get_progress(P_ORACLE) == 0) then
-      bubble(HERO1, "I will try to introduce myself.")
-      bubble(en, "And I, the Oracle, will already know who you are, which surprises you.")
-      bubble(HERO1, "We talk about the stolen statue.")
--- Should I add P_TALK_CORIN here?
-
-      if (get_progress(P_DENORIAN) == 0) then
-        bubble(HERO1, "I haven't been to the Denorian village, so I know nothing about where to look.")
-      elseif (get_progress(P_DENORIAN) < 3) then
-        bubble(HERO1, "I know the Denorian statue is missing, but haven't beaten Demnas for it.")
-      elseif (get_progress(P_DENORIAN) == 3) then
-        bubble(HERO1, "I fought Demnas but didn't report it to the Denorians. I have the broken statue with me.")
-      elseif (get_progress(P_DENORIAN) == 4) then
-        if (get_progress(P_TALK_CORIN) == 0) then
-          bubble(HERO1, "I also fought the troll but didn't talk to Corin, so still don't know about Malkaron. Which was stupid, since he was standing RIGHT THERE.")
-        elseif (get_progress(P_TALK_CORIN) == 1) then
-          bubble(HERO1, "I also fought the troll and Corin told me about Malkaron's army stealing the statue.")
-        end
-        bubble(HERO1, "However, I didn't return the statue to the Denorians. I have the broken statue with me.")
-      elseif (get_progress(P_DENORIAN) == 5)then
-        bubble(HERO1, "I returned the broken statue to the Denorians and there was much rejoicing.")
-      end
-
-      bubble(en, "I respond appropriately, then inform you of my dilema.")
-      bubble(HERO1, "You have a dilema?")
-      bubble(en, "Yes, now shut up while I tell you about it.")
-      if (get_progress(P_DENORIAN) < 3) then
-        bubble(en, "The civil war is because that statue is missing and you need to help find it.")
-      elseif (get_progress(P_DENORIAN) == 3) then
-        bubble(en, "I see you have the statue. You're holding the reason of the civil war in your hands. Give it back to the Denorians.")
-      elseif (get_progress(P_DENORIAN) == 4) then
-        if (get_progress(P_TALK_CORIN) == 0) then
-          bubble(en, "I see you have the statue. You're holding the reason of the civil war in your hands. Give it back to the Denorians.")
-        elseif (get_progress(P_TALK_CORIN) == 1) then
-          bubble(en, "I deduce that Malkaron's army stole the statue you're carrying and still has it!")
-        end
-      elseif (get_progress(P_DENORIAN) == 5) then
-        bubble(en, "The civil war is over for the goblins in the south since you returned the statue to the Denorians.")
-        if (get_progress(P_TALK_CORIN) == 0) then
-          bubble(en, "I wonder if it was Malkaron's minions who stole the other half of the statue.")
-        elseif (get_progress(P_TALK_CORIN) == 1) then
-          bubble(en, "I deduce that Malkaron's army has to be who stole the other half of the statue.")
-        end
-      end
-
-      bubble(en, "Now I ask you to rid the caves below of monsters as they prevent people from using her TravelPoint.")
-      bubble(HERO1, "We as heros blindly agree to this side-quest because, hey, why not?")
-      set_progress(P_ORACLE, 1)
-    elseif (get_progress(P_ORACLE) == 1) then
-      -- You've spoken to her once: she's told you about her dilema with the monsters downstairs.
-
-      bubble(HERO1, "I guess you knew I was coming, huh?")
-      bubble(en, "Quite right. I have known for some time now that you would be paying me a visit. I have been waiting.")
-      bubble(HERO1, "Have any of the others been here?")
-      bubble(en, "I haven't seen any of them. They wouldn't be able to get into the tower anyways.")
-      bubble(HERO1, "I don't understand. Where are the others? I hardly seen any of them, so I assumed that they were way ahead of me.")
-      bubble(en, "I am not certain. They are probably lost or confused. They did not speak to Derig as you did.")
-      bubble(en, "They probably have no idea where to go.")
-      bubble(HERO1, "Why wouldn't they have spoken to Derig? It seemed as though Derig was there to help us.")
-      bubble(en, "Actually, Derig chose you above the others. He is a bit of a prophet himself, and he knew exactly who to help.")
-      bubble(en, "If you are concerned about the others you may want to seek them out.")
-      bubble(en, "However, you should wait until later, for there are more important things to take care of first.")
-      bubble(HERO1, "Yes, I suppose there are. Are you going to tell me how to find the staff?")
-      bubble(en, "Well, not exactly, but I do know where you have to go and how you will get there.")
-      bubble(en, "You have to gather several items, all of which are made of Opal, in order to proceed.")
-      bubble(en, "Once you find these things, you will then use them to travel the underwater passage on the western shore.")
-      bubble(en, "The passage will take you to the tiny kingdom of Esteria. There you will find an evil warlord named Binderak.")
-      bubble(en, "He is the one who acquired the Staff from Malkaron all those years ago. I believe he still has that half of the Staff.")
-      bubble(en, "However, I may be wrong. And I don't know where the other half is. Unfortunately, that is all that I can tell you.")
-      bubble(HERO1, "That's plenty. Thanks.")
-      bubble(en, "Now you must go, for the Stone Dragon will soon piece himself back together and be even stronger.")
-      bubble(HERO1, "Okay... thanks again.")
-      bubble(en, "Oh, just one more thing.")
-      bubble(en, "In the caves south of here there was a locked door. That door leads to a teleporter and will now be unlocked.")
-      bubble(HERO1, "Thanks!")
-      set_progress(P_ORACLE, 1)
-    else
-      bubble(en, "There is nothing else that I can tell you.")
-    end
--- }
--- */
-
 
 
 function LOC_draw_dragon()
