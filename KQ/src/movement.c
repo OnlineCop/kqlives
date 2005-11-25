@@ -36,7 +36,8 @@
 
 
 static void copy_map (int *);
-static int search_paths (int, int *, int, int, int, int, int, int, int, int, int);
+static int search_paths (int, int *, int, int, int, int, int, int, int, int,
+                         int);
 static int compose_path (AL_CONST int *, int, int, char *, int);
 static int minimize_path (AL_CONST char *, char *, int);
 
@@ -75,8 +76,8 @@ int find_path (int id, int source_x, int source_y, int target_x, int target_y,
    memset (buffer, '\0', size);
 
    /*  TODO: Allocate memory once instead of every call  */
-   result = g_map.xsize * g_map.ysize * sizeof(int);
-   map = (int *)malloc(result);
+   result = g_map.xsize * g_map.ysize * sizeof (int);
+   map = (int *) malloc (result);
    if (map == NULL)
       return (3);
 
@@ -85,7 +86,7 @@ int find_path (int id, int source_x, int source_y, int target_x, int target_y,
    result = search_paths (id, map, 1, source_x, source_y, target_x, target_y,
                           0, 0, g_map.xsize, g_map.ysize);
 
-   if (! result)
+   if (!result)
       result = compose_path (map, target_x, target_y, buffer, size);
    else
       result = 1;
@@ -119,9 +120,9 @@ int find_path (int id, int source_x, int source_y, int target_x, int target_y,
  *
  * \sa copy_map compose_path find_path minimize_path
  */
-static int search_paths (int id, int *map, int step, int source_x, int source_y,
-                         int target_x, int target_y, int start_x, int start_y,
-                         int limit_x, int limit_y)
+static int search_paths (int id, int *map, int step, int source_x,
+                         int source_y, int target_x, int target_y,
+                         int start_x, int start_y, int limit_x, int limit_y)
 {
    int index;
    int value;
@@ -134,7 +135,7 @@ static int search_paths (int id, int *map, int step, int source_x, int source_y,
       map[index] = step;
 
       if ((source_x == target_x) && (source_y == target_y))
-          return 0;
+         return 0;
 
       if (source_x > start_x)
          result &= search_paths (id, map, step + 1, source_x - 1, source_y,
@@ -223,19 +224,21 @@ static int compose_path (AL_CONST int *map, int target_x, int target_y,
    y = target_y;
    value = map[y * g_map.xsize + x];
    index = value - 2;
-   memset(temp, '\0', sizeof(temp));
+   memset (temp, '\0', sizeof (temp));
 
    while (value > 1) {
 
       /*  move as many squares up as possible  */
-      while ((y > 0) && (map[(y - 1) * g_map.xsize + x] == (value - 1)) && (value > 1)) {
+      while ((y > 0) && (map[(y - 1) * g_map.xsize + x] == (value - 1))
+             && (value > 1)) {
          value--;
          y--;
          temp[index--] = 'D';
       }
 
       /*  move as many squares left as possible  */
-      while ((x > 0) && (map[y * g_map.xsize + (x - 1)] == (value - 1)) && (value > 1)) {
+      while ((x > 0) && (map[y * g_map.xsize + (x - 1)] == (value - 1))
+             && (value > 1)) {
          value--;
          x--;
          temp[index--] = 'R';
@@ -258,7 +261,7 @@ static int compose_path (AL_CONST int *map, int target_x, int target_y,
       }
    }
 
-   return (minimize_path(temp, buffer, size));
+   return (minimize_path (temp, buffer, size));
 }
 
 
@@ -279,13 +282,13 @@ static int compose_path (AL_CONST int *map, int target_x, int target_y,
  */
 static int minimize_path (AL_CONST char *source, char *target, int size)
 {
-   int  source_index = 0;
-   int  repetition = 0;
+   int source_index = 0;
+   int repetition = 0;
    char value;
    char temp[16];
    char buffer[512];
 
-   memset(buffer, '\0', sizeof(buffer));
+   memset (buffer, '\0', sizeof (buffer));
    while (source[source_index] != '\0') {
       value = source[source_index];
 
@@ -298,14 +301,13 @@ static int minimize_path (AL_CONST char *source, char *target, int size)
       }
 
       /*  FIXME: check to see if the buffer is long enough?  */
-      snprintf(temp, sizeof(temp), "%c%d", value, repetition);
-      strncat(buffer, temp, sizeof(buffer));
+      snprintf (temp, sizeof (temp), "%c%d", value, repetition);
+      strncat (buffer, temp, sizeof (buffer));
    }
 
-   if (strlen(buffer) < (unsigned int)size) {
-      strcpy(target, buffer);
+   if (strlen (buffer) < (unsigned int) size) {
+      strcpy (target, buffer);
       return (0);
-   }
-   else
+   } else
       return (1);
 }

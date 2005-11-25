@@ -826,7 +826,7 @@ void change_mapm (char *map_name, const char *marker_name)
     * player's starting position and camera position will be the same
     */
    for (m = g_map.markers; m < g_map.markers + g_map.num_markers; ++m) {
-      if (!strcmp(marker_name, m->name)) {
+      if (!strcmp (marker_name, m->name)) {
          msx = mvx = m->x;
          msy = mvy = m->y;
       }
@@ -1707,7 +1707,7 @@ void kwait (int dtime)
       if (debugging > 0) {
          if (key[KEY_W] && key[KEY_ALT]) {
             klog ("Alt+W Pressed:");
-            sprintf (strbuf, "\tkwait(); cnt = %d, dtime = %d, timer_count = %d",
+            sprintf (strbuf, "\tkwait(); cnt=%d, dtime=%d, timer_count=%d",
                      cnt, dtime, timer_count);
             klog (strbuf);
             break;

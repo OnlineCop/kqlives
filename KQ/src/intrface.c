@@ -2201,20 +2201,20 @@ static int KQ_set_sstone (lua_State * L)
  */
 static int KQ_move_entity (lua_State * L)
 {
-   int   entity_id = real_entity_num (L, 1);
-   int   target_x  = (int) lua_tonumber (L, 2);
-   int   target_y  = (int) lua_tonumber (L, 3);
-   int   kill      = (int) lua_tonumber (L, 4);
-   int   result;
-   char  buffer[1024];
+   int entity_id = real_entity_num (L, 1);
+   int target_x = (int) lua_tonumber (L, 2);
+   int target_y = (int) lua_tonumber (L, 3);
+   int kill = (int) lua_tonumber (L, 4);
+   int result;
+   char buffer[1024];
 
    result = find_path (entity_id, g_ent[entity_id].tilex,
                        g_ent[entity_id].tiley, target_x, target_y, buffer,
-                       sizeof(buffer));
+                       sizeof (buffer));
 
    /*  FIXME: The fourth parameter is a ugly hack for now.  */
    if (kill)
-       strcat (buffer, "K");
+      strcat (buffer, "K");
 
    set_script (entity_id, buffer);
    return 0;
@@ -2234,27 +2234,27 @@ static int KQ_move_entitym (lua_State * L)
 {
    int entity_id = real_entity_num (L, 1);
    const char *marker_name = lua_tostring (L, 2);
-   int kill      = (int) lua_tonumber (L, 3);
-   int target_x  = 0;
-   int target_y  = 0;
+   int kill = (int) lua_tonumber (L, 3);
+   int target_x = 0;
+   int target_y = 0;
    int result;
    char buffer[1024];
    s_marker *m;
 
    for (m = g_map.markers; m < g_map.markers + g_map.num_markers; ++m) {
-      if (!strcmp(marker_name, m->name)) {
+      if (!strcmp (marker_name, m->name)) {
          target_x = m->x;
          target_y = m->y;
       }
    }
 
-   result = find_path(entity_id, g_ent[entity_id].tilex,
-                      g_ent[entity_id].tiley, target_x, target_y, buffer,
-                      sizeof(buffer));
+   result = find_path (entity_id, g_ent[entity_id].tilex,
+                       g_ent[entity_id].tiley, target_x, target_y, buffer,
+                       sizeof (buffer));
 
    /*  FIXME: The fourth parameter is a ugly hack for now.  */
    if (kill)
-       strcat(buffer, "K");
+      strcat (buffer, "K");
 
    set_script (entity_id, buffer);
    return 0;
@@ -3623,7 +3623,8 @@ static int KQ_set_marker (lua_State * L)
          sprintf (strbuf, "Error in script: %s already defined.", marker_name);
          message (strbuf, 255, 50, xofs, yofs);
       } else {
-         strcpy (g_map.markers[g_map.num_markers++].name, (const char *) marker_name);
+         strcpy (g_map.markers[g_map.num_markers++].name,
+                 (const char *) marker_name);
          g_map.markers[g_map.num_markers++].x = x_coord;
          g_map.markers[g_map.num_markers++].y = y_coord;
       }
