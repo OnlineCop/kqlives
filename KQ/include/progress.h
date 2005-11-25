@@ -148,6 +148,7 @@
 #define P_TALK_CORIN      109
 #define P_TALKOLDMAN      110
 #define P_ORACLEMONSTERS  111
+#define P_TRAVELPOINT     112
 
 /* 'specials' */
 #define P_SHOPSTART       1750
