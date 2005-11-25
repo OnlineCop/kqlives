@@ -523,7 +523,7 @@ static void moveleft (int target_entity)
       return;
    if (g_ent[target_entity].obsmode == 1) {
       if (obstruction (tx, ty, -1, 0)
-          || entityat (tx - 1, ty, target_entity)))
+          || entityat (tx - 1, ty, target_entity))
          return;
    }
    g_ent[target_entity].tilex--;
