@@ -9,7 +9,7 @@
 
 
 function autoexec()
-  if (get_progress(P_WARPEDTOT4) == 0) then
+  if (get_progress(P_WARPEDTOT4) == 1) then
     if (get_numchrs() > 1) then
       set_progress(P_OLDPARTNER, get_pidx(1) + 1)
       remove_chr(get_pidx(1))
@@ -17,7 +17,7 @@ function autoexec()
     else
       set_progress(P_OLDPARTNER, 0)
     end
-    set_progress(P_WARPEDTOT4, 1)
+    set_progress(P_WARPEDTOT4, 2)
     set_desc(0)
   end
   if (get_progress(P_BOUGHTHOUSE) == 1) then
@@ -43,7 +43,7 @@ end
 function postexec()
   local a, b
 
-  if (get_progress(P_WARPEDTOT4) == 1) then
+  if (get_progress(P_WARPEDTOT4) == 2) then
     if (get_progress(P_OLDPARTNER) > 0) then
       bubble(HERO1, "What?")
       set_autoparty(1)
@@ -66,7 +66,7 @@ function postexec()
         wait(50)
       end
     end
-    set_progress(P_WARPEDTOT4, 2)
+    set_progress(P_WARPEDTOT4, 3)
   end
 end
 

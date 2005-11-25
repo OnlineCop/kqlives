@@ -1,5 +1,7 @@
 -- town7 - "Pulcannen"
 
+-- // P_TRAVELPOINT: Whether we've just come through the TravelPoint
+
 function autoexec()
 
   if ((get_progress(P_TALKOLDMAN) == 0) and
@@ -9,6 +11,11 @@ function autoexec()
       (get_progress(P_OPALARMOUR) > 0)) then
     set_progress(P_TALKOLDMAN, 1)
   end
+  
+  if (get_progress(P_TRAVELPOINT) == 1) then
+    set_progress(P_TRAVELPOINT, 0)
+  end
+  
   refresh()
 end
 
@@ -142,6 +149,10 @@ function zone_handler(zn)
 
   elseif (zn == 31 or zn == 32) then
     bubble(HERO1, "The chest is locked.")
+
+  elseif (zn == 33) then
+    set_progress(P_TRAVELPOINT, 1)
+    change_mapm("cave3a", "portal")
 
   end
 end
