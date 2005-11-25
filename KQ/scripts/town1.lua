@@ -261,8 +261,10 @@ function entity_handler(en)
   if (en == 0) then
     if (get_progress(P_WARPSTONE) == 0) then
       if (get_progress(P_EKLAWELCOME) == 0) then
-        bubble(en, "Welcome to Ekla.")
-        bubble(en, "Yes! This makes 8!", "If I welcome enough people to town, I might get promoted to a job where I just sit around the house all day and say the same thing over and over. I should start practicing.")
+        bubble(en, "Welcome to the town of Ekla.")
+        bubble(en, "Yes! That makes eight. If I welcome enough newcomers to this town, I will get promoted.")
+        bubble(en, "I might get a job sitting in a house all day saying the same thing over and over to anyone who talks to me.")
+        bubble(en, "I should start practicing.")
         set_progress(P_EKLAWELCOME, 1)
       elseif (get_progress(P_EKLAWELCOME) == 1) then
         bubble(en, "I like cheese.")
