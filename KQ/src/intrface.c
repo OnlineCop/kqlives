@@ -25,15 +25,24 @@
  * \date Created ????????
  * \date Updated 20021125 -- Added extra functions
  * \date Updated 20030308 -- Added object interface
+ * \data Updated 20051220 -- Change to Lua 5
  *
  * This file implements the interface between
  * the C code and the Lua scripts.
  *
  */
-
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+#ifndef KQ_SCAN_DEPEND
 #include <stdio.h>
 #include <string.h>
+#ifdef HAVE_LUA50_LUA_H
+#include <lua50/lua.h>
+#else
 #include <lua.h>
+#endif
+#endif /* KQ_SCAN_DEPEND */
 #include "intrface.h"
 #include "setup.h"
 #include "effects.h"
@@ -60,6 +69,16 @@
 /* Defines */
 #define LUA_ENT_KEY "_ent"
 #define LUA_PLR_KEY "_obj"
+
+
+#define NUM_IFUNCS   142
+
+struct luaL_reg
+{
+   const char *name;
+   lua_CFunction func;
+};
+
 
 
 
@@ -411,7 +430,7 @@ static const struct luaL_reg lrs[] = {
 };
 
 /*! \brief Holds a reference to the zone handler function */
-int ref_zone_handler;
+/*int ref_zone_handler;*/
 
 /*! \brief Maps a text field name to an identifier */
 static struct s_field
@@ -828,39 +847,44 @@ static void init_markers (lua_State * L)
 static void init_obj (lua_State * L)
 {
    int i = 0;
-   int tag = lua_newtag (L);
-   int ptag = lua_newtag (L);
 
    /* do all the players */
+   lua_newtable (L);
+   lua_pushstring(L, "gettable");
+   lua_pushcfunction(L, KQ_char_getter);
+   lua_settable(L, -3);
+   lua_pushstring(L, "settable");
+   lua_pushcfunction(L, KQ_char_setter);
+   lua_settable(L, -3);
+
    for (i = 0; i < MAXCHRS; ++i) {
       lua_newtable (L);
-      lua_settag (L, tag);
+      lua_pushvalue(L, -2);
+      lua_setmetatable(L, -1);
       lua_pushstring (L, LUA_PLR_KEY);
-      lua_pushuserdata (L, &party[i]);
+      lua_pushlightuserdata (L, &party[i]);
       lua_rawset (L, -3);
       lua_setglobal (L, party[i].name);
    }
-   lua_pushcfunction (L, KQ_char_getter);
-   lua_settagmethod (L, tag, "gettable");
-   lua_pushcfunction (L, KQ_char_setter);
-   lua_settagmethod (L, tag, "settable");
    /* party */
    for (i = 0; i < numchrs; ++i) {
       lua_getglobal (L, party[pidx[i]].name);
       /* also fill in the entity reference */
       lua_pushstring (L, LUA_ENT_KEY);
-      lua_pushuserdata (L, &g_ent[i]);
+      lua_pushlightuserdata (L, &g_ent[i]);
       lua_rawset (L, -3);
    }
    /* party pseudo-array */
    lua_newtable (L);
-   lua_settag (L, ptag);
+   lua_newtable (L);
+   lua_pushstring(L, "gettable");
+   lua_pushcfunction(L, party_getter);
+   lua_settable(L, -3);
+   lua_pushstring(L, "settable");
+   lua_pushcfunction(L, party_setter);
+   lua_settable(L, -3);
+   lua_setmetatable(L, -2);
    lua_setglobal (L, "party");
-   lua_pushcfunction (L, party_getter);
-   lua_settagmethod (L, ptag, "gettable");
-   lua_pushcfunction (L, party_setter);
-   lua_settagmethod (L, ptag, "settable");
-
    /* player[] array */
    lua_newtable (L);
    for (i = 0; i < MAXCHRS; ++i) {
@@ -874,9 +898,10 @@ static void init_obj (lua_State * L)
    /* ents */
    for (i = 0; i < noe; ++i) {
       lua_newtable (L);
-      lua_settag (L, tag);
+      lua_pushvalue(L, -2);
+      lua_setmetatable(L, -2);
       lua_pushstring (L, LUA_ENT_KEY);
-      lua_pushuserdata (L, &g_ent[i + PSIZE]);
+      lua_pushlightuserdata (L, &g_ent[i + PSIZE]);
       lua_rawset (L, -3);
       lua_rawseti (L, -2, i);
    }
@@ -890,13 +915,13 @@ static void init_obj (lua_State * L)
 
 
 
-int g_trk, g_keys[8];
-BITMAP *g_bmp[5];
-DATAFILE *g_df;
-lua_State *theL;
-char tmap_name[16];
-char marker_name[255];
-int tmx, tmy, tmvx, tmvy, changing_map = 0, changing_map_markers = 0;
+static int g_keys[8];
+static BITMAP *g_bmp[5];
+static DATAFILE *g_df;
+static lua_State *theL;
+static char tmap_name[16];
+static char marker_name[255];
+static int tmx, tmy, tmvx, tmvy, changing_map = 0, changing_map_markers = 0;
 
 
 
@@ -3346,6 +3371,44 @@ int KQ_add_quest_item (lua_State * L)
    return 0;
 }
 
+/*! \brief Read file chunk
+ *
+ * Read in a piece of a file for the Lua system to compile
+ *
+ * \param L the Lua state (ignored)
+ * \param f an Allegro packfile to read from 
+ * \param size [out] the number of bytes read
+ */
+static const char* filereader(lua_State* L, PACKFILE* f, size_t* size)
+{
+  static char buf[1024];
+  /* Avoid 'unused' warning */
+  L=L;
+  *size=pack_fread(buf, sizeof(buf), f);
+  return buf;
+}
+
+/*! \brief Read in a complete file
+ *
+ * Read in a file and execute it. Executing means
+ * defining all the functions etc listed within
+ * it.
+ * \todo More error checking 
+ *
+ * \param L the Lua state 
+ * \param filename the full path of the file to read
+ */
+
+int lua_dofile(lua_State* L, const char* filename) 
+{
+  int retval;
+  PACKFILE* f;
+  f=pack_fopen(filename, F_READ);
+  retval = lua_load(L, (lua_Chunkreader) filereader, f, filename);
+  pack_fclose(f);
+  return retval ? retval : lua_pcall(L, 0, LUA_MULTRET, 0);
+}
+
 /*! \brief Initialise scripting engine
  *
  * Initialise the Lua scripting engine by loading from a file. A new VM is
@@ -3361,7 +3424,7 @@ void do_luainit (char *fname)
    if (theL != NULL) {
       do_luakill ();
    }
-   theL = lua_open (0);
+   theL = lua_open();
    if (theL == NULL)
       program_death ("Could not initialise scripting engine");
    fieldsort ();
@@ -3382,8 +3445,6 @@ void do_luainit (char *fname)
       sprintf (strbuf, "Could not open script:%s", fname);
       program_death (strbuf);
    }
-   lua_getglobal (theL, "zone_handler");
-   ref_zone_handler = lua_ref (theL, 1);
    lua_settop (theL, oldtop);
 }
 
@@ -3421,7 +3482,6 @@ void do_luakill (void)
 {
    reset_timer_events ();
    if (theL) {
-      lua_unref (theL, ref_zone_handler);
       lua_close (theL);
       theL = NULL;
    }
@@ -3441,7 +3501,7 @@ void do_autoexec (void)
    int oldtop = lua_gettop (theL);
 
    lua_getglobal (theL, "autoexec");
-   lua_call (theL, 0, 0);
+   lua_pcall (theL, 0, 0, 0);
    lua_settop (theL, oldtop);
    check_map_change ();
 }
@@ -3481,7 +3541,8 @@ void do_zone (int zn_num)
 {
    int oldtop = lua_gettop (theL);
 
-   lua_getref (theL, ref_zone_handler);
+   /*   lua_getref (theL, ref_zone_handler);*/
+   lua_getglobal(theL, "zone_handler");
    lua_pushnumber (theL, zn_num);
    lua_call (theL, 1, 0);
    lua_settop (theL, oldtop);
