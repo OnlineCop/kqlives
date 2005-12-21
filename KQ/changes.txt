@@ -1,3 +1,43 @@
+20051221 - teamterradactyl <teamterradactyl@users.sourceforge.net>:
+
+Map Editor:
+
+1) Changed mapshared.c so both mapedit and mapdump use a common struct (s_show showing), so now the following can be output in visual_map():
+-  Layers[1-3]
+-  Entities
+-  Obstacles
+-  Shadows
+-  Zones
+-  Markers
+2) Compare Markers in mapdiff
+
+KQ:
+
+1) Hopefully, this is temporary: Configured kq_yield() to allow one of the following:
+-  yield_timeslice()
+-  rest(0)
+-  rest(1)
+
+
+-----
+
+20050826 - teamterradactyl <teamterradactyl@users.sourceforge.net>:
+
+MAPDRAW:
+
+Markers have been updated to provide smoother usage in the game and scripts.  The player can choose a marker on the same map to warp to or use as a reference for treasure chest updates, etc.  This is handy incase the size of maps or placement of tiles are changed, so instead of changing the hard-coded x/y coordinates, the user only needs to remember the Marker name.
+
+An example of this is the warp function (specific for markers):
+
+  warpm("halldoor", 8)
+
+This will locate the marker named "halldoor" and use its x and y coordinates (plus the fade value of "8").
+
+Some other changes were to change_map() in reference to pointers, so you can now also say something like "change_map("mapname", "markername") and it will open the map, when warp to its marker's coordinates.
+
+
+-----
+
 20050512 - teamterradactyl <teamterradactyl@users.sourceforge.net>:
 
 NOTES:
@@ -20,8 +60,3 @@ KQ_CHEATS has been modified to affect whether the player can use "cheat.lob" dur
 -----
 
 Updated P_TALK_TSORIN so the player is required to go back and talk to Derig.  Whether you've found Derig before or not, this script should compensate for where you meet with him.
-
-
-TODO:
-
-Add other ideas for debugging as needed.
