@@ -154,12 +154,7 @@ static void parse_allegro_setup (void)
    }
    push_config_state ();
    set_config_file (cfg);
-#ifdef KQ_CHEATS
-   cheat = get_config_int (NULL, "cheat", 0);
-#endif
-#ifdef DEBUGMODE
-   debugging = get_config_int (NULL, "debugging", 0);
-#endif
+
    /* NB. JB's config file uses intro=yes --> skip_intro=0 */
    skip_intro = get_config_int (NULL, "skip_intro", 0);
 #ifdef __DJGPP__
@@ -174,6 +169,13 @@ static void parse_allegro_setup (void)
    is_sound = get_config_int (NULL, "is_sound", 1);
    use_joy = get_config_int (NULL, "use_joy", 0);
    slow_computer = get_config_int (NULL, "slow_computer", 0);
+   cpu_usage = get_config_int (NULL, "cpu_usage", 2);
+#ifdef KQ_CHEATS
+   cheat = get_config_int (NULL, "cheat", 0);
+#endif
+#ifdef DEBUGMODE
+   debugging = get_config_int (NULL, "debugging", 0);
+#endif
 
    kup = get_config_int (NULL, "kup", KEY_UP);
    kdown = get_config_int (NULL, "kdown", KEY_DOWN);
@@ -317,11 +319,11 @@ static void parse_jb_setup (void)
  * \param   caption Title of the setting (e.g. "Windowed mode:")
  * \param   value The setting (e.g. "Yes")
  */
-static void citem (int y, const char *caption, const char *value)
+static void citem (int y, const char *caption, const char *value, const int color)
 {
-   print_font (double_buffer, 48 + xofs, y + yofs, caption, FNORMAL);
+   print_font (double_buffer, 48 + xofs, y + yofs, caption, color);
    print_font (double_buffer, 280 - 8 * strlen (value) + xofs, y + yofs, value,
-               FNORMAL);
+               color);
 }
 
 
@@ -336,12 +338,25 @@ void config_menu (void)
 {
    int stop = 0, ptr = 0, p;
    int temp_key = 0;
+
 #ifdef DEBUGMODE
-   #define MENU_SIZE 17
+   #define MENU_SIZE 18
 #else
-   #define MENU_SIZE 16
+   #define MENU_SIZE 17
 #endif
-   /* helper strings */
+
+   /* Define rows with appropriate spacings for breaks between groups */
+   int row[MENU_SIZE];
+   for (p = 0; p < 4; p++)
+      row[p] = (p + 4) * 8;   // (p * 8) + 32
+   for (p = 4; p < 12; p++)
+      row[p] = (p + 5) * 8;   // (p * 8) + 40
+   for (p = 12; p < 15; p++)
+      row[p] = (p + 6) * 8;   // (p * 8) + 48
+   for (p = 15; p < MENU_SIZE; p++)
+      row[p] = (p + 7) * 8;   // (p * 8) + 56
+
+   /* Helper strings */
    static char *dc[MENU_SIZE] = {
       "Display KQ in a window.",
       "Stretch to fit 640x480 resolution.",
@@ -359,6 +374,7 @@ void config_menu (void)
       "Overall sound volume (affects music).",
       "Music volume.",
       "Animation speed-ups for slow machines.",
+      "Toggle how to allocate CPU usage.",
 #ifdef DEBUGMODE
       "Things you can do only in DebugMode.",
 #endif
@@ -378,42 +394,43 @@ void config_menu (void)
                   FGOLD);
       menubox (double_buffer, 32 + xofs, 24 + yofs, 30, MENU_SIZE + 3, BLUE);
 
-      citem (32, "Windowed mode:", windowed == 1 ? "YES" : "NO");
-      citem (40, "Stretch Display:", stretch_view == 1 ? "YES" : "NO");
-      citem (48, "Show Frame Rate:", show_frate == 1 ? "YES" : "NO");
-      citem (56, "Wait for Retrace:", wait_retrace == 1 ? "YES" : "NO");
-      citem (72, "Up Key:", kq_keyname (kup));
-      citem (80, "Down Key:", kq_keyname (kdown));
-      citem (88, "Left Key:", kq_keyname (kleft));
-      citem (96, "Right Key:", kq_keyname (kright));
-      citem (104, "Confirm Key:", kq_keyname (kalt));
-      citem (112, "Cancel Key:", kq_keyname (kctrl));
-      citem (120, "Menu Key:", kq_keyname (kenter));
-      citem (128, "System Menu Key:", kq_keyname (kesc));
-      citem (144, "Sound System:", is_sound ? "ON" : "OFF");
+      citem (row[0], "Windowed mode:", windowed == 1 ? "YES" : "NO", FNORMAL);
+      citem (row[1], "Stretch Display:", stretch_view == 1 ? "YES" : "NO", FNORMAL);
+      citem (row[2], "Show Frame Rate:", show_frate == 1 ? "YES" : "NO", FNORMAL);
+      citem (row[3], "Wait for Retrace:", wait_retrace == 1 ? "YES" : "NO", FNORMAL);
+      citem (row[4], "Up Key:", kq_keyname (kup), FNORMAL);
+      citem (row[5], "Down Key:", kq_keyname (kdown), FNORMAL);
+      citem (row[6], "Left Key:", kq_keyname (kleft), FNORMAL);
+      citem (row[7], "Right Key:", kq_keyname (kright), FNORMAL);
+      citem (row[8],  "Confirm Key:", kq_keyname (kalt), FNORMAL);
+      citem (row[9],  "Cancel Key:", kq_keyname (kctrl), FNORMAL);
+      citem (row[10], "Menu Key:", kq_keyname (kenter), FNORMAL);
+      citem (row[11], "System Menu Key:", kq_keyname (kesc), FNORMAL);
+      citem (row[12], "Sound System:", is_sound ? "ON" : "OFF", FNORMAL);
 
-      if (is_sound == 2) {
-         sprintf (strbuf, "%3d%%", gsvol * 100 / 250);
-         citem (152, "Sound Volume:", strbuf);
-
-         sprintf (strbuf, "%3d%%", gmvol * 100 / 250);
-         citem (160, "Music Volume:", strbuf);
-      }
-
+      p = FNORMAL;
       /* TT: This needs to check for ==0 because 1 means sound init */
-      if (is_sound == 0) {
-         print_font (double_buffer, 48 + xofs, 152 + yofs, "Sound Volume:",
-                     FDARK);
-         print_font (double_buffer, 48 + xofs, 160 + yofs, "Music Volume:",
-                     FDARK);
-      }
+      if (is_sound == 0)
+         p = FDARK;
 
-      citem (176, "Slow Computer:", slow_computer ? "YES" : "NO");
+      sprintf (strbuf, "%3d%%", gsvol * 100 / 250);
+      citem (row[13], "Sound Volume:", strbuf, p);
+
+      sprintf (strbuf, "%3d%%", gmvol * 100 / 250);
+      citem (row[14], "Music Volume:", strbuf, p);
+
+      citem (row[15], "Slow Computer:", slow_computer ? "YES" : "NO", FNORMAL);
+
+      if (cpu_usage)
+         sprintf (strbuf, "rest(%d)", cpu_usage - 1);
+      else
+         sprintf (strbuf, "yield_timeslice()");
+      citem (row[16], "CPU Usage:", strbuf, FNORMAL);
 
 #ifdef DEBUGMODE
       if (debugging)
          sprintf (strbuf, "%d", debugging);
-      citem (184, "DebugMode Stuff:", debugging ? strbuf : "OFF");
+      citem (row[17], "DebugMode Stuff:", debugging ? strbuf : "OFF", FNORMAL);
 #endif
 
       /* This affects the VISUAL placement of the arrow */
@@ -614,8 +631,14 @@ void config_menu (void)
             slow_computer = !slow_computer;
             set_config_int (NULL, "slow_computer", slow_computer);
             break;
-#ifdef DEBUGMODE
          case 16:
+            /* TT: Adjust the CPU usage:yield_timeslice() or rest() */
+            cpu_usage++;
+            if (cpu_usage > 2)
+               cpu_usage = 0;
+            break;
+#ifdef DEBUGMODE
+         case 17:
             /* TT: Things we only have access to when we're in debug mode */
             if (debugging < 4)
                debugging++;
@@ -763,20 +786,20 @@ void show_help (void)
    menubox (double_buffer, xofs, 216 + yofs, 38, 1, BLUE);
    print_font (double_buffer, 16 + xofs, 224 + yofs,
                "Press CONFIRM to exit this screen", FNORMAL);
-   citem (72, "Up Key:", kq_keyname (kup));
-   citem (80, "Down Key:", kq_keyname (kdown));
-   citem (88, "Left Key:", kq_keyname (kleft));
-   citem (96, "Right Key:", kq_keyname (kright));
-   citem (104, "Confirm Key:", kq_keyname (kalt));
-   citem (112, "Cancel Key:", kq_keyname (kctrl));
-   citem (120, "Menu Key:", kq_keyname (kenter));
-   citem (128, "System Menu Key:", kq_keyname (kesc));
+   citem (72, "Up Key:", kq_keyname (kup), FNORMAL);
+   citem (80, "Down Key:", kq_keyname (kdown), FNORMAL);
+   citem (88, "Left Key:", kq_keyname (kleft), FNORMAL);
+   citem (96, "Right Key:", kq_keyname (kright), FNORMAL);
+   citem (104, "Confirm Key:", kq_keyname (kalt), FNORMAL);
+   citem (112, "Cancel Key:", kq_keyname (kctrl), FNORMAL);
+   citem (120, "Menu Key:", kq_keyname (kenter), FNORMAL);
+   citem (128, "System Menu Key:", kq_keyname (kesc), FNORMAL);
    do {
       blit2screen (xofs, yofs);
       readcontrols ();
       kq_yield ();
    }
-   while (!balt);
+   while (!balt && !bctrl);
    unpress ();
 }
 

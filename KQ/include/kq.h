@@ -457,7 +457,7 @@ extern int noe, pidx[MAXCHRS], numchrs, gp, xofs, yofs, gsvol, gmvol;
 extern unsigned char autoparty, alldead, is_sound, deadeffect, vfollow,
    use_sstone, sound_avail;
 extern unsigned char kq_version, hold_fade, cansave, skip_intro, wait_retrace,
-   windowed, stretch_view;
+   windowed, stretch_view, cpu_usage;
 extern unsigned short tilex[MAX_TILES], adelay[MAX_ANIM];
 extern char *strbuf, *savedir;
 extern s_player party[MAXCHRS];

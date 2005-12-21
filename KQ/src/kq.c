@@ -164,7 +164,7 @@ unsigned char cansave = 0;
 /*! True if the intro is to be skipped (the bit where the heroes learn of the quest) */
 unsigned char skip_intro = 0;
 /*! Graphics mode settings */
-unsigned char wait_retrace = 0, windowed = 0, stretch_view = 0;
+unsigned char wait_retrace = 0, windowed = 0, stretch_view = 0, cpu_usage = 0;
 /*! Current sequence position of animated tiles */
 unsigned short tilex[MAX_TILES];
 /*! Current 'time' for animated tiles. When this increments to adata[].delay,
@@ -1994,11 +1994,23 @@ char *get_timer_event (void)
  */
 void kq_yield (void)
 {
-#if (ALLEGRO_VERSION >= 4 && ALLEGRO_SUB_VERSION >= 2)
-   rest (1);
-#else
-   yield_timeslice ();
-#endif
+   if (cpu_usage > 2)
+      cpu_usage = 2;
+
+   /* This can call the regular yield_timeslice() function, or we can try to
+    * use rest(0) or rest(1), depending on the user's preference (and Allegro
+    * settings).
+    */
+   if (cpu_usage == 0)
+      yield_timeslice ();
+   else
+      rest(cpu_usage - 1);
+
+// #if (ALLEGRO_VERSION >= 4 && ALLEGRO_SUB_VERSION >= 2)
+//    rest (1);
+// #else
+//    yield_timeslice ();
+// #endif
 }
 
 
