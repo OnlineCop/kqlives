@@ -27,6 +27,7 @@
 
 #ifndef __STRUCTS_H
 #define __STRUCTS_H
+
 /*! \brief Position marker
  *
  * A marker is a named position on the map.
@@ -37,12 +38,14 @@
  * \date 20050126
  */
 
+
 typedef struct
 {
    char name[32];               /*!< The name of this marker */
    short x;                     /*! <The X position it refers to */
    short y;                     /*! <The Y position it refers to */
 } s_marker;
+
 
 /*! \brief Map definition 
  *
@@ -75,6 +78,7 @@ typedef struct
    s_marker *markers;           /*!< Pointer to the array markers */
 }
 s_map;
+
 
 /*! \brief Entity
  *
@@ -113,6 +117,7 @@ typedef struct
 }
 s_entity;
 
+
 /*! \brief Animation specifier 
  *
  * Marks a block of tiles that are interchanged to give
@@ -126,10 +131,12 @@ typedef struct
 }
 s_anim;
 
+
 /* PH eek! hack alert! */
 #ifndef MAX_ANIM
 #define MAX_ANIM 5
 #endif
+
 
 /*! \brief Tileset definition 
  *
