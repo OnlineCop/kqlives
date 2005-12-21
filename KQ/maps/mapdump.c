@@ -103,24 +103,25 @@ void usage (const char *argv)
    fprintf (stdout,
             "   +  includes the option: it WILL appear in the image.\n");
    fprintf (stdout,
-            "   -  negates an option: it will not appear in the image.\n");
+            "   -  negates an option: it WILL NOT appear in the image.\n");
    fprintf (stdout, "   1  shows layer 1 (default ON)\n");
    fprintf (stdout, "   2  shows layer 2 (default ON)\n");
    fprintf (stdout, "   3  shows layer 3 (default ON)\n");
-   fprintf (stdout, "   e  shows the entities (default OFF)\n");
-   fprintf (stdout, "   o  shows the obstacles (default OFF)\n");
-   fprintf (stdout, "   s  shows the shadows (default ON)\n");
-   fprintf (stdout, "   z  shows the zones (default OFF)\n\n");
+   fprintf (stdout, "   e  shows the Entities (default OFF)\n");
+   fprintf (stdout, "   o  shows the Obstacles (default OFF)\n");
+   fprintf (stdout, "   s  shows the Shadows (default ON)\n");
+   fprintf (stdout, "   z  shows the Zones (default OFF)\n");
+   fprintf (stdout, "   m  shows the Markers (default OFF)\n\n");
    fprintf (stdout, "   -v displays %s output in verbose mode\n\n", argv);
    fprintf (stdout, "   -b output as Windows bitmap instead of PCX\n\n");
    fprintf (stdout, "   -f overwrite image, even if it already exists\n\n");
    fprintf (stdout, "   filename  is the .MAP file(s) to be used\n");
    fprintf (stdout, "Example: %s +1oz -23es town1.map town2.map\n\n", argv);
    fprintf (stdout,
-            "  Output will be `town1.pcx' and `town2.pcx' with only level 1, obstacles,\n");
-   fprintf (stdout, "    and zones showing.\n");
+            "  Output will be `town1.pcx' and `town2.pcx' with only Layer 1, Obstacles,\n");
+   fprintf (stdout, "    and Zones showing.\n");
    fprintf (stdout,
-            "  Layers 2 and 3, entities, and shadows will NOT be included.\n");
+            "  Layers 2 and 3, Entities, and Shadows will NOT be included.\n");
 }                               /* usage () */
 
 
