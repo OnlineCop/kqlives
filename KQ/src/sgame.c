@@ -163,6 +163,7 @@ static void show_sgstats (int saving)
          menubox (double_buffer, 72, sg * 48, 29, 4, DARKBLUE);
       else
          menubox (double_buffer, 72, sg * 48, 29, 4, BLUE);
+
       if (snc[sg] == -1)
          print_font (double_buffer, 136, sg * 48 + 20, "Wrong version",
                      FNORMAL);
@@ -402,7 +403,7 @@ static int load_game (void)
       g_inv[a][0] = pack_igetw (sdat);
       g_inv[a][1] = pack_igetw (sdat);
    }
-   /* PH: I've decided that I'm going to ignore 
+   /* PH: I've decided that I'm going to ignore
     * these things in the save file. and use
     * the global values instead.
     gsvol = pack_igetl (sdat);
@@ -740,9 +741,9 @@ int start_menu (int c)
 }
 
 /*! \brief Confirm that the player really wants to quit
- * 
+ *
  * Ask the player if she/he wants to quit, yes or no.
- * \date 20050119 
+ * \date 20050119
  * \author PH
  *
  * \returns 1=quit 0=don't quit

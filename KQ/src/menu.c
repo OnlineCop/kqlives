@@ -810,6 +810,8 @@ static void level_up (int pr)
    party[pr].mmp += b;
 }
 
+
+
 /*! \brief Contains one item of information about the quest 
  *
  * These are hints/reminders about the game - e.g
@@ -826,14 +828,20 @@ typedef struct info_item
    char *text;                  /*!< The actual info */
 } IITEM;
 
+
+
 typedef struct info_list
 {
-   IITEM *root;                 /*! < The array of active  info items */
+   IITEM *root;                 /*!< The array of active  info items */
    int count;                   /*!< The number of items currently in the  array */
    int capacity;                /*!< The total capacity of the  array */
 } ILIST;
 
+
+
 static ILIST quest_list;
+
+
 
 void ilist_add (ILIST * l, const char *key, const char *text)
 {
@@ -849,6 +857,8 @@ void ilist_add (ILIST * l, const char *key, const char *text)
    ++l->count;
 }
 
+
+
 /*! \brief Add a new quest item
  *
  * Add a Quest info item to the current set
@@ -862,6 +872,8 @@ void add_questinfo (const char *key, const char *text)
 {
    ilist_add (&quest_list, key, text);
 }
+
+
 
 /*! \brief Remove all  items
  *
@@ -880,6 +892,8 @@ void ilist_clear (ILIST * l)
    l->count = 0;
 }
 
+
+
 /*! \brief Do the Quest Info menu
  *
  * Show the current list of quest information items
@@ -891,6 +905,7 @@ static void quest_info (void)
 {
    int ii = 0;
    int i, base;
+
    /* Call into the script */
    ilist_clear (&quest_list);
    do_questinfo ();
