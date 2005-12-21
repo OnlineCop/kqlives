@@ -879,7 +879,7 @@ s_item items[NUM_ITEMS] = {
 
 
 /* Format: {"Name", Icon, "Description", Stat, Mpc, Use, Tgt, Dmg, Bon, Hit, Elem, Dlvl, Eff,
- *          Clvl {Sensar, Sarina, Corin, Ajathar, Casandra, Temmin, Ayla, Noslom}
+ *          Clvl {Sensar, Sarina, Corin, Ajathar, Casandra, Temmin, Ayla, Noslom}}
  * "Name" is what the player sees either in the list of spells, or when the spell is being cast
  * Icon is the index for the picture that is on the side of the list of spells (the spell group)
  * "Description" is a very basic description of the type of spell
@@ -1069,6 +1069,12 @@ s_effect eff[NUM_EFFECTS] = {
 
 
 
+/* Format: {tnum, lvl, per, idx[5]}
+ * tnum:    Encounter number in the Encounter table
+ * lvl:     Level of monsters
+ * per:     When random encounters are specified, this is the cumulative percentage that this one will be selected
+ * idx[5]:  There can be up to 5 enemies per battle; index of each enemy (index starts at 1; 0 means NO enemy)
+ */
 s_erow erows[NUM_ETROWS] = {
    {0, 2, 20, {3, 3, 3, 0, 0}},
    {0, 1, 40, {3, 3, 0, 0, 0}},
@@ -1185,6 +1191,14 @@ s_erow erows[NUM_ETROWS] = {
 
 
 
+/* Format: {Map, Zone, Enc, Etnum, Eidx, "BMusic", "BackImg"}
+ *   Map:       Where this battle occurs
+ *   Zone:      What triggers this battle
+ *   Enc:       The 1-in-enc chance there will NOT be combat
+ *   Etnum:     Select rows in the Encounter table
+ *   "BMusic":  Music file to play
+ *   "BackImg": Background image
+ */
 s_encounter battles[NUM_BATTLES] = {
    {MAP_BRIDGE, 255, 1, 2, 5, "walk.s3m", "BACK3_PCX"},
    {MAP_CAMP, 255, 1, 10, 0, "hm.s3m", "BACK7_PCX"},

@@ -114,8 +114,8 @@ s_effect;
 /*! \brief An encounter */
 typedef struct
 {
-   unsigned char tnum;
-   unsigned char lvl;
+   unsigned char tnum;          /*!< Encounter number in the Encounter table */
+   unsigned char lvl;           /*!< Level of monsters */
    unsigned char per;           /*!< When random encounters are specified, this is the cumulative percentage that this one will be selected */
    unsigned char idx[5];        /*!< Index of enemies */
 }
