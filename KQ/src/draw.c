@@ -509,8 +509,10 @@ static void draw_backlayer (void)
    xofs = 16 - (dx & 15);
    yofs = 16 - (dy & 15);
    for (dy = 0; dy < 16; dy++) {
+      /* TT Parallax problem here #1 */
       if (ytc + dy >= v_y1 && ytc + dy <= v_y2) {
          for (dx = 0; dx < 21; dx++) {
+            /* TT Parallax problem here #2 */
             if (xtc + dx >= v_x1 && xtc + dx <= v_x2) {
                pix = map_seg[((ytc + dy) * g_map.xsize) + xtc + dx];
                blit (map_icons[tilex[pix]], double_buffer, 0, 0,
