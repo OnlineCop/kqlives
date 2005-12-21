@@ -67,7 +67,7 @@ static int deequip (int, int);
  * It's kept separate from the equip_menu routine for the sake
  * of code cleanliness... better late than never :P
  *
- * \param   c Index of chanracter to equip
+ * \param   c Index of character to equip
  * \param   sel If sel==1, show the full range of options (Equip, Optimize,
  *              Remove, Empty)
  *              Otherwise just show Equip if eqp_act is 0 or Remove if it is 2.
