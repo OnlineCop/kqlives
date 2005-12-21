@@ -23,29 +23,12 @@
 
 /* globals */
 
-/* Shadows, obstacles, entities */
-BITMAP *shadow[MAX_SHADOWS];
-
-/* Selectable tiles on the right-hand menu */
-BITMAP *icons[MAX_TILES];
-
-/* Used for the icons */
-short max_sets = 51;
-
-s_map gmap;
-s_entity gent[50];
 s_anim tanim[NUM_TILESETS][MAX_ANIM];
 s_anim adata[MAX_ANIM];
 unsigned short tilex[MAX_TILES];
 
 /* Show details when parsing MAP files */
 int verbose = 0;
-
-/* Default values, incase an option is not specified */
-static int d_layer1 = 1, d_layer2 = 1, d_layer3 = 1, d_shadows = 1,
-   d_zones = 0, d_obstacles = 0, d_entities = 1;
-static int show_layer1, show_layer2, show_layer3, show_shadows,
-   show_zones, show_obstacles, show_entities;
 
 char *filenames[PATH_MAX];
 
@@ -83,8 +66,6 @@ void bufferize (void)
  */
 void cleanup (void)
 {
-   int i;
-
    free (map);
    free (b_map);
    free (f_map);
@@ -92,11 +73,7 @@ void cleanup (void)
    free (sh_map);
    free (z_map);
 
-   for (i = 0; i < MAX_TILES; i++)
-      destroy_bitmap (icons[i]);
-   for (i = 0; i < MAX_SHADOWS; i++)
-      destroy_bitmap (shadow[i]);
-   destroy_bitmap (mesh);
+   shared_cleanup ();
 }                               /* cleanup () */
 
 
@@ -150,10 +127,12 @@ void usage (const char *argv)
 int main (int argc, char *argv[])
 {
    char fn[PATH_MAX], *filenames[PATH_MAX];
-   int i, k, number_of_files = 0, verbose = 0;
+   int i, number_of_files = 0, verbose = 0;
    int force_overwrite = 0;
    char *output_ext = "pcx";
    COLOR_MAP cmap;
+   /* Regular and default values (incase an option is not specified) */
+   s_show showing, d_showing;
 
    /* Make sure that we have some sort of input; exit with error if not */
    if (argc == 1) {
@@ -166,6 +145,30 @@ int main (int argc, char *argv[])
    create_trans_table (&cmap, pal, 128, 128, 128, NULL);
    color_map = &cmap;
 
+   shared_startup ();
+
+   /* Initialize standard "unchanged" settings */
+   showing.entities = -1;
+   showing.obstacles = -1;
+   showing.shadows = -1;
+   showing.zones = -1;
+   showing.markers = -1;
+   showing.layer[0] = -1;
+   showing.layer[1] = -1;
+   showing.layer[2] = -1;
+
+   /* Initialize default settings */
+   d_showing.entities = 1;
+   d_showing.obstacles = 0;
+   d_showing.shadows = 1;
+   d_showing.zones = 0;
+   d_showing.markers = 0;
+   d_showing.last_layer = 0;
+   d_showing.layer[0] = 1;
+   d_showing.layer[1] = 1;
+   d_showing.layer[2] = 1;
+
+   /* Some command-line switches must have preference, so sweep twice */
    for (i = 1; i < argc; i++) {
       if (!strcmp (argv[i], "--help") || !strcmp (argv[i], "-h")) {
          usage (argv[0]);
@@ -176,39 +179,32 @@ int main (int argc, char *argv[])
       if (!strcmp (argv[i], "-b"))
          output_ext = "bmp";
       if (!strcmp (argv[i], "-f"))
-         force_overwrite = 1;;
+         force_overwrite = 1;
    }
 
-   show_layer1 = d_layer1;
-   show_layer2 = d_layer2;
-   show_layer3 = d_layer3;
-   show_entities = d_entities;
-   show_obstacles = d_obstacles;
-   show_shadows = d_shadows;
-   show_zones = d_zones;
    if (verbose)
       fprintf (stdout, "\nStarting %s...\n", argv[0]);
    for (i = 1; i < argc; i++) {
-      /* Do not allow "--" options to be passed */
-      if (argv[i][0] == '-' && argv[i][1] == '-') {
-      } else if (argv[i][0] == '-') {
+      if (argv[i][0] == '-') {
          /* This means to exclude an effect */
-         show_layer1 = strchr (argv[i] + 1, '1') ? 0 : d_layer1;
-         show_layer2 = strchr (argv[i] + 1, '2') ? 0 : d_layer2;
-         show_layer3 = strchr (argv[i] + 1, '3') ? 0 : d_layer3;
-         show_entities = strchr (argv[i] + 1, 'e') ? 0 : d_entities;
-         show_obstacles = strchr (argv[i] + 1, 'o') ? 0 : d_obstacles;
-         show_shadows = strchr (argv[i] + 1, 's') ? 0 : d_shadows;
-         show_zones = strchr (argv[i] + 1, 'z') ? 0 : d_zones;
+         showing.entities = strchr (argv[i], 'e') ? 0 : showing.entities;
+         showing.obstacles = strchr (argv[i], 'o') ? 0 : showing.obstacles;
+         showing.shadows = strchr (argv[i], 's') ? 0 : showing.shadows;
+         showing.zones = strchr (argv[i], 'z') ? 0 : showing.zones;
+         showing.markers = strchr (argv[i], 'm') ? 0 : showing.zones;
+         showing.layer[0] = strchr (argv[i], '1') ? 0 : showing.layer[0];
+         showing.layer[1] = strchr (argv[i], '2') ? 0 : showing.layer[1];
+         showing.layer[2] = strchr (argv[i], '3') ? 0 : showing.layer[2];
       } else if (argv[i][0] == '+') {
          /* This means to include an effect */
-         show_layer1 = strchr (argv[i] + 1, '1') ? 1 : d_layer1;
-         show_layer2 = strchr (argv[i] + 1, '2') ? 1 : d_layer2;
-         show_layer3 = strchr (argv[i] + 1, '3') ? 1 : d_layer3;
-         show_entities = strchr (argv[i] + 1, 'e') ? 1 : d_entities;
-         show_obstacles = strchr (argv[i] + 1, 'o') ? 1 : d_obstacles;
-         show_shadows = strchr (argv[i] + 1, 's') ? 1 : d_shadows;
-         show_zones = strchr (argv[i] + 1, 'z') ? 1 : d_zones;
+         showing.entities = strchr (argv[i], 'e') ? 1 : showing.entities;
+         showing.obstacles = strchr (argv[i], 'o') ? 1 : showing.obstacles;
+         showing.shadows = strchr (argv[i], 's') ? 1 : showing.shadows;
+         showing.zones = strchr (argv[i], 'z') ? 1 : showing.zones;
+         showing.markers = strchr (argv[i], 'm') ? 1 : showing.zones;
+         showing.layer[0] = strchr (argv[i], '1') ? 1 : showing.layer[0];
+         showing.layer[1] = strchr (argv[i], '2') ? 1 : showing.layer[1];
+         showing.layer[2] = strchr (argv[i], '3') ? 1 : showing.layer[2];
       } else {
          if (exists (argv[i])) {
             if (number_of_files < PATH_MAX)
@@ -224,31 +220,33 @@ int main (int argc, char *argv[])
       }
    }
 
-   for (k = 0; k < MAX_TILES; k++) {
-      icons[k] = create_bitmap (16, 16);
-      clear (icons[k]);
-   }
+   if (showing.entities == -1)
+      showing.entities = d_showing.entities;
+   if (showing.obstacles == -1)
+      showing.obstacles = d_showing.obstacles;
+   if (showing.shadows == -1)
+      showing.shadows = d_showing.shadows;
+   if (showing.zones == -1)
+      showing.zones = d_showing.zones;
+   if (showing.markers == -1)
+      showing.markers = d_showing.markers;
+   if (showing.layer[0] == -1)
+      showing.layer[0] = d_showing.layer[0];
+   if (showing.layer[1] == -1)
+      showing.layer[1] = d_showing.layer[1];
+   if (showing.layer[2] == -1)
+      showing.layer[2] = d_showing.layer[2];
 
-   /* Shadow images */
-   if (show_shadows) {
-      set_pcx (&pcx_buffer, "Misc.pcx", pal, 0);
-      for (k = 0; k < MAX_SHADOWS; k++) {
-         shadow[k] = create_bitmap (16, 16);
-         blit (pcx_buffer, shadow[k], k * 16, 160, 0, 0, 16, 16);
-      }
-      destroy_bitmap (pcx_buffer);
-   }
-
-   /* Obstacles */
-   if (show_obstacles) {
-      mesh = create_bitmap (16, 16);
-      clear (mesh);
-      for (i = 0; i < 16; i += 2) {
-         for (k = 0; k < 16; k += 2)
-            putpixel (mesh, k, i, 255);
-         for (k = 1; k < 16; k += 2)
-            putpixel (mesh, k, i + 1, 255);
-      }
+   if (verbose) {
+      fprintf (stdout, "You have set the following: \n");
+      fprintf (stdout, "- Entities: %s", showing.entities ? "ON\n" : "OFF\n");
+      fprintf (stdout, "- Obstacles: %s", showing.obstacles ? "ON\n" : "OFF\n");
+      fprintf (stdout, "- Shadows: %s", showing.shadows ? "ON\n" : "OFF\n");
+      fprintf (stdout, "- Zones: %s", showing.zones ? "ON\n" : "OFF\n");
+      fprintf (stdout, "- Markers: %s", showing.markers ? "ON\n" : "OFF\n");
+      fprintf (stdout, "- Layer1: %s", showing.layer[0] ? "ON\n" : "OFF\n");
+      fprintf (stdout, "- Layer2: %s", showing.layer[1] ? "ON\n" : "OFF\n");
+      fprintf (stdout, "- Layer3: %s", showing.layer[2] ? "ON\n" : "OFF\n");
    }
 
    for (i = 0; i < number_of_files; i++) {
@@ -261,13 +259,12 @@ int main (int argc, char *argv[])
             fprintf (stdout, "  - %s replaced by extension .%s: %s\n",
                      filenames[i], output_ext, fn);
          load_map (filenames[i]);
-         if (verbose)
-            fprintf (stdout, "  - Setting palette\n");
-         set_palette (pal);
          if (!exists (fn) || force_overwrite) {
             if (verbose)
                fprintf (stdout, "  - Saving %s...\n", fn);
-            visual_map (fn);
+
+            visual_map (showing, fn);
+
             if (verbose)
                fprintf (stdout, "  - \"%s\" created with mode \"%d\"\n", fn,
                         gmap.map_mode);
@@ -279,6 +276,7 @@ int main (int argc, char *argv[])
       }
    }
 
+   cleanup ();
    return 0;
 }                               /* main () */
 

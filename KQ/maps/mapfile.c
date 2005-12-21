@@ -30,7 +30,7 @@ void error_load (const char *problem_file)
 
    sprintf (strbuf, "Could not load \"%s\"", problem_file);
    draw_map ();
-   blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+   blit2screen ();
 
    i = (strlen (strbuf) + 1) * 6;
    rectfill (screen, 0, 0, i + 4, 22, 0);
@@ -68,7 +68,7 @@ void make_mapfrompcx (void)
 
    done = 0;
    while (!done) {
-      blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+      blit2screen ();
       response = get_line (66, 12, fname, 40);
 
       /* If the user hits ESC, break out of the function entirely */
@@ -100,7 +100,7 @@ void make_mapfrompcx (void)
 
    done = 0;
    while (!done) {
-      blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+      blit2screen ();
       tm = NULL;
 
       response = get_line (102, 12, strbuf, 2);
@@ -202,7 +202,7 @@ void new_map (void)
 
    done = 0;
    while (!done) {
-      blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+      blit2screen ();
       response = get_line (48, 18, strbuf, 4);
 
       /* If the user hits ESC, break out of the function entirely */
@@ -231,7 +231,7 @@ void new_map (void)
 
    done = 0;
    while (!done) {
-      blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+      blit2screen ();
       response = get_line (54, 26, strbuf, 4);
 
       /* If the user hits ESC, break out of the new_map() loop entirely */
@@ -261,7 +261,7 @@ void new_map (void)
 
    done = 0;
    while (!done) {
-      blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+      blit2screen ();
       response = get_line (156, 34, strbuf, 2);
 
       /* If the user hits ESC, break out of the new_map() loop entirely */
@@ -290,7 +290,7 @@ void new_map (void)
    }
 
    /* Redraw the screen, blank */
-   blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+   blit2screen ();
 
    /* Default values for the new map */
    gmap.map_no = 0;
@@ -338,7 +338,7 @@ void prompt_load_map (void)
 
    done = 0;
    while (!done) {
-      blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+      blit2screen ();
       response = get_line (66, 18, fname, sizeof (fname));
 
       /* If the user hits ESC, break out of the function entirely */
@@ -406,7 +406,7 @@ void save_map (void)
 
    done = 0;
    while (!done) {
-      blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+      blit2screen ();
       response = get_line (66, 18, fname, sizeof (fname));
 
       /* If the user hits ESC, break out of the function entirely */

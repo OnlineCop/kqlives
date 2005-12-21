@@ -15,13 +15,11 @@
 #include "mapdraw.h"
 #include "../include/disk.h"
 
-int show_layer1 = 1, show_layer2 = 1, show_layer3 = 1;
-int show_zones = 0, show_obstacles = 0, show_shadows = 1;
-
 /* Selectable tiles on the right-hand menu */
 BITMAP *icons[MAX_TILES];
 BITMAP *double_buffer, *pcx_buffer, *eframes[MAX_EPICS][12];
-BITMAP *font6, *mesh;
+BITMAP *font6, *mesh1[MAX_OBSTACLES], *shadow[MAX_SHADOWS];
+BITMAP *marker_image;
 
 // This line turns off other/indent.pro indentation settings:
 // *INDENT-OFF*
@@ -106,6 +104,9 @@ PALETTE pal = {
    {27, 54, 54, 0}, {30, 60, 60, 0}, {34, 63, 63, 0}, {38, 63, 63, 0},
    {42, 63, 63, 0}, {46, 63, 63, 0}, {50, 63, 63, 0}, {63, 63, 63, 0}
 };
+// This line turns back on other/indent.pro indentation settings:
+// *INDENT-ON*
+
 
 char *icon_files[NUM_TILESETS] = {
    "land.pcx", "newtown.pcx", "castle.pcx", "Incave.pcx", "village.pcx",
@@ -113,10 +114,48 @@ char *icon_files[NUM_TILESETS] = {
 };
 
 char map_fname[40], *strbuf;
-short icon_set;
+
+/* Used for the icons */
+short max_sets = 51;
+short icon_set = 0;
+short num_markers = 0;
+
+s_map gmap;
+s_entity gent[50];
+s_show showing;
 
 unsigned short *map, *b_map, *f_map, *c_map, *cf_map, *cb_map;
 unsigned char *z_map, *sh_map, *o_map, *cz_map, *csh_map, *co_map;
+
+s_marker markers[MAX_MARKERS];
+
+
+/*! \brief Blit to screen
+ *
+ * Since this is called repeatedly, make a function; if we ever have to make
+ * changes to the way this blits to the screen, we'll only have to update it
+ * once.
+ */
+void blit2screen (void)
+{
+   blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+}
+
+
+void load_iconsets (PALETTE pal)
+{
+   int x, y;
+
+   set_pcx (&pcx_buffer, icon_files[gmap.tileset], pal, 1);
+   max_sets = (pcx_buffer->h / 16);
+
+   for (y = 0; y < max_sets; y++)
+      for (x = 0; x < ICONSET_SIZE; x++)
+         blit (pcx_buffer, icons[y * ICONSET_SIZE + x], x * 16, y * 16, 0, 0,
+               16, 16);
+   icon_set = 0;
+   destroy_bitmap (pcx_buffer);
+}
 
 
 /*! \brief Load a map
@@ -177,12 +216,7 @@ void load_map (const char *filename)
    set_pcx (&pcx_buffer, icon_files[gmap.tileset], pal, 1);
    max_sets = (pcx_buffer->h / 16);
 
-   for (q = 0; q < max_sets; q++)
-      for (p = 0; p < ICONSET_SIZE; p++)
-         blit (pcx_buffer, icons[q * ICONSET_SIZE + p], p * 16, q * 16, 0, 0,
-               16, 16);
-   icon_set = 0;
-   destroy_bitmap (pcx_buffer);
+   load_iconsets (pal);
 
    /* Check for bogus map squares */
    for (p = 0; p < gmap.xsize * gmap.ysize; ++p) {
@@ -246,6 +280,99 @@ void set_pcx (BITMAP ** pcx_buf, const char *pcx_file, PALETTE pcx_pal,
 }                               /* set_pcx () */
 
 
+/*! \brief Cleanup scripts used in mapedit.c and mapdump.c */
+void shared_cleanup (void)
+{
+   int i;
+
+   destroy_bitmap (font6);
+   destroy_bitmap (marker_image);
+   for (i = 0; i < MAX_TILES; i++)
+      destroy_bitmap (icons[i]);
+   for (i = 0; i < MAX_SHADOWS; i++)
+      destroy_bitmap (shadow[i]);
+   for (i = 0; i < MAX_OBSTACLES; i++)
+      destroy_bitmap (mesh1[i]);
+}
+
+
+/*! \brief Startup scripts used in mapedit.c and mapdump.c */
+void shared_startup (void)
+{
+   int i, x, y;
+
+   set_palette (pal);
+
+   /* Used for icons */
+   for (i = 0; i < MAX_TILES; i++) {
+      icons[i] = create_bitmap (16, 16);
+      clear (icons[i]);
+   }
+
+   /* Used for Obstacles */
+   /* Block all directions */
+   mesh1[0] = create_bitmap (16, 16);
+   clear(mesh1[0]);
+   for (y = 0; y < 16; y += 2) {
+      for (x = 0; x < 16; x += 2)
+         putpixel (mesh1[0], x, y, 255);
+      for (x = 1; x < 16; x += 2)
+         putpixel (mesh1[0], x, y + 1, 255);
+   }
+
+   /* Block up */
+   mesh1[1] = create_bitmap (16, 16);
+   clear(mesh1[1]);
+   hline (mesh1[1], 0, 0, 15, 255);
+   vline (mesh1[1], 8, 0, 15, 255);
+
+   /* Block right */
+   mesh1[2] = create_bitmap (16, 16);
+   clear(mesh1[2]);
+   hline (mesh1[2], 0, 8, 15, 255);
+   vline (mesh1[2], 15, 0, 15, 255);
+
+   /* Block down */
+   mesh1[3] = create_bitmap (16, 16);
+   clear(mesh1[3]);
+   hline (mesh1[3], 0, 15, 15, 255);
+   vline (mesh1[3], 8, 0, 15, 255);
+
+   /* Block left */
+   mesh1[4] = create_bitmap (16, 16);
+   clear(mesh1[4]);
+   hline (mesh1[4], 0, 8, 15, 255);
+   vline (mesh1[4], 0, 0, 15, 255);
+
+   /* Used for Shadows */
+   /* Shadows */
+   set_pcx (&pcx_buffer, "Misc.pcx", pal, 1);
+   for (i = 0; i < MAX_SHADOWS; i++) {
+      shadow[i] = create_bitmap (16, 16);
+      blit (pcx_buffer, shadow[i], i * 16, 160, 0, 0, 16, 16);
+   }
+   destroy_bitmap (pcx_buffer);
+
+   /* Entity images */
+   set_pcx (&pcx_buffer, "entities.pcx", pal, 1);
+   for (x = 0; x < MAX_EPICS; x++) {
+      for (i = 0; i < 12; i++) {
+         eframes[x][i] = create_bitmap (16, 16);
+         blit (pcx_buffer, eframes[x][i], i * 16, x * 16, 0, 0, 16, 16);
+      }
+   }
+   destroy_bitmap (pcx_buffer);
+
+   /* Create the marker image */
+   marker_image = create_bitmap (16, 16);
+   clear_bitmap (marker_image);
+   vline (marker_image, 0, 0, 16, makecol (255, 255, 255));
+   vline (marker_image, 1, 0, 16, makecol (192, 192, 192));
+   rectfill (marker_image, 2, 0, 10, 8, makecol (255, 0, 0));
+
+}
+
+
 /*! \brief Save the whole map as a pcx
  *
  * Make one giant bitmap and draw all the layers on it, so you can get an
@@ -257,7 +384,7 @@ void set_pcx (BITMAP ** pcx_buf, const char *pcx_file, PALETTE pcx_pal,
  *
  * \param   save_fname File to save the map to
  */
-void visual_map (const char *save_fname)
+void visual_map (s_show showing, const char *save_fname)
 {
    int i, j, w;
    BITMAP *bmp;
@@ -271,16 +398,18 @@ void visual_map (const char *save_fname)
          /* Which tile is currently being evaluated */
          w = gmap.xsize * j + i;
 
-         if (show_layer1)
+         if (showing.layer[0])
             blit (icons[map[w]], bmp, 0, 0, i * 16, j * 16, 16, 16);
-         if (show_layer2)
+         if (showing.layer[1])
             draw_sprite (bmp, icons[b_map[w]], i * 16, j * 16);
-         if (show_layer3)
+         if (showing.layer[2])
             draw_sprite (bmp, icons[f_map[w]], i * 16, j * 16);
-         if (show_shadows)
+         if (showing.shadows)
             draw_trans_sprite (bmp, shadow[sh_map[w]], i * 16, j * 16);
+         if (showing.obstacles && o_map[w] > 0)
+            draw_sprite (bmp, mesh1[o_map[w] - 1], i * 16, j * 16);
 
-         if ((show_zones) && (z_map[w] > 0) && (z_map[w] < MAX_ZONES)) {
+         if ((showing.zones) && (z_map[w] > 0) && (z_map[w] < MAX_ZONES)) {
 /* This check is here because of the differing versions of the Allegro library */
 #ifdef HAVE_TEXT_EX
             if (z_map[w] < 10) {
@@ -327,34 +456,31 @@ void visual_map (const char *save_fname)
 #endif
          }
 
-         if (show_obstacles) {
-            switch (o_map[w]) {
-            case 1:
-               /* Block-all: blocks movement from every direction */
-               draw_sprite (bmp, mesh, i * 16, j * 16);
-               break;
-            case 2:
-               /* North-block: blocks movement up */
-               hline (bmp, i * 16, j * 16, i * 16 + 15, 255);
-               vline (bmp, i * 16 + 8, j * 16, j * 16 + 15, 255);
-               break;
-            case 3:
-               /* East-block: blocks movement right */
-               hline (bmp, i * 16, j * 16 + 8, i * 16 + 15, 255);
-               vline (bmp, i * 16 + 15, j * 16, j * 16 + 15, 255);
-               break;
-            case 4:
-               /* South-block: blocks movement down */
-               hline (bmp, i * 16, j * 16 + 15, i * 16 + 15, 255);
-               vline (bmp, i * 16 + 8, j * 16, j * 16 + 15, 255);
-               break;
-            case 5:
-               /* West-block: blocks movement left */
-               hline (bmp, i * 16, j * 16 + 8, i * 16 + 15, 255);
-               vline (bmp, i * 16, j * 16, j * 16 + 15, 255);
-               break;
-            }
+      }
+   }
+
+   /* Show entities */
+   if (showing.entities) {
+      for (i = 0; i < 50; i++) {
+         if (gent[i].active) {
+            if (gent[i].transl == 0) {
+               draw_sprite (bmp, eframes[gent[i].chrx][gent[i].facing * 3],
+                            gent[i].tilex * 16, gent[i].tiley * 16);
+            } else {
+                  draw_trans_sprite (bmp,
+                                     eframes[gent[i].chrx][gent[i].facing * 3],
+                                     gent[i].tilex * 16, gent[i].tiley * 16);
+            }                   // if..else ()
          }
+      }
+   }
+   
+   if (showing.markers == 1 && gmap.num_markers > 0) {
+      num_markers = gmap.num_markers;
+      memcpy (markers, gmap.markers, gmap.num_markers * sizeof (s_marker));
+      for (i = 0; i < num_markers; ++i) {
+         draw_sprite (bmp, marker_image, markers[i].x * 16 + 8,
+                      markers[i].y * 16 - 8);
       }
    }
 

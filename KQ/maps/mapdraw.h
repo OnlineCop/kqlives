@@ -53,9 +53,10 @@
 
 typedef struct
 {
-   int entities, shadows, obstacles, zones;
+   int entities, obstacles, shadows, zones;
    int markers;
    int last_layer;              /* Tracks last-used layer */
+   int layer[3];
 }
 s_show;
 
@@ -138,18 +139,25 @@ void prompt_load_map (void);
 void save_map (void);
 
 /* From mapshared.c */
+void blit2screen (void);
+void load_iconsets (PALETTE);
 void load_map (const char *);
 void set_pcx (BITMAP **, const char *, PALETTE, const int);
-void visual_map (const char *);
+void shared_cleanup (void);
+void shared_startup (void);
+void visual_map (s_show, const char *);
 
 
 extern BITMAP *double_buffer, *pcx_buffer, *icons[MAX_TILES],
    *eframes[MAX_EPICS][12];
-extern BITMAP *font6, *mesh;
+extern BITMAP *font6, *mesh1[MAX_OBSTACLES], *mesh2, *mesh3,
+   *shadow[MAX_SHADOWS], *marker_image;
 extern PALETTE pal;
 
 extern char map_fname[40], *strbuf;
-extern short icon_set;
+extern short icon_set, num_markers;
+
+extern s_marker markers[MAX_MARKERS];
 
 extern char *icon_files[NUM_TILESETS];
 
@@ -164,7 +172,7 @@ extern unsigned short tilex[MAX_TILES];
 extern s_anim tanim[NUM_TILESETS][MAX_ANIM];
 extern s_anim adata[MAX_ANIM];
 
-extern int draw_mode, column[5], row[8];
+extern int column[5], row[8];
 
 extern short window_x, window_y;
 extern short max_sets;

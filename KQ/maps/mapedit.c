@@ -26,11 +26,16 @@
 
 /* globals */
 
-BITMAP *mesh2, *mesh3, *shadow[MAX_SHADOWS];
+/* mesh1[MAX_OBSTACLES]: Obstacles
+ * mesh2: Highlight
+ * mesh3: MapBoundaries
+ * shadow: Shadows
+ */
+BITMAP *mesh2, *mesh3;
 static BITMAP *mouse_pic;
 
 /* Used for the right-hand menu, plus something for the mouse */
-short max_sets = 51, nomouse = 0;
+short nomouse = 0;
 
 /* window_x and window_y are view-window coords
  * x and y are everything else
@@ -44,9 +49,6 @@ static int clipb = 0, cbh = 0, cbw = 0;
 static int needupdate, highlight, grab_tile = 0;
 static const int COLUMN_WIDTH = 80;
 
-s_map gmap;
-s_entity gent[50];
-s_show showing;
 
 /*! Tile animation specifiers for each tile set */
 /* Format: {starting_tile, finishing_tile, animation_speed}
@@ -110,10 +112,8 @@ const int vtiles = (SH - 48) / 16;
 int column[5], row[8];
 
 /*! Markers in use in this map */
-s_marker markers[MAX_MARKERS];
-short num_markers;
-BITMAP *marker_image;
 int curmarker;
+int cpu_usage = 2; // Default to rest(1)
 
 
 /* Welcome to Mapdraw, folks! */
@@ -171,7 +171,7 @@ int main (int argc, char *argv[])
             unscare_mouse ();
             show_mouse (double_buffer);
          }
-         blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+         blit2screen ();
          if (!nomouse) {
             show_mouse (NULL);
             oldmouse_x = mouse_x;
@@ -302,20 +302,13 @@ void cleanup (void)
 {
    int k, j;
 
-   for (k = 0; k < MAX_TILES; k++)
-      destroy_bitmap (icons[k]);
    for (k = 0; k < MAX_EPICS; k++)
       for (j = 0; j < 12; j++)
          destroy_bitmap (eframes[k][j]);
-   for (k = 0; k < MAX_SHADOWS; k++)
-      destroy_bitmap (shadow[k]);
    destroy_bitmap (double_buffer);
-   destroy_bitmap (font6);
-   destroy_bitmap (mesh);
    destroy_bitmap (mesh2);
    destroy_bitmap (mesh3);
    destroy_bitmap (mouse_pic);
-   destroy_bitmap (marker_image);
 
    free (b_map);
    free (f_map);
@@ -330,6 +323,8 @@ void cleanup (void)
    free (csh_map);
    free (cz_map);
    free (strbuf);
+
+   shared_cleanup ();
 }                               /* cleanup () */
 
 
@@ -348,7 +343,7 @@ void clear_layer (void)
 
    done = 0;
    while (!done) {
-      blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+      blit2screen ();
       response = get_line (84, 12, strbuf, 2);
 
       /* If the user hits ESC, break out of the function entirely */
@@ -459,7 +454,7 @@ void copy_layer (void)
 
    done = 0;
    while (!done) {
-      blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+      blit2screen ();
       response = get_line (78, 12, strbuf, 2);
 
       /* If the user hits ESC, break out of the function entirely */
@@ -489,7 +484,7 @@ void copy_layer (void)
 
    done = 0;
    while (!done) {
-      blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+      blit2screen ();
       response = get_line (78, 18, strbuf, 2);
 
       /* If the user hits ESC, break out of the function entirely */
@@ -643,7 +638,7 @@ void describe_map (void)
 
    done = 0;
    while (!done) {
-      blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+      blit2screen ();
       response = get_line (108, 18, strbuf, 40);
 
       /* If the user hits ESC, break out of the function entirely */
@@ -675,7 +670,11 @@ void draw_map (void)
    int w;
    /* Size of the map or view-window, whichever is smaller */
    int maxx, maxy;
-   int i, drawlayer1 = 0, drawlayer2 = 0, drawlayer3 = 0;
+   int i;
+
+   /* Make sure we reset the visible attributes */
+   for (i = 0; i < 3; i++)
+      showing.layer[i] = 0;
 
    /* Clear everything with black */
    rectfill (double_buffer, 0, 0, htiles * 16, vtiles * 16, 0);
@@ -697,11 +696,11 @@ void draw_map (void)
          w = ((window_y + dy) * gmap.xsize) + window_x + dx;
 
          if (draw_mode & MAP_LAYER1)
-            drawlayer1 = 1;
+            showing.layer[0] = 1;
          if (draw_mode & MAP_LAYER2)
-            drawlayer2 = 1;
+            showing.layer[1] = 1;
          if (draw_mode & MAP_LAYER3)
-            drawlayer3 = 1;
+            showing.layer[2] = 1;
 
          switch (draw_mode) {
          case BLOCK_COPY:
@@ -712,15 +711,15 @@ void draw_map (void)
          case MAP_MARKERS:
          case MAP_ZONES:
             if (showing.last_layer & MAP_LAYER1)
-               drawlayer1 = 1;
+               showing.layer[0] = 1;
             if (showing.last_layer & MAP_LAYER2)
-               drawlayer2 = 1;
+               showing.layer[1] = 1;
             if (showing.last_layer & MAP_LAYER3)
-               drawlayer3 = 1;
+               showing.layer[2] = 1;
             if (showing.last_layer == MAP_PREVIEW) {
-               drawlayer1 = 1;
-               drawlayer2 = 1;
-               drawlayer3 = 1;
+               showing.layer[0] = 1;
+               showing.layer[1] = 1;
+               showing.layer[2] = 1;
             }
             break;
          default:
@@ -732,11 +731,11 @@ void draw_map (void)
             rectfill (double_buffer, dx * 16, dy * 16, dx * 16 + 15,
                       dy * 16 + 15, 0);
 
-         if (drawlayer1)
+         if (showing.layer[0])
             draw_sprite (double_buffer, icons[map[w]], dx * 16, dy * 16);
-         if (drawlayer2)
+         if (showing.layer[1])
             draw_sprite (double_buffer, icons[b_map[w]], dx * 16, dy * 16);
-         if (drawlayer3)
+         if (showing.layer[2])
             draw_sprite (double_buffer, icons[f_map[w]], dx * 16, dy * 16);
 
          /* Draw the Shadows */
@@ -748,34 +747,7 @@ void draw_map (void)
          /* Draw the Obstacles */
          if ((showing.obstacles) && (o_map[w] > 0)
              && (o_map[w] <= MAX_OBSTACLES)) {
-            switch (o_map[w]) {
-            case 1:
-               /* Block-all: blocks movement from every direction */
-               draw_sprite (double_buffer, mesh, dx * 16, dy * 16);
-               break;
-            case 2:
-               /* North-block: blocks movement up */
-               hline (double_buffer, dx * 16, dy * 16, dx * 16 + 15, 255);
-               vline (double_buffer, dx * 16 + 8, dy * 16, dy * 16 + 15, 255);
-               break;
-            case 3:
-               /* East-block: blocks movement right */
-               hline (double_buffer, dx * 16, dy * 16 + 8, dx * 16 + 15, 255);
-               vline (double_buffer, dx * 16 + 15, dy * 16, dy * 16 + 15, 255);
-               break;
-            case 4:
-               /* South-block: blocks movement down */
-               hline (double_buffer, dx * 16, dy * 16 + 15, dx * 16 + 15, 255);
-               vline (double_buffer, dx * 16 + 8, dy * 16, dy * 16 + 15, 255);
-               break;
-            case 5:
-               /* West-block: blocks movement left */
-               hline (double_buffer, dx * 16, dy * 16 + 8, dx * 16 + 15, 255);
-               vline (double_buffer, dx * 16, dy * 16, dy * 16 + 15, 255);
-               break;
-            default:
-               break;
-            }                   // switch (o_map)
+            draw_sprite (double_buffer, mesh1[o_map[w] - 1], dx * 16, dy * 16);
          }                      // if (showing.obstacles)
 
          /* Draw the Zones */
@@ -1171,14 +1143,27 @@ void draw_menubars (void)
       }
    }                            // if (draw_mode == MAP_ZONES)
 
+   /* Displays both the currently selected Marker as well as the
+    * Marker under the mouse
+    */
    if (draw_mode == MAP_MARKERS && num_markers > 0) {
-      /* draw the currently selected marker */
       sprintf (strbuf, "Marker #%d: %s (%d, %d)", curmarker,
                markers[curmarker].name, markers[curmarker].x,
                markers[curmarker].y);
-      print_sfont (column[4], row[5], strbuf, double_buffer);
+      print_sfont (column[4], row[0], strbuf, double_buffer);
+      xp = mouse_x / 16;
+      yp = mouse_y / 16;
+      for (p = 0; p < num_markers; p++) {
+         if (markers[p].x == xp + window_x && markers[p].y == yp + window_y) {
+            sprintf (strbuf, "Current Marker:");
+            print_sfont (column[4], row[1], strbuf, double_buffer);
+            sprintf (strbuf, "Marker #%d: \"%s\"", p, markers[p].name);
+            print_sfont (column[4] + 24, row[2], strbuf, double_buffer);
+         }
+      }
    }                            // if (draw_mode == MAP_MARKERS)
 
+   /* Displays the Highlight on the 4 Attributes */
    if (draw_mode >= MAP_OBSTACLES && draw_mode <= MAP_ZONES) {
       if (highlight)
          sprintf (strbuf, "Highlight: ON");
@@ -1206,7 +1191,7 @@ void draw_menubars (void)
 #ifdef DEBUG
    /* Debugging values */
    sprintf (strbuf, "Last Layer: %s", dt[draw_mode_last]);
-   print_sfont (column[4], row[3], strbuf, double_buffer);
+   print_sfont (column[4], row[6], strbuf, double_buffer);
 #endif
 
    /* Add a border around the iconset on the right */
@@ -1270,21 +1255,49 @@ void draw_menubars (void)
    }
 
    /* Determine which tile is going to be displayed */
-   if (draw_mode == MAP_SHADOWS) {
-      sprintf (strbuf, "Shadow");
-      stretch_blit (shadow[curshadow], double_buffer, 0, 0, 16, 16,
-                    (htiles + 1) * 16 + 8, 250, 32, 32);
-   } else if (draw_mode == MAP_ENTITIES) {
+   if (draw_mode == MAP_ENTITIES) {
       sprintf (strbuf, "Entity");
       stretch_blit (eframes[current_ent][0], double_buffer, 0, 0, 16, 16,
                     (htiles + 1) * 16 + 8, 250, 32, 32);
+   } else if (draw_mode == MAP_OBSTACLES) {
+      sprintf (strbuf, "Obstacle");
+      if (curobs > 0) {
+         stretch_blit (mesh1[curobs - 1], double_buffer, 0, 0, 16, 16,
+                       (htiles + 1) * 16 + 8, 250, 32, 32);
+      }
+   } else if (draw_mode == MAP_SHADOWS) {
+      sprintf (strbuf, "Shadow");
+      stretch_blit (shadow[curshadow], double_buffer, 0, 0, 16, 16,
+                    (htiles + 1) * 16 + 8, 250, 32, 32);
+   } else if (draw_mode == MAP_MARKERS) {
+      sprintf (strbuf, "Markers");
+      stretch_blit (marker_image, double_buffer, 0, 0, 16, 16,
+                    (htiles + 1) * 16 + 8, 250, 32, 32);
+
+      /* Align the numbers inside the Preview window */
+      p = (htiles + 3) * 16;
+      if (curmarker < 10)
+         p += 1;
+      else if (curmarker < 100)
+         p -= 7;
+      else if (curmarker < 1000)
+         p -= 15;
+
+#ifdef HAVE_TEXT_EX
+      textprintf_ex (double_buffer, font, p, 274,
+                     makecol (255, 255, 255), 0, "%d", curmarker);
+#else
+      textprintf (double_buffer, font, p, 274,
+                  makecol (255, 255, 255), "%d", curmarker);
+#endif
+
    } else {
-      sprintf (strbuf, " Tile");
+      sprintf (strbuf, "Tile");
       stretch_blit (icons[curtile], double_buffer, 0, 0, 16, 16,
                     (htiles + 1) * 16 + 8, 250, 32, 32);
    }
-   print_sfont ((htiles + 1) * 16 + 6, 234, strbuf, double_buffer);
-   print_sfont ((htiles + 1) * 16 + 6, 234, strbuf, double_buffer);
+   print_sfont (htiles * 16 + 42 - (strlen (strbuf) * 6 / 2), 234, strbuf,
+                double_buffer);
    print_sfont ((htiles + 1) * 16 + 2, 240, "Preview:", double_buffer);
    rect (double_buffer, (htiles + 1) * 16 + 6, 248, (htiles + 3) * 16 + 8 + 1,
          283, 255);
@@ -1322,6 +1335,16 @@ void draw_menubars (void)
    /* Draw a rectangle around the mouse when it's inside the view-window */
    if (mouse_y / 16 < vtiles && mouse_x / 16 < htiles)
       rect (double_buffer, x * 16, y * 16, x * 16 + 15, y * 16 + 15, 255);
+
+   /* Show the current CPU usage */
+   print_sfont (htiles * 16 + 8, 294, "CPU Usage:", double_buffer);
+   if (cpu_usage == 0) {
+      print_sfont (htiles * 16 + 14, 300, "timeslice", double_buffer);
+   } else {
+      sprintf (strbuf, "rest(%d)", cpu_usage - 1);
+      print_sfont (htiles * 16 + 14, 300, strbuf, double_buffer);
+   }
+
 }                               /* draw_menubars () */
 
 
@@ -1339,13 +1362,13 @@ void draw_menubars (void)
 int get_line (const int line_x, const int line_y, char *buffer,
               const int max_len)
 {
-   int index = 0, ch;
+   int done = 0, index = 0, ch;
    BITMAP *under;
 
    under = create_bitmap (320, 6);
 
    blit (screen, under, 0, line_y, 0, 0, 320, 6);
-   while (1) {
+   while (!done) {
       ch = (readkey () & 0xff);
 
       /* Make sure character entered is valid ASCII */
@@ -1359,8 +1382,7 @@ int get_line (const int line_x, const int line_y, char *buffer,
          /* Code for ENTER */
          if (ch == 13) {
             buffer[index] = 0;
-            destroy_bitmap (under);
-            return 1;
+            done = 2;
          } else {
             /* Code for BACKSPACE */
             if (ch == 8) {
@@ -1374,8 +1396,7 @@ int get_line (const int line_x, const int line_y, char *buffer,
             } else {
                /* Code for ESC */
                if (ch == 27) {
-                  destroy_bitmap (under);
-                  return 0;
+                  done = 1;
                }
             }
          }                      /* if (ch == 13) */
@@ -1383,7 +1404,7 @@ int get_line (const int line_x, const int line_y, char *buffer,
    }                            /* while (1) */
    /* Just to make sure, incase something wasn't working right... */
    destroy_bitmap (under);
-   return 0;
+   return done - 1;
 }                               /* get_line () */
 
 
@@ -1394,6 +1415,7 @@ int get_line (const int line_x, const int line_y, char *buffer,
 void get_tile (void)
 {
    int tile = ((window_y + y) * gmap.xsize) + window_x + x;
+   int i;
 
    switch (draw_mode) {
    case MAP_LAYER1:
@@ -1420,6 +1442,13 @@ void get_tile (void)
    case MAP_ZONES:
       curzone = z_map[tile];
       break;
+   case MAP_MARKERS:
+      for (i = 0; i < num_markers; i++) {
+         if ((markers[i].x == window_x + x)
+              && (markers[i].y == window_y + y)) {
+            curmarker = i;
+         }
+      }
    default:
       break;
    }
@@ -1446,7 +1475,7 @@ void global_change (void)
 
    done = 0;
    while (!done) {
-      blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+      blit2screen ();
       response = get_line (72, 6, strbuf, 4);
 
       /* If the user hits ESC, break out of the function entirely */
@@ -1476,7 +1505,7 @@ void global_change (void)
 
    done = 0;
    while (!done) {
-      blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+      blit2screen ();
       response = get_line (60, 12, strbuf, 4);
 
       /* If the user hits ESC, break out of the function entirely */
@@ -1506,7 +1535,7 @@ void global_change (void)
 
    done = 0;
    while (!done) {
-      blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+      blit2screen ();
       response = get_line (18, 24, strbuf, 7);
 
       /* If the user hits ESC, break out of the function entirely */
@@ -1684,7 +1713,7 @@ void paste_region_special (const int tx, const int ty)
 
    done = 0;
    while (!done) {
-      blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+      blit2screen ();
       response = get_line (6, 12, strbuf, 7);
 
       /* If the user hits ESC, break out of the function entirely */
@@ -1999,12 +2028,13 @@ int process_keyboard (const int k)
          curzone = 0;
       break;
    case (KEY_G):
-      /* Get the tile under the mouse curser, including a 4 of the Attributes.
-       * This will not let you enter grab_tile mode if you are not in a mode
-       * which can be drawn onto.
+      /* Get the tile under the mouse curser, including all 5 of the
+       * Attributes. This will not let you enter grab_tile mode if you are not
+       * in a mode which can be drawn onto.
        */
       if ((draw_mode >= MAP_LAYER1 && draw_mode <= MAP_LAYER3)
-          || (draw_mode >= MAP_ENTITIES && draw_mode <= MAP_ZONES))
+          || (draw_mode >= MAP_ENTITIES && draw_mode <= MAP_ZONES)
+          || draw_mode == MAP_MARKERS)
          grab_tile = 1 - grab_tile;
       else
          grab_tile = 0;
@@ -2106,9 +2136,29 @@ int process_keyboard (const int k)
       draw_mode = BLOCK_COPY;
       grab_tile = 0;
       break;
+   case (KEY_U):
+      if (++cpu_usage > 2)
+         cpu_usage = 0;
    case (KEY_V):
       /* Save whole map as a picture */
-      visual_map ("vis_map.pcx");
+      if (draw_mode == MAP_PREVIEW)
+      {
+         showing.entities   = 1;
+         showing.obstacles  = 0;
+         showing.shadows    = 1;
+         showing.zones      = 0;
+         showing.markers    = 0;
+         showing.last_layer = 0;
+         showing.layer[0]   = 1;
+         showing.layer[1]   = 1;
+         showing.layer[2]   = 1;
+      } else {
+         showing.layer[0] = showing.last_layer & MAP_LAYER1;
+         showing.layer[1] = showing.last_layer & MAP_LAYER2;
+         showing.layer[2] = showing.last_layer & MAP_LAYER3;
+      }
+
+      visual_map (showing, "vis_map.pcx");
       break;
    case (KEY_W):
       /* TT TODO: This looks like it does the exact same thing as KEY_N:
@@ -2434,7 +2484,7 @@ void process_menu_bottom (const int cx, const int cy)
       print_sfont (column[0] + 6 * 5, row[2], ">", double_buffer);
       hline (double_buffer, column[0] + 6 * 6, row[3] - 1,
              column[0] + 6 * 24 - 1, 255);
-      blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+      blit2screen ();
       a = get_line (column[0] + 6 * 6, row[2], strbuf, 19);
 
       /* This is kinda hard to error-check... */
@@ -2458,7 +2508,7 @@ void process_menu_bottom (const int cx, const int cy)
       print_sfont (column[0] + 6 * 6, row[4], ">", double_buffer);
       hline (double_buffer, column[0] + 6 * 7, row[5] - 1,
              column[0] + 6 * 10 - 1, 255);
-      blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+      blit2screen ();
       a = get_line (column[0] + 6 * 7, row[4], strbuf, 4);
 
       /* Make sure the line isn't blank */
@@ -2505,7 +2555,7 @@ void process_menu_bottom (const int cx, const int cy)
       print_sfont (column[1] + 6 * 6, row[5], ">", double_buffer);
       hline (double_buffer, column[1] + 6 * 7, row[6] - 1,
              column[1] + 6 * 11 - 1, 255);
-      blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+      blit2screen ();
       a = get_line (column[1] + 6 * 7, row[5], strbuf, 5);
 
       /* Make sure the line isn't blank */
@@ -2528,7 +2578,7 @@ void process_menu_bottom (const int cx, const int cy)
       print_sfont (column[1] + 6 * 6, row[6], ">", double_buffer);
       hline (double_buffer, column[1] + 6 * 7, row[7] - 1,
              column[1] + 6 * 11 - 1, 255);
-      blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+      blit2screen ();
       a = get_line (column[1] + 6 * 7, row[6], strbuf, 5);
 
       /* Make sure the line isn't blank */
@@ -2551,7 +2601,7 @@ void process_menu_bottom (const int cx, const int cy)
       print_sfont (column[2] + 6 * 8, row[1], ">", double_buffer);
       hline (double_buffer, column[2] + 6 * 9, row[2] - 1,
              column[2] + 6 * 13 - 1, 255);
-      blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+      blit2screen ();
       a = get_line (column[2] + 6 * 9, row[1], strbuf, 5);
 
       /* Make sure the line isn't blank */
@@ -2574,7 +2624,7 @@ void process_menu_bottom (const int cx, const int cy)
       print_sfont (column[2] + 6 * 8, row[2], ">", double_buffer);
       hline (double_buffer, column[2] + 6 * 9, row[3] - 1,
              column[2] + 6 * 13 - 1, 255);
-      blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+      blit2screen ();
       a = get_line (column[2] + 6 * 9, row[2], strbuf, 4);
 
       /* Make sure the line isn't blank */
@@ -2597,7 +2647,7 @@ void process_menu_bottom (const int cx, const int cy)
       print_sfont (column[3] + 6 * 5, row[1], ">", double_buffer);
       hline (double_buffer, column[3] + 6 * 6, row[2] - 1,
              column[3] + 6 * 9 - 1, 255);
-      blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+      blit2screen ();
       a = get_line (column[3] + 6 * 6, row[1], strbuf, 4);
 
       /* Make sure the line isn't blank */
@@ -2623,7 +2673,7 @@ void process_menu_bottom (const int cx, const int cy)
       print_sfont (column[3] + 6 * 4, row[2], ">", double_buffer);
       hline (double_buffer, column[3] + 6 * 5, row[3] - 1,
              column[3] + 6 * 8 - 1, 255);
-      blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+      blit2screen ();
       a = get_line (column[3] + 6 * 5, row[2], strbuf, 4);
 
       /* Make sure the line isn't blank */
@@ -3002,7 +3052,7 @@ void resize_map (const int selection)
 
       done = 0;
       while (!done) {
-         blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+         blit2screen ();
          response = get_line (48, 18, strbuf, 4);
 
          /* If the user hits ESC, break out of the function entirely */
@@ -3031,7 +3081,7 @@ void resize_map (const int selection)
 
       done = 0;
       while (!done) {
-         blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+         blit2screen ();
          response = get_line (54, 18, strbuf, 4);
 
          /* If the user hits ESC, break out of the function entirely */
@@ -3173,7 +3223,7 @@ void show_help (void)
 // This line turns off other/indent.pro indentation settings:
 // *INDENT-OFF*
    int this_counter, i, j;
-   #define NUMBER_OF_ITEMS 34
+   #define NUMBER_OF_ITEMS 35
 
    /* The first line in the help menu needs to be the total width, for correct
     * calculation later on
@@ -3209,8 +3259,9 @@ void show_help (void)
       "PGDN . . . . . . . . . . Move 1 screen down  LEFT ARROW . . . . . . .  Move left 1 space",
       "BACKSPACE  . . . . . . . Move 1 screen left  RIGHT ARROW  . . . . . . Move right 1 space",
       "TAB  . . . . . . . . .  Move 1 screen right",
-      "                                             HOME . . . . . . Move to the top of the map",
-      "Q  . . . . . . . . . . . . . . . . . . Quit  END  . . . . . . Move to the end of the map",
+      "                                             U  . . . . . . . . . . . . Change CPU Usage",
+      "Q  . . . . . . . . . . . . . . . . . . Quit  HOME . . . . . . Move to the top of the map",
+      "                                             END  . . . . . . Move to the end of the map",
       "",
       "                                  [PRESS ESC OR ENTER]"
    };
@@ -3236,7 +3287,7 @@ void show_help (void)
           i + (strlen (*help_keys) * FW / 2) - 1,
           j + ((FH + 1) * 3) - 1,
           j + (NUMBER_OF_ITEMS - 2) * (FH + 1) - 2, 255);
-   blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+   blit2screen ();
    yninput ();
 
 }                               /* show_help () */
@@ -3248,7 +3299,7 @@ void show_help (void)
  */
 int startup (void)
 {
-   int k, kx, ky, a, tmapx, tmapy;
+   int k, kx, ky, a;
    COLOR_MAP cmap;
 
    if (allegro_init () != 0)
@@ -3285,6 +3336,8 @@ int startup (void)
       rest (1000);
    }
 
+   shared_startup ();
+
    /* Create the picture used for the mouse */
    mouse_pic = create_bitmap (4, 6);
    for (ky = 0; ky < 6; ky++)
@@ -3304,31 +3357,6 @@ int startup (void)
    gmap.xsize = htiles;
    gmap.ysize = vtiles;
 
-   /* Create a bitmap for each tile/icon used */
-   set_palette (pal);
-   for (k = 0; k < MAX_TILES; k++) {
-      icons[k] = create_bitmap (16, 16);
-      clear (icons[k]);
-   }
-
-   /* Create the marker image */
-   marker_image = create_bitmap (16, 16);
-   clear_bitmap (marker_image);
-   vline (marker_image, 0, 0, 16, makecol (255, 255, 255));
-   vline (marker_image, 1, 0, 16, makecol (192, 192, 192));
-   rectfill (marker_image, 2, 0, 10, 8, makecol (255, 0, 0));
-
-   set_pcx (&pcx_buffer, icon_files[gmap.tileset], pal, 1);
-   max_sets = (pcx_buffer->h / 16);
-
-   for (tmapy = 0; tmapy < max_sets; tmapy++)
-      for (tmapx = 0; tmapx < ICONSET_SIZE; tmapx++)
-         blit (pcx_buffer, icons[tmapy * ICONSET_SIZE + tmapx], tmapx * 16,
-               tmapy * 16, 0, 0, 16, 16);
-
-   icon_set = 0;
-   destroy_bitmap (pcx_buffer);
-
    bufferize ();
 
    create_trans_table (&cmap, pal, 128, 128, 128, NULL);
@@ -3336,16 +3364,6 @@ int startup (void)
 
    font6 = create_bitmap (6, 546);
    getfont ();
-
-   /* Used for Obstacles */
-   mesh = create_bitmap (16, 16);
-   clear (mesh);
-   for (ky = 0; ky < 16; ky += 2) {
-      for (kx = 0; kx < 16; kx += 2)
-         putpixel (mesh, kx, ky, 255);
-      for (kx = 1; kx < 16; kx += 2)
-         putpixel (mesh, kx, ky + 1, 255);
-   }
 
    /* Used for highlighting */
    static unsigned char hilite[] = {
@@ -3399,15 +3417,6 @@ int startup (void)
       for (kx = 0; kx < 16; kx++)
          mesh3->line[ky][kx] = diag_bars[ky * 16 + kx];
 
-   /* Shadows */
-   set_pcx (&pcx_buffer, "Misc.pcx", pal, 1);
-
-   for (a = 0; a < MAX_SHADOWS; a++) {
-      shadow[a] = create_bitmap (16, 16);
-      blit (pcx_buffer, shadow[a], a * 16, 160, 0, 0, 16, 16);
-   }
-   destroy_bitmap (pcx_buffer);
-
    /* Entity images */
    set_pcx (&pcx_buffer, "entities.pcx", pal, 1);
 
@@ -3421,10 +3430,15 @@ int startup (void)
 
    init_entities ();
    showing.entities = 0;
-   showing.shadows = 0;
    showing.obstacles = 0;
+   showing.shadows = 0;
    showing.zones = 0;
+   showing.markers = 0;
    showing.last_layer = draw_mode;
+   showing.layer[0] = 1;
+   showing.layer[1] = 1;
+   showing.layer[2] = 1;
+
    icon_set = 0;
 
    return 1;
@@ -3542,7 +3556,7 @@ int yninput (void)
       if (ch == KEY_Y || ch == KEY_ENTER || ch == KEY_ENTER_PAD)
          done = 2;
    }
-   blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+   blit2screen ();
    return done - 1;
 }                               /* yninput () */
 
@@ -3606,7 +3620,7 @@ void rename_marker (s_marker *found)
 
    done = 0;
    while (!done) {
-      blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+      blit2screen ();
       response = get_line (12, 12, strbuf, 31);
 
       /* If the user hits ESC, break out of the function entirely */
@@ -3646,9 +3660,22 @@ void rename_marker (s_marker *found)
  */
 void kq_yield (void)
 {
-#if (ALLEGRO_VERSION >= 4 && ALLEGRO_SUB_VERSION >= 2)
-   rest (0);
-#else
-   yield_timeslice ();
-#endif
+   /* TT: If this breaks stuff, let me know. I _know_ it complains that
+    * yield_timeslice() is deprecated; until I know everyone is using the most
+    * recent version of Allegro, though, we may need to keep this in here for
+    * compatibility reasons.
+    * Question: Does rest(0) or rest(1) break anything on anyone's machine?
+    */
+   if (cpu_usage == 0)
+      yield_timeslice ();
+   else
+      rest(cpu_usage - 1);
+
+// TT REMOVE:
+//#if (ALLEGRO_VERSION >= 4 && ALLEGRO_SUB_VERSION >= 2)
+//   rest (0);
+//#else
+//   yield_timeslice ();
+//#endif
+
 }

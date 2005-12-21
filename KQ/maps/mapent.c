@@ -29,7 +29,7 @@ void displace_entities (void)
    print_sfont (6, 6, "Displace entities", double_buffer);
    print_sfont (6, 12, "X adjust: ", double_buffer);
 
-   blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+   blit2screen ();
    response = get_line (66, 12, strbuf, 4);
 
    /* If the user hits ESC, break out of the function entirely */
@@ -48,7 +48,7 @@ void displace_entities (void)
    /* Clear the box and ask for y-coord adjustment */
    print_sfont (6, 18, "Y adjust: ", double_buffer);
 
-   blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+   blit2screen ();
    response = get_line (66, 18, strbuf, 4);
 
    /* If the user hits ESC, break out of the function entirely */
@@ -158,7 +158,7 @@ void draw_entdata (const int ent_index)
    sprintf (strbuf, "T - %s", ent_transl[gent[ent_index].transl]);
    print_sfont (column[2], row[5], strbuf, double_buffer);
 
-   blit (double_buffer, screen, 0, 0, 0, 0, SW, SH);
+   blit2screen ();
 }                               /* draw_entdata () */
 
 
