@@ -1,11 +1,21 @@
 Mapdraw: a map editor for KQ
 Mapdump: a .MAP to .PCX image extractor
+Mapdiff: a map comparison utility
 
-Thank you in your interest in the KQ game's map editor, Mapdraw, and its sidekick, MapDump.
+Thank you in your interest in the KQ game's map tools:
+  MapDraw (the map editor)
+  MapDump (displays the map as an image)
+  MapDiff (the comparison tool)
 
 Mapdraw has been designed for developers to create the maps for KQ quickly and with as little pain as possible.  Unfortunately at this time, there are no current GUI menus (such as File, Edit, etc.), so you will have to make use of the keyboard shortcuts (use F1 to see a list of possible keys).
 
-Maps are constructed with 3 layers (background, middle, and foreground), entities (NPCs) and their attributes, obstacles, shadows, and zones.
+Maps contain the following:
+  3 layers (background, middle, and foreground)
+  Entities (NPCs) and their attributes
+  Obstacles
+  Shadows
+  Zones
+  Markers
 
 The background, middle, and foreground layers are broken down as follows:
 - Layer 1, background: 90% of the drawing goes here.  This includes the base of trees, tables, ground tiles (such as dirt or flowers), and buildings.
@@ -14,20 +24,42 @@ The background, middle, and foreground layers are broken down as follows:
 
 *NOTE: KQ makes use of Parallax, a feature which means that one layer can move more quickly or slowly than another in order to create a spacial depth perception.  (Look at pass.map and cave3b.map as examples.)  This may affect the above descriptions slightly.
 
-The four layers are broken down as follows:
-- Shadows are drawn over EVERYTHING.  This is a partially transparent layer where, when a Player or NPC is standing under it, part or all of their sprite will be lightened or darkened (depending on the type of shadow).
-- Obstacles restrict movement.
-  - The most common obstacle used is the SQUARE, where nothing can move onto the tile from any 4 directions.
-  - The other types are the T-shaped obstacles.  These will block movement only in one direction, meaning you can enter the tile from 3 directions, but cannot move onto or off of the tile from the 4th.  Examples are chairs, beds, and pillars.
-- Zones are trigger-points (hotspots) where the developer can perform an action, based on the LUA script files.  They can be used to change maps, read a book, initiate a battle, find an item (hidden treasure or open a treasure chest), etc.
-- Entities (or NPCs) and their initial attributes are stored in the maps.  This includes coordinates, direction, speed, scripted movements, etc.  These attributes can be changed at run-time by scripts, but conversations, etc. are handled by the LUA script files.
+Maps also contain the following:
+  VISIBLE DURING GAMEPLAY:
+  - Shadows are drawn over EVERYTHING, including Layer 3.
+    - This is a partially transparent layer where, when a Player or NPC is standing under it, part or all of their sprite will be lightened or darkened (depending on the type of shadow).
+    - Examples are the edges of buildings or in caves above Save points.
+  - Entities (or NPCs) are most commonly drawn between Layer 2 and Layer 3 (depending on the map's parallax mode).
+    - Entities' initial attributes are stored in the MAP files, such as starting coordinates, direction, speed, and some scripted movements.
+    - All NPCs attributes can be changed at run-time by scripts.
+    - Conversations between NPCs-to-NPCs or NPCs-to-Player are not stored in the MAP files.  Those are handled by the LUA script files.
+    - Although Entities/NPCs are stored in the map's data, the Player's characters are not.
+  INVISIBLE DURING GAMEPLAY:
+  - Obstacles restrict movement, and are not shown.
+    - The most common obstacle used is the SQUARE (in the map's editor, at least), where nothing can move onto the tile from any 4 directions during gameplay (including NPCs).
+    - The other types are the T-shaped obstacles.  These will block movement only in one direction, meaning you can enter the tile from 3 directions, but cannot move onto or off of the tile from the 4th.
+    - Examples where these are used are beds, pillars, and cliff edges, such as in town8.
+  - Zones are trigger-points (hotspots), and are not shown.
+    - Zones are activated when the Player's character steps on it.  The specific action carried out is determined by the LUA script files.  They can be used to change maps, open doors, initiate battles, open treasure chests, etc.
+    - There can be several zones with the same value, but all instances of each zone (such as "Zone 3") will call the same LUA function.
+    - Examples of zones are where random battles may occur, with some zones (like "Zone 4") calling "weak" monsters and others (like "Zone 5") calling "very strong" ones.
+  - Markers are "named coordinates", and are not shown.
+    - Markers replace static (hard-coded) coordinates in LUA scripts, because they can be easily moved and updated on the MAP file without changing the LUA script.  This is useful incase a map ever changes size.
+    - The LUA scripts can use markers for things such as movement targets (such as in "tower") or copying tiles (such as in "cave4").
+    - Markers must have unique names, and tiles can have at most one marker at a time.
+    - Markers are not triggered hotspots, like zones, so the player will not be affected if they step on a tile which contains a marker.
+    - Examples of marker names: two markers could not be named "entrance" on the same map, but one could be named "entrance_1" while another is "entrance_2".
+
 
 ===============================
 MAPDRAW:
 
 Now that you understand the basic structure of the MAP file, you can create or modify your maps.  Below is a quick-reference section with the keys and their descriptions.
 
-The map editor is split into three panes: the main view-window, the tile selection area on the right, and the stats at the bottom of the map.
+The map editor is split into three panes:
+  The main view-window
+  The tile selection area on the right
+  The stats at the bottom of the map
 
 ===============================
 VIEW WINDOW:
@@ -37,11 +69,11 @@ The view-window is self-explanatory, so I won't cover it here.
 ===============================
 TILE SELECTION:
 
-The tile selection area on the right contains all the tiles which are available for this tileset.  You can change the tileset being used by clicking on the "Icon:" selection at the bottom.
+The tile selection area on the right contains all the tiles which are available for this tileset.  You can change the tileset being used by clicking on the "Icon:" selection in the Map Stats at the bottom.
 
-You will see a 2x10 grid with the tiles.  The first icon is blank; it will ALWAYS be used as the default, or "none".  You may click on any of these tiles to select it, and use the +/- keys to advance through the available tiles.  This is a dynamic tileset, which means that if the PCX image being used is ever changed/modified, it will appear here and you will have more (or fewer) tiles to choose from.  Currently, KQ maps only support 16x16 tiles, so you will have to work within those boundaries.
+You will see a 4x10 grid with the tiles, outlined in a thick red border.  All tilesets should have the first tile blank; it will ALWAYS be used as the default, or "none".  You may click on any of these tiles to select it, and use the +/- keys to advance through the available tiles.  This is a dynamic tileset, which means that if the PCX image being used is ever changed/modified, it will appear here and you will have more (or fewer) tiles to choose from.  Currently, KQ maps only support 16x16 tiles, so you will have to work within those boundaries.
 
-Below the tiles shows which editing mode you are currently in.  If it is "Layer 1", "Layer 2", "Layer 3", "Entities", "Obstacles, "Shadows", or "Zones", you are in a mode which will allow you to draw onto the map.  Anything else is simply a viewing mode, and nothing will be modified on the map if you click on a tile in the view-window.
+Below the 4x10 grid, you are shown which editing mode you are currently in.  If it is "Layer 1", "Layer 2", "Layer 3", "Entities", "Obstacles, "Shadows", "Zones" or "Markers", you are in a mode which will allow you to draw onto the map.  Anything else is simply a viewing mode, and nothing will be modified on the map if you click on a tile in the view-window.
 
 Immediately below the editing mode, you will see the "page" of tiles you are on and the selected tile in (parentheses).
 
@@ -75,9 +107,9 @@ Save:       WarpY:      Last Zone:
 "Last Zone" displays the number of the zone with the largest value.
 "Mult" and "Div" are used for parallax/depth-perception.
 
-Attributes are toggled, meaning that if you select Shadows, for example (KEY_S), you will be able to draw just to that layer until you turn it off or select a different option.
+Attributes are toggled, meaning that if you select Shadows, you will be able to draw just to that layer until you turn it off or select a different option.
 
-When you are in one of the four Attributes, you will also see which Attribute # you have currently selected.  You will also have "Current Tile" which means that if you move the mouse over a tile in the map and it has that Attribute, it will tell you its value for that tile.  The last is called "Highlight" which just makes a large red bullet appear over the top of the Attribute, so you can more easily see where it is.
+When you are using one of the Attributes (Entities, Obstacles, Shadows, Zones, or Markers), you will also see which Attribute # you have currently selected.  You will also have "Current Tile" which means that if you move the mouse over a tile in the map and it has that Attribute, it will tell you its value for that tile.  The last is called "Highlight" which just makes a large red bullet appear over the top of the Attribute, so you can more easily see where it is.
 
 The KEY_+ and KEY_- keys (at the top of the keyboard, or on the number pad) are used to choose which tile (they are on the right-side menu) or Attribute you will draw to the map.
 
@@ -132,7 +164,7 @@ V   - Visualize (create entire image, minus Entities) of whole map
 F6  - Copy any instance of the specified tile into any instance of another tile
 F9  - Copy the properties from one Layer to another
 
-F4  - Clear all the tiles from the specified Layer 
+F4  - Clear all the tiles from the specified Layer
 F7  - Clear all the Obstructions on the map
 F8  - Clear all the Shadows on the map
 W   - Wipe the contents of the current map
