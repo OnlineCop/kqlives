@@ -618,9 +618,9 @@ static int party_setter (lua_State * L)
 
 /*! \brief Object interface for character
  *
- * This implements the settable tag method
+ * This implements the __newindex meta method
  * for either a party member, a player or an entity
- * \param L the lua state. See lua docs for the settable protocol
+ * \param L the lua state. See lua docs for the __newindex protocol
  */
 static int KQ_char_setter (lua_State * L)
 {
@@ -708,7 +708,7 @@ static int KQ_char_setter (lua_State * L)
 
 /*! \brief Object interface for party
  *
- * This implements the gettable tag method
+ * This implements the __index meta-method
  */
 static int KQ_char_getter (lua_State * L)
 {
@@ -836,7 +836,7 @@ static void init_markers (lua_State * L)
 
 /*! \brief Initialise the object interface for heroes and entities
  *
- * This registers a new tag type for the heroes and adds the gettable method
+ * This registers a new tag type for the heroes and adds the __index method
  * to it. It then creates global variables for all heroes with their names as
  * defined (Sensar etc.). Then it sets the 'player[]' global (all heroes) and
  * the 'party[]' global (all heroes currently in play). Finally it sets the
@@ -850,17 +850,17 @@ static void init_obj (lua_State * L)
 
    /* do all the players */
    lua_newtable (L);
-   lua_pushstring(L, "gettable");
-   lua_pushcfunction(L, KQ_char_getter);
-   lua_settable(L, -3);
-   lua_pushstring(L, "settable");
-   lua_pushcfunction(L, KQ_char_setter);
-   lua_settable(L, -3);
+   lua_pushstring (L, "__index");
+   lua_pushcfunction (L, KQ_char_getter);
+   lua_settable (L, -3);
+   lua_pushstring (L, "__newindex");
+   lua_pushcfunction (L, KQ_char_setter);
+   lua_settable (L, -3);
 
    for (i = 0; i < MAXCHRS; ++i) {
       lua_newtable (L);
-      lua_pushvalue(L, -2);
-      lua_setmetatable(L, -1);
+      lua_pushvalue (L, -2);
+      lua_setmetatable (L, -1);
       lua_pushstring (L, LUA_PLR_KEY);
       lua_pushlightuserdata (L, &party[i]);
       lua_rawset (L, -3);
@@ -877,13 +877,13 @@ static void init_obj (lua_State * L)
    /* party pseudo-array */
    lua_newtable (L);
    lua_newtable (L);
-   lua_pushstring(L, "gettable");
-   lua_pushcfunction(L, party_getter);
-   lua_settable(L, -3);
-   lua_pushstring(L, "settable");
-   lua_pushcfunction(L, party_setter);
-   lua_settable(L, -3);
-   lua_setmetatable(L, -2);
+   lua_pushstring (L, "__index");
+   lua_pushcfunction (L, party_getter);
+   lua_settable (L, -3);
+   lua_pushstring (L, "__newindex");
+   lua_pushcfunction (L, party_setter);
+   lua_settable (L, -3);
+   lua_setmetatable (L, -2);
    lua_setglobal (L, "party");
    /* player[] array */
    lua_newtable (L);
@@ -898,8 +898,8 @@ static void init_obj (lua_State * L)
    /* ents */
    for (i = 0; i < noe; ++i) {
       lua_newtable (L);
-      lua_pushvalue(L, -2);
-      lua_setmetatable(L, -2);
+      lua_pushvalue (L, -2);
+      lua_setmetatable (L, -2);
       lua_pushstring (L, LUA_ENT_KEY);
       lua_pushlightuserdata (L, &g_ent[i + PSIZE]);
       lua_rawset (L, -3);
@@ -3379,13 +3379,13 @@ int KQ_add_quest_item (lua_State * L)
  * \param f an Allegro packfile to read from 
  * \param size [out] the number of bytes read
  */
-static const char* filereader(lua_State* L, PACKFILE* f, size_t* size)
+static const char *filereader (lua_State * L, PACKFILE * f, size_t * size)
 {
-  static char buf[1024];
-  /* Avoid 'unused' warning */
-  L=L;
-  *size=pack_fread(buf, sizeof(buf), f);
-  return buf;
+   static char buf[1024];
+   /* Avoid 'unused' warning */
+   L = L;
+   *size = pack_fread (buf, sizeof (buf), f);
+   return buf;
 }
 
 /*! \brief Read in a complete file
@@ -3399,14 +3399,14 @@ static const char* filereader(lua_State* L, PACKFILE* f, size_t* size)
  * \param filename the full path of the file to read
  */
 
-int lua_dofile(lua_State* L, const char* filename) 
+int lua_dofile (lua_State * L, const char *filename)
 {
-  int retval;
-  PACKFILE* f;
-  f=pack_fopen(filename, F_READ);
-  retval = lua_load(L, (lua_Chunkreader) filereader, f, filename);
-  pack_fclose(f);
-  return retval ? retval : lua_pcall(L, 0, LUA_MULTRET, 0);
+   int retval;
+   PACKFILE *f;
+   f = pack_fopen (filename, F_READ);
+   retval = lua_load (L, (lua_Chunkreader) filereader, f, filename);
+   pack_fclose (f);
+   return retval ? retval : lua_pcall (L, 0, LUA_MULTRET, 0);
 }
 
 /*! \brief Initialise scripting engine
@@ -3424,7 +3424,7 @@ void do_luainit (char *fname)
    if (theL != NULL) {
       do_luakill ();
    }
-   theL = lua_open();
+   theL = lua_open ();
    if (theL == NULL)
       program_death ("Could not initialise scripting engine");
    fieldsort ();
@@ -3501,7 +3501,7 @@ void do_autoexec (void)
    int oldtop = lua_gettop (theL);
 
    lua_getglobal (theL, "autoexec");
-   lua_pcall (theL, 0, 0, 0);
+   lua_call (theL, 0, 0);
    lua_settop (theL, oldtop);
    check_map_change ();
 }
@@ -3541,11 +3541,10 @@ void do_zone (int zn_num)
 {
    int oldtop = lua_gettop (theL);
 
-   /*   lua_getref (theL, ref_zone_handler);*/
-   lua_getglobal(theL, "zone_handler");
+   lua_getglobal (theL, "zone_handler");
    lua_pushnumber (theL, zn_num);
-   lua_call (theL, 1, 0);
-   lua_settop (theL, oldtop);
+   lua_call (theL, 1, 0)
+      lua_settop (theL, oldtop);
    check_map_change ();
 }
 
