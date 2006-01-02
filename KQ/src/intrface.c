@@ -257,6 +257,7 @@ static int KQ_get_marker_tilex (lua_State *);
 static int KQ_get_marker_tiley (lua_State *);
 static int KQ_set_marker (lua_State *);
 static int KQ_take_stairs (lua_State *);
+static int KQ_traceback (lua_State *);
 
 static const struct luaL_reg lrs[] = {
    {"get_pidx", KQ_get_pidx},
@@ -3460,11 +3461,17 @@ void do_luainit (char *fname)
 void do_luacheat (void)
 {
    int oldtop;
-
    oldtop = lua_gettop (theL);
+#ifdef DEBUGMODE
+   lua_pushcfunction (theL, KQ_traceback);
+#endif
    lua_dofile (theL, kqres (SCRIPT_DIR, "cheat.lob"));
    lua_getglobal (theL, "cheat");
+#ifdef DEBUGMODE
+   lua_pcall (theL, 0, 0, oldtop + 1);
+#else
    lua_call (theL, 0, 0);
+#endif
    lua_settop (theL, oldtop);
    check_map_change ();
    message ("Cheating complete.", 255, 50, xofs, yofs);
@@ -3540,11 +3547,17 @@ void do_postexec (void)
 void do_zone (int zn_num)
 {
    int oldtop = lua_gettop (theL);
-
+#ifdef DEBUGMODE
+   lua_pushcfunction (theL, KQ_traceback);
+#endif
    lua_getglobal (theL, "zone_handler");
    lua_pushnumber (theL, zn_num);
-   lua_call (theL, 1, 0)
-      lua_settop (theL, oldtop);
+#ifdef DEBUGMODE
+   lua_pcall (theL, 1, 0, oldtop + 1);
+#else
+   lua_call (theL, 1, 0);
+#endif
+   lua_settop (theL, oldtop);
    check_map_change ();
 }
 
@@ -3560,10 +3573,16 @@ void do_zone (int zn_num)
 void do_entity (int en_num)
 {
    int oldtop = lua_gettop (theL);
-
+#ifdef DEBUGMODE
+   lua_pushcfunction (theL, KQ_traceback);
+#endif
    lua_getglobal (theL, "entity_handler");
    lua_pushnumber (theL, en_num - PSIZE);
+#ifdef DEBUGMODE
+   lua_pcall (theL, 1, 0, oldtop + 1);
+#else
    lua_call (theL, 1, 0);
+#endif
    lua_settop (theL, oldtop);
    check_map_change ();
 }
@@ -3719,4 +3738,17 @@ static int KQ_take_stairs (lua_State * L)
    }
 
    return 0;
+}
+
+int KQ_traceback (lua_State * theL)
+{
+   lua_Debug ar;
+   int level = 1;               /* Function at index 0 is always KQ_traceback; don't show it */
+   TRACE ("%s\nStack trace:\n", lua_tostring (theL, -1));
+   while (lua_getstack (theL, level, &ar) != 0) {
+      lua_getinfo (theL, "Sln", &ar);
+      TRACE ("%d: %s %s %s\n", ar.currentline, ar.what, ar.namewhat, ar.name);
+      ++level;
+   }
+   return 1;
 }
