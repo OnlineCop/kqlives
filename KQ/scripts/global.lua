@@ -219,11 +219,16 @@ end
 -- hero can be a single value or a table
 -- returns the number of heroes that were actually added
 function add_to_manor(hero)
-  local total
+  local total, i
+  if (not hero) then
+  return 0
+  end
   if (istable(hero)) then
     total = 0
-    for i, v in hero do
-      total = total + add_to_manor(v)
+    i = 1
+    while (hero[i]) do
+      total = total + add_to_manor(hero[i])
+      i = i + 1
     end
     return total
   else
