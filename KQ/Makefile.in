@@ -19,7 +19,7 @@
 #                                                                             #
 ###############################################################################
 
-GCC:= @CC@
+CC:= @CC@
 #                                                                             #
 #  Basic package information.                                                 #
 #                                                                             #
@@ -68,11 +68,8 @@ LDFLAGS  :=
 TGZFLAGS := cvzf
 ZIPFLAGS := -r -v
 RMFLAGS  := -f
-COMPILER := $(GCC)
-LINKER   := $(GCC)
-COMPILER_FLAGS = $(CFLAGS)
 
-ifdef KQ_CHEATS
+ifeq (@kq_use_cheats@,1) 
 	CFLAGS += -DKQ_CHEATS
 endif
 
@@ -114,22 +111,17 @@ OBJ_SUFFIX := o
 OBJDIR:= $(OBJ_DIR)/unix
 
 # Use these explicit files:
-FILES = combat.c effects.c eskill.c intrface.c masmenu.c scrnshot.c shopmenu.c\
-	credits.c enemyc.c fade.c itemmenu.c menu.c selector.c timing.c\
-	disk.c entity.c heroc.c kq.c music.c setup.c\
-	draw.c eqpmenu.c hskill.c magic.c res.c sgame.c\
-	movement.c unix.c
-
+EXTRAFILES:=unix.c
 #                                                                             #
 #  Finally, add to the standard flags the options, according to the type of   #
 #  linking we are looking for.                                                #
 #                                                                             #
-ifdef DEBUG
+ifeq (@kq_use_debug@,1)
 	CFLAGS   += -g3 -ggdb3 -gstabs3 -DDEBUGMODE
 	LDFLAGS  += -g3 -ggdb3 -gstabs3 -DDEBUGMODE
 	ALLEGRO  := `allegro-config --shared debug`
 else
-	ifdef PROFILE
+	ifeq (@kq_use_profile@,1)
 		CFLAGS   += -pg
 		LDFLAGS  += -pg
 		ALLEGRO  := `allegro-config --shared profile`
