@@ -108,10 +108,11 @@ endif
 EXE_SUFFIX := 
 SRC_SUFFIX := c
 OBJ_SUFFIX := o
-OBJDIR:= $(OBJ_DIR)/unix
+OBJDIR:= $(OBJ_DIR)/@kq_target_dir@
 
 # Use these explicit files:
-EXTRAFILES:=unix.c
+EXTRAFILES:=@kq_extra_src@
+
 #                                                                             #
 #  Finally, add to the standard flags the options, according to the type of   #
 #  linking we are looking for.                                                #
