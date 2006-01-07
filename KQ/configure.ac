@@ -58,7 +58,7 @@ case ${host} in
      ;;
 
      *-*-darwin*)
-     AC_SUBST(kq_extra_src, [macosx.m])
+     AC_SUBST(kq_extra_src, [osx.m])
      AC_SUBST(kq_target_dir,macosx)
      ;;
 esac

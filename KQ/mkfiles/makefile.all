@@ -86,13 +86,30 @@ $(EXEC) : $(OBJECTS)
 $(OBJDIR)/%.$(OBJ_SUFFIX) : $(SRC_DIR)/%.c
 	$(COMPILE.c) -o $@ $<
 
+$(OBJDIR)/%.$(OBJ_SUFFIX) : $(SRC_DIR)/%.m
+	$(COMPILE.m) -o $@ $<
+
 # Just go into the scripts directory and run the script there                 #
 scripting:
 	$(MAKE) -C scripts
 
 editor:
-	@echo This could take a long time, please wait.
+#	@echo This could take a long time, please wait.
 	$(MAKE) -C maps
+
+# Special target for OSX - make the application bundle
+BUNDLE:=$(ID_SHORT).app
+APPR:=$(BUNDLE)/Contents/Resources
+bundle: $(EXEC)
+	install -d $(BUNDLE)/Contents/MacOS
+	install -d $(APPR)/data $(APPR)/music $(APPR)/scripts $(APPR)/maps 
+	install -C Mac/Info.plist $(BUNDLE)/Contents
+	install -C bin/kq $(BUNDLE)/Contents/MacOS
+	install -C data/*.dat data/*.kq data/*.mon $(APPR)/data
+	install -C maps/*.map $(APPR)/maps
+	install -C music/*.s3m music/*.mod music/*.xm $(APPR)/music
+	install -C scripts/*.lob $(APPR)/scripts
+	install Mac/KQ-icon.icns $(APPR)/KQ.icns
 
 
 # $(RES_C): other/items.csv other/spells.csv other/effects.csv other/encount.csv other/battles.csv
