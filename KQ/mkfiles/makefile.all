@@ -63,6 +63,12 @@ PACKAGE_OBJ = fix.bat    \
 ###############################################################################
 
 RES_C=src/res.c
+FILES:= combat.c effects.c eskill.c intrface.c masmenu.c scrnshot.c shopmenu.c\
+	credits.c enemyc.c fade.c itemmenu.c menu.c selector.c timing.c\
+	disk.c entity.c heroc.c kq.c music.c setup.c\
+	draw.c eqpmenu.c hskill.c magic.c res.c sgame.c\
+	movement.c $(EXTRAFILES)
+
 
 #                                                                             #
 #  Find out the objects we must generate.                                     #
@@ -75,10 +81,10 @@ export
 game: $(EXEC)
 
 $(EXEC) : $(OBJECTS)
-	$(LINKER) $^ -o $@ $(LDFLAGS)
+	$(LINK.o) $^ -o $@ $(LDLIBS)
 
-$(OBJDIR)/%.$(OBJ_SUFFIX) : $(SRC_DIR)/%.$(SRC_SUFFIX)
-	$(COMPILER) $(COMPILER_FLAGS) -c -o $@ $<
+$(OBJDIR)/%.$(OBJ_SUFFIX) : $(SRC_DIR)/%.c
+	$(COMPILE.c) -o $@ $<
 
 # Just go into the scripts directory and run the script there                 #
 scripting:
