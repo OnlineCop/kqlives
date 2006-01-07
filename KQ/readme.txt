@@ -15,6 +15,49 @@ Sam Hocevar for several fixes and for being the Debian package maintainer
 Edge for porting KQ to BeOS, and (with Caz Jones) fixing the joystick code 
 on that platform.
 
+Building Instructions
+=====================
+
+You will need Allegro 4.0 or above, Lua 5.0 or above, DUMB 0.92 or
+above. Most of our work was done with the GCC compiler (also known as
+MinGW on Windows, DJGPP on DOS). The code should compile on Microsoft
+Visual C, but we haven't any project files for it.
+
+On Windows:
+----------
+Type
+fix.bat mingw
+make depend
+make
+
+On DOS:
+-------
+Type
+fix.bat djgpp
+make depend
+make
+
+On Mac OS X:
+------------
+Type 
+./fixosx.sh
+make depend
+make
+
+On Linux:
+---------
+Type
+./configure
+make depend
+make
+
+If you have the CVS version, you'll need to do some preparatory work 
+on Linux. Type
+libtoolize
+automake --add-missing
+Then ./configure, make depend, make as above.
+
+
 Without further ado, over to JB: (some of his comments about directory
 structure are now out of date)
 ---------------
