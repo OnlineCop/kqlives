@@ -1,53 +1,69 @@
--- grotto2 - second, larger part of grotto north of Ekla
+
+
+-- grotto2 - "Second, larger part of grotto north of Ekla"
 
 function autoexec()
-  refresh();
+  refresh()
 end
+
 
 function refresh()
   if (get_progress(37) > 0) then
-    set_btile(20,23,515);
+    set_mtile(20, 23, 265)
   end
-  if (get_treasure(48) > 0) then
-    set_btile(17,52,517);
+
+  if (get_treasure(48) == 1) then
+    set_mtile(17, 52, 265)
   end
-  if (get_treasure(49) > 0) then
-    set_btile(18,47,517);
+
+  if (get_treasure(49) == 1) then
+    set_mtile(18, 47, 265)
   end
 end
-  
+
+
 function postexec()
   return
 end
 
+
 function zone_handler(zn)
   if (zn == 0) then
-    combat(24);
-  
+    combat(24)
+
   elseif (zn == 1) then
-    change_map("grotto",11,13,11,13);
-  
+    change_mapm("grotto", "portal")
+    -- change_map("grotto", 11, 13, 11, 13)
+
   elseif (zn == 2) then
-    bubble(200,"This door is stuck tight.","","","");
-  
+    if (get_progress(110) == 3) then
+      msg("$0 fits the rusty key into the lock.", 255, 0)
+      set_progress(110, 4)
+    elseif (get_progress(110) == 4) then
+      bubble(200, "Something's supposed to happen here... it hasn't been programmed yet.")
+    else
+      bubble(200, "This door is stuck tight.")
+    end
+
   elseif (zn == 3) then
     if (get_progress(37) == 0) then
-      set_progress(37,1);
-      sfx(5);
-      msg("Rod of Cancellation procured",255,0);
-      refresh();
+      set_progress(37, 1)
+      sfx(5)
+      msg("Rod of Cancellation procured", 255, 0)
+      refresh()
     end
-  
+
   elseif (zn == 4) then
-    chest(48,103,1);
-    refresh();
-  
+    chest(48, 103, 1)
+    refresh()
+
   elseif (zn == 5) then
-    chest(49,50,1);
-    refresh();
+    chest(49, 50, 1)
+    refresh()
 
   end
 end
+
 
 function entity_handler(en)
   return
