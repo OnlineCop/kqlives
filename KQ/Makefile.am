@@ -43,16 +43,16 @@ KQ.app: kq
 	install -C $(cscripts_DATA) $(APPR)/scripts
 	install Mac/KQ-icon.icns $(APPR)/KQ.icns
 
-dist_map_DATA= maps/dville.peter.map maps/starting.map maps/bridge2.map\
-maps/estate.map maps/temple1.map maps/bridge.map maps/esteria.map\
+dist_map_DATA=  maps/starting.map maps/bridge2.map\
+maps/estate.map maps/temple1.map maps/bridge.map \
 maps/temple2.map maps/camp.map maps/fort.map maps/tower.map\
 maps/cave1.map maps/goblin.map maps/town1.map maps/cave2.map\
 maps/grotto2.map maps/town2.map maps/cave3a.map maps/grotto.map\
 maps/town3.map maps/cave3b.map maps/guild.map maps/town4.map\
 maps/cave4.map maps/main.map maps/town5.map maps/manor.map maps/town6.map\
 maps/cave5.map maps/town7.map maps/cave6a.map maps/town8.map\
-maps/cave6b.map maps/tunnel.map maps/coliseum.map maps/pass.map\
-maps/cult.map maps/dville.map maps/shrine.map
+maps/cave6b.map  maps/coliseum.map maps/pass.map\
+maps/cult.map maps/dville.map 
 
 mapdir=$(pkgdatadir)/maps
 
