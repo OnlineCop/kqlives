@@ -61,12 +61,17 @@ endif
 #                                                                             #
 COMPILER_FLAGS += -mwindows
 LDFLAGS += -mwindows $(addprefix -l,$(LIBRARY))
-FILES += win.c
+FILES += win.c winres.rc
 
 #                                                                             #
 #  Generate the object files.                                                 #
 #                                                                             #
 OBJECTS  := $(addprefix $(OBJDIR)/, $(addsuffix .$(OBJ_SUFFIX), $(FILES)))
+
+$(OBJDIR)/%.o: $(SRC_DIR)/%.rc
+	windres $< -o $@
+
+	
 
 
 
