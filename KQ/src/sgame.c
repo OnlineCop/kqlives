@@ -99,27 +99,18 @@ void load_sgstats (void)
             smp[a][b] = 0;
          }
       } else {
-         /*             pack_fread (&vc, sizeof (vc), ldat); */
          vc = pack_getc (ldat);
          if (vc != kq_version)
             snc[a] = -1;
          else {
-            /*
-               pack_fread (&snc[a], sizeof (snc[a]), ldat);
-               pack_fread (&sgp[a], sizeof (sgp[a]), ldat);
-               pack_fread (&shr[a], sizeof (shr[a]), ldat);
-               pack_fread (&smin[a], sizeof (smin[a]), ldat);
-             */
             snc[a] = pack_igetl (ldat);
             sgp[a] = pack_igetl (ldat);
             shr[a] = pack_igetl (ldat);
             smin[a] = pack_igetl (ldat);
             for (b = 0; b < PSIZE; b++) {
-               /*                     pack_fread (&sid[a][b], sizeof (sid[a][b]), ldat); */
                sid[a][b] = pack_igetl (ldat);
             }
             for (b = 0; b < MAXCHRS; b++) {
-               /*                       pack_fread (&tpm, sizeof (tpm), ldat); */
                load_s_player (&tpm, ldat);
                for (c = 0; c < PSIZE; c++) {
                   if (b == sid[a][c]) {
@@ -236,71 +227,40 @@ static int save_game (void)
       message ("Could not save game data.", 255, 0, 0, 0);
       return 0;
    }
-   /*   pack_fwrite (&kq_version, sizeof (kq_version), sdat);
-      pack_fwrite (&numchrs, sizeof (numchrs), sdat);
-      pack_fwrite (&gp, sizeof (gp), sdat);
-      pack_fwrite (&shr[save_ptr], sizeof (shr[save_ptr]), sdat);
-      pack_fwrite (&smin[save_ptr], sizeof (smin[save_ptr]), sdat);
-    */
    pack_putc (kq_version, sdat);
    pack_iputl (numchrs, sdat);
    pack_iputl (gp, sdat);
    pack_iputl (shr[save_ptr], sdat);
    pack_iputl (smin[save_ptr], sdat);
    for (a = 0; a < PSIZE; a++) {
-      /*      pack_fwrite (&pidx[a], sizeof (pidx[a]), sdat); */
       pack_iputl (pidx[a], sdat);
    }
    for (a = 0; a < MAXCHRS; a++) {
-      /*
-         pack_fwrite (&party[a], sizeof (s_player), sdat);
-       */
       save_s_player (&party[a], sdat);
    }
    pack_fwrite (curmap, 16, sdat);
-/*    pack_fwrite (progress, 2000, sdat); */
    for (a = 0; a < 2000; ++a) {
       pack_putc (progress[a], sdat);
    }
-/*    pack_fwrite (treasure, 1000, sdat); */
    for (a = 0; a < 1000; ++a) {
       pack_putc (treasure[a], sdat);
    }
-/*    pack_fwrite (shopq, NUMSHOPS * SHOPITEMS * sizeof (shopq[0][0]), sdat); */
    for (a = 0; a < NUMSHOPS; ++a) {
       for (b = 0; b < SHOPITEMS; ++b) {
          pack_iputw (shopq[a][b], sdat);
       }
    }
-/* pack_fwrite (g_inv, MAX_INV * 2 * sizeof (g_inv[0][0]), sdat); */
    for (a = 0; a < MAX_INV; ++a) {
       pack_iputw (g_inv[a][0], sdat);
       pack_iputw (g_inv[a][1], sdat);
    }
    /* PH FIXME: do we _really_ want things like controls and screen */
    /* mode to be saved/loaded ? */
-/*    pack_fwrite (&gsvol, sizeof (gsvol), sdat); */
-/*    pack_fwrite (&gmvol, sizeof (gmvol), sdat); */
-/*    pack_fwrite (&windowed, sizeof (windowed), sdat); */
-/*    pack_fwrite (&stretch_view, sizeof (stretch_view), sdat); */
-/*    pack_fwrite (&wait_retrace, sizeof (wait_retrace), sdat); */
    pack_iputl (gsvol, sdat);
    pack_iputl (gmvol, sdat);
    pack_putc (windowed, sdat);
    pack_putc (stretch_view, sdat);
    pack_putc (wait_retrace, sdat);
-/*    pack_fwrite (&kup, sizeof (kup), sdat); */
-/*    pack_fwrite (&kdown, sizeof (kdown), sdat); */
-/*    pack_fwrite (&kleft, sizeof (kleft), sdat); */
-/*    pack_fwrite (&kright, sizeof (kright), sdat); */
-/*    pack_fwrite (&kalt, sizeof (kalt), sdat); */
-/*    pack_fwrite (&kctrl, sizeof (kctrl), sdat); */
-/*    pack_fwrite (&kenter, sizeof (kenter), sdat); */
-/*    pack_fwrite (&kesc, sizeof (kesc), sdat); */
-/*    pack_fwrite (&jbalt, sizeof (jbalt), sdat); */
-/*    pack_fwrite (&jbctrl, sizeof (jbctrl), sdat); */
-/*    pack_fwrite (&jbenter, sizeof (jbenter), sdat); */
-/*    pack_fwrite (&jbesc, sizeof (jbesc), sdat); */
    pack_iputl (kup, sdat);
    pack_iputl (kdown, sdat);
    pack_iputl (kleft, sdat);
@@ -313,8 +273,6 @@ static int save_game (void)
    pack_iputl (jbctrl, sdat);
    pack_iputl (jbenter, sdat);
    pack_iputl (jbesc, sdat);
-/*    pack_fwrite (&g_ent[0].tilex, sizeof (g_ent[0].tilex), sdat); */
-/*    pack_fwrite (&g_ent[0].tiley, sizeof (g_ent[0].tiley), sdat); */
    pack_iputw (g_ent[0].tilex, sdat);
    pack_iputw (g_ent[0].tiley, sdat);
    pack_fclose (sdat);
@@ -344,27 +302,17 @@ static int load_game (void)
       message ("Could not load saved game.", 255, 0, 0, 0);
       return 0;
    }
-   /*   pack_fread (&tv, sizeof (tv), sdat); */
    tv = pack_getc (sdat);
    if (tv != kq_version) {
       pack_fclose (sdat);
       message ("Saved game format is not current.", 255, 0, 0, 0);
       return 0;
    }
-   /*
-      pack_fread (&numchrs, sizeof (numchrs), sdat);
-      pack_fread (&gp, sizeof (gp), sdat);
-      pack_fread (&thr, sizeof (thr), sdat);
-      pack_fread (&tmin, sizeof (tmin), sdat);
-    */
    numchrs = pack_igetl (sdat);
    gp = pack_igetl (sdat);
    thr = pack_igetl (sdat);
    tmin = pack_igetl (sdat);
    for (a = 0; a < PSIZE; a++) {
-      /*
-         pack_fread (&pidx[a], sizeof (pidx[a]), sdat);
-       */
       pidx[a] = pack_igetl (sdat);
       g_ent[a].active = 0;
       if (a < numchrs) {
@@ -373,27 +321,15 @@ static int load_game (void)
       }
    }
    for (a = 0; a < MAXCHRS; a++) {
-      /*
-         pack_fread (&party[a], sizeof (s_player), sdat);
-       */
       load_s_player (&party[a], sdat);
    }
    pack_fread (curmap, 16, sdat);
    for (a = 0; a < 2000; ++a) {
-      /*
-         pack_fread (progress, 2000, sdat);
-       */
       progress[a] = pack_getc (sdat);
    }
    for (a = 0; a < 1000; ++a) {
-      /*
-         pack_fread (treasure, 1000, sdat);
-       */
       treasure[a] = pack_getc (sdat);
    }
-   /*
-      pack_fread (shopq, NUMSHOPS * SHOPITEMS * sizeof (shopq[0][0]), sdat);
-    */
    for (a = 0; a < NUMSHOPS; ++a) {
       for (b = 0; b < SHOPITEMS; ++b) {
          shopq[a][b] = pack_igetw (sdat);
@@ -603,7 +539,6 @@ int start_menu (int c)
          blit (staff, double_buffer, 0, 0, 124, 22, 72, 226);
          blit2screen (0, 0);
 
-         //do_transition (TRANS_FADE_IN, 1);
          wait (1000);
          for (a = 0; a < 42; a++) {
             stretch_blit (staff, double_buffer, 0, 0, 72, 226, 124 - (a * 32),
@@ -817,7 +752,7 @@ int system_menu (void)
 #else
             if (cansave == 1)
 #endif /* KQ_CHEATS */
-               // TT: This open bracket here so match-brace doesn't choke
+               /* TT: This open bracket here so match-brace doesn't choke */
             {
                saveload (1);
                return 0;
