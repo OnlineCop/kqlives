@@ -43,6 +43,10 @@ static char game_dir[PATH_MAX];
 
 /*! \brief Return the name of 'significant' directories.
  *
+ * Checks to see if the exe is in its correct, install location (set
+ * during the ./configure process). If it is, also look for data in
+ * the install location.
+ *
  * \param   dir Enumerated constant for directory type  \sa DATA_DIR et al.
  * \param   file File name below that directory.
  * \returns the combined path
@@ -50,6 +54,7 @@ static char game_dir[PATH_MAX];
 const char *kqres (int dir, const char *file)
 {
    static char ans[PATH_MAX];
+   char exe[PATH_MAX];
    if (!init_path) {
       /* Get home directory; this bit originally written by SH */
       struct passwd *pwd;
@@ -70,8 +75,17 @@ const char *kqres (int dir, const char *file)
          strcpy (user_dir, ".");
       }
       /* Now the data directory */
-      /* PH: Should be /usr/local/lib/KQ or something?? I have no idea */
-      strcpy (game_dir, ".");
+      get_executable_name(exe, sizeof(exe));
+      if (strcmp(exe, KQ_BIN)==0)
+	{
+	  /* It's in its proper installed location */
+	  strcpy(game_dir, KQ_DATA);
+	}
+      else
+	{
+	  /* Not installed, development version */
+	  strcpy(game_dir, ".");
+	}
       init_path = 1;
    }
    switch (dir) {
