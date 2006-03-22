@@ -31,9 +31,7 @@
  * the C code and the Lua scripts.
  *
  */
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+#include "kq.h"
 #ifndef KQ_SCAN_DEPEND
 #include <stdio.h>
 #include <string.h>
@@ -47,7 +45,6 @@
 #include "setup.h"
 #include "effects.h"
 #include "draw.h"
-#include "kq.h"
 #include "combat.h"
 #include "heroc.h"
 #include "menu.h"
