@@ -40,22 +40,19 @@ make
 On Mac OS X:
 ------------
 Type 
-./fixosx.sh
-make depend
+./configure
 make
 
 On Linux:
 ---------
 Type
 ./configure
-make depend
 make
 
 If you have the CVS version, you'll need to do some preparatory work 
-on Linux. Type
-libtoolize
-automake --add-missing
-Then ./configure, make depend, make as above.
+on Linux and OSX. Type
+autoreconf
+Then ./configure, make as above.
 
 
 Without further ado, over to JB: (some of his comments about directory
