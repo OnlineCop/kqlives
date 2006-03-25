@@ -58,9 +58,10 @@ AC_SEARCH_LIBS(lua_open, lua50 lua, [], [AC_MSG_ERROR([Lua not found])])
 m4_ifdef([AS_HELP_STRING], , [m4_define([AS_HELP_STRING], m4_defn([AC_HELP_STRING]))])
 AC_ARG_WITH(jgmod, AS_HELP_STRING([--with-jgmod], [Use the JGMod library (default NO)]), AC_SUBST(kq_use_jgmod,1))
 AC_ARG_WITH(2xsai, AS_HELP_STRING([--with-2xsai], [Use the 2xSAI library (default NO)]), AC_SUBST(kq_use_2xsai,1))
-AC_ARG_ENABLE(debug, AS_HELP_STRING([--enable-debug], [Enable debug mode]), AC_SUBST(kq_use_debug,1))
+AC_ARG_ENABLE(debug, AS_HELP_STRING([--enable-debug], [Enable debug mode]), 
+[AC_DEFINE(DEBUGMODE,1,[Some debug options])])
 AC_ARG_ENABLE(profile, AS_HELP_STRING([--enable-profile], [Enable profile mode]), AC_SUBST(kq_use_profile,1))
-AC_ARG_ENABLE(cheats, AS_HELP_STRING([--enable-cheats], [Enable cheats]), AC_SUBST(kq_use_cheats,1))
+AC_ARG_ENABLE(cheats, AS_HELP_STRING([--enable-cheats], [Enable cheats]), AC_DEFINE(KQ_CHEATS,1, [Add some code to allow the player to cheat]))
 
 # host stuff
 case ${host} in
