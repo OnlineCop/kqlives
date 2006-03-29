@@ -754,9 +754,6 @@ void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
  *              the marker's name doesn't exist on the map, pass 0 for msx and
  *              msy to use the 'default' position stored in the map file
  *              (s_map::stx and s_map::sty)
- * \param   mvx New x-coord for camera. Pass 0 for mvx and mvy to use the
- *              default (also s_map::stx and s_map::sty)
- * \param   mvy New y-coord for camera
  */
 void change_mapm (char *map_name, const char *marker_name)
 {

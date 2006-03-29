@@ -25,7 +25,7 @@
  * \date Created ????????
  * \date Updated 20021125 -- Added extra functions
  * \date Updated 20030308 -- Added object interface
- * \data Updated 20051220 -- Change to Lua 5
+ * \date Updated 20051220 -- Change to Lua 5
  *
  * This file implements the interface between
  * the C code and the Lua scripts.
@@ -3609,7 +3609,6 @@ void do_timefunc (const char *funcname)
  *
  * Call the get_quest_info function. This is called
  * when quest info is selected from the menu
- * \param funcname the name of the function to call
  */
 void do_questinfo (void)
 {

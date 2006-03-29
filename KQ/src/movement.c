@@ -105,10 +105,10 @@ int find_path (int id, int source_x, int source_y, int target_x, int target_y,
  * \param id  [in]     The ID of the entity moving around.
  * \param map [in,out] The map in where to write the paths.
  * \param step [in]    The current step in recursivity.
- * \param source_x[in] The x coordinate of the source point.
- * \param source_y [in]The y coordinate of the source point.
- * \param target_x [in]The x coordinate of the target point.
- * \param target_y[in] The y coordinate of the target point.
+ * \param source_x [in] The x coordinate of the source point.
+ * \param source_y [in] The y coordinate of the source point.
+ * \param target_x [in] The x coordinate of the target point.
+ * \param target_y [in] The y coordinate of the target point.
  * \param start_x [in] The minimum value of the x axis.
  * \param start_y [in] The minimum value of the y axis.
  * \param limit_x [in] The maximum value of the x axis.
