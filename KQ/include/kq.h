@@ -465,7 +465,7 @@ extern s_fighter fighter[NUM_FIGHTERS];
 extern s_fighter tempa, tempd;
 extern int noi, shin[12], dct;
 extern char sname[39], ctext[39];
-extern volatile int timer, ksec, kmin, khr, timer_count;
+extern volatile int timer, ksec, kmin, khr, animation_count, timer_count;
 extern unsigned short lup[MAXCHRS][20];
 extern COLOR_MAP cmap;
 extern unsigned char can_run, display_desc;
@@ -473,7 +473,7 @@ extern unsigned char draw_background, draw_middle, draw_foreground,
    draw_shadow;
 extern unsigned short g_inv[MAX_INV][2];
 extern int view_x1, view_y1, view_x2, view_y2, view_on, in_combat;
-extern int frate, mfrate, show_frate, use_joy;
+extern int show_frate, use_joy;
 
 extern int cheat;
 extern int warx, wary;

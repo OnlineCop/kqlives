@@ -69,10 +69,7 @@ int select_player (void)
       return 0;
    ptr = 0;
    while (!stop) {
-      while (timer_count > 0) {
-         timer_count--;
-         check_animation ();
-      }
+      check_animation ();
       drawmap ();
       draw_mainmenu (ptr);
       blit2screen (xofs, yofs);
@@ -100,7 +97,6 @@ int select_player (void)
          unpress ();
          return -1;
       }
-      kq_yield ();
    }
    return ptr;
 }
@@ -138,10 +134,7 @@ int select_any_player (int csa, int icn, char *msg)
       sa = 0;
    ptr = 0;
    while (!stop) {
-      while (timer_count > 0) {
-         timer_count--;
-         check_animation ();
-      }
+      check_animation ();
       drawmap ();
       if (csa < TGT_ALLY_ALL) {
          menubox (double_buffer, 152 - ((strlen (msg) + 1) * 4) + xofs,
@@ -208,7 +201,6 @@ int select_any_player (int csa, int icn, char *msg)
          unpress ();
          stop = 2;
       }
-      kq_yield ();
    }
    if (csa == TGT_ALLY_ALL || stop == 2)
       return -1;
@@ -255,10 +247,7 @@ int select_hero (int whom, int multi, int csd)
       }
    }
    while (!stop) {
-      while (timer_count > 0) {
-         timer_count--;
-         check_animation ();
-      }
+      check_animation ();
       if (multi > TGT_NONE && sa == 1)
          battle_render (tmpd[ptr] + 1, whom + 1, 1);
       else
@@ -303,7 +292,6 @@ int select_hero (int whom, int multi, int csd)
                sa = 0;
          }
       }
-      kq_yield ();
    }
    if (sa == 0)
       return tmpd[ptr];
@@ -348,10 +336,7 @@ int select_enemy (int whom, int multi)
    stop = 0;
 
    while (!stop) {
-      while (timer_count > 0) {
-         timer_count--;
-         check_animation ();
-      }
+      check_animation ();
       if (multi > 0 && sa == 1)
          battle_render (tmpd[ptr] + 1, whom + 1, 2);
       else
@@ -398,7 +383,6 @@ int select_enemy (int whom, int multi)
                sa = 0;
          }
       }
-      kq_yield ();
    }
    if (sa == 0)
       return tmpd[ptr];
@@ -559,10 +543,7 @@ int select_party (int *avail, int n_avail, int numchrs_max)
    print_font (double_buffer, 24 + xofs, 32 + yofs, "Available:", FGOLD);
    print_font (double_buffer, 24 + xofs, 80 + yofs, "In party:", FGOLD);
    while (running) {
-      while (timer_count > 0) {
-         timer_count--;
-         check_animation ();
-      }
+      check_animation ();
       /* Draw everything */
       /* draw the row of available heroes */
       y = yofs + 40;
@@ -690,7 +671,6 @@ int select_party (int *avail, int n_avail, int numchrs_max)
       if (oldcur != cur)
          play_effect (SND_CLICK, 128);
 
-      kq_yield ();
    }
    return 0;
 }
@@ -725,10 +705,7 @@ static int mini_menu (int omask)
    }
 
    while (1) {
-      while (timer_count > 0) {
-         timer_count--;
-         check_animation ();
-      }
+      check_animation ();
       menubox (double_buffer, MM_X - 13, MM_Y - 8, 6, 3, DARKBLUE);
       print_font (double_buffer, MM_X, MM_Y, "Join",
                   (omask & MM_JOIN) ? FNORMAL : FDARK);
@@ -771,7 +748,6 @@ static int mini_menu (int omask)
             play_effect (SND_BAD, 128);
          }
       }
-      kq_yield ();
    }
 }
 

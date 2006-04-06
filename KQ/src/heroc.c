@@ -166,10 +166,7 @@ void hero_choose_action (int who)
    if (pidx[who] != CORIN && pidx[who] != CASANDRA)
       fighter[who].aux = 0;
    while (!stop) {
-      while (timer_count > 0) {
-         timer_count--;
-         check_animation ();
-      }
+      check_animation ();
       battle_render (who + 1, who + 1, 0);
       my = 0;
       strcpy (ca[my], "Attack");
@@ -298,7 +295,6 @@ void hero_choose_action (int who)
             }
          }
       }
-      kq_yield ();
    }
 }
 
@@ -425,10 +421,7 @@ static int combat_item_menu (int whom)
 
    blit (double_buffer, back, 0, 0, 0, 0, 352, 280);
    while (!stop) {
-      while (timer_count > 0) {
-         timer_count--;
-         check_animation ();
-      }
+      check_animation ();
       blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
       combat_draw_items (pptr);
       draw_sprite (double_buffer, menuptr, 72, ptr * 8 + 16);
@@ -492,7 +485,6 @@ static int combat_item_menu (int whom)
          unpress ();
          stop = 1;
       }
-      kq_yield ();
    }
    return stop - 1;
 }
@@ -623,10 +615,7 @@ static int hero_invoke (int whom)
    blit (double_buffer, back, 0, 0, 0, 0, 352, 280);
    dud = pidx[whom];
    while (!stop) {
-      while (timer_count > 0) {
-         timer_count--;
-         check_animation ();
-      }
+      check_animation ();
       blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
       draw_invokable (dud);
       draw_sprite (double_buffer, menuptr, 72, ptr * 8 + 88);
@@ -659,7 +648,6 @@ static int hero_invoke (int whom)
          unpress ();
          stop = 1;
       }
-      kq_yield ();
    }
    return stop - 1;
 }
@@ -900,10 +888,7 @@ int combat_spell_menu (int c)
    blit (double_buffer, back, 0, 0, 0, 0, 352, 280);
    play_effect (SND_MENU, 128);
    while (!stop) {
-      while (timer_count > 0) {
-         timer_count--;
-         check_animation ();
-      }
+      check_animation ();
       blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
       combat_draw_spell_menu (c, ptr, pgno);
       blit2screen (0, 0);
@@ -949,7 +934,6 @@ int combat_spell_menu (int c)
          unpress ();
          stop = 1;
       }
-      kq_yield ();
    }
    if (stop == 2) {
       if ((fighter[c].csmem == M_LIFE || fighter[c].csmem == M_FULLLIFE)

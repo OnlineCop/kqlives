@@ -232,12 +232,12 @@ static void allocate_stuff (void);
 static void load_heroes (void);
 void reset_timer_events (void);
 
-/*! \note 23: for keeping time. timer_counter is the game timer the main game
+/*! \note 23: for keeping time. timer_count is the game timer the main game
  * loop uses for logic (see int main()) and the rest track your playtime in
  * hours, minutes and seconds. They're all used in the my_counter() timer
  * function just below
  */
-volatile int timer = 0, ksec = 0, kmin = 0, khr = 0, timer_count = 0;
+volatile int timer = 0, ksec = 0, kmin = 0, khr = 0, timer_count = 0, animation_count;
 
 /*! Current colour map */
 COLOR_MAP cmap;
@@ -258,7 +258,7 @@ int view_x1, view_y1, view_x2, view_y2, view_on = 0;
 /*! Are we in combat mode? */
 int in_combat = 0;
 /*! Frame rate stuff */
-int skips = 0, frate, mfrate = 0, show_frate = 0;
+int show_frate = 0;
 /*! Should we use the joystick */
 int use_joy = 1;
 
@@ -268,7 +268,7 @@ int cheat = 0;
 #endif
 
 /*! The number of frames per second */
-#define KQ_FPS 100
+#define KQ_TICKS 100
 
 
 
@@ -280,13 +280,12 @@ void my_counter (void)
 {
    timer++;
 
-   if (timer >= KQ_FPS) {
+   if (timer >= KQ_TICKS) {
       timer = 0;
       ksec++;
-      mfrate = frate;
-      frate = 0;
    }
-
+   
+   animation_count++;
    timer_count++;
 }
 
@@ -370,7 +369,7 @@ void readcontrols (void)
    /* Emergency kill-game set. */
    /* PH modified - need to hold down for 0.50 sec */
    if (key[KEY_ALT] && key[KEY_X]) {
-      int kill_time = timer_count + KQ_FPS / 2;
+      int kill_time = timer_count + KQ_TICKS / 2;
       while (key[KEY_ALT] && key[KEY_X]) {
          if (timer_count >= kill_time) {
             /* Pressed, now wait for release */
@@ -733,10 +732,8 @@ void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
    use_sstone = g_map.use_sstone;
    cansave = g_map.can_save;
    timer_count = 0;
-   timer = 0;
    do_postexec ();
    timer_count = 0;
-   timer = 0;
 }
 
 
@@ -920,10 +917,8 @@ void change_mapm (char *map_name, const char *marker_name)
    use_sstone = g_map.use_sstone;
    cansave = g_map.can_save;
    timer_count = 0;
-   timer = 0;
    do_postexec ();
    timer_count = 0;
-   timer = 0;
 }
 
 
@@ -1022,20 +1017,20 @@ void warp (int wtx, int wty, int fspeed)
 void check_animation (void)
 {
    int i, j;
-
+   int diff = animation_count;
+   animation_count -= diff;
+   if (!diff) return;
    for (i = 0; i < MAX_ANIM; i++) {
       if (adata[i].start != 0) {
          if (adata[i].delay && adata[i].delay < adelay[i]) {
-            adelay[i] = 0;
-
+            adelay[i] %= adata[i].delay;
             for (j = adata[i].start; j <= adata[i].end; j++)
                if (tilex[j] < adata[i].end)
                   tilex[j]++;
                else
                   tilex[j] = adata[i].start;
          }
-
-         adelay[i]++;
+         adelay[i]+=diff;
       }
    }
 }
@@ -1348,13 +1343,14 @@ static void startup (void)
 
    LOCK_VARIABLE (timer);
    LOCK_VARIABLE (timer_count);
+   LOCK_VARIABLE (animation_count);
    LOCK_VARIABLE (ksec);
    LOCK_VARIABLE (kmin);
    LOCK_VARIABLE (khr);
    LOCK_FUNCTION (my_counter);
    LOCK_FUNCTION (time_counter);
 
-   install_int_ex (my_counter, BPS_TO_TIMER (KQ_FPS));
+   install_int_ex (my_counter, BPS_TO_TIMER (KQ_TICKS));
    /* tick every minute */
    install_int_ex (time_counter, BPM_TO_TIMER (1));
    create_trans_table (&cmap, pal, 128, 128, 128, NULL);
@@ -1692,8 +1688,8 @@ void kwait (int dtime)
          timer_count--;
          cnt++;
          process_entities ();
-         check_animation ();
       }
+      check_animation ();
 
       drawmap ();
       blit2screen (xofs, yofs);
@@ -1745,9 +1741,9 @@ void wait_for_entity (int est, int efi)
       while (timer_count > 0) {
          timer_count--;
          process_entities ();
-         check_animation ();
       }
       poll_music ();
+      check_animation ();
       drawmap ();
       blit2screen (xofs, yofs);
 
@@ -1765,7 +1761,6 @@ void wait_for_entity (int est, int efi)
             break;
          }
       }
-      kq_yield ();
    }
    while (n);
    autoparty = 0;
@@ -1817,7 +1812,7 @@ int in_party (int pn)
  *
  * Well, this one is pretty obvious.
  */
-int main (void)
+int main (int argc, const char * argv[])
 {
    int stop, game_on, skip_splash;
    startup ();
@@ -1841,22 +1836,16 @@ int main (void)
       if (game_on) {
          stop = 0;
          timer_count = 0;
-         timer = 0;
          alldead = 0;
          while (!stop) {
-            if (timer_count < 1) {
-               check_animation ();
-               drawmap ();
-               blit2screen (xofs, yofs);
-               while (timer_count < 1) {
-                  kq_yield ();
-               }
+            while (timer_count > 0) {
+               timer_count--;
+               process_entities ();
             }
-            timer_count--;
+            check_animation ();
+            drawmap ();
+            blit2screen (xofs, yofs);
             poll_music ();
-            process_entities ();
-
-            frate++;
 
             if (key[kesc]) {
                stop = system_menu ();
@@ -1864,7 +1853,6 @@ int main (void)
             if (bhelp) {
                /* TODO: In-game help system. */
             }
-
 
             if (alldead) {
                clear (screen);

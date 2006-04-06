@@ -417,10 +417,7 @@ static int saveload (int am_saving)
 
    play_effect (SND_MENU, 128);
    while (!stop) {
-      while (timer_count > 0) {
-         timer_count--;
-         check_animation ();
-      }
+      check_animation ();
       clear_bitmap (double_buffer);
       show_sgstats (am_saving);
       blit2screen (0, 0);
@@ -462,7 +459,6 @@ static int saveload (int am_saving)
          unpress ();
          stop = 1;
       }
-      kq_yield ();
    }
    return stop - 1;
 }
@@ -650,7 +646,6 @@ int start_menu (int c)
             return 2;
          }
       }
-      kq_yield ();
    }
    unload_datafile_object (bg);
    if (stop == 2) {
@@ -706,10 +701,7 @@ int system_menu (void)
 
    unpress ();
    while (!stop) {
-      while (timer_count > 0) {
-         timer_count--;
-         check_animation ();
-      }
+      check_animation ();
       drawmap ();
       menubox (double_buffer, xofs, yofs, 8, 4, BLUE);
       if (cansave == 1)
@@ -773,7 +765,6 @@ int system_menu (void)
          unpress ();
          return 0;
       }
-      kq_yield ();
    }
    return 0;
 }

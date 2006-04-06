@@ -60,10 +60,7 @@ void menu (void)
    play_effect (SND_MENU, 128);
    timer_count = 0;
    while (!stop) {
-      while (timer_count > 0) {
-         timer_count--;
-         check_animation ();
-      }
+      check_animation ();
       drawmap ();
       draw_mainmenu (-1);
       draw_sprite (double_buffer, menuptr, 204 + xofs, ptr * 8 + 73 + yofs);
@@ -127,7 +124,6 @@ void menu (void)
          close_menu = 0;
          stop = 1;
       }
-      kq_yield ();
    }
 }
 
@@ -353,10 +349,7 @@ void spec_items (void)
    }
    play_effect (SND_MENU, 128);
    while (!stop) {
-      while (timer_count > 0) {
-         timer_count--;
-         check_animation ();
-      }
+      check_animation ();
       drawmap ();
       menubox (double_buffer, 72 + xofs, 12 + yofs, 20, 1, BLUE);
       print_font (double_buffer, 108 + xofs, 20 + yofs, "Special Items",
@@ -398,7 +391,6 @@ void spec_items (void)
          unpress ();
          stop = 1;
       }
-      kq_yield ();
    }
 }
 
@@ -418,10 +410,7 @@ static void status_screen (int ch)
    c = pidx[ch];
    update_equipstats ();
    while (!stop) {
-      while (timer_count > 0) {
-         timer_count--;
-         check_animation ();
-      }
+      check_animation ();
       // Redraw the map, clearing any menus under this new window
       drawmap ();
 
@@ -534,7 +523,6 @@ static void status_screen (int ch)
          play_effect (SND_MENU, 128);
          stop = 1;
       }
-      kq_yield ();
    }
 }
 
@@ -916,10 +904,7 @@ static void quest_info (void)
    }
 
    while (1) {
-      if (timer_count > 0) {
-         check_animation ();
-         timer_count = 0;
-      }
+      timer_count = 0;
       drawmap ();
       base = ii - ii % 10;
       menubox (double_buffer, 88 + xofs, 92 + yofs, 18, 10, BLUE);

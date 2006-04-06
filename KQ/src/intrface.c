@@ -2907,22 +2907,20 @@ static int KQ_move_camera (lua_State * L)
    autoparty = 1;
    timer_count = 0;
    while (ytot > 0 || xtot > 0) {
-      while (timer_count <= 0) {
-         check_animation ();
-         kq_yield ();
-         drawmap ();
-         blit2screen (xofs, yofs);
+      if (timer_count >= dtime) {
+         timer_count -= dtime;
+         if (xtot > 0) {
+            vx += xinc;
+            xtot--;
+         }
+         if (ytot > 0) {
+            vy += yinc;
+            ytot--;
+         }
       }
-
-      timer_count -= dtime;
-      if (xtot > 0) {
-         vx += xinc;
-         xtot--;
-      }
-      if (ytot > 0) {
-         vy += yinc;
-         ytot--;
-      }
+      check_animation ();
+      drawmap ();
+      blit2screen (xofs, yofs);
    }
 
    timer_count = 0;

@@ -239,10 +239,7 @@ void camp_spell_menu (int c)
    update_equipstats ();
    play_effect (SND_MENU, 128);
    while (!stop) {
-      while (timer_count > 0) {
-         timer_count--;
-         check_animation ();
-      }
+      check_animation ();
       drawmap ();
       camp_draw_spell_menu (c, pg[smove], ptr[smove]);
       if (smove == 0)
@@ -322,7 +319,6 @@ void camp_spell_menu (int c)
       }
       if (close_menu == 1)
          stop = 1;
-      kq_yield ();
    }
 }
 

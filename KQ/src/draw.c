@@ -77,16 +77,16 @@ const char *parse_string (const char *);
 extern int skips;
 void blit2screen (int xw, int yw)
 {
-   if (wait_retrace == 1)
-      vsync ();
+   static int frate;
    if (show_frate == 1) {
-      sprintf (strbuf, "%d %d", mfrate, skips);
+      sprintf (strbuf, "%d %d", frate, skips);
       print_font (double_buffer, xofs, yofs, strbuf, FNORMAL);
    }
    if (stretch_view == 1)
       stretch_blit (double_buffer, screen, xw, yw, 320, 240, 0, 0, 640, 480);
    else
       blit (double_buffer, screen, xw, yw, 0, 0, 320, 240);
+   frate = limit_frame_rate(25);
 }
 
 
@@ -1219,10 +1219,7 @@ static void generic_text (int who, int box_style)
    unpress ();
    timer_count = 0;
    while (!stop) {
-      while (timer_count > 0) {
-         timer_count--;
-         check_animation ();
-      }
+      check_animation ();
       drawmap ();
       draw_textbox (box_style);
       blit2screen (xofs, yofs);
@@ -1231,7 +1228,6 @@ static void generic_text (int who, int box_style)
          unpress ();
          stop = 1;
       }
-      kq_yield ();
    }
    timer_count = 0;
 }
@@ -1337,10 +1333,7 @@ int prompt_ex (int who, const char *ptext, char *opt[], int n_opt)
          winy = yofs + 230 - winheight * 12;
          running = 1;
          while (running) {
-            while (timer_count > 0) {
-               timer_count--;
-               check_animation ();
-            }
+            check_animation ();
             drawmap ();
             /* Draw the prompt text */
             set_textpos (who);
@@ -1391,7 +1384,6 @@ int prompt_ex (int who, const char *ptext, char *opt[], int n_opt)
                topopt = curopt - winheight + 1;
 
             }
-            kq_yield ();
          }
          return curopt;
       }
@@ -1439,10 +1431,7 @@ int prompt (int who, int numopt, int bstyle, char *sp1, char *sp2, char *sp3,
       return -1;
    ly = (gbbh - numopt) * 12 + gbby + 10;
    while (!stop) {
-      while (timer_count > 0) {
-         timer_count--;
-         check_animation ();
-      }
+      check_animation ();
       drawmap ();
       draw_textbox (bstyle);
 /*           for (a = 0; a < gbbh; a++) */
@@ -1471,7 +1460,6 @@ int prompt (int who, int numopt, int bstyle, char *sp1, char *sp2, char *sp3,
          unpress ();
          stop = 1;
       }
-      kq_yield ();
    }
    return ptr;
 }

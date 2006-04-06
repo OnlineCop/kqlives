@@ -584,10 +584,7 @@ int shop (int shop_num)
    unpress ();
    play_effect (SND_MENU, 128);
    while (!stop) {
-      while (timer_count > 0) {
-         timer_count--;
-         check_animation ();
-      }
+      check_animation ();
       drawmap ();
       menubox (double_buffer, 152 - (strlen (sname) * 4) + xofs, yofs,
                strlen (sname), 1, BLUE);
@@ -651,10 +648,7 @@ static void buy_menu (void)
    if (max_x > 9)
       max_x = 9;
    while (!stop) {
-      while (timer_count > 0) {
-         timer_count--;
-         check_animation ();
-      }
+      check_animation ();
       drawmap ();
       menubox (double_buffer, 152 - (strlen (sname) * 4) + xofs, yofs,
                strlen (sname), 1, BLUE);
@@ -736,7 +730,6 @@ static void buy_menu (void)
          unpress ();
          stop = 1;
       }
-      kq_yield ();
    }
 }
 
@@ -762,10 +755,7 @@ static void buy_item (int how_many, int item_no)
       return;
    }
    while (!stop) {
-      while (timer_count > 0) {
-         timer_count--;
-         check_animation ();
-      }
+      check_animation ();
       blit (back, double_buffer, 0, 0, xofs, 192 + yofs, 320, 48);
       menubox (double_buffer, 32 + xofs, 168 + yofs, 30, 1, DARKBLUE);
       print_font (double_buffer, 104 + xofs, 176 + yofs, "Confirm/Cancel",
@@ -782,7 +772,6 @@ static void buy_item (int how_many, int item_no)
          unpress ();
          return;
       }
-      kq_yield ();
    }
    z = check_inventory (l, how_many);
    if (z > 0) {
@@ -808,10 +797,7 @@ static void sell_menu (void)
    int yptr = 0, stop = 0, z, p, k, sp, inv_page = 0;
 
    while (!stop) {
-      while (timer_count > 0) {
-         timer_count--;
-         check_animation ();
-      }
+      check_animation ();
       drawmap ();
       menubox (double_buffer, 152 - (strlen (sname) * 4) + xofs, yofs,
                strlen (sname), 1, BLUE);
@@ -937,10 +923,7 @@ static void sell_howmany (int item_no, int inv_page)
       stop = 1;
    }
    while (!stop) {
-      while (timer_count > 0) {
-         timer_count--;
-         check_animation ();
-      }
+      check_animation ();
       drawmap ();
       menubox (double_buffer, 32 + xofs, 168 + yofs, 30, 1, DARKBLUE);
       print_font (double_buffer, 124 + xofs, 176 + yofs, "How many?", FNORMAL);
@@ -1076,10 +1059,7 @@ void inn (char *iname, int gpc, int pay)
       }
    }
    while (!stop) {
-      while (timer_count > 0) {
-         timer_count--;
-         check_animation ();
-      }
+      check_animation ();
       drawmap ();
 
       sprintf (strbuf, "The cost is %d gp for the night.", gpts);
@@ -1137,7 +1117,6 @@ void inn (char *iname, int gpc, int pay)
             stop = 2;
          }
       }
-      kq_yield ();
    }
    timer_count = 0;
 }

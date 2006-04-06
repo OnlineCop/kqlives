@@ -268,10 +268,7 @@ void equip_menu (int c)
    eqp_act = 0;
    play_effect (SND_MENU, 128);
    while (!stop) {
-      while (timer_count > 0) {
-         timer_count--;
-         check_animation ();
-      }
+      check_animation ();
       drawmap ();
       draw_equipmenu (c, sl);
       if (sl == 0) {
@@ -380,10 +377,7 @@ static void choose_equipment (int c, int slot)
    int stop = 0, yptr = 0, pptr = 0, sm = 0, ym = 15;
 
    while (!stop) {
-      while (timer_count > 0) {
-         timer_count--;
-         check_animation ();
-      }
+      check_animation ();
       drawmap ();
       draw_equipmenu (c, 0);
       draw_equippable (c, slot, pptr);

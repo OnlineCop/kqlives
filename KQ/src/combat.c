@@ -271,7 +271,6 @@ static int do_combat (char *bg, char *mus, int is_rnd)
       stop_music ();
    steps = 0;
    in_combat = 0;
-   timer = 0;
    timer_count = 0;
    return (1);
 }

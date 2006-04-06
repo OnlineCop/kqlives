@@ -23,5 +23,6 @@
 #define __TIMING_H
 
 void wait (long ms);
+int limit_frame_rate(int fps);
 
 #endif

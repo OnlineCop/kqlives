@@ -385,10 +385,7 @@ void config_menu (void)
    push_config_state ();
    set_config_file (kqres (SETTINGS_DIR, "kq.cfg"));
    while (!stop) {
-      while (timer_count > 0) {
-         timer_count--;
-         check_animation ();
-      }
+      check_animation ();
       drawmap ();
       menubox (double_buffer, 88 + xofs, yofs, 16, 1, BLUE);
       print_font (double_buffer, 96 + xofs, 8 + yofs, "KQ Configuration",
@@ -653,7 +650,6 @@ void config_menu (void)
          unpress ();
          stop = 1;
       }
-      kq_yield ();
    }
    pop_config_state ();
 }
@@ -717,10 +713,7 @@ static int getavalue (char *capt, int minu, int maxu, int cv, int sp)
    if (maxu == 0)
       return -1;
    while (!stop) {
-      while (timer_count > 0) {
-         timer_count--;
-         check_animation ();
-      }
+      check_animation ();
       menubox (double_buffer, 148 - (maxu * 4) + xofs, 100 + yofs, maxu + 1,
                3, DARKBLUE);
       print_font (double_buffer, 160 - (strlen (capt) * 4) + xofs,
@@ -767,7 +760,6 @@ static int getavalue (char *capt, int minu, int maxu, int cv, int sp)
          unpress ();
          return -1;
       }
-      kq_yield ();
    }
    return cv;
 }
@@ -798,7 +790,6 @@ void show_help (void)
    do {
       blit2screen (xofs, yofs);
       readcontrols ();
-      kq_yield ();
    }
    while (!balt && !bctrl);
    unpress ();

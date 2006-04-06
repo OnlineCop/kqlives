@@ -125,10 +125,7 @@ void camp_item_menu (void)
    item_act = 0;
    play_effect (SND_MENU, 128);
    while (!stop) {
-      while (timer_count > 0) {
-         timer_count--;
-         check_animation ();
-      }
+      check_animation ();
       drawmap ();
       draw_itemmenu (ptr, pptr, sel);
       blit2screen (xofs, yofs);
@@ -199,12 +196,7 @@ void camp_item_menu (void)
 
                      /* Make sure the player really wants to drop the item specified. */
                      while (!stop2) {
-                        kq_yield ();
-
-                        while (timer_count > 0) {
-                           timer_count--;
-                           check_animation ();
-                        }
+                        check_animation ();
                         drawmap ();
                         draw_itemmenu (ptr, pptr, sel);
                         menubox (double_buffer, 72 + xofs, 204 + yofs, 20, 1,
@@ -240,7 +232,6 @@ void camp_item_menu (void)
          else
             stop = 1;
       }
-      kq_yield ();
    }
 }
 
