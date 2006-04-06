@@ -28,9 +28,19 @@
 #ifndef __KQ_H
 #define __KQ_H
 
-
-
 #include <allegro.h>
+
+#ifdef HAVE_CONFIG_H
+/* Have to undef some stuff because Allegro defines it - thanks guys
+*/
+#undef PACKAGE_TARNAME
+#undef PACKAGE_VERSION
+#undef PACKAGE_NAME
+#undef PACKAGE_STRING
+#undef PACKAGE_BUGREPORT
+#include "config.h"
+#endif
+
 #include "entity.h"
 
 #define MAX_TILES        1024
@@ -262,8 +272,6 @@ const char *kqres (int dir_id, const char *file);
 #define MAP_GOBLIN         34
 /*\}*/
 
-
-
 #include "structs.h"
 
 /*! \brief Player */
@@ -367,7 +375,7 @@ s_fighter;
 
 
 void change_map (char *, int, int, int, int);   /*  intrface.c, magic.c  */
-void change_mapm (char *, const char *);  /*  intrface.c */
+void change_mapm (char *, const char *);        /*  intrface.c */
 void readcontrols (void);       /*  everywhere ;)  */
 void calc_viewport (int);       /*  entity.c, intrface.c  */
 void zone_check (void);         /*  entity.c  */
