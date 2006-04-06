@@ -783,7 +783,6 @@ static void party_add (int id, int lead)
    if (numchrs < MAXCHRS) {
       if (numchrs > 0) {
          memcpy (&g_ent[numchrs], &g_ent[numchrs - 1], sizeof (*g_ent));
-         lastm[numchrs] = lastm[numchrs - 1] = MOVE_NOT;
       }
       if (lead) {
          t = &g_ent[0];

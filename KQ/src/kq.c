@@ -96,7 +96,7 @@ int jbalt, jbctrl, jbenter, jbesc;
 /*! View and character positions */
 int vx, vy, mx, my;
 /*! What was the last direction each player moved in */
-int steps = 0, lastm[PSIZE];
+int steps = 0;
 
 /*! 23: various global bitmaps */
 BITMAP *double_buffer, *fx_buffer, *map_icons[MAX_TILES], *back, *tc, *tc2,
@@ -652,7 +652,6 @@ void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
          // Place players at specific coordinates in the map
          place_ent (i, msx, msy);
 
-      lastm[i] = 0;
       g_ent[i].speed = 4;
       g_ent[i].obsmode = 1;
       g_ent[i].moving = 0;
@@ -840,7 +839,6 @@ void change_mapm (char *map_name, const char *marker_name)
          // Place players at specific coordinates in the map
          place_ent (i, msx, msy);
 
-      lastm[i] = 0;
       g_ent[i].speed = 4;
       g_ent[i].obsmode = 1;
       g_ent[i].moving = 0;
@@ -1000,7 +998,6 @@ void warp (int wtx, int wty, int fspeed)
       g_ent[i].moving = 0;
       g_ent[i].movcnt = 0;
       g_ent[i].framectr = 0;
-      lastm[i] = 0;
    }
 
    vx = wtx * 16;

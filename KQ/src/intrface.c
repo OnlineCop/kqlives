@@ -597,8 +597,6 @@ static int party_setter (lua_State * L)
                memcpy (&g_ent[which], &g_ent[0], sizeof (s_entity));
                g_ent[which].x = g_ent[0].x;
                g_ent[which].y = g_ent[0].y;
-               /* orient heroes */
-               lastm[0] = lastm[1] = MOVE_NOT;
             }
             g_ent[which].chrx = 0;
             g_ent[which].eid = pidx[which];
@@ -2946,7 +2944,7 @@ static int KQ_in_forest (lua_State * L)
 static int KQ_orient_heroes (lua_State * L)
 {
 /*  RB: TODO  */
-   if (L != NULL)
+   /*if (L != NULL)
       L = L;
    if (numchrs == 2) {
       lastm[1] = MOVE_NOT;
@@ -2968,7 +2966,7 @@ static int KQ_orient_heroes (lua_State * L)
             lastm[0] = MOVE_RIGHT;
          return 0;
       }
-   }
+   }*/
    return 0;
 }
 

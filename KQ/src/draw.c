@@ -305,7 +305,7 @@ static void drawchar (int xw, int yw)
       fid = g_ent[i].eid;
       dx = g_ent[i].x - vx + xw;
       dy = g_ent[i].y - vy + yw;
-      if (g_ent[i].moving == 0)
+      if (!g_ent[i].moving)
          fr = g_ent[i].facing * 3 + 2;
       else {
          fr = g_ent[i].facing * 3 + (g_ent[i].framectr > 10 ? 1 : 0);
@@ -325,22 +325,10 @@ static void drawchar (int xw, int yw)
             spr = sprite_base[fr];
          }
          if (is_forestsquare (g_ent[i].tilex, g_ent[i].tiley)) {
-            f = 0;
-            if (g_ent[i].moving == 0)
+            f = !g_ent[i].moving;
+            if (g_ent[i].moving && is_forestsquare (g_ent[i].x / 16, g_ent[i].y / 16))
                f = 1;
-            if (g_ent[i].moving == 1
-                && is_forestsquare (g_ent[i].tilex, g_ent[i].tiley - 1))
-               f = 1;
-            if (g_ent[i].moving == 2
-                && is_forestsquare (g_ent[i].tilex, g_ent[i].tiley + 1))
-               f = 1;
-            if (g_ent[i].moving == 3
-                && is_forestsquare (g_ent[i].tilex + 1, g_ent[i].tiley))
-               f = 1;
-            if (g_ent[i].moving == 4
-                && is_forestsquare (g_ent[i].tilex - 1, g_ent[i].tiley))
-               f = 1;
-            if (f == 1) {
+            if (f) {
                clear_to_color (tc, 0);
                blit (spr, tc, 0, 0, 0, 0, 16, 6);
                spr = tc;

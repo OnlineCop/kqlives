@@ -216,15 +216,6 @@ const char *kqres (int dir_id, const char *file);
 #define TGT_ENEMY_ALL     6
 /*\}*/
 
-/*! \name Movement directions */
-/*\{*/
-#define MOVE_NOT     0
-#define MOVE_DOWN    1
-#define MOVE_UP      2
-#define MOVE_LEFT    3
-#define MOVE_RIGHT   4
-/*\}*/
-
 /*! \name Facing directions */
 /*\{*/
 #define FACE_DOWN    0
