@@ -74,12 +74,12 @@ const char *parse_string (const char *);
  * \param   xw x-coord in double_buffer of the top-left of the screen
  * \param   yw y-coord in double_buffer of the top-left of the screen
  */
-extern int skips;
+
 void blit2screen (int xw, int yw)
 {
    static int frate;
    if (show_frate == 1) {
-      sprintf (strbuf, "%d %d", frate, skips);
+      sprintf (strbuf, "%d", frate);
       print_font (double_buffer, xofs, yofs, strbuf, FNORMAL);
    }
    if (stretch_view == 1)
