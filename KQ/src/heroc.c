@@ -722,7 +722,8 @@ static int hero_invokeitem (int whom, int eno)
 static void hero_run (void)
 {
    int a, b = 0, c = 0, bt = 0, ct = 0, p, fr, fx, fy, g = 0;
-   // TT: slow_computer additions for speed-ups
+   char msg[64]; /* Escaped! message */
+   /* TT: slow_computer additions for speed-ups */
    int count;
 
    if (ms == 1)
@@ -769,12 +770,12 @@ static void hero_run (void)
       return;
    }
    if (g > 0)
-      sprintf (strbuf, "Escaped! Dropped %d gold!", g);
+      sprintf (msg, "Escaped! Dropped %d gold!", g);
    else
-      sprintf (strbuf, "Escaped!");
-   g = strlen (strbuf) * 4;
+      sprintf (msg, "Escaped!");
+   g = strlen (msg) * 4;
 
-   // TT: slow_computer addition for speed-ups
+   /* TT: slow_computer addition for speed-ups */
    if (slow_computer)
       count = 3;
    else
@@ -783,8 +784,8 @@ static void hero_run (void)
    for (c = 0; c < 5; c++) {
       for (a = 0; a < count; a++) {
          clear_bitmap (double_buffer);
-         menubox (double_buffer, 152 - g, 32, strlen (strbuf), 1, BLUE);
-         print_font (double_buffer, 160 - g, 40, strbuf, FNORMAL);
+         menubox (double_buffer, 152 - g, 32, strlen (msg), 1, BLUE);
+         print_font (double_buffer, 160 - g, 40, msg, FNORMAL);
          for (b = 0; b < numchrs; b++) {
             fx = fighter[b].cx;
             fy = fighter[b].cy;
