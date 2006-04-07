@@ -36,7 +36,7 @@ KQ.app: kq
 	install -d $(APPR)/data $(APPR)/music $(APPR)/scripts $(APPR)/maps 
 	install -d KQ.app/Contents/MacOS
 	install -C Mac/Info.plist KQ.app/Contents
-	install -C bin/kq KQ.app/Contents/MacOS
+	install -C kq KQ.app/Contents/MacOS
 	install -C $(dist_gfx_DATA) $(APPR)/data
 	install -C $(dist_map_DATA) $(APPR)/maps
 	install -C $(dist_music_DATA) $(APPR)/music
@@ -104,4 +104,8 @@ musicdir=$(pkgdatadir)/music
 dist_man_MANS=debian/kq.6
 
 AM_CFLAGS=-I$(top_srcdir)/include -DKQ_BIN=\"$(bindir)/KQ$(EXEEXT)\" -DKQ_DATA=\"$(pkgdatadir)\"
+
+if BUNDLE
+all-am: Makefile $(PROGRAMS) $(MANS) $(DATA) config.h KQ.app
+endif BUNDLE
 

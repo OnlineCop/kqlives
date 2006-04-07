@@ -4,7 +4,7 @@
 AC_PREREQ(2.52)
 AC_INIT(KQ, 0.99, [peterhull90@users.sourceforge.net])
 AC_CONFIG_SRCDIR([src/kq.c])
-AC_CONFIG_HEADER([config.h])
+AM_CONFIG_HEADER([config.h])
 AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
 AM_INIT_AUTOMAKE()
@@ -69,19 +69,22 @@ case ${host} in
      kq_extra_files='unix.$(OBJEXT)'
      AC_SUBST([kq_extra_files])
      AC_SUBST(kq_target_dir,unix)
+     bundle=no
      ;;
      *-*-darwin*)
      kq_extra_files='osx.$(OBJEXT)'
      AC_SUBST([kq_extra_files])
      AC_SUBST(kq_target_dir,macosx)
+     bundle=yes
      ;;
      *-*-mingw32* | *-*-cygwin* | *-*-windows*)
      kq_extra_files='win.$(OBJEXT)'
      AC_SUBST([kq_extra_files])
+     bundle=no
 	 #LIBS="-lwinmm ${LIBS}"
      ;;
 esac
-
+AM_CONDITIONAL(BUNDLE, test x$bundle = xyes)
 AC_CONFIG_FILES([Makefile scripts/Makefile])
 AC_OUTPUT
 
