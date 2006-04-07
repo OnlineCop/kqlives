@@ -3398,6 +3398,11 @@ int lua_dofile (lua_State * L, const char *filename)
    int retval;
    PACKFILE *f;
    f = pack_fopen (filename, F_READ);
+   if (f == NULL) 
+     {
+       sprintf(strbuf, "Could not open script %s!", filename);
+       program_death(strbuf);
+     }
    retval = lua_load (L, (lua_Chunkreader) filereader, f, filename);
    pack_fclose (f);
    return retval ? retval : lua_pcall (L, 0, LUA_MULTRET, 0);
