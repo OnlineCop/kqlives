@@ -24,7 +24,7 @@ while (<STDIN>)
 {
   for $a (0..$ni-1)
   {
-    $_ =~ s/$d_s[$a]/$d_v[$a]/g;
+    $_ =~ s/\b$d_s[$a]}\b/$d_v[$a]/g;
   }
   print $_;
 }

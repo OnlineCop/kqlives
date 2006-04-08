@@ -51,7 +51,7 @@ make
 
 If you have the CVS version, you'll need to do some preparatory work 
 on Linux and OSX. Type
-autoreconf
+autoreconf -i
 Then ./configure, make as above.
 
 

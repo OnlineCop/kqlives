@@ -22,6 +22,4 @@ pscripts/%.lua: $(srcdir)/%.lua
 	$(CPP) $(foreach X, $(INCLUDES), -include $(X)) $< > $@
 
 confirm-dir:
-	echo $(cscripts_DATA)
 	if test ! -d pscripts; then $(mkdir_p) pscripts ; fi
-
