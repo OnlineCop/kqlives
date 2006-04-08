@@ -36,8 +36,6 @@ AC_CHECK_HEADERS([lua50/lua.h], ,
     [AC_MSG_ERROR([Lua not found])])
   ])
 
-AC_CHECK_HEADER([aldumb.h], , [AC_MSG_ERROR([aldumb.h from libaldmb not found])])
-
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
 AC_C_INLINE
@@ -50,7 +48,7 @@ AC_FUNC_MALLOC
 AC_FUNC_REALLOC
 AC_CHECK_FUNCS([atexit gettimeofday memmove memset mkdir pow strchr strstr])
 AC_CHECK_LIB(dumb, dumb_exit, [], [AC_MSG_ERROR([Dumb not found])])
-AC_CHECK_LIB(aldmb, al_duh_set_volume, [], [AC_MSG_ERROR([Aldumb not found])], [$ALLEGRO_LIBS])
+AX_CHECK_ALDUMB(, [AC_MSG_ERROR([Aldumb not found])], [$ALLEGRO_LIBS])
 AC_SEARCH_LIBS(lua_open, lua50 lua, [], [AC_MSG_ERROR([Lua not found])])
 
 m4_ifdef([AS_HELP_STRING], , [m4_define([AS_HELP_STRING], m4_defn([AC_HELP_STRING]))])
