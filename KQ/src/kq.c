@@ -230,7 +230,11 @@ static void data_dump (void);
 
 static void allocate_stuff (void);
 static void load_heroes (void);
+static void load_map(const char*);
+static void prepare_map(int, int, int, int);
+
 void reset_timer_events (void);
+
 
 /*! \note 23: for keeping time. timer_count is the game timer the main game
  * loop uses for logic (see int main()) and the rest track your playtime in
@@ -562,28 +566,10 @@ static void map_alloc (void)
 
 
 
-/*! \brief Free old map data and load a new one
- *
- * This loads a new map and performs all of the functions
- * that accompany the loading of a new map.
- *
- * \param   map_name Base name of map (xxx -> maps/xxx.map)
- * \param   msx New x-coord for player. Pass 0 for msx and msy
- *              to use the 'default' position stored in the
- *              map file (s_map::stx and s_map::sty)
- * \param   msy New y-coord for player
- * \param   mvx New x-coord for camera. Pass 0 for mvx and mvy
- *              to use the default (also s_map::stx and
- *              s_map::sty)
- * \param   mvy New y-coord for camera
- */
-void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
+static void load_map (const char *map_name)
 {
-   int i, o;
+   int i;
    PACKFILE *pf;
-   DATAFILE *pb;
-   BITMAP *pcxb;
-   unsigned char cc[4];
    reset_timer_events ();
    if (hold_fade == 0)
       do_transition (TRANS_FADE_OUT, 4);
@@ -619,6 +605,15 @@ void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
    pack_fread (s_seg, (g_map.xsize * g_map.ysize), pf);
    pack_fread (o_seg, (g_map.xsize * g_map.ysize), pf);
    pack_fclose (pf);
+   strcpy (curmap, map_name);
+}
+
+static void prepare_map (int msx, int msy, int mvx, int mvy)
+{
+     BITMAP *pcxb;
+     unsigned char cc[4];
+     int i, o;
+     DATAFILE *pb;
 
    /* PH fixme: cc[] were not initialised to zero */
    cc[0] = cc[1] = cc[2] = cc[3] = 0;
@@ -711,7 +706,6 @@ void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
    for (i = 0; i < MAX_ENT; i++)
       g_ent[i].delayctr = 0;
 
-   strcpy (curmap, map_name);
    set_view (0, 0, 0, 0, 0);
 
    if (strlen (g_map.map_desc) > 1)
@@ -720,7 +714,7 @@ void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
       display_desc = 0;
 
    do_luakill ();
-   do_luainit (map_name);
+   do_luainit (curmap);
    do_autoexec ();
 
    if (hold_fade == 0 && numchrs > 0) {
@@ -736,6 +730,26 @@ void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
    timer_count = 0;
 }
 
+/*! \brief Free old map data and load a new one
+ *
+ * This loads a new map and performs all of the functions
+ * that accompany the loading of a new map.
+ *
+ * \param   map_name Base name of map (xxx -> maps/xxx.map)
+ * \param   msx New x-coord for player. Pass 0 for msx and msy
+ *              to use the 'default' position stored in the
+ *              map file (s_map::stx and s_map::sty)
+ * \param   msy New y-coord for player
+ * \param   mvx New x-coord for camera. Pass 0 for mvx and mvy
+ *              to use the default (also s_map::stx and
+ *              s_map::sty)
+ * \param   mvy New y-coord for camera
+ */
+void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
+{
+   load_map(map_name);
+   prepare_map(msx, msy, mvx, mvy);
+}
 
 
 /*! \brief Free old map data and load a new one
@@ -753,68 +767,10 @@ void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
  */
 void change_mapm (char *map_name, const char *marker_name)
 {
-   int i, o, msx = 0, msy = 0, mvx = 0, mvy = 0;
-   PACKFILE *pf;
-   DATAFILE *pb;
-   BITMAP *pcxb;
-   unsigned char cc[4];
+   int msx = 0, msy = 0, mvx = 0, mvy = 0;
    s_marker *m;
 
-   reset_timer_events ();
-   if (hold_fade == 0)
-      do_transition (TRANS_FADE_OUT, 4);
-
-   sprintf (strbuf, "%s.map", map_name);
-
-   pf = pack_fopen (kqres (MAP_DIR, strbuf), F_READ_PACKED);
-
-   if (!pf) {
-      clear_bitmap (screen);
-      clear_bitmap (double_buffer);
-
-      if (hold_fade == 0)
-         do_transition (TRANS_FADE_IN, 16);
-
-      g_map.xsize = -1;
-      sprintf (strbuf, "Could not load map %s!", map_name);
-      program_death (strbuf);
-   }
-
-   load_s_map (&g_map, pf);
-   for (i = 0; i < 50; ++i)
-      load_s_entity (&g_ent[PSIZE + i], pf);
-   map_alloc ();
-   for (i = 0; i < g_map.xsize * g_map.ysize; ++i)
-      map_seg[i] = pack_igetw (pf);
-   for (i = 0; i < g_map.xsize * g_map.ysize; ++i)
-      b_seg[i] = pack_igetw (pf);
-   for (i = 0; i < g_map.xsize * g_map.ysize; ++i)
-      f_seg[i] = pack_igetw (pf);
-
-   pack_fread (z_seg, (g_map.xsize * g_map.ysize), pf);
-   pack_fread (s_seg, (g_map.xsize * g_map.ysize), pf);
-   pack_fread (o_seg, (g_map.xsize * g_map.ysize), pf);
-   pack_fclose (pf);
-
-   /* PH fixme: cc[] were not initialised to zero */
-   cc[0] = cc[1] = cc[2] = cc[3] = 0;
-
-   for (i = 0; i < g_map.xsize * g_map.ysize; i++) {
-      if (map_seg[i] > 0)
-         cc[0] = 1;
-      if (b_seg[i] > 0)
-         cc[1] = 1;
-      if (f_seg[i] > 0)
-         cc[2] = 1;
-      if (s_seg[i] > 0)
-         cc[3] = 1;
-   }
-
-   draw_background = cc[0];
-   draw_middle = cc[1];
-   draw_foreground = cc[2];
-   draw_shadow = cc[3];
-
+   load_map(map_name);
    /* Search for the marker with the name passed into the function. Both
     * player's starting position and camera position will be the same
     */
@@ -824,101 +780,7 @@ void change_mapm (char *map_name, const char *marker_name)
          msy = mvy = m->y;
       }
    }
-
-   for (i = 0; i < numchrs; i++) {
-      /* This allows us to either go to the map's default starting coords
-       * or specify the marker on the map to go to.
-       */
-      if (msx == 0 && msy == 0)
-         // Place players at default map starting coords
-         place_ent (i, g_map.stx, g_map.sty);
-      else
-         // Place players at specific coordinates in the map
-         place_ent (i, msx, msy);
-
-      g_ent[i].speed = 4;
-      g_ent[i].obsmode = 1;
-      g_ent[i].moving = 0;
-   }
-
-   for (i = 0; i < MAX_ENT; i++) {
-      if (g_ent[i].chrx == 38 && g_ent[i].active == 1) {
-         g_ent[i].eid = ID_ENEMY;
-         g_ent[i].speed = rand () % 4 + 1;
-         g_ent[i].obsmode = 1;
-         g_ent[i].moving = 0;
-         g_ent[i].movemode = MM_CHASE;
-         g_ent[i].chasing = 0;
-         g_ent[i].extra = 50 + rand () % 50;
-         g_ent[i].delay = rand () % 25 + 25;
-      }
-   }
-
-   pb = load_datafile_object (PCX_DATAFILE, tilesets[g_map.tileset].icon_set);
-   pcxb = (BITMAP *) pb->dat;
-
-   for (o = 0; o < pcxb->h / 16; o++)
-      for (i = 0; i < pcxb->w / 16; i++)
-         blit ((BITMAP *) pb->dat, map_icons[o * (pcxb->w / 16) + i], i * 16,
-               o * 16, 0, 0, 16, 16);
-
-   unload_datafile_object (pb);
-
-   for (o = 0; o < MAX_ANIM; o++)
-      adelay[o] = 0;
-
-   play_music (g_map.song_file, 0);
-   mx = g_map.xsize * 16 - 304;
-   /*PH fixme: was 224, drawmap() draws 16 rows, so should be 16*16=256 */
-   my = g_map.ysize * 16 - 256;
-
-   if (mvx == 0 && mvy == 0) {
-      vx = g_map.stx * 16;
-      vy = g_map.sty * 16;
-   } else {
-      vx = mvx * 16;
-      vy = mvy * 16;
-   }
-
-   calc_viewport (1);
-
-   for (i = 0; i < MAX_TILES; i++)
-      tilex[i] = i;
-   for (i = 0; i < MAX_ANIM; i++)
-      adata[i] = tilesets[g_map.tileset].tanim[i];
-
-   noe = 0;
-   for (i = 0; i < numchrs; i++)
-      g_ent[i].active = 1;
-
-   count_entities ();
-
-   for (i = 0; i < MAX_ENT; i++)
-      g_ent[i].delayctr = 0;
-
-   strcpy (curmap, map_name);
-   set_view (0, 0, 0, 0, 0);
-
-   if (strlen (g_map.map_desc) > 1)
-      display_desc = 1;
-   else
-      display_desc = 0;
-
-   do_luakill ();
-   do_luainit (map_name);
-   do_autoexec ();
-
-   if (hold_fade == 0 && numchrs > 0) {
-      drawmap ();
-      blit2screen (xofs, yofs);
-      do_transition (TRANS_FADE_IN, 4);
-   }
-
-   use_sstone = g_map.use_sstone;
-   cansave = g_map.can_save;
-   timer_count = 0;
-   do_postexec ();
-   timer_count = 0;
+   prepare_map(msx, msy, mvx, mvy);
 }
 
 
