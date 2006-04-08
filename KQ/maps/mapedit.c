@@ -3917,6 +3917,10 @@ int startup (void)
 
    if (allegro_init () != 0)
       return 0;
+
+   /* Buffer for all strings */
+   strbuf = (char *) malloc (256);
+
    install_keyboard ();
    install_timer ();
 
@@ -3957,9 +3961,6 @@ int startup (void)
       for (kx = 0; kx < 4; kx++)
          mouse_pic->line[ky][kx] = mousepic[ky * 4 + kx];
    set_mouse_speed (4, 4);
-
-   /* Buffer for all strings */
-   strbuf = (char *) malloc (256);
 
    /* Screen buffer */
    double_buffer = create_bitmap (SW, SH);
