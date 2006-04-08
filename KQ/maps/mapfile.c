@@ -58,7 +58,7 @@ void make_mapfrompcx (void)
    int response, destination, done;
    int w, h, ax, ay;
    BITMAP *pcx_bitmap;
-   short *tm;
+   unsigned short *tm;
 
    draw_map ();
    rectfill (double_buffer, 0, 0, 238, 29, 0);
@@ -148,8 +148,12 @@ void make_mapfrompcx (void)
 /*! \brief Convert map to PCX images
  *
  * Convert the current map into several mini PCX images
+ *
+ * \param   format - Whether a PCX or BMP is desired for output
+ *                   1: BMP
+ *                   2: PCX
  */
-void maptopcx (void)
+void maptopcx (int format)
 {
    /* Foreground, middle, and background */
    BITMAP *pcx_foreground, *pcx_middleground, *pcx_background;
@@ -168,12 +172,28 @@ void maptopcx (void)
          pcx_foreground->line[jy][jx] = f_map[jy * gmap.xsize + jx];
       }
    }
-   save_pcx ("mdback.pcx", pcx_background, pal);
-   save_pcx ("mdmid.pcx", pcx_middleground, pal);
-   save_pcx ("mdfore.pcx", pcx_foreground, pal);
-   /* Confirmation message */
-   cmessage ("Saved to PCX!");
-   wait_enter ();
+
+   if (format == 1)
+   {
+      save_pcx ("mdback.bmp", pcx_background, pal);
+      save_pcx ("mdmid.bmp", pcx_middleground, pal);
+      save_pcx ("mdfore.bmp", pcx_foreground, pal);
+
+      /* Confirmation message */
+      cmessage ("Saved to BMP!");
+      wait_enter ();
+   }
+   else if (format == 2)
+   {
+      save_pcx ("mdback.pcx", pcx_background, pal);
+      save_pcx ("mdmid.pcx", pcx_middleground, pal);
+      save_pcx ("mdfore.pcx", pcx_foreground, pal);
+
+      /* Confirmation message */
+      cmessage ("Saved to PCX!");
+      wait_enter ();
+   }
+
    destroy_bitmap (pcx_background);
    destroy_bitmap (pcx_middleground);
    destroy_bitmap (pcx_foreground);

@@ -126,6 +126,7 @@ s_show showing;
 
 unsigned short *map, *b_map, *f_map, *c_map, *cf_map, *cb_map;
 unsigned char *z_map, *sh_map, *o_map, *cz_map, *csh_map, *co_map;
+unsigned char *search_map;
 
 s_marker markers[MAX_MARKERS];
 

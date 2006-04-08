@@ -32,7 +32,9 @@
  * shadow: Shadows
  */
 BITMAP *mesh2, *mesh3;
+static BITMAP *mesh_h;
 static BITMAP *mouse_pic;
+static BITMAP *arrow_pics[5];
 
 /* Used for the right-hand menu, plus something for the mouse */
 short nomouse = 0;
@@ -44,6 +46,10 @@ short window_x = 0, window_y = 0, x = 0, y = 0;
 
 static int draw_mode = MAP_LAYER123, curtile = 0, dmode = 0;
 static int curzone = 0, curshadow = 0, curobs = 0;
+static int curobs_x = -1, curobs_y = -1;
+static int curshadow_x = -1, curshadow_y = -1;
+static int curzone_x = -1, curzone_y = -1;
+static int *curr_x = &curobs_x, *curr_y = &curobs_y;
 static int copying = 0, copyx1 = -1, copyx2 = -1, copyy1 = -1, copyy2 = -1;
 static int clipb = 0, cbh = 0, cbw = 0;
 static int needupdate, highlight, grab_tile = 0;
@@ -109,86 +115,60 @@ unsigned short tilex[MAX_TILES];
 
 const int htiles = (SW - 80) / 16;
 const int vtiles = (SH - 48) / 16;
-int column[5], row[8];
+int column[8], row[8];
 
 /*! Markers in use in this map */
 int curmarker;
-int cpu_usage = 2; // Default to rest(1)
+int cpu_usage = 2;              // Default to rest(1)
 
+/****************************************************************************/
 
-/* Welcome to Mapdraw, folks! */
-int main (int argc, char *argv[])
+/* Action handler for clicking in marker mode button b; */
+void add_change_marker (int marker_x, int marker_y, int mouse_button)
 {
-   int main_stop = 0, oldmouse_x = 0, oldmouse_y = 0;
-   int i;
+   s_marker *m;
+   s_marker *found = NULL;
 
-   row[0] = vtiles * 16 + 6;
-   for (i = 1; i < 8; i++) {
-      row[i] = row[i - 1] + 6;
-   }
-
-   column[0] = 0;
-   for (i = 1; i < 5; i++) {
-      column[i] = column[i - 1] + COLUMN_WIDTH + 1;
-   }
-
-   needupdate = 0;
-
-   if (!startup ())
-      return 1;
-
-   if (argc > 1) {
-      load_map (argv[1]);
-      /* Recount the number of entities on the map */
-      number_of_ents = 0;
-
-      for (i = 0; i < 50; i++) {
-         if (gent[i].active == 1)
-            number_of_ents = i + 1;
-      }
-      if (gmap.revision == 1) {
-         /* copy out the markers */
-         num_markers = gmap.num_markers;
-         memcpy (markers, gmap.markers, gmap.num_markers * sizeof (s_marker));
-         curmarker = 0;
-      } else {
-         num_markers = 0;
+   /* Does a marker exist here? */
+   for (m = markers; m < markers + num_markers; ++m) {
+      if (m->x == marker_x && m->y == marker_y) {
+         found = m;
+         break;
       }
    }
 
-   while (!main_stop) {
-      read_controls ();
-      if (needupdate) {
-         if (draw_mode == MAP_PREVIEW)
-            preview_map ();
-         else
-            draw_map ();
-         draw_menubars ();
-      }
+   if (found) {
+      /* There is a marker here */
+      if (mouse_button == 1) {
+         /* Rename it */
+         rename_marker (found);
+      } else if (mouse_button == 2) {
+         /* Delete it */
 
-      if ((needupdate) || (mouse_x != oldmouse_x) || (mouse_y != oldmouse_y)) {
-         if (!nomouse) {
-            unscare_mouse ();
-            show_mouse (double_buffer);
-         }
-         blit2screen ();
-         if (!nomouse) {
-            show_mouse (NULL);
-            oldmouse_x = mouse_x;
-            oldmouse_y = mouse_y;
-            scare_mouse ();
+         /* Move the selector to the previous marker if this was the last
+          * marker on the map
+          */
+         num_markers--;
+         if (curmarker == num_markers)
+            curmarker = num_markers - 1;
+         memcpy (found, found + 1,
+                 (&markers[num_markers] - found) * sizeof (s_marker));
+         while (mouse_b & 2);
+      }
+   } else {
+      /* There is no marker here */
+      if (mouse_button == 1) {
+         /* Add a marker with default name */
+         if (num_markers < MAX_MARKERS) {
+            curmarker = num_markers;
+            m = &markers[num_markers++];
+            m->x = marker_x;
+            m->y = marker_y;
+            sprintf (m->name, "Marker_%d", num_markers);
          }
       }
-
-      if (key[KEY_Q])
-         main_stop = confirm_exit ();
-      kq_yield ();
-   }                            /* while (!main_stop) */
-   cleanup ();
-   return EXIT_SUCCESS;
-}                               /* main () */
-
-END_OF_MAIN ();
+   }
+}
 
 
 /*! \brief Animation
@@ -258,6 +238,9 @@ void bufferize (void)
    free (cz_map);
    cz_map = (unsigned char *) malloc (gmap.xsize * gmap.ysize);
 
+   free (search_map);
+   search_map = (unsigned char *) malloc (gmap.xsize * gmap.ysize);
+
    memset (map, 0, gmap.xsize * gmap.ysize * 2);
    memset (b_map, 0, gmap.xsize * gmap.ysize * 2);
    memset (f_map, 0, gmap.xsize * gmap.ysize * 2);
@@ -273,6 +256,31 @@ void bufferize (void)
 
    clipb = 0;
 }                               /* bufferize () */
+
+
+/*! \brief Center the view-window on the given coords
+ * This will actually call the individual center functions since there was a
+ * need for ONLY center_window_[xy] but not both in some cases.
+ */
+void center_window (int center_x, int center_y)
+{
+   center_window_x (center_x);
+   center_window_y (center_y);
+}
+
+
+/*! \brief Center the view-window on the x-coord */
+void center_window_x (int center_x)
+{
+   window_x = center_x - (htiles / 2);
+}
+
+
+/*! \brief Center the view-window on the y-coord */
+void center_window_y (int center_y)
+{
+   window_y = center_y - (vtiles / 2);
+}
 
 
 /*! \brief Return the maximum zone used in the map
@@ -309,6 +317,9 @@ void cleanup (void)
    destroy_bitmap (mesh2);
    destroy_bitmap (mesh3);
    destroy_bitmap (mouse_pic);
+   for (k = 0; k < 5; k++) {
+      destroy_bitmap (arrow_pics[k]);
+   }
 
    free (b_map);
    free (f_map);
@@ -476,7 +487,7 @@ void copy_layer (void)
    }                            // while ()
 
    /* This is incase we need to redraw the map, the information will still be
-    * visible to the user
+    * visible to the user.
     */
    sprintf (strbuf, "%d", from_layer);
    print_sfont (78, 12, strbuf, double_buffer);
@@ -505,6 +516,7 @@ void copy_layer (void)
       }
    }
 
+   b = 0;
    for (a = 0; a < gmap.xsize * gmap.ysize; a++) {
       if (from_layer == 1)
          b = map[a];
@@ -658,6 +670,57 @@ void describe_map (void)
 }                               /* describe_map () */
 
 
+/*! \brief Draw the layers with parallax
+ *
+ * Draws a single layer (back, middle or fore) and will compensate for parallax.
+ * Drawing is done by draw_sprite() - so the bottom layer needs to go onto a black background.
+ * This is called by preview_map().
+ * The code is slightly overcomplicated but it is more general, if things need to change later.
+ *
+ * \author PH
+ * \date 20031205
+ * \param   layer Pointer to layer data array
+ * \param   parallax ==0 draw with parallax off or !=0 on
+ */
+void draw_layer (short *layer, const int parallax)
+{
+   int layer_x, j;
+   int layer_x1, layer_x2, layer_y1, layer_y2;
+   int x0, y0;
+
+   /* Calculate the top left, taking parallax into account */
+   layer_x1 = parallax ? window_x * gmap.pmult / gmap.pdiv : window_x;
+   layer_y1 = parallax ? window_y * gmap.pmult / gmap.pdiv : window_y;
+
+   /* Calculate bottom right */
+   layer_x2 = layer_x1 + htiles;
+   layer_y2 = layer_y1 + vtiles;
+
+   /* Make sure these don't step off the edges of the map */
+   if (layer_x1 < 0)
+      layer_x1 = 0;
+   if (layer_y1 < 0)
+      layer_y1 = 0;
+   if (layer_x2 > gmap.xsize)
+      layer_x2 = gmap.xsize;
+   if (layer_y2 > gmap.ysize)
+      layer_y2 = gmap.ysize;
+
+   /* Calculate the pixel-based coordinate of the top left */
+   x0 = layer_x1 * 16;
+   y0 = layer_y1 * 16;
+
+   /* ...And draw the tilemap */
+   for (j = layer_y1; j < layer_y2; ++j) {
+      for (layer_x = layer_x1; layer_x < layer_x2; ++layer_x) {
+         draw_sprite (double_buffer,
+                      icons[tilex[layer[layer_x + j * gmap.xsize]]],
+                      layer_x * 16 - x0, j * 16 - y0);
+      }
+   }
+}                               /* draw_layer () */
+
+
 /*! \brief Update the screen
  *
  * Update the screen after all controls taken care of.
@@ -808,6 +871,17 @@ void draw_map (void)
                     && curzone > 0))
                draw_sprite (double_buffer, mesh2, dx * 16, dy * 16);
          }
+
+         // Try to hilight the currently-selected attrib
+         if (curr_x != NULL && curr_y != NULL) {
+            if ((window_x + dx == *curr_x && window_y + dy == *curr_y)
+                && (draw_mode == MAP_OBSTACLES || draw_mode == MAP_SHADOWS
+                ||  draw_mode == MAP_ZONES))
+            {
+               draw_sprite (double_buffer, mesh_h, dx * 16, dy * 16);
+            }
+         }
+
       }                         /* for (dx) */
    }                            /* for (dy) */
 
@@ -835,10 +909,9 @@ void draw_map (void)
       /* Only draw highlight around marker if the mode is correct */
       if (draw_mode == MAP_MARKERS) {
          /* Put a rectangle around the selected one for clarity */
-         rect (double_buffer, (markers[curmarker].x - window_x) * 16,
-               (markers[curmarker].y - window_y) * 16,
-               (markers[curmarker].x - window_x) * 16 + 15,
-               (markers[curmarker].y - window_y) * 16 + 15, 25);
+         draw_sprite (double_buffer, mesh_h,
+                      (markers[curmarker].x - window_x) * 16,
+                      (markers[curmarker].y - window_y) * 16);
       }
    }
 
@@ -1283,14 +1356,15 @@ void draw_menubars (void)
       else if (curmarker < 1000)
          p -= 15;
 
+      if (num_markers > 0) {
 #ifdef HAVE_TEXT_EX
-      textprintf_ex (double_buffer, font, p, 274,
-                     makecol (255, 255, 255), 0, "%d", curmarker);
+         textprintf_ex (double_buffer, font, p, 274,
+                        makecol (255, 255, 255), 0, "%d", curmarker);
 #else
-      textprintf (double_buffer, font, p, 274,
-                  makecol (255, 255, 255), "%d", curmarker);
+         textprintf (double_buffer, font, p, 274,
+                     makecol (255, 255, 255), "%d", curmarker);
 #endif
-
+      }
    } else {
       sprintf (strbuf, "Tile");
       stretch_blit (icons[curtile], double_buffer, 0, 0, 16, 16,
@@ -1345,7 +1419,280 @@ void draw_menubars (void)
       print_sfont (htiles * 16 + 14, 300, strbuf, double_buffer);
    }
 
+   if (draw_mode == MAP_OBSTACLES || draw_mode == MAP_SHADOWS
+       || draw_mode == MAP_ZONES || draw_mode == MAP_MARKERS) {
+      blit (arrow_pics[0], double_buffer, 0, 0, (htiles + 2) * 16, 316, 16, 16);
+      blit (arrow_pics[1], double_buffer, 0, 0, (htiles + 1) * 16, 332, 16, 16);
+      blit (arrow_pics[2], double_buffer, 0, 0, (htiles + 2) * 16, 332, 16, 16);
+      blit (arrow_pics[3], double_buffer, 0, 0, (htiles + 3) * 16, 332, 16, 16);
+      blit (arrow_pics[4], double_buffer, 0, 0, (htiles + 2) * 16, 348, 16, 16);
+   }
+
 }                               /* draw_menubars () */
+
+
+/*! \brief Draw the shadows
+ *
+ * Draws the shadows onto the screen and takes into consideration any layer
+ * effects that need to take place (see map_mode_text[] for details).
+ * This is basically the same as draw_layer().
+ * \author  PH
+ * \date    20031205
+ * \param   parallax 0 draws with parallax off, else parallax on
+ */
+static void draw_shadow (const int parallax)
+{
+   int layer_x, j;
+   int layer_x1, layer_y1, layer_x2, layer_y2;
+   int x0, y0;
+   int ss;
+
+   /* Calculate the top left, taking parallax into account */
+   layer_x1 = parallax ? window_x * gmap.pmult / gmap.pdiv : window_x;
+   layer_y1 = parallax ? window_y * gmap.pmult / gmap.pdiv : window_y;
+
+   /* Calculate bottom right */
+   layer_x2 = layer_x1 + htiles;
+   layer_y2 = layer_y1 + vtiles;
+
+   /* Make sure these don't step off the edges of the map */
+   if (layer_x1 < 0)
+      layer_x1 = 0;
+   if (layer_y1 < 0)
+      layer_y1 = 0;
+   if (layer_x2 > gmap.xsize)
+      layer_x2 = gmap.xsize;
+   if (layer_y2 > gmap.ysize)
+      layer_y2 = gmap.ysize;
+
+   /* Calculate the pixel-based coordinate of the top left */
+   x0 = window_x * 16;
+   y0 = window_y * 16;
+
+   /* ...And draw the tilemap */
+   for (j = layer_y1; j < layer_y2; ++j) {
+      for (layer_x = layer_x1; layer_x < layer_x2; ++layer_x) {
+         ss = sh_map[j * gmap.xsize + layer_x];
+         if (ss > 0) {
+            draw_trans_sprite (double_buffer, shadow[ss], layer_x * 16 - x0,
+                               j * 16 - y0);
+         }
+      }
+   }
+}                               /* draw_shadow () */
+
+
+/*! \brief Target the specified attribute on the map (so it's in view)
+ * Locates the FIRST, PREV, CURR, NEXT, or LAST map segment containing the
+ * attribute
+ *
+ * The 'direction' is calculated on the arrow
+ * \param   direction: -3: top (first instance, from top-left)
+ *                     -1: backward
+ *                      0: center
+ *                      1: forward
+ *                      3: bottom (last instance, from bottom-right)
+ *
+ * \returns 0 if not found, 1 otherwise
+ */
+int find_cursor (int direction)
+{
+   int col, row;           // Used to scan the map
+   int first_x, first_y, prev_x, prev_y, next_x, next_y, last_x, last_y;
+   int the_attrib;         // Which attrib we're going to look for
+
+   // They have to let go of the mouse button before we go on...
+   while (mouse_b)
+      kq_yield ();
+
+   /* Step 1: Look for an "invalid search direction" */
+   if (direction < -3 || direction == -2 || direction == 2 || direction > 3) {
+      return 0;
+   }
+
+   /* Step 2: Check the mode: MAP_OBSTACLES, MAP_SHADOWS, and MAP_ZONES all
+    *         work the same, but MAP_MARKERS is completely different logic.
+    *         If MAP_MARKERS, do its logic only and return; no other tests
+    *         necessary.
+    */
+   if (draw_mode == MAP_MARKERS) {
+      // No markers, so nothing to do, so return 'not found'
+      if (num_markers < 1) {
+         return 0;
+      }
+
+      /* Which marker to move to */
+      if (direction == -3) {
+         /* First marker */
+         curmarker = 0;
+      } else if (direction == -1) {
+         /* Previous Marker */
+         if (--curmarker < 0) {
+            curmarker = num_markers - 1;
+         }
+      } else if (direction == 0) {
+         /* Center map on current Marker */
+         center_window (markers[curmarker].x, markers[curmarker].y);
+      } else if (direction == 1) {
+         /* Next Marker */
+         if (++curmarker >= num_markers) {
+            curmarker = 0;
+         }
+      } else if (direction == 3) {
+         /* Last Marker */
+         curmarker = num_markers - 1;
+      }
+
+      orient_markers ();
+      normalize_view ();
+      return 1;
+   }
+
+   /* Set search_map to whichever map we're looking at */
+   if (draw_mode == MAP_OBSTACLES) {
+      search_map = o_map;
+      the_attrib = curobs;
+      curr_x = &curobs_x;
+      curr_y = &curobs_y;
+   } else if (draw_mode == MAP_SHADOWS) {
+      search_map = sh_map;
+      the_attrib = curshadow;
+      curr_x = &curshadow_x;
+      curr_y = &curshadow_y;
+   } else if (draw_mode == MAP_ZONES) {
+      search_map = z_map;
+      the_attrib = curzone;
+      curr_x = &curzone_x;
+      curr_y = &curzone_y;
+   } else {
+      return 0;
+   }
+
+   /* Do not search for 0-index attribs, as they are "nothing" attribs */
+   if (the_attrib == 0)
+      return 0;
+
+   /* TODO: Another thing we can do here is to scan through the entire map
+    * since all directions (backward, center, forward) need to scan at least
+    * once to orient on the current attribute
+    */
+
+   /* We will keep track of the following:
+    *    first_[xy]: First time we encounter the attribute from map[0,0] to
+    *                current attribute's position: used if no "next" attrib
+    *                found at end of map: map[gmap.ysize][gmap.xsize]
+    *    prev_[xy]:  current attrib minus one
+    *    curr_[xy]:  This is a global variable
+    *    next_[xy]:  current attrib plus one
+    *    last_[xy]:  Works opposite of first_[xy]; when searching backward
+    *                instead of forward and BEGINNING of map is reached w/o a
+    *                previous attrib found
+    */
+
+   first_x = prev_x = next_x = last_x = -1;
+   first_y = prev_y = next_y = last_y = -1;
+   for (row = 0; row < gmap.ysize; row++) {
+      for (col = 0; col < gmap.xsize; col++) {
+         /* Continue searching until a match is found on the map */
+         if (the_attrib == 0 ||
+            search_map[row * gmap.xsize + col] != the_attrib)
+            continue;
+
+         /* First time through the loop */
+         if (first_x < 0 || first_y < 0) {
+            /* Everything can be set to this for the 1st time through */
+            first_x = prev_x = next_x = last_x = col;
+            first_y = prev_y = next_y = last_y = row;
+         }
+
+         /* Set prev_[xy] as close to curr_[xy] as possible */
+         if (row < *curr_y || (row == *curr_y && col < *curr_x)) {
+            prev_x = col;
+            prev_y = row;
+         }
+
+         /* Check for anything after the curr_[xy] coords */
+         if (row > *curr_y || (row == *curr_y && col > *curr_x)) {
+            /* Only set the first-found attrib after the curr_[xy] coords; all
+             * others will be ignored
+             */
+            if (next_y < *curr_y || (next_y == *curr_y && next_x <= *curr_x)) {
+               next_x = col;
+               next_y = row;
+            }
+
+            /* Regardless of 'next_[xy]', the last_[xy] coords will scan all
+             * the way to the bottom to determine the last-found attrib */
+            last_x = col;
+            last_y = row;
+         }
+      }
+   }
+
+   /* Step 3: Check whether first_[xy] was found; if it wasn't, there will be
+    * no other 'found' items either, so no further processing necessary
+    */
+   if (first_x < 0 || first_y < 0)
+      return 0;
+
+   /* Step 4: Determine the search direction and adjust coordinates
+    * appropriately
+    */
+   if (direction == -3) {
+      *curr_x = first_x;
+      *curr_y = first_y;
+   } else if (direction == -1) {
+      if (prev_x == *curr_x && prev_y == *curr_y) {
+         /* This means that there is no 'prev', so assign the curr_[xy] to the
+          * last_[xy] coords: these may also be the same as curr_[xy], but
+          * again, they may differ, so we'll set it regardless.
+          */
+         *curr_x = last_x; // Remember: since this is a pointer, it will
+         *curr_y = last_y; // update 'curbos', 'curshadow' or 'curzone', too
+      } else {
+         /* It's not the same, so set curr_[xy] to prev_[xy] instead */
+         *curr_x = prev_x;
+         *curr_y = prev_y;
+      }
+   } else if (direction == 0) {
+      /* We will not change the curr_[xy] coords unless they aren't set yet OR
+       * if the user changes the index of the current attrib */
+      if (search_map[*curr_y * gmap.xsize + *curr_x] != the_attrib) {
+         *curr_x = next_x;
+         *curr_y = next_y;
+      } else if (*curr_x < 0 || *curr_y < 0) {
+         *curr_x = first_x;
+         *curr_y = first_y;
+      }
+      center_window_x (*curr_x);
+      center_window_y (*curr_y);
+   } else if (direction == 1) {
+      /* Same as with 'direction < 0', but other uh... direction */
+      if (next_x == *curr_x && next_y == *curr_y) {
+         *curr_x = first_x;
+         *curr_y = first_y;
+      } else {
+         /* It's not the same, so set curr_[xy] to next_[xy] instead */
+         *curr_x = next_x;
+         *curr_y = next_y;
+      }
+   } else if (direction == 3) {
+      *curr_x = last_x;
+      *curr_y = last_y;
+   }
+
+   /* Step 5a: Center on attrib if outside the window; focus-only if inside */
+   if (*curr_x < window_x || *curr_x > window_x + htiles - 1)
+      center_window_x (*curr_x);
+   if (*curr_y < window_y || *curr_y > window_y + vtiles - 1)
+      center_window_y (*curr_y);
+
+   /* Step 5b: Correct the view if window is outside the bounds */
+   normalize_view ();
+
+   /* Step 6: Return 'found' */
+   return 1;
+}
 
 
 /*! \brief Process keyboard input
@@ -1435,17 +1782,29 @@ void get_tile (void)
       break;
    case MAP_OBSTACLES:
       curobs = o_map[tile];
+      if (curobs > 0) {
+         *curr_x = window_x + x;
+         *curr_y = window_y + y;
+      }
       break;
    case MAP_SHADOWS:
       curshadow = sh_map[tile];
+      if (curshadow > 0) {
+         *curr_x = window_x + x;
+         *curr_y = window_y + y;
+      }
       break;
    case MAP_ZONES:
       curzone = z_map[tile];
+      if (curzone > 0) {
+         *curr_x = window_x + x;
+         *curr_y = window_y + y;
+      }
       break;
    case MAP_MARKERS:
       for (i = 0; i < num_markers; i++) {
          if ((markers[i].x == window_x + x)
-              && (markers[i].y == window_y + y)) {
+             && (markers[i].y == window_y + y)) {
             curmarker = i;
          }
       }
@@ -1497,7 +1856,7 @@ void global_change (void)
    }                            // while ()
 
    /* This is incase we need to redraw the map, the information will still be
-    * visible to the user
+    * visible to the user.
     */
    sprintf (strbuf, "%d", tile_from);
    print_sfont (72, 6, strbuf, double_buffer);
@@ -1527,7 +1886,7 @@ void global_change (void)
    }                            // while ();
 
    /* This is incase we need to redraw the map, the information will still be
-    * visible to the user
+    * visible to the user.
     */
    sprintf (strbuf, "%d", tile_to);
    print_sfont (60, 12, strbuf, double_buffer);
@@ -1577,6 +1936,93 @@ void global_change (void)
 }                               /* global_change () */
 
 
+/*! \brief Move the map's window to specified coords
+ *
+ * This will center on the coords, if possible, else just get "close enough"
+ * to the coords given (like if the map is too small to center on it).
+ */
+void goto_coords (void)
+{
+   int response, done;
+   int new_x, new_y;
+
+   new_x = window_x;
+   new_y = window_y;
+
+   make_rect (double_buffer, 4, 17);
+   print_sfont (6, 6, "Goto Coordinates", double_buffer);
+   print_sfont (6, 12, "x: ", double_buffer);
+
+   done = 0;
+   while (!done) {
+      blit2screen ();
+      response = get_line (24, 12, strbuf, 4);
+
+      /* If the user hits ESC, break out of the function entirely */
+      if (response == 0)
+         return;
+
+      /* If left blank, assume "no change" to this coordinate */
+      if (strlen (strbuf) == 0) {
+         new_x = window_x;
+         done = 1;
+      } else {
+         new_x = atoi (strbuf);
+         if (new_x < 0 || new_x >= gmap.xsize)
+            new_x = window_x;
+         done = 1;
+      }
+   }
+
+   /* This is incase we need to redraw the map, the information will still be
+    * visible to the user.
+    */
+   sprintf (strbuf, "x: %d", new_x);
+   print_sfont (6, 12, strbuf, double_buffer);
+   print_sfont (6, 18, "y: ", double_buffer);
+
+   done = 0;
+   while (!done) {
+      blit2screen ();
+      response = get_line (24, 18, strbuf, 4);
+
+      /* If the user hits ESC, break out of the function entirely */
+      if (response == 0)
+         return;
+
+      /* If left blank, assume "no change" to this coordinate */
+      if (strlen (strbuf) == 0) {
+         new_y = window_y;
+         done = 1;
+      } else {
+         new_y = atoi (strbuf);
+         if (new_y < 0 || new_y >= gmap.ysize)
+            new_y = window_y;
+         done = 1;
+      }
+   }
+
+   /* This is incase we need to redraw the map, the information will still be
+    * visible to the user.
+    */
+   sprintf (strbuf, "x: %d", new_x);
+   print_sfont (6, 12, strbuf, double_buffer);
+   sprintf (strbuf, "y: %d", new_y);
+   print_sfont (6, 18, strbuf, double_buffer);
+   print_sfont (6, 24, "Center?", double_buffer);
+   blit2screen ();
+
+   if (yninput ()) {
+      center_window (new_x, new_y);
+   } else {
+      window_x = new_x;
+      window_y = new_y;
+   }
+
+   normalize_view ();
+}
+
+
 /*! \brief Error reporting tool
  *
  * Report errors and comments through this function
@@ -1598,6 +2044,113 @@ void klog (char *msg)
    fprintf (ff, "%s\n", msg);
    fclose (ff);
 }                               /* klog () */
+
+
+/*! \brief Yield processor for other tasks
+ *
+ * This function calls rest() or yield_cpu() as appropriate for
+ * the platform and allegro version
+ *
+ * \author PH
+ * \date 20050423
+ */
+void kq_yield (void)
+{
+   /* TT: If this breaks stuff, let me know. I _know_ it complains that
+    * yield_timeslice() is deprecated; until I know everyone is using the most
+    * recent version of Allegro, though, we may need to keep this in here for
+    * compatibility reasons.
+    * Question: Does rest(0) or rest(1) break anything on anyone's machine?
+    */
+   if (cpu_usage == 0) {
+//      yield_timeslice ();
+   } else {
+      rest (cpu_usage - 1);
+   }
+
+// TT REMOVE:
+//#if (ALLEGRO_VERSION >= 4 && ALLEGRO_SUB_VERSION >= 2)
+//   rest (0);
+//#else
+//   yield_timeslice ();
+//#endif
+
+}
+
+
+/* Welcome to Mapdraw, folks! */
+int main (int argc, char *argv[])
+{
+   int main_stop = 0, oldmouse_x = 0, oldmouse_y = 0;
+   int i;
+
+   row[0] = vtiles * 16 + 6;
+   for (i = 1; i < 8; i++) {
+      row[i] = row[i - 1] + 6;
+   }
+
+   column[0] = 0;
+   for (i = 1; i < 8; i++) {
+      column[i] = column[i - 1] + COLUMN_WIDTH + 1;
+   }
+
+   needupdate = 0;
+
+   if (!startup ())
+      return 1;
+
+   if (argc > 1) {
+      load_map (argv[1]);
+      /* Recount the number of entities on the map */
+      number_of_ents = 0;
+
+      for (i = 0; i < 50; i++) {
+         if (gent[i].active == 1)
+            number_of_ents = i + 1;
+      }
+      if (gmap.revision == 1) {
+         /* copy out the markers */
+         num_markers = gmap.num_markers;
+         memcpy (markers, gmap.markers, gmap.num_markers * sizeof (s_marker));
+         curmarker = 0;
+      } else {
+         num_markers = 0;
+      }
+   }
+
+   while (!main_stop) {
+      read_controls ();
+      if (needupdate) {
+         if (draw_mode == MAP_PREVIEW)
+            preview_map ();
+         else
+            draw_map ();
+         draw_menubars ();
+      }
+
+      if ((needupdate) || (mouse_x != oldmouse_x) || (mouse_y != oldmouse_y)) {
+         if (!nomouse) {
+            unscare_mouse ();
+            show_mouse (double_buffer);
+         }
+         blit2screen ();
+         if (!nomouse) {
+            show_mouse (NULL);
+            oldmouse_x = mouse_x;
+            oldmouse_y = mouse_y;
+            scare_mouse ();
+         }
+      }
+
+      if (key[KEY_Q])
+         main_stop = confirm_exit ();
+      kq_yield ();
+   }                            /* while (!main_stop) */
+   cleanup ();
+   return EXIT_SUCCESS;
+}                               /* main () */
+
+END_OF_MAIN ();
 
 
 /*! \brief Create a rectangle around the selection
@@ -1634,6 +2187,23 @@ void normalize_view (void)
    if (window_y < 0)
       window_y = 0;
 }                               /* normalize_view () */
+
+
+/*! \brief Move the window so we can see the currenly-selected marker */
+void orient_markers (void)
+{
+   /* Move view-window enough to show marker */
+   if (markers[curmarker].x < window_x)
+      window_x = markers[curmarker].x;
+   else if (markers[curmarker].x > window_x + htiles - 1)
+      window_x = markers[curmarker].x - htiles + 1;
+
+   if (markers[curmarker].y < window_y)
+      window_y = markers[curmarker].y;
+   else if (markers[curmarker].y > window_y + vtiles - 1)
+      window_y = markers[curmarker].y - vtiles + 1;
+}
+
 
 
 /*! \brief Paste the copied selection to all Layers
@@ -1757,57 +2327,6 @@ void paste_region_special (const int tx, const int ty)
 }                               /* paste_region_special () */
 
 
-/*! \brief Draw the shadows
- *
- * Draws the shadows onto the screen and takes into consideration any layer
- * effects that need to take place (see map_mode_text[] for details).
- * This is basically the same as draw_layer().
- * \author  PH
- * \date    20031205
- * \param   parallax 0 draws with parallax off, else parallax on
- */
-static void draw_shadow (const int parallax)
-{
-   int layer_x, j;
-   int layer_x1, layer_y1, layer_x2, layer_y2;
-   int x0, y0;
-   int ss;
-
-   /* Calculate the top left, taking parallax into account */
-   layer_x1 = parallax ? window_x * gmap.pmult / gmap.pdiv : window_x;
-   layer_y1 = parallax ? window_y * gmap.pmult / gmap.pdiv : window_y;
-
-   /* Calculate bottom right */
-   layer_x2 = layer_x1 + htiles;
-   layer_y2 = layer_y1 + vtiles;
-
-   /* Make sure these don't step off the edges of the map */
-   if (layer_x1 < 0)
-      layer_x1 = 0;
-   if (layer_y1 < 0)
-      layer_y1 = 0;
-   if (layer_x2 > gmap.xsize)
-      layer_x2 = gmap.xsize;
-   if (layer_y2 > gmap.ysize)
-      layer_y2 = gmap.ysize;
-
-   /* Calculate the pixel-based coordinate of the top left */
-   x0 = window_x * 16;
-   y0 = window_y * 16;
-
-   /* ...And draw the tilemap */
-   for (j = layer_y1; j < layer_y2; ++j) {
-      for (layer_x = layer_x1; layer_x < layer_x2; ++layer_x) {
-         ss = sh_map[j * gmap.xsize + layer_x];
-         if (ss > 0) {
-            draw_trans_sprite (double_buffer, shadow[ss], layer_x * 16 - x0,
-                               j * 16 - y0);
-         }
-      }
-   }
-}                               /* draw_shadow () */
-
-
 /*! \brief Preview map
  *
  * Draw the map with all layers on and using parallax/layering
@@ -1858,57 +2377,6 @@ void preview_map (void)
 }                               /* preview_map () */
 
 
-/*! \brief Draw the layers with parallax
- *
- * Draws a single layer (back, middle or fore) and will compensate for parallax.
- * Drawing is done by draw_sprite() - so the bottom layer needs to go onto a black background.
- * This is called by preview_map().
- * The code is slightly overcomplicated but it is more general, if things need to change later.
- *
- * \author PH
- * \date 20031205
- * \param   layer Pointer to layer data array
- * \param   parallax ==0 draw with parallax off or !=0 on
- */
-void draw_layer (short *layer, const int parallax)
-{
-   int layer_x, j;
-   int layer_x1, layer_x2, layer_y1, layer_y2;
-   int x0, y0;
-
-   /* Calculate the top left, taking parallax into account */
-   layer_x1 = parallax ? window_x * gmap.pmult / gmap.pdiv : window_x;
-   layer_y1 = parallax ? window_y * gmap.pmult / gmap.pdiv : window_y;
-
-   /* Calculate bottom right */
-   layer_x2 = layer_x1 + htiles;
-   layer_y2 = layer_y1 + vtiles;
-
-   /* Make sure these don't step off the edges of the map */
-   if (layer_x1 < 0)
-      layer_x1 = 0;
-   if (layer_y1 < 0)
-      layer_y1 = 0;
-   if (layer_x2 > gmap.xsize)
-      layer_x2 = gmap.xsize;
-   if (layer_y2 > gmap.ysize)
-      layer_y2 = gmap.ysize;
-
-   /* Calculate the pixel-based coordinate of the top left */
-   x0 = layer_x1 * 16;
-   y0 = layer_y1 * 16;
-
-   /* ...And draw the tilemap */
-   for (j = layer_y1; j < layer_y2; ++j) {
-      for (layer_x = layer_x1; layer_x < layer_x2; ++layer_x) {
-         draw_sprite (double_buffer,
-                      icons[tilex[layer[layer_x + j * gmap.xsize]]],
-                      layer_x * 16 - x0, j * 16 - y0);
-      }
-   }
-}                               /* draw_layer () */
-
-
 /*! \brief Displays the text on the screen
  *
  * Prints the string to the screen using the default font
@@ -1937,12 +2405,14 @@ void print_sfont (const int print_x, const int print_y, const char *string,
 
 
 /*! \brief Keyboard input
- * Keyboard inputs (sorry, no joystick support)
+ * Keyboard inputs -- sorry, no joystick support
  *
  * \param   k The keyboard key to process
  */
 int process_keyboard (const int k)
 {
+   int response;
+
    /* Process which key was pressed */
    switch (k) {
    case (KEY_1):
@@ -2021,11 +2491,16 @@ int process_keyboard (const int k)
          draw_mode = MAP_ENTITIES;
       }
       grab_tile = 0;
+      find_cursor (0);
       break;
    case (KEY_F):
       /* Get the first Zone used and set the indicator to that */
       if (draw_mode == MAP_ZONES)
          curzone = 0;
+      else if (draw_mode == MAP_MARKERS) {
+         curmarker = 0;
+         orient_markers ();
+      }
       break;
    case (KEY_G):
       /* Get the tile under the mouse curser, including all 5 of the
@@ -2047,12 +2522,22 @@ int process_keyboard (const int k)
       break;
    case (KEY_J):
       /* Copy Layers 1, 2, 3 to mini PCX images */
-      maptopcx ();
+      response = prompt_BMP_PCX ();     // Can return a 1 or 2 (BMP or PCX)
+
+      if (!response || response > 2)
+         break;
+      else
+         maptopcx (response);
+
       break;
    case (KEY_L):
-      /* Get the last Zone used and set the indicator to that */
+      /* Get the last Zone/Marker used and set the indicator to that */
       if (draw_mode == MAP_ZONES)
          curzone = check_last_zone ();
+      else if (draw_mode == MAP_MARKERS) {
+         curmarker = num_markers - 1;
+         orient_markers ();
+      }
       break;
    case (KEY_M):
       /* Show markers or not */
@@ -2100,6 +2585,7 @@ int process_keyboard (const int k)
          draw_mode = MAP_OBSTACLES;
       }
       grab_tile = 0;
+      find_cursor (0);
       break;
    case (KEY_P):
       /* Paste the copied selection area */
@@ -2130,6 +2616,7 @@ int process_keyboard (const int k)
          draw_mode = MAP_SHADOWS;
       }
       grab_tile = 0;
+      find_cursor (0);
       break;
    case (KEY_T):
       /* Copy a selection */
@@ -2139,26 +2626,33 @@ int process_keyboard (const int k)
    case (KEY_U):
       if (++cpu_usage > 2)
          cpu_usage = 0;
+      break;
    case (KEY_V):
       /* Save whole map as a picture */
-      if (draw_mode == MAP_PREVIEW)
-      {
-         showing.entities   = 1;
-         showing.obstacles  = 0;
-         showing.shadows    = 1;
-         showing.zones      = 0;
-         showing.markers    = 0;
+      if (draw_mode == MAP_PREVIEW) {
+         showing.entities = 1;
+         showing.obstacles = 0;
+         showing.shadows = 1;
+         showing.zones = 0;
+         showing.markers = 0;
          showing.last_layer = 0;
-         showing.layer[0]   = 1;
-         showing.layer[1]   = 1;
-         showing.layer[2]   = 1;
+         showing.layer[0] = 1;
+         showing.layer[1] = 1;
+         showing.layer[2] = 1;
       } else {
          showing.layer[0] = showing.last_layer & MAP_LAYER1;
          showing.layer[1] = showing.last_layer & MAP_LAYER2;
          showing.layer[2] = showing.last_layer & MAP_LAYER3;
       }
 
-      visual_map (showing, "vis_map.pcx");
+      response = prompt_BMP_PCX ();
+      if (!response || response > 2)
+         break;
+      else if (response == 1)
+         visual_map (showing, "vis_map.bmp");
+      else if (response == 2)
+         visual_map (showing, "vis_map.pcx");
+
       break;
    case (KEY_W):
       /* TT TODO: This looks like it does the exact same thing as KEY_N:
@@ -2166,6 +2660,11 @@ int process_keyboard (const int k)
        */
       /* Clear the contents of the current map */
       wipe_map ();
+      break;
+   case (KEY_X):
+      /* This should be a general "GOTO" but since GRAB_TILE is already
+       * assigned to this letter, we'll just use this unused one. */
+      goto_coords ();
       break;
    case (KEY_Z):
       /* Toggle whether zones should be shown or turned off */
@@ -2187,6 +2686,7 @@ int process_keyboard (const int k)
          draw_mode = MAP_ZONES;
       }
       grab_tile = 0;
+      find_cursor (0);
       break;
    case (KEY_SPACE):
       /* Attempt at giving the user a chance to see the animations */
@@ -2220,7 +2720,8 @@ int process_keyboard (const int k)
       }
 
       /* Copy the markers back in */
-      gmap.markers = realloc (gmap.markers, num_markers * sizeof (s_marker));
+      gmap.markers = (s_marker *) realloc
+         (gmap.markers, num_markers * sizeof (s_marker));
       memcpy (gmap.markers, markers, num_markers * sizeof (s_marker));
       gmap.num_markers = num_markers;
       save_map ();
@@ -2299,26 +2800,8 @@ int process_keyboard (const int k)
             curzone = MAX_ZONES - 1;
          break;
       case MAP_MARKERS:
-         /* Page through the Markers on the map */
-         if (num_markers > 0) {
-            curmarker--;
-            if (curmarker < 0)
-               curmarker = num_markers - 1;
-         } else
-            break;
-
-         /* Move view-window enough to show marker */
-         if (markers[curmarker].x < window_x)
-            window_x = markers[curmarker].x;
-         else if (markers[curmarker].x > window_x + htiles - 1)
-            window_x = markers[curmarker].x - htiles + 1;
-
-         if (markers[curmarker].y < window_y)
-            window_y = markers[curmarker].y;
-         else if (markers[curmarker].y > window_y + vtiles - 1)
-            window_y = markers[curmarker].y - vtiles + 1;
-
-         normalize_view ();
+         /* Go to previous Marker on map */
+         find_cursor (-1);
          break;
       default:
          /* Change the iconset's "page" */
@@ -2357,26 +2840,8 @@ int process_keyboard (const int k)
             curzone = 0;
          break;
       case MAP_MARKERS:
-         /* Page through the Markers on the map */
-         if (num_markers > 0) {
-            curmarker++;
-            if (curmarker >= num_markers)
-               curmarker = 0;
-         } else
-            break;
-
-         /* Move view-window enough to show marker */
-         if (markers[curmarker].x < window_x)
-            window_x = markers[curmarker].x;
-         else if (markers[curmarker].x > window_x + htiles - 1)
-            window_x = markers[curmarker].x - htiles + 1;
-
-         if (markers[curmarker].y < window_y)
-            window_y = markers[curmarker].y;
-         else if (markers[curmarker].y > window_y + vtiles - 1)
-            window_y = markers[curmarker].y - vtiles + 1;
-
-         normalize_view ();
+         /* Go to next Marker on map */
+         find_cursor (1);
          break;
       default:
          /* Change the iconset's "page" */
@@ -2541,8 +3006,7 @@ void process_menu_bottom (const int cx, const int cy)
    }
 
    /* The mouse is over 'Warp' menu */
-   if (cx >= column[1] && cx < column[2] && cy >= row[4]
-       && cy < row[5]) {
+   if (cx >= column[1] && cx < column[2] && cy >= row[4] && cy < row[5]) {
       gmap.can_warp = 1 - gmap.can_warp;
       while (mouse_b & 1);
       return;
@@ -2640,7 +3104,28 @@ void process_menu_bottom (const int cx, const int cy)
       return;
    }
 
-   /* Mouse is over 'Mult' menu */
+   /* The mouse is over 'Width' menu */
+   if (cx >= column[2] && cx < column[3] && cy >= row[3] && cy < row[4]) {
+      /* 1 means resize width */
+      resize_map (1);
+      return;
+   }
+
+   /* The mouse is over 'Height' menu */
+   if (cx >= column[2] && cx < column[3] && cy >= row[4] && cy < row[5]) {
+      /* 2 means resize height */
+      resize_map (2);
+      return;
+   }
+
+   /* The mouse is over 'SunStone' menu */
+   if (cx >= column[2] && cx < column[3] && cy >= row[5] && cy < row[6]) {
+      gmap.use_sstone = 1 - gmap.use_sstone;
+      while (mouse_b & 1);
+      return;
+   }
+
+   /* The mouse is over 'Mult' menu */
    if (cx >= column[3] && cx < column[4] && cy >= row[1] && cy < row[2]) {
       rectfill (double_buffer, column[3] + 6 * 6, row[1], column[4] - 1,
                 row[2] - 1, 0);
@@ -2691,27 +3176,6 @@ void process_menu_bottom (const int cx, const int cy)
       gmap.pdiv = atoi (strbuf);
       return;
    }
-
-   /* The mouse is over the 'Width' menu */
-   if (cx >= column[2] && cx < column[3] && cy >= row[3] && cy < row[4]) {
-      /* 1 means resize width */
-      resize_map (1);
-      return;
-   }
-
-   /* The mouse is over the 'Height' menu */
-   if (cx >= column[2] && cx < column[3] && cy >= row[4] && cy < row[5]) {
-      /* 2 means resize height */
-      resize_map (2);
-      return;
-   }
-
-   /* The mouse is over 'SunStone' menu */
-   if (cx >= column[2] && cx < column[3] && cy >= row[5] && cy < row[6]) {
-      gmap.use_sstone = 1 - gmap.use_sstone;
-      while (mouse_b & 1);
-      return;
-   }
 }                               /* process_menu_bottom () */
 
 
@@ -2726,7 +3190,7 @@ void process_menu_right (const int cx, const int cy)
 {
    int xp, yp;
 
-   /* Make sure that the mouse is over one if the selectable tiles */
+   /* Check whether the mouse is over one if the selectable tiles */
    if (cy > 8 && cy < 168 && cx >= htiles * 16 + 8
        && cx < (htiles + 4) * 16 + 8) {
       xp = ((cx - 8) - htiles * 16) / 16;
@@ -2740,8 +3204,31 @@ void process_menu_right (const int cx, const int cy)
    }
 
    /* Show the correct tileset "page" when Tile Preview is clicked on */
-   if (cx > (htiles + 1) * 16 + 6 && cx <= (htiles + 3) * 16 + 9 && cy > 248 && cy < 284) {
-      icon_set = (curtile / ICONSET_SIZE) - ((curtile / ICONSET_SIZE) % 2);
+   if (cx > (htiles + 1) * 16 + 6 && cx <= (htiles + 3) * 16 + 9 && cy > 248
+       && cy < 284) {
+      if ((draw_mode >= MAP_ENTITIES && draw_mode <= MAP_ZONES)
+          || draw_mode == MAP_MARKERS) {
+         find_cursor (0);
+      } else {
+         icon_set = (curtile / ICONSET_SIZE) - ((curtile / ICONSET_SIZE) % 2);
+      }
+   }
+
+   /* The mouse is "somewhere" over 'Attribs' arrows */
+   if ((cx >= (htiles + 1) * 16 && cx < (htiles + 4) * 16) &&
+       (cy >= 316 && cy < 364)) {
+      if (draw_mode == MAP_OBSTACLES || draw_mode == MAP_SHADOWS
+          || draw_mode == MAP_ZONES || draw_mode == MAP_MARKERS) {
+         /* This math results in the x-coord passed into the function as
+          * -4, -3, -2: top row of arrows
+          * -1, 0, 1: middle row of arrows
+          * 2, 3, 4: bottom row of arrows
+          *
+          * We only use "-3", "-1..1" and "3" (up, left, center, right, down)
+          * here, and can throw out the rest.
+          */
+         find_cursor ((((cy - 316) / 16) * 3 + (cx - ((htiles + 1) * 16)) / 16) - 4);
+      }
    }
 
 }                               /* process_menu_right () */
@@ -2826,7 +3313,7 @@ void process_mouse (const int mouse_button)
             /* Draw to Zone layer */
             z_map[((window_y + y) * gmap.xsize) + window_x + x] = curzone;
             break;
-         case MAP_MARKERS:
+         case (MAP_MARKERS):
             /* Add or change a marker */
             add_change_marker (x + window_x, y + window_y, mouse_button);
             /* This isn't ideal, but just wait for the button to be released */
@@ -2894,7 +3381,7 @@ void process_mouse (const int mouse_button)
             /* Remove a Zone */
             z_map[((window_y + y) * gmap.xsize) + window_x + x] = 0;
             break;
-         case MAP_MARKERS:
+         case (MAP_MARKERS):
             /* Remove a marker */
             add_change_marker (x + window_x, y + window_y, mouse_button);
             break;
@@ -2911,6 +3398,39 @@ void process_mouse (const int mouse_button)
    if (x > (htiles - 1))
       x = htiles - 1;
 }                               /* process_mouse () */
+
+
+/*! \brief Similar to yninput function, but for 'b/p' response
+ *
+ * Asks user which format to output the image in:
+ *   B for BMP
+ *   P for PCX
+ *   ESC will cancel the action
+ *
+ * \returns 1 for Y/ENTER, 0 for N/ESC
+ */
+int prompt_BMP_PCX (void)
+{
+   int response, done;
+
+   cmessage ("Do you want output as BMP or PCX format? (b/p)");
+
+   done = 0;
+   while (!done) {
+      /* Wait for either a 'b' (BMP) or 'p' (PCX) */
+      response = (readkey () >> 8);
+
+      if (response == KEY_ESC)  // Cancel (ESC pressed)
+         done = 1;
+      if (response == KEY_B)    // BMP
+         done = 2;
+      if (response == KEY_P)    // PCX
+         done = 3;
+   }
+   blit2screen ();
+
+   return done - 1;
+}                               /* prompt_BMP_PCX () */
 
 
 /*! \brief Mouse and keyboard input
@@ -3012,6 +3532,7 @@ void read_controls (void)
       /* The mouse is inside the window */
       if (grab_tile) {
          dmode = 2;
+         /* Grab the tile under the mouse curser */
          get_tile ();
       } else {
          /* Draw to the map */
@@ -3028,6 +3549,47 @@ void read_controls (void)
 }                               /* read_controls () */
 
 
+void rename_marker (s_marker *found)
+{
+   int response, done;
+   s_marker *m;
+
+   make_rect (double_buffer, 2, 32);
+   print_sfont (6, 6, found->name, double_buffer);
+   print_sfont (6, 12, ">", double_buffer);
+
+   done = 0;
+   while (!done) {
+      blit2screen ();
+      response = get_line (12, 12, strbuf, 31);
+
+      /* If the user hits ESC, break out of the function entirely */
+      if (response == 0)
+         return;
+
+      /* Make sure this line isn't blank */
+      if (strlen (strbuf) == 0) {
+         cmessage ("Do you want to clear the name of this marker? (y/n)");
+         if (yninput ())
+            done = 1;
+      } else {
+         done = 1;
+      }
+
+      /* Make sure no other markers have the same name */
+      for (m = markers; m < markers + num_markers; ++m) {
+         if (!strcmp (strbuf, m->name) && m != found) {
+            cmessage ("Another marker has that name. Use another name.");
+            yninput ();
+            done = 0;
+            break;
+         }
+      }
+   }
+   strcpy (found->name, strbuf);
+}                               /* rename_marker () */
+
+
 /*! \brief Resize the current map
  * Changes the map's height and width
  *
@@ -3040,6 +3602,7 @@ void resize_map (const int selection)
    int response, done;
    int old_height, old_width, new_height, new_width;
    int i, ix, iy, coord1, coord2;
+   s_marker *m;
 
    /* Set current and old map sizes, incase one will not change */
    new_width = old_width = gmap.xsize;
@@ -3103,6 +3666,37 @@ void resize_map (const int selection)
       }                         // while ()
    }                            // if (selection)
 
+   // Check if there are "stray" markers; prompt user what to do with them.
+   done = 0;
+   for (m = markers; m < markers + num_markers; ++m) {
+      if (m->x >= new_width || m->y >= new_height) {
+         done++;
+      }
+   }
+
+   // Some markers found; prompt if we should remove them
+   if (done) {
+
+      sprintf (strbuf, "%d marker%s will be discarded! Continue? (y/n)", done,
+               done == 1 ? "" : "s");
+      cmessage (strbuf);
+
+      if (!yninput ())
+      {
+         // They chose to cancel the resize
+         return;
+      } else {
+         // They chose to remove the markers
+         done = num_markers;
+         for (m = markers + done; m > markers; --m) {
+            if (m->x >= new_width || m->y >= new_height) {
+               // This removes the marker
+               add_change_marker (m->x, m->y, 2);
+            }
+         }
+      }
+   }
+
    /* Pre-copy the map info */
    for (iy = 0; iy < gmap.ysize; iy++) {
       for (ix = 0; ix < gmap.xsize; ix++) {
@@ -3133,12 +3727,16 @@ void resize_map (const int selection)
    sh_map = (unsigned char *) malloc (gmap.xsize * gmap.ysize);
    free (z_map);
    z_map = (unsigned char *) malloc (gmap.xsize * gmap.ysize);
+   free (search_map);
+   search_map = (unsigned char *) malloc (gmap.xsize * gmap.ysize);
+
    memset (map, 0, gmap.xsize * gmap.ysize * 2);
    memset (b_map, 0, gmap.xsize * gmap.ysize * 2);
    memset (f_map, 0, gmap.xsize * gmap.ysize * 2);
    memset (o_map, 0, gmap.xsize * gmap.ysize);
    memset (sh_map, 0, gmap.xsize * gmap.ysize);
    memset (z_map, 0, gmap.xsize * gmap.ysize);
+   memset (search_map, 0, gmap.xsize * gmap.ysize);
 
    /* Draw all the old map data into the new map size */
    for (iy = 0; iy < old_height; iy++) {
@@ -3209,6 +3807,21 @@ void select_only (const int lastlayer, const int which_layer)
       showing.last_layer = draw_mode;
    grab_tile = 0;
 }                               /* select_only () */
+
+
+/*! \brief Show the left/right seek buttons
+ */
+void show_buttons (int should_show)
+{
+   /* The buttons will be on the bottom-right corner, where the Entity
+    * image is usually shown.
+    */
+   if (should_show) {
+
+   } else {
+
+   }
+}
 
 
 /*! \brief Handy-dandy help screen
@@ -3366,7 +3979,7 @@ int startup (void)
    getfont ();
 
    /* Used for highlighting */
-   static unsigned char hilite[] = {
+   unsigned char hilite[] = {
       00, 00, 00, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 00, 00, 00,
       00, 00, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 00, 00,
       00, 25, 25, 25, 45, 45, 45, 45, 45, 45, 45, 45, 25, 25, 25, 00,
@@ -3440,6 +4053,157 @@ int startup (void)
    showing.layer[2] = 1;
 
    icon_set = 0;
+
+   // This turns the other/indent.pro settings off:
+   // *INDENT-OFF*
+
+   /* arrowpic[0] = up arrow
+    * arrowpic[1] = left arrow
+    * arrowpic[2] = center button
+    * arrowpic[3] = right arrow
+    * arrowpic[4] = down arrow
+    */
+   unsigned char arrow_up[] = {
+      00, 00, 00, 00, 00, 00, 00, 60, 00, 00, 00, 00, 00, 00, 00, 00,
+      00, 00, 00, 00, 00, 00, 60, 58, 60, 00, 00, 00, 00, 00, 00, 00,
+      00, 00, 00, 00, 00, 60, 58, 56, 58, 60, 00, 00, 00, 00, 00, 00,
+      00, 00, 00, 00, 60, 58, 56, 54, 56, 58, 60, 00, 00, 00, 00, 00,
+      00, 00, 00, 60, 58, 56, 54, 52, 54, 56, 58, 60, 00, 00, 00, 00,
+      00, 00, 60, 58, 56, 56, 56, 56, 56, 56, 56, 58, 60, 00, 00, 00,
+      00, 60, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 60, 00, 00,
+      60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 00,
+      00, 50, 50, 50, 50, 50, 60, 60, 60, 50, 50, 50, 50, 50, 50, 50,
+      00, 00, 00, 00, 00, 00, 60, 60, 60, 50, 00, 00, 00, 00, 00, 00,
+      00, 00, 00, 00, 00, 00, 60, 60, 60, 50, 00, 00, 00, 00, 00, 00,
+      00, 00, 00, 00, 00, 00, 60, 60, 60, 50, 00, 00, 00, 00, 00, 00,
+      00, 00, 00, 00, 00, 00, 60, 60, 60, 50, 00, 00, 00, 00, 00, 00,
+      00, 00, 00, 00, 00, 00, 60, 60, 60, 50, 00, 00, 00, 00, 00, 00,
+      00, 00, 00, 00, 00, 00, 00, 50, 50, 50, 00, 00, 00, 00, 00, 00,
+      00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
+   };
+
+   unsigned char arrow_left[] = {
+      00, 00, 00, 00, 00, 00, 00, 60, 00, 00, 00, 00, 00, 00, 00, 00,
+      00, 00, 00, 00, 00, 00, 60, 60, 50, 00, 00, 00, 00, 00, 00, 00,
+      00, 00, 00, 00, 00, 60, 58, 60, 50, 00, 00, 00, 00, 00, 00, 00,
+      00, 00, 00, 00, 60, 58, 58, 60, 50, 00, 00, 00, 00, 00, 00, 00,
+      00, 00, 00, 60, 58, 56, 58, 60, 50, 00, 00, 00, 00, 00, 00, 00,
+      00, 00, 60, 58, 56, 56, 58, 60, 50, 00, 00, 00, 00, 00, 00, 00,
+      00, 60, 58, 56, 54, 56, 58, 60, 60, 60, 60, 60, 60, 60, 60, 00,
+      60, 58, 56, 54, 52, 56, 58, 60, 60, 60, 60, 60, 60, 60, 60, 50,
+      00, 60, 58, 56, 54, 56, 58, 60, 60, 60, 60, 60, 60, 60, 60, 50,
+      00, 00, 60, 58, 56, 56, 58, 60, 50, 50, 50, 50, 50, 50, 50, 50,
+      00, 00, 00, 60, 58, 56, 58, 60, 50, 00, 00, 00, 00, 00, 00, 00,
+      00, 00, 00, 00, 60, 58, 58, 60, 50, 00, 00, 00, 00, 00, 00, 00,
+      00, 00, 00, 00, 00, 60, 58, 60, 50, 00, 00, 00, 00, 00, 00, 00,
+      00, 00, 00, 00, 00, 00, 60, 60, 50, 00, 00, 00, 00, 00, 00, 00,
+      00, 00, 00, 00, 00, 00, 00, 60, 50, 00, 00, 00, 00, 00, 00, 00,
+      00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
+   };
+
+   unsigned char arrow_center[] = {
+      00, 00, 00, 60, 60, 60, 60, 60, 60, 60, 60, 60, 00, 00, 00, 00,
+      00, 00, 60, 00, 00, 00, 00, 60, 00, 00, 00, 00, 60, 00, 00, 00,
+      00, 60, 00, 00, 58, 58, 58, 60, 58, 58, 58, 58, 00, 60, 00, 00,
+      60, 00, 00, 58, 00, 00, 00, 60, 00, 00, 00, 00, 58, 00, 60, 00,
+      60, 00, 58, 00, 00, 60, 60, 60, 60, 60, 00, 00, 58, 00, 60, 00,
+      60, 00, 58, 00, 60, 00, 00, 60, 00, 00, 60, 00, 58, 00, 60, 00,
+      60, 00, 58, 00, 60, 00, 00, 58, 00, 00, 60, 00, 58, 00, 60, 00,
+      60, 60, 60, 60, 60, 60, 58, 00, 58, 60, 60, 60, 58, 60, 60, 00,
+      60, 00, 58, 00, 60, 00, 00, 58, 00, 00, 60, 00, 58, 00, 60, 00,
+      60, 00, 58, 00, 60, 00, 00, 60, 00, 00, 60, 00, 58, 00, 60, 00,
+      60, 00, 58, 00, 00, 60, 60, 60, 60, 60, 00, 00, 58, 00, 60, 00,
+      60, 00, 58, 00, 00, 00, 00, 60, 00, 00, 00, 58, 00, 00, 60, 00,
+      00, 60, 00, 58, 58, 58, 58, 60, 58, 58, 58, 00, 00, 60, 00, 00,
+      00, 00, 60, 00, 00, 00, 00, 60, 00, 00, 00, 00, 60, 00, 00, 00,
+      00, 00, 00, 60, 60, 60, 60, 60, 60, 60, 60, 60, 00, 00, 00, 00,
+      00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
+   };
+
+   unsigned char arrow_right[] = {
+      00, 00, 00, 00, 00, 00, 00, 60, 00, 00, 00, 00, 00, 00, 00, 00,
+      00, 00, 00, 00, 00, 00, 00, 60, 60, 00, 00, 00, 00, 00, 00, 00,
+      00, 00, 00, 00, 00, 00, 00, 60, 58, 60, 00, 00, 00, 00, 00, 00,
+      00, 00, 00, 00, 00, 00, 00, 60, 58, 58, 60, 00, 00, 00, 00, 00,
+      00, 00, 00, 00, 00, 00, 00, 60, 58, 56, 58, 60, 00, 00, 00, 00,
+      00, 00, 00, 00, 00, 00, 00, 60, 58, 56, 56, 58, 60, 00, 00, 00,
+      60, 60, 60, 60, 60, 60, 60, 60, 58, 56, 54, 56, 58, 60, 00, 00,
+      60, 60, 60, 60, 60, 60, 60, 60, 58, 56, 52, 54, 56, 58, 60, 00,
+      60, 60, 60, 60, 60, 60, 60, 60, 58, 56, 54, 56, 58, 60, 50, 00,
+      50, 50, 50, 50, 50, 50, 50, 60, 58, 56, 56, 58, 60, 50, 00, 00,
+      00, 00, 00, 00, 00, 00, 00, 60, 58, 56, 58, 60, 50, 00, 00, 00,
+      00, 00, 00, 00, 00, 00, 00, 60, 58, 58, 60, 50, 00, 00, 00, 00,
+      00, 00, 00, 00, 00, 00, 00, 60, 58, 60, 50, 00, 00, 00, 00, 00,
+      00, 00, 00, 00, 00, 00, 00, 60, 60, 50, 00, 00, 00, 00, 00, 00,
+      00, 00, 00, 00, 00, 00, 00, 60, 50, 00, 00, 00, 00, 00, 00, 00,
+      00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
+   };
+
+   unsigned char arrow_down[] = {
+      00, 00, 00, 00, 00, 00, 60, 60, 60, 00, 00, 00, 00, 00, 00, 00,
+      00, 00, 00, 00, 00, 00, 60, 60, 60, 50, 00, 00, 00, 00, 00, 00,
+      00, 00, 00, 00, 00, 00, 60, 60, 60, 50, 00, 00, 00, 00, 00, 00,
+      00, 00, 00, 00, 00, 00, 60, 60, 60, 50, 00, 00, 00, 00, 00, 00,
+      00, 00, 00, 00, 00, 00, 60, 60, 60, 50, 00, 00, 00, 00, 00, 00,
+      00, 00, 00, 00, 00, 00, 60, 60, 60, 50, 00, 00, 00, 00, 00, 00,
+      60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 00,
+      00, 60, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 60, 50, 00,
+      00, 00, 60, 58, 56, 56, 56, 56, 56, 56, 56, 58, 60, 50, 00, 00,
+      00, 00, 00, 60, 58, 56, 54, 52, 54, 56, 58, 60, 50, 00, 00, 00,
+      00, 00, 00, 00, 60, 58, 56, 54, 56, 58, 60, 50, 00, 00, 00, 00,
+      00, 00, 00, 00, 00, 60, 58, 56, 58, 60, 50, 00, 00, 00, 00, 00,
+      00, 00, 00, 00, 00, 00, 60, 58, 60, 50, 00, 00, 00, 00, 00, 00,
+      00, 00, 00, 00, 00, 00, 00, 60, 50, 00, 00, 00, 00, 00, 00, 00,
+      00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
+      00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
+   };
+
+   // This turns the other/indent.pro settings back on:
+   // *INDENT-ON*
+
+   /* Create the arrow bitmaps */
+   for (a = 0; a < 5; a++) {
+      arrow_pics[a] = create_bitmap (16, 16);
+   }
+
+   for (ky = 0; ky < 16; ky++) {
+      for (kx = 0; kx < 16; kx++) {
+         arrow_pics[0]->line[ky][kx] = arrow_up[ky * 16 + kx];
+         arrow_pics[1]->line[ky][kx] = arrow_left[ky * 16 + kx];
+         arrow_pics[2]->line[ky][kx] = arrow_center[ky * 16 + kx];
+         arrow_pics[3]->line[ky][kx] = arrow_right[ky * 16 + kx];
+         arrow_pics[4]->line[ky][kx] = arrow_down[ky * 16 + kx];
+      }
+   }
+
+   /* Used for highlighting */
+   static unsigned char hilite_attrib[] = {
+      24, 24, 00, 00, 00, 00, 00, 24, 24, 00, 00, 00, 00, 00, 24, 24,
+      24, 24, 24, 00, 00, 00, 00, 24, 24, 00, 00, 00, 00, 24, 24, 24,
+      00, 24, 24, 24, 00, 00, 00, 24, 24, 00, 00, 00, 24, 24, 24, 00,
+      00, 00, 24, 24, 24, 00, 00, 24, 24, 00, 00, 24, 24, 24, 00, 00,
+      00, 00, 00, 24, 00, 00, 00, 00, 00, 00, 00, 00, 24, 00, 00, 00,
+      00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
+      00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
+      24, 24, 24, 24, 00, 00, 00, 00, 00, 00, 00, 00, 24, 24, 24, 24,
+      24, 24, 24, 24, 00, 00, 00, 00, 00, 00, 00, 00, 24, 24, 24, 24,
+      00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
+      00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
+      00, 00, 00, 24, 00, 00, 00, 00, 00, 00, 00, 00, 24, 00, 00, 00,
+      00, 00, 24, 24, 24, 00, 00, 24, 24, 00, 00, 24, 24, 24, 00, 00,
+      00, 24, 24, 24, 00, 00, 00, 24, 24, 00, 00, 00, 24, 24, 24, 00,
+      24, 24, 24, 00, 00, 00, 00, 24, 24, 00, 00, 00, 00, 24, 24, 24,
+      24, 24, 00, 00, 00, 00, 00, 24, 24, 00, 00, 00, 00, 00, 24, 24,
+   };
+
+   mesh_h = create_bitmap (16, 16);
+   clear (mesh_h);
+   for (ky = 0; ky < 16; ky++)
+      for (kx = 0; kx < 16; kx++)
+         mesh_h->line[ky][kx] = hilite_attrib[ky * 16 + kx];
+
+   curr_x = NULL;
+   curr_y = NULL;
 
    return 1;
 }                               /* startup () */
@@ -3530,6 +4294,7 @@ void wipe_map (void)
    memset (o_map, 0, gmap.xsize * gmap.ysize);
    memset (sh_map, 0, gmap.xsize * gmap.ysize);
    memset (z_map, 0, gmap.xsize * gmap.ysize);
+   memset (search_map, 0, gmap.xsize * gmap.ysize);
 
    init_entities ();
 }                               /* wipe_map () */
@@ -3559,123 +4324,3 @@ int yninput (void)
    blit2screen ();
    return done - 1;
 }                               /* yninput () */
-
-
-/* Action handler for clicking in marker mode button b; */
-void add_change_marker (int marker_x, int marker_y, int mouse_button)
-{
-   s_marker *m;
-   s_marker *found = NULL;
-
-   /* Does a marker exist here? */
-   for (m = markers; m < markers + num_markers; ++m) {
-      if (m->x == marker_x && m->y == marker_y) {
-         found = m;
-         break;
-      }
-   }
-
-   if (found) {
-      /* There is a marker here */
-      if (mouse_button == 1) {
-         /* Rename it */
-         rename_marker (found);
-      } else if (mouse_button == 2) {
-         /* Delete it */
-
-         /* Move the selector to the previous marker if this was the last
-          * marker on the map
-          */
-         num_markers--;
-         if (curmarker == num_markers)
-            curmarker = num_markers - 1;
-         memcpy (found, found + 1,
-                 (&markers[num_markers] - found) * sizeof (s_marker));
-         while (mouse_b & 2);
-      }
-   } else {
-      /* There is no marker here */
-      if (mouse_button == 1) {
-         /* Add a marker with default name */
-         if (num_markers < MAX_MARKERS) {
-            curmarker = num_markers;
-            m = &markers[num_markers++];
-            m->x = marker_x;
-            m->y = marker_y;
-            sprintf (m->name, "Marker #%d: (%d, %d)", num_markers, m->x, m->y);
-         }
-      }
-   }
-}
-
-
-void rename_marker (s_marker *found)
-{
-   int response, done;
-   s_marker *m;
-
-   make_rect (double_buffer, 2, 32);
-   print_sfont (6, 6, found->name, double_buffer);
-   print_sfont (6, 12, ">", double_buffer);
-
-   done = 0;
-   while (!done) {
-      blit2screen ();
-      response = get_line (12, 12, strbuf, 31);
-
-      /* If the user hits ESC, break out of the function entirely */
-      if (response == 0)
-         return;
-
-      /* Make sure this line isn't blank */
-      if (strlen (strbuf) == 0) {
-         cmessage ("Do you want to clear the name of this marker? (y/n)");
-         if (yninput ())
-            done = 1;
-      } else {
-         done = 1;
-      }
-
-      /* Make sure no other markers have the same name */
-      for (m = markers; m < markers + num_markers; ++m) {
-         if (!strcmp (strbuf, m->name) && m != found) {
-            cmessage ("Another marker has that name. Use another name.");
-            yninput ();
-            done = 0;
-            break;
-         }
-      }
-   }
-   strcpy (found->name, strbuf);
-}                               /* rename_marker () */
-
-
-/*! \brief Yield processor for other tasks
- *
- * This function calls rest() or yield_cpu() as appropriate for
- * the platform and allegro version
- *
- * \author PH
- * \date 20050423
- */
-void kq_yield (void)
-{
-   /* TT: If this breaks stuff, let me know. I _know_ it complains that
-    * yield_timeslice() is deprecated; until I know everyone is using the most
-    * recent version of Allegro, though, we may need to keep this in here for
-    * compatibility reasons.
-    * Question: Does rest(0) or rest(1) break anything on anyone's machine?
-    */
-   if (cpu_usage == 0)
-      yield_timeslice ();
-   else
-      rest(cpu_usage - 1);
-
-// TT REMOVE:
-//#if (ALLEGRO_VERSION >= 4 && ALLEGRO_SUB_VERSION >= 2)
-//   rest (0);
-//#else
-//   yield_timeslice ();
-//#endif
-
-}

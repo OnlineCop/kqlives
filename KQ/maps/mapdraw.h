@@ -47,7 +47,7 @@
 
 /* Something for allegro version compatibility */
 /* ..can we use the textout_ex() and friends? */
-#if (ALLEGRO_VERSION>=4 && ALLEGRO_SUB_VERSION>=1)
+#if (ALLEGRO_VERSION >= 4 && ALLEGRO_SUB_VERSION >= 1)
 #define HAVE_TEXT_EX
 #endif
 
@@ -56,7 +56,7 @@ typedef struct
    int entities, obstacles, shadows, zones;
    int markers;
    int last_layer;              /* Tracks last-used layer */
-   int layer[3];
+   int layer[3];                /* Back, Mid, Fore */
 }
 s_show;
 
@@ -76,6 +76,9 @@ void usage (const char *);
 /* From mapedit.c */
 void animate (void);
 extern void bufferize (void);
+void center_window (int, int);
+void center_window_x (int);
+void center_window_y (int);
 int check_last_zone (void);
 extern void cleanup (void);
 void clear_layer (void);
@@ -92,15 +95,16 @@ void describe_map (void);
 void draw_layer (short *, const int);
 void draw_map (void);
 void draw_menubars (void);
-void draw_menu_bottom (int, int, char [][12]);
-void draw_menu_side (int, char [][12]);
+int find_cursor (int);
 int get_line (const int, const int, char *, const int);
 void get_tile (void);
 void global_change (void);
+void goto_coords (void);
 void klog (char *);
 void kq_yield (void);
 void make_rect (BITMAP *, const int, const int);
 void normalize_view (void);
+void orient_markers (void);
 void paste_region (const int, const int);
 void paste_region_special (const int, const int);
 void preview_map (void);
@@ -109,6 +113,7 @@ int process_keyboard (const int);
 void process_menu_bottom (const int, const int);
 void process_menu_right (const int, const int);
 void process_mouse (const int);
+int prompt_BMP_PCX (void);
 void read_controls (void);
 void resize_map (const int);
 void select_only (const int, const int);
@@ -133,7 +138,7 @@ void update_entities (void);
 /* From mapfile.c */
 void error_load (const char *);
 void make_mapfrompcx (void);
-void maptopcx (void);
+void maptopcx (int format);
 void new_map (void);
 void prompt_load_map (void);
 void save_map (void);
@@ -172,12 +177,13 @@ extern unsigned short tilex[MAX_TILES];
 extern s_anim tanim[NUM_TILESETS][MAX_ANIM];
 extern s_anim adata[MAX_ANIM];
 
-extern int column[5], row[8];
+extern int column[8], row[8];
 
 extern short window_x, window_y;
 extern short max_sets;
 
 extern unsigned short *map, *b_map, *f_map, *c_map, *cf_map, *cb_map;
 extern unsigned char *z_map, *sh_map, *o_map, *cz_map, *csh_map, *co_map;
+extern unsigned char *search_map;
 
 #endif

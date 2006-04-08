@@ -208,7 +208,7 @@ void getfont (void)
 // *INDENT-ON*
 
    int a, b;
-   char *ptr = kq_font;
+   unsigned char *ptr = kq_font;
 
    /* Letters are medium-gray color */
    static int color_gray[] = { 0, 9, 15 };
