@@ -79,8 +79,10 @@ void blit2screen (int xw, int yw)
 {
    static int frate;
    if (show_frate == 1) {
-      sprintf (strbuf, "%d", frate);
-      print_font (double_buffer, xofs, yofs, strbuf, FNORMAL);
+     char fbuf[16];
+      sprintf (fbuf, "%3d", frate);
+      rectfill(double_buffer, xofs, yofs, xofs+24, yofs+8, makecol(0,0,0)); 
+      print_font (double_buffer, xofs, yofs, fbuf, FNORMAL);
    }
    if (stretch_view == 1)
       stretch_blit (double_buffer, screen, xw, yw, 320, 240, 0, 0, 640, 480);
