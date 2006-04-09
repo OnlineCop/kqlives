@@ -201,7 +201,6 @@ static int KQ_door_in (lua_State *);
 static int KQ_door_out (lua_State *);
 static int KQ_calc_viewport (lua_State *);
 static int KQ_change_map (lua_State *);
-static int KQ_change_mapm (lua_State *);
 static int KQ_give_item (lua_State *);
 static int KQ_warp (lua_State *);
 static int KQ_warpm (lua_State *);
@@ -378,7 +377,6 @@ static const struct luaL_reg lrs[] = {
    {"door_out", KQ_door_out},
    {"calc_viewport", KQ_calc_viewport},
    {"change_map", KQ_change_map},
-   {"change_mapm", KQ_change_mapm},
    {"give_item", KQ_give_item},
    {"warp", KQ_warp},
    {"warpm", KQ_warpm},
@@ -915,11 +913,11 @@ static int g_keys[8];
 static BITMAP *g_bmp[5];
 static DATAFILE *g_df;
 static lua_State *theL;
+/* These variables handle the map->map transition. */
 static char tmap_name[16];
 static char marker_name[255];
-static int tmx, tmy, tmvx, tmvy, changing_map = 0, changing_map_markers = 0;
-
-
+static int tmx, tmy, tmvx, tmvy;
+static enum {NOT_CHANGING, CHANGE_TO_COORDS, CHANGE_TO_MARKER } changing_map;
 
 /*! \brief Process HERO1 and HERO2 pseudo-entity numbers
  *
@@ -2691,32 +2689,21 @@ static int KQ_calc_viewport (lua_State * L)
 static int KQ_change_map (lua_State * L)
 {
    strcpy (tmap_name, (char *) lua_tostring (L, 1));
-   tmx = (int) lua_tonumber (L, 2);
-   tmy = (int) lua_tonumber (L, 3);
-   tmvx = (int) lua_tonumber (L, 4);
-   tmvy = (int) lua_tonumber (L, 5);
-   changing_map = 1;
-   changing_map_markers = 0;
+   if (lua_type(L, 2) == LUA_TSTRING) {
+     /* it's the ("map", "marker") form */
+     strcpy (marker_name, lua_tostring (L, 2));
+     changing_map = CHANGE_TO_MARKER;
+   }
+   else {
+     /* (assume) it's the ("map", x, y, x, y) form */
+     tmx = (int) lua_tonumber (L, 2);
+     tmy = (int) lua_tonumber (L, 3);
+     tmvx = (int) lua_tonumber (L, 4);
+     tmvy = (int) lua_tonumber (L, 5);
+     changing_map = CHANGE_TO_COORDS;
+   }
    return 0;
 }
-
-
-
-/* Change the map to the coordinates of the given marker
- * The camera will also be set to the same coords
- */
-static int KQ_change_mapm (lua_State * L)
-{
-   // *** TT TODO ***
-   strcpy (tmap_name, (char *) lua_tostring (L, 1));
-   strcpy (marker_name, lua_tostring (L, 2));
-
-   changing_map = 0;
-   changing_map_markers = 1;
-   return 0;
-}
-
-
 
 static int KQ_give_item (lua_State * L)
 {
@@ -3445,6 +3432,7 @@ void do_luainit (char *fname)
       program_death (strbuf);
    }
    lua_settop (theL, oldtop);
+   changing_map = NOT_CHANGING;
 }
 
 
@@ -3536,10 +3524,6 @@ void do_postexec (void)
  * that the hero has just stepped on.  This function is not called for zone 0,
  * unless the map property zero_zone is non-zero.
  *
- * PH used the Lua ref system here; should be quicker to get a reference to
- * 'zone_handler' than to do a look-up based on the name.  Whether this is
- * significant I don't know.
- *
  * \param   zn_num Zone number
  */
 void do_zone (int zn_num)
@@ -3630,18 +3614,19 @@ void do_questinfo (void)
  */
 static void check_map_change (void)
 {
-   if (changing_map == 0 && changing_map_markers == 0)
-      return;
-   if (changing_map != 0) {
-      changing_map = 0;
-      change_map (tmap_name, tmx, tmy, tmvx, tmvy);
-   } else if (changing_map_markers != 0) {
-      changing_map_markers = 0;
-      change_mapm (tmap_name, marker_name);
-   }
+  switch(changing_map) {
+  case CHANGE_TO_COORDS:
+    change_map (tmap_name, tmx, tmy, tmvx, tmvy);
+    changing_map = NOT_CHANGING;
+    break;
+  case CHANGE_TO_MARKER:
+    change_mapm (tmap_name, marker_name);
+    changing_map = NOT_CHANGING;
+    break;
+  default:
+    break;
+  }
 }
-
-
 
 /*! \brief Get the x-coord of marker
  *

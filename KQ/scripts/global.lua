@@ -279,3 +279,8 @@ function get_quest_info()
    add_quest_item("Test1", "Some test info")
    add_quest_item("Sensar", "He rages!")
 end
+
+-- backward compat
+change_mapm = change_map
+
+
