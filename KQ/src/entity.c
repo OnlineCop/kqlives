@@ -48,7 +48,7 @@ static void follow (int tx, int ty);
 static void wander (int);
 static void player_move (void);
 static int move (int, int, int);
-static int obstruction (int, int, int, int);
+static int obstruction (int, int, int, int, int);
 static void parsems (int);
 static void getcommand (int);
 static void entscript (int);
@@ -362,24 +362,24 @@ static int move (int target_entity, int dx, int dy)
        || ty + dy == g_map.ysize)
       return 0;
    if (ent->obsmode == 1) {
-      if (dx && obstruction (tx, ty, dx, 0)) {
+      if (dx && obstruction (tx, ty, dx, 0, FALSE)) {
          /* Try to avoid the obstacle if facing it*/
-         if (dy != -1 && oldfacing == ent->facing && !obstruction (tx, ty, dx, 1) && !obstruction (tx, ty, 0, 1))
+         if (dy != -1 && oldfacing == ent->facing && !obstruction (tx, ty + 1, dx, 0, TRUE) && !obstruction (tx, ty, 0, 1, TRUE))
             dy = 1;
-         else if (dy != 1 && oldfacing == ent->facing && !obstruction (tx, ty, dx, -1) && !obstruction (tx, ty, 0, -1))
+         else if (dy != 1 && oldfacing == ent->facing && !obstruction (tx, ty - 1, dx, 0, TRUE) && !obstruction (tx, ty, 0, -1, TRUE))
             dy = -1;
          else
             dx = 0;
       }
-      if (dy && obstruction (tx, ty, 0, dy)) {
-         if (dx != -1 && oldfacing == ent->facing && !obstruction (tx, ty, 1, dy) && !obstruction (tx, ty, 1, 0))
+      if (dy && obstruction (tx, ty, 0, dy, FALSE)) {
+         if (dx != -1 && oldfacing == ent->facing && !obstruction (tx + 1, ty, 0, dy, TRUE) && !obstruction (tx, ty, 1, 0, TRUE))
             dx = 1;
-         else if (dx != 1 && oldfacing == ent->facing && !obstruction (tx, ty, -1, dy) && !obstruction (tx, ty, -1, 0))
+         else if (dx != 1 && oldfacing == ent->facing && !obstruction (tx - 1, ty, 0, dy, TRUE) && !obstruction (tx, ty, -1, 0, TRUE))
             dx = -1;
          else
             dy = 0;
       }
-      if ((dx || dy) && obstruction (tx, ty, dx, dy)) {
+      if ((dx || dy) && obstruction (tx, ty, dx, dy, FALSE)) {
          dx = dy = 0;
       }
    }
@@ -406,11 +406,12 @@ static int move (int target_entity, int dx, int dy)
  * \param   oy Original y-coord position
  * \param   mx Amount to move -1..+1
  * \param   my Amount to move -1..+1
+ * \param   check_entity Wether to return 1 if an entity is at the target
  * \returns 1 if path is obstructed, 0 otherwise
  */
-static int obstruction (int ox, int oy, int mx, int my)
+static int obstruction (int ox, int oy, int mx, int my, int check_entity)
 {
-   int son, sto, tox, toy;
+   int son, sto, tox, toy, i;
 
    tox = ox + mx;
    if (tox < 0 || tox > g_map.xsize - 1)
@@ -437,6 +438,12 @@ static int obstruction (int ox, int oy, int mx, int my)
    if (mx == 1) {
       if (son == 3 || sto == 5)
          return 1;
+   }
+	 
+   if (check_entity) for (i = 0; i < MAX_ENT; i++) {
+      if (g_ent[i].active && tox == g_ent[i].tilex && toy == g_ent[i].tiley) {
+			   return 1;
+      }
    }
    return 0;
 }
