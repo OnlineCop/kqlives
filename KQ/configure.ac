@@ -5,8 +5,8 @@ AC_PREREQ(2.52)
 AC_INIT(KQ, 0.99, [peterhull90@users.sourceforge.net])
 AC_CONFIG_SRCDIR([src/kq.c])
 AC_CONFIG_HEADER([config.h])
+AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
-AC_CANONICAL_TARGET
 AM_INIT_AUTOMAKE()
 
 # Checks for programs.
@@ -43,13 +43,29 @@ AC_HEADER_TIME
 AC_STRUCT_TM
 AC_C_VOLATILE
 
+WARNING_CFLAGS="-Wall -W -Wno-unused-parameter -Wshadow -Wmissing-prototypes \
+-Wredundant-decls -Wendif-labels -Wpointer-arith \
+-Wcast-qual -Wcast-align -Wwrite-strings"
+kq_save_CFLAGS="$CFLAGS"
+CFLAGS="$CFLAGS $WARNING_CFLAGS"
+AC_COMPILE_IFELSE("", [], [WARNING_CFLAGS=""])
+CFLAGS="$kq_save_CFLAGS"
+AC_SUBST(WARNING_CFLAGS)
+
 # Checks for libraries and library functions.
 AC_FUNC_MALLOC
 AC_FUNC_REALLOC
 AC_CHECK_FUNCS([atexit gettimeofday memmove memset mkdir pow strchr strstr])
-AC_CHECK_LIB(dumb, dumb_exit, [], [AC_MSG_ERROR([Dumb not found])])
-AX_CHECK_ALDUMB(, [AC_MSG_ERROR([Aldumb not found])], [$ALLEGRO_LIBS])
+AC_CHECK_LIB(dumb, dumb_exit, [ALLEGRO_LIBS="-ldumb $ALLEGRO_LIBS"], [AC_MSG_ERROR([Dumb not found])])
+AX_CHECK_ALDUMB([ALLEGRO_LIBS="-laldmb $ALLEGRO_LIBS"], [AC_MSG_ERROR([Aldumb not found])], [$ALLEGRO_LIBS])
 AC_SEARCH_LIBS(lua_open, lua50 lua, [], [AC_MSG_ERROR([Lua not found])])
+
+PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.8.0 libglade-2.0 >= 2.4.0],
+  [AC_SUBST(GTK_LIBS)
+  AC_SUBST(GTK_CFLAGS)
+  MAPDRAW2="mapdraw2${EXEEXT}"],
+  [MAPDRAW2=""])
+AC_SUBST(MAPDRAW2)
 
 m4_ifdef([AS_HELP_STRING], , [m4_define([AS_HELP_STRING], m4_defn([AC_HELP_STRING]))])
 AC_ARG_WITH(2xsai, AS_HELP_STRING([--with-2xsai], [Use the 2xSAI library (default NO)]), AC_SUBST(kq_use_2xsai,1))

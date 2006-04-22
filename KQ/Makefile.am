@@ -1,5 +1,6 @@
 SUBDIRS = scripts
-bin_PROGRAMS = kq mapdraw mapdiff mapdump
+bin_PROGRAMS = kq mapdraw mapdiff mapdump $(MAPDRAW2)
+EXTRA_PROGRAMS = mapdraw2
 
 kq_SOURCES = src/enemyc.c src/intrface.c src/sgame.c \
 	src/combat.c src/entity.c src/movement.c src/shopmenu.c \
@@ -25,6 +26,13 @@ mapdraw_SOURCES = maps/mapdata.c maps/mapdraw.h maps/mapedit.c \
 	maps/mapfile.c maps/mapent.c maps/mapshared.c src/disk.c \
 	include/disk.h include/structs.h
 mapdraw_LDADD = $(ALLEGRO_LIBS)
+
+mapdraw2_SOURCES = maps/mapdraw2.c maps/mapdraw2.h \
+	maps/mainwindow.c maps/mapedit2.c maps/mapedit2.h \
+	maps/mapshared.c maps/mapdraw.h src/disk.c \
+        include/disk.h include/structs.h
+mapdraw2_LDADD = $(GTK_LIBS) $(ALLEGRO_LIBS)
+mapdraw2_CPPFLAGS = $(GTK_CFLAGS) $(WARNING_CFLAGS)
 
 mapdiff_SOURCES = maps/mapdraw.h maps/mapdiff.c src/disk.c \
 	include/disk.h include/structs.h
@@ -89,7 +97,8 @@ EXTRA_DIST = scripts/bridge2.lua scripts/dville.lua \
 	scripts/town6.lua scripts/cave6b.lua scripts/manor.lua \
 	scripts/town7.lua scripts/town8.lua scripts/coliseum.lua \
 	scripts/pass.lua scripts/tunnel.lua scripts/cult.lua \
-	scripts/shrine.lua Mac/Info.plist Mac/KQ-icon.icns
+	scripts/shrine.lua Mac/Info.plist Mac/KQ-icon.icns \
+        maps/mapdraw2.glade
 
 dist_gfx_DATA = data/kqsnd.dat data/mpcx.dat data/ssprites.dat \
 	data/hero.kq data/tileset.kq data/allstat.mon data/resabil.mon
@@ -109,6 +118,6 @@ dist_man_MANS = debian/kq.6
 AM_CFLAGS = -I$(top_srcdir)/include -DKQ_BIN=\"$(bindir)/KQ$(EXEEXT)\" -DKQ_DATA=\"$(pkgdatadir)\"
 
 if BUNDLE
-all-am: Makefile $(PROGRAMS) $(MANS) $(DATA) config.h KQ.app
+all-local: KQ.app
 endif BUNDLE
 
