@@ -27,9 +27,9 @@
  */
 
 #include <string.h>
-#include <allegro.h>
-#include <allegro/internal/aintern.h>
 #include "kq.h"
+
+#include <allegro/internal/aintern.h>
 #include "fade.h"
 #include "draw.h"
 #include "music.h"

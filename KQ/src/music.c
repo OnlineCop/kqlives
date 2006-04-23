@@ -19,19 +19,19 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#include <string.h>
-#include <allegro.h>
 /*! \file
  * \brief In-game music routines
  *
  * Handles playing and pausing music in the game.
- * Interfaces to wither JGMOD or DUMB, depending on #defines
+ * Interfaces to either JGMOD or DUMB, depending on #defines
  */
 
+#include <string.h>
+
+#include "kq.h"
 #ifndef KQ_USE_JGMOD            /* { */
 /* DUMB version of music */
 #include <aldumb.h>
-#include "kq.h"
 #include "music.h"
 
 /* private variables */

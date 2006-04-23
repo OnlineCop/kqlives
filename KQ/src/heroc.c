@@ -34,10 +34,10 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "kq.h"
 #include "setup.h"
 #include "eqpmenu.h"
 #include "draw.h"
-#include "kq.h"
 #include "heroc.h"
 #include "combat.h"
 #include "selector.h"

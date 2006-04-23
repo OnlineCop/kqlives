@@ -29,8 +29,8 @@
 
 #include <math.h>
 #include <string.h>
-#include <allegro.h>
 #include <stdio.h>
+
 #include "kq.h"
 #include "scrnshot.h"
 

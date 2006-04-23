@@ -31,11 +31,11 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "kq.h"
 #include "setup.h"
 #include "menu.h"
 #include "itemmenu.h"
 #include "eqpmenu.h"
-#include "kq.h"
 #include "draw.h"
 #include "res.h"
 

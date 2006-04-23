@@ -36,12 +36,10 @@
 #include <ctype.h>
 #include <string.h>
 
-#include <allegro.h>
-/*#include <allegro/internal/aintern.h>*/
+#include "kq.h"
 
 #include "setup.h"
 #include "fade.h"
-#include "kq.h"
 #include "draw.h"
 #include "sgame.h"
 /*#include "kqsnd.h"*/

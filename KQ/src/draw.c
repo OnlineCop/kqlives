@@ -31,8 +31,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
-#include "setup.h"
+
 #include "kq.h"
+#include "setup.h"
 #include "music.h"
 #include "draw.h"
 #include "combat.h"

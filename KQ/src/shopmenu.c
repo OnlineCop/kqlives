@@ -29,10 +29,10 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "kq.h"
 #include "setup.h"
 #include "shopmenu.h"
 #include "itemmenu.h"
-#include "kq.h"
 #include "draw.h"
 #include "res.h"
 #include "progress.h"

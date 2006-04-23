@@ -56,8 +56,6 @@
 #endif
 #endif
 
-#include <allegro.h>
-
 #include "kq.h"
 #include "draw.h"
 #include "entity.h"
@@ -1850,13 +1848,20 @@ void kq_yield (void)
    else
       rest(cpu_usage - 1);
 
-// #if (ALLEGRO_VERSION >= 4 && ALLEGRO_SUB_VERSION >= 2)
-//    rest (1);
-// #else
-//    yield_timeslice ();
-// #endif
 }
 
+/*! \mainpage KQ - The Classic Computer Role-Playing Game
+ * 
+ * Take the part of one of eight mighty heroes as you search for the
+ * Staff of Xenarum.  Visit over twenty different locations, fight a
+ * multitude of evil monsters, wield deadly weapons and cast powerful
+ * spells. On your quest, you will find out how the Oracle knows
+ * everything, who killed the former master of the Embers guild, why
+ * no-one trusts the old man in the manor, and what exactly is
+ * terrorizing the poor Denorians.
+ *
+ * KQ is licensed under the GPL.
+ */
 
 /*! \page treasure A Note on Treasure
  *

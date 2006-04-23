@@ -19,8 +19,8 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#include "res.h"
 #include "kq.h"
+#include "res.h"
 #include "allegro.h"
 
 

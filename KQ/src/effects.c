@@ -29,9 +29,9 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "kq.h"
 #include "setup.h"
 #include "effects.h"
-#include "kq.h"
 #include "itemmenu.h"
 #include "draw.h"
 #include "combat.h"
