@@ -60,8 +60,9 @@ endif
 #  console when running the game.                                             #
 #                                                                             #
 COMPILER_FLAGS += -mwindows
-LDFLAGS += -mwindows $(addprefix -l,$(LIBRARY))
-FILES += win.c winres.rc
+LDFLAGS += -mwindows 
+LDLIBS += $(addprefix -l,$(LIBRARY))
+EXTRAFILES = win.c winres.rc
 
 #                                                                             #
 #  Generate the object files.                                                 #
