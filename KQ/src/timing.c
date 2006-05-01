@@ -37,7 +37,8 @@
 #include "timing.h"
 #include "music.h"
 
-static int mfrate; static int frate;
+static int mfrate;
+static int frate;
 
 #ifdef HAVE_SYS_SELECT_H
 #include <sys/select.h>
@@ -51,7 +52,7 @@ static int mfrate; static int frate;
  */
 void wait (long ms)
 {
-   /* dumb's doc says to call poll_music each bufsize / freq seconds*/
+   /* dumb's doc says to call poll_music each bufsize / freq seconds */
    static const int delay = 1000 * 4096 * 2 / 44100;
    struct timeval timeout = { 0, 0 };
    while (ms > 0) {
@@ -62,8 +63,8 @@ void wait (long ms)
          timeout.tv_usec = ms * 1000;
          ms = 0;
       }
-      select(0, NULL, NULL, NULL, &timeout);
-      
+      select (0, NULL, NULL, NULL, &timeout);
+
       poll_music ();
    }
 }
@@ -79,23 +80,23 @@ void wait (long ms)
  * \param   fps The targeted frames per second
  * \returns The actual frames per second
  */
-int limit_frame_rate(int fps)
+int limit_frame_rate (int fps)
 {
    static struct timeval last_exec = { 0, 0 };
    struct timeval tv = { 0, 0 };
    struct timeval timeout = { 0, 0 };
    time_t seconds;
-   gettimeofday(&tv, 0);
+   gettimeofday (&tv, 0);
    /* The time between now and (last exec + delay) */
    timeout.tv_usec = last_exec.tv_usec - tv.tv_usec + (1000000 / fps)
-			+ 1000000 * (last_exec.tv_sec - tv.tv_sec);
+      + 1000000 * (last_exec.tv_sec - tv.tv_sec);
    seconds = last_exec.tv_sec;
    /* Negative waits are not yet possible */
    if (timeout.tv_usec < 0 || !last_exec.tv_sec) {
       last_exec.tv_usec = tv.tv_usec;
       last_exec.tv_sec = tv.tv_sec;
    } else {
-      select(0, NULL, NULL, NULL, &timeout);
+      select (0, NULL, NULL, NULL, &timeout);
       last_exec.tv_usec += (1000000 / fps);
       if (last_exec.tv_usec > 1000000) {
          ++last_exec.tv_sec;
@@ -103,7 +104,8 @@ int limit_frame_rate(int fps)
       }
    }
    if (seconds != last_exec.tv_sec) {
-      mfrate = frate; frate = 0;
+      mfrate = frate;
+      frate = 0;
    }
    ++frate;
    return mfrate;
@@ -113,14 +115,14 @@ int limit_frame_rate(int fps)
 
 void wait (long ms)
 {
-   /* dumb's doc says to call poll_music each bufsize / freq seconds*/
+   /* dumb's doc says to call poll_music each bufsize / freq seconds */
    static const int delay = 1000 * 4096 * 4 / 44100;
    while (ms > 0) {
       if (ms > delay) {
-         Sleep(delay);
+         Sleep (delay);
          ms -= delay;
       } else {
-         Sleep(ms);
+         Sleep (ms);
          ms = 0;
       }
       poll_music ();
@@ -129,21 +131,22 @@ void wait (long ms)
 
 
 
-int limit_frame_rate(int fps)
+int limit_frame_rate (int fps)
 {
    static long last_exec = 0;
    long now, delay;
-   now = GetTickCount();
+   now = GetTickCount ();
    delay = last_exec - now + 1000 / fps;
-   skips = delay;
+//   skips = delay;
    if (delay < 0) {
       last_exec = now;
    } else {
       last_exec += 1000 / fps;
-      Sleep(delay);
+      Sleep (delay);
    }
    if (now / 1000 != last_exec / 1000) {
-      mfrate = frate; frate = 0;
+      mfrate = frate;
+      frate = 0;
    }
    ++frate;
    return mfrate;
@@ -173,7 +176,7 @@ void wait (long ms)
 
 
 
-int limit_frame_rate(int fps)
+int limit_frame_rate (int fps)
 {
    static int last_ksec = 0;
    vsync ();

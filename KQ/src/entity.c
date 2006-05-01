@@ -43,7 +43,8 @@
 static int entity_near (int, int, int);
 static void speed_adjust (int);
 static void process_entity (int);
-static void lastm_check (int);
+// TT: Is this even used?
+// static void lastm_check (int);
 static void follow (int tx, int ty);
 static void wander (int);
 static void player_move (void);
@@ -146,8 +147,8 @@ static void speed_adjust (int target_entity)
  */
 static void process_entity (int target_entity)
 {
-   s_entity * ent = &g_ent[target_entity];
-   s_player * player = 0;
+   s_entity *ent = &g_ent[target_entity];
+   s_player *player = 0;
    ent->scount = 0;
    if (ent->active) {
       if (!ent->moving) {
@@ -188,7 +189,10 @@ static void process_entity (int target_entity)
          }
          if (ent->framectr > 20)
             ent->framectr = 0;
-         if ((ent->movcnt == 0 /*|| (ent->tilex * 16 == ent->x && ent->tiley * 16 == ent->y)*/) && ent->moving) {
+         if (ent->movcnt == 0 && ent->moving) {
+            /* Was:
+             * if ((ent->movcnt == 0 || (ent->tilex * 16 == ent->x && ent->tiley * 16 == ent->y)) && ent->moving) {
+             */
             ent->moving = 0;
             if (target_entity < PSIZE) {
                player = &party[pidx[target_entity]];
@@ -263,7 +267,8 @@ static void follow (int tx, int ty)
       if (i == 1)
          move (i, tx - g_ent[i].tilex, ty - g_ent[i].tiley);
       else
-         move (i, g_ent[i - 1].tilex - g_ent[i].tilex, g_ent[i - 1].tiley - g_ent[i].tiley);
+         move (i, g_ent[i - 1].tilex - g_ent[i].tilex,
+               g_ent[i - 1].tiley - g_ent[i].tiley);
    }
 }
 
@@ -324,7 +329,7 @@ static void player_move (void)
       do_luacheat ();
    }
 #endif
-   move(0, right ? 1 : left ? -1 : 0, down ? 1 : up ? -1 : 0);
+   move (0, right ? 1 : left ? -1 : 0, down ? 1 : up ? -1 : 0);
    if (g_ent[0].moving) {
       follow (oldx, oldy);
    }
@@ -343,8 +348,8 @@ static void player_move (void)
 static int move (int target_entity, int dx, int dy)
 {
    int tx, ty, oldfacing;
-   s_entity * ent = &g_ent[target_entity];
-   
+   s_entity *ent = &g_ent[target_entity];
+
    tx = ent->x / 16;
    ty = ent->y / 16;
    oldfacing = ent->facing;
@@ -363,18 +368,26 @@ static int move (int target_entity, int dx, int dy)
       return 0;
    if (ent->obsmode == 1) {
       if (dx && obstruction (tx, ty, dx, 0, FALSE)) {
-         /* Try to avoid the obstacle if facing it*/
-         if (dy != -1 && oldfacing == ent->facing && !obstruction (tx, ty + 1, dx, 0, TRUE) && !obstruction (tx, ty, 0, 1, TRUE))
+         /* Try to avoid the obstacle if facing it */
+         if (dy != -1 && oldfacing == ent->facing
+             && !obstruction (tx, ty + 1, dx, 0, TRUE)
+             && !obstruction (tx, ty, 0, 1, TRUE))
             dy = 1;
-         else if (dy != 1 && oldfacing == ent->facing && !obstruction (tx, ty - 1, dx, 0, TRUE) && !obstruction (tx, ty, 0, -1, TRUE))
+         else if (dy != 1 && oldfacing == ent->facing
+                  && !obstruction (tx, ty - 1, dx, 0, TRUE)
+                  && !obstruction (tx, ty, 0, -1, TRUE))
             dy = -1;
          else
             dx = 0;
       }
       if (dy && obstruction (tx, ty, 0, dy, FALSE)) {
-         if (dx != -1 && oldfacing == ent->facing && !obstruction (tx + 1, ty, 0, dy, TRUE) && !obstruction (tx, ty, 1, 0, TRUE))
+         if (dx != -1 && oldfacing == ent->facing
+             && !obstruction (tx + 1, ty, 0, dy, TRUE)
+             && !obstruction (tx, ty, 1, 0, TRUE))
             dx = 1;
-         else if (dx != 1 && oldfacing == ent->facing && !obstruction (tx - 1, ty, 0, dy, TRUE) && !obstruction (tx, ty, -1, 0, TRUE))
+         else if (dx != 1 && oldfacing == ent->facing
+                  && !obstruction (tx - 1, ty, 0, dy, TRUE)
+                  && !obstruction (tx, ty, -1, 0, TRUE))
             dx = -1;
          else
             dy = 0;
@@ -406,7 +419,7 @@ static int move (int target_entity, int dx, int dy)
  * \param   oy Original y-coord position
  * \param   mx Amount to move -1..+1
  * \param   my Amount to move -1..+1
- * \param   check_entity Wether to return 1 if an entity is at the target
+ * \param   check_entity Whether to return 1 if an entity is at the target
  * \returns 1 if path is obstructed, 0 otherwise
  */
 static int obstruction (int ox, int oy, int mx, int my, int check_entity)
@@ -439,10 +452,12 @@ static int obstruction (int ox, int oy, int mx, int my, int check_entity)
       if (son == 3 || sto == 5)
          return 1;
    }
-	 
-   if (check_entity) for (i = 0; i < MAX_ENT; i++) {
-      if (g_ent[i].active && tox == g_ent[i].tilex && toy == g_ent[i].tiley) {
-			   return 1;
+
+   if (check_entity) {
+      for (i = 0; i < MAX_ENT; i++) {
+         if (g_ent[i].active && tox == g_ent[i].tilex && toy == g_ent[i].tiley) {
+            return 1;
+         }
       }
    }
    return 0;

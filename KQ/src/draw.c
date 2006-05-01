@@ -80,16 +80,17 @@ void blit2screen (int xw, int yw)
 {
    static int frate;
    if (show_frate == 1) {
-     char fbuf[16];
+      char fbuf[16];
       sprintf (fbuf, "%3d", frate);
-      rectfill(double_buffer, xofs, yofs, xofs+24, yofs+8, makecol(0,0,0)); 
+      rectfill (double_buffer, xofs, yofs, xofs + 24, yofs + 8,
+                makecol (0, 0, 0));
       print_font (double_buffer, xofs, yofs, fbuf, FNORMAL);
    }
    if (stretch_view == 1)
       stretch_blit (double_buffer, screen, xw, yw, 320, 240, 0, 0, 640, 480);
    else
       blit (double_buffer, screen, xw, yw, 0, 0, 320, 240);
-   frate = limit_frame_rate(25);
+   frate = limit_frame_rate (25);
 }
 
 
@@ -329,7 +330,8 @@ static void drawchar (int xw, int yw)
          }
          if (is_forestsquare (g_ent[i].tilex, g_ent[i].tiley)) {
             f = !g_ent[i].moving;
-            if (g_ent[i].moving && is_forestsquare (g_ent[i].x / 16, g_ent[i].y / 16))
+            if (g_ent[i].moving
+                && is_forestsquare (g_ent[i].x / 16, g_ent[i].y / 16))
                f = 1;
             if (f) {
                clear_to_color (tc, 0);

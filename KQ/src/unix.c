@@ -75,17 +75,14 @@ const char *kqres (int dir, const char *file)
          strcpy (user_dir, ".");
       }
       /* Now the data directory */
-      get_executable_name(exe, sizeof(exe));
-      if (strcmp(exe, KQ_BIN)==0)
-	{
-	  /* It's in its proper installed location */
-	  strcpy(game_dir, KQ_DATA);
-	}
-      else
-	{
-	  /* Not installed, development version */
-	  strcpy(game_dir, ".");
-	}
+      get_executable_name (exe, sizeof (exe));
+      if (strcmp (exe, KQ_BIN) == 0) {
+         /* It's in its proper installed location */
+         strcpy (game_dir, KQ_DATA);
+      } else {
+         /* Not installed, development version */
+         strcpy (game_dir, ".");
+      }
       init_path = 1;
    }
    switch (dir) {

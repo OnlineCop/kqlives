@@ -320,7 +320,8 @@ static void parse_jb_setup (void)
  * \param   value The setting (e.g. "Yes")
  * \param   color The foreground colour of the text
  */
-static void citem (int y, const char *caption, const char *value, const int color)
+static void citem (int y, const char *caption, const char *value,
+                   const int color)
 {
    print_font (double_buffer, 48 + xofs, y + yofs, caption, color);
    print_font (double_buffer, 280 - 8 * strlen (value) + xofs, y + yofs, value,
@@ -400,8 +401,8 @@ void config_menu (void)
       citem (row[5], "Down Key:", kq_keyname (kdown), FNORMAL);
       citem (row[6], "Left Key:", kq_keyname (kleft), FNORMAL);
       citem (row[7], "Right Key:", kq_keyname (kright), FNORMAL);
-      citem (row[8],  "Confirm Key:", kq_keyname (kalt), FNORMAL);
-      citem (row[9],  "Cancel Key:", kq_keyname (kctrl), FNORMAL);
+      citem (row[8], "Confirm Key:", kq_keyname (kalt), FNORMAL);
+      citem (row[9], "Cancel Key:", kq_keyname (kctrl), FNORMAL);
       citem (row[10], "Menu Key:", kq_keyname (kenter), FNORMAL);
       citem (row[11], "System Menu Key:", kq_keyname (kesc), FNORMAL);
       citem (row[12], "Sound System:", is_sound ? "ON" : "OFF", FNORMAL);

@@ -55,6 +55,7 @@ const char *kqres (int dir, const char *file)
    SHGETFOLDERPATH SHGetFolderPath;
    char *home;
    static char ans[PATH_MAX];
+
    if (!init_path) {
       home = ans;
       /* Get home directory; this bit originally written by SH */
@@ -84,6 +85,7 @@ const char *kqres (int dir, const char *file)
       strcpy (game_dir, ".");
       init_path = 1;
    }
+
    switch (dir) {
    case DATA_DIR:
       sprintf (ans, "%s/data/%s", game_dir, file);
