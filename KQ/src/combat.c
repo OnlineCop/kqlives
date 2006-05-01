@@ -812,10 +812,32 @@ void draw_fighter (int dude, int dcur)
    if (fr->sts[S_STONE] > 0)
       convert_cframes (dude, 2, 12, 0);
 
-   if (fr->sts[S_ETHER] > 0)
+   if (fr->sts[S_ETHER] > 0) {
       draw_trans_sprite (double_buffer, cframes[dude][ff], xx, yy);
-   else
+   } else {
+      if (dude < 2) {
+         // Your party
+         BITMAP *shad = create_bitmap (cframes[dude][ff]->w * 2 / 3,
+                                       cframes[dude][ff]->h / 4);
+         clear_bitmap (shad);
+         ellipsefill (shad, shad->w / 2, shad->h / 2, shad->w / 2, shad->h / 2,
+                      makecol (128, 128, 128));
+         draw_trans_sprite (double_buffer, shad, xx + (shad->w / 3) - 2,
+                            yy + cframes[dude][ff]->h - shad->h / 2);
+         destroy_bitmap (shad);
+      } else {
+         // Enemy
+         BITMAP *shad =
+            create_bitmap (cframes[dude][ff]->w, cframes[dude][ff]->h / 4);
+         clear_bitmap (shad);
+         ellipsefill (shad, shad->w / 2, shad->h / 2, shad->w / 2, shad->h / 2,
+                      makecol (128, 128, 128));
+         draw_trans_sprite (double_buffer, shad, xx,
+                            yy + cframes[dude][ff]->h - shad->h / 2);
+         destroy_bitmap (shad);
+      }
       draw_sprite (double_buffer, cframes[dude][ff], xx, yy);
+   }
 
    if (dcur == 1)
       draw_sprite (double_buffer, bptr, xx + (fr->cw / 2) - 8, yy - 8);
