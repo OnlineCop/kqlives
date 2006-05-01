@@ -39,7 +39,7 @@
 #include <lua50/lua.h>
 #else
 #include <lua.h>
-#endif
+#endif /* HAVE_LUA50_LUA_H */
 #endif /* KQ_SCAN_DEPEND */
 #include "intrface.h"
 #include "setup.h"
@@ -66,8 +66,6 @@
 /* Defines */
 #define LUA_ENT_KEY "_ent"
 #define LUA_PLR_KEY "_obj"
-
-
 #define NUM_IFUNCS   142
 
 struct luaL_reg
@@ -75,8 +73,6 @@ struct luaL_reg
    const char *name;
    lua_CFunction func;
 };
-
-
 
 
 /*  internal functions  */
@@ -156,6 +152,8 @@ static int KQ_set_shadow (lua_State *);
 static int KQ_set_tile_all (lua_State *);
 static int KQ_set_desc (lua_State *);
 static int KQ_set_foreground (lua_State *);
+static int KQ_set_midground (lua_State *);
+static int KQ_set_background (lua_State *);
 static int KQ_set_holdfade (lua_State *);
 static int KQ_get_noe (lua_State *);
 static int KQ_set_noe (lua_State *);
@@ -230,6 +228,7 @@ static int KQ_set_map_mode (lua_State *);
 static int party_getter (lua_State *);
 static int KQ_add_timer (lua_State *);
 static int KQ_add_quest_item (lua_State *);
+
 /* New functions */
 #if 0
 /* Not used yet */
@@ -324,6 +323,8 @@ static const struct luaL_reg lrs[] = {
    {"set_tile_all", KQ_set_tile_all},
    {"set_desc", KQ_set_desc},
    {"set_foreground", KQ_set_foreground},
+   {"set_midground", KQ_set_midground},
+   {"set_background", KQ_set_background},
    {"set_holdfade", KQ_set_holdfade},
    {"get_noe", KQ_get_noe},
    {"set_noe", KQ_set_noe},
@@ -420,7 +421,6 @@ static struct s_field
 }
 
 
-
 // *INDENT-OFF*
 fields[] = {
    // Name of entity
@@ -482,6 +482,7 @@ static void fieldsort (void)
 }
 
 
+
 /*! \brief Get the field number from a name.
  *
  * Note that the field list MUST be sorted first
@@ -503,15 +504,16 @@ static int get_field (const char *n)
 
 
 /*
- PH's own notes:
- party[] - chrs in play
- player[] - all players; this is read-only
- entity[] - all entities (NPCs); this array is read-only, though the properties of the ents can change
- chrs in play appear in party and player
- chrs not in play appear in player
- npc appear in entity
- also want ability to add custom properties
- also want it to change dynamically
+ * PH's own notes:
+ * party[] - chrs in play
+ * player[] - all players; this is read-only
+ * entity[] - all entities (NPCs); this array is read-only, though the
+ *            properties of the ents can change
+ * chrs in play appear in party and player
+ * chrs not in play appear in player
+ * npc appear in entity
+ * also want ability to add custom properties
+ * also want it to change dynamically
  */
 
 /*! \brief Get party array
@@ -902,6 +904,7 @@ static char marker_name[255];
 static int tmx, tmy, tmvx, tmvy;
 static enum {NOT_CHANGING, CHANGE_TO_COORDS, CHANGE_TO_MARKER } changing_map;
 
+
 /*! \brief Find a marker
  *
  * Find the named marker on the current map.
@@ -912,23 +915,24 @@ static enum {NOT_CHANGING, CHANGE_TO_COORDS, CHANGE_TO_MARKER } changing_map;
  * \param required if non-zero throw an error if the marker isn't found
  * \returns pointer to marker or NULL if name not found
  */
-static s_marker* find_marker(const char* name, int required) 
+static s_marker *find_marker (const char *name, int required)
 {
-  s_marker* m;
-  for (m = g_map.markers; m < g_map.markers + g_map.num_markers; ++m) {
-    if (strcmp (name, m->name) == 0) {
-      return m;
-    }
-  }
-  if (required) {
-    /* Error, marker name not found */
-    sprintf(strbuf, "Marker %s not found.", name);
-    lua_pushstring(theL, strbuf);
-    lua_error(theL);
-    /* never returns here... */
-  }
-  return NULL;
+   s_marker *m;
+   for (m = g_map.markers; m < g_map.markers + g_map.num_markers; ++m) {
+      if (strcmp (name, m->name) == 0) {
+         return m;
+      }
+   }
+   if (required) {
+      /* Error, marker name not found */
+      sprintf (strbuf, "Marker %s not found.", name);
+      lua_pushstring (theL, strbuf);
+      lua_error (theL);
+      /* never returns here... */
+   }
+   return NULL;
 }
+
 
 /*! \brief Process HERO1 and HERO2 pseudo-entity numbers
  *
@@ -1910,28 +1914,26 @@ static int KQ_set_all_equip (lua_State * L)
  *          ::3 New value \n
  *          Or:           \n
  *          ::1 marker    \n
- *          ::2 New value 
+ *          ::2 New value
  * \returns 0 (Nothing returned)
  */
 static int KQ_set_btile (lua_State * L)
 {
-  if (lua_type(L, 1) == LUA_TSTRING)
-    {
+   if (lua_type (L, 1) == LUA_TSTRING) {
       /* set_btile("marker", value) */
       int x, y;
-      s_marker* m = find_marker(lua_tostring(L, 1), 1);
-      x=m->x;
-      y=m->y;
-      set_btile(x, y, (int) lua_tonumber(L, 2));
-    }
-  else 
-    {
+      s_marker *m = find_marker (lua_tostring (L, 1), 1);
+      x = m->x;
+      y = m->y;
+      set_btile (x, y, (int) lua_tonumber (L, 2));
+   } else {
       /* set_btile(x, y, value) */
       set_btile ((int) lua_tonumber (L, 1), (int) lua_tonumber (L, 2),
-		 (int) lua_tonumber (L, 3));
-    }
-  return 0;
+                 (int) lua_tonumber (L, 3));
+   }
+   return 0;
 }
+
 
 
 /*! Set middle tile
@@ -1942,28 +1944,27 @@ static int KQ_set_btile (lua_State * L)
  *          ::3 New value \n
  *          Or:           \n
  *          ::1 marker    \n
- *          ::2 New value 
+ *          ::2 New value
  * \returns 0 (Nothing returned)
  */
 static int KQ_set_mtile (lua_State * L)
 {
-  if (lua_type(L, 1) == LUA_TSTRING)
-    {
+   if (lua_type (L, 1) == LUA_TSTRING) {
       /* set_mtile("marker", value) */
       int x, y;
-      s_marker* m = find_marker(lua_tostring(L, 1), 1);
-      x=m->x;
-      y=m->y;
-      set_mtile(x, y, (int) lua_tonumber(L, 2));
-    }
-  else 
-    {
+      s_marker *m = find_marker (lua_tostring (L, 1), 1);
+      x = m->x;
+      y = m->y;
+      set_mtile (x, y, (int) lua_tonumber (L, 2));
+   } else {
       /* set_mtile(x, y, value) */
       set_mtile ((int) lua_tonumber (L, 1), (int) lua_tonumber (L, 2),
-		 (int) lua_tonumber (L, 3));
-    }
-  return 0;
+                 (int) lua_tonumber (L, 3));
+   }
+   return 0;
 }
+
+
 
 /*! Set foreground tile
  *
@@ -1973,28 +1974,26 @@ static int KQ_set_mtile (lua_State * L)
  *          ::3 New value \n
  *          Or:           \n
  *          ::1 marker    \n
- *          ::2 New value 
+ *          ::2 New value
  * \returns 0 (Nothing returned)
  */
 static int KQ_set_ftile (lua_State * L)
 {
-  if (lua_type(L, 1) == LUA_TSTRING)
-    {
+   if (lua_type (L, 1) == LUA_TSTRING) {
       /* set_ftile("marker", value) */
       int x, y;
-      s_marker* m = find_marker(lua_tostring(L, 1), 1);
-      x=m->x;
-      y=m->y;
-      set_ftile(x, y, (int) lua_tonumber(L, 2));
-    }
-  else 
-    {
+      s_marker *m = find_marker (lua_tostring (L, 1), 1);
+      x = m->x;
+      y = m->y;
+      set_ftile (x, y, (int) lua_tonumber (L, 2));
+   } else {
       /* set_ftile(x, y, value) */
       set_ftile ((int) lua_tonumber (L, 1), (int) lua_tonumber (L, 2),
-		 (int) lua_tonumber (L, 3));
-    }
-  return 0;
+                 (int) lua_tonumber (L, 3));
+   }
+   return 0;
 }
+
 
 
 /*! Set obstruction
@@ -2005,28 +2004,26 @@ static int KQ_set_ftile (lua_State * L)
  *          ::3 New value \n
  *          Or:           \n
  *          ::1 marker    \n
- *          ::2 New value 
+ *          ::2 New value
  * \returns 0 (Nothing returned)
  */
 static int KQ_set_obs (lua_State * L)
 {
-  if (lua_type(L, 1) == LUA_TSTRING)
-    {
+   if (lua_type (L, 1) == LUA_TSTRING) {
       /* set_obs("marker", value) */
       int x, y;
-      s_marker* m = find_marker(lua_tostring(L, 1), 1);
-      x=m->x;
-      y=m->y;
-      set_obs(x, y, (int) lua_tonumber(L, 2));
-    }
-  else 
-    {
+      s_marker *m = find_marker (lua_tostring (L, 1), 1);
+      x = m->x;
+      y = m->y;
+      set_obs (x, y, (int) lua_tonumber (L, 2));
+   } else {
       /* set_obs(x, y, value) */
       set_obs ((int) lua_tonumber (L, 1), (int) lua_tonumber (L, 2),
-		 (int) lua_tonumber (L, 3));
-    }
-  return 0;
+               (int) lua_tonumber (L, 3));
+   }
+   return 0;
 }
+
 
 
 /*! Set zone number at location
@@ -2037,28 +2034,26 @@ static int KQ_set_obs (lua_State * L)
  *          ::3 New value \n
  *          Or:           \n
  *          ::1 marker    \n
- *          ::2 New value 
+ *          ::2 New value
  * \returns 0 (Nothing returned)
  */
 static int KQ_set_zone (lua_State * L)
 {
-  if (lua_type(L, 1) == LUA_TSTRING)
-    {
+   if (lua_type (L, 1) == LUA_TSTRING) {
       /* set_zone("marker", value) */
       int x, y;
-      s_marker* m = find_marker(lua_tostring(L, 1), 1);
-      x=m->x;
-      y=m->y;
-      set_zone(x, y, (int) lua_tonumber(L, 2));
-    }
-  else 
-    {
+      s_marker *m = find_marker (lua_tostring (L, 1), 1);
+      x = m->x;
+      y = m->y;
+      set_zone (x, y, (int) lua_tonumber (L, 2));
+   } else {
       /* set_zone(x, y, value) */
       set_zone ((int) lua_tonumber (L, 1), (int) lua_tonumber (L, 2),
-		 (int) lua_tonumber (L, 3));
-    }
-  return 0;
+                (int) lua_tonumber (L, 3));
+   }
+   return 0;
 }
+
 
 
 /*! Set shadow number at location
@@ -2069,28 +2064,27 @@ static int KQ_set_zone (lua_State * L)
  *          ::3 New value \n
  *          Or:           \n
  *          ::1 marker    \n
- *          ::2 New value 
+ *          ::2 New value
  * \returns 0 (Nothing returned)
  */
 static int KQ_set_shadow (lua_State * L)
 {
-  if (lua_type(L, 1) == LUA_TSTRING)
-    {
+   if (lua_type (L, 1) == LUA_TSTRING) {
       /* set_shadow("marker", value) */
       int x, y;
-      s_marker* m = find_marker(lua_tostring(L, 1), 1);
-      x=m->x;
-      y=m->y;
-      set_shadow(x, y, (int) lua_tonumber(L, 2));
-    }
-  else 
-    {
+      s_marker *m = find_marker (lua_tostring (L, 1), 1);
+      x = m->x;
+      y = m->y;
+      set_shadow (x, y, (int) lua_tonumber (L, 2));
+   } else {
       /* set_shadow(x, y, value) */
       set_shadow ((int) lua_tonumber (L, 1), (int) lua_tonumber (L, 2),
-		 (int) lua_tonumber (L, 3));
-    }
-  return 0;
+                  (int) lua_tonumber (L, 3));
+   }
+   return 0;
 }
+
+
 
 static int KQ_set_tile_all (lua_State * L)
 {
@@ -2199,6 +2193,28 @@ static int KQ_set_foreground (lua_State * L)
 
 
 
+static int KQ_set_midground (lua_State * L)
+{
+   int a = (int) lua_tonumber (L, 1);
+
+   if (a == 0 || a == 1)
+      draw_middle = a;
+   return 0;
+}
+
+
+
+static int KQ_set_background (lua_State * L)
+{
+   int a = (int) lua_tonumber (L, 1);
+
+   if (a == 0 || a == 1)
+      draw_background = a;
+   return 0;
+}
+
+
+
 static int KQ_set_holdfade (lua_State * L)
 {
    int a = (int) lua_tonumber (L, 1);
@@ -2263,7 +2279,7 @@ static int KQ_set_sstone (lua_State * L)
 
 
 /*! \brief Automatically find a path for the entity to take
- * 
+ *
  * \param L::1 Index of entity to move
  * \param L::2 x-coord to go to
  * \param L::3 y-coord to go to
@@ -2271,7 +2287,7 @@ static int KQ_set_sstone (lua_State * L)
  *             0 - Keep entity alive
  *             1 - Kill (remove) entity
  *        Or:
- * \param L::2 Marker name to go to 
+ * \param L::2 Marker name to go to
  * \param L::3 Kill entity after move is complete
  *             0 - Keep entity alive
  *             1 - Kill (remove) entity
@@ -2283,16 +2299,15 @@ static int KQ_move_entity (lua_State * L)
    int result;
    char buffer[1024];
 
-   if (lua_type(L, 2) == LUA_TSTRING) {
-     s_marker* m = find_marker(lua_tostring(L, 2), 1);
-     target_x = m->x;
-     target_y = m->y;
-     kill = (int) lua_tonumber (L, 3);
-   }
-   else {
-     target_x = (int) lua_tonumber (L, 2);
-     target_y = (int) lua_tonumber (L, 3);
-     int kill = (int) lua_tonumber (L, 4);
+   if (lua_type (L, 2) == LUA_TSTRING) {
+      s_marker *m = find_marker (lua_tostring (L, 2), 1);
+      target_x = m->x;
+      target_y = m->y;
+      kill = (int) lua_tonumber (L, 3);
+   } else {
+      target_x = (int) lua_tonumber (L, 2);
+      target_y = (int) lua_tonumber (L, 3);
+      kill = (int) lua_tonumber (L, 4);
    }
 
    result = find_path (entity_id, g_ent[entity_id].tilex,
@@ -2307,6 +2322,8 @@ static int KQ_move_entity (lua_State * L)
    return 0;
 }
 
+
+
 static int KQ_set_warp (lua_State * L)
 {
    int a = (int) lua_tonumber (L, 1);
@@ -2317,6 +2334,8 @@ static int KQ_set_warp (lua_State * L)
    g_map.warpy = (int) lua_tonumber (L, 3);
    return 0;
 }
+
+
 
 /* Whether the camera view follows the players as they walk around */
 static int KQ_set_vfollow (lua_State * L)
@@ -2713,21 +2732,22 @@ static int KQ_calc_viewport (lua_State * L)
 static int KQ_change_map (lua_State * L)
 {
    strcpy (tmap_name, (char *) lua_tostring (L, 1));
-   if (lua_type(L, 2) == LUA_TSTRING) {
-     /* it's the ("map", "marker") form */
-     strcpy (marker_name, lua_tostring (L, 2));
-     changing_map = CHANGE_TO_MARKER;
-   }
-   else {
-     /* (assume) it's the ("map", x, y, x, y) form */
-     tmx = (int) lua_tonumber (L, 2);
-     tmy = (int) lua_tonumber (L, 3);
-     tmvx = (int) lua_tonumber (L, 4);
-     tmvy = (int) lua_tonumber (L, 5);
-     changing_map = CHANGE_TO_COORDS;
+   if (lua_type (L, 2) == LUA_TSTRING) {
+      /* it's the ("map", "marker") form */
+      strcpy (marker_name, lua_tostring (L, 2));
+      changing_map = CHANGE_TO_MARKER;
+   } else {
+      /* (assume) it's the ("map", x, y, x, y) form */
+      tmx = (int) lua_tonumber (L, 2);
+      tmy = (int) lua_tonumber (L, 3);
+      tmvx = (int) lua_tonumber (L, 4);
+      tmvy = (int) lua_tonumber (L, 5);
+      changing_map = CHANGE_TO_COORDS;
    }
    return 0;
 }
+
+
 
 static int KQ_give_item (lua_State * L)
 {
@@ -2754,26 +2774,25 @@ static int KQ_give_item (lua_State * L)
  */
 static int KQ_warp (lua_State * L)
 {
-  int x, y, s, warpspeed;
-  if (lua_type(L, 1) == LUA_TSTRING) 
-    {
+   int x, y, s, warpspeed;
+   if (lua_type (L, 1) == LUA_TSTRING) {
       /* Format is warp("marker", [speed]) */
-      s_marker* m = find_marker(lua_tostring(L,1), 1);
-      x=m->x;
-      y=m->y;
+      s_marker *m = find_marker (lua_tostring (L, 1), 1);
+      x = m->x;
+      y = m->y;
       s = 2;
-    }
-  else
-    {
+   } else {
       /* Format is warp(x, y, [speed]) */
-      x=(int) lua_tonumber(L, 1);
-      y=(int) lua_tonumber(L,2);
+      x = (int) lua_tonumber (L, 1);
+      y = (int) lua_tonumber (L, 2);
       s = 3;
-    }
-  warpspeed = lua_isnil (L, s) ? 8 : (int) lua_tonumber (L, s);
-  warp (x, y, warpspeed);
-  return 0;
+   }
+   warpspeed = lua_isnil (L, s) ? 8 : (int) lua_tonumber (L, s);
+   warp (x, y, warpspeed);
+   return 0;
 }
+
+
 
 static int KQ_give_xp (lua_State * L)
 {
@@ -2884,6 +2903,12 @@ static int KQ_msg (lua_State * L)
 
 
 
+/*! \brief Move the camera
+ *
+ * \param   L::1 x-coord to move the camera
+ * \param   L::2 y-coord to move the camera
+ * \param   L::3 time it should take to move the camera (speed)
+ */
 static int KQ_move_camera (lua_State * L)
 {
    int xinc = 0, yinc = 0, xtot = 0, ytot = 0;
@@ -2945,8 +2970,9 @@ static int KQ_in_forest (lua_State * L)
 static int KQ_orient_heroes (lua_State * L)
 {
 /*  RB: TODO  */
-   /*if (L != NULL)
+   if (L != NULL)
       L = L;
+   /*
    if (numchrs == 2) {
       lastm[1] = MOVE_NOT;
       if (g_ent[0].tilex == g_ent[1].tilex && g_ent[0].tiley == g_ent[1].tiley) {
@@ -2967,7 +2993,8 @@ static int KQ_orient_heroes (lua_State * L)
             lastm[0] = MOVE_RIGHT;
          return 0;
       }
-   }*/
+   }
+   */
    return 0;
 }
 
@@ -3368,12 +3395,13 @@ int KQ_add_quest_item (lua_State * L)
    return 0;
 }
 
+
 /*! \brief Read file chunk
  *
  * Read in a piece of a file for the Lua system to compile
  *
  * \param L the Lua state (ignored)
- * \param f an Allegro packfile to read from 
+ * \param f an Allegro packfile to read from
  * \param size [out] the number of bytes read
  */
 static const char *filereader (lua_State * L, PACKFILE * f, size_t * size)
@@ -3385,31 +3413,31 @@ static const char *filereader (lua_State * L, PACKFILE * f, size_t * size)
    return buf;
 }
 
+
 /*! \brief Read in a complete file
  *
  * Read in a file and execute it. Executing means
  * defining all the functions etc listed within
  * it.
- * \todo More error checking 
+ * \todo More error checking
  *
- * \param L the Lua state 
+ * \param L the Lua state
  * \param filename the full path of the file to read
  */
-
 int lua_dofile (lua_State * L, const char *filename)
 {
    int retval;
    PACKFILE *f;
    f = pack_fopen (filename, F_READ);
-   if (f == NULL) 
-     {
-       sprintf(strbuf, "Could not open script %s!", filename);
-       program_death(strbuf);
-     }
+   if (f == NULL) {
+      sprintf (strbuf, "Could not open script %s!", filename);
+      program_death (strbuf);
+   }
    retval = lua_load (L, (lua_Chunkreader) filereader, f, filename);
    pack_fclose (f);
    return retval ? retval : lua_pcall (L, 0, LUA_MULTRET, 0);
 }
+
 
 /*! \brief Initialise scripting engine
  *
@@ -3509,13 +3537,13 @@ void do_autoexec (void)
    int oldtop = lua_gettop (theL);
 
 #ifdef DEBUGMODE
-   lua_pushcfunction(theL, KQ_traceback);
+   lua_pushcfunction (theL, KQ_traceback);
    lua_getglobal (theL, "autoexec");
-   lua_pcall (theL, 0, 0, oldtop+1);
+   lua_pcall (theL, 0, 0, oldtop + 1);
 #else
    lua_getglobal (theL, "autoexec");
    lua_call (theL, 0, 0);
-#endif   
+#endif
    lua_settop (theL, oldtop);
    check_map_change ();
 }
@@ -3532,9 +3560,9 @@ void do_postexec (void)
    int oldtop = lua_gettop (theL);
 
 #ifdef DEBUGMODE
-   lua_pushcfunction(theL, KQ_traceback);
+   lua_pushcfunction (theL, KQ_traceback);
    lua_getglobal (theL, "postexec");
-   lua_pcall (theL, 0, 0, oldtop+1);
+   lua_pcall (theL, 0, 0, oldtop + 1);
 #else
    lua_getglobal (theL, "postexec");
    lua_call (theL, 0, 0);
@@ -3611,17 +3639,17 @@ void do_timefunc (const char *funcname)
 #ifdef DEBUGMODE
    lua_pushcfunction (theL, KQ_traceback);
    lua_getglobal (theL, funcname);
-   if (!lua_isnil(theL, -1))
-     lua_pcall (theL, 1, 0, oldtop + 1);
+   if (!lua_isnil (theL, -1))
+      lua_pcall (theL, 1, 0, oldtop + 1);
    else
-     lua_pop(theL, 1);
+      lua_pop (theL, 1);
 #else
    lua_getglobal (theL, funcname);
-   if (!lua_isnil(theL, -1))
-     lua_call (theL, 1, 0);
+   if (!lua_isnil (theL, -1))
+      lua_call (theL, 1, 0);
    else
-     lua_pop(theL, 1);
-#endif   
+      lua_pop (theL, 1);
+#endif
    lua_settop (theL, oldtop);
    check_map_change ();
 }
@@ -3652,19 +3680,21 @@ void do_questinfo (void)
  */
 static void check_map_change (void)
 {
-  switch(changing_map) {
-  case CHANGE_TO_COORDS:
-    change_map (tmap_name, tmx, tmy, tmvx, tmvy);
-    changing_map = NOT_CHANGING;
-    break;
-  case CHANGE_TO_MARKER:
-    change_mapm (tmap_name, marker_name);
-    changing_map = NOT_CHANGING;
-    break;
-  default:
-    break;
-  }
+   switch (changing_map) {
+      case CHANGE_TO_COORDS:
+         change_map (tmap_name, tmx, tmy, tmvx, tmvy);
+         changing_map = NOT_CHANGING;
+         break;
+      case CHANGE_TO_MARKER:
+         change_mapm (tmap_name, marker_name);
+         changing_map = NOT_CHANGING;
+         break;
+      default:
+         break;
+   }
 }
+
+
 
 /*! \brief Get the x-coord of marker
  *
@@ -3673,10 +3703,10 @@ static void check_map_change (void)
  */
 static int KQ_get_marker_tilex (lua_State * L)
 {
-  const char * marker_name = lua_tostring (L, 1);
-  s_marker *m = find_marker(marker_name, 1);
-  lua_pushnumber (L, m->x);
-  return 1;
+   const char *marker_name = lua_tostring (L, 1);
+   s_marker *m = find_marker (marker_name, 1);
+   lua_pushnumber (L, m->x);
+   return 1;
 }
 
 
@@ -3688,10 +3718,10 @@ static int KQ_get_marker_tilex (lua_State * L)
  */
 static int KQ_get_marker_tiley (lua_State * L)
 {
-  const char * marker_name = lua_tostring (L, 1);
-  s_marker *m = find_marker(marker_name, 1);
-  lua_pushnumber (L, m->y);
-  return 1;
+   const char *marker_name = lua_tostring (L, 1);
+   s_marker *m = find_marker (marker_name, 1);
+   lua_pushnumber (L, m->y);
+   return 1;
 }
 
 
@@ -3706,17 +3736,18 @@ static int KQ_set_marker (lua_State * L)
 {
    s_marker *m;
 
-   const char* marker_name = lua_tostring (L, 1);
+   const char *marker_name = lua_tostring (L, 1);
    const int x_coord = lua_tonumber (L, 2);
    const int y_coord = lua_tonumber (L, 3);
 
-   if ((m = find_marker(marker_name, 0)) == NULL) 
-     {
-       /* Need to add a new marker */
-       g_map.markers = (s_marker*) realloc(g_map.markers, sizeof(s_marker) * (g_map.num_markers+1));
-       m = &g_map.markers[g_map.num_markers++];
-       strcpy (m->name, marker_name);
-     }
+   if ((m = find_marker (marker_name, 0)) == NULL) {
+      /* Need to add a new marker */
+      g_map.markers =
+         (s_marker *) realloc (g_map.markers,
+                               sizeof (s_marker) * (g_map.num_markers + 1));
+      m = &g_map.markers[g_map.num_markers++];
+      strcpy (m->name, marker_name);
+   }
    m->x = x_coord;
    m->y = y_coord;
 
@@ -3731,29 +3762,31 @@ static int KQ_set_marker (lua_State * L)
  */
 static int KQ_take_stairs (lua_State * L)
 {
-   s_marker *m = find_marker(lua_tostring(L,1), 1);
+   s_marker *m = find_marker (lua_tostring (L, 1), 1);
    int a, b[4];
 
    for (a = 0; a < 4; a++)
-     b[a] = (int) lua_tonumber (L, a + 2);
+      b[a] = (int) lua_tonumber (L, a + 2);
    if (b[0] == 0 || b[1] == 0 || b[2] == 0 || b[3] == 0) {
-     warp (0, 0, 8);
+      warp (0, 0, 8);
    } else {
-     set_view (1, b[0], b[1], b[2], b[3]);
-     warp (m->x, m->y, 8);
+      set_view (1, b[0], b[1], b[2], b[3]);
+      warp (m->x, m->y, 8);
    }
-   
+
    return 0;
 }
+
+
 
 #ifdef DEBUGMODE
 /*! Show stack trace
  *
  * This is called internally, after an error; its purpose is to show
  * the stack of functions leading up to the faulting one
- * 
+ *
  * Each line shows Stack level, source-code line, function type and function name
- * 
+ *
  * \param L Lua state
  * \returns 0 (No value)
  * \author PH
@@ -3766,10 +3799,11 @@ static int KQ_traceback (lua_State * theL)
    TRACE ("%s\nStack trace:\n", lua_tostring (theL, -1));
    while (lua_getstack (theL, level, &ar) != 0) {
       lua_getinfo (theL, "Sln", &ar);
-      TRACE ("#%d Line %d in (%s %s) %s\n", level, ar.currentline, ar.what, ar.namewhat, ar.name);
+      TRACE ("#%d Line %d in (%s %s) %s\n", level, ar.currentline, ar.what,
+             ar.namewhat, ar.name);
       ++level;
    }
-   message("Script error. See allegro.log", 255, 0, xofs, yofs);
+   message ("Script error. See allegro.log", 255, 0, xofs, yofs);
    return 1;
 }
 
