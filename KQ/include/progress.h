@@ -150,6 +150,15 @@
 #define P_ORACLEMONSTERS  111
 #define P_TRAVELPOINT     112
 
+/* side quests */
+#define P_SIDEQUEST1      113
+#define P_SIDEQUEST2      114
+#define P_SIDEQUEST3      115
+#define P_SIDEQUEST4      116
+#define P_SIDEQUEST5      117
+#define P_SIDEQUEST6      118
+#define P_SIDEQUEST7      119
+
 /* 'specials' */
 #define P_SHOPSTART       1750
 #define P_SKIPINTRO       1997

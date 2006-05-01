@@ -1,9 +1,23 @@
 -- cave5 - "The new Opal cave in the mountain pass"
-
+-- /*
 -- Todo: top door back in from pass, some chests on wrong
 -- level inside cave cabin, obstacles for pass chests
+-- Side quest 7: Sensar
+--  P_SIDEQUEST7 = 0 - not started
+--               = 1 - you have defeated all Ghost Miners
+--               = 2 - you've met Sensar and he's joined 
+--                     or been dismissed
+-- */
+
+local num_miners
 
 function autoexec()
+-- There are six ghost miners to be dealt with
+   num_miners = 6
+-- Just check that Sensar has not already been recruited
+   if LOC_manor_or_party(SENSAR) then
+      set_progress(P_SIDEQUEST7, 2)
+   end
   refresh()
 end
 
@@ -48,6 +62,15 @@ function refresh()
   showch(60, 78, 93)
   showch(63, 78, 94)
   showch(95, 102, 95)
+
+  -- Place Sensar if necessary
+  if get_progress(P_SIDEQUEST7)==1 then
+     set_ent_chrx(0, 255)
+     set_ent_id(0, SENSAR)
+     set_ent_active(0, 1)
+  else
+     set_ent_active(0, 0)
+  end
 end
 
 
@@ -353,15 +376,37 @@ function zone_handler(zn)
       refresh()
     end
   elseif (zn == 23) then
-    combat(59)
     -- Clear the zone so it does not repeat the combat
     set_zone(get_ent_tilex(HERO1), get_ent_tiley(HERO1), 0)
+
+    combat(59)
+
+    num_miners = num_miners - 1
+    -- Killed all miners?
+    if (num_miners == 0) and (get_progress(P_SIDEQUEST7) == 0) then
+       -- Place Sensar in position
+       set_progress(P_SIDEQUEST7, 1)
+       refresh()
+       bubble(0, "Uhhh...", "Where am I?")
+    end
   end
 end
 
 
 function entity_handler(en)
-  return
+   local returning
+  if en == 0 then -- Sensar
+     bubble(HERO1, "What happened? Are you OK?")
+     bubble(en, "I was attacked, but I couldn't "..
+	    "use my RAGE against those ghosts")
+     bubble(en, "Then I felt everthing fade away...")
+     bubble(HERO1, "If you're feeling better you can join up, "..
+	    "or go back to the Manor to rest.")
+     returning = select_team({SENSAR})
+     add_to_manor(returning)
+     set_progress(P_SIDEQUEST7, 2)
+     refresh()
+  end 
 end
 
 
