@@ -1,6 +1,6 @@
 /* Allegro datafile object indexes, produced by grabber v4.1.8 (WIP), djgpp */
 /* Datafile: kq/data/mpcx.dat */
-/* Date: Sat May 15 12:56:27 2004 */
+/* Date: Mon May 01 12:29:33 2006 */
 /* Do not hand edit! */
 
 #define ALLFONTS_PCX                     0      /* BMP  */
