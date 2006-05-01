@@ -228,8 +228,8 @@ static void data_dump (void);
 
 static void allocate_stuff (void);
 static void load_heroes (void);
-static void load_map(const char*);
-static void prepare_map(int, int, int, int);
+static void load_map (const char *);
+static void prepare_map (int, int, int, int);
 
 void reset_timer_events (void);
 
@@ -239,7 +239,8 @@ void reset_timer_events (void);
  * hours, minutes and seconds. They're all used in the my_counter() timer
  * function just below
  */
-volatile int timer = 0, ksec = 0, kmin = 0, khr = 0, timer_count = 0, animation_count;
+volatile int timer = 0, ksec = 0, kmin = 0, khr = 0,
+   timer_count = 0, animation_count;
 
 /*! Current colour map */
 COLOR_MAP cmap;
@@ -286,7 +287,7 @@ void my_counter (void)
       timer = 0;
       ksec++;
    }
-   
+
    animation_count++;
    timer_count++;
 }
@@ -606,12 +607,13 @@ static void load_map (const char *map_name)
    strcpy (curmap, map_name);
 }
 
+
 static void prepare_map (int msx, int msy, int mvx, int mvy)
 {
-     BITMAP *pcxb;
-     unsigned char cc[4];
-     int i, o;
-     DATAFILE *pb;
+   BITMAP *pcxb;
+   unsigned char cc[4];
+   int i, o;
+   DATAFILE *pb;
 
    /* PH fixme: cc[] were not initialised to zero */
    cc[0] = cc[1] = cc[2] = cc[3] = 0;
@@ -745,8 +747,8 @@ static void prepare_map (int msx, int msy, int mvx, int mvy)
  */
 void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
 {
-   load_map(map_name);
-   prepare_map(msx, msy, mvx, mvy);
+   load_map (map_name);
+   prepare_map (msx, msy, mvx, mvy);
 }
 
 
@@ -768,7 +770,7 @@ void change_mapm (char *map_name, const char *marker_name)
    int msx = 0, msy = 0, mvx = 0, mvy = 0;
    s_marker *m;
 
-   load_map(map_name);
+   load_map (map_name);
    /* Search for the marker with the name passed into the function. Both
     * player's starting position and camera position will be the same
     */
@@ -778,7 +780,7 @@ void change_mapm (char *map_name, const char *marker_name)
          msy = mvy = m->y;
       }
    }
-   prepare_map(msx, msy, mvx, mvy);
+   prepare_map (msx, msy, mvx, mvy);
 }
 
 
@@ -879,7 +881,8 @@ void check_animation (void)
    int i, j;
    int diff = animation_count;
    animation_count -= diff;
-   if (!diff) return;
+   if (!diff)
+      return;
    for (i = 0; i < MAX_ANIM; i++) {
       if (adata[i].start != 0) {
          if (adata[i].delay && adata[i].delay < adelay[i]) {
@@ -890,7 +893,7 @@ void check_animation (void)
                else
                   tilex[j] = adata[i].start;
          }
-         adelay[i]+=diff;
+         adelay[i] += diff;
       }
    }
 }
@@ -1672,13 +1675,26 @@ int in_party (int pn)
  *
  * Well, this one is pretty obvious.
  */
-int main (int argc, const char * argv[])
+int main (int argc, const char *argv[])
 {
    int stop, game_on, skip_splash;
+   int i;
+
+   if (argc > 1) {
+      for (i = 1; i < argc; i++) {
+         if (!strcmp (argv[i], "-nosplash")) {
+            skip_splash = 1;
+         } else {
+            skip_splash = 0;
+         }
+      }
+   } else {
+      skip_splash = 0;
+   }
+
    startup ();
    game_on = 1;
    /* Also this can be overridden by settings in config */
-   skip_splash = 0;
    while (game_on) {
       switch (start_menu (skip_splash)) {
       case 0:
@@ -1730,6 +1746,7 @@ int main (int argc, const char * argv[])
 }
 
 END_OF_MAIN ();
+
 
 /*! \brief Timer Event structure
  *
@@ -1846,8 +1863,7 @@ void kq_yield (void)
    if (cpu_usage == 0)
       yield_timeslice ();
    else
-      rest(cpu_usage - 1);
-
+      rest (cpu_usage - 1);
 }
 
 /*! \mainpage KQ - The Classic Computer Role-Playing Game
