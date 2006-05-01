@@ -58,7 +58,8 @@ int load_s_map (s_map * sm, PACKFILE * f)
    if (sm->revision == 1) {
       /* Markers stuff */
       sm->num_markers = pack_igetw (f);
-      sm->markers = realloc (sm->markers, sm->num_markers * sizeof (s_marker));
+      sm->markers = (s_marker *) realloc
+         (sm->markers, sm->num_markers * sizeof (s_marker));
       for (i = 0; i < sm->num_markers; ++i) {
          load_s_marker (&sm->markers[i], f);
       }
