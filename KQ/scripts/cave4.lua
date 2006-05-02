@@ -83,7 +83,7 @@ function zone_handler(zn)
     combat(10)
 
   elseif (zn == 1) then
-    change_map("main", 244, 67, 244, 67)
+    change_map("main", "cave4")
 
   elseif (zn == 2) then
     if (get_progress(P_C4DOORSOPEN) == 0) then
@@ -170,7 +170,7 @@ function zone_handler(zn)
     --  */
     copy_tile_all(45, 92, 21, 46, 5, 8)
     view_range(1, 20, 46, 26, 54)
-    warpm("ustairs", 8)
+    warp("ustairs", 8)
 
     -- /* Now, so you don't see this after you leave that room, send back
     --  * the tiles it used to have in the appropriate place. (We'll just
@@ -179,7 +179,7 @@ function zone_handler(zn)
   elseif (zn == 12) then
     autoexec()
     view_range(0, 0, 0, 0, 0)
-    warpm("dstairs", 8)
+    warp("dstairs", 8)
 
   elseif (zn == 13) then
     if (get_progress(P_DENORIAN) < 4) then

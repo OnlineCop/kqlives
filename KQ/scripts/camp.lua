@@ -14,6 +14,7 @@
 -- }
 -- */
 
+
 function autoexec()
   local a
 
@@ -86,10 +87,10 @@ end
 
 function zone_handler(zn)
   if (zn == 1) then
-    change_map("main", 235, 36, 235, 36)
+    change_map("main", "camp_n")
 
   elseif (zn == 2) then
-    change_map("main", 235, 38, 235, 38)
+    change_map("main", "camp_s")
 
   elseif (zn == 3) then
     set_ent_script(7, "L1U2")
@@ -137,7 +138,7 @@ function zone_handler(zn)
       set_ent_script(18, "U1L8U3")
     end
     wait_for_entity(16, 18)
-    
+
     set_run(0)
     combat(3)
     set_run(1)
@@ -244,7 +245,7 @@ function entity_handler(en)
     else
       bubble(en, "Don't worry about me. I'm still looking for the exit...")
     end
-    
+
   elseif (en == 9) then
     if (get_numchrs() > 1) then
       bubble(en, "Intruders!")

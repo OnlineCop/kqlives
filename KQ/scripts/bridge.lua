@@ -35,8 +35,8 @@ end
 
 function refresh()
   if (get_treasure(8) == 1) then
-    set_obsm("treas_1", 0)
-    set_zonem("treas_1", 0)
+    set_obs("treas_1", 0)
+    set_zone("treas_1", 0)
   end
 end
 
@@ -47,7 +47,7 @@ function zone_handler(zn)
       if (get_progress(P_FIGHTONBRIDGE) == 3) then
         set_progress(P_FIGHTONBRIDGE, 4)
       end
-      change_map("main", 240, 29, 240, 29)
+      change_map("main", "bridge_l")
       return
     end
     if (get_progress(P_FIGHTONBRIDGE) == 1) then

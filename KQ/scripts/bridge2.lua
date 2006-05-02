@@ -32,20 +32,20 @@ end
 
 function refresh()
   if (get_treasure(8) == 1) then
-    set_obsm("treas_1", 0)
-    set_zonem("treas_1", 0)
+    set_obs("treas_1", 0)
+    set_zone("treas_1", 0)
   end
 
   if (get_treasure(90) == 1) then
-    set_ftilem("treas_2", 0)
-    set_zonem("treas_2", 0)
+    set_ftile("treas_2", 0)
+    set_zone("treas_2", 0)
   end
 end
 
 
 function zone_handler(zn)
   if (zn == 1) then
-    change_map("main", 240, 29, 240, 29)
+    change_map("main", "bridge_l")
 
   elseif (zn == 2) then
     -- // TT: This is still here incase the player didn't get it on the first
@@ -58,7 +58,7 @@ function zone_handler(zn)
     refresh()
 
   elseif (zn == 4) then
-    change_map("main", 242, 29, 242, 29)
+    change_map("main", "bridge_r")
 
   end
 end

@@ -13,11 +13,11 @@ local num_miners
 
 function autoexec()
 -- There are six ghost miners to be dealt with
-   num_miners = 6
+  num_miners = 6
 -- Just check that Sensar has not already been recruited
-   if LOC_manor_or_party(SENSAR) then
-      set_progress(P_SIDEQUEST7, 2)
-   end
+  if LOC_manor_or_party(SENSAR) then
+    set_progress(P_SIDEQUEST7, 2)
+  end
   refresh()
 end
 
@@ -64,12 +64,12 @@ function refresh()
   showch(95, 102, 95)
 
   -- Place Sensar if necessary
-  if get_progress(P_SIDEQUEST7)==1 then
-     set_ent_chrx(0, 255)
-     set_ent_id(0, SENSAR)
-     set_ent_active(0, 1)
+  if (get_progress(P_SIDEQUEST7) == 1) then
+    set_ent_chrx(0, 255)
+    set_ent_id(0, SENSAR)
+    set_ent_active(0, 1)
   else
-     set_ent_active(0, 0)
+    set_ent_active(0, 0)
   end
 end
 
@@ -119,7 +119,7 @@ function destroy2()
   if (has_dynamite()) then
     hero_escape("R3D3R3D5R8")
     sfx(42)
-    if (get_numchrs()>1) then
+    if (get_numchrs() > 1) then
       bubble(HERO2, "I think you might have overdone it!")
       oneliner(HERO1, {"Good, wasn't it?",
                        "It scared me too.",
@@ -326,19 +326,16 @@ function zone_handler(zn)
     set_save(1)
     warp(119, 132, 10)
   elseif (zn == 9) then
-    change_mapm("pass", "door1")
-    -- change_map("pass", 78, 39, 0, 0)
+    change_map("pass", "door1")
   elseif (zn == 10) then
-    change_mapm("pass", "door2")
-    -- change_map("pass", 106, 36, 0, 0)
+    change_map("pass", "door2")
   elseif (zn == 11) then
     -- Dragon
     sfx(26)
     warp(112, 49, 10)
     opaldragon()
   elseif (zn == 12) then
-    change_mapm("pass", "door3")
-    -- change_map("pass", 83, 28, 0, 0)
+    change_map("pass", "door3")
   elseif (zn == 13) then
     -- Behind pillar
     set_save(0)
@@ -384,28 +381,28 @@ function zone_handler(zn)
     num_miners = num_miners - 1
     -- Killed all miners?
     if (num_miners == 0) and (get_progress(P_SIDEQUEST7) == 0) then
-       -- Place Sensar in position
-       set_progress(P_SIDEQUEST7, 1)
-       refresh()
-       bubble(0, "Uhhh...", "Where am I?")
+      -- Place Sensar in position
+      set_progress(P_SIDEQUEST7, 1)
+      refresh()
+      bubble(0, "Uhhh...", "Where am I?")
     end
   end
 end
 
 
 function entity_handler(en)
-   local returning
-  if en == 0 then -- Sensar
-     bubble(HERO1, "What happened? Are you OK?")
-     bubble(en, "I was attacked, but I couldn't "..
-	    "use my RAGE against those ghosts")
-     bubble(en, "Then I felt everthing fade away...")
-     bubble(HERO1, "If you're feeling better you can join up, "..
-	    "or go back to the Manor to rest.")
-     returning = select_team({SENSAR})
-     add_to_manor(returning)
-     set_progress(P_SIDEQUEST7, 2)
-     refresh()
+  local returning
+  if (en == 0) then -- Sensar
+    bubble(HERO1, "What happened? Are you OK?")
+    bubble(en, "I was attacked, but I couldn't "..
+      "use my RAGE against those ghosts")
+    bubble(en, "Then I felt everthing fade away...")
+    bubble(HERO1, "If you're feeling better you can join up, "..
+      "or go back to the Manor to rest.")
+    returning = select_team({SENSAR})
+    add_to_manor(returning)
+    set_progress(P_SIDEQUEST7, 2)
+    refresh()
   end 
 end
 

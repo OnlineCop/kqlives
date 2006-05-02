@@ -11,7 +11,7 @@
 function autoexec()
   set_ent_active(12, 0)
   if (get_progress(P_ROUNDNUM) > 0) then
-    place_ent(6, 67, 20)
+    place_ent(6, 67, 20+4)
   end
 end
 
@@ -25,16 +25,16 @@ function zone_handler(zn)
   if (zn == 1) then
     set_progress(P_ROUNDNUM, 0)
     set_progress(P_BATTLESTATUS, 0)
-    change_map("main", 218, 123, 218, 123)
+    change_map("main", "coliseum")
 
   elseif (zn == 2) then
-    door_in(72, 11, 62, 0, 82, 14)
+    door_in(72, 11+4, 62, 0+4, 82, 14+4)
 
   elseif (zn == 3) then
-    door_in(66, 30, 62, 16, 70, 33)
+    door_in(66, 30+4, 62, 16+4, 70, 33+4)
 
   elseif (zn == 4) then
-    door_in(79, 27, 72, 16, 86, 30)
+    door_in(79, 27+4, 72, 16+4, 86, 30+4)
 
   elseif (zn == 5) then
     door_out(20, 21)
@@ -56,15 +56,15 @@ function zone_handler(zn)
       bubble(HERO1, "I'm not ready yet.")
       return
     end
-    view_range(1, 86, 1, 88, 3)
-    warp(87, 2, 16)
+    view_range(1, 72, 34, 74, 36)
+    warp(73, 35, 16)
     set_run(0)
     set_progress(P_USEITEMINCOMBAT, 1)
-    combat(11+get_progress(P_ROUNDNUM))
+    combat(11 + get_progress(P_ROUNDNUM))
     set_progress(P_USEITEMINCOMBAT, 0)
     set_run(1)
-    view_range(1, 62, 16, 70, 33)
-    warp(66, 20, 16)
+    view_range(1, 62, 16+4, 70, 33+4)
+    warp(66, 20+4, 16)
     if (get_alldead() == 1) then
       set_progress(P_BATTLESTATUS, 2)
       set_party_hp(party[0], 1)
@@ -183,7 +183,7 @@ function entity_handler(en)
           set_ent_script(6, "L1D2")
           wait_for_entity(6, 6)
           bubble(6, "Good luck in your endeavours.")
-	  if (get_numchrs()>1) then -- Skip this partnering up bit.
+	  if (get_numchrs() > 1) then -- Skip this partnering up bit.
 	     return
 	  end
           bubble(en, "Good luck in your endeavours.")
@@ -203,7 +203,7 @@ function entity_handler(en)
             while (get_progress(P_FINALPARTNER) == 0) do
               z = krnd(8)
               if (z ~= party[0].id) then
-                set_progress(P_FINALPARTNER, z+1)
+                set_progress(P_FINALPARTNER, z + 1)
               end
             end
           end

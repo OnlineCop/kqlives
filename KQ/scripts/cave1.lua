@@ -34,32 +34,32 @@ function refresh()
   
   -- Pot in SW corner
   if (get_treasure(1) == 1) then
-    set_zone(29, 45, 0)
+    set_zone(36, 52, 0)
   end
 
   -- Treasure chest on W
   if (get_treasure(2) == 1) then
-    set_zone(2, 18, 41)
-    set_mtile(2, 18, 41)
+    set_zone(9, 25, 41)
+    set_mtile(9, 25, 41)
   end
 
   -- Dark Imp boss in SE corner
   if (get_progress(P_DARKIMPBOSS) == 1) then
-    set_ftile(41, 42, 0)
-    set_obs(41, 42, 0)
-    set_zone(41, 42, 7)
+    set_ftile(48, 49, 0)
+    set_obs(48, 49, 0)
+    set_zone(48, 49, 7)
   end
 
   -- Dying man in NE corner
   if (get_progress(P_DYINGDUDE) == 1 or get_progress(P_DARKIMPBOSS) == 1) then
-    set_btile(45, 14, 25)
-    set_obs(45, 14, 0)
-    set_zone(45, 14, 0)
+    set_btile(52, 21, 25)
+    set_obs(52, 21, 0)
+    set_zone(52, 21, 0)
   end
 
   -- Portal in SW corner
   if (get_progress(P_PORTALGONE) == 1) then
-    set_ftile(7, 43, 217)
+    set_ftile(14, 50, 217)
   end
 end
 
@@ -76,12 +76,10 @@ function zone_handler(zn)
     end
 
   elseif (zn == 1) then
-    change_mapm("town1", "dstairs1")
-    -- change_map("town1", 27, 57, 27, 57)
+    change_map("town1", "dstairs1")
 
   elseif (zn == 2) then
-    change_mapm("town2", "dstairs1")
-    -- change_map("town2", 11, 11, 11, 11)
+    change_map("town2", "dstairs1")
 
   elseif (zn == 4) then
     chest(1, I_MHERB, 1)
@@ -104,10 +102,10 @@ function zone_handler(zn)
     end
 
   elseif (zn == 9) then
-    warp(4, 24, 8)
+    warp("warp_w", 8)
 
   elseif (zn == 10) then
-    warp(23, 37, 8)
+    warp("warp_e", 8)
 
   elseif (zn == 11) then
     if (get_progress(P_DYINGDUDE) == 0) then

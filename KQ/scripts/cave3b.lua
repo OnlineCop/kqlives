@@ -22,16 +22,14 @@ function zone_handler(zn)
 --    combat(9)
 
   elseif (zn == 1) then
-    change_mapm("cave3a", "uldoor1")
-    -- change_map("cave3a", 13, 11, 13, 11)
+    change_map("cave3a", "uldoor1")
 
   elseif (zn == 2) then
     chest(20, I_B_LIFE, 1)
     refresh()
 
   elseif (zn == 3) then
-    change_mapm("cave3a", "drdoor1")
-    -- change_map("cave3a", 36, 55, 36, 55)
+    change_map("cave3a", "drdoor1")
 
   -- zn == 4 is a no-combat tile
 

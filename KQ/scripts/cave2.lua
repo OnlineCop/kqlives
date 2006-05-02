@@ -41,8 +41,8 @@ end
 function refresh()
   -- Show the shiny, glowing rescue spot
   if (get_progress(P_FELLINPIT) > 0) then
-    set_btile(15, 18, 30)
-    set_zone(15, 18, 3)
+    set_btile("exit", 30)
+    set_zone("exit", 3)
   end
 end
 
@@ -77,23 +77,20 @@ function zone_handler(zn)
         inn("You decide to sleep.", 0, 0)
       end
       set_ent_facing(HERO1, FACE_RIGHT)
-      change_mapm("grotto", "by_fire")
-      -- change_map("grotto", 19, 16, 19, 16)
+      change_map("grotto", "by_fire")
     elseif (get_progress(P_UCOIN) == 1) then
       bubble(HERO1, "Hmm... this doesn't look like it does anything.")
       msg("Hello? Who's there? Is that somebody down there?", 255, 0)
       bubble(HERO1, "Yeah... I fell down here and the door's blocked.")
       msg("Hang on, let me get you out of there.", 255, 0)
       set_progress(P_TALKDERIG, 3)
-      change_mapm("grotto", "by_pit")
-      -- change_map("grotto", 17, 14, 17, 14)
+      change_map("grotto", "by_pit")
     else
       -- // Derig has helped you out of here before
       bubble(HERO1, "Derig, can you help me out of here?")
       msg("Sure thing. Here you go.", 255, 0)
       set_ent_facing(HERO1, FACE_RIGHT)
-      change_mapm("grotto", "by_fire")
-      -- change_map("grotto", 19, 16, 19, 16)
+      change_map("grotto", "by_fire")
     end
   end
 end

@@ -3,8 +3,8 @@
 -- // P_TRAVELPOINT: Whether we've just come through the TravelPoint
 
 function autoexec()
-  if (get_ent_tilex(HERO1) == get_marker_tilex("urdoor1") and
-      get_ent_tiley(HERO1) == get_marker_tiley("urdoor1")) then
+  if (get_ent_tilex(HERO1) == get_marker_tilex("exit") and
+      get_ent_tiley(HERO1) == get_marker_tiley("exit")) then
     set_warp(1, 264, 57)
   elseif (get_ent_tilex(HERO1) == get_marker_tilex("uldoor1") and
           get_ent_tiley(HERO1) == get_marker_tiley("uldoor1")) then
@@ -56,24 +56,22 @@ function zone_handler(zn)
     combat(8)
 
   elseif (zn == 1) then
-    change_map("main", 264, 60, 264, 60)
+    change_map("main", "cave3a_s")
 
   elseif (zn == 2) then
     view_range(1, 44, 8, 57, 58)
-    warpm("halldoor", 8)
+    warp("halldoor", 8)
 
   elseif (zn == 3) then
     view_range(1, 8, 47, 20, 57)
-    warpm("dldoor2", 8)
-    -- warp(8, 46, 8)
+    warp("dldoor2", 8)
 
   elseif (zn == 4) then
-    change_map("cave3b", 0, 0, 0, 0)
+    change_map("cave3b", "entrance")
 
   elseif (zn == 5) then
     view_range(1, 9, 8, 22, 21)
-    warpm("uldoor3", 8)
-    -- warp(9, 3, 8)
+    warp("uldoor3", 8)
 
   elseif (zn == 6) then
     chest(18, I_NLEAF, 1)
@@ -89,8 +87,7 @@ function zone_handler(zn)
 
   elseif (zn == 9) then
     view_range(1, 9, 8, 22, 21)
-    warpm("uldoor2", 8)
-    -- warp(7, 3, 8)
+    warp("uldoor2", 8)
 
   elseif (zn == 10) then
     if (get_progress(P_WARPEDTOT4) == 0) then
@@ -99,50 +96,43 @@ function zone_handler(zn)
       refresh()
     else
       view_range(1, 22, 23, 43, 39)
-      warpm("mrdoor1", 8)
+      warp("mrdoor1", 8)
       if (get_progress(P_ORACLEMONSTERS) == 0) then
         LOC_monsters_statue()
       end
-    -- warp(27, 28, 8)
     end
 
   -- zn == 11 is a no-combat zone
 
   elseif (zn == 12) then
     view_range(1, 8, 47, 20, 57)
-    warpm("dldoor1", 8)
-    -- warp(5, 42, 8)
+    warp("dldoor1", 8)
 
   elseif (zn == 13) then
     if (get_progress(P_WARPEDTOT4) < 3) then
       set_progress(P_ORACLEMONSTERS, 3)
-      change_mapm("town4", "bad_portal")
+      change_map("town4", "bad_portal")
     else
       set_progress(P_TRAVELPOINT, 1)
-      change_mapm("town7", "travelpoint")
+      change_map("town7", "travelpoint")
     end
-    -- change_map("town4", 32, 21, 32, 21)
 
   elseif (zn == 14) then
-    change_mapm("cave1", "dstairs1")
-    -- change_map("cave1", 2, 17, 2, 17)
+    change_map("cave1", "dstairs1")
 
   elseif (zn == 15) then
-    change_mapm("cave3b", "door_1")
-    -- change_map("cave3b", 13, 13, 13, 13)
+    change_map("cave3b", "exit")
 
   elseif (zn == 16) then
     view_range(1, 29, 9, 38, 19)
-    warpm("urstairs1", 8)
-    -- warp(27, 8, 8)
+    warp("urstairs1", 8)
 
   elseif (zn == 17) then
     view_range(1, 32, 48, 39, 58)
-    warpm("drstairs1", 8)
-    -- warp(28, 44, 8)
+    warp("drstairs1", 8)
 
   elseif (zn == 18) then
-    change_map("main", 264, 57, 264, 57)
+    change_map("main", "cave3a_n")
 
   elseif (zn == 19) then
     if (get_progress(P_ORACLEMONSTERS) == 1) then
