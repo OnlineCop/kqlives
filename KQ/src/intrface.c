@@ -240,6 +240,7 @@ static int KQ_use_up (lua_State *);
 static int KQ_battle (lua_State *);
 static int KQ_select_team (lua_State *);
 static int KQ_set_ent_target (lua_State *);
+static int KQ_marker (lua_State *);
 static int KQ_get_marker_tilex (lua_State *);
 static int KQ_get_marker_tiley (lua_State *);
 static int KQ_set_marker (lua_State *);
@@ -403,6 +404,7 @@ static const struct luaL_reg lrs[] = {
    {"set_ent_target", KQ_set_ent_target},
    {"add_timer", KQ_add_timer},
    {"add_quest_item", KQ_add_quest_item},
+   {"marker", KQ_marker},
    {"get_marker_tilex", KQ_get_marker_tilex},
    {"get_marker_tiley", KQ_get_marker_tiley},
    {"set_marker", KQ_set_marker},
@@ -914,14 +916,20 @@ static enum {NOT_CHANGING, CHANGE_TO_COORDS, CHANGE_TO_MARKER } changing_map;
  * \param name the name of the marker to search for
  * \param required if non-zero throw an error if the marker isn't found
  * \returns pointer to marker or NULL if name not found
+ * \date 20060502 PH added check for name == NULL
  */
 static s_marker *find_marker (const char *name, int required)
 {
    s_marker *m;
-   for (m = g_map.markers; m < g_map.markers + g_map.num_markers; ++m) {
-      if (strcmp (name, m->name) == 0) {
+   if (name == NULL) {
+     name = "(null)";
+   }
+   else {
+     for (m = g_map.markers; m < g_map.markers + g_map.num_markers; ++m) {
+       if (strcmp (name, m->name) == 0) {
          return m;
-      }
+       }
+     }
    }
    if (required) {
       /* Error, marker name not found */
@@ -3694,7 +3702,25 @@ static void check_map_change (void)
    }
 }
 
-
+/*! \brief Get marker coordinates
+ *
+ * \param L ::1 Marker name
+ * \returns x,y coordinates if marker exists, otherwise nil
+ */
+static int KQ_marker (lua_State * L)
+{
+  s_marker* s = find_marker (lua_tostring(L, 1), 0);
+  if (s != NULL) {
+    lua_pushnumber (L, s->x);
+    lua_pushnumber (L, s->y);
+    return 2;
+  }
+  else  {
+    lua_pushnil (L);
+    return 1;
+  }
+}
+  
 
 /*! \brief Get the x-coord of marker
  *
