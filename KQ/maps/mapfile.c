@@ -50,7 +50,7 @@ void error_load (const char *problem_file)
  */
 void make_mapfrompcx (void)
 {
-   /* TT TODO: This is still very buggy, as the PCX image only as 255 values;
+   /* TT TODO: This is still very buggy, as the PCX image only has 255 values;
     * the particular tile on the map may actually exceed this; when we import
     * the PCX image, anything over the 255 boundary are mistaken for <= 255
     */
