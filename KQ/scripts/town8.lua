@@ -18,23 +18,23 @@ end
 
 function refresh()
   if (get_treasure(91) == 1) then
-    set_obsm("treas_1", 0)
-    set_zonem("treas_1", 0)
+    set_obs("treas_1", 0)
+    set_zone("treas_1", 0)
   end
 
   if (get_treasure(92) == 1) then
-    set_obsm("treas_2", 0)
-    set_zonem("treas_1", 0)
+    set_obs("treas_2", 0)
+    set_zone("treas_1", 0)
   end
 
   if (get_treasure(93) == 1) then
-    set_obsm("treas_3", 0)
-    set_zonem("treas_3", 0)
+    set_obs("treas_3", 0)
+    set_zone("treas_3", 0)
   end
 
   if (get_treasure(95) == 1) then
-    set_obsm("treas_4", 0)
-    set_zonem("treas_4", 0)
+    set_obs("treas_4", 0)
+    set_zone("treas_4", 0)
   end
 end
 
@@ -46,7 +46,7 @@ end
 
 function zone_handler(zn)
   if (zn == 1) then
-    change_map("main", 227, 159, 227, 159)
+    change_map("main", "town8")
 
   elseif (zn == 2) then
     set_progress(P_WALKING, 0)
@@ -72,10 +72,10 @@ function zone_handler(zn)
     bubble(HERO1, "This appears to be a hologram of the Oracle!")
 
   elseif (zn == 8) then
-    warpm("dstairs1", 16)
+    warp("dstairs1", 16)
 
   elseif (zn == 9) then
-    warpm("dstairs2", 16)
+    warp("dstairs2", 16)
 
   elseif (zn == 10) then
     chest(94, I_ARMOR8, 1)
@@ -144,11 +144,11 @@ function zone_handler(zn)
 
   elseif (zn == 31) then
     view_range(1, 81, 31, 91, 42)
-    warpm("dstairs3", 8)
+    warp("dstairs3", 8)
 
   elseif (zn == 32) then
     view_range(1, 101, 19, 111, 31)
-    warpm("ustairs1", 8)
+    warp("ustairs1", 8)
 
   elseif (zn == 33) then
     thought(HERO1, "This spa is relaxing.")

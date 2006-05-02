@@ -30,8 +30,7 @@ function zone_handler(zn)
     combat(24)
 
   elseif (zn == 1) then
-    change_mapm("grotto", "portal")
-    -- change_map("grotto", 11, 13, 11, 13)
+    change_map("grotto", "portal")
 
   elseif (zn == 2) then
     if (get_progress(P_TALKOLDMAN) == 3) then

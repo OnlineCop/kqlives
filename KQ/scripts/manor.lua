@@ -110,7 +110,7 @@ end
 function zone_handler(zn)
   -- Front door
   if (zn == 1) then
-    change_map("main", 107, 40, 107, 40)
+    change_map("main", "manor")
 
   -- Stairs going up
   elseif (zn == 2) then
@@ -285,7 +285,7 @@ function LOC_explain_mission(en)
       bubble(en, "Their forces unexpectedly withdrew a few months ago and it's been peaceful until now.")
       bubble(en, "It appears that there are monsters springing up everywhere, looking for something.")
       bubble(en, "Malkaron had a magical staff that made his armies' weapons and armour practically indestructible by mere proximity to it.")
-      bubble(en, "He found out that I knew about this 'little secret', and threw me into the dungeon.")
+      bubble(en, "He found out that I knew about this `little secret', and threw me into the dungeon.")
       LOC_explain_mission2(en)
     else
       bubble(en, "Fine, I'll tell you the minimal amount. Malkaron captured me.")

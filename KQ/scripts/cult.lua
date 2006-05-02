@@ -3,15 +3,14 @@
 function autoexec()
   local a
 
-  view_range(1, 0, 0, 22, 25)
+  view_range(1, 6, 1, 30, 30)
   if (get_progress(P_AVATARDEAD) < 2) then
-    set_obs(11, 24, 1)
-    set_zone(11, 24, 32)
+    set_obs("front_door", 1)
+    set_zone("front_door", 32)
   else
-    set_zone(63, 44, 31)
-    set_zone(63, 45, 31)
-    set_obs(11, 24, 0)
-    for a=0, 19, 1 do
+    set_zone("avatar", 31)
+    set_obs("front_door", 0)
+    for a = 0, 19, 1 do
       set_ent_active(a, 0)
     end
     set_ent_active(23, 0)
@@ -25,19 +24,19 @@ end
 
 function refresh()
   if (get_treasure(75) == 1) then
-    set_mtile(31, 4, 65)
+    set_mtile(39, 7, 65)
   end
   if (get_treasure(76) == 1) then
-    set_mtile(39, 4, 65)
+    set_mtile(47, 7, 65)
   end
   if (get_treasure(77) == 1) then
-    set_mtile(31, 20, 65)
+    set_mtile(39, 24, 65)
   end
   if (get_treasure(78) == 1) then
-    set_mtile(21, 33, 65)
+    set_mtile(28, 37, 65)
   end
   if (get_treasure(79) == 1) then
-    set_mtile(23, 34, 65)
+    set_mtile(30, 38, 65)
   end
 end
 
@@ -54,58 +53,58 @@ function zone_handler(zn)
     end
 
   elseif (zn == 1) then
-    change_map("main", 225, 104, 225, 104)
+    change_map("main", "cult")
 
   elseif (zn == 2) then
-    view_range(1, 24, 0, 46, 25)
-    warp(25, 13, 8)
+    view_range(1, 31, 1, 55, 29)
+    warp("dstairs2", 8)
 
   elseif (zn == 3) then
-    view_range(1, 0, 0, 22, 25)
-    warp(21, 13, 8)
+    view_range(1, 6, 1, 30, 30)
+    warp("ustairs1", 8)
 
   elseif (zn == 4) then
-    view_range(1, 48, 0, 69, 24)
-    warp(49, 12, 8)
+    view_range(1, 56, 1, 79, 30)
+    warp("dstairs3", 8)
 
   elseif (zn == 5) then
-    view_range(1, 24, 0, 46, 25)
-    warp(45, 13, 8)
+    view_range(1, 31, 1, 55, 29)
+    warp("ustairs2", 8)
 
   elseif (zn == 6) then
-    view_range(1, 0, 28, 24, 45)
-    warp(12, 32, 8)
+    view_range(1, 6, 31, 32, 50)
+    warp("ustairs4", 8)
 
   elseif (zn == 7) then
-    view_range(1, 0, 0, 22, 25)
-    warp(1, 13, 8)
+    view_range(1, 6, 1, 30, 30)
+    warp("dstairs1", 8)
 
   elseif (zn == 8) then
-    view_range(1, 26, 31, 58, 45)
-    warp(27, 41, 8)
+    view_range(1, 32, 34, 66, 50)
+    warp("ustairs5", 8)
 
   elseif (zn == 9) then
-    view_range(1, 0, 28, 24, 45)
-    warp(1, 40, 8)
+    view_range(1, 6, 31, 32, 50)
+    warp("dstairs4", 8)
 
   elseif (zn == 10) then
-    view_range(1, 60, 31, 72, 48)
-    warp(61, 35, 8)
+    view_range(1, 66, 34, 80, 53)
+    warp("ustairs6", 8)
 
   elseif (zn == 11) then
     if (get_progress(P_AVATARDEAD) == 2) then
       set_ent_active(20, 1)
       set_ent_active(21, 1)
       set_ent_active(22, 1)
-      place_ent(23, 49, 41)
+      place_ent(23, 56, 45)
       set_ent_facing(23, FACE_RIGHT)
-      set_ftile(49, 39, 0)
-      set_zone(49, 39, 0)
-      set_obs(49, 39, 0)
-      set_btile(49, 40, 160)
+      set_ftile(56, 43, 0)
+      set_zone(56, 43, 0)
+      set_obs(56, 43, 0)
+      set_btile(56, 43, 160)
     end
-    view_range(1, 26, 31, 58, 45)
-    warp(57, 41, 8)
+    view_range(1, 32, 34, 66, 50)
+    warp("dstairs5", 8)
     if (get_progress(P_AVATARDEAD) == 2) then
       set_autoparty(1)
       if (get_numchrs() == 2) then
@@ -162,22 +161,22 @@ function zone_handler(zn)
     end
 
   elseif (zn == 12) then
-    LOC_open_door(8, 15)
+    LOC_open_door(15, 20)
 
   elseif (zn == 13) then
-    LOC_open_door(14, 15)
+    LOC_open_door(21, 20)
 
   elseif (zn == 14) then
-    LOC_open_door(11, 11)
+    LOC_open_door(18, 13)
 
   elseif (zn == 15) then
-    LOC_open_door(35, 10)
+    LOC_open_door(43, 13)
 
   elseif (zn == 16) then
-    LOC_open_door(35, 16)
+    LOC_open_door(43, 20)
 
   elseif (zn == 17) then
-    LOC_open_door(6, 37)
+    LOC_open_door(13, 41)
 
   elseif (zn == 18) then
     if (get_progress(P_IRONKEY) == 0) then
@@ -187,11 +186,11 @@ function zone_handler(zn)
         bubble(HERO1, "Unlocked.")
         set_progress(P_IRONKEY, 2)
       end
-      LOC_open_door(12, 37)
+      LOC_open_door(19, 41)
     end
 
   elseif (zn == 19) then
-    LOC_open_door(18, 37)
+    LOC_open_door(25, 41)
 
   elseif (zn == 20) then
     chest(75, I_ARMOR6, 1)
@@ -262,24 +261,16 @@ function zone_handler(zn)
     if (get_alldead() == 1) then
       return
     end
-    set_zone(63, 44, 31)
-    set_zone(63, 45, 31)
+    set_zone(70, 48, 31)
+    set_zone(70, 49, 31)
     set_ent_active(17, 0)
     set_ent_active(18, 0)
     set_ent_active(19, 0)
-    set_mtile(67, 39, 250)
+    set_mtile(74, 43, 250)
     set_autoparty(1)
-    if (get_ent_tiley(HERO1) == 44) then
-      set_ent_script(HERO1, "R4U1")
-    else
-      set_ent_script(HERO1, "R4U2")
-    end
+    set_ent_script(HERO1, "R4U1")
     if (get_numchrs() == 2) then
-      if (get_ent_tiley(HERO2) == 44) then
-        set_ent_script(HERO2, "R5")
-      else
-        set_ent_script(HERO2, "R5U1")
-      end
+      set_ent_script(HERO2, "R5")
       wait_for_entity(HERO1, HERO2)
     else
       wait_for_entity(HERO1, HERO1)
@@ -310,16 +301,16 @@ function zone_handler(zn)
     if (get_alldead() == 1) then
       return
     end
-    set_mtile(67, 38, 0)
-    set_mtile(66, 39, 0)
-    set_mtile(67, 39, 0)
-    set_mtile(68, 39, 0)
-    set_mtile(66, 40, 0)
-    set_mtile(67, 40, 0)
-    set_mtile(68, 40, 0)
+    set_mtile(74, 42, 0)
+    set_mtile(73, 43, 0)
+    set_mtile(74, 43, 0)
+    set_mtile(75, 43, 0)
+    set_mtile(73, 44, 0)
+    set_mtile(74, 44, 0)
+    set_mtile(75, 44, 0)
     set_progress(P_AVATARDEAD, 2)
-    set_obs(11, 24, 0)
-    set_zone(11, 24, 1)
+    set_obs("front_door", 0)
+    set_zone("front_door", 1)
 
   elseif (zn == 32) then
     bubble(HERO1, "Hey! The door is sealed!")
@@ -364,7 +355,7 @@ function LOC_open_door(a, b)
   set_ftile(a, b, 175)
   set_obs(a, b, 0)
   set_zone(a, b, 0)
-  set_btile(a, b+1, 176)
+  set_btile(a, b + 1, 176)
 end
 
 
@@ -381,21 +372,21 @@ function LOC_avatar_abounds()
 
   ax = get_vx()
   ay = get_vy()
-  move_camera(920, 512, 1)
+  move_camera(1032, 576, 1)
 
-  for a=1, 23, 1 do
-    for b=0, 3, 3 do
+  for a = 1, 23, 1 do
+    for b = 0, 3, 3 do
       drawmap()
-      for dx=0, 6, 1 do
-        for dy=1, 5, 1 do
-          maskblit(1, b*16, 0, dx*16+104, dy*16+64, 16, 16)
+      for dx = 0, 6, 1 do
+        for dy = 1, 5, 1 do
+          maskblit(1, b * 16, 0, dx * 16 + 104, dy * 16 + 64, 16, 16)
         end
       end
-      for dx=1, 5, 1 do
-        maskblit(1, b*16, 0, dx*16+104, 64, 16, 16)
-        maskblit(1, b*16, 0, dx*16+104, 160, 16, 16)
+      for dx = 1, 5, 1 do
+        maskblit(1, b * 16, 0, dx * 16 + 104, 64, 16, 16)
+        maskblit(1, b * 16, 0, dx * 16 + 104, 160, 16, 16)
       end
-      maskblit(0, 0, 0, 148, 128-a, 24, a)
+      maskblit(0, 0, 0, 148, 128 - a, 24, a)
       screen_dump()
       rest(40)
     end
@@ -403,16 +394,16 @@ function LOC_avatar_abounds()
   destroy_bmp(0)
   destroy_bmp(1)
 
-  for a=1, 19, 1 do
+  for a = 1, 19, 1 do
     set_ent_active(a, 0)
   end
-  set_mtile(67, 38, 270)
-  set_mtile(66, 39, 271)
-  set_mtile(67, 39, 272)
-  set_mtile(68, 39, 273)
-  set_mtile(66, 40, 274)
-  set_mtile(67, 40, 275)
-  set_mtile(68, 40, 276)
+  set_mtile(74, 42, 270)
+  set_mtile(73, 43, 271)
+  set_mtile(74, 43, 272)
+  set_mtile(75, 43, 273)
+  set_mtile(73, 44, 274)
+  set_mtile(74, 44, 275)
+  set_mtile(75, 44, 276)
 
   move_camera(ax, ay, 1)
 end

@@ -52,19 +52,32 @@ function zone_handler(zn)
     shop(22)
 
   elseif (zn == 10) then
+    door_out(get_marker_tilex("battle"), get_marker_tiley("battle"))
+  
+  elseif (zn == 11) then
+    set_save(0)
+
+  elseif (zn == 12) then
+    bubble(HERO1, "Hmm. The sun feels very warm right here.")
+    set_save(1)
+
+  elseif (zn == 13) then
+    touch_fire(party[0])
+
+  elseif (zn == 14) then
+    door_in(66, 23, 62, 16+4, 70, 33+4)
+    
+  elseif (zn == 15) then
     if (get_progress(P_BATTLESTATUS) > 0) then
       bubble(HERO1, "I'm not ready yet.")
       return
     end
-    view_range(1, 72, 34, 74, 36)
-    warp(73, 35, 16)
     set_run(0)
     set_progress(P_USEITEMINCOMBAT, 1)
     combat(11 + get_progress(P_ROUNDNUM))
     set_progress(P_USEITEMINCOMBAT, 0)
     set_run(1)
-    view_range(1, 62, 16+4, 70, 33+4)
-    warp(66, 20+4, 16)
+    warp(get_marker_tilex("battle"), get_marker_tiley("battle") - 3, 16)
     if (get_alldead() == 1) then
       set_progress(P_BATTLESTATUS, 2)
       set_party_hp(party[0], 1)
@@ -72,15 +85,6 @@ function zone_handler(zn)
     else
       set_progress(P_BATTLESTATUS, 1)
     end
-
-  elseif (zn == 11) then
-    set_save(0)
-
-  elseif (zn == 12) then
-    set_save(1)
-
-  elseif (zn == 13) then
-    touch_fire(party[0])
 
   end
 end
@@ -156,8 +160,7 @@ function entity_handler(en)
         if (get_progress(P_ROUNDNUM) == 7) then
           bubble(en, "Wow! This is it... your next battle is with Trayor. Good luck... you'll need it!")
         else
-          b = "Battle number "..get_progress(P_ROUNDNUM).." just"
-          bubble(en, b, "head on through that door when you are ready.")
+          bubble(en, "Battle number "..get_progress(P_ROUNDNUM)..". Just head on through that door when you are ready.")
         end
       elseif (a == 1) then
         if (get_progress(P_ROUNDNUM) == 7) then
@@ -172,12 +175,15 @@ function entity_handler(en)
           end
 
           if (get_numchrs() == 1) then
-            set_ent_script(HERO1, "D3F1")
+            move_entity(HERO1, "prebattle", 0)
             wait_for_entity(HERO1, HERO1)
+            set_ent_facing(HERO1, FACE_UP)
           else
-            set_ent_script(HERO1, "D3F1")
-            set_ent_script(HERO2, "D3F1")
+            move_entity(HERO1, "prebattle", 0)
+            move_entity(HERO2, get_marker_tilex("prebattle"), get_marker_tiley("prebattle") + 1, 0)
             wait_for_entity(HERO1, HERO2)
+            set_ent_facing(HERO1, FACE_UP)
+            set_ent_facing(HERO2, FACE_UP)
             orient_heroes()
           end
           set_ent_script(6, "L1D2")

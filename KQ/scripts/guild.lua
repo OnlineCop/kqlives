@@ -59,11 +59,10 @@ function zone_handler(zn)
     if (get_progress(P_OPALHELMET) == 1) then
       set_progress(P_FOUGHTGUILD, 2)
     end
-    change_mapm("town5", "guild_door")
-    -- change_map("town5", 18, 37, 18, 37)
+    change_map("town5", "guild_door")
 
   elseif (zn == 2) then
-    warp(10, 5, 8)
+    warp("dstairs1", 8)
 
   elseif (zn == 3) then
     if (get_progress(P_GUILDSECRET) == 0) then
@@ -86,10 +85,10 @@ function zone_handler(zn)
     refresh()
 
   elseif (zn == 6) then
-    warp(37, 7, 8)
+    warp("ustairs2", 8)
 
   elseif (zn == 7) then
-    warp(23, 19, 8)
+    warp("dstairs2", 8)
 
   elseif (zn == 8) then
     chest(50, I_SWORD4, 1)
@@ -163,7 +162,7 @@ function zone_handler(zn)
     end
 
   elseif (zn == 13) then
-    warp(10, 27, 8)
+    warp("ustairs1", 8)
 
   elseif (zn == 14) then
     touch_fire(party[0])
@@ -184,7 +183,7 @@ end
 
 
 function entity_handler(en)
-   if (en==2) then -- // You've met Ayla
+   if (en == 2) then -- // You've met Ayla
       bubble(en, "Wha...? Oh, it's you!")
       bubble(HERO1, "Hello... I recognise you from Nostik's manor, don't I?")
       bubble(en, "Yes, I broke into the house, but I couldn't find the secret passage.", "Can I join you now?")

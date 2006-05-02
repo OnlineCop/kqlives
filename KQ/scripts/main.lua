@@ -13,11 +13,14 @@ function autoexec()
     set_zone(242, 29, 71)
   end
 
-  if (get_progress(P_TOWEROPEN) == 1 or get_progress(P_TOWEROPEN) == 3) then
+  if (get_progress(P_TOWEROPEN) == 1 or
+      get_progress(P_TOWEROPEN) == 3) then
     set_obs(263, 52, 0)
   end
 
-  if (get_progress(P_FOUNDMAYOR) > 0 and get_progress(P_MAYORGUARD1) > 0 and get_progress(P_MAYORGUARD2) > 0) then
+  if (get_progress(P_FOUNDMAYOR) > 0 and
+      get_progress(P_MAYORGUARD1) > 0 and
+      get_progress(P_MAYORGUARD2) > 0) then
     set_zone(235, 37, 0)
   end
 
@@ -37,7 +40,7 @@ end
 
 function zone_handler(zn)
   if (zn == 1) then
-    change_map("manor", 0, 0, 0, 0)
+    change_map("manor", "entrance")
 
   elseif (zn == 2) then
     if (get_progress(P_START) == 1) then
@@ -84,37 +87,35 @@ function zone_handler(zn)
     change_map("grotto", 0, 0, 0, 0)
 
   elseif (zn == 10) then
-    change_mapm("fort", "exit1")
-    -- change_map("fort", 15, 8, 10, 1)
+    change_map("fort", "entrance")
 
   elseif (zn == 11) then
-    change_mapm("fort", "exit2")
-    -- change_map("fort", 15, 42, 10, 35)
+    change_map("fort", "exit")
 
   elseif (zn == 12) then
-    change_map("cave3a", 0, 0, 0, 0)
+    change_map("cave3a", "entrance")
 
   elseif (zn == 13) then
-    change_mapm("cave3a", "urdoor1")
-    -- change_map("cave3a", 32, 12, 32, 12)
+    change_map("cave3a", "exit")
 
   elseif (zn == 14) then
-    if (get_progress(P_GOBLINITEM) == 1 and get_progress(P_TOWEROPEN) == 0) then
-      set_progress(P_TOWEROPEN, 1)
-      set_progress(P_GOBLINITEM, 2)
-      bubble(HERO1, "Hey! The pendant is glowing!")
-      bubble(255, "The doors fly open and the pendant disappears in a puff of smoke.")
-      change_map("tower", 0, 0, 0, 0)
-      return
-    end
     if (get_progress(P_TOWEROPEN) == 0) then
-      bubble(HERO1, "The tower is sealed.")
-    elseif (get_progress(P_TOWEROPEN) == 1 or get_progress(P_TOWEROPEN) == 3) then
-      change_map("tower", 0, 0, 0, 0)
-    elseif (get_progress(P_TOWEROPEN) == 2) then
+      if (get_progress(P_GOBLINITEM) == 1) then
+        set_progress(P_TOWEROPEN, 1)
+        set_progress(P_GOBLINITEM, 2)
+        bubble(HERO1, "Hey! The pendant is glowing!")
+        bubble(255, "The doors fly open and the pendant disappears in a puff of smoke.")
+      elseif (get_progress(P_DENORIAN) == 2) then
+        set_progress(P_TOWEROPEN, 1)
+        bubble(HERO1, "The doors open with a shower of rust.")
+      else
+        bubble(HERO1, "The tower appears to be sealed. Maybe we need something to get in here?")
+      end
+    end
+
+    if (get_progress(P_TOWEROPEN) == 2) then
       bubble(HERO1, "I can't get in here anymore!")
-    else
-      bubble(HERO1, "The tower is open again.")
+    elseif (get_progress(P_TOWEROPEN) > 0) then
       change_map("tower", 0, 0, 0, 0)
     end
 
@@ -227,17 +228,16 @@ function zone_handler(zn)
     change_map("town6", 0, 0, 0, 0)
 
   elseif (zn == 33) then
-    warp(233, 128, 16)
+    warp("colis_w", 16)
 
   elseif (zn == 34) then
-    warp(247, 128, 16)
+    warp("colis_e", 16)
 
   elseif (zn == 35) then
-    change_map("pass", 0, 0, 0, 0)
+    change_map("pass", "entrance")
 
   elseif (zn == 36) then
-    change_mapm("pass", "entrance_2")
-    -- change_map("pass", 124, 35, 124, 35)
+    change_map("pass", "exit")
 
   elseif (zn == 37) then
     change_map("town7", 0, 0, 0, 0)
@@ -251,11 +251,11 @@ function zone_handler(zn)
         set_progress(P_GIANTDEAD, 1)
       end
     else
-      warp(211, 108, 16)
+      warp("giant_w", 16)
     end
 
   elseif (zn == 39) then
-    warp(295, 108, 16)
+    warp("giant_e", 16)
 
   elseif (zn == 40) then
     change_map("cult", 0, 0, 0, 0)
@@ -352,8 +352,7 @@ function zone_handler(zn)
 
   elseif (zn == 71) then
     set_ent_facing(HERO1, FACE_LEFT)
-    change_mapm("bridge2", "exit")
-    -- change_map("bridge2", 63, 18, 63, 18)
+    change_map("bridge2", "exit")
 
   elseif (zn == 72) then
     if ((get_progress(P_OPALHELMET) == 1) and
@@ -370,11 +369,10 @@ function zone_handler(zn)
     end
 
   elseif (zn == 73) then
-    change_map("cave6a", 0, 0, 0, 0)
+    change_map("cave6a", "entrance")
 
   elseif (zn == 74) then
-    change_mapm("cave6b", "ustairs1")
-    -- change_map("cave6b", 5, 7, 5, 7)
+    change_map("cave6b", "exit")
 
   elseif (zn == 75) then
     bubble(HERO1, "The underwater tunnel should go here.")

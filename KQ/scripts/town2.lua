@@ -154,8 +154,7 @@ end
 
 function zone_handler(zn)
   if (zn == 1) then
-    change_mapm("cave1", "ustairs2")
-    -- change_map("cave1", 47, 47, 47, 47)
+    change_map("cave1", "exit")
 
   elseif (zn == 2) then
     door_in(85, 13, 80, 6, 90, 16)
@@ -255,7 +254,7 @@ function zone_handler(zn)
     refresh()
 
   elseif (zn == 28) then
-    change_map("main", 222, 19, 222, 19)
+    change_map("main", "town2")
 
   elseif (zn == 29) then
     chest(10, I_MHERB, 1)
@@ -285,8 +284,7 @@ function zone_handler(zn)
     bubble(HERO1, "Inns always have boring books.")
 
   elseif (zn == 36) then
-    change_mapm("town6", "travelpoint")
-    -- change_map("town6", 38, 56, 38, 56)
+    change_map("town6", "travelpoint")
 
   elseif (zn == 37) then
     touch_fire(party[0])

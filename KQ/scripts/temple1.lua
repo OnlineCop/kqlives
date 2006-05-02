@@ -78,7 +78,7 @@ end
 
 function zone_handler(zn)
   if (zn == 1) then
-    change_map("main", 268, 12, 268, 12)
+    change_map("main", "temple1")
 
   elseif (zn == 2) then
     sfx(26)
@@ -134,7 +134,7 @@ function zone_handler(zn)
     warp(56, 44, 8)
 
   elseif (zn == 10) then
-    change_map("temple2", 0, 0, 0, 0)
+    change_map("temple2", "entrance")
 
   elseif (zn == 11) then
     bubble(HERO1, "Locked.")

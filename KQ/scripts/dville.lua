@@ -25,28 +25,28 @@ end
 
 function zone_handler(zn)
   if (zn == 1) then
-    change_map("main", 256, 77, 256, 77)
+    change_map("main", "dville")
 
   elseif (zn == 2) then
     bubble(HERO1, "Locked.")
 
   elseif (zn == 3) then
-    door_in(61, 8, 57, 1, 65, 11)
+    door_in(61, 16, 56, 8, 66, 20)
 
   elseif (zn == 4) then
-    door_in(71, 8, 67, 1, 75, 11)
+    door_in(71, 16, 66, 8, 76, 20)
 
   elseif (zn == 5) then
-    door_in(61, 20, 57, 13, 65, 23)
+    door_in(61, 28, 56, 20, 66, 32)
 
   elseif (zn == 6) then
-    door_in(71, 20, 67, 13, 75, 23)
+    door_in(71, 28, 66, 20, 76, 32)
 
   elseif (zn == 7) then
-    door_in(61, 32, 57, 25, 65, 35)
+    door_in(61, 40, 56, 32, 66, 44)
 
   elseif (zn == 8) then
-    door_in(71, 32, 67, 25, 75, 35)
+    door_in(71, 40, 66, 32, 76, 44)
 
   elseif (zn == 9) then
     door_out(13, 18)
@@ -78,7 +78,7 @@ function entity_handler(en)
   -- Anyone except head of town council kicks you out if you refuse to help
   if (get_progress(P_DENORIAN) == 1 and en ~= 7) then
     bubble(en, "You're not welcome here!")
-    change_map("main", 256, 77, 256, 77)
+    change_map("main", "dville")
     return
   end
 
@@ -151,7 +151,7 @@ function entity_handler(en)
         bubble(en, "I see. Well, then you should be on your way then. My people will show you out.")
         view_range(0, 0, 0, 0, 0)
         set_progress(P_DENORIAN, 1)
-        change_map("main", 256, 77, 256, 77)
+        change_map("main", "dville")
       end
     elseif (get_progress(P_DENORIAN) == 1) then
       if (prompt(en, 2, 0, "Have you changed your mind?",
@@ -161,7 +161,7 @@ function entity_handler(en)
       else
         bubble(en, "I thought as much. Begone!")
         view_range(0, 0, 0, 0, 0)
-        change_map("main", 256, 77, 256, 77)
+        change_map("main", "dville")
       end
     elseif (get_progress(P_DENORIAN) == 2) then
       bubble(en, "Good luck.")

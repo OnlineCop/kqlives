@@ -30,7 +30,7 @@ end
 
 function zone_handler(zn)
   if (zn == 1) then
-    change_map("main", 258, 185, 258, 185)
+    change_map("main", "town6")
 
   elseif (zn == 2) then
     door_in(56, 9, 52, 1, 72, 12)
@@ -151,8 +151,7 @@ function zone_handler(zn)
     if (get_progress(P_WARPSTONE) == 0) then
       set_progress(P_WARPSTONE, 1)
     end
-    change_mapm("town2", "travelpoint")
-    -- change_map("town2", 35, 15, 35, 15)
+    change_map("town2", "travelpoint")
 
   elseif (zn == 31) then
     touch_fire(party[0])

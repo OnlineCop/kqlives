@@ -73,7 +73,7 @@ end
 
 function zone_handler(zn)
   if (zn == 1) then
-    change_map("main", 205, 45, 205, 45)
+    change_map("main", "town4")
 
   elseif (zn == 2) then
     door_in(96, 8, 93, 0, 103, 12)

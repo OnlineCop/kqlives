@@ -62,7 +62,7 @@ end
 function zone_handler(zn)
   if (zn == 1) then
     LOC_check_costume()
-    change_map("main", 247, 115, 247, 115)
+    change_map("main", "town5")
 
   elseif (zn == 2) then
     bubble(HERO1, "Locked.")
@@ -123,7 +123,7 @@ function zone_handler(zn)
     else
       -- LOC_change_costume()
       bubble(HERO1, "Key goes in...")
-      change_map("guild", 0, 0, 0, 0)
+      change_map("guild", "entrance")
     end
 
   elseif (zn == 19) then
@@ -215,8 +215,7 @@ function entity_handler(en)
     bubble(en, "We can discuss that back at my place. It is not safe here.")
     bubble(HERO1, "Okay.")
     set_progress(P_EMBERSKEY, 1)
-    change_mapm("estate", "by_table")
-    -- change_map("estate", 57, 17, 57, 17)
+    change_map("estate", "by_table")
   end
 
 end
@@ -319,7 +318,7 @@ function LOC_ayla_gates()
     bubble(8, "I'm still not sure of my motivation in this scene...")
     wait_for_entity(HERO1, 8)
     LOC_check_costume()
-    change_map("main", 247, 115, 247, 115)
+    change_map("main", "town5")
     set_vfollow(1)
   else
     bubble(HERO1, "I was wondering if you did tours around the castle?")

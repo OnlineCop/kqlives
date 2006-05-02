@@ -22,20 +22,20 @@ end
 
 function refresh()
   if (get_treasure(72) == 1) then
-    set_obsm("treas_1", 0)
-    set_zonem("treas_1", 0)
+    set_obs("treas_1", 0)
+    set_zone("treas_1", 0)
   end
 
   if (get_progress(P_TALKOLDMAN) == 1) then
-    set_obsm("door1", 0)
+    set_obs("door1", 0)
   elseif (get_progress(P_TALKOLDMAN) > 1) then
     place_ent(6, 103, 10)
     set_zone(104, 23, 0)
     set_zone(104, 26, 0)
     if (get_progress(P_TALKOLDMAN) == 5) then
       -- // Unlock the doors leading to the old man's counters
-      set_obsm("hdoor1", 0)
-      set_obsm("hdoor2", 0)
+      set_obs("hdoor1", 0)
+      set_obs("hdoor2", 0)
     end
   end
 end
@@ -48,7 +48,7 @@ end
 
 function zone_handler(zn)
   if (zn == 1) then
-    change_map("main", 293, 82, 293, 82)
+    change_map("main", "town7")
 
   elseif (zn == 2) then
     door_in(74, 36, 69, 22, 97, 39)
@@ -102,19 +102,19 @@ function zone_handler(zn)
 
   elseif (zn == 17) then
     view_range(1, 69, 4, 97, 20)
-    warpm("dstairs1", 8)
+    warp("dstairs1", 8)
 
   elseif (zn == 18) then
     view_range(1, 69, 4, 97, 20)
-    warpm("dstairs2", 8)
+    warp("dstairs2", 8)
 
   elseif (zn == 19) then
     view_range(1, 69, 22, 97, 39)
-    warpm("ustairs1", 8)
+    warp("ustairs1", 8)
 
   elseif (zn == 20) then
     view_range(1, 69, 22, 97, 39)
-    warpm("ustairs2", 8)
+    warp("ustairs2", 8)
 
   elseif (zn == 21) then
     chest(71, I_SALVE, 1)
@@ -152,7 +152,7 @@ function zone_handler(zn)
 
   elseif (zn == 33) then
     set_progress(P_TRAVELPOINT, 1)
-    change_mapm("cave3a", "portal")
+    change_map("cave3a", "portal")
 
   end
 end
@@ -197,8 +197,8 @@ function entity_handler(en)
       end
       bubble(en, "Wow! You have all the Opal items! Quick, come up here to my study and let me see them!")
       -- Unlock doors that lead behind his counters
-      set_obsm("hdoor1", 0)
-      set_obsm("hdoor2", 0)
+      set_obs("hdoor1", 0)
+      set_obs("hdoor2", 0)
       set_ent_speed(en, 5)
 
       move_entity(en, 103, 10, 0)

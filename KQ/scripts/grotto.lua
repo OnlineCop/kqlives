@@ -105,7 +105,7 @@ end
 function zone_handler(zn)
   -- Grotto entrance/exit
   if (zn == 1) then
-    change_map("main", 129, 19, 129, 19)
+    change_map("main", "grotto")
 
   -- Campfire
   elseif (zn == 2) then
@@ -125,7 +125,7 @@ function zone_handler(zn)
       bubble(HERO1, "I'd rather not go down there right now.")
       return
     end
-    change_map("cave2", 0, 0, 0, 0)
+    change_map("cave2", "entrance")
 
   -- Treasure under flowers on E corner
   elseif (zn == 4) then
@@ -139,7 +139,7 @@ function zone_handler(zn)
     elseif (get_progress(P_UCOIN) == 1) then
       bubble(HERO1, "Wow. The rune hummed for a second but now it's quiet.")
     elseif (get_progress(P_UCOIN) == 2) then
-        change_map("grotto2", 0, 0, 0, 0)
+        change_map("grotto2", "entrance")
     else
       bubble(HERO1, "I can't go through here anymore since I no longer have the Unadium Coin.")
     end
@@ -170,8 +170,7 @@ function entity_handler(en)
         bubble(en, "Let's go back to town.")
         set_progress(P_FELLINPIT, 2)
         set_progress(P_TALKDERIG, 4)
-        change_mapm("town1", "by_derig")
-        -- change_map("town1", 65, 52, 65, 52)
+        change_map("town1", "by_derig")
       elseif (get_progress(P_TALKDERIG) == 6) then
         -- // Derig would only be here after you've finished with the Rod of Cancellation
         bubble(en, "Good job with the portal. I have returned the Rod of Cancellation.")

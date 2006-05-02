@@ -127,7 +127,7 @@ end
 
 function zone_handler(zn)
   if (zn == 1) then
-    change_map("main", 132, 30, 132, 30)
+    change_map("main", "town1")
 
   elseif (zn == 2) then
     inn("The Blue Boar Inn", 25, 1)
@@ -145,7 +145,7 @@ function zone_handler(zn)
     bubble(HERO1, "Locked.")
 
   elseif (zn == 7) then
-    change_map("cave1", 0, 0, 0, 0)
+    change_map("cave1", "entrance")
 
   elseif (zn == 8) then
     chest(0, I_B_SCORCH, 1)

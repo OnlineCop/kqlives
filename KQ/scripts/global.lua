@@ -270,6 +270,7 @@ function LOC_manor_or_party(who)
   return nil
 end
 
+
 function get_quest_info()
    if LOC_add_quest_item then
       LOC_add_quest_item()
@@ -282,5 +283,3 @@ end
 
 -- backward compat
 change_mapm = change_map
-
-

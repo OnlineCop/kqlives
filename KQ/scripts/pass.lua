@@ -6,7 +6,7 @@ function autoexec()
     place_ent(0, get_ent_tilex(0) - 1, get_ent_tiley(0))
     set_ent_facing(0, FACE_RIGHT)
     -- Move guard on right side of pass
-    place_ent(1, get_ent_tilex(1) + 1, get_ent_tiley(1))
+    place_ent(1, get_ent_tilex(1) + 1, get_ent_tiley(1) - 1)
     set_ent_facing(1, FACE_LEFT)
   end
   refresh()
@@ -26,7 +26,7 @@ end
 
 
 function refresh()
-  if (get_progress(P_CAVEKEY)>0) then
+  if (get_progress(P_CAVEKEY) > 0) then
     -- Move Rufus into his house
     place_ent(2, 152, 12)
   end
@@ -49,10 +49,10 @@ function zone_handler(zn)
 
 --  elseif (zn == 1) then
   if (zn == 1) then
-    change_map("main", 268, 103, 268, 103)
+    change_map("main", "pass_w")
 
   elseif (zn == 2) then
-    change_map("main", 271, 100, 271, 100)
+    change_map("main", "pass_e")
 
   elseif (zn == 3) then -- northern door
     if (get_progress(P_CAVEKEY) == 0) then
@@ -68,8 +68,7 @@ function zone_handler(zn)
       drawmap()
       screen_dump()
 
-      change_mapm("cave5", "door1")
-      -- change_map("cave5", 4, 93, 0, 0)
+      change_map("cave5", "door1")
     end
   elseif (zn == 4) then
     chest(73, I_VITSEED, 1)
@@ -91,8 +90,7 @@ function zone_handler(zn)
       drawmap()
       screen_dump()
 
-      change_mapm("cave5", "door2")
-      -- change_map("cave5", 15, 147, 0, 0)
+      change_map("cave5", "door2")
     end
 
   elseif (zn == 7) then
@@ -106,17 +104,20 @@ function zone_handler(zn)
       drawmap()
       screen_dump()
 
-      change_mapm("cave5", "door3")
-      -- change_map("cave5", 84, 147, 0, 0)
+      change_map("cave5", "entrance")
     end
 
   -- Door into cabin
   elseif (zn == 8) then
-    door_in(150, 14, 147, 7, 155, 18)
+    -- Avoid parallax problems: remove the background temporarily
+    set_background(0)
+    door_in(get_marker_tilex("cabin_in"), get_marker_tiley("cabin_in"), 147, 7, 155, 18)
 
   -- Door out of the cabin
   elseif (zn == 9) then
-    door_out(83, 50)
+    -- Reset the background for correct parallax
+    set_background(1)
+    door_out(get_marker_tilex("cabin_out"), get_marker_tiley("cabin_out"))
 
   -- Treasure
   elseif (zn == 10) then

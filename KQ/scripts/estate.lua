@@ -53,7 +53,7 @@ end
 
 function zone_handler(zn)
   if (zn == 1) then
-    change_map("main", 222, 41, 222, 41)
+    change_map("main", "estate")
 
   elseif (zn == 2) then
     door_in(61, 17, 53, 5, 69, 20)
@@ -73,14 +73,14 @@ function zone_handler(zn)
 
   elseif (zn == 7) then
     view_range(1, 71, 5, 87, 19)
-    warp(86, 17, 8)
+    warp("dstairs1", 8)
 
   elseif (zn == 8) then
     if (get_progress(P_TALKGELIK) < 4) then
       bubble(HERO1, "That scream came from up here somewhere! I can't leave!")
     else
       view_range(1, 53, 5, 69, 20)
-      warp(68, 17, 8)
+      warp("ustairs1", 8)
     end
 
   elseif (zn == 9) then

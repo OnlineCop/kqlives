@@ -47,7 +47,7 @@ function refresh()
     set_ent_facehero(1, 1)
   end
   if (get_progress(P_UNDEADJEWEL) == 2) then
-    set_btile(69, 69, 237)
+    set_btile("jewel", 237)
   end
 end
 
@@ -64,23 +64,22 @@ function zone_handler(zn)
     end
 
   elseif (zn == 1) then
-    change_mapm("temple1", "dstairs1")
-    -- change_map("temple1", 56, 36, 56, 36)
+    change_map("temple1", "dstairs1")
 
   elseif (zn == 2) then
-    warp(2, 45, 8)
+    warp("ustairs1", 8)
 
   elseif (zn == 3) then
-    warp(14, 25, 8)
+    warp("dstairs1", 8)
 
   elseif (zn == 4) then
-    warp(25, 6, 8)
+    warp("ustairs2", 8)
 
   elseif (zn == 5) then
-    warp(92, 86, 8)
+    warp("dstairs2", 8)
 
   elseif (zn == 6) then
-    warp(87, 21, 8)
+    warp("dstairs3", 8)
 
   elseif (zn == 7) then
     if (get_progress(P_KILLBLORD) == 0) then
@@ -113,10 +112,10 @@ function zone_handler(zn)
       set_ent_active(1, 0)
       return
     end
-    warp(75, 71, 8)
+    warp("ustairs4", 8)
 
   elseif (zn == 8) then
-    warp(60, 49, 8)
+    warp("ustairs3", 8)
 
   elseif (zn == 9) then
     chest(21, I_EAGLEEYES, 1)
@@ -159,7 +158,7 @@ function zone_handler(zn)
     refresh()
 
   elseif (zn == 19) then
-    warp(91, 67, 8)
+    warp("dstairs4", 8)
 
   elseif (zn == 20) then
     if (get_progress(P_GOBLINITEM) == 1) then
@@ -169,7 +168,7 @@ function zone_handler(zn)
     if (get_progress(P_UNDEADJEWEL) == 1 and get_progress(P_GOBLINITEM) == 0) then
       bubble(HERO1, "Hey, that gem would fit here.")
       sfx(5)
-      set_btile(69, 69, 237)
+      set_btile("jewel", 237)
       rest(500)
       bubble(255, "Thank you.")
       set_ent_facing(0, FACE_DOWN)

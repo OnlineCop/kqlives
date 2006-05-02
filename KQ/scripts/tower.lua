@@ -156,7 +156,7 @@ function zone_handler(zn)
       set_progress(P_TOWEROPEN, 2)
     end
     LOC_reset_progress()
-    change_map("main", 263, 53, 263, 53)
+    change_map("main", "tower")
 
   -- Stairs up (1: Main entrance -> 2: Floor switches)
   elseif (zn == 2) then
@@ -597,7 +597,7 @@ function entity_handler(en)
         end
 
         set_autoparty(1)
-        move_entitym(HERO1, "oracle", 0)
+        move_entity(HERO1, "oracle", 0)
 
         if (get_numchrs() == 1) then
           wait_for_entity(HERO1, HERO1)
