@@ -153,6 +153,8 @@ void add_change_marker (int marker_x, int marker_y, int mouse_button)
             curmarker = num_markers - 1;
          memcpy (found, found + 1,
                  (&markers[num_markers] - found) * sizeof (s_marker));
+         
+         /* Wait for mouse button to be released */
          while (mouse_b & 2);
       }
    } else {
@@ -367,7 +369,8 @@ void clear_layer (void)
 
          /* Make sure the value is valid */
          if (selected_layer < 1 || selected_layer > 3) {
-            cmessage ("Invalid layer!");
+            sprintf (strbuf, "Invalid layer: %d", selected_layer);
+            cmessage (strbuf);
             wait_enter ();
          } else {
             sprintf (strbuf, "Do you want to clear Layer %d? (y/n)",
@@ -478,7 +481,8 @@ void copy_layer (void)
 
          /* Make sure the value is valid */
          if (from_layer < 1 || from_layer > 3) {
-            cmessage ("Invalid layer!");
+            sprintf (strbuf, "Invalid layer: %d", from_layer);
+            cmessage (strbuf);
             wait_enter ();
          } else {
             done = 1;
@@ -508,7 +512,8 @@ void copy_layer (void)
 
          /* Make sure the value is valid */
          if (to_layer < 1 || to_layer > 3) {
-            cmessage ("Invalid layer!");
+            sprintf (strbuf, "Invalid layer: %d", to_layer);
+            cmessage (strbuf);
             wait_enter ();
          } else {
             done = 1;
@@ -1568,6 +1573,12 @@ int find_cursor (int direction)
       return 0;
    }
 
+   if ((*curr_x < 0 || *curr_x > gmap.xsize) ||
+       (*curr_y < 0 || *curr_y > gmap.ysize)) {
+      *curr_x = 0;
+      *curr_y = 0;
+   }
+
    /* Do not search for 0-index attribs, as they are "nothing" attribs */
    if (the_attrib == 0)
       return 0;
@@ -1847,7 +1858,8 @@ void global_change (void)
 
          /* Make sure the value is valid */
          if (!(tile_from >= 0 && tile_from < ICONSET_SIZE * max_sets)) {
-            cmessage ("Invalid tile!");
+            sprintf (strbuf, "Invalid tile: %d", tile_from);
+            cmessage (strbuf);
             wait_enter ();
          } else {
             done = 1;
@@ -1877,7 +1889,8 @@ void global_change (void)
 
          /* Make sure the value is valid */
          if (!(tile_to >= 0 && tile_to < ICONSET_SIZE * max_sets)) {
-            cmessage ("Invalid tile!");
+            sprintf (strbuf, "Invalid tile: %d", tile_to);
+            cmessage (strbuf);
             wait_enter ();
          } else {
             done = 1;
@@ -2491,7 +2504,6 @@ int process_keyboard (const int k)
          draw_mode = MAP_ENTITIES;
       }
       grab_tile = 0;
-      find_cursor (0);
       break;
    case (KEY_F):
       /* Get the first Zone used and set the indicator to that */
@@ -2585,7 +2597,6 @@ int process_keyboard (const int k)
          draw_mode = MAP_OBSTACLES;
       }
       grab_tile = 0;
-      find_cursor (0);
       break;
    case (KEY_P):
       /* Paste the copied selection area */
@@ -2616,7 +2627,6 @@ int process_keyboard (const int k)
          draw_mode = MAP_SHADOWS;
       }
       grab_tile = 0;
-      find_cursor (0);
       break;
    case (KEY_T):
       /* Copy a selection */
@@ -2686,7 +2696,6 @@ int process_keyboard (const int k)
          draw_mode = MAP_ZONES;
       }
       grab_tile = 0;
-      find_cursor (0);
       break;
    case (KEY_SPACE):
       /* Attempt at giving the user a chance to see the animations */
@@ -2924,7 +2933,7 @@ int process_keyboard (const int k)
  */
 void process_menu_bottom (const int cx, const int cy)
 {
-   int a;
+   int response;
    scare_mouse ();
 
    /* The mouse is over 'Icon:' menu */
@@ -2950,10 +2959,10 @@ void process_menu_bottom (const int cx, const int cy)
       hline (double_buffer, column[0] + 6 * 6, row[3] - 1,
              column[0] + 6 * 24 - 1, 255);
       blit2screen ();
-      a = get_line (column[0] + 6 * 6, row[2], strbuf, 19);
+      response = get_line (column[0] + 6 * 6, row[2], strbuf, 19);
 
       /* This is kinda hard to error-check... */
-      if (a == 0 || strlen (strbuf) < 1)
+      if (response == 0 || strlen (strbuf) < 1)
          return;
       strcpy (gmap.song_file, strbuf);
       return;
@@ -2974,14 +2983,15 @@ void process_menu_bottom (const int cx, const int cy)
       hline (double_buffer, column[0] + 6 * 7, row[5] - 1,
              column[0] + 6 * 10 - 1, 255);
       blit2screen ();
-      a = get_line (column[0] + 6 * 7, row[4], strbuf, 4);
+      response = get_line (column[0] + 6 * 7, row[4], strbuf, 4);
 
       /* Make sure the line isn't blank */
-      if (a == 0 || strlen (strbuf) < 1)
+      if (response == 0 || strlen (strbuf) < 1)
          return;
       /* Make sure the value is valid */
       if (!(atoi (strbuf) >= 0 && atoi (strbuf) <= 255)) {
-         cmessage ("Invalid map number!");
+         sprintf (strbuf, "Invalid map number: %d", atoi (strbuf));
+         cmessage (strbuf);
          wait_enter ();
          return;
       }
@@ -3020,14 +3030,26 @@ void process_menu_bottom (const int cx, const int cy)
       hline (double_buffer, column[1] + 6 * 7, row[6] - 1,
              column[1] + 6 * 11 - 1, 255);
       blit2screen ();
-      a = get_line (column[1] + 6 * 7, row[5], strbuf, 5);
+      response = get_line (column[1] + 6 * 7, row[5], strbuf, 5);
 
       /* Make sure the line isn't blank */
-      if (a == 0 || strlen (strbuf) < 1)
+      if (response == 0 || strlen (strbuf) < 1)
          return;
       /* Make sure the value is valid */
-      if (!(atoi (strbuf) >= 0 && atoi (strbuf) < MAX_WIDTH)) {
-         cmessage ("Invalid x-coordinate for warp!");
+      if (strbuf[0] == '-' || strbuf[0] == '+') {
+         response = gmap.warpx + atoi (strbuf);
+         if (response >= 0 && response < gmap.xsize) {
+            gmap.warpx += atoi (strbuf);
+            return;
+         } else {
+            sprintf (strbuf, "Invalid x-coordinate for warp: %d", response);
+            cmessage (strbuf);
+            wait_enter ();
+            return;
+         }
+      } else if (!(atoi (strbuf) >= 0 && atoi (strbuf) < MAX_WIDTH)) {
+         sprintf (strbuf, "Invalid x-coordinate for warp: %d", response);
+         cmessage (strbuf);
          wait_enter ();
          return;
       }
@@ -3043,14 +3065,26 @@ void process_menu_bottom (const int cx, const int cy)
       hline (double_buffer, column[1] + 6 * 7, row[7] - 1,
              column[1] + 6 * 11 - 1, 255);
       blit2screen ();
-      a = get_line (column[1] + 6 * 7, row[6], strbuf, 5);
+      response = get_line (column[1] + 6 * 7, row[6], strbuf, 5);
 
       /* Make sure the line isn't blank */
-      if (a == 0 || strlen (strbuf) < 1)
+      if (response == 0 || strlen (strbuf) < 1)
          return;
       /* Make sure the value is valid */
-      if (!(atoi (strbuf) >= 0 && atoi (strbuf) < MAX_HEIGHT)) {
-         cmessage ("Invalid y-coordinate for warp!");
+      if (strbuf[0] == '-' || strbuf[0] == '+') {
+         response = gmap.warpy + atoi (strbuf);
+         if (response >= 0 && response < gmap.ysize) {
+            gmap.warpy += atoi (strbuf);
+            return;
+         } else {
+            sprintf (strbuf, "Invalid y-coordinate for warp: %d", response);
+            cmessage (strbuf);
+            wait_enter ();
+            return;
+         }
+      } else if (!(atoi (strbuf) >= 0 && atoi (strbuf) < MAX_HEIGHT)) {
+         sprintf (strbuf, "Invalid y-coordinate for warp: %d", response);
+         cmessage (strbuf);
          wait_enter ();
          return;
       }
@@ -3066,14 +3100,26 @@ void process_menu_bottom (const int cx, const int cy)
       hline (double_buffer, column[2] + 6 * 9, row[2] - 1,
              column[2] + 6 * 13 - 1, 255);
       blit2screen ();
-      a = get_line (column[2] + 6 * 9, row[1], strbuf, 5);
+      response = get_line (column[2] + 6 * 9, row[1], strbuf, 5);
 
       /* Make sure the line isn't blank */
-      if (a == 0 || strlen (strbuf) < 1)
+      if (response == 0 || strlen (strbuf) < 1)
          return;
       /* Make sure the value is valid */
-      if (!(atoi (strbuf) >= 0 && atoi (strbuf) < gmap.xsize)) {
-         cmessage ("Invalid starting x-position!");
+      if (strbuf[0] == '-' || strbuf[0] == '+') {
+         response = gmap.stx + atoi (strbuf);
+         if (response >= 0 && response < gmap.xsize) {
+            gmap.stx += atoi (strbuf);
+            return;
+         } else {
+            sprintf (strbuf, "Invalid starting x-position: %d", response);
+            cmessage (strbuf);
+            wait_enter ();
+            return;
+         }
+      } else if (!(atoi (strbuf) >= 0 && atoi (strbuf) < gmap.xsize)) {
+         sprintf (strbuf, "Invalid starting x-position: %d", response);
+         cmessage (strbuf);
          wait_enter ();
          return;
       }
@@ -3089,14 +3135,26 @@ void process_menu_bottom (const int cx, const int cy)
       hline (double_buffer, column[2] + 6 * 9, row[3] - 1,
              column[2] + 6 * 13 - 1, 255);
       blit2screen ();
-      a = get_line (column[2] + 6 * 9, row[2], strbuf, 4);
+      response = get_line (column[2] + 6 * 9, row[2], strbuf, 4);
 
       /* Make sure the line isn't blank */
-      if (a == 0 || strlen (strbuf) < 1)
+      if (response == 0 || strlen (strbuf) < 1)
          return;
       /* Make sure the value is valid */
-      if (!(atoi (strbuf) >= 0 && atoi (strbuf) < gmap.ysize)) {
-         cmessage ("Invalid starting y-position!");
+      if (strbuf[0] == '-' || strbuf[0] == '+') {
+         response = gmap.sty + atoi (strbuf);
+         if (response >= 0 && response < gmap.ysize) {
+            gmap.sty += atoi (strbuf);
+            return;
+         } else {
+            sprintf (strbuf, "Invalid starting y-position: %d", response);
+            cmessage (strbuf);
+            wait_enter ();
+            return;
+         }
+      } else if (!(atoi (strbuf) >= 0 && atoi (strbuf) < gmap.ysize)) {
+         sprintf (strbuf, "Invalid starting y-position: %d", response);
+         cmessage (strbuf);
          wait_enter ();
          return;
       }
@@ -3133,17 +3191,30 @@ void process_menu_bottom (const int cx, const int cy)
       hline (double_buffer, column[3] + 6 * 6, row[2] - 1,
              column[3] + 6 * 9 - 1, 255);
       blit2screen ();
-      a = get_line (column[3] + 6 * 6, row[1], strbuf, 4);
+      response = get_line (column[3] + 6 * 6, row[1], strbuf, 4);
 
       /* Make sure the line isn't blank */
-      if (a == 0 || strlen (strbuf) < 1)
+      if (response == 0 || strlen (strbuf) < 1)
          return;
-      /* Make sure the value is valid (999 is a VERY extreme value!).
-         Even though you cannot divide by 0 (see below), you CAN multiply
-         by 0 to make the background totally stationary.
+
+      /* Make sure the value is valid (9 is a VERY extreme value!).
+       * Even though you cannot divide by 0 (see below), you CAN multiply
+       * by 0 to make the background totally stationary.
        */
-      if (!(atoi (strbuf) >= 0 && atoi (strbuf) <= 999)) {
-         cmessage ("Invalid parallax multiplier!");
+      if (strbuf[0] == '-' || strbuf[0] == '+') {
+         response = gmap.pmult + atoi (strbuf);
+         if (response >= 0 && response < 10) {
+            gmap.pmult += atoi (strbuf);
+            return;
+         } else {
+            sprintf (strbuf, "Invalid parallax multiplier: %d", response);
+            cmessage (strbuf);
+            wait_enter ();
+            return;
+         }
+      } else if (!(atoi (strbuf) >= 0 && atoi (strbuf) < 10)) {
+         sprintf (strbuf, "Invalid parallax multiplier: %d", response);
+         cmessage (strbuf);
          wait_enter ();
          return;
       }
@@ -3159,17 +3230,29 @@ void process_menu_bottom (const int cx, const int cy)
       hline (double_buffer, column[3] + 6 * 5, row[3] - 1,
              column[3] + 6 * 8 - 1, 255);
       blit2screen ();
-      a = get_line (column[3] + 6 * 5, row[2], strbuf, 4);
+      response = get_line (column[3] + 6 * 5, row[2], strbuf, 4);
 
       /* Make sure the line isn't blank */
-      if (a == 0 || strlen (strbuf) < 1)
+      if (response == 0 || strlen (strbuf) < 1)
          return;
 
-      /* Make sure the value is valid (999 is a VERY extreme value!) and
+      /* Make sure the value is valid (9 is a VERY extreme value!) and
          you CANNOT divide by zero.
        */
-      if (!(atoi (strbuf) > 0 && atoi (strbuf) <= 999)) {
-         cmessage ("Invalid parallax divider!");
+      if (strbuf[0] == '-' || strbuf[0] == '+') {
+         response = gmap.pdiv + atoi (strbuf);
+         if (response > 0 && response < 10) {
+            gmap.pdiv += atoi (strbuf);
+            return;
+         } else {
+            sprintf (strbuf, "Invalid parallax divider: %d", response);
+            cmessage (strbuf);
+            wait_enter ();
+            return;
+         }
+      } else if (!(atoi (strbuf) > 0 && atoi (strbuf) < 10)) {
+         sprintf (strbuf, "Invalid parallax divider: %d", atoi (strbuf));
+         cmessage (strbuf);
          wait_enter ();
          return;
       }
@@ -3609,14 +3692,14 @@ void resize_map (const int selection)
    new_height = old_height = gmap.ysize;
 
    if (selection == 0 || selection == 1) {
-      make_rect (double_buffer, 3, 11);
+      make_rect (double_buffer, 3, 12);
       print_sfont (6, 6, "Resize map", double_buffer);
       print_sfont (6, 18, "Width: ", double_buffer);
 
       done = 0;
       while (!done) {
          blit2screen ();
-         response = get_line (48, 18, strbuf, 4);
+         response = get_line (48, 18, strbuf, 6);
 
          /* If the user hits ESC, break out of the function entirely */
          if (response == 0)
@@ -3624,11 +3707,17 @@ void resize_map (const int selection)
 
          /* Make sure the line isn't blank */
          if (strlen (strbuf) > 0) {
-            new_width = atoi (strbuf);
+            /* Allow "+3" or "-16" to change relative to current size */
+            if (strbuf[0] == '-' || strbuf[0] == '+') {
+               new_width = gmap.xsize + atoi (strbuf);
+            } else {
+               new_width = atoi (strbuf);
+            }
 
             /* Make sure the value is valid */
             if (new_width < 10 || new_width > MAX_WIDTH) {
-               cmessage ("Invalid width!");
+               sprintf (strbuf, "Invalid width: %d", new_width);
+               cmessage (strbuf);
                wait_enter ();
             } else {
                done = 1;
@@ -3638,14 +3727,14 @@ void resize_map (const int selection)
    }
 
    if (selection == 0 || selection == 2) {
-      make_rect (double_buffer, 3, 11);
+      make_rect (double_buffer, 3, 12);
       print_sfont (6, 6, "Resize map", double_buffer);
       print_sfont (6, 18, "Height: ", double_buffer);
 
       done = 0;
       while (!done) {
          blit2screen ();
-         response = get_line (54, 18, strbuf, 4);
+         response = get_line (54, 18, strbuf, 6);
 
          /* If the user hits ESC, break out of the function entirely */
          if (response == 0)
@@ -3653,16 +3742,22 @@ void resize_map (const int selection)
 
          /* Make sure the line isn't blank */
          if (strlen (strbuf) > 0) {
-            new_height = atoi (strbuf);
+            /* Allow "+3" or "-16" to change relative to current size */
+            if (strbuf[0] == '-' || strbuf[0] == '+') {
+               new_height = gmap.ysize + atoi (strbuf);
+            } else {
+               new_height = atoi (strbuf);
+            }
 
             /* Make sure the value is valid */
             if (new_height < 15 || new_height > MAX_HEIGHT) {
-               cmessage ("Invalid height!");
+               sprintf (strbuf, "%d is an invalid height!", new_height);
+               cmessage (strbuf);
                wait_enter ();
             } else {
                done = 1;
-            }                   // if..else ()
-         }                      // if (strlen())
+            }
+         }
       }                         // while ()
    }                            // if (selection)
 
@@ -3675,7 +3770,7 @@ void resize_map (const int selection)
    }
 
    // Some markers found; prompt if we should remove them
-   if (done) {
+   if (done > 0) {
 
       sprintf (strbuf, "%d marker%s will be discarded! Continue? (y/n)", done,
                done == 1 ? "" : "s");
@@ -3687,8 +3782,7 @@ void resize_map (const int selection)
          return;
       } else {
          // They chose to remove the markers
-         done = num_markers;
-         for (m = markers + done; m > markers; --m) {
+         for (m = markers + num_markers; m >= markers; --m) {
             if (m->x >= new_width || m->y >= new_height) {
                // This removes the marker
                add_change_marker (m->x, m->y, 2);
@@ -4202,9 +4296,6 @@ int startup (void)
    for (ky = 0; ky < 16; ky++)
       for (kx = 0; kx < 16; kx++)
          mesh_h->line[ky][kx] = hilite_attrib[ky * 16 + kx];
-
-   curr_x = NULL;
-   curr_y = NULL;
 
    return 1;
 }                               /* startup () */
