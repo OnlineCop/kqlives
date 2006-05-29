@@ -37,7 +37,8 @@
 
 static int init_path = 0;
 static char user_dir[PATH_MAX];
-static char game_dir[PATH_MAX];
+static char data_dir[PATH_MAX];
+static char lib_dir[PATH_MAX];
 
 
 
@@ -78,29 +79,31 @@ const char *kqres (int dir, const char *file)
       get_executable_name (exe, sizeof (exe));
       if (strcmp (exe, KQ_BIN) == 0) {
          /* It's in its proper installed location */
-         strcpy (game_dir, KQ_DATA);
+         strcpy (data_dir, KQ_DATA);
+         strcpy (lib_dir, KQ_LIB);
       } else {
          /* Not installed, development version */
-         strcpy (game_dir, ".");
+         strcpy (data_dir, ".");
+         strcpy (lib_dir, ".");
       }
       init_path = 1;
    }
    switch (dir) {
    case DATA_DIR:
-      sprintf (ans, "%s/data/%s", game_dir, file);
+      sprintf (ans, "%s/data/%s", data_dir, file);
       break;
    case MUSIC_DIR:
-      sprintf (ans, "%s/music/%s", game_dir, file);
+      sprintf (ans, "%s/music/%s", data_dir, file);
       break;
    case MAP_DIR:
-      sprintf (ans, "%s/maps/%s", game_dir, file);
+      sprintf (ans, "%s/maps/%s", data_dir, file);
       break;
    case SAVE_DIR:
    case SETTINGS_DIR:
       sprintf (ans, "%s/%s", user_dir, file);
       break;
    case SCRIPT_DIR:
-      sprintf (ans, "%s/scripts/%s", game_dir, file);
+      sprintf (ans, "%s/scripts/%s", lib_dir, file);
       break;
    default:
       return NULL;

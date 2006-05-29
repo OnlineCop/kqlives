@@ -18,7 +18,7 @@ kq_SOURCES = src/enemyc.c src/intrface.c src/sgame.c \
 	include/entity.h include/kq.h include/res.h include/timing.h \
 	include/eqpmenu.h include/kqsnd.h include/scrnshot.h \
 	include/eskill.h include/magic.h include/selector.h 
-EXTRA_kq_SOURCES = src/unix.c src/osx.m src/beos.c src/win.c src/dos.c
+EXTRA_kq_SOURCES = src/unix.c src/osx.m src/beos.c src/win.c src/dos.c src/winres.rc
 kq_LDADD = $(kq_extra_files) $(ALLEGRO_LIBS)
 kq_DEPENDENCIES = $(kq_extra_files)
 
@@ -54,6 +54,9 @@ KQ.app: kq
 	install -C $(cscripts_DATA) $(APPR)/scripts
 	install Mac/KQ-icon.icns $(APPR)/KQ.icns
 
+winres.o: winres.rc
+	windres $< -o $@
+
 dist_map_DATA = maps/starting.map maps/bridge2.map \
 	maps/estate.map maps/temple1.map maps/bridge.map \
 	maps/temple2.map maps/camp.map maps/fort.map maps/tower.map \
@@ -82,7 +85,7 @@ cscripts_DATA = scripts/bridge2.lob scripts/dville.lob \
 	scripts/pass.lob scripts/tunnel.lob scripts/cult.lob \
 	scripts/shrine.lob
 MOSTLYCLEANFILES = $(cscripts_DATA)
-cscriptsdir = $(pkgdatadir)/scripts
+cscriptsdir = $(pkglibdir)/scripts
 
 EXTRA_DIST = scripts/bridge2.lua scripts/dville.lua \
 	scripts/starting.lua scripts/bridge.lua scripts/estate.lua \
@@ -98,7 +101,7 @@ EXTRA_DIST = scripts/bridge2.lua scripts/dville.lua \
 	scripts/town7.lua scripts/town8.lua scripts/coliseum.lua \
 	scripts/pass.lua scripts/tunnel.lua scripts/cult.lua \
 	scripts/shrine.lua Mac/Info.plist Mac/KQ-icon.icns \
-        maps/mapdraw2.glade
+        maps/mapdraw2.glade other/kq.ico
 
 dist_gfx_DATA = data/kqsnd.dat data/mpcx.dat data/ssprites.dat \
 	data/hero.kq data/tileset.kq data/allstat.mon data/resabil.mon
@@ -115,7 +118,7 @@ musicdir = $(pkgdatadir)/music
 
 dist_man_MANS = debian/kq.6
 
-AM_CFLAGS = -I$(top_srcdir)/include -DKQ_BIN=\"$(bindir)/KQ$(EXEEXT)\" -DKQ_DATA=\"$(pkgdatadir)\"
+AM_CFLAGS = -I$(top_srcdir)/include -DKQ_BIN=\"$(bindir)/kq$(EXEEXT)\" -DKQ_DATA=\"$(pkgdatadir)\" -DKQ_LIB=\"$(pkglibdir)\"
 
 if BUNDLE
 all-local: KQ.app
