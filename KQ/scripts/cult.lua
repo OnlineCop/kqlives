@@ -363,7 +363,7 @@ function LOC_avatar_abounds()
   local a, b, dx, dy
   local ax, ay, z
 
-  create_df("data/mpcx.dat", "LFLAME_PCX")
+  create_df("mpcx.dat", "LFLAME_PCX")
   create_bmp(0, 24, 24)
   df2bmp(0, 0, 16, 0, 0, 24, 24)
   create_bmp(1, 64, 16)

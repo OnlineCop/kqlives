@@ -2359,7 +2359,8 @@ static int KQ_set_vfollow (lua_State * L)
 
 static int KQ_create_df (lua_State * L)
 {
-   g_df = load_datafile_object (lua_tostring (L, 1), lua_tostring (L, 2));
+   g_df = load_datafile_object (kqres(DATA_DIR, lua_tostring (L, 1)),
+                                lua_tostring (L, 2));
    return 0;
 }
 
