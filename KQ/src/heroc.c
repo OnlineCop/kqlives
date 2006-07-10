@@ -367,7 +367,7 @@ static int hero_attack (int whom)
    cury = -1;
    battle_render (0, 0, 0);
    blit2screen (0, 0);
-   wait (150);
+   kq_wait (150);
    fight (whom, tgt, 0);
    return 1;
 }
@@ -796,7 +796,7 @@ static void hero_run (void)
                draw_sprite (double_buffer, frames[pidx[b]][fr], fx, fy);
          }
          blit2screen (0, 0);
-         wait (10);
+         kq_wait (10);
       }
    }
    revert_equipstats ();

@@ -2708,7 +2708,7 @@ static int KQ_door_in (lua_State * L)
    play_effect (25, 128);
    drawmap ();
    blit2screen (xofs, yofs);
-   wait (50);
+   kq_wait (50);
    set_view (1, (int) lua_tonumber (L, 3), (int) lua_tonumber (L, 4),
              (int) lua_tonumber (L, 5), (int) lua_tonumber (L, 6));
    warp ((int) lua_tonumber (L, 1), (int) lua_tonumber (L, 2), 8);
@@ -2883,7 +2883,7 @@ static int KQ_wait (lua_State * L)
 
 static int KQ_rest (lua_State * L)
 {
-   wait ((int) lua_tonumber (L, 1));
+   kq_wait ((int) lua_tonumber (L, 1));
    return 0;
 }
 
@@ -2897,7 +2897,7 @@ static int KQ_rest (lua_State * L)
  * \param   L::1 String message to show
  * \param   L::2 Icon number or 255 for none (icons
  *             are displayed, for instance, when items are procured)
- * \param   L::3 Delay time (see wait()) , or 0 for indefinite
+ * \param   L::3 Delay time (see kq_wait()) , or 0 for indefinite
  * \returns 0 (no value returned)
  *
  * 20040308 PH added code to default missing L::2 parameter to 255 (instead of 0)
@@ -3446,7 +3446,25 @@ int lua_dofile (lua_State * L, const char *filename)
    pack_fclose (f);
    return retval ? retval : lua_pcall (L, 0, LUA_MULTRET, 0);
 }
+#ifndef HAVE_LUA_OPEN
+/* We have to make our own! */
+static void *l_alloc (void *ud, void *ptr, size_t osize, size_t nsize) {
+  (void)ud;     /* not used */
+  (void)osize;  /* not used */
+  if (nsize == 0) {
+    free(ptr);  /* ANSI requires that free(NULL) has no effect */
+    return NULL;
+  }
+  else
+    /* ANSI requires that realloc(NULL, size) == malloc(size) */
+    return realloc(ptr, nsize);
+}
 
+static lua_State* lua_open() 
+{
+  return lua_newstate(l_alloc, NULL);
+}
+#endif
 
 /*! \brief Initialise scripting engine
  *

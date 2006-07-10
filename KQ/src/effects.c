@@ -137,7 +137,7 @@ void display_amount (int tgt, int cl, int aflag)
             }
          }
          blit2screen (0, 0);
-         wait (30);
+         kq_wait (30);
       }
    }
    battle_render (0, 0, 0);
@@ -240,7 +240,7 @@ void draw_spellsprite (int tgt, int aflag, int ef, int shows)
          }
       }
       blit2screen (0, 0);
-      wait (eff[ef].delay);
+      kq_wait (eff[ef].delay);
       blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
    }
    revert_cframes (tgt, aflag);
@@ -301,7 +301,7 @@ void draw_hugesprite (int tgt, int hx, int hy, int ef, int shows)
          masked_blit ((BITMAP *) pb->dat, double_buffer, 0, eff[ef].ysize * a,
                       hx, hy, eff[ef].xsize, eff[ef].ysize);
       blit2screen (0, 0);
-      wait (eff[ef].delay);
+      kq_wait (eff[ef].delay);
       blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
    }
    revert_cframes (tgt, 1);
@@ -368,7 +368,7 @@ void draw_attacksprite (int tgt, int aflag, int ef, int shows)
          }
       }
       blit2screen (0, 0);
-      wait (eff[ef].delay);
+      kq_wait (eff[ef].delay);
       blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
    }
    if (tgt < PSIZE) {
@@ -421,7 +421,7 @@ void draw_castersprite (int cstr, int cc)
          masked_blit (cs, double_buffer, 0, a * 32, dx - 16, dy - 16, 32, 32);
       }
       blit2screen (0, 0);
-      wait (120);
+      kq_wait (120);
       blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
    }
    unload_datafile_object (cd);
@@ -483,7 +483,7 @@ void death_animation (int tgt, int aflag)
             }
          }
          blit2screen (0, 0);
-         wait (30);
+         kq_wait (30);
          blit (back, double_buffer, 0, 0, 0, 0, 350, 280);
       }
    }

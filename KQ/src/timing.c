@@ -46,11 +46,12 @@ static int frate;
 
 /*! \brief Pause the game for a period of time
  *
- * Calls poll_music() continuously to ensure music keeps playing
+ * Calls poll_music() continuously to ensure music keeps playing.
+ * PH renamed from wait to kq_wait as the former was causing conflicts on OSX
  *
  * \param   ms Time to pause in milliseconds
  */
-void wait (long ms)
+void kq_wait (long ms)
 {
    /* dumb's doc says to call poll_music each bufsize / freq seconds */
    static const int delay = 1000 * 4096 * 2 / 44100;
@@ -113,7 +114,7 @@ int limit_frame_rate (int fps)
 
 #elif defined(_WIN32)
 
-void wait (long ms)
+void kq_wait (long ms)
 {
    /* dumb's doc says to call poll_music each bufsize / freq seconds */
    static const int delay = 1000 * 4096 * 4 / 44100;
@@ -169,7 +170,7 @@ static void _kq_rest_callback (void)
 
 
 
-void wait (long ms)
+void kq_wait (long ms)
 {
    rest_callback (ms, _kq_rest_callback);
 }

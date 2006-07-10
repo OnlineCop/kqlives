@@ -1149,7 +1149,7 @@ void do_inn_effects (int do_delay)
    }
    progress[P_REPULSE] = 0;
    if (do_delay) {
-      wait (1500);
+      kq_wait (1500);
       do_transition (TRANS_FADE_IN, 2);
    }
    resume_music ();

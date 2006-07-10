@@ -533,22 +533,22 @@ int start_menu (int c)
          blit (staff, double_buffer, 0, 0, 124, 22, 72, 226);
          blit2screen (0, 0);
 
-         wait (1000);
+         kq_wait (1000);
          for (a = 0; a < 42; a++) {
             stretch_blit (staff, double_buffer, 0, 0, 72, 226, 124 - (a * 32),
                           22 - (a * 96), 72 + (a * 64), 226 + (a * 192));
             blit2screen (0, 0);
-            wait (100);
+            kq_wait (100);
          }
          for (a = 0; a < 5; a++) {
             color_scale (dudes, tdudes, 53 - a, 53 + a);
             draw_sprite (double_buffer, tdudes, 106, 64);
             blit2screen (0, 0);
-            wait (100);
+            kq_wait (100);
          }
          draw_sprite (double_buffer, dudes, 106, 64);
          blit2screen (0, 0);
-         wait (1000);
+         kq_wait (1000);
          destroy_bitmap (staff);
          destroy_bitmap (dudes);
          destroy_bitmap (tdudes);
@@ -574,10 +574,10 @@ int start_menu (int c)
                       52);
 #endif
          blit2screen (0, 0);
-         wait (a == 0 ? 500 : 100);
+	 kq_wait (a == 0 ? 500 : 100);
       }
       if (c == 0)
-         wait (500);
+         kq_wait (500);
 #ifdef DEBUGMODE
    } else {
       set_palette (pal);

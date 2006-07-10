@@ -253,7 +253,7 @@ static int do_combat (char *bg, char *mus, int is_rnd)
                           240 - (zoom_step * 24), 0, 0, 320, 240);
 
          /*  RB FIXME: should we vsync here rather than rest?  */
-         wait (100);
+         kq_wait (100);
       }
    snap_togrid ();
    roll_initiative ();
@@ -951,10 +951,10 @@ int fight (int ar, int dr, int sk)
       for (f = 0; f < 3; f++) {
          battle_render (dr + 1, 0, 0);
          blit2screen (0, 0);
-         wait (20);
+         kq_wait (20);
          rectfill (double_buffer, 0, 0, 320, 240, 15);
          blit2screen (0, 0);
-         wait (20);
+         kq_wait (20);
       }
    }
 
@@ -1266,7 +1266,7 @@ static void enemies_win (void)
    battle_render (0, 0, 0);
    /*  RB FIXME: rest()?  */
    blit2screen (0, 0);
-   wait (1000);
+   kq_wait (1000);
    sprintf (strbuf, "%s was defeated!", party[pidx[0]].name);
    menubox (double_buffer, 152 - (strlen (strbuf) * 4), 48, strlen (strbuf), 1,
             BLUE);
@@ -1303,14 +1303,14 @@ static void heroes_win (void)
    s_fighter t2;
 
    play_music ("rend5.s3m", 0);
-   wait (500);
+   kq_wait (500);
    revert_equipstats ();
    for (index = 0; index < numchrs; index++)
       fighter[index].aframe = 4;
 
    battle_render (0, 0, 0);
    blit2screen (0, 0);
-   wait (250);
+   kq_wait (250);
    for (index = 0; index < numchrs; index++) {
       if ((fighter[index].sts[S_STONE] == 0)
           && (fighter[index].sts[S_DEAD] == 0))

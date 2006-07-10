@@ -212,7 +212,7 @@ int skill_use (int who)
       cury = -1;
       battle_render (0, 0, 0);
       blit2screen (0, 0);
-      wait (150);
+      kq_wait (150);
       multi_fight (who);
       dct = 0;
       break;
@@ -242,7 +242,7 @@ int skill_use (int who)
                   draw_fighter (who, 0);
                }
                blit2screen (0, 0);
-               wait (50);
+               kq_wait (50);
                blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
             }
          }
@@ -275,7 +275,7 @@ int skill_use (int who)
                if (is_active (g))
                   draw_fighter (g, 0);
             blit2screen (0, 0);
-            wait (50);
+            kq_wait (50);
             blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
          }
          revert_cframes (PSIZE, 1);
@@ -372,9 +372,9 @@ int skill_use (int who)
       dct = 1;
       battle_render (0, who + 1, 0);
       blit2screen (0, 0);
-      wait (100);
+      kq_wait (100);
       play_effect (SND_MENU, 128);
-      wait (500);
+      kq_wait (500);
       dct = 0;
       battle_render (who, who, 0);
       found_item = 0;

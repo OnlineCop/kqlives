@@ -969,7 +969,7 @@ void play_effect (int efc, int panning)
 
       for (a = 0; a < 8; a++) {
          blit2screen (xo + bx[a], yo + by[a]);
-         wait (10);
+         kq_wait (10);
       }
       blit (fx_buffer, double_buffer, 0, 0, 0, 0, 352, 280);
       break;
@@ -993,7 +993,7 @@ void play_effect (int efc, int panning)
 
          for (a = 0; a < 8; a++) {
             blit2screen (xofs + bx[a] * sc[s], yofs + by[a] * sc[s]);
-            wait (10);
+            kq_wait (10);
          }
       }
       blit (fx_buffer, double_buffer, 0, 0, 0, 0, 352, 280);

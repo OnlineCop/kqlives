@@ -1532,7 +1532,7 @@ void message (char *m, int icn, int delay, int x_m, int y_m)
       if (delay == 0)
          wait_enter ();
       else
-         wait (delay);
+         kq_wait (delay);
       blit (back, double_buffer, 0, 0, x_m, y_m, 352, 280);
    }
 }

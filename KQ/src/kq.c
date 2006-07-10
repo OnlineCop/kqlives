@@ -1586,7 +1586,7 @@ void kwait (int dtime)
 
 /*! \brief Wait for scripted movement to finish
  *
- * This does like wait() and processes entities...
+ * This does like kq_wait() and processes entities...
  * however, this function waits for particular entities
  * to finish scripted movement rather than waiting for
  * a specific amount of time to pass.
