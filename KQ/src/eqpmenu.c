@@ -32,23 +32,21 @@
 #include <string.h>
 
 #include "kq.h"
-#include "setup.h"
-#include "menu.h"
-#include "itemmenu.h"
-#include "eqpmenu.h"
 #include "draw.h"
+#include "eqpmenu.h"
+#include "itemmenu.h"
+#include "menu.h"
 #include "res.h"
+#include "setup.h"
 
 
-
-/* globals  */
+/* Globals  */
 int tstats[13], tres[16];
 unsigned short t_inv[MAX_INV], tot, sm;
 char eqp_act;
 
 
-
-/*  internal functions  */
+/* Internal functions */
 static void draw_equipmenu (int, int);
 static void draw_equippable (int, int, int);
 static void calc_possible_equip (int, int);
@@ -58,6 +56,154 @@ static void calc_equippreview (int, int, int);
 static void draw_equippreview (int, int, int);
 static int equip (int, int, int);
 static int deequip (int, int);
+
+
+/*! \brief Show the effect on stats if this piece were selected
+ *
+ * This is used to calculate the difference in stats due to
+ * (de)equipping a piece of equipment.
+ *
+ * \param   aa Character to process
+ * \param   p2 Slot to consider changing
+ * \param   ii New piece of equipment to compare/use
+ */
+static void calc_equippreview (int aa, int p2, int ii)
+{
+   int c, z;
+
+   c = party[pidx[aa]].eqp[p2];
+   party[pidx[aa]].eqp[p2] = ii;
+   update_equipstats ();
+   for (z = 0; z < 13; z++)
+      tstats[z] = fighter[aa].stats[z];
+   for (z = 0; z < 16; z++)
+      tres[z] = fighter[aa].res[z];
+   party[pidx[aa]].eqp[p2] = c;
+   update_equipstats ();
+}
+
+
+
+/*! \brief List equipment that can go in a slot
+ *
+ * Create a list of equipment that can be equipped in a particular
+ * slot for a particular hero.
+ *
+ * \param   c Character to equip
+ * \param   slot Which body part to equip
+ */
+static void calc_possible_equip (int c, int slot)
+{
+   int k;
+
+   tot = 0;
+   for (k = 0; k < MAX_INV; k++) {
+      // Check if we have any items at all
+      if (g_inv[k][0] > 0 && g_inv[k][1] > 0) {
+         if (items[g_inv[k][0]].type == slot
+             && items[g_inv[k][0]].eq[pidx[c]] != 0) {
+            t_inv[tot] = k;
+            tot++;
+         }
+      }
+   }
+}
+
+
+
+/*! \brief Handle selecting an equipment item
+ *
+ * After choosing an equipment slot, select an item to equip
+ *
+ * \param   c Character to equip
+ * \param   slot Which part of the body to process
+ */
+static void choose_equipment (int c, int slot)
+{
+   int stop = 0, yptr = 0, pptr = 0, sm = 0, ym = 15;
+
+   while (!stop) {
+      check_animation ();
+      drawmap ();
+      draw_equipmenu (c, 0);
+      draw_equippable (c, slot, pptr);
+      if (tot == 0) {
+         draw_equippreview (c, -1, 0);
+         play_effect (SND_BAD, 128);
+         return;
+      }
+      draw_equippreview (c, slot, g_inv[t_inv[pptr + yptr]][0]);
+      draw_sprite (double_buffer, menuptr, 12 + xofs, yptr * 8 + 100 + yofs);
+      blit2screen (xofs, yofs);
+      if (tot < 16) {
+         sm = 0;
+         ym = tot - 1;
+      } else
+         sm = tot - 16;
+
+      readcontrols ();
+
+      if (down) {
+         unpress ();
+         if (yptr == 15) {
+            pptr++;
+            if (pptr > sm)
+               pptr = sm;
+         } else {
+            if (yptr < ym)
+               yptr++;
+         }
+         play_effect (SND_CLICK, 128);
+      }
+      if (up) {
+         unpress ();
+         if (yptr == 0) {
+            pptr--;
+            if (pptr < 0)
+               pptr = 0;
+         } else
+            yptr--;
+         play_effect (SND_CLICK, 128);
+      }
+      if (balt) {
+         unpress ();
+         if (equip (pidx[c], t_inv[pptr + yptr], 0) == 1) {
+            play_effect (SND_EQUIP, 128);
+            stop = 1;
+         } else
+            play_effect (SND_BAD, 128);
+      }
+      if (bctrl) {
+         unpress ();
+         stop = 1;
+      }
+   }
+   return;
+}
+
+
+
+/*! \brief Check if item can be de-equipped, then do it.
+ *
+ * Hmm... this is hard to describe :)  The functions makes sure you have
+ * room to de-equip before it actual does anything.
+ *
+ * \param   c Character to process
+ * \param   ptr Slot to de-equip
+ * \returns 0 if unsuccessful, 1 if successful
+ */
+static int deequip (int c, int ptr)
+{
+   int a, b = 0;
+
+   a = party[pidx[c]].eqp[ptr];
+   if (a > 0)
+      b = check_inventory (a, 1);
+   if (b == 0 || a == 0)
+      return 0;
+   party[pidx[c]].eqp[ptr] = 0;
+   return 1;
+}
 
 
 
@@ -155,310 +301,6 @@ static void draw_equippable (int c, int slot, int pptr)
    if (tot > 16)
       if (pptr < tot - 16)
          draw_sprite (double_buffer, dnptr, 180 + xofs, 206 + yofs);
-}
-
-
-
-/*! \brief List equipment that can go in a slot
- *
- * Create a list of equipment that can be equipped in a particular
- * slot for a particular hero.
- *
- * \param   c Character to equip
- * \param   slot Which body part to equip
- */
-static void calc_possible_equip (int c, int slot)
-{
-   int k;
-
-   tot = 0;
-   for (k = 0; k < MAX_INV; k++) {
-      // Check if we have any items at all
-      if (g_inv[k][0] > 0 && g_inv[k][1] > 0) {
-         if (items[g_inv[k][0]].type == slot
-             && items[g_inv[k][0]].eq[pidx[c]] != 0) {
-            t_inv[tot] = k;
-            tot++;
-         }
-      }
-   }
-}
-
-
-
-/*! \brief Calculate optimum equipment
- *
- * This calculates what equipment is optimum for a particular hero.
- * The weapon that does the most damage is chosen and the armor with
- * the best combination of defense+magic_defense is chosen.  As for a
- * relic, the one that offers the greatest overall bonus to stats is
- * selected.
- *
- * \param   c Which character to operate on
- */
-static void optimize_equip (int c)
-{
-   int a, b, z, maxx, maxi, v = 0;
-
-   for (a = 0; a < 6; a++)
-      if (party[pidx[c]].eqp[a] > 0)
-         if (deequip (c, a) == 0)
-            return;
-   maxx = 0;
-   maxi = -1;
-   calc_possible_equip (c, 0);
-   for (a = 0; a < tot; a++) {
-      b = g_inv[t_inv[a]][0];
-      if (items[b].stats[A_ATT] > maxx) {
-         maxx = items[b].stats[A_ATT];
-         maxi = a;
-      }
-   }
-   if (maxi > -1)
-      if (equip (pidx[c], t_inv[maxi], 0) == 0)
-         return;
-   for (z = 1; z < 5; z++) {
-      maxx = 0;
-      maxi = -1;
-      calc_possible_equip (c, z);
-      for (a = 0; a < tot; a++) {
-         b = g_inv[t_inv[a]][0];
-         if (items[b].stats[A_DEF] + items[b].stats[A_MAG] > maxx) {
-            maxx = items[b].stats[A_DEF] + items[b].stats[A_MAG];
-            maxi = a;
-         }
-      }
-      if (maxi > -1)
-         if (equip (pidx[c], t_inv[maxi], 0) == 0)
-            return;
-   }
-   maxx = 0;
-   maxi = -1;
-   calc_possible_equip (c, 5);
-   for (a = 0; a < tot; a++) {
-      b = g_inv[t_inv[a]][0];
-      for (z = 0; z < 13; z++)
-         v += items[b].stats[z];
-      for (z = 0; z < 16; z++)
-         v += items[b].res[z];
-      if (v > maxx) {
-         maxx = v;
-         maxi = a;
-      }
-   }
-   if (maxi > -1)
-      if (equip (pidx[c], t_inv[maxi], 0) == 0)
-         return;
-   play_effect (SND_EQUIP, 128);
-}
-
-
-
-/*! \brief Handle equip menu
- *
- * Draw the equip menu stuff and let the user select an equip slot.
- *
- * \param   c Character to process
- */
-void equip_menu (int c)
-{
-   int stop = 0, yptr = 0, sl = 1;
-   int a, b, d;
-
-   eqp_act = 0;
-   play_effect (SND_MENU, 128);
-   while (!stop) {
-      check_animation ();
-      drawmap ();
-      draw_equipmenu (c, sl);
-      if (sl == 0) {
-         draw_equippable (c, yptr, 0);
-         if (eqp_act == 2)
-            draw_equippreview (c, yptr, 0);
-         else
-            draw_equippreview (c, -1, 0);
-      } else {
-         draw_equippable (c, -1, 0);
-         draw_equippreview (c, -1, 0);
-      }
-      if (sl == 0)
-         draw_sprite (double_buffer, menuptr, 12 + xofs, yptr * 8 + 36 + yofs);
-      blit2screen (xofs, yofs);
-
-      readcontrols ();
-
-      if (sl == 1) {
-         if (left) {
-            unpress ();
-            eqp_act--;
-            if (eqp_act < 0)
-               eqp_act = 3;
-            play_effect (SND_CLICK, 128);
-         }
-         if (right) {
-            unpress ();
-            eqp_act++;
-            if (eqp_act > 3)
-               eqp_act = 0;
-            play_effect (SND_CLICK, 128);
-         }
-      } else {
-         if (down) {
-            unpress ();
-            yptr++;
-            if (yptr > 5)
-               yptr = 0;
-            play_effect (SND_CLICK, 128);
-         }
-         if (up) {
-            unpress ();
-            yptr--;
-            if (yptr < 0)
-               yptr = 5;
-            play_effect (SND_CLICK, 128);
-         }
-      }
-      if (balt) {
-         unpress ();
-         if (sl == 1) {
-            // If the selection is over 'Equip' or 'Remove'
-            if (eqp_act == 0 || eqp_act == 2)
-               sl = 0;
-            else if (eqp_act == 1)
-               optimize_equip (c);
-            else if (eqp_act == 3) {
-               b = 0;
-               d = 0;
-               for (a = 0; a < 6; a++) {
-                  if (party[pidx[c]].eqp[a] > 0) {
-                     d++;
-                     b += deequip (c, a);
-                  }
-               }
-               if (b == d)
-                  play_effect (SND_UNEQUIP, 128);
-               else
-                  play_effect (SND_BAD, 128);
-            }
-         } else {
-            if (eqp_act == 0)
-               choose_equipment (c, yptr);
-            else {
-               if (eqp_act == 2) {
-                  if (deequip (c, yptr) == 1)
-                     play_effect (SND_UNEQUIP, 128);
-                  else
-                     play_effect (SND_BAD, 128);
-               }
-            }
-         }
-      }
-      if (bctrl) {
-         unpress ();
-         if (sl == 0)
-            sl = 1;
-         else
-            stop = 1;
-      }
-   }
-}
-
-
-
-/*! \brief Handle selecting an equipment item
- *
- * After choosing an equipment slot, select an item to equip
- *
- * \param   c Character to equip
- * \param   slot Which part of the body to process
- */
-static void choose_equipment (int c, int slot)
-{
-   int stop = 0, yptr = 0, pptr = 0, sm = 0, ym = 15;
-
-   while (!stop) {
-      check_animation ();
-      drawmap ();
-      draw_equipmenu (c, 0);
-      draw_equippable (c, slot, pptr);
-      if (tot == 0) {
-         draw_equippreview (c, -1, 0);
-         play_effect (SND_BAD, 128);
-         return;
-      }
-      draw_equippreview (c, slot, g_inv[t_inv[pptr + yptr]][0]);
-      draw_sprite (double_buffer, menuptr, 12 + xofs, yptr * 8 + 100 + yofs);
-      blit2screen (xofs, yofs);
-      if (tot < 16) {
-         sm = 0;
-         ym = tot - 1;
-      } else
-         sm = tot - 16;
-
-      readcontrols ();
-
-      if (down) {
-         unpress ();
-         if (yptr == 15) {
-            pptr++;
-            if (pptr > sm)
-               pptr = sm;
-         } else {
-            if (yptr < ym)
-               yptr++;
-         }
-         play_effect (SND_CLICK, 128);
-      }
-      if (up) {
-         unpress ();
-         if (yptr == 0) {
-            pptr--;
-            if (pptr < 0)
-               pptr = 0;
-         } else
-            yptr--;
-         play_effect (SND_CLICK, 128);
-      }
-      if (balt) {
-         unpress ();
-         if (equip (pidx[c], t_inv[pptr + yptr], 0) == 1) {
-            play_effect (SND_EQUIP, 128);
-            stop = 1;
-         } else
-            play_effect (SND_BAD, 128);
-      }
-      if (bctrl) {
-         unpress ();
-         stop = 1;
-      }
-   }
-   return;
-}
-
-
-
-/*! \brief Show the effect on stats if this piece were selected
- *
- * This is used to calculate the difference in stats due to
- * (de)equipping a piece of equipment.
- *
- * \param   aa Character to process
- * \param   p2 Slot to consider changing
- * \param   ii New piece of equipment to compare/use
- */
-static void calc_equippreview (int aa, int p2, int ii)
-{
-   int c, z;
-
-   c = party[pidx[aa]].eqp[p2];
-   party[pidx[aa]].eqp[p2] = ii;
-   update_equipstats ();
-   for (z = 0; z < 13; z++)
-      tstats[z] = fighter[aa].stats[z];
-   for (z = 0; z < 16; z++)
-      tres[z] = fighter[aa].res[z];
-   party[pidx[aa]].eqp[p2] = c;
-   update_equipstats ();
 }
 
 
@@ -595,24 +437,179 @@ static int equip (int c, int selected_item, int forced)
 
 
 
-/*! \brief Check if item can be de-equipped, then do it.
+/*! \brief Handle equip menu
  *
- * Hmm... this is hard to describe :)  The functions makes sure you have
- * room to de-equip before it actual does anything.
+ * Draw the equip menu stuff and let the user select an equip slot.
  *
  * \param   c Character to process
- * \param   ptr Slot to de-equip
- * \returns 0 if unsuccessful, 1 if successful
  */
-static int deequip (int c, int ptr)
+void equip_menu (int c)
 {
-   int a, b = 0;
+   int stop = 0, yptr = 0, sl = 1;
+   int a, b, d;
 
-   a = party[pidx[c]].eqp[ptr];
-   if (a > 0)
-      b = check_inventory (a, 1);
-   if (b == 0 || a == 0)
-      return 0;
-   party[pidx[c]].eqp[ptr] = 0;
-   return 1;
+   eqp_act = 0;
+   play_effect (SND_MENU, 128);
+   while (!stop) {
+      check_animation ();
+      drawmap ();
+      draw_equipmenu (c, sl);
+      if (sl == 0) {
+         draw_equippable (c, yptr, 0);
+         if (eqp_act == 2)
+            draw_equippreview (c, yptr, 0);
+         else
+            draw_equippreview (c, -1, 0);
+      } else {
+         draw_equippable (c, -1, 0);
+         draw_equippreview (c, -1, 0);
+      }
+      if (sl == 0)
+         draw_sprite (double_buffer, menuptr, 12 + xofs, yptr * 8 + 36 + yofs);
+      blit2screen (xofs, yofs);
+
+      readcontrols ();
+
+      if (sl == 1) {
+         if (left) {
+            unpress ();
+            eqp_act--;
+            if (eqp_act < 0)
+               eqp_act = 3;
+            play_effect (SND_CLICK, 128);
+         }
+         if (right) {
+            unpress ();
+            eqp_act++;
+            if (eqp_act > 3)
+               eqp_act = 0;
+            play_effect (SND_CLICK, 128);
+         }
+      } else {
+         if (down) {
+            unpress ();
+            yptr++;
+            if (yptr > 5)
+               yptr = 0;
+            play_effect (SND_CLICK, 128);
+         }
+         if (up) {
+            unpress ();
+            yptr--;
+            if (yptr < 0)
+               yptr = 5;
+            play_effect (SND_CLICK, 128);
+         }
+      }
+      if (balt) {
+         unpress ();
+         if (sl == 1) {
+            // If the selection is over 'Equip' or 'Remove'
+            if (eqp_act == 0 || eqp_act == 2)
+               sl = 0;
+            else if (eqp_act == 1)
+               optimize_equip (c);
+            else if (eqp_act == 3) {
+               b = 0;
+               d = 0;
+               for (a = 0; a < 6; a++) {
+                  if (party[pidx[c]].eqp[a] > 0) {
+                     d++;
+                     b += deequip (c, a);
+                  }
+               }
+               if (b == d)
+                  play_effect (SND_UNEQUIP, 128);
+               else
+                  play_effect (SND_BAD, 128);
+            }
+         } else {
+            if (eqp_act == 0)
+               choose_equipment (c, yptr);
+            else {
+               if (eqp_act == 2) {
+                  if (deequip (c, yptr) == 1)
+                     play_effect (SND_UNEQUIP, 128);
+                  else
+                     play_effect (SND_BAD, 128);
+               }
+            }
+         }
+      }
+      if (bctrl) {
+         unpress ();
+         if (sl == 0)
+            sl = 1;
+         else
+            stop = 1;
+      }
+   }
+}
+
+
+
+/*! \brief Calculate optimum equipment
+ *
+ * This calculates what equipment is optimum for a particular hero.
+ * The weapon that does the most damage is chosen and the armor with
+ * the best combination of defense+magic_defense is chosen.  As for a
+ * relic, the one that offers the greatest overall bonus to stats is
+ * selected.
+ *
+ * \param   c Which character to operate on
+ */
+static void optimize_equip (int c)
+{
+   int a, b, z, maxx, maxi, v = 0;
+
+   for (a = 0; a < 6; a++)
+      if (party[pidx[c]].eqp[a] > 0)
+         if (deequip (c, a) == 0)
+            return;
+   maxx = 0;
+   maxi = -1;
+   calc_possible_equip (c, 0);
+   for (a = 0; a < tot; a++) {
+      b = g_inv[t_inv[a]][0];
+      if (items[b].stats[A_ATT] > maxx) {
+         maxx = items[b].stats[A_ATT];
+         maxi = a;
+      }
+   }
+   if (maxi > -1)
+      if (equip (pidx[c], t_inv[maxi], 0) == 0)
+         return;
+   for (z = 1; z < 5; z++) {
+      maxx = 0;
+      maxi = -1;
+      calc_possible_equip (c, z);
+      for (a = 0; a < tot; a++) {
+         b = g_inv[t_inv[a]][0];
+         if (items[b].stats[A_DEF] + items[b].stats[A_MAG] > maxx) {
+            maxx = items[b].stats[A_DEF] + items[b].stats[A_MAG];
+            maxi = a;
+         }
+      }
+      if (maxi > -1)
+         if (equip (pidx[c], t_inv[maxi], 0) == 0)
+            return;
+   }
+   maxx = 0;
+   maxi = -1;
+   calc_possible_equip (c, 5);
+   for (a = 0; a < tot; a++) {
+      b = g_inv[t_inv[a]][0];
+      for (z = 0; z < 13; z++)
+         v += items[b].stats[z];
+      for (z = 0; z < 16; z++)
+         v += items[b].res[z];
+      if (v > maxx) {
+         maxx = v;
+         maxi = a;
+      }
+   }
+   if (maxi > -1)
+      if (equip (pidx[c], t_inv[maxi], 0) == 0)
+         return;
+   play_effect (SND_EQUIP, 128);
 }

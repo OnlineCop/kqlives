@@ -31,17 +31,15 @@
 #include <string.h>
 
 #include "kq.h"
-#include "setup.h"
-
 #include "combat.h"
 #include "draw.h"
 #include "music.h"
 #include "res.h"
+#include "setup.h"
 #include "timing.h"
 
 
 /*! \name Globals */
-
 
 /*! Debug level 0..3 */
 char debugging = 0;
@@ -49,52 +47,10 @@ char debugging = 0;
 /*! Speed-up for slower machines */
 char slow_computer = 0;
 
-/* Allegro 4.2 has the scancode_to_name function,
- * For previous versions, we must emulate that function
- * with our own table of keynames
- */
-#if (ALLEGRO_VERSION >= 4 && ALLEGRO_SUB_VERSION >=2 )
-#define kq_keyname scancode_to_name
-#else
-/*! Look up table of names for keys */
-static char *keynames[] = {
-   "",
-   "A", "B", "C", "D", "E", "F", "G", "H", "I", "J",
-   "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T",
-   "U", "V", "W", "X", "Y", "Z", "0", "1", "2", "3",
-   "4", "5", "6", "7", "8", "9", "0_PAD", "1_PAD", "2_PAD", "3_PAD",
-   "4_PAD", "5_PAD", "6_PAD", "7_PAD", "8_PAD", "9_PAD", "F1", "F2", "F3",
-   "F4",
-   "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12", "ESC", "TILDE",
-   "MINUS", "EQUALS", "BACKSPACE", "TAB", "OPENBRACE", "CLOSEBRACE", "ENTER",
-   "COLON", "QUOTE", "BACKSLASH",
-   "BACKSLASH2", "COMMA", "STOP", "SLASH", "SPACE", "INSERT", "DEL", "HOME",
-   "END", "PGUP",
-   "PGDN", "LEFT", "RIGHT", "UP", "DOWN", "SLASH_PAD", "ASTERISK",
-   "MINUS_PAD", "PLUS_PAD", "DEL_PAD",
-   "ENTER_PAD", "PRTSCR", "PAUSE", "ABNT_C1", "YEN", "KANA", "CONVERT",
-   "NOCONVERT", "AT", "CIRCUMFLEX",
-   "COLON2", "KANJI", "LSHIFT", "RSHIFT", "LCONTROL", "RCONTROL", "ALT",
-   "ALTGR", "LWIN", "RWIN",
-   "MENU", "SCRLOCK", "NUMLOCK", "CAPSLOCK"
-};
-
-#define N_KEYNAMES (sizeof(keynames) / sizeof (*keynames))
-const char *kq_keyname (int scancode)
-{
-   if (scancode >= 0 && scancode < (signed) N_KEYNAMES)
-      return keynames[scancode];
-   else
-      return "???";
-}
-#endif
-
-/*  internal variables  */
+/*  Internal variables  */
 static DATAFILE *sfx[MAX_SAMPLES];
 
-
-
-/*  internal functions  */
+/*  Internal functions  */
 static int load_samples (void);
 static int getavalue (char *, int, int, int, int);
 static int getakey (void);
@@ -102,211 +58,15 @@ static void parse_allegro_setup (void);
 static void parse_jb_setup (void);
 
 
-
-/*! \brief Parse setup file
- *
- * \date 20030831
- * \author PH
- */
-void parse_setup (void)
-{
-   parse_allegro_setup ();
-}
-
-
-
-/*! \brief Parse allegro file kq.cfg
- *
- * This is like parse_setup(), but using Allegro format files
- *
- * \author PH
- * \date 20030831
- */
-static void parse_allegro_setup (void)
-{
-   const char *cfg = kqres (SETTINGS_DIR, "kq.cfg");
-   if (!exists (cfg)) {
-      /* config file does not exist. Fall back to setup.cfg */
-      /* Transitional code */
-      parse_jb_setup ();
-      push_config_state ();
-      set_config_file (cfg);
-
-      set_config_int (NULL, "skip_intro", skip_intro);
-      set_config_int (NULL, "windowed", windowed);
-
-      set_config_int (NULL, "stretch_view", stretch_view);
-      set_config_int (NULL, "show_frate", show_frate);
-      set_config_int (NULL, "is_sound", is_sound);
-      set_config_int (NULL, "use_joy", use_joy);
-      set_config_int (NULL, "slow_computer", slow_computer);
-
-      set_config_int (NULL, "kup", kup);
-      set_config_int (NULL, "kdown", kdown);
-      set_config_int (NULL, "kleft", kleft);
-      set_config_int (NULL, "kright", kright);
-      set_config_int (NULL, "kesc", kesc);
-      set_config_int (NULL, "kalt", kalt);
-      set_config_int (NULL, "kctrl", kctrl);
-      set_config_int (NULL, "kenter", kenter);
-      pop_config_state ();
-      return;
-   }
-   push_config_state ();
-   set_config_file (cfg);
-
-   /* NB. JB's config file uses intro=yes --> skip_intro=0 */
-   skip_intro = get_config_int (NULL, "skip_intro", 0);
-#ifdef __DJGPP__
-   /* In DJGPP, it's always non-windowed non-stretched (DOS-era stuff!) */
-   windowed = 0;
-   stretch_view = 0;
-#else
-   windowed = get_config_int (NULL, "windowed", 1);
-   stretch_view = get_config_int (NULL, "stretch_view", 1);
-#endif
-   show_frate = get_config_int (NULL, "show_frate", 0);
-   is_sound = get_config_int (NULL, "is_sound", 1);
-   use_joy = get_config_int (NULL, "use_joy", 0);
-   slow_computer = get_config_int (NULL, "slow_computer", 0);
-   cpu_usage = get_config_int (NULL, "cpu_usage", 2);
-#ifdef KQ_CHEATS
-   cheat = get_config_int (NULL, "cheat", 0);
-#endif
-#ifdef DEBUGMODE
-   debugging = get_config_int (NULL, "debugging", 0);
-#endif
-
-   kup = get_config_int (NULL, "kup", KEY_UP);
-   kdown = get_config_int (NULL, "kdown", KEY_DOWN);
-   kleft = get_config_int (NULL, "kleft", KEY_LEFT);
-   kright = get_config_int (NULL, "kright", KEY_RIGHT);
-   kesc = get_config_int (NULL, "kesc", KEY_ESC);
-   kalt = get_config_int (NULL, "kalt", KEY_ALT);
-   kctrl = get_config_int (NULL, "kctrl", KEY_LCONTROL);
-   kenter = get_config_int (NULL, "kenter", KEY_ENTER);
-   pop_config_state ();
-}
-
-
-
-/*! \brief Parse setup.cfg
- *
- * Read settings from file
- * Parse the setup.cfg file for key configurations.
- * This file would also contain sound options, but that
- * isn't necessary right now.
- *
- * Remember that setup.cfg is found in the /saves dir!
- */
-static void parse_jb_setup (void)
-{
-   FILE *s;
-   int dab = 0;
-   /* Default key assignments */
-   kup = KEY_UP;
-   kdown = KEY_DOWN;
-   kright = KEY_RIGHT;
-   kleft = KEY_LEFT;
-   kalt = KEY_ALT;
-   kctrl = KEY_LCONTROL;
-   kenter = KEY_ENTER;
-   kesc = KEY_ESC;
-   jbalt = 0;
-   jbctrl = 1;
-   jbenter = 2;
-   jbesc = 3;
-   /* PH Why in the world doesn't he use Allegro cfg functions here? */
-   if (!(s = fopen (kqres (SETTINGS_DIR, "setup.cfg"), "r"))) {
-      klog ("Could not open saves/setup.cfg - Using defaults.");
-      return;
-   }
-   fscanf (s, "%s", strbuf);
-   while (!feof (s)) {
-      if (strbuf[0] == '#')
-         fgets (strbuf, 254, s);
-#ifdef KQ_CHEATS
-      if (!strcmp (strbuf, "cheat")) {
-         fscanf (s, "%d", &dab);
-         cheat = dab;
-      }
-#endif
-      if (!strcmp (strbuf, "debug")) {
-         fscanf (s, "%d", &dab);
-         debugging = dab;
-      }
-      if (!strcmp (strbuf, "intro")) {
-         fscanf (s, "%s", strbuf);
-         if (!strcmp (strbuf, "no"))
-            skip_intro = 1;
-      }
-      if (!strcmp (strbuf, "windowed")) {
-         fscanf (s, "%s", strbuf);
-         if (!strcmp (strbuf, "yes"))
-            windowed = 1;
-      }
-      if (!strcmp (strbuf, "stretch")) {
-         fscanf (s, "%s", strbuf);
-         if (!strcmp (strbuf, "yes"))
-            stretch_view = 1;
-      }
-      if (!strcmp (strbuf, "framerate")) {
-         fscanf (s, "%s", strbuf);
-         if (!strcmp (strbuf, "on"))
-            show_frate = 1;
-      }
-      if (!strcmp (strbuf, "sound")) {
-         fscanf (s, "%s", strbuf);
-         if (!strcmp (strbuf, "off"))
-            is_sound = 0;
-      }
-      if (!strcmp (strbuf, "joystick")) {
-         fscanf (s, "%s", strbuf);
-         if (!strcmp (strbuf, "no"))
-            use_joy = 0;
-      }
-      if (!strcmp (strbuf, "slow_computer")) {
-         fscanf (s, "%s", strbuf);
-         if (!strcmp (strbuf, "yes"))
-            slow_computer = 1;
-      }
-      if (!strcmp (strbuf, "rightkey")) {
-         fscanf (s, "%s", strbuf);
-         kright = atoi (strbuf);
-      }
-      if (!strcmp (strbuf, "leftkey")) {
-         fscanf (s, "%s", strbuf);
-         kleft = atoi (strbuf);
-      }
-      if (!strcmp (strbuf, "upkey")) {
-         fscanf (s, "%s", strbuf);
-         kup = atoi (strbuf);
-      }
-      if (!strcmp (strbuf, "downkey")) {
-         fscanf (s, "%s", strbuf);
-         kdown = atoi (strbuf);
-      }
-      if (!strcmp (strbuf, "sysmenukey")) {
-         fscanf (s, "%s", strbuf);
-         kesc = atoi (strbuf);
-      }
-      if (!strcmp (strbuf, "cancelkey")) {
-         fscanf (s, "%s", strbuf);
-         kctrl = atoi (strbuf);
-      }
-      if (!strcmp (strbuf, "confirmkey")) {
-         fscanf (s, "%s", strbuf);
-         kalt = atoi (strbuf);
-      }
-      if (!strcmp (strbuf, "chrmenukey")) {
-         fscanf (s, "%s", strbuf);
-         kenter = atoi (strbuf);
-      }
-      fscanf (s, "%s", strbuf);
-   }
-   fclose (s);
-}
-
+/*! \brief Play sound effects / music if adjusting it */
+/* TT: looks like a hack to me! :-) */
+/* PH: I cannot tell a lie: it was Matthew... */
+#define IF_VOLUME_ALERT() \
+   if (!strcmp (capt, "Sound Volume")) {\
+      set_volume (cv * 10, 0);\
+      play_effect (1, 127);\
+   } else if (!strcmp (capt, "Music Volume"))\
+      set_music_volume (cv / 25.5);
 
 
 /*! \brief Draw a setting and its title
@@ -350,13 +110,13 @@ void config_menu (void)
    /* Define rows with appropriate spacings for breaks between groups */
    int row[MENU_SIZE];
    for (p = 0; p < 4; p++)
-      row[p] = (p + 4) * 8;   // (p * 8) + 32
+      row[p] = (p + 4) * 8;     // (p * 8) + 32
    for (p = 4; p < 12; p++)
-      row[p] = (p + 5) * 8;   // (p * 8) + 40
+      row[p] = (p + 5) * 8;     // (p * 8) + 40
    for (p = 12; p < 15; p++)
-      row[p] = (p + 6) * 8;   // (p * 8) + 48
+      row[p] = (p + 6) * 8;     // (p * 8) + 48
    for (p = 15; p < MENU_SIZE; p++)
-      row[p] = (p + 7) * 8;   // (p * 8) + 56
+      row[p] = (p + 7) * 8;     // (p * 8) + 56
 
    /* Helper strings */
    static char *dc[MENU_SIZE] = {
@@ -657,6 +417,25 @@ void config_menu (void)
 
 
 
+/*! \brief Release memory used by samples
+ * \author  : Josh Bolduc
+ * \date ????????
+ *
+ *  Duh.
+ */
+void free_samples (void)
+{
+   int index;
+
+   if (is_sound == 0)
+      return;
+
+   for (index = 0; index < MAX_SAMPLES; index++)
+      unload_datafile_object (sfx[index]);
+}
+
+
+
 /*! \brief Process keypresses when mapping new keys
  *
  * This grabs whatever key is being pressed and returns it to the caller.
@@ -681,18 +460,6 @@ static int getakey (void)
    }
    return 0;
 }
-
-
-
-/*! \brief Play sound effects / music if adjusting it */
-/* TT: looks like a hack to me! :-) */
-/* PH: I cannot tell a lie: it was Matthew... */
-#define IF_VOLUME_ALERT() \
-   if (!strcmp (capt, "Sound Volume")) {\
-      set_volume (cv * 10, 0);\
-      play_effect (1, 127);\
-   } else if (!strcmp (capt, "Music Volume"))\
-      set_music_volume (cv / 25.5);
 
 
 
@@ -767,92 +534,18 @@ static int getavalue (char *capt, int minu, int maxu, int cv, int sp)
 
 
 
-/*! \brief Show keys help
- * Show a screen with the keys listed, and other helpful info
- * \author PH
- * \date 20030527
- */
-void show_help (void)
+#if (ALLEGRO_VERSION >= 4 && ALLEGRO_SUB_VERSION >= 2)
+   // TT: Already defined in setup.h
+   // #define kq_keyname scancode_to_name
+#else
+const char *kq_keyname (int scancode)
 {
-   menubox (double_buffer, 116 + xofs, yofs, 9, 1, BLUE);
-   print_font (double_buffer, 132 + xofs, 8 + yofs, "KQ Help", FGOLD);
-   menubox (double_buffer, 32 + xofs, 32 + yofs, 30, 20, BLUE);
-   menubox (double_buffer, xofs, 216 + yofs, 38, 1, BLUE);
-   print_font (double_buffer, 16 + xofs, 224 + yofs,
-               "Press CONFIRM to exit this screen", FNORMAL);
-   citem (72, "Up Key:", kq_keyname (kup), FNORMAL);
-   citem (80, "Down Key:", kq_keyname (kdown), FNORMAL);
-   citem (88, "Left Key:", kq_keyname (kleft), FNORMAL);
-   citem (96, "Right Key:", kq_keyname (kright), FNORMAL);
-   citem (104, "Confirm Key:", kq_keyname (kalt), FNORMAL);
-   citem (112, "Cancel Key:", kq_keyname (kctrl), FNORMAL);
-   citem (120, "Menu Key:", kq_keyname (kenter), FNORMAL);
-   citem (128, "System Menu Key:", kq_keyname (kesc), FNORMAL);
-   do {
-      blit2screen (xofs, yofs);
-      readcontrols ();
-   }
-   while (!balt && !bctrl);
-   unpress ();
+   if (scancode >= 0 && scancode < (signed) N_KEYNAMES)
+      return keynames[scancode];
+   else
+      return "???";
 }
-
-
-
-/*! \brief Set mode
- *
- * Set the graphics mode, taking into account the Windowed and Stretched
- * settings.
- */
-void set_graphics_mode (void)
-{
-   if (stretch_view == 1) {
-      if (windowed == 1)
-         set_gfx_mode (GFX_AUTODETECT_WINDOWED, 640, 480, 0, 0);
-      else
-         set_gfx_mode (GFX_AUTODETECT, 640, 480, 0, 0);
-   } else {
-      if (windowed == 1)
-         set_gfx_mode (GFX_AUTODETECT_WINDOWED, 320, 240, 0, 0);
-      else
-         set_gfx_mode (GFX_AUTODETECT, 320, 240, 0, 0);
-   }
-
-   set_palette (pal);
-}
-
-
-
-/*! \brief Initialize sound system
- * \author JB
- * \date ????????
- * \remark On entry is_sound=1 to initialise,
- *         on exit is_sound=0 (failure) or 2 (success),
- *         is_sound=2 to shutdown,
- *         on exit is_sound=0
- * \remark 20020914 - 05:28 RB : Updated
- *  20020922 - ML : updated to use DUMB
- *  20020922 - ML : Changed to only reserving 8 voices. (32 seemed over-kill?)
- */
-void sound_init (void)
-{
-   if (!sound_avail) {
-      is_sound = 0;
-      return;
-   }
-   switch (is_sound) {
-   case 1:
-      /* set_volume_per_voice (2); */
-      init_music ();
-      is_sound = load_samples ()? 0 : 2;        /* load the wav files */
-      break;
-   case 2:
-      /* TT: We forgot to add this line, causing phantom music to loop */
-      stop_music ();
-      free_samples ();
-      is_sound = 0;
-      break;
-   }
-}
+#endif
 
 
 
@@ -902,21 +595,208 @@ static int load_samples (void)
 
 
 
-/*! \brief Release memory used by samples
- * \author  : Josh Bolduc
- * \date ????????
+/*! \brief Parse allegro file kq.cfg
  *
- *  Duh.
+ * This is like parse_setup(), but using Allegro format files
+ *
+ * \author PH
+ * \date 20030831
  */
-void free_samples (void)
+static void parse_allegro_setup (void)
 {
-   int index;
+   const char *cfg = kqres (SETTINGS_DIR, "kq.cfg");
+   if (!exists (cfg)) {
+      /* config file does not exist. Fall back to setup.cfg */
+      /* Transitional code */
+      parse_jb_setup ();
+      push_config_state ();
+      set_config_file (cfg);
 
-   if (is_sound == 0)
+      set_config_int (NULL, "skip_intro", skip_intro);
+      set_config_int (NULL, "windowed", windowed);
+
+      set_config_int (NULL, "stretch_view", stretch_view);
+      set_config_int (NULL, "show_frate", show_frate);
+      set_config_int (NULL, "is_sound", is_sound);
+      set_config_int (NULL, "use_joy", use_joy);
+      set_config_int (NULL, "slow_computer", slow_computer);
+
+      set_config_int (NULL, "kup", kup);
+      set_config_int (NULL, "kdown", kdown);
+      set_config_int (NULL, "kleft", kleft);
+      set_config_int (NULL, "kright", kright);
+      set_config_int (NULL, "kesc", kesc);
+      set_config_int (NULL, "kalt", kalt);
+      set_config_int (NULL, "kctrl", kctrl);
+      set_config_int (NULL, "kenter", kenter);
+      pop_config_state ();
       return;
+   }
+   push_config_state ();
+   set_config_file (cfg);
 
-   for (index = 0; index < MAX_SAMPLES; index++)
-      unload_datafile_object (sfx[index]);
+   /* NB. JB's config file uses intro=yes --> skip_intro=0 */
+   skip_intro = get_config_int (NULL, "skip_intro", 0);
+#ifdef __DJGPP__
+   /* In DJGPP, it's always non-windowed non-stretched (DOS-era stuff!) */
+   windowed = 0;
+   stretch_view = 0;
+#else
+   windowed = get_config_int (NULL, "windowed", 1);
+   stretch_view = get_config_int (NULL, "stretch_view", 1);
+#endif
+   show_frate = get_config_int (NULL, "show_frate", 0);
+   is_sound = get_config_int (NULL, "is_sound", 1);
+   use_joy = get_config_int (NULL, "use_joy", 0);
+   slow_computer = get_config_int (NULL, "slow_computer", 0);
+   cpu_usage = get_config_int (NULL, "cpu_usage", 2);
+#ifdef KQ_CHEATS
+   cheat = get_config_int (NULL, "cheat", 0);
+#endif
+#ifdef DEBUGMODE
+   debugging = get_config_int (NULL, "debugging", 0);
+#endif
+
+   kup = get_config_int (NULL, "kup", KEY_UP);
+   kdown = get_config_int (NULL, "kdown", KEY_DOWN);
+   kleft = get_config_int (NULL, "kleft", KEY_LEFT);
+   kright = get_config_int (NULL, "kright", KEY_RIGHT);
+   kesc = get_config_int (NULL, "kesc", KEY_ESC);
+   kalt = get_config_int (NULL, "kalt", KEY_ALT);
+   kctrl = get_config_int (NULL, "kctrl", KEY_LCONTROL);
+   kenter = get_config_int (NULL, "kenter", KEY_ENTER);
+   pop_config_state ();
+}
+
+
+
+/*! \brief Parse setup.cfg
+ *
+ * Read settings from file
+ * Parse the setup.cfg file for key configurations.
+ * This file would also contain sound options, but that
+ * isn't necessary right now.
+ *
+ * Remember that setup.cfg is found in the /saves dir!
+ */
+static void parse_jb_setup (void)
+{
+   FILE *s;
+   int dab = 0;
+   /* Default key assignments */
+   kup = KEY_UP;
+   kdown = KEY_DOWN;
+   kright = KEY_RIGHT;
+   kleft = KEY_LEFT;
+   kalt = KEY_ALT;
+   kctrl = KEY_LCONTROL;
+   kenter = KEY_ENTER;
+   kesc = KEY_ESC;
+   jbalt = 0;
+   jbctrl = 1;
+   jbenter = 2;
+   jbesc = 3;
+   /* PH Why in the world doesn't he use Allegro cfg functions here? */
+   if (!(s = fopen (kqres (SETTINGS_DIR, "setup.cfg"), "r"))) {
+      klog ("Could not open saves/setup.cfg - Using defaults.");
+      return;
+   }
+   fscanf (s, "%s", strbuf);
+   while (!feof (s)) {
+      if (strbuf[0] == '#')
+         fgets (strbuf, 254, s);
+#ifdef KQ_CHEATS
+      if (!strcmp (strbuf, "cheat")) {
+         fscanf (s, "%d", &dab);
+         cheat = dab;
+      }
+#endif
+      if (!strcmp (strbuf, "debug")) {
+         fscanf (s, "%d", &dab);
+         debugging = dab;
+      }
+      if (!strcmp (strbuf, "intro")) {
+         fscanf (s, "%s", strbuf);
+         if (!strcmp (strbuf, "no"))
+            skip_intro = 1;
+      }
+      if (!strcmp (strbuf, "windowed")) {
+         fscanf (s, "%s", strbuf);
+         if (!strcmp (strbuf, "yes"))
+            windowed = 1;
+      }
+      if (!strcmp (strbuf, "stretch")) {
+         fscanf (s, "%s", strbuf);
+         if (!strcmp (strbuf, "yes"))
+            stretch_view = 1;
+      }
+      if (!strcmp (strbuf, "framerate")) {
+         fscanf (s, "%s", strbuf);
+         if (!strcmp (strbuf, "on"))
+            show_frate = 1;
+      }
+      if (!strcmp (strbuf, "sound")) {
+         fscanf (s, "%s", strbuf);
+         if (!strcmp (strbuf, "off"))
+            is_sound = 0;
+      }
+      if (!strcmp (strbuf, "joystick")) {
+         fscanf (s, "%s", strbuf);
+         if (!strcmp (strbuf, "no"))
+            use_joy = 0;
+      }
+      if (!strcmp (strbuf, "slow_computer")) {
+         fscanf (s, "%s", strbuf);
+         if (!strcmp (strbuf, "yes"))
+            slow_computer = 1;
+      }
+      if (!strcmp (strbuf, "rightkey")) {
+         fscanf (s, "%s", strbuf);
+         kright = atoi (strbuf);
+      }
+      if (!strcmp (strbuf, "leftkey")) {
+         fscanf (s, "%s", strbuf);
+         kleft = atoi (strbuf);
+      }
+      if (!strcmp (strbuf, "upkey")) {
+         fscanf (s, "%s", strbuf);
+         kup = atoi (strbuf);
+      }
+      if (!strcmp (strbuf, "downkey")) {
+         fscanf (s, "%s", strbuf);
+         kdown = atoi (strbuf);
+      }
+      if (!strcmp (strbuf, "sysmenukey")) {
+         fscanf (s, "%s", strbuf);
+         kesc = atoi (strbuf);
+      }
+      if (!strcmp (strbuf, "cancelkey")) {
+         fscanf (s, "%s", strbuf);
+         kctrl = atoi (strbuf);
+      }
+      if (!strcmp (strbuf, "confirmkey")) {
+         fscanf (s, "%s", strbuf);
+         kalt = atoi (strbuf);
+      }
+      if (!strcmp (strbuf, "chrmenukey")) {
+         fscanf (s, "%s", strbuf);
+         kenter = atoi (strbuf);
+      }
+      fscanf (s, "%s", strbuf);
+   }
+   fclose (s);
+}
+
+
+
+/*! \brief Parse setup file
+ *
+ * \date 20030831
+ * \author PH
+ */
+void parse_setup (void)
+{
+   parse_allegro_setup ();
 }
 
 
@@ -997,6 +877,95 @@ void play_effect (int efc, int panning)
          }
       }
       blit (fx_buffer, double_buffer, 0, 0, 0, 0, 352, 280);
+      break;
+   }
+}
+
+
+
+/*! \brief Set mode
+ *
+ * Set the graphics mode, taking into account the Windowed and Stretched
+ * settings.
+ */
+void set_graphics_mode (void)
+{
+   if (stretch_view == 1) {
+      if (windowed == 1)
+         set_gfx_mode (GFX_AUTODETECT_WINDOWED, 640, 480, 0, 0);
+      else
+         set_gfx_mode (GFX_AUTODETECT, 640, 480, 0, 0);
+   } else {
+      if (windowed == 1)
+         set_gfx_mode (GFX_AUTODETECT_WINDOWED, 320, 240, 0, 0);
+      else
+         set_gfx_mode (GFX_AUTODETECT, 320, 240, 0, 0);
+   }
+
+   set_palette (pal);
+}
+
+
+
+/*! \brief Show keys help
+ * Show a screen with the keys listed, and other helpful info
+ * \author PH
+ * \date 20030527
+ */
+void show_help (void)
+{
+   menubox (double_buffer, 116 + xofs, yofs, 9, 1, BLUE);
+   print_font (double_buffer, 132 + xofs, 8 + yofs, "KQ Help", FGOLD);
+   menubox (double_buffer, 32 + xofs, 32 + yofs, 30, 20, BLUE);
+   menubox (double_buffer, xofs, 216 + yofs, 38, 1, BLUE);
+   print_font (double_buffer, 16 + xofs, 224 + yofs,
+               "Press CONFIRM to exit this screen", FNORMAL);
+   citem (72, "Up Key:", kq_keyname (kup), FNORMAL);
+   citem (80, "Down Key:", kq_keyname (kdown), FNORMAL);
+   citem (88, "Left Key:", kq_keyname (kleft), FNORMAL);
+   citem (96, "Right Key:", kq_keyname (kright), FNORMAL);
+   citem (104, "Confirm Key:", kq_keyname (kalt), FNORMAL);
+   citem (112, "Cancel Key:", kq_keyname (kctrl), FNORMAL);
+   citem (120, "Menu Key:", kq_keyname (kenter), FNORMAL);
+   citem (128, "System Menu Key:", kq_keyname (kesc), FNORMAL);
+   do {
+      blit2screen (xofs, yofs);
+      readcontrols ();
+   }
+   while (!balt && !bctrl);
+   unpress ();
+}
+
+
+
+/*! \brief Initialize sound system
+ * \author JB
+ * \date ????????
+ * \remark On entry is_sound=1 to initialise,
+ *         on exit is_sound=0 (failure) or 2 (success),
+ *         is_sound=2 to shutdown,
+ *         on exit is_sound=0
+ * \remark 20020914 - 05:28 RB : Updated
+ *  20020922 - ML : updated to use DUMB
+ *  20020922 - ML : Changed to only reserving 8 voices. (32 seemed over-kill?)
+ */
+void sound_init (void)
+{
+   if (!sound_avail) {
+      is_sound = 0;
+      return;
+   }
+   switch (is_sound) {
+   case 1:
+      /* set_volume_per_voice (2); */
+      init_music ();
+      is_sound = load_samples ()? 0 : 2;        /* load the wav files */
+      break;
+   case 2:
+      /* TT: We forgot to add this line, causing phantom music to loop */
+      stop_music ();
+      free_samples ();
+      is_sound = 0;
       break;
    }
 }

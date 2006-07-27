@@ -18,10 +18,6 @@
 --   (2) You've spoken to him once
 --   (3) He's back in the temple after the jewel was returned
 --   (4) You've finished with Temmin
---
--- P_UNDEADJEWEL: Whether you collected the Jewel needed to seal the portal
---   (0) Don't have it
---   (1) Have it
 -- }
 -- */
 
@@ -56,17 +52,17 @@ end
 
 
 function refresh()
+  local x, y
   if (get_progress(P_ALTARSWITCH) == 1) then
-    set_ftile(54, 14, 0)
-    set_btile(54, 15, 29)
-    set_obs(54, 15, 0)
-    set_ftile(53, 14, 118)
-    set_btile(53, 15, 119)
-    set_obs(53, 15, 1)
-    set_zone(54, 15, 9)
-  end
-  if (get_progress(P_UNDEADJEWEL) > 0) then
-    set_mtile(30, 42, 65)
+    x, y = marker("move_statue")
+    set_ftile(x, y - 1, 0)
+    set_btile(x, y, 29)
+    set_obs(x, y, 0)
+    set_ftile(x - 1, y - 1, 118)
+    set_btile(x - 1, y, 119)
+    set_obs(x - 1, y, 1)
+    set_zone(x, y, 9)
+    set_zone(x + 4, y + 1, 0)
   end
 end
 
@@ -81,57 +77,29 @@ function zone_handler(zn)
     change_map("main", "temple1")
 
   elseif (zn == 2) then
-    sfx(26)
-    set_zone(18, 34, 0)
-    set_ftile(18, 34, 154)
-    set_btile(18, 35, 156)
-    set_obs(18, 34, 0)
+    LOC_door("door2")
 
   elseif (zn == 3) then
-    sfx(26)
-    set_zone(18, 29, 0)
-    set_ftile(18, 29, 154)
-    set_btile(18, 30, 156)
-    set_obs(18, 29, 0)
+    LOC_door("door3")
 
   elseif (zn == 4) then
-    sfx(26)
-    set_zone(36, 41, 0)
-    set_ftile(36, 41, 154)
-    set_btile(36, 42, 156)
-    set_obs(36, 41, 0)
+    LOC_door("door4")
 
   elseif (zn == 5) then
-    sfx(26)
-    set_zone(36, 37, 0)
-     set_ftile(36, 37, 154)
-    set_btile(36, 38, 156)
-    set_obs(36, 37, 0)
+    LOC_door("door5")
 
   elseif (zn == 6) then
-    sfx(26)
-    set_zone(31, 20, 0)
-    set_ftile(31, 20, 154)
-    set_btile(31, 21, 156)
-    set_obs(31, 20, 0)
+    LOC_door("door6")
 
   elseif (zn == 7) then
-    sfx(26)
-    set_ftile(24, 12, 154)
-    set_btile(24, 13, 156)
-    set_obs(24, 12, 0)
-    set_zone(24, 12, 12)
+    LOC_door("to_alter")
+    set_zone("to_alter", 12)
 
   elseif (zn == 8) then
-    if (get_progress(P_ALTARSWITCH) == 0) then
-      bubble(HERO1, "A switch!")
-      sfx(26)
-      set_progress(P_ALTARSWITCH, 1)
-      refresh()
-    end
+    LOC_alter()
 
   elseif (zn == 9) then
-    warp(56, 44, 8)
+    warp("ustairs1", 8)
 
   elseif (zn == 10) then
     change_map("temple2", "entrance")
@@ -140,17 +108,15 @@ function zone_handler(zn)
     bubble(HERO1, "Locked.")
 
   elseif (zn == 12) then
-    warp(58, 19, 8)
+    warp("alter", 8)
 
   elseif (zn == 13) then
-    set_ftile(24, 12, 154)
-    set_btile(24, 13, 156)
-    set_obs(24, 12, 0)
-    set_zone(24, 12, 12)
-    warp(24, 13, 8)
+    LOC_door("to_alter")
+    set_zone("to_alter", 12)
+    warp("to_alter", 8)
 
   elseif (zn == 14) then
-    warp(54, 15, 8)
+    warp("move_statue", 8)
 
   elseif (zn == 15) then
     if (get_progress(P_GOBLINITEM) == 0) then
@@ -327,4 +293,24 @@ function LOC_join_temmin(en)
   set_ent_active(en, 0)
   set_progress(P_PLAYERS, get_progress(P_PLAYERS) + 1)
   set_progress(P_TALK_TEMMIN, 4)
+end
+
+
+function LOC_alter()
+  if (get_progress(P_ALTARSWITCH) == 0) then
+    bubble(HERO1, "A switch!")
+    sfx(26)
+    set_progress(P_ALTARSWITCH, 1)
+    refresh()
+  end
+end
+
+
+function LOC_door(door)
+  local x, y = marker(door)
+  set_obs  (x, y, 0)
+  set_zone (x, y, 0)
+  set_ftile(x, y, 154)
+  set_btile(x, y + 1, 156)
+  sfx(26)
 end

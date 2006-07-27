@@ -28,14 +28,17 @@
 
 #include <string.h>
 #include "kq.h"
-#include "draw.h"
 #include "credits.h"
+#include "draw.h"
+
+
+static int ease (int);
 
 
 /*! Array of strings */
 static char *credits[] = {
    "(C) 2001 DoubleEdge Software",
-   "(C) 2002-5 KQ Lives Team",
+   "(C) 2002-6 KQ Lives Team",
    "http://kqlives.sourceforge.net/",
    "Peter Hull",
    "TeamTerradactyl",
@@ -62,28 +65,6 @@ static void ticker (void)
 }
 
 END_OF_FUNCTION (ticker);
-
-
-
-/*! \brief An S-shaped curve
- * 
- * Returns values from an 'ease' curve,
- * generally =3*x^2-2*x^3
- * 
- * Here modified to return a value 0..32
- * \param   x Where to evaluate the function
- * \returns 0 if x<0, 32 if x>=32, otherwise a number between 0 and 32
- */
-static int ease (int x)
-{
-   if (x <= 0)
-      return 0;
-   else if (x >= 32)
-      return 32;
-   else
-      return etab[x];
-}
-
 
 
 void allocate_credits (void)
@@ -151,3 +132,27 @@ void display_credits (void)
       last_e = e;
    }
 }
+
+
+
+/*! \brief An S-shaped curve
+ * 
+ * Returns values from an 'ease' curve,
+ * generally =3*x^2-2*x^3
+ * 
+ * Here modified to return a value 0..32
+ * \param   x Where to evaluate the function
+ * \returns 0 if x<0, 32 if x>=32, otherwise a number between 0 and 32
+ */
+static int ease (int x)
+{
+   if (x <= 0)
+      return 0;
+   else if (x >= 32)
+      return 32;
+   else
+      return etab[x];
+}
+
+
+

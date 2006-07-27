@@ -220,9 +220,11 @@ end
 -- returns the number of heroes that were actually added
 function add_to_manor(hero)
   local total, i
+
   if (not hero) then
-  return 0
+    return 0
   end
+
   if (istable(hero)) then
     total = 0
     i = 1

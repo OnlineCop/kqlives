@@ -47,7 +47,7 @@ function zone_handler(zn)
       if (get_progress(P_FIGHTONBRIDGE) == 3) then
         set_progress(P_FIGHTONBRIDGE, 4)
       end
-      change_map("main", "bridge_l")
+      change_map("main", "bridge", -1, 0)
       return
     end
     if (get_progress(P_FIGHTONBRIDGE) == 1) then

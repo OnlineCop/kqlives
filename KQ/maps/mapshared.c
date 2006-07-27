@@ -116,9 +116,12 @@ char *icon_files[NUM_TILESETS] = {
 char map_fname[40], *strbuf;
 
 /* Used for the icons */
-short max_sets = 51;
+short active_bound = 0;
 short icon_set = 0;
+short max_sets = 51;
 short num_markers = 0;
+int number_of_ents = 0;
+short num_bound_boxes = 0;
 
 s_map gmap;
 s_entity gent[50];
@@ -129,7 +132,7 @@ unsigned char *z_map, *sh_map, *o_map, *cz_map, *csh_map, *co_map;
 unsigned char *search_map;
 
 s_marker markers[MAX_MARKERS];
-
+s_bound bound_box[MAX_BOUNDS];
 
 /*! \brief Blit to screen
  *
@@ -188,8 +191,14 @@ void load_map (const char *filename)
 
    strcpy (map_fname, load_fname);
    load_s_map (&gmap, pf);
-   for (i = 0; i < 50; ++i)
+
+   /* Recount the number of entities on the map */
+   number_of_ents = 0;
+   for (i = 0; i < 50; i++) {
       load_s_entity (gent + i, pf);
+      if (gent[i].active == 1)
+         number_of_ents = i + 1;
+   }
 
    bufferize ();
 
@@ -250,6 +259,11 @@ void load_map (const char *filename)
       tilex[i] = i;
    for (i = 0; i < MAX_ANIM; i++)
       adata[i] = tanim[gmap.tileset][i];
+
+   num_markers = gmap.num_markers;
+   memcpy (markers, gmap.markers, gmap.num_markers * sizeof (s_marker));
+   num_bound_boxes = gmap.num_bound_boxes;
+   memcpy (bound_box, gmap.bound_box, gmap.num_bound_boxes * sizeof (s_bound));
 }                               /* load_map () */
 
 
@@ -313,7 +327,7 @@ void shared_startup (void)
    /* Used for Obstacles */
    /* Block all directions */
    mesh1[0] = create_bitmap (16, 16);
-   clear(mesh1[0]);
+   clear (mesh1[0]);
    for (y = 0; y < 16; y += 2) {
       for (x = 0; x < 16; x += 2)
          putpixel (mesh1[0], x, y, 255);
@@ -323,25 +337,25 @@ void shared_startup (void)
 
    /* Block up */
    mesh1[1] = create_bitmap (16, 16);
-   clear(mesh1[1]);
+   clear (mesh1[1]);
    hline (mesh1[1], 0, 0, 15, 255);
    vline (mesh1[1], 8, 0, 15, 255);
 
    /* Block right */
    mesh1[2] = create_bitmap (16, 16);
-   clear(mesh1[2]);
+   clear (mesh1[2]);
    hline (mesh1[2], 0, 8, 15, 255);
    vline (mesh1[2], 15, 0, 15, 255);
 
    /* Block down */
    mesh1[3] = create_bitmap (16, 16);
-   clear(mesh1[3]);
+   clear (mesh1[3]);
    hline (mesh1[3], 0, 15, 15, 255);
    vline (mesh1[3], 8, 0, 15, 255);
 
    /* Block left */
    mesh1[4] = create_bitmap (16, 16);
-   clear(mesh1[4]);
+   clear (mesh1[4]);
    hline (mesh1[4], 0, 8, 15, 255);
    vline (mesh1[4], 0, 0, 15, 255);
 
@@ -370,7 +384,6 @@ void shared_startup (void)
    vline (marker_image, 0, 0, 16, makecol (255, 255, 255));
    vline (marker_image, 1, 0, 16, makecol (192, 192, 192));
    rectfill (marker_image, 2, 0, 10, 8, makecol (255, 0, 0));
-
 }
 
 
@@ -468,14 +481,14 @@ void visual_map (s_show showing, const char *save_fname)
                draw_sprite (bmp, eframes[gent[i].chrx][gent[i].facing * 3],
                             gent[i].tilex * 16, gent[i].tiley * 16);
             } else {
-                  draw_trans_sprite (bmp,
-                                     eframes[gent[i].chrx][gent[i].facing * 3],
-                                     gent[i].tilex * 16, gent[i].tiley * 16);
+               draw_trans_sprite (bmp,
+                                  eframes[gent[i].chrx][gent[i].facing * 3],
+                                  gent[i].tilex * 16, gent[i].tiley * 16);
             }                   // if..else ()
          }
       }
    }
-   
+
    if (showing.markers == 1 && gmap.num_markers > 0) {
       num_markers = gmap.num_markers;
       memcpy (markers, gmap.markers, gmap.num_markers * sizeof (s_marker));

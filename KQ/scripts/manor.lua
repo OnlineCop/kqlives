@@ -48,8 +48,6 @@
 
 
 function autoexec()
-  view_range(1, 5, 4, 26, 22)
-
   if (get_progress(P_PLAYERS) > 0) then
     set_progress(P_MANOR, 3)
   end
@@ -69,7 +67,7 @@ function autoexec()
     LOC_at_table()
 
     -- Put Nostik to bed (he is old and feeble)
-    place_ent(8, 9, 31)
+    place_ent(8, "bed")
     set_ent_facing(8, FACE_DOWN)
   end
 end
@@ -77,7 +75,7 @@ end
 
 function postexec()
   local en = 8
-
+  local x, y = marker("entrance")
   if (get_progress(P_MANOR) == 0) then
     rest(200)
 
@@ -88,14 +86,14 @@ function postexec()
     bubble(en, "Good luck all of you.")
 
     -- TT: make everyone else walk out the door
-    move_entity(SENSAR,   11, 20, 1)
-    move_entity(SARINA,   11, 20, 1)
-    move_entity(CORIN,    11, 20, 1)
-    move_entity(AJATHAR,  11, 20, 1)
-    move_entity(CASANDRA, 11, 20, 1)
-    move_entity(TEMMIN,   11, 20, 1)
-    move_entity(AYLA,     11, 20, 1)
-    move_entity(NOSLOM,   11, 20, 1)
+    move_entity(SENSAR,   x - 4, y, 1)
+    move_entity(SARINA,   x - 4, y, 1)
+    move_entity(CORIN,    x - 4, y, 1)
+    move_entity(AJATHAR,  x - 4, y, 1)
+    move_entity(CASANDRA, x - 4, y, 1)
+    move_entity(TEMMIN,   x - 4, y, 1)
+    move_entity(AYLA,     x - 4, y, 1)
+    move_entity(NOSLOM,   x - 4, y, 1)
     for a = 0, 7, 1 do
       set_ent_speed(a, 4)
     end
@@ -114,13 +112,11 @@ function zone_handler(zn)
 
   -- Stairs going up
   elseif (zn == 2) then
-    view_range(1, 5, 24, 26, 42)
-    warp(25, 28, 8)
+    warp("dstairs", 8)
 
   -- Stairs going down
   elseif (zn == 3) then
-    view_range(1, 5, 4, 26, 22)
-    warp(25, 8, 8)
+    warp("ustairs", 8)
 
   -- Doors, duh
   elseif (zn == 4) then
@@ -135,6 +131,7 @@ function zone_handler(zn)
     local en = 9
 
     if (get_progress(P_MANOR) == 0 or get_progress(P_MANOR) == 1) then
+      local x, y = get_ent_tile(HERO1)
       bubble(en, "Hey! Hold on!")
 
       -- Turn around, see who is yelling
@@ -146,7 +143,7 @@ function zone_handler(zn)
       set_ent_speed(en, 5)
 
       -- Check location on map
-      move_entity(en, get_ent_tilex(HERO1), get_ent_tiley(HERO1) - 1, 0)
+      move_entity(en, x, y - 1, 0)
 
       -- Process movement script
       wait_for_entity(en, en)
@@ -189,33 +186,7 @@ function entity_handler(en)
 
   -- Nostik
   elseif (en == 8) then
-    if (get_progress(P_MANOR) == 0) then
-      if (prompt(en, 2, 1, "Do you need me to explain it again?",
-                           "  yes",
-                           "  no") == 0) then
-        LOC_explain_mission(en)
-        bubble(en, "I hope this helps you have a better understanding of what's going on.")
-      else
-        bubble(HERO1, "No, I think I get it. But why did you choose me?")
-        bubble(en, "As you may have noticed, you're not the only one. We've been friends a long time, $0, and I know I can trust you with confidence.")
-        bubble(HERO1, "Oh. I thought you selected me because of my brains or because my magic skills were more finely honed than anyone else's...")
-        bubble(en, "Heh-heh. You DO have certain skills which I'm counting on will help you out on your mission, but so do the others, so don't get a big head.")
-        bubble(HERO1, "Yea, yea. So why didn't you just get everybody into one big group and just let all of us go out and find this staff?")
-        bubble(en, "Groups attract attention. If you see a group of three or more people wandering around, you begin to suspect something's up. That's exactly what you'd want to avoid, if you ever want to stay ahead of Malkaron and his minions.")
-        bubble(HERO1, "Oh yea, I hadn't thought of that.")
-        set_progress(P_MANOR, 1)
-      end
-      wait(50)
-      bubble(en, "You should be going. Talk to Hunert before you go. He can help start you on your way.")
-    elseif (get_progress(P_MANOR) == 1) then
-      bubble(en, "You should be going. Talk to Hunert before you go. He can help start you on your way.")
-    elseif (get_progress(P_MANOR) == 2) then
-      bubble(en, "Good luck, $0.")
-    elseif (get_progress(P_MANOR) == 3) then
-      bubble(en, "Zzz... zzz... zzz...")
-    else
-      bubble(en, "Mine aren't the only books on the Staff of Xenarum and other treasures.")
-    end
+    LOC_explain_mission3(en)
 
   -- Butler Hunert
   elseif (en == 9) then
@@ -239,6 +210,7 @@ end
 
 function LOC_setup_newgame()
   local a
+  local x, y = get_ent_tile(get_pidx(0))
 
   -- Set up entities 0-7 in manor.map as your team members
   for a = 0, 7, 1 do
@@ -252,8 +224,7 @@ function LOC_setup_newgame()
   set_ent_active(get_pidx(0), 0)
 
   -- Set the REAL hero in the old NPCs place
-  place_ent(HERO1, get_ent_tilex(get_pidx(0)),
-                   get_ent_tiley(get_pidx(0)))
+  place_ent(HERO1, x, y)
 
   -- Set your facing direction
   set_ent_facing(HERO1, get_ent_facing(get_pidx(0)))
@@ -302,6 +273,37 @@ function LOC_explain_mission2(en)
     bubble(en, "Each of you have a different skill that I believe will be very beneficial to your search.")
     bubble(en, "You will need to stop the monsters. They are Malkaron's eyes and ears, and if they find the staff before you do, we may be in trouble again.")
     wait(50)
+end
+
+
+function LOC_explain_mission3(en)
+  if (get_progress(P_MANOR) == 0) then
+    if (prompt(en, 2, 1, "Do you need me to explain it again?",
+                         "  yes",
+                         "  no") == 0) then
+      LOC_explain_mission(en)
+      bubble(en, "I hope this helps you have a better understanding of what's going on.")
+    else
+      bubble(HERO1, "No, I think I get it. But why did you choose me?")
+      bubble(en, "As you may have noticed, you're not the only one. We've been friends a long time, $0, and I know I can trust you with confidence.")
+      bubble(HERO1, "Oh. I thought you selected me because of my brains or because my magic skills were more finely honed than anyone else's...")
+      bubble(en, "Heh-heh. You DO have certain skills which I'm counting on will help you out on your mission, but so do the others, so don't get a big head.")
+      bubble(HERO1, "Yea, yea. So why didn't you just get everybody into one big group and just let all of us go out and find this staff?")
+      bubble(en, "Groups attract attention. If you see a group of three or more people wandering around, you begin to suspect something's up. That's exactly what you'd want to avoid, if you ever want to stay ahead of Malkaron and his minions.")
+      bubble(HERO1, "Oh yea, I hadn't thought of that.")
+      set_progress(P_MANOR, 1)
+    end
+    wait(50)
+    LOC_explain_mission3(en)
+  elseif (get_progress(P_MANOR) == 1) then
+    bubble(en, "You should be going. Talk to Hunert before you go. He can help start you on your way.")
+  elseif (get_progress(P_MANOR) == 2) then
+    bubble(en, "Good luck, $0.")
+  elseif (get_progress(P_MANOR) == 3) then
+    bubble(en, "Zzz... zzz... zzz...")
+  else
+    bubble(en, "Mine aren't the only books on the Staff of Xenarum and other treasures.")
+  end
 end
 
 

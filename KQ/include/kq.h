@@ -41,6 +41,8 @@
 
 #include <allegro.h>
 #include "entity.h"
+#include "structs.h"
+#include "bounds.h"
 
 #define MAX_TILES        1024
 #define MAXE               41
@@ -262,7 +264,6 @@ const char *kqres (int dir_id, const char *file);
 #define MAP_GOBLIN         34
 /*\}*/
 
-#include "structs.h"
 
 /*! \brief Player */
 typedef struct
@@ -365,7 +366,7 @@ s_fighter;
 
 
 void change_map (char *, int, int, int, int);   /*  intrface.c, magic.c  */
-void change_mapm (char *, const char *);        /*  intrface.c */
+void change_mapm (char *, const char *, int, int);      /*  intrface.c */
 void readcontrols (void);       /*  everywhere ;)  */
 void calc_viewport (int);       /*  entity.c, intrface.c  */
 void zone_check (void);         /*  entity.c  */
@@ -380,9 +381,9 @@ void kwait (int);               /*  intrface.c  */
 void program_death (char *);    /*  everywhere ;)  */
 int in_party (int);             /*  combat.c, intrface.c  */
 void wait_for_entity (int, int);        /*  intrface.c  */
-char *get_timer_event (void);
-int add_timer_event (const char *, int);
-void reset_timer_events (void);
+char *get_timer_event (void);   /*  entity.c, kq.c  */
+int add_timer_event (const char *, int);        /*  intrface.c  */
+void reset_timer_events (void); /*  intrface.c  */
 
 
 

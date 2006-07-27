@@ -30,15 +30,15 @@
 #include <string.h>
 
 #include "kq.h"
+#include "draw.h"
+#include "fade.h"
+#include "itemdefs.h"
+#include "itemmenu.h"
+#include "music.h"
+#include "progress.h"
+#include "res.h"
 #include "setup.h"
 #include "shopmenu.h"
-#include "itemmenu.h"
-#include "draw.h"
-#include "res.h"
-#include "progress.h"
-#include "itemdefs.h"
-#include "fade.h"
-#include "music.h"
 #include "timing.h"
 
 
@@ -437,197 +437,54 @@ static void sell_item (int, int);
 
 
 
-/*! \brief Show status info
+/*! \brief Actually purchase the item
  *
- * Well, it used to be on the side, but now it's on the bottom.
- * This displays the characters and whether or not they are
- * able to use/equip what is being looked at, and how it would
- * improve their stats (if applicable).
+ * This is used after selecting an item, from the above
+ * menu, to determine who to give it to.  Then it gives
+ * it to them and deducts the cash.
  *
- * \param   selected_item Item being looked at.
+ * \param   how_many Quantity
+ * \param   item_no Index of item
  */
-static void draw_sideshot (int selected_item)
+static void buy_item (int how_many, int item_no)
 {
-   int a, j, ownd = 0, eqp = 0, wx, wy, slot;
-   int cs[13];
+   int z = 0, l, stop = 0, cost;
 
-   menubox (double_buffer, 80 + xofs, 192 + yofs, 18, 4, BLUE);
-   for (a = 0; a < numchrs; a++) {
-      wx = a * 72 + 88 + xofs;
-      wy = 200 + yofs;
-      draw_sprite (double_buffer, frames[pidx[a]][2], wx, wy);
-   }
-   if (selected_item == -1)
+   l = shin[item_no];
+   cost = items[l].price * how_many;
+   if (cost > gp || how_many == 0) {
+      play_effect (SND_BAD, 128);
       return;
-   slot = items[selected_item].type;
-   for (a = 0; a < numchrs; a++) {
-      wx = a * 72 + 88 + xofs;
-      wy = 200 + yofs;
-      for (j = 0; j < 6; j++)
-         if (party[pidx[a]].eqp[j] == selected_item)
-            eqp++;
-      if (slot < 6) {
-         if (party[pidx[a]].eqp[slot] > 0) {
-            for (j = 0; j < 13; j++)
-               cs[j] =
-                  items[selected_item].stats[j] -
-                  items[party[pidx[a]].eqp[slot]].stats[j];
-         } else {
-            for (j = 0; j < 13; j++)
-               cs[j] = items[selected_item].stats[j];
-         }
-         if (slot == 0) {
-            draw_icon (double_buffer, 3, wx + 16, wy);
-            print_font (double_buffer, wx + 16, wy + 8, "%", FNORMAL);
-            for (j = 0; j < 2; j++) {
-               if (cs[j + 8] < 0) {
-                  sprintf (strbuf, "%-4d", cs[j + 8]);
-                  print_font (double_buffer, wx + 24, j * 8 + wy, strbuf,
-                              FRED);
-               }
-               if (cs[j + 8] > 0) {
-                  sprintf (strbuf, "+%-3d", cs[j + 8]);
-                  print_font (double_buffer, wx + 24, j * 8 + wy, strbuf,
-                              FGREEN);
-               }
-               if (cs[j + 8] == 0)
-                  print_font (double_buffer, wx + 24, j * 8 + wy, "=",
-                              FNORMAL);
-            }
-         } else {
-            draw_icon (double_buffer, 9, wx + 16, wy);
-            print_font (double_buffer, wx + 16, wy + 8, "%", FNORMAL);
-            draw_icon (double_buffer, 47, wx + 16, wy + 16);
-            for (j = 0; j < 3; j++) {
-               if (cs[j + 10] < 0) {
-                  sprintf (strbuf, "%-4d", cs[j + 10]);
-                  print_font (double_buffer, wx + 24, j * 8 + wy, strbuf,
-                              FRED);
-               }
-               if (cs[j + 10] > 0) {
-                  sprintf (strbuf, "+%-3d", cs[j + 10]);
-                  print_font (double_buffer, wx + 24, j * 8 + wy, strbuf,
-                              FGREEN);
-               }
-               if (cs[j + 10] == 0)
-                  print_font (double_buffer, wx + 24, j * 8 + wy, "=",
-                              FNORMAL);
-            }
-         }
-         if (items[selected_item].eq[pidx[a]] == 0)
-            draw_sprite (double_buffer, noway, wx, wy);
-      } else {
-         if (items[selected_item].icon == W_SBOOK
-             || items[selected_item].icon == W_ABOOK) {
-            for (j = 0; j < 60; j++)
-               if (party[pidx[a]].spells[j] == items[selected_item].hnds)
-                  draw_sprite (double_buffer, noway, wx, wy);
-         }
-      }
    }
-   for (j = 0; j < MAX_INV; j++)
-      if (g_inv[j][0] == selected_item)
-         ownd += g_inv[j][1];   // quantity of this item
-   sprintf (strbuf, "Own: %d", ownd);
-   print_font (double_buffer, 88 + xofs, 224 + yofs, strbuf, FNORMAL);
-   if (slot < 6) {
-      sprintf (strbuf, "Eqp: %d", eqp);
-      print_font (double_buffer, 160 + xofs, 224 + yofs, strbuf, FNORMAL);
-   }
-}
-
-
-
-/*! \brief Display amount of gold
- *
- * Display the party's funds.
- */
-void draw_shopgold (void)
-{
-   menubox (double_buffer, 248 + xofs, 208 + yofs, 7, 2, BLUE);
-   print_font (double_buffer, 256 + xofs, 216 + yofs, "Gold:", FGOLD);
-   sprintf (strbuf, "%d", gp);
-   print_font (double_buffer, 312 - (strlen (strbuf) * 8) + xofs, 224 + yofs,
-               strbuf, FNORMAL);
-}
-
-
-
-/*! \brief Main entry point to shop functions
- *
- * The initial shop dialog.  This function calculates item quantities
- * and then just asks if we're buying or selling.
- *
- * \param   shop_num Index of this shop
- * \returns 1 if shop has no items, 0 otherwise
- */
-int shop (int shop_num)
-{
-   int ptr = 0, stop = 0, a;
-
-   shop_no = shop_num;
-   strcpy (sname, shopn[shop_no]);
-   for (a = 0; a < SHOPITEMS; a++) {
-      if (shops[shop_no][a][2] > 0)
-         /* Shops replenish after a certain time? */
-         if ((khr * 60) + kmin - progress[P_SHOPSTART + shop_no] >
-             shops[shop_no][a][2])
-            shopq[shop_no][a] = shops[shop_no][a][1];
-      shin[a] = shops[shop_no][a][0];
-   }
-   noi = SHOPITEMS - 1;
-   for (a = SHOPITEMS - 1; a >= 0; a--)
-      if (shin[a] == 0)
-         noi = a;
-   if (noi == 0)
-      return 1;
-   unpress ();
-   play_effect (SND_MENU, 128);
    while (!stop) {
       check_animation ();
-      drawmap ();
-      menubox (double_buffer, 152 - (strlen (sname) * 4) + xofs, yofs,
-               strlen (sname), 1, BLUE);
-      print_font (double_buffer, 160 - (strlen (sname) * 4) + xofs,
-                  8 + yofs, sname, FGOLD);
-      menubox (double_buffer, 32 + xofs, 24 + yofs, 30, 1, BLUE);
-      menubox (double_buffer, ptr * 80 + 32 + xofs, 24 + yofs, 10, 1,
-               DARKBLUE);
-      print_font (double_buffer, 68 + xofs, 32 + yofs, "Buy", FGOLD);
-      print_font (double_buffer, 144 + xofs, 32 + yofs, "Sell", FGOLD);
-      print_font (double_buffer, 224 + xofs, 32 + yofs, "Exit", FGOLD);
-      draw_sideshot (-1);
-      draw_shopgold ();
+      blit (back, double_buffer, 0, 0, xofs, 192 + yofs, 320, 48);
+      menubox (double_buffer, 32 + xofs, 168 + yofs, 30, 1, DARKBLUE);
+      print_font (double_buffer, 104 + xofs, 176 + yofs, "Confirm/Cancel",
+                  FNORMAL);
+      draw_sideshot (shin[item_no]);
       blit2screen (xofs, yofs);
 
       readcontrols ();
-
-      if (left && ptr > 0) {
-         unpress ();
-         ptr--;
-         play_effect (SND_CLICK, 128);
-      }
-      if (right && ptr < 2) {
-         unpress ();
-         ptr++;
-         play_effect (SND_CLICK, 128);
-      }
       if (balt) {
-         unpress ();
-         if (ptr == 0)
-            buy_menu ();
-         if (ptr == 1)
-            sell_menu ();
-         if (ptr == 2)
-            stop = 1;
-      }
-      if (bctrl) {
          unpress ();
          stop = 1;
       }
+      if (bctrl) {
+         unpress ();
+         return;
+      }
    }
-   progress[P_SHOPSTART + shop_no] = khr * 60 + kmin;
-   return 0;
+   z = check_inventory (l, how_many);
+   if (z > 0) {
+      gp = gp - cost;
+      shopq[shop_no][item_no] -= how_many;
+      play_effect (SND_MONEY, 128);
+      return;
+   }
+   play_effect (SND_BAD, 128);
+   message ("No room!", -1, 0, xofs, yofs);
+   return;
 }
 
 
@@ -735,160 +592,257 @@ static void buy_menu (void)
 
 
 
-/*! \brief Actually purchase the item
+/*! \brief Restore characters according to Inn effects.
  *
- * This is used after selecting an item, from the above
- * menu, to determine who to give it to.  Then it gives
- * it to them and deducts the cash.
+ * This is separate so that these effects can be done from anywhere.
  *
- * \param   how_many Quantity
- * \param   item_no Index of item
+ * \param   do_delay Whether or not to wait during the darkness...
  */
-static void buy_item (int how_many, int item_no)
+void do_inn_effects (int do_delay)
 {
-   int z = 0, l, stop = 0, cost;
+   int a, b, c;
 
-   l = shin[item_no];
-   cost = items[l].price * how_many;
-   if (cost > gp || how_many == 0) {
-      play_effect (SND_BAD, 128);
-      return;
+   for (a = 0; a < numchrs; a++) {
+      c = pidx[a];
+      party[c].hp = party[c].mhp;
+      party[c].mp = party[c].mmp;
+      for (b = 0; b < 8; b++)
+         party[c].sts[b] = 0;
    }
-   while (!stop) {
-      check_animation ();
-      blit (back, double_buffer, 0, 0, xofs, 192 + yofs, 320, 48);
-      menubox (double_buffer, 32 + xofs, 168 + yofs, 30, 1, DARKBLUE);
-      print_font (double_buffer, 104 + xofs, 176 + yofs, "Confirm/Cancel",
-                  FNORMAL);
-      draw_sideshot (shin[item_no]);
+   pause_music ();
+   play_effect (36, 128);
+   if (do_delay) {
+      do_transition (TRANS_FADE_OUT, 2);
+      drawmap ();
       blit2screen (xofs, yofs);
-
-      readcontrols ();
-      if (balt) {
-         unpress ();
-         stop = 1;
-      }
-      if (bctrl) {
-         unpress ();
-         return;
-      }
    }
-   z = check_inventory (l, how_many);
-   if (z > 0) {
-      gp = gp - cost;
-      shopq[shop_no][item_no] -= how_many;
-      play_effect (SND_MONEY, 128);
-      return;
+   progress[P_REPULSE] = 0;
+   if (do_delay) {
+      kq_wait (1500);
+      do_transition (TRANS_FADE_IN, 2);
    }
-   play_effect (SND_BAD, 128);
-   message ("No room!", -1, 0, xofs, yofs);
-   return;
+   resume_music ();
 }
 
 
 
-/*! \brief Show items that can be sold
+/*! \brief Display amount of gold
  *
- * Display a list of items that are in inventory and ask which
- * one(s) to sell.
+ * Display the party's funds.
  */
-static void sell_menu (void)
+void draw_shopgold (void)
 {
-   int yptr = 0, stop = 0, z, p, k, sp, inv_page = 0;
+   menubox (double_buffer, 248 + xofs, 208 + yofs, 7, 2, BLUE);
+   print_font (double_buffer, 256 + xofs, 216 + yofs, "Gold:", FGOLD);
+   sprintf (strbuf, "%d", gp);
+   print_font (double_buffer, 312 - (strlen (strbuf) * 8) + xofs, 224 + yofs,
+               strbuf, FNORMAL);
+}
 
+
+
+/*! \brief Show status info
+ *
+ * Well, it used to be on the side, but now it's on the bottom.
+ * This displays the characters and whether or not they are
+ * able to use/equip what is being looked at, and how it would
+ * improve their stats (if applicable).
+ *
+ * \param   selected_item Item being looked at.
+ */
+static void draw_sideshot (int selected_item)
+{
+   int a, j, ownd = 0, eqp = 0, wx, wy, slot;
+   int cs[13];
+
+   menubox (double_buffer, 80 + xofs, 192 + yofs, 18, 4, BLUE);
+   for (a = 0; a < numchrs; a++) {
+      wx = a * 72 + 88 + xofs;
+      wy = 200 + yofs;
+      draw_sprite (double_buffer, frames[pidx[a]][2], wx, wy);
+   }
+   if (selected_item == -1)
+      return;
+   slot = items[selected_item].type;
+   for (a = 0; a < numchrs; a++) {
+      wx = a * 72 + 88 + xofs;
+      wy = 200 + yofs;
+      for (j = 0; j < 6; j++)
+         if (party[pidx[a]].eqp[j] == selected_item)
+            eqp++;
+      if (slot < 6) {
+         if (party[pidx[a]].eqp[slot] > 0) {
+            for (j = 0; j < 13; j++)
+               cs[j] =
+                  items[selected_item].stats[j] -
+                  items[party[pidx[a]].eqp[slot]].stats[j];
+         } else {
+            for (j = 0; j < 13; j++)
+               cs[j] = items[selected_item].stats[j];
+         }
+         if (slot == 0) {
+            draw_icon (double_buffer, 3, wx + 16, wy);
+            print_font (double_buffer, wx + 16, wy + 8, "%", FNORMAL);
+            for (j = 0; j < 2; j++) {
+               if (cs[j + 8] < 0) {
+                  sprintf (strbuf, "%-4d", cs[j + 8]);
+                  print_font (double_buffer, wx + 24, j * 8 + wy, strbuf,
+                              FRED);
+               }
+               if (cs[j + 8] > 0) {
+                  sprintf (strbuf, "+%-3d", cs[j + 8]);
+                  print_font (double_buffer, wx + 24, j * 8 + wy, strbuf,
+                              FGREEN);
+               }
+               if (cs[j + 8] == 0)
+                  print_font (double_buffer, wx + 24, j * 8 + wy, "=",
+                              FNORMAL);
+            }
+         } else {
+            draw_icon (double_buffer, 9, wx + 16, wy);
+            print_font (double_buffer, wx + 16, wy + 8, "%", FNORMAL);
+            draw_icon (double_buffer, 47, wx + 16, wy + 16);
+            for (j = 0; j < 3; j++) {
+               if (cs[j + 10] < 0) {
+                  sprintf (strbuf, "%-4d", cs[j + 10]);
+                  print_font (double_buffer, wx + 24, j * 8 + wy, strbuf,
+                              FRED);
+               }
+               if (cs[j + 10] > 0) {
+                  sprintf (strbuf, "+%-3d", cs[j + 10]);
+                  print_font (double_buffer, wx + 24, j * 8 + wy, strbuf,
+                              FGREEN);
+               }
+               if (cs[j + 10] == 0)
+                  print_font (double_buffer, wx + 24, j * 8 + wy, "=",
+                              FNORMAL);
+            }
+         }
+         if (items[selected_item].eq[pidx[a]] == 0)
+            draw_sprite (double_buffer, noway, wx, wy);
+      } else {
+         if (items[selected_item].icon == W_SBOOK
+             || items[selected_item].icon == W_ABOOK) {
+            for (j = 0; j < 60; j++)
+               if (party[pidx[a]].spells[j] == items[selected_item].hnds)
+                  draw_sprite (double_buffer, noway, wx, wy);
+         }
+      }
+   }
+   for (j = 0; j < MAX_INV; j++)
+      if (g_inv[j][0] == selected_item)
+         ownd += g_inv[j][1];   // quantity of this item
+   sprintf (strbuf, "Own: %d", ownd);
+   print_font (double_buffer, 88 + xofs, 224 + yofs, strbuf, FNORMAL);
+   if (slot < 6) {
+      sprintf (strbuf, "Eqp: %d", eqp);
+      print_font (double_buffer, 160 + xofs, 224 + yofs, strbuf, FNORMAL);
+   }
+}
+
+
+
+/*! \brief Handle Inn functions
+ *
+ * This is simply used for staying at the inn.  Remember
+ * it costs more money to stay if your characters require
+ * healing or resurrection.
+ *
+ * \param   iname Name of Inn
+ * \param   gpc Gold per character (base price)
+ * \param   pay If 0, staying is free.
+ */
+void inn (char *iname, int gpc, int pay)
+{
+   int a, b, my = 0, stop = 0, gpts;
+
+   if (pay == 0) {
+      /* TT add: (pay) is also used now to indicate whether we should wait
+       *         (fade in/out) or just heal the heroes and be done
+       */
+      do_inn_effects (pay);
+      return;
+   }
+   unpress ();
+   drawmap ();
+   menubox (double_buffer, 152 - (strlen (iname) * 4) + xofs, yofs,
+            strlen (iname), 1, BLUE);
+   print_font (double_buffer, 160 - (strlen (iname) * 4) + xofs, 8 + yofs,
+               iname, FGOLD);
+   gpts = gpc;
+   for (a = 0; a < numchrs; a++) {
+      if (party[pidx[a]].sts[S_POISON] != 0)
+         gpts += gpc * 50 / 100;
+      if (party[pidx[a]].sts[S_BLIND] != 0)
+         gpts += gpc * 50 / 100;
+      if (party[pidx[a]].sts[S_MUTE] != 0)
+         gpts += gpc * 50 / 100;
+      if (party[pidx[a]].sts[S_DEAD] != 0) {
+         b = gpc * 50 / 100;
+         gpts += (b * party[pidx[a]].lvl / 5);
+      }
+   }
    while (!stop) {
       check_animation ();
       drawmap ();
-      menubox (double_buffer, 152 - (strlen (sname) * 4) + xofs, yofs,
-               strlen (sname), 1, BLUE);
-      print_font (double_buffer, 160 - (strlen (sname) * 4) + xofs,
-                  8 + yofs, sname, FGOLD);
-      menubox (double_buffer, xofs, 208 + yofs, 7, 2, BLUE);
-      print_font (double_buffer, 20 + xofs, 220 + yofs, "Sell", FGOLD);
-      menubox (double_buffer, 32 + xofs, 24 + yofs, 30, 16, BLUE);
-      menubox (double_buffer, 32 + xofs, 168 + yofs, 30, 1, BLUE);
-      draw_shopgold ();
-      for (p = 0; p < 16; p++) {
-         z = g_inv[inv_page * 16 + p][0];
-         if (items[z].price == 0)
-            k = FDARK;
-         else
-            k = FNORMAL;
-         draw_icon (double_buffer, items[z].icon, 48 + xofs,
-                    p * 8 + 32 + yofs);
-         print_font (double_buffer, 56 + xofs, p * 8 + 32 + yofs,
-                     items[z].name, k);
-         // Check if quantity of this item > 1
-         if (g_inv[inv_page * 16 + p][1] > 1) {
-            // The '^' in this is an 'x' in allfonts.pcx
-            sprintf (strbuf, "^%d", g_inv[inv_page * 16 + p][1]);
-            print_font (double_buffer, 264 + xofs, p * 8 + 32 + yofs,
-                        strbuf, k);
-         }
-      }
-      sp = items[g_inv[inv_page * 16 + yptr][0]].price * 50 / 100;
-      if (items[g_inv[inv_page * 16 + yptr][0]].price > 0) {
-         if (g_inv[inv_page * 16 + yptr][1] > 1) {
-            // Check if there is more than one item
-            sprintf (strbuf, "%d gp for each one.", sp);
-            print_font (double_buffer, 160 - (strlen (strbuf) * 4) + xofs,
-                        176 + yofs, strbuf, FNORMAL);
-         } else {
-            // There is only one of this item
-            sprintf (strbuf, "That's worth %d gp.", sp);
-            print_font (double_buffer, 160 - (strlen (strbuf) * 4) + xofs,
-                        176 + yofs, strbuf, FNORMAL);
-         }
+
+      sprintf (strbuf, "The cost is %d gp for the night.", gpts);
+      menubox (double_buffer, 152 - (strlen (strbuf) * 4) + xofs, 48 + yofs,
+               strlen (strbuf), 1, BLUE);
+      print_font (double_buffer, 160 - (strlen (strbuf) * 4) + xofs, 56 + yofs,
+                  strbuf, FNORMAL);
+      menubox (double_buffer, 248 + xofs, 168 + yofs, 7, 2, BLUE);
+      print_font (double_buffer, 256 + xofs, 176 + yofs, "Gold:", FGOLD);
+      sprintf (strbuf, "%d", gp);
+      print_font (double_buffer, 312 - (strlen (strbuf) * 8) + xofs,
+                  184 + yofs, strbuf, FNORMAL);
+      if (gp >= gpts) {
+         menubox (double_buffer, 52 + xofs, 96 + yofs, 25, 2, BLUE);
+         print_font (double_buffer, 60 + xofs, 108 + yofs,
+                     "Do you wish to stay?", FNORMAL);
       } else {
-         if (g_inv[inv_page * 16 + yptr][0] > 0)
-            print_font (double_buffer, 76 + xofs, 192 + yofs,
-                        "That can not be sold!", FNORMAL);
+         menubox (double_buffer, 32 + xofs, 96 + yofs, 30, 2, BLUE);
+         print_font (double_buffer, 40 + xofs, 108 + yofs,
+                     "You can't afford to stay here.", FNORMAL);
+         blit2screen (xofs, yofs);
+         wait_enter ();
+         return;
       }
-      draw_sprite (double_buffer, menuptr, 32 + xofs, yptr * 8 + 32 + yofs);
-      draw_sprite (double_buffer, pgb[inv_page], 278 + xofs, 158 + yofs);
+
+      menubox (double_buffer, 220 + xofs, 96 + yofs, 4, 2, DARKBLUE);
+      print_font (double_buffer, 236 + xofs, 104 + yofs, "yes", FNORMAL);
+      print_font (double_buffer, 236 + xofs, 112 + yofs, "no", FNORMAL);
+      draw_sprite (double_buffer, menuptr, 220 + xofs, my * 8 + 104 + yofs);
       blit2screen (xofs, yofs);
-
       readcontrols ();
-
       if (down) {
          unpress ();
-         yptr++;
-         if (yptr > 15)
-            yptr = 0;
+         if (my == 0)
+            my = 1;
+         else
+            my = 0;
          play_effect (SND_CLICK, 128);
       }
       if (up) {
          unpress ();
-         yptr--;
-         if (yptr < 0)
-            yptr = 15;
-         play_effect (SND_CLICK, 128);
-      }
-      if (left) {
-         unpress ();
-         inv_page--;
-         if (inv_page < 0)
-            inv_page = MAX_INV / 16 - 1;
-         play_effect (SND_CLICK, 128);
-      }
-      if (right) {
-         unpress ();
-         inv_page++;
-         if (inv_page > (MAX_INV / 16 - 1))
-            inv_page = 0;
+         if (my == 0)
+            my = 1;
+         else
+            my = 0;
          play_effect (SND_CLICK, 128);
       }
       if (balt) {
          unpress ();
-         if (g_inv[inv_page * 16 + yptr][0] > 0
-             && items[g_inv[inv_page * 16 + yptr][0]].price > 0)
-            sell_howmany (yptr, inv_page);
-      }
-      if (bctrl) {
-         unpress ();
-         stop = 1;
+         if (my == 0) {
+            gp -= gpts;
+            do_inn_effects (pay);
+            stop = 1;
+         } else {
+            stop = 2;
+         }
       }
    }
+   timer_count = 0;
 }
 
 
@@ -1018,139 +972,185 @@ static void sell_item (int itno, int ni)
 
 
 
-/*! \brief Handle Inn functions
+/*! \brief Show items that can be sold
  *
- * This is simply used for staying at the inn.  Remember
- * it costs more money to stay if your characters require
- * healing or resurrection.
- *
- * \param   iname Name of Inn
- * \param   gpc Gold per character (base price)
- * \param   pay If 0, staying is free.
+ * Display a list of items that are in inventory and ask which
+ * item or items to sell.
  */
-void inn (char *iname, int gpc, int pay)
+static void sell_menu (void)
 {
-   int a, b, my = 0, stop = 0, gpts;
+   int yptr = 0, stop = 0, z, p, k, sp, inv_page = 0;
 
-   if (pay == 0) {
-      /* TT add: (pay) is also used now to indicate whether we should wait
-       *         (fade in/out) or just heal the heroes and be done
-       */
-      do_inn_effects (pay);
-      return;
-   }
-   unpress ();
-   drawmap ();
-   menubox (double_buffer, 152 - (strlen (iname) * 4) + xofs, yofs,
-            strlen (iname), 1, BLUE);
-   print_font (double_buffer, 160 - (strlen (iname) * 4) + xofs, 8 + yofs,
-               iname, FGOLD);
-   gpts = gpc;
-   for (a = 0; a < numchrs; a++) {
-      if (party[pidx[a]].sts[S_POISON] != 0)
-         gpts += gpc * 50 / 100;
-      if (party[pidx[a]].sts[S_BLIND] != 0)
-         gpts += gpc * 50 / 100;
-      if (party[pidx[a]].sts[S_MUTE] != 0)
-         gpts += gpc * 50 / 100;
-      if (party[pidx[a]].sts[S_DEAD] != 0) {
-         b = gpc * 50 / 100;
-         gpts += (b * party[pidx[a]].lvl / 5);
-      }
-   }
    while (!stop) {
       check_animation ();
       drawmap ();
-
-      sprintf (strbuf, "The cost is %d gp for the night.", gpts);
-      menubox (double_buffer, 152 - (strlen (strbuf) * 4) + xofs, 48 + yofs,
-               strlen (strbuf), 1, BLUE);
-      print_font (double_buffer, 160 - (strlen (strbuf) * 4) + xofs, 56 + yofs,
-                  strbuf, FNORMAL);
-      menubox (double_buffer, 248 + xofs, 168 + yofs, 7, 2, BLUE);
-      print_font (double_buffer, 256 + xofs, 176 + yofs, "Gold:", FGOLD);
-      sprintf (strbuf, "%d", gp);
-      print_font (double_buffer, 312 - (strlen (strbuf) * 8) + xofs,
-                  184 + yofs, strbuf, FNORMAL);
-      if (gp >= gpts) {
-         menubox (double_buffer, 52 + xofs, 96 + yofs, 25, 2, BLUE);
-         print_font (double_buffer, 60 + xofs, 108 + yofs,
-                     "Do you wish to stay?", FNORMAL);
-      } else {
-         menubox (double_buffer, 32 + xofs, 96 + yofs, 30, 2, BLUE);
-         print_font (double_buffer, 40 + xofs, 108 + yofs,
-                     "You can't afford to stay here.", FNORMAL);
-         blit2screen (xofs, yofs);
-         wait_enter ();
-         return;
+      menubox (double_buffer, 152 - (strlen (sname) * 4) + xofs, yofs,
+               strlen (sname), 1, BLUE);
+      print_font (double_buffer, 160 - (strlen (sname) * 4) + xofs,
+                  8 + yofs, sname, FGOLD);
+      menubox (double_buffer, xofs, 208 + yofs, 7, 2, BLUE);
+      print_font (double_buffer, 20 + xofs, 220 + yofs, "Sell", FGOLD);
+      menubox (double_buffer, 32 + xofs, 24 + yofs, 30, 16, BLUE);
+      menubox (double_buffer, 32 + xofs, 168 + yofs, 30, 1, BLUE);
+      draw_shopgold ();
+      for (p = 0; p < 16; p++) {
+         z = g_inv[inv_page * 16 + p][0];
+         if (items[z].price == 0)
+            k = FDARK;
+         else
+            k = FNORMAL;
+         draw_icon (double_buffer, items[z].icon, 48 + xofs,
+                    p * 8 + 32 + yofs);
+         print_font (double_buffer, 56 + xofs, p * 8 + 32 + yofs,
+                     items[z].name, k);
+         // Check if quantity of this item > 1
+         if (g_inv[inv_page * 16 + p][1] > 1) {
+            // The '^' in this is an 'x' in allfonts.pcx
+            sprintf (strbuf, "^%d", g_inv[inv_page * 16 + p][1]);
+            print_font (double_buffer, 264 + xofs, p * 8 + 32 + yofs,
+                        strbuf, k);
+         }
       }
-
-      menubox (double_buffer, 220 + xofs, 96 + yofs, 4, 2, DARKBLUE);
-      print_font (double_buffer, 236 + xofs, 104 + yofs, "yes", FNORMAL);
-      print_font (double_buffer, 236 + xofs, 112 + yofs, "no", FNORMAL);
-      draw_sprite (double_buffer, menuptr, 220 + xofs, my * 8 + 104 + yofs);
+      sp = items[g_inv[inv_page * 16 + yptr][0]].price * 50 / 100;
+      if (items[g_inv[inv_page * 16 + yptr][0]].price > 0) {
+         if (g_inv[inv_page * 16 + yptr][1] > 1) {
+            // Check if there is more than one item
+            sprintf (strbuf, "%d gp for each one.", sp);
+            print_font (double_buffer, 160 - (strlen (strbuf) * 4) + xofs,
+                        176 + yofs, strbuf, FNORMAL);
+         } else {
+            // There is only one of this item
+            sprintf (strbuf, "That's worth %d gp.", sp);
+            print_font (double_buffer, 160 - (strlen (strbuf) * 4) + xofs,
+                        176 + yofs, strbuf, FNORMAL);
+         }
+      } else {
+         if (g_inv[inv_page * 16 + yptr][0] > 0)
+            print_font (double_buffer, 76 + xofs, 192 + yofs,
+                        "That can not be sold!", FNORMAL);
+      }
+      draw_sprite (double_buffer, menuptr, 32 + xofs, yptr * 8 + 32 + yofs);
+      draw_sprite (double_buffer, pgb[inv_page], 278 + xofs, 158 + yofs);
       blit2screen (xofs, yofs);
+
       readcontrols ();
+
       if (down) {
          unpress ();
-         if (my == 0)
-            my = 1;
-         else
-            my = 0;
+         yptr++;
+         if (yptr > 15)
+            yptr = 0;
          play_effect (SND_CLICK, 128);
       }
       if (up) {
          unpress ();
-         if (my == 0)
-            my = 1;
-         else
-            my = 0;
+         yptr--;
+         if (yptr < 0)
+            yptr = 15;
+         play_effect (SND_CLICK, 128);
+      }
+      if (left) {
+         unpress ();
+         inv_page--;
+         if (inv_page < 0)
+            inv_page = MAX_INV / 16 - 1;
+         play_effect (SND_CLICK, 128);
+      }
+      if (right) {
+         unpress ();
+         inv_page++;
+         if (inv_page > (MAX_INV / 16 - 1))
+            inv_page = 0;
          play_effect (SND_CLICK, 128);
       }
       if (balt) {
          unpress ();
-         if (my == 0) {
-            gp -= gpts;
-            do_inn_effects (pay);
-            stop = 1;
-         } else {
-            stop = 2;
-         }
+         if (g_inv[inv_page * 16 + yptr][0] > 0
+             && items[g_inv[inv_page * 16 + yptr][0]].price > 0)
+            sell_howmany (yptr, inv_page);
+      }
+      if (bctrl) {
+         unpress ();
+         stop = 1;
       }
    }
-   timer_count = 0;
 }
 
 
 
-/*! \brief Restore characters according to Inn effects.
+/*! \brief Main entry point to shop functions
  *
- * This is separate so that these effects can be done from anywhere.
+ * The initial shop dialog.  This function calculates item quantities
+ * and then just asks if we're buying or selling.
  *
- * \param   do_delay Whether or not to wait during the darkness...
+ * \param   shop_num Index of this shop
+ * \returns 1 if shop has no items, 0 otherwise
  */
-void do_inn_effects (int do_delay)
+int shop (int shop_num)
 {
-   int a, b, c;
+   int ptr = 0, stop = 0, a;
 
-   for (a = 0; a < numchrs; a++) {
-      c = pidx[a];
-      party[c].hp = party[c].mhp;
-      party[c].mp = party[c].mmp;
-      for (b = 0; b < 8; b++)
-         party[c].sts[b] = 0;
+   shop_no = shop_num;
+   strcpy (sname, shopn[shop_no]);
+   for (a = 0; a < SHOPITEMS; a++) {
+      if (shops[shop_no][a][2] > 0)
+         /* Shops replenish after a certain time? */
+         if ((khr * 60) + kmin - progress[P_SHOPSTART + shop_no] >
+             shops[shop_no][a][2])
+            shopq[shop_no][a] = shops[shop_no][a][1];
+      shin[a] = shops[shop_no][a][0];
    }
-   pause_music ();
-   play_effect (36, 128);
-   if (do_delay) {
-      do_transition (TRANS_FADE_OUT, 2);
+   noi = SHOPITEMS - 1;
+   for (a = SHOPITEMS - 1; a >= 0; a--)
+      if (shin[a] == 0)
+         noi = a;
+   if (noi == 0)
+      return 1;
+   unpress ();
+   play_effect (SND_MENU, 128);
+   while (!stop) {
+      check_animation ();
       drawmap ();
+      menubox (double_buffer, 152 - (strlen (sname) * 4) + xofs, yofs,
+               strlen (sname), 1, BLUE);
+      print_font (double_buffer, 160 - (strlen (sname) * 4) + xofs,
+                  8 + yofs, sname, FGOLD);
+      menubox (double_buffer, 32 + xofs, 24 + yofs, 30, 1, BLUE);
+      menubox (double_buffer, ptr * 80 + 32 + xofs, 24 + yofs, 10, 1,
+               DARKBLUE);
+      print_font (double_buffer, 68 + xofs, 32 + yofs, "Buy", FGOLD);
+      print_font (double_buffer, 144 + xofs, 32 + yofs, "Sell", FGOLD);
+      print_font (double_buffer, 224 + xofs, 32 + yofs, "Exit", FGOLD);
+      draw_sideshot (-1);
+      draw_shopgold ();
       blit2screen (xofs, yofs);
+
+      readcontrols ();
+
+      if (left && ptr > 0) {
+         unpress ();
+         ptr--;
+         play_effect (SND_CLICK, 128);
+      }
+      if (right && ptr < 2) {
+         unpress ();
+         ptr++;
+         play_effect (SND_CLICK, 128);
+      }
+      if (balt) {
+         unpress ();
+         if (ptr == 0)
+            buy_menu ();
+         if (ptr == 1)
+            sell_menu ();
+         if (ptr == 2)
+            stop = 1;
+      }
+      if (bctrl) {
+         unpress ();
+         stop = 1;
+      }
    }
-   progress[P_REPULSE] = 0;
-   if (do_delay) {
-      kq_wait (1500);
-      do_transition (TRANS_FADE_IN, 2);
-   }
-   resume_music ();
+   progress[P_SHOPSTART + shop_no] = khr * 60 + kmin;
+   return 0;
 }

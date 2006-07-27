@@ -35,9 +35,11 @@
 
 
 function autoexec()
+  local x, y
   -- You have fallen in the pit at least once; the hole is showing on the map
   if (get_progress(P_FELLINPIT) > 0) then
-    set_btile(16, 14, 153)
+    x, y = marker("by_pit")
+    set_btile(x + 1, y, 153)
   end
 
   -- // You've entered the grotto at least once
@@ -47,8 +49,9 @@ function autoexec()
 
   -- Determine if the fire should be lit or not
   if (get_progress(P_TALKDERIG) < 2) then
-    set_mtile(20, 16, 154)
-    set_zone(20, 16, 0)
+    x, y = marker("by_fire")
+    set_mtile(x + 1, y, 154)
+    set_zone(x + 1, y, 0)
   end
 
   -- Allows you to fall down the pit once Derig is back in the Grotto
@@ -58,7 +61,8 @@ function autoexec()
 
   -- // There will be some times when the player shouldn't go down in the pit
   if (get_progress(P_FELLINPIT) == 2) then
-    set_obs(16, 14, 1)
+    x, y = marker("by_pit")
+    set_obs(x - 1, y, 1)
   end
 
   -- Determine if Derig should be showing or not
@@ -72,8 +76,9 @@ function autoexec()
       set_ent_active(0, 0)
     else
       -- Light the fire if Derig is next to it
-      set_mtile(20, 16, 154)
-      set_zone(20, 16, 0)
+      x, y = marker("by_fire")
+      set_mtile(x + 1, y, 154)
+      set_zone(x + 1, y, 0)
     end
   end
 
@@ -84,14 +89,16 @@ end
 function refresh()
   -- Treasure on NE corner, in trees
   if (get_treasure(15) == 1) then
-    set_obs(24, 16, 0)
-    set_zone(24, 16, 0)
+    x, y = marker("treasure1")
+    set_zone(x, y, 0)
+    set_obs(x, y, 0)
   end
 
   -- Treasure under flowers on E corner
   if (get_treasure(80) == 1) then
-    set_obs(26, 10, 0)
-    set_zone(26, 10, 0)
+    x, y = marker("treasure2")
+    set_zone(x, y, 0)
+    set_obs(x, y, 0)
   end
 
 end

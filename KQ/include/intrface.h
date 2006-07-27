@@ -29,20 +29,14 @@
 #define FACE_RIGHT   3
 
 
-void do_luainit (char *);       /*  kq.c  */
-void do_luacheat (void);        /*  entity.c  */
-void do_luakill (void);         /*  kq.c  */
 void do_autoexec (void);        /*  kq.c  */
-void do_postexec (void);        /*  kq.c  */
-void do_zone (int);             /*  kq.c  */
 void do_entity (int);           /*  kq.c  */
+void do_luacheat (void);        /*  entity.c  */
+void do_luainit (char *);       /*  kq.c  */
+void do_luakill (void);         /*  kq.c  */
+void do_postexec (void);        /*  kq.c  */
 void do_timefunc (const char *);
-
-
-#if 0
-void check_map_change (void);   /*  staticed  */
-#endif /*  0  */
-
+void do_zone (int);             /*  kq.c  */
 
 
 #endif /*  __INTRFACE_H  */

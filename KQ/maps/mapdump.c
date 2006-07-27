@@ -111,7 +111,8 @@ void usage (const char *argv)
    fprintf (stdout, "   o  shows the Obstacles (default OFF)\n");
    fprintf (stdout, "   s  shows the Shadows (default ON)\n");
    fprintf (stdout, "   z  shows the Zones (default OFF)\n");
-   fprintf (stdout, "   m  shows the Markers (default OFF)\n\n");
+   fprintf (stdout, "   m  shows the Markers (default OFF)\n");
+   fprintf (stdout, "   b  shows the Bounding Areas (default OFF)\n\n");
    fprintf (stdout, "   -v displays %s output in verbose mode\n\n", argv);
    fprintf (stdout, "   -b output as Windows bitmap instead of PCX\n\n");
    fprintf (stdout, "   -f overwrite image, even if it already exists\n\n");
@@ -149,25 +150,27 @@ int main (int argc, char *argv[])
    shared_startup ();
 
    /* Initialize standard "unchanged" settings */
-   showing.entities = -1;
-   showing.obstacles = -1;
-   showing.shadows = -1;
-   showing.zones = -1;
-   showing.markers = -1;
-   showing.layer[0] = -1;
-   showing.layer[1] = -1;
-   showing.layer[2] = -1;
+   showing.entities   = -1;
+   showing.obstacles  = -1;
+   showing.shadows    = -1;
+   showing.zones      = -1;
+   showing.markers    = -1;
+   showing.boundaries = -1;
+   showing.layer[0]   = -1;
+   showing.layer[1]   = -1;
+   showing.layer[2]   = -1;
 
    /* Initialize default settings */
-   d_showing.entities = 1;
-   d_showing.obstacles = 0;
-   d_showing.shadows = 1;
-   d_showing.zones = 0;
-   d_showing.markers = 0;
+   d_showing.entities   = 1;
+   d_showing.obstacles  = 0;
+   d_showing.shadows    = 1;
+   d_showing.zones      = 0;
+   d_showing.markers    = 0;
+   d_showing.boundaries = 0;
    d_showing.last_layer = 0;
-   d_showing.layer[0] = 1;
-   d_showing.layer[1] = 1;
-   d_showing.layer[2] = 1;
+   d_showing.layer[0]   = 1;
+   d_showing.layer[1]   = 1;
+   d_showing.layer[2]   = 1;
 
    /* Some command-line switches must have preference, so sweep twice */
    for (i = 1; i < argc; i++) {
@@ -188,24 +191,26 @@ int main (int argc, char *argv[])
    for (i = 1; i < argc; i++) {
       if (argv[i][0] == '-') {
          /* This means to exclude an effect */
-         showing.entities = strchr (argv[i], 'e') ? 0 : showing.entities;
-         showing.obstacles = strchr (argv[i], 'o') ? 0 : showing.obstacles;
-         showing.shadows = strchr (argv[i], 's') ? 0 : showing.shadows;
-         showing.zones = strchr (argv[i], 'z') ? 0 : showing.zones;
-         showing.markers = strchr (argv[i], 'm') ? 0 : showing.zones;
-         showing.layer[0] = strchr (argv[i], '1') ? 0 : showing.layer[0];
-         showing.layer[1] = strchr (argv[i], '2') ? 0 : showing.layer[1];
-         showing.layer[2] = strchr (argv[i], '3') ? 0 : showing.layer[2];
+         showing.entities   = strchr (argv[i], 'e') ? 0 : showing.entities;
+         showing.obstacles  = strchr (argv[i], 'o') ? 0 : showing.obstacles;
+         showing.shadows    = strchr (argv[i], 's') ? 0 : showing.shadows;
+         showing.zones      = strchr (argv[i], 'z') ? 0 : showing.zones;
+         showing.markers    = strchr (argv[i], 'm') ? 0 : showing.zones;
+         showing.boundaries = strchr (argv[i], 'b') ? 0 : showing.boundaries;
+         showing.layer[0]   = strchr (argv[i], '1') ? 0 : showing.layer[0];
+         showing.layer[1]   = strchr (argv[i], '2') ? 0 : showing.layer[1];
+         showing.layer[2]   = strchr (argv[i], '3') ? 0 : showing.layer[2];
       } else if (argv[i][0] == '+') {
          /* This means to include an effect */
-         showing.entities = strchr (argv[i], 'e') ? 1 : showing.entities;
-         showing.obstacles = strchr (argv[i], 'o') ? 1 : showing.obstacles;
-         showing.shadows = strchr (argv[i], 's') ? 1 : showing.shadows;
-         showing.zones = strchr (argv[i], 'z') ? 1 : showing.zones;
-         showing.markers = strchr (argv[i], 'm') ? 1 : showing.zones;
-         showing.layer[0] = strchr (argv[i], '1') ? 1 : showing.layer[0];
-         showing.layer[1] = strchr (argv[i], '2') ? 1 : showing.layer[1];
-         showing.layer[2] = strchr (argv[i], '3') ? 1 : showing.layer[2];
+         showing.entities   = strchr (argv[i], 'e') ? 1 : showing.entities;
+         showing.obstacles  = strchr (argv[i], 'o') ? 1 : showing.obstacles;
+         showing.shadows    = strchr (argv[i], 's') ? 1 : showing.shadows;
+         showing.zones      = strchr (argv[i], 'z') ? 1 : showing.zones;
+         showing.markers    = strchr (argv[i], 'm') ? 1 : showing.zones;
+         showing.boundaries = strchr (argv[i], 'b') ? 1 : showing.boundaries;
+         showing.layer[0]   = strchr (argv[i], '1') ? 1 : showing.layer[0];
+         showing.layer[1]   = strchr (argv[i], '2') ? 1 : showing.layer[1];
+         showing.layer[2]   = strchr (argv[i], '3') ? 1 : showing.layer[2];
       } else {
          if (exists (argv[i])) {
             if (number_of_files < PATH_MAX)
@@ -231,6 +236,8 @@ int main (int argc, char *argv[])
       showing.zones = d_showing.zones;
    if (showing.markers == -1)
       showing.markers = d_showing.markers;
+   if (showing.boundaries == -1)
+      showing.boundaries = d_showing.boundaries;
    if (showing.layer[0] == -1)
       showing.layer[0] = d_showing.layer[0];
    if (showing.layer[1] == -1)
@@ -245,6 +252,7 @@ int main (int argc, char *argv[])
       fprintf (stdout, "- Shadows: %s", showing.shadows ? "ON\n" : "OFF\n");
       fprintf (stdout, "- Zones: %s", showing.zones ? "ON\n" : "OFF\n");
       fprintf (stdout, "- Markers: %s", showing.markers ? "ON\n" : "OFF\n");
+      fprintf (stdout, "- Boundaries: %s", showing.boundaries ? "ON\n" : "OFF\n");
       fprintf (stdout, "- Layer1: %s", showing.layer[0] ? "ON\n" : "OFF\n");
       fprintf (stdout, "- Layer2: %s", showing.layer[1] ? "ON\n" : "OFF\n");
       fprintf (stdout, "- Layer3: %s", showing.layer[2] ? "ON\n" : "OFF\n");

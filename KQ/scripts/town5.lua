@@ -11,8 +11,10 @@
 --   (1) Talked to the girl near the gates
 --   (2) Talked to the folks in the bar
 --   (3) Talked to both
---   (4) Got the disguise and ready to go
---   (5) Finished/given up
+--   (4) Opened the hidden latch on the northern wall
+--   (5) Got the disguise and ready to go
+--   (6) Allowed into inner city
+--   (7) Used to dress Ayla on entering the town (should not be used elsewhere)
 --*/
 
 --/*
@@ -36,15 +38,39 @@ function autoexec()
   if (get_progress(P_FOUGHTGUILD) == 2) then
     set_desc(0)
   end
-  set_ent_active(8, 0)
+
+  if (get_progress(P_AYLA_QUEST) == 7) then
+    if (party[0] == Ayla or party[1] == Ayla) then
+      if (get_numchrs() == 2) then
+        set_ent_tiley(HERO2, get_ent_tiley(HERO1) - 1)
+        set_ent_facing(HERO2, FACE_RIGHT)
+      end
+    end
+  end
+
+  set_ent_active(8, 0) -- Guard inside city gates
   refresh()
 end
 
 
 function refresh()
   if (get_treasure(32) == 1) then
-    set_obs(21, 27, 0)
+    set_obs("treas1", 0)
   end
+
+  if (get_progress(P_AYLA_QUEST) > 3) then
+    local x, y = marker("wall")
+    local hero = LOC_get_ayla()
+
+    set_obs(x, y, 0)
+    set_zone(x, y, 0)
+ 
+    -- Put Ayla into her disguise
+    if (get_progress(P_AYLA_QUEST) == 5 and hero ~= 0) then
+      set_ent_chrx(hero, 8)
+    end
+  end
+
 end
 
 
@@ -56,40 +82,67 @@ function postexec()
     bubble(HERO1, "I must have dropped that key inside!")
     bubble(HERO1, "Oh well, I got what I came for.")
   end
+
+  if (get_progress(P_AYLA_QUEST) == 7) then
+    local hero = LOC_get_ayla()
+
+    if (hero ~= 0) then
+      bubble(hero, "Let me hop into the maid's outfit real quick.")
+
+      do_fadeout(4)
+      set_holdfade(1)
+      set_progress(P_AYLA_QUEST, 5)
+      refresh()
+      wait(100)
+      set_holdfade(0)
+      do_fadein(4)
+    end
+  end
 end
 
 
 function zone_handler(zn)
+  local x, y
+
   if (zn == 1) then
-    LOC_check_costume()
+    if (party[0] == Ayla or party[1] == Ayla) then
+      if (get_progress(P_AYLA_QUEST) == 5) then
+        LOC_check_costume()
+        set_progress(P_AYLA_QUEST, 7)
+      end
+    end
     change_map("main", "town5")
 
   elseif (zn == 2) then
     bubble(HERO1, "Locked.")
 
   elseif (zn == 3) then
-    door_in(65, 16, 61, 5, 77, 19)
+    x, y = marker("inn")
+    door_in(x - 4, y)
 
   elseif (zn == 4) then
-    door_in(73, 16, 61, 5, 77, 19)
+    x, y = marker("inn")
+    door_in(x + 4, y)
 
   elseif (zn == 5) then
-    door_in(65, 36, 61, 25, 75, 39)
+    x, y = marker("shop")
+    door_in(x - 3, y)
 
   elseif (zn == 6) then
-    door_in(71, 36, 61, 25, 75, 39)
+    x, y = marker("shop")
+    door_in(x + 3, y)
 
   elseif (zn == 7) then
-    door_out(24, 12)
+    door_out("inn1")
 
   elseif (zn == 8) then
-    door_out(28, 12)
+    door_out("inn2")
 
   elseif (zn == 9) then
-    door_out(37, 34)
+    door_out("shop1")
 
   elseif (zn == 10) then
-    door_out(42, 34)
+    door_out("shop2")
 
   elseif (zn == 11) then
     inn("River's Way Inn", 70, 1)
@@ -101,7 +154,7 @@ function zone_handler(zn)
     shop(14)
 
   elseif (zn == 14) then
-    bubble(HERO1, "Worst books ever.")
+    bubble(HERO1, "Inn books. Worst ever.")
 
   elseif (zn == 15) then
     bubble(HERO1, "What language is this?")
@@ -130,35 +183,47 @@ function zone_handler(zn)
     touch_fire(party[0].id)
 
   elseif (zn == 20) then
-    -- clothes chest in cottage
-    if (party[0] == Ayla) then
-      if (get_progress(P_AYLA_QUEST) < 4 and get_progress(P_AYLA_QUEST) > 0) then
-        sfx(5)
-        msg("Maid's outfit procured", 12, 0)
-        wait(200)
-        bubble(HERO1, "Do you mind? I'm getting undressed!")
-        do_fadeout(4)
-        set_holdfade(1)
-        set_ent_chrx(HERO1, 8)
-        wait(200)
-        set_holdfade(0)
-        do_fadein(4)
-        thought(HERO1, "It's a little tight around the arms...")
-        set_progress(P_AYLA_QUEST, 4)
-      else
-        thought(HERO1, "Nothing here worth stealing")
-      end
-    else
-      thought(HERO1, "Nothing in here but old clothes")
-    end
+    -- Maid cottage
+    door_in("maid_in")
+    bubble(HERO1, "Hey, that's not a real fire down there. It's just a mirage!")
 
   elseif (zn == 21) then
-    -- exit cottage
-    door_out(37, 17)
+    door_out("maid_out")
 
   elseif (zn == 22) then
-    --enter cottage
-    door_in(67, 45, 64, 39, 71, 47)
+    -- Not allowed to leave cottage
+    bubble(HERO1, "The door is locked.")
+
+  elseif (zn == 23) then
+    LOC_maid_clothes()
+
+  elseif (zn == 24) then
+
+    -- TODO: Once we find and pull the latch, we should always be able to find and pull it, regardless of if Ayla is in the party
+    -- This needs to be re-written to properly handle it:
+
+    -- Wall behind city
+
+    -- Only Ayla will notice anything unusual about the wall.
+    local hero = LOC_get_ayla()
+    if (hero == 0 or get_progress(P_AYLA_QUEST) < 2) then
+      return
+    end
+
+    if (get_progress(P_AYLA_QUEST) > 1 and
+        get_progress(P_AYLA_QUEST) < 4) then
+      bubble(hero, "Ayla:", "There's a latch on the wall.")
+    end
+
+    msg("You pull the latch, and the wall slides open.", 255, 0)
+    x, y = marker("wall")
+    set_obs(x, y, 0)
+    set_zone(x, y, 0)
+    set_progress(P_AYLA_QUEST, 4)
+
+  elseif (zn == 25) then
+    bubble(HERO1, "Nothing in here but old clothes.")
+
   end
 end
 
@@ -192,16 +257,25 @@ function entity_handler(en)
     end
 
   elseif (en == 6) then
-    bubble(en, "Welcome to Sunarin!",
-              "Please feel free to leave at any time.")
+    local face
+
+    if (party[0] == Ayla and get_progress(P_AYLA_QUEST) == 5) then
+      bubble(en, "Hey there, hot mama!", "", "        Rowr!")
+      face = get_ent_facing(en)
+      msg("SLAP!", 255, 0)
+        set_ent_facing(en, 0) set_ent_script(en, "W7") wait_for_entity(en, en)
+        set_ent_facing(en, 2) set_ent_script(en, "W7") wait_for_entity(en, en)
+        set_ent_facing(en, 1) set_ent_script(en, "W7") wait_for_entity(en, en)
+        set_ent_facing(en, 3) set_ent_script(en, "W50") wait_for_entity(en, en)
+        set_ent_facing(en, face)
+        bubble(en, "Ouch!")
+      set_ent_movemode(en, 1)
+    else
+      bubble(en, "Welcome to Sunarin!",
+                 "Please feel free to leave at any time.")
+    end
 
   elseif (en == 7) then
-    set_progress(P_TALKGELIK, 3)
-    if (get_progress(P_AYLA_QUEST) == 4) then
-      bubble(en, "Help... go and get me something to drink...")
-      LOC_check_costume()
-      bubble(HERO1, "...now, what were you saying?")
-    end
     bubble(en, "Please... help me... I brought soldiers with me... but the Embers killed them. I barely escaped with my life!")
     bubble(HERO1, "Who are you? And who are the Embers?")
     bubble(en, "My name is Dungar. The Embers is the short name for the Thieves of the Ember Crest. They run this town.")
@@ -215,9 +289,86 @@ function entity_handler(en)
     bubble(en, "We can discuss that back at my place. It is not safe here.")
     bubble(HERO1, "Okay.")
     set_progress(P_EMBERSKEY, 1)
+    set_progress(P_TALKGELIK, 3)
     change_map("estate", "by_table")
   end
 
+end
+
+
+-- Conversations between Ayla and the single woman in the bar
+function LOC_ayla_bar(woman)
+  local pp
+  pp = get_progress(P_AYLA_QUEST)
+  if (pp == 0) then
+    bubble(woman, "Hello there! I'd buy you a drink but I'm broke.")
+    bubble(HERO1, "I'd buy you one but it looks like you've had a few already. Goodbye...")
+    bubble(woman, "Don't be like that. I've just had to pay out half my gold in taxes.")
+    bubble(HERO1, "What did you say?")
+    bubble(woman, "Our ruler takes all our wealth and keeps it in the Inner City.",
+           "Only the servants get to see what goes on in there.",
+           "That woman over there, she's a maid and she gets to live in a nice cottage just opposite Vezdin's shop.")
+    bubble(HERO1, "She's certainly got some money to spend on drink.")
+    thought(HERO1, "I might just pay a little visit to that cottage while the maid's in here.")
+    set_progress(P_AYLA_QUEST, 2)
+    bubble(woman, "I know, it's just unfair!")
+  elseif (pp == 1) then
+    bubble(HERO1, "I don't suppose you work in the palace?")
+    bubble(woman, "I wish. That woman over there is a maid. Only a maid and she lives in a lovely cottage opposite Vezdin's shop.")
+    bubble(HERO1, "Do  you know anything about the wealth that's supposed to be in there?")
+    bubble(woman, "Keep your voice down! I bet you've been talking to that little miss near the palace gates, haven't you?")
+    bubble(HERO1, "Yes, but I much prefer the company in here.")
+    set_progress(P_AYLA_QUEST, 3)
+  elseif (pp == 2 or pp == 5) then
+    bubble(woman, pick("Y'know, you're my best friend!",
+                  "I love this bar - I just wish it would stop spinning.",
+                  "My boyfriend used to say: Work is the curse of the drinking classes. That's funny, don't you think?"))
+  elseif (pp == 3) then
+    bubble(woman, "I always talk too much when I've been drinking. Don't pay any attention to what I said.")
+  elseif (pp == 4) then
+    bubble(woman, "Oh, I am honoured! Haven't you got better things to do over at the palace?")
+  end
+end
+
+
+function LOC_ayla_gates()
+  local x, y, guard
+
+  x, y = marker("gate")
+  guard = 8
+  bubble(255, "WHO GOES THERE?!?")
+  if (get_progress(P_AYLA_QUEST) == 5 and get_ent_chrx(HERO1) ~= 0) then
+    bubble(HERO1, "Just a little serving-girl, reporting for duty.")
+    bubble(255, "Wait there, I'm coming.")
+    set_ent_active(guard, 1)
+    move_entity(guard, x, y)
+    wait_for_entity(guard, guard)
+    bubble(guard, "Come through.")
+    sfx(25)
+    warp(x, y - 1, 8)
+    set_ent_facing(HERO1, FACE_DOWN)
+    set_ent_facing(guard, FACE_UP)
+    bubble(guard, "Well, you are a cute little thing, aren't you?")
+    bubble(HERO1, "Cute??")
+    bubble(guard, "I'm sorry, miss, I didn't mean to offend. Follow me.")
+    ----
+    bubble(255, "CUT!")
+    bubble(255, "That's a wrap for today.",
+                "PH hasn't written the rest of this script yet!")
+    set_vfollow(0)
+    set_ent_script(guard, "R12")
+    bubble(255, "Ayla, great work. Sir Alec, you were fabulous, sweetie.")
+    bubble(guard, "I'm still not sure of my motivation in this scene...")
+    wait_for_entity(guard, guard)
+    LOC_check_costume()
+    set_progress(P_AYLA_QUEST, 6)
+    change_map("main", "town5")
+    set_vfollow(1)
+  else
+    bubble(HERO1, "I was wondering if you did tours around the castle?")
+    bubble(255, "I will show you the inside of the dungeon if you bother me again. Clear off!")
+    bubble(HERO1, "I'll take that as a 'no', then.")
+  end
 end
 
 
@@ -247,97 +398,78 @@ function LOC_ayla_girl(girl)
     thought(HERO1, "Every so often I am amazed by the gullibility of my fellow humans.")
     set_progress(P_AYLA_QUEST, 3)
   elseif (pp == 3) then
-    bubble(girl, pick("You're always hanging around here. I'm becoming a little suspicious",
+    bubble(girl, pick("You're always hanging around here. I'm becoming a little suspicious.",
            "Have you been talking to those losers in the bar? You stink of beer!",
            "Whatever you want, I'm not interested."))
   elseif (pp == 4) then
     bubble(girl, "Hello. You must be a new employee. But you look strangely familiar...")
-  end
-end
-
-
--- Conversations between Ayla and the single woman in the bar
-function LOC_ayla_bar(woman)
-  local pp
-  pp = get_progress(P_AYLA_QUEST)
-  if (pp == 0) then
-    bubble(woman, "Hello there! I'd buy you a drink but I'm broke.")
-    bubble(HERO1, "I'd buy you one but it looks like you've had a few already. Goodbye...")
-    bubble(woman, "Don't be like that. I've just had to pay out half my gold in taxes.")
-    bubble(HERO1, "What did you say?")
-    bubble(woman, "Our ruler takes all our wealth and keeps it in the Inner City.",
-           "Only the servants get to see what goes on in there.",
-           "That woman over there, she's a maid and she gets to live in a nice cottage just opposite Vezdin's shop.")
-    bubble(HERO1, "She's certainly got some money to spend on drink.")
-    thought(HERO1, "I might just pay a little visit to that cottage while the maid's in here.")
-    set_progress(P_AYLA_QUEST, 2)
-    bubble(woman, "I know, it's just unfair!")
-  elseif (pp == 1) then
-    bubble(HERO1, "I don't suppose you work in the palace?")
-    bubble(woman, "I wish. That woman over there is a maid. Only a maid and she lives in a lovely cottage opposite Vezdin's shop.")
-    bubble(HERO1, "Do  you know anything about the wealth that's supposed to be in there?")
-    bubble(woman, "Keep your voice down! I bet you've been talking to that little miss near the palace gates, haven't you?")
-    bubble(HERO1, "Yes, but I much prefer the company in here.")
-    set_progress(P_AYLA_QUEST, 3)
-  elseif (pp == 2) then
-    bubble(woman, pick("Y'know, you're my best friend!",
-                  "I love this bar - I just wish it would stop spinning.",
-                  "My boyfriend used to say: Work is the curse of the drinking classes. That's funny, don't you think?"))
-  elseif (pp == 3) then
-    bubble(woman, "I always talk too much when I've been drinking. Don't pay any attention to what I said.")
-  elseif (pp == 4) then
-    bubble(woman, "Oh, I am honoured! Haven't you got better things to do over at the palace?")
-  end
-end
-
-
-function LOC_ayla_gates()
-  bubble(255, "WHO GOES THERE?!?")
-  if (get_ent_chrx(HERO1) ~= 0) then
-    bubble(HERO1, "Just a little serving-girl, reporting for duty.")
-    bubble(255, "Wait there, I'm coming.")
-    set_ent_active(8, 1)
-    set_ent_script(8, "L10")
-    wait_for_entity(8, 8)
-    bubble(8, "Come through.")
-    sfx(25)
-    warp(50, 23, 8)
-    set_ent_facing(HERO1, FACE_DOWN)
-    set_ent_facing(8, FACE_UP)
-    bubble(8, "Well, you are a cute little thing, aren't you?")
-    bubble(HERO1, "Cute??")
-    bubble(8, "I'm sorry, miss, I didn't mean to offend. Follow me.")
-    ----
-    bubble(255, "CUT!")
-    bubble(255, "That's a wrap for today.",
-                "PH hasn't written the rest of this script yet!")
-    set_vfollow(0)
-    set_ent_script(HERO1, "R12")
-    set_ent_script(8, "R12")
-    bubble(255, "Ayla, great work. Sir Alec, you were fabulous, sweetie.")
-    bubble(8, "I'm still not sure of my motivation in this scene...")
-    wait_for_entity(HERO1, 8)
-    LOC_check_costume()
-    change_map("main", "town5")
-    set_vfollow(1)
-  else
-    bubble(HERO1, "I was wondering if you did tours around the castle?")
-    bubble(255, "I will show you the inside of the dungeon if you bother me again. Clear off!")
-    bubble(HERO1, "I'll take that as a 'no', then.")
+  elseif (pp == 5) then
+    bubble(girl, "Looking at you again, you look REALLY familiar.  Hmm...")
   end
 end
 
 
 function LOC_check_costume()
-  if (get_ent_chrx() ~= 0) then
-    bubble(HERO1, "Just wait a second whilst I change out of this costume.")
+  local hero = LOC_get_ayla()
+
+  if (hero ~= 0 and get_ent_chrx(hero) ~= 0) then
+    bubble(hero, "Just wait a second whilst I change out of this costume.")
     do_fadeout(4)
     set_holdfade(1)
-    set_ent_chrx(HERO1, 0)
-    set_progress(P_AYLA_QUEST, 5)
+    set_ent_chrx(hero, 0)
     wait(100)
     set_holdfade(0)
     do_fadein(4)
-    return
+  end
+end
+
+
+function LOC_get_ayla()
+  if (party[0] == Ayla) then
+    hero = HERO1
+  elseif (party[1] == Ayla) then
+    hero = HERO2
+  else
+    hero = 0
+  end
+
+  return hero
+end
+
+
+function LOC_maid_clothes()
+  -- Clothes chest in cottage, Ayla must be in lead to find them
+  if (party[0] == Ayla) then
+    if (get_progress(P_AYLA_QUEST) > 0 and get_progress(P_AYLA_QUEST) < 5) then
+      sfx(5)
+      msg("Maid's outfit procured", 12, 0)
+
+      x, y = marker("maid_in")
+      move_entity(HERO1, x + 4, y)
+
+      wait_for_entity(HERO1, HERO1)
+      set_ent_facing(HERO1, FACE_DOWN)
+
+      bubble(HERO1, "Would you look at this ratty old thing? Oh well...")
+
+      move_entity(HERO1, x + 3, y)
+      wait_for_entity(HERO1, HERO1)
+
+      msg("Ayla changes into the maid's outfit.", 255, 0)
+
+      do_fadeout(4)
+      set_holdfade(1)
+      set_progress(P_AYLA_QUEST, 5)
+      refresh()
+
+      wait(100)
+      set_holdfade(0)
+      do_fadein(4)
+      thought(HERO1, "Hmm... it's a little tight around the arms...")
+    else
+      bubble(HERO1, "Nothing here worth stealing.")
+    end
+  else
+    bubble(HERO1, "Nothing in here but old clothes.")
   end
 end

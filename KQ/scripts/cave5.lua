@@ -23,14 +23,12 @@ end
 
 
 -- Show the status of a chest
-function showch(x, y, tr)
-  local ch
-  if (get_treasure(tr) == 1) then
-    ch = 41
-  else
-    ch = 40
+function showch(which_marker, which_chest)
+  -- Set tiles if -1 passed in as 'which_chest' or if chest already opened
+  if (which_chest < 0 or get_treasure(which_chest) == 1) then
+    set_mtile(which_marker, 41)
+    set_zone(which_marker, 0)
   end
-  set_mtile(x, y, ch)
 end
 
 
@@ -56,20 +54,21 @@ function refresh()
   end
 
   -- Modify for the chests
-  showch(93, 19, 90)
-  showch(10, 11, 91)
-  showch(91, 61, 92)
-  showch(60, 78, 93)
-  showch(63, 78, 94)
-  showch(95, 102, 95)
+  showch("treasure1", 84)
+  showch("treasure2", 85)
+  showch("treasure3", 86)
+  showch("treasure4", 87)
+  showch("treasure5", 88)
+  showch("treasure6", 89)
 
   -- Place Sensar if necessary
+  local en = 0
   if (get_progress(P_SIDEQUEST7) == 1) then
-    set_ent_chrx(0, 255)
-    set_ent_id(0, SENSAR)
-    set_ent_active(0, 1)
+    set_ent_chrx(en, 255)
+    set_ent_id(en, SENSAR)
+    set_ent_active(en, 1)
   else
-    set_ent_active(0, 0)
+    set_ent_active(en, 0)
   end
 end
 
@@ -320,11 +319,11 @@ function zone_handler(zn)
   elseif (zn == 7) then
     -- Save point south
     set_save(1)
-    warp(119, 139, 10)
+    warp("save_1i", 10)
   elseif (zn == 8) then
     -- Save point north
     set_save(1)
-    warp(119, 132, 10)
+    warp("save_2i", 10)
   elseif (zn == 9) then
     change_map("pass", "door1")
   elseif (zn == 10) then
@@ -332,21 +331,21 @@ function zone_handler(zn)
   elseif (zn == 11) then
     -- Dragon
     sfx(26)
-    warp(112, 49, 10)
+    warp("battle_i", 10)
     opaldragon()
   elseif (zn == 12) then
     change_map("pass", "door3")
   elseif (zn == 13) then
     -- Behind pillar
     set_save(0)
-    warp(35, 24, 10)
+    warp("save_1o", 10)
   elseif (zn == 14) then
     -- Long room south
     set_save(0)
-    warp(35, 10, 10)
+    warp("save_2o", 10)
   elseif (zn == 15) then
     -- Long room north
-    warp(35, 4, 10)
+    warp("battle_o", 10)
   elseif (zn == 16) then
     chest(84, I_PCURING, 1)
     refresh()
@@ -374,7 +373,8 @@ function zone_handler(zn)
     end
   elseif (zn == 23) then
     -- Clear the zone so it does not repeat the combat
-    set_zone(get_ent_tilex(HERO1), get_ent_tiley(HERO1), 0)
+    local x, y = get_ent_tile(HERO1)
+    set_zone(x, y, 0)
 
     combat(59)
 
@@ -394,11 +394,9 @@ function entity_handler(en)
   local returning
   if (en == 0) then -- Sensar
     bubble(HERO1, "What happened? Are you OK?")
-    bubble(en, "I was attacked, but I couldn't "..
-      "use my RAGE against those ghosts")
+    bubble(en, "I was attacked, but I couldn't use my RAGE against those ghosts.")
     bubble(en, "Then I felt everthing fade away...")
-    bubble(HERO1, "If you're feeling better you can join up, "..
-      "or go back to the Manor to rest.")
+    bubble(HERO1, "If you're feeling better you can join up, or go back to the Manor to rest.")
     returning = select_team({SENSAR})
     add_to_manor(returning)
     set_progress(P_SIDEQUEST7, 2)

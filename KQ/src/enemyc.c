@@ -30,14 +30,14 @@
 #include <string.h>
 
 #include "kq.h"
-#include "enemyc.h"
-#include "selector.h"
 #include "combat.h"
-#include "skills.h"
-#include "res.h"
+#include "draw.h"
+#include "enemyc.h"
 #include "magic.h"
 #include "progress.h"
-#include "draw.h"
+#include "res.h"
+#include "selector.h"
+#include "skills.h"
 
 /*! Index related to enemies in an encounter */
 int cf[NUM_FIGHTERS];
@@ -45,75 +45,16 @@ int cf[NUM_FIGHTERS];
 
 
 /*  internal prototypes  */
+static void enemy_attack (int);
 static int enemy_cancast (int, int);
 static void enemy_curecheck (int);
+static void enemy_skillcheck (int, int);
 static void enemy_spellcheck (int, int);
 static int enemy_stscheck (int, int);
-static void enemy_skillcheck (int, int);
-static int spell_setup (int, int);
+static void load_enemies (void);
+static s_fighter *make_enemy (int, s_fighter *);
 static int skill_setup (int, int);
-static void enemy_attack (int);
-
-
-
-/*! \brief Enemy initialisation
- *
- * This is the main enemy initialization routine.  This function sets up
- * the enemy types and then loads each one in.  It also calls a helper
- * function or two to complete the process.
- *
- * The encounter table consists of several 'sub-tables', grouped by
- * encounter number. Each row is one possible battle.
- * Fills in the cf[] array of enemies to load.
- *
- * \param   en Encounter number in the Encounter table.
- * \param   etid If =99, select a random row with that encounter number,
- *          otherwise select row etid.
- * \returns number of random encounter
- */
-int select_encounter (int en, int etid)
-{
-   int i, p, j;
-   int stop = 0, where = 0, entry = -1;
-
-   while (!stop) {
-      if (erows[where].tnum == en)
-         stop = 1;
-      else
-         where++;
-      if (where >= NUM_ETROWS) {
-         sprintf (strbuf, "There are no rows for encounter table #%d!", en);
-         program_death (strbuf);
-      }
-   }
-   if (etid == 99) {
-      i = rand () % 100 + 1;
-      while (entry < 0) {
-         if (i <= erows[where].per) {
-            entry = where;
-         } else
-            where++;
-         if (erows[where].tnum > en || where >= NUM_ETROWS)
-            program_death ("Couldn't select random encounter table row!");
-      }
-   } else
-      entry = where + etid;
-   p = 0;
-   for (j = 0; j < 5; j++) {
-      if (erows[entry].idx[j] > 0) {
-         cf[p] = erows[entry].idx[j] - 1;
-         p++;
-      }
-   }
-   numens = p;
-   /* adjust 'too hard' combat where player is alone and faced by >2 enemies */
-   if (numens > 2 && numchrs == 1 && erows[entry].lvl + 2 > party[pidx[0]].lvl
-       && etid == 99)
-      numens = 2;
-   if (numens == 0)
-      program_death ("Empty encounter table row!");
-   return entry;
-}
+static int spell_setup (int, int);
 
 
 
@@ -167,316 +108,124 @@ static DATAFILE *enemy_pcx = NULL;
 
 
 
-/*! \brief Load all enemies from disk
+/*! \brief Melee attack
  *
- * Loads up enemies from the *.mon files and fills the enemies[] array.
- * \author PH
- * \date 2003????
+ * Do an enemy melee attack.  Enemies only defend if they are in critical
+ * status.  This could use a little more smarts, so that more-intelligent
+ * enemies would know to hit spellcasters or injured heroes first, and so
+ * that berserk-type enemies don't defend.  The hero selection is done in
+ * a different function, but it all starts here.
+ *
+ * \param   whom Target
  */
-void load_enemies (void)
+static void enemy_attack (int whom)
 {
-   int i, tmp, lx, ly, p;
-   FILE *edat;
-   s_fighter *f;
-   if (enemies != NULL) {
-      /* Already done the loading */
+   int a, b, c;
+
+   if (fighter[whom].hp < (fighter[whom].mhp / 5)
+       && fighter[whom].sts[S_CHARM] == 0) {
+      if (rand () % 4 == 0) {
+         fighter[whom].defend = 1;
+         cact[whom] = 0;
+         return;
+      }
+   }
+   if (fighter[whom].sts[S_CHARM] == 0)
+      b = auto_select_hero (whom, NO_STS_CHECK);
+   else {
+      if (fighter[whom].ctmem == 0)
+         b = auto_select_hero (whom, NO_STS_CHECK);
+      else
+         b = auto_select_enemy (whom, NO_STS_CHECK);
+   }
+   if (b == -1) {
+      fighter[whom].defend = 1;
+      cact[whom] = 0;
       return;
    }
-   enemy_pcx = load_datafile_object (PCX_DATAFILE, "ENEMY_PCX");
-   if (enemy_pcx == NULL) {
-      program_death ("Could not load enemy sprites from datafile!");
-   }
-   edat = fopen (kqres (DATA_DIR, "allstat.mon"), "r");
-   if (!edat)
-      program_death ("Could not load 1st enemy datafile!");
-   enemies_n = 0;
-   enemies_cap = 128;
-   enemies = (s_fighter **) malloc (sizeof (s_fighter *) * enemies_cap);
-   // Loop through for every monster in allstat.mon
-   while (fscanf (edat, "%s", strbuf) != EOF) {
-      if (enemies_n >= enemies_cap) {
-         enemies_cap *= 2;
-         enemies =
-            (s_fighter **) realloc (enemies,
-                                    sizeof (s_fighter *) * enemies_cap);
-      }
-      f = enemies[enemies_n++] = (s_fighter *) malloc (sizeof (s_fighter));
-      memset (f, 0, sizeof (s_fighter));
-      // Enemy name
-      strncpy (f->name, strbuf, sizeof (f->name));
-      // Index number (ignored; automatically generated)
-      fscanf (edat, "%d", &tmp);
-      // x-coord of image in datafile
-      fscanf (edat, "%d", &tmp);
-      lx = tmp;
-      // y-coord of image in datafile
-      fscanf (edat, "%d", &tmp);
-      ly = tmp;
-      // Image width
-      fscanf (edat, "%d", &tmp);
-      f->cw = tmp;
-      // Image length (height)
-      fscanf (edat, "%d", &tmp);
-      f->cl = tmp;
-      // Experience points earned
-      fscanf (edat, "%d", &tmp);
-      f->xp = tmp;
-      // Gold received
-      fscanf (edat, "%d", &tmp);
-      f->gp = tmp;
-      // Level
-      fscanf (edat, "%d", &tmp);
-      f->lvl = tmp;
-      // Max HP
-      fscanf (edat, "%d", &tmp);
-      f->mhp = tmp;
-      // Max MP
-      fscanf (edat, "%d", &tmp);
-      f->mmp = tmp;
-      // Defeat Item Probability: chance of finding any items after defeat
-      fscanf (edat, "%d", &tmp);
-      f->dip = tmp;
-      // Defeat Item Common: item found commonly of the time
-      fscanf (edat, "%d", &tmp);
-      f->defeat_item_common = tmp;
-      // Defeat Item Rare: item found rarely
-      fscanf (edat, "%d", &tmp);
-      f->defeat_item_rare = tmp;
-      // Steal Item Common: item found commonly from stealing
-      fscanf (edat, "%d", &tmp);
-      f->steal_item_common = tmp;
-      // Steal Item Rare: item found rarely when stealing
-      fscanf (edat, "%d", &tmp);
-      f->steal_item_rare = tmp;
-      // Enemy's strength (agility & vitality set to zero)
-      fscanf (edat, "%d", &tmp);
-      f->stats[A_STR] = tmp;
-      f->stats[A_AGI] = 0;
-      f->stats[A_VIT] = 0;
-      // Intelligence & Sagacity (both the same)
-      fscanf (edat, "%d", &tmp);
-      f->stats[A_INT] = tmp;
-      f->stats[A_SAG] = tmp;
-      // Defense against: Speed, Spirit, Attack, Hit, Defence, Evade, Magic (in that order)
-      for (p = 5; p < 13; p++) {
-         fscanf (edat, "%d", &tmp);
-         f->stats[p] = tmp;
-      }
-      // Bonus
-      fscanf (edat, "%d", &tmp);
-      f->bonus = tmp;
-      f->bstat = 0;
-      // Current weapon type
-      fscanf (edat, "%d", &tmp);
-      f->cwt = tmp;
-      // Weapon elemental type
-      fscanf (edat, "%d", &tmp);
-      f->welem = tmp;
-      // Undead Level (defense against Undead attacks)
-      fscanf (edat, "%d", &tmp);
-      f->unl = tmp;
-      // Critical attacks
-      fscanf (edat, "%d", &tmp);
-      f->crit = tmp;
-      // Temp Sag & Int for Imbued
-      fscanf (edat, "%d", &tmp);
-      f->imb_s = tmp;
-      // Imbued stat type (Spd, Spi, Att, Hit, Def, Evd, Mag)
-      fscanf (edat, "%d", &tmp);
-      f->imb_a = tmp;
-#if 0
-      sprintf (strbuf, "Img for %d: (%d,%d)x(%d,%d)", enemies_n - 1, lx, ly,
-               f->cw, f->cl);
-      klog (strbuf);
-#endif
-      f->img =
-         create_sub_bitmap ((BITMAP *) enemy_pcx->dat, lx, ly, f->cw, f->cl);
-      for (p = 0; p < 2; p++) {
-         fscanf (edat, "%d", &tmp);
-#if 0
-         if (tmp > 0) {
-            sprintf (strbuf, "%s has imbued %d", f->name, tmp);
-            klog (strbuf);
-         }
-#endif
-         f->imb[p] = tmp;
-      }
-   }
-   fclose (edat);
-   edat = fopen (kqres (DATA_DIR, "resabil.mon"), "r");
-   if (!edat)
-      program_death ("Could not load 2nd enemy datafile!");
-   for (i = 0; i < enemies_n; i++) {
-      f = enemies[i];
-      fscanf (edat, "%s", strbuf);
-      fscanf (edat, "%d", &tmp);
-      for (p = 0; p < 16; p++) {
-         fscanf (edat, "%d", &tmp);
-         f->res[p] = tmp;
-      }
-      for (p = 0; p < 8; p++) {
-         fscanf (edat, "%d", &tmp);
-         f->ai[p] = tmp;
-      }
-      for (p = 0; p < 8; p++) {
-         fscanf (edat, "%d", &tmp);
-         f->aip[p] = tmp;
-         f->atrack[p] = 0;
-      }
-      f->hp = f->mhp;
-      f->mp = f->mmp;
-      for (p = 0; p < 24; p++)
-         f->sts[p] = 0;
-      f->aux = 0;
-      f->mrp = 100;
-   }
-   fclose (edat);
-}
-
-
-
-/*! \brief Unload the data loaded by load_enemies()
- * 
- * JB would have said 'duh' here! Not much explanation required.
- * \author PH
- * \date 2003????
- */
-void unload_enemies (void)
-{
-   int i;
-   if (enemies != NULL) {
-      for (i = 0; i < enemies_n; ++i) {
-         destroy_bitmap (enemies[i]->img);
-         free (enemies[i]);
-      }
-      free (enemies);
-      enemies = NULL;
-      unload_datafile_object (enemy_pcx);
-   }
-}
-
-
-
-/*! \brief Prepare an enemy for battle
- *
- * Fills out a supplied s_fighter structure with the default,
- * starting values for an enemy.
- * \author PH
- * \date 2003????
- * \param   who The numeric id of the enemy to make
- * \param   en Pointer to an s_fighter structure to initialise
- * \returns the value of en, for convenience, or NULL if an error occurred.
- * \sa make_enemy_by_name()
- */
-static s_fighter *make_enemy (int who, s_fighter * en)
-{
-   if (enemies && who >= 0 && who < enemies_n) {
-      memcpy (en, enemies[who], sizeof (s_fighter));
-#if 0
-      sprintf (strbuf, "\tMaking enemy %d (%s)", who, en->name);
-      klog (strbuf);
-#endif
-      return en;
-   } else {
-      /* PH probably should call program_death() here? */
-      return NULL;
-   }
-}
-
-
-
-#if 0
-/*! \brief Prepare an enemy for battle
- *
- * Fills out a supplied s_fighter structure with the default,
- * starting values for an enemy. Currently not used, but it will be, 
- * so don't delete it ;).
- * \author PH
- * \date 2003????
- * \param   who The name  of the enemy to make
- * \param   en Pointer to an s_fighter structure to initialise
- * \returns the value of en, for convenience, or NULL if an error occurred.
- * \sa make_enemy()
- */
-static s_fighter *make_enemy_by_name (const char *who, s_fighter * en)
-{
-   int i;
-   if (enemies != NULL) {
-      for (i = 0; i < enemies_n; ++i) {
-         if (strcmp (enemies[i]->name, who) == 0) {
-            memcpy (en, enemies[i], sizeof (s_fighter));
-            return en;
+   if (b < PSIZE && numchrs > 1) {
+      c = 0;
+      for (a = 0; a < numchrs; a++)
+         if (pidx[a] == TEMMIN && fighter[a].aux == 1)
+            c = a + 1;
+      if (c != 0) {
+         if (pidx[b] != TEMMIN) {
+            b = c - 1;
+            fighter[c - 1].aux = 2;
          }
       }
    }
-   return NULL;
+   fight (whom, b, 0);
+   cact[whom] = 0;
 }
-#endif
 
 
 
-/*! \brief Initialise enemy & sprites for combat
+/*! \brief Check if enemy can cast this spell
  *
- * If required, load the all the enemies, then
- * init the ones that are going into battle, by calling make_enemy() and
- * copying the graphics sprites into cframes[] and tcframes[].
- * Looks at the cf[] array to see which enemies to do.
+ * This function is fairly specific in that it will only
+ * return 1 if the enemy has the spell in its list of spells,
+ * is not mute, and has enough mp to cast the spell.
  *
- * \author PH
- * \date 2003????
+ * \param   wh Which enemy
+ * \param   sp Spell to cast
+ * \returns 1 if spell can be cast, 0 otherwise
  */
-void enemy_init (void)
+static int enemy_cancast (int wh, int sp)
 {
-   int i, p;
-   s_fighter *f;
-   if (enemies == NULL)
-      load_enemies ();
-   for (i = 0; i < numens; ++i) {
-      f = make_enemy (cf[i], &fighter[i + PSIZE]);
-      for (p = 0; p < MAXCFRAMES; ++p) {
-         /* If, in a previous combat, we made a bitmap, destroy it now */
-         if (cframes[i + PSIZE][p])
-            destroy_bitmap (cframes[i + PSIZE][p]);
-         /* and create a new one */
-         cframes[i + PSIZE][p] = create_bitmap (f->img->w, f->img->h);
-         blit (f->img, cframes[i + PSIZE][p], 0, 0, 0, 0, f->img->w,
-               f->img->h);
-         tcframes[i + PSIZE][p] = copy_bitmap (tcframes[i + PSIZE][p], f->img);
-      }
-   }
+   int a, z = 0;
+
+   /* Enemy is mute; cannot cast the spell */
+   if (fighter[wh].sts[S_MUTE] != 0)
+      return 0;
+
+   for (a = 0; a < 8; a++)
+      if (fighter[wh].ai[a] == sp)
+         z++;
+   if (z == 0)
+      return 0;
+   if (fighter[wh].mp < mp_needed (wh, sp))
+      return 0;
+   return 1;
 }
 
 
 
-#if 0
-/*! \brief Copy frames from main bitmap
+/*! \brief Action for confused enemy
  *
- * Extract the appropriate frames from the enemy pcx file.
- * \note PH no longer used; enemy_init does this.
+ * Enemy actions are chosen differently if they are confused.  Confused
+ * fighters either attack the enemy, an ally, or do nothing.  Confused
+ * fighters never use spells or items.
  *
- * \param   who Enemy id
- * \param   locx x-coord of frame
- * \param   locy y-coord of frame
+ * \sa auto_herochooseact()
+ * \param   who Target
  */
-static void load_enemyframes (int who, int locx, int locy)
+void enemy_charmaction (int who)
 {
-   int p;
-   DATAFILE *pcx;
+   int a;
 
-   pcx = load_datafile_object (PCX_DATAFILE, "ENEMY_PCX");
-   for (p = 0; p < MAXCFRAMES; p++) {
-      destroy_bitmap (cframes[who][p]);
-      destroy_bitmap (tcframes[who][p]);
-      cframes[who][p] = create_bitmap (fighter[who].cw, fighter[who].cl);
-      tcframes[who][p] = create_bitmap (fighter[who].cw, fighter[who].cl);
-      blit ((BITMAP *) pcx->dat, cframes[who][p], locx, locy, 0, 0,
-            fighter[who].cw, fighter[who].cl);
-      blit ((BITMAP *) pcx->dat, tcframes[who][p], locx, locy, 0, 0,
-            fighter[who].cw, fighter[who].cl);
+   if (cact[who] == 0)
+      return;
+   if (fighter[who].sts[S_DEAD] == 1 || fighter[who].hp <= 0) {
+      cact[who] = 0;
+      return;
    }
-   unload_datafile_object (pcx);
+   for (a = 0; a < 5; a++)
+      if (fighter[who].atrack[a] > 0)
+         fighter[who].atrack[a]--;
+   a = rand () % 4;
+   if (a == 0) {
+      cact[who] = 0;
+      return;
+   }
+   if (a == 1) {
+      fighter[who].ctmem = 0;
+      enemy_attack (who);
+      return;
+   }
+   fighter[who].ctmem = 1;
+   enemy_attack (who);
 }
-#endif
 
 
 
@@ -537,36 +286,6 @@ void enemy_chooseaction (int who)
 
 
 
-/*! \brief Check if enemy can cast this spell
- *
- * This function is fairly specific in that it will only
- * return true (1) if the enemy has the spell in its list
- * of spells, is not mute, and has enough mp to cast the spell.
- *
- * \param   wh Which enemy
- * \param   sp Spell to cast
- * \returns 1 if spell can be cast, 0 otherwise
- */
-static int enemy_cancast (int wh, int sp)
-{
-   int a, z = 0;
-
-   /* Enemy is mute; cannot cast the spell */
-   if (fighter[wh].sts[S_MUTE] != 0)
-      return 0;
-
-   for (a = 0; a < 8; a++)
-      if (fighter[wh].ai[a] == sp)
-         z++;
-   if (z == 0)
-      return 0;
-   if (fighter[wh].mp < mp_needed (wh, sp))
-      return 0;
-   return 1;
-}
-
-
-
 /*! \brief Use cure spell
  *
  * If the caster has a cure/drain spell, use it to cure itself.
@@ -593,6 +312,88 @@ static void enemy_curecheck (int w)
       fighter[w].ctmem = w;
       combat_spell (w, 0);
       cact[w] = 0;
+   }
+}
+
+
+
+/*! \brief Initialise enemy & sprites for combat
+ *
+ * If required, load the all the enemies, then
+ * init the ones that are going into battle, by calling make_enemy() and
+ * copying the graphics sprites into cframes[] and tcframes[].
+ * Looks at the cf[] array to see which enemies to do.
+ *
+ * \author PH
+ * \date 2003????
+ */
+void enemy_init (void)
+{
+   int i, p;
+   s_fighter *f;
+   if (enemies == NULL)
+      load_enemies ();
+   for (i = 0; i < numens; ++i) {
+      f = make_enemy (cf[i], &fighter[i + PSIZE]);
+      for (p = 0; p < MAXCFRAMES; ++p) {
+         /* If, in a previous combat, we made a bitmap, destroy it now */
+         if (cframes[i + PSIZE][p])
+            destroy_bitmap (cframes[i + PSIZE][p]);
+         /* and create a new one */
+         cframes[i + PSIZE][p] = create_bitmap (f->img->w, f->img->h);
+         blit (f->img, cframes[i + PSIZE][p], 0, 0, 0, 0, f->img->w,
+               f->img->h);
+         tcframes[i + PSIZE][p] = copy_bitmap (tcframes[i + PSIZE][p], f->img);
+      }
+   }
+}
+
+
+
+#if 0
+/* RB: unused until now */
+/*! \brief Escape battle
+ *
+ * Hmmm... this could use a little work :)
+ *
+ * \param   whom Which enemy is going to run
+ * \warning RB Unused until now
+ */
+void enemy_run (int whom)
+{
+   whom = whom;
+}
+#endif
+
+
+
+/*! \brief Check skills
+ *
+ * Very simple... see if the skill that was selected can be used.
+ *
+ * \param   w Enemy index
+ * \param   ws Enemy skill index
+ */
+static void enemy_skillcheck (int w, int ws)
+{
+   int sk;
+
+   sk = fighter[w].ai[ws] - 100;
+
+   if (sk >= 1 && sk <= 153) {
+      if (sk == 5) {
+         if (numchrs == 1)
+            fighter[w].atrack[ws] = 1;
+         if (numchrs == 2
+             && (fighter[0].sts[S_DEAD] > 0 || fighter[1].sts[S_DEAD] > 0))
+            fighter[w].atrack[ws] = 1;
+      }
+      if (fighter[w].atrack[ws] > 0)
+         return;
+      if (skill_setup (w, ws) == 1) {
+         combat_skill (w);
+         cact[w] = 0;
+      }
    }
 }
 
@@ -758,72 +559,349 @@ static int enemy_stscheck (int ws, int s)
 
 
 
-/*! \brief Check skills
+/*! \brief Load all enemies from disk
  *
- * Very simple... see if the skill that was selected can be used.
- *
- * \param   w Enemy index
- * \param   ws Enemy skill index
+ * Loads up enemies from the *.mon files and fills the enemies[] array.
+ * \author PH
+ * \date 2003????
  */
-static void enemy_skillcheck (int w, int ws)
+static void load_enemies (void)
 {
-   int sk;
-
-   sk = fighter[w].ai[ws] - 100;
-
-   if (sk >= 1 && sk <= 153) {
-      if (sk == 5) {
-         if (numchrs == 1)
-            fighter[w].atrack[ws] = 1;
-         if (numchrs == 2
-             && (fighter[0].sts[S_DEAD] > 0 || fighter[1].sts[S_DEAD] > 0))
-            fighter[w].atrack[ws] = 1;
+   int i, tmp, lx, ly, p;
+   FILE *edat;
+   s_fighter *f;
+   if (enemies != NULL) {
+      /* Already done the loading */
+      return;
+   }
+   enemy_pcx = load_datafile_object (PCX_DATAFILE, "ENEMY_PCX");
+   if (enemy_pcx == NULL) {
+      program_death ("Could not load enemy sprites from datafile!");
+   }
+   edat = fopen (kqres (DATA_DIR, "allstat.mon"), "r");
+   if (!edat)
+      program_death ("Could not load 1st enemy datafile!");
+   enemies_n = 0;
+   enemies_cap = 128;
+   enemies = (s_fighter **) malloc (sizeof (s_fighter *) * enemies_cap);
+   // Loop through for every monster in allstat.mon
+   while (fscanf (edat, "%s", strbuf) != EOF) {
+      if (enemies_n >= enemies_cap) {
+         enemies_cap *= 2;
+         enemies =
+            (s_fighter **) realloc (enemies,
+                                    sizeof (s_fighter *) * enemies_cap);
       }
-      if (fighter[w].atrack[ws] > 0)
-         return;
-      if (skill_setup (w, ws) == 1) {
-         combat_skill (w);
-         cact[w] = 0;
+      f = enemies[enemies_n++] = (s_fighter *) malloc (sizeof (s_fighter));
+      memset (f, 0, sizeof (s_fighter));
+      // Enemy name
+      strncpy (f->name, strbuf, sizeof (f->name));
+      // Index number (ignored; automatically generated)
+      fscanf (edat, "%d", &tmp);
+      // x-coord of image in datafile
+      fscanf (edat, "%d", &tmp);
+      lx = tmp;
+      // y-coord of image in datafile
+      fscanf (edat, "%d", &tmp);
+      ly = tmp;
+      // Image width
+      fscanf (edat, "%d", &tmp);
+      f->cw = tmp;
+      // Image length (height)
+      fscanf (edat, "%d", &tmp);
+      f->cl = tmp;
+      // Experience points earned
+      fscanf (edat, "%d", &tmp);
+      f->xp = tmp;
+      // Gold received
+      fscanf (edat, "%d", &tmp);
+      f->gp = tmp;
+      // Level
+      fscanf (edat, "%d", &tmp);
+      f->lvl = tmp;
+      // Max HP
+      fscanf (edat, "%d", &tmp);
+      f->mhp = tmp;
+      // Max MP
+      fscanf (edat, "%d", &tmp);
+      f->mmp = tmp;
+      // Defeat Item Probability: chance of finding any items after defeat
+      fscanf (edat, "%d", &tmp);
+      f->dip = tmp;
+      // Defeat Item Common: item found commonly of the time
+      fscanf (edat, "%d", &tmp);
+      f->defeat_item_common = tmp;
+      // Defeat Item Rare: item found rarely
+      fscanf (edat, "%d", &tmp);
+      f->defeat_item_rare = tmp;
+      // Steal Item Common: item found commonly from stealing
+      fscanf (edat, "%d", &tmp);
+      f->steal_item_common = tmp;
+      // Steal Item Rare: item found rarely when stealing
+      fscanf (edat, "%d", &tmp);
+      f->steal_item_rare = tmp;
+      // Enemy's strength (agility & vitality set to zero)
+      fscanf (edat, "%d", &tmp);
+      f->stats[A_STR] = tmp;
+      f->stats[A_AGI] = 0;
+      f->stats[A_VIT] = 0;
+      // Intelligence & Sagacity (both the same)
+      fscanf (edat, "%d", &tmp);
+      f->stats[A_INT] = tmp;
+      f->stats[A_SAG] = tmp;
+      // Defense against: Speed, Spirit, Attack, Hit, Defence, Evade, Magic (in that order)
+      for (p = 5; p < 13; p++) {
+         fscanf (edat, "%d", &tmp);
+         f->stats[p] = tmp;
       }
+      // Bonus
+      fscanf (edat, "%d", &tmp);
+      f->bonus = tmp;
+      f->bstat = 0;
+      // Current weapon type
+      fscanf (edat, "%d", &tmp);
+      f->cwt = tmp;
+      // Weapon elemental type
+      fscanf (edat, "%d", &tmp);
+      f->welem = tmp;
+      // Undead Level (defense against Undead attacks)
+      fscanf (edat, "%d", &tmp);
+      f->unl = tmp;
+      // Critical attacks
+      fscanf (edat, "%d", &tmp);
+      f->crit = tmp;
+      // Temp Sag & Int for Imbued
+      fscanf (edat, "%d", &tmp);
+      f->imb_s = tmp;
+      // Imbued stat type (Spd, Spi, Att, Hit, Def, Evd, Mag)
+      fscanf (edat, "%d", &tmp);
+      f->imb_a = tmp;
+#if 0
+      sprintf (strbuf, "Img for %d: (%d,%d)x(%d,%d)", enemies_n - 1, lx, ly,
+               f->cw, f->cl);
+      klog (strbuf);
+#endif
+      f->img =
+         create_sub_bitmap ((BITMAP *) enemy_pcx->dat, lx, ly, f->cw, f->cl);
+      for (p = 0; p < 2; p++) {
+         fscanf (edat, "%d", &tmp);
+#if 0
+         if (tmp > 0) {
+            sprintf (strbuf, "%s has imbued %d", f->name, tmp);
+            klog (strbuf);
+         }
+#endif
+         f->imb[p] = tmp;
+      }
+   }
+   fclose (edat);
+   edat = fopen (kqres (DATA_DIR, "resabil.mon"), "r");
+   if (!edat)
+      program_death ("Could not load 2nd enemy datafile!");
+   for (i = 0; i < enemies_n; i++) {
+      f = enemies[i];
+      fscanf (edat, "%s", strbuf);
+      fscanf (edat, "%d", &tmp);
+      for (p = 0; p < 16; p++) {
+         fscanf (edat, "%d", &tmp);
+         f->res[p] = tmp;
+      }
+      for (p = 0; p < 8; p++) {
+         fscanf (edat, "%d", &tmp);
+         f->ai[p] = tmp;
+      }
+      for (p = 0; p < 8; p++) {
+         fscanf (edat, "%d", &tmp);
+         f->aip[p] = tmp;
+         f->atrack[p] = 0;
+      }
+      f->hp = f->mhp;
+      f->mp = f->mmp;
+      for (p = 0; p < 24; p++)
+         f->sts[p] = 0;
+      f->aux = 0;
+      f->mrp = 100;
+   }
+   fclose (edat);
+}
+
+
+
+#if 0
+/*! \brief Copy frames from main bitmap
+ *
+ * Extract the appropriate frames from the enemy pcx file.
+ * \note PH no longer used; enemy_init does this.
+ *
+ * \param   who Enemy id
+ * \param   locx x-coord of frame
+ * \param   locy y-coord of frame
+ */
+static void load_enemyframes (int who, int locx, int locy)
+{
+   int p;
+   DATAFILE *pcx;
+
+   pcx = load_datafile_object (PCX_DATAFILE, "ENEMY_PCX");
+   for (p = 0; p < MAXCFRAMES; p++) {
+      destroy_bitmap (cframes[who][p]);
+      destroy_bitmap (tcframes[who][p]);
+      cframes[who][p] = create_bitmap (fighter[who].cw, fighter[who].cl);
+      tcframes[who][p] = create_bitmap (fighter[who].cw, fighter[who].cl);
+      blit ((BITMAP *) pcx->dat, cframes[who][p], locx, locy, 0, 0,
+            fighter[who].cw, fighter[who].cl);
+      blit ((BITMAP *) pcx->dat, tcframes[who][p], locx, locy, 0, 0,
+            fighter[who].cw, fighter[who].cl);
+   }
+   unload_datafile_object (pcx);
+}
+#endif
+
+
+
+/*! \brief Prepare an enemy for battle
+ *
+ * Fills out a supplied s_fighter structure with the default,
+ * starting values for an enemy.
+ * \author PH
+ * \date 2003????
+ * \param   who The numeric id of the enemy to make
+ * \param   en Pointer to an s_fighter structure to initialise
+ * \returns the value of en, for convenience, or NULL if an error occurred.
+ * \sa make_enemy_by_name()
+ */
+static s_fighter *make_enemy (int who, s_fighter * en)
+{
+   if (enemies && who >= 0 && who < enemies_n) {
+      memcpy (en, enemies[who], sizeof (s_fighter));
+#if 0
+      sprintf (strbuf, "\tMaking enemy %d (%s)", who, en->name);
+      klog (strbuf);
+#endif
+      return en;
+   } else {
+      /* PH probably should call program_death() here? */
+      return NULL;
    }
 }
 
 
 
-/*! \brief Action for confused enemy
+#if 0
+/*! \brief Prepare an enemy for battle
  *
- * Enemy actions are chosen differently if they are confused.  Confused
- * fighters either attack the enemy, an ally, or do nothing.  Confused
- * fighters never use spells or items.
- *
- * \sa auto_herochooseact()
- * \param   who Target
+ * Fills out a supplied s_fighter structure with the default,
+ * starting values for an enemy. Currently not used, but it will be, 
+ * so don't delete it ;).
+ * \author PH
+ * \date 2003????
+ * \param   who The name  of the enemy to make
+ * \param   en Pointer to an s_fighter structure to initialise
+ * \returns the value of en, for convenience, or NULL if an error occurred.
+ * \sa make_enemy()
  */
-void enemy_charmaction (int who)
+static s_fighter *make_enemy_by_name (const char *who, s_fighter * en)
 {
-   int a;
+   int i;
+   if (enemies != NULL) {
+      for (i = 0; i < enemies_n; ++i) {
+         if (strcmp (enemies[i]->name, who) == 0) {
+            memcpy (en, enemies[i], sizeof (s_fighter));
+            return en;
+         }
+      }
+   }
+   return NULL;
+}
+#endif
 
-   if (cact[who] == 0)
-      return;
-   if (fighter[who].sts[S_DEAD] == 1 || fighter[who].hp <= 0) {
-      cact[who] = 0;
-      return;
+
+
+/*! \brief Enemy initialisation
+ *
+ * This is the main enemy initialization routine.  This function sets up
+ * the enemy types and then loads each one in.  It also calls a helper
+ * function or two to complete the process.
+ *
+ * The encounter table consists of several 'sub-tables', grouped by
+ * encounter number. Each row is one possible battle.
+ * Fills in the cf[] array of enemies to load.
+ *
+ * \param   en Encounter number in the Encounter table.
+ * \param   etid If =99, select a random row with that encounter number,
+ *          otherwise select row etid.
+ * \returns number of random encounter
+ */
+int select_encounter (int en, int etid)
+{
+   int i, p, j;
+   int stop = 0, where = 0, entry = -1;
+
+   while (!stop) {
+      if (erows[where].tnum == en)
+         stop = 1;
+      else
+         where++;
+      if (where >= NUM_ETROWS) {
+         sprintf (strbuf, "There are no rows for encounter table #%d!", en);
+         program_death (strbuf);
+      }
    }
-   for (a = 0; a < 5; a++)
-      if (fighter[who].atrack[a] > 0)
-         fighter[who].atrack[a]--;
-   a = rand () % 4;
-   if (a == 0) {
-      cact[who] = 0;
-      return;
+   if (etid == 99) {
+      i = rand () % 100 + 1;
+      while (entry < 0) {
+         if (i <= erows[where].per) {
+            entry = where;
+         } else
+            where++;
+         if (erows[where].tnum > en || where >= NUM_ETROWS)
+            program_death ("Couldn't select random encounter table row!");
+      }
+   } else
+      entry = where + etid;
+   p = 0;
+   for (j = 0; j < 5; j++) {
+      if (erows[entry].idx[j] > 0) {
+         cf[p] = erows[entry].idx[j] - 1;
+         p++;
+      }
    }
-   if (a == 1) {
-      fighter[who].ctmem = 0;
-      enemy_attack (who);
-      return;
+   numens = p;
+   /* adjust 'too hard' combat where player is alone and faced by >2 enemies */
+   if (numens > 2 && numchrs == 1 && erows[entry].lvl + 2 > party[pidx[0]].lvl
+       && etid == 99)
+      numens = 2;
+   if (numens == 0)
+      program_death ("Empty encounter table row!");
+   return entry;
+}
+
+
+
+/*! \brief Set up skill targets
+ *
+ * This is just for aiding in skill setup... choosing skill targets.
+ *
+ * \param   whom Caster
+ * \param   sn Which skill
+ * \returns 1 for success, 0 otherwise
+ */
+static int skill_setup (int whom, int sn)
+{
+   int sk = fighter[whom].ai[sn] - 100;
+
+   fighter[whom].csmem = sn;
+   if (sk == 1 || sk == 2 || sk == 3 || sk == 6 || sk == 7 || sk == 12
+       || sk == 14) {
+      fighter[whom].ctmem = auto_select_hero (whom, NO_STS_CHECK);
+      if (fighter[whom].ctmem == -1)
+         return 0;
+      return 1;
+   } else {
+      fighter[whom].ctmem = SEL_ALL_ENEMIES;
+      return 1;
    }
-   fighter[who].ctmem = 1;
-   enemy_attack (who);
+   return 0;
 }
 
 
@@ -913,98 +991,22 @@ static int spell_setup (int whom, int z)
 
 
 
-/*! \brief Set up skill targets
- *
- * This is just for aiding in skill setup... choosing skill targets.
- *
- * \param   whom Caster
- * \param   sn Which skill
- * \returns 1 for success, 0 otherwise
+/*! \brief Unload the data loaded by load_enemies()
+ * 
+ * JB would have said 'duh' here! Not much explanation required.
+ * \author PH
+ * \date 2003????
  */
-static int skill_setup (int whom, int sn)
+void unload_enemies (void)
 {
-   int sk = fighter[whom].ai[sn] - 100;
-
-   fighter[whom].csmem = sn;
-   if (sk == 1 || sk == 2 || sk == 3 || sk == 6 || sk == 7 || sk == 12
-       || sk == 14) {
-      fighter[whom].ctmem = auto_select_hero (whom, NO_STS_CHECK);
-      if (fighter[whom].ctmem == -1)
-         return 0;
-      return 1;
-   } else {
-      fighter[whom].ctmem = SEL_ALL_ENEMIES;
-      return 1;
-   }
-   return 0;
-}
-
-
-
-/*! \brief Melee attack
- *
- * Do an enemy melee attack.  Enemies only defend if they are in critical
- * status.  This could use a little more smarts, so that more-intelligent
- * enemies would know to hit spellcasters or injured heroes first, and so
- * that berserk-type enemies don't defend.  The hero selection is done in
- * a different function, but it all starts here.
- *
- * \param   whom Target
- */
-static void enemy_attack (int whom)
-{
-   int a, b, c;
-
-   if (fighter[whom].hp < (fighter[whom].mhp / 5)
-       && fighter[whom].sts[S_CHARM] == 0) {
-      if (rand () % 4 == 0) {
-         fighter[whom].defend = 1;
-         cact[whom] = 0;
-         return;
+   int i;
+   if (enemies != NULL) {
+      for (i = 0; i < enemies_n; ++i) {
+         destroy_bitmap (enemies[i]->img);
+         free (enemies[i]);
       }
+      free (enemies);
+      enemies = NULL;
+      unload_datafile_object (enemy_pcx);
    }
-   if (fighter[whom].sts[S_CHARM] == 0)
-      b = auto_select_hero (whom, NO_STS_CHECK);
-   else {
-      if (fighter[whom].ctmem == 0)
-         b = auto_select_hero (whom, NO_STS_CHECK);
-      else
-         b = auto_select_enemy (whom, NO_STS_CHECK);
-   }
-   if (b == -1) {
-      fighter[whom].defend = 1;
-      cact[whom] = 0;
-      return;
-   }
-   if (b < PSIZE && numchrs > 1) {
-      c = 0;
-      for (a = 0; a < numchrs; a++)
-         if (pidx[a] == TEMMIN && fighter[a].aux == 1)
-            c = a + 1;
-      if (c != 0) {
-         if (pidx[b] != TEMMIN) {
-            b = c - 1;
-            fighter[c - 1].aux = 2;
-         }
-      }
-   }
-   fight (whom, b, 0);
-   cact[whom] = 0;
 }
-
-
-
-#if 0
-/* RB: unused until now */
-/*! \brief Escape battle
- *
- * Hmmm... this could use a little work :)
- *
- * \param   whom Which enemy is going to run
- * \warning RB Unused until now
- */
-void enemy_run (int whom)
-{
-   whom = whom;
-}
-#endif

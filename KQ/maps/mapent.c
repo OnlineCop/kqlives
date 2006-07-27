@@ -15,6 +15,9 @@
 #include <string.h>
 #include "mapdraw.h"
 
+/* Number of entities, index of currently-selected entity */
+int current_ent = 0;
+
 
 /*! \brief Offset the x/y coodinates of entities
  *
@@ -221,30 +224,30 @@ void erase_entity (const int ent_x, const int ent_y)
    /* This re-numerates the index of entities */
    for (a = ent_index + 1; a <= number_of_ents; a++) {
       gent[a - 1] = gent[a];
-      gent[a].chrx = 0;       /* Entity's identity (what s/he looks like) */
-      gent[a].x = 0;          /* x-coord on map */
-      gent[a].y = 0;          /* y-coord on map */
-      gent[a].tilex = 0;      /* x-coord tile that entity is standing on */
-      gent[a].tiley = 0;      /* y-coord tile that entity is standing on */
-      gent[a].eid = 0;        /* Entity type (fighter, enemy, normal) */
-      gent[a].active = 0;     /* "Alive" and on-screen or not */
-      gent[a].facing = 0;     /* Direction facing */
-      gent[a].moving = 0;     /* In the middle of a move */
-      gent[a].movcnt = 0;     /* How far along into the move s/he is */
-      gent[a].framectr = 0;   /* Counter for determining animation frame */
-      gent[a].movemode = 0;   /* Stand, wander, script, or chasing */
-      gent[a].obsmode = 0;    /* Affected by obstacles (some can walk through walls/other NPCs) */
-      gent[a].delay = 0;      /* Movement delay (between steps) */
-      gent[a].delayctr = 0;   /* Counter for movement delay */
-      gent[a].speed = 0;      /* How hyperactive the entity is */
-      gent[a].scount = 0;     /* Hyperactivity counter */
-      gent[a].cmd = 0;        /* Move, wait, facing command */
-      gent[a].sidx = 0;       /* Script index number */
-      gent[a].extra = 0;      /* ??? */
-      gent[a].chasing = 0;    /* Entity is following another */
-      gent[a].cmdnum = 0;     /* Number of times we need to repeat 'cmd' */
-      gent[a].atype = 0;      /* (unused) */
-      strcpy (gent[a].script, "");  /* Movement script (pacing, etc.) */
+      gent[a].chrx = 0;         /* Entity's identity (what s/he looks like) */
+      gent[a].x = 0;            /* x-coord on map */
+      gent[a].y = 0;            /* y-coord on map */
+      gent[a].tilex = 0;        /* x-coord tile that entity is standing on */
+      gent[a].tiley = 0;        /* y-coord tile that entity is standing on */
+      gent[a].eid = 0;          /* Entity type (fighter, enemy, normal) */
+      gent[a].active = 0;       /* "Alive" and on-screen or not */
+      gent[a].facing = 0;       /* Direction facing */
+      gent[a].moving = 0;       /* In the middle of a move */
+      gent[a].movcnt = 0;       /* How far along into the move s/he is */
+      gent[a].framectr = 0;     /* Counter for determining animation frame */
+      gent[a].movemode = 0;     /* Stand, wander, script, or chasing */
+      gent[a].obsmode = 0;      /* Affected by obstacles (some can walk through walls/other NPCs) */
+      gent[a].delay = 0;        /* Movement delay (between steps) */
+      gent[a].delayctr = 0;     /* Counter for movement delay */
+      gent[a].speed = 0;        /* How hyperactive the entity is */
+      gent[a].scount = 0;       /* Hyperactivity counter */
+      gent[a].cmd = 0;          /* Move, wait, facing command */
+      gent[a].sidx = 0;         /* Script index number */
+      gent[a].extra = 0;        /* ??? */
+      gent[a].chasing = 0;      /* Entity is following another */
+      gent[a].cmdnum = 0;       /* Number of times we need to repeat 'cmd' */
+      gent[a].atype = 0;        /* (unused) */
+      strcpy (gent[a].script, "");      /* Movement script (pacing, etc.) */
    }
 
    /* Oh yea, and do this too */

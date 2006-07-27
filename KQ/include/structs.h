@@ -28,6 +28,8 @@
 #ifndef __STRUCTS_H
 #define __STRUCTS_H
 
+#include "bounds.h"
+
 /*! \brief Position marker
  *
  * A marker is a named position on the map.
@@ -37,13 +39,11 @@
  * \author PH
  * \date 20050126
  */
-
-
 typedef struct
 {
    char name[32];               /*!< The name of this marker */
-   short x;                     /*! <The X position it refers to */
-   short y;                     /*! <The Y position it refers to */
+   short x;                     /*!< The X position it refers to */
+   short y;                     /*!< The Y position it refers to */
 } s_marker;
 
 
@@ -51,6 +51,7 @@ typedef struct
  *
  * This is the structure of each map on disk
  * \note 20050126 PH add extensions for markers (rev1 map)
+ * \note 20060710 TT add extensions for bounding boxes (rev2 map)
  */
 typedef struct
 {
@@ -76,13 +77,15 @@ typedef struct
    char map_desc[40];           /*!< Map name (shown when map first appears) */
    short num_markers;           /*!< How many markers defined on the map */
    s_marker *markers;           /*!< Pointer to the array markers */
+   short num_bound_boxes;       /*!< Number of bounding boxes in this map */
+   s_bound *bound_box;          /*!< Pointer to the array bound_box */
 }
 s_map;
 
 
 /*! \brief Entity
  *
- * Contains info on an entities appearance,  position  and behaviour */
+ * Contains info on an entities appearance, position and behaviour */
 typedef struct
 {
    unsigned char chrx;          //!< Entity's identity (what s/he looks like)
@@ -106,14 +109,14 @@ typedef struct
    unsigned char sidx;          //!< Script ID number
    unsigned char extra;
    unsigned char chasing;       //!< Entity is following another
-   int cmdnum;                  //!< Number of times we need to repeat 'cmd'
+   signed int cmdnum;           //!< Number of times we need to repeat 'cmd'
    unsigned char atype;
    unsigned char snapback;      //!< Snaps back to direction previously facing
    unsigned char facehero;      //!< Look at player when talked to
    unsigned char transl;        //!< Entity is see-through or not
    char script[60];             //!< Movement/action script (pacing, etc.)
-   unsigned short target_x;     //!< x-coord the ent is moving to
-   unsigned short target_y;     //!< y-coord the ent is moving to
+   unsigned short target_x;     //!< Scripted x-coord the ent is moving to
+   unsigned short target_y;     //!< Scripted y-coord the ent is moving to
 }
 s_entity;
 
@@ -149,5 +152,18 @@ typedef struct
    char icon_set[16];
    s_anim tanim[MAX_ANIM];
 } s_tileset;
+
+
+/*! \brief Progress Dump
+ *
+ * Contains the names of all the P_* progress constants
+ */
+typedef struct
+{
+   unsigned int num_progress;   /*!< Number of current progress */
+   char name[18];               /*!< Name of current progress */
+}
+s_progress;
+
 
 #endif /*__STRUCTS_H*/

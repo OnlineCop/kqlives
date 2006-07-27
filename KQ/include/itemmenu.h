@@ -22,11 +22,13 @@
 #ifndef __ITEMMENU_H
 #define __ITEMMENU_H
 
-
-
 void camp_item_menu (void);     /*  menu.c  */
 int check_inventory (int, int); /*  many functions ;)  */
-void remove_item (int, int);    /*  (eqp|shop)menu.c, heroc.c  */
 int item_effects (int, int, int);       /*  heroc.c  */
+void remove_item (int, int);    /*  (eqp|shop)menu.c, heroc.c  */
+
+extern int useup_item (int);
+
+#define MAX_ITEMS           9
 
 #endif /*  __ITEMMENU_H  */

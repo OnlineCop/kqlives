@@ -57,6 +57,8 @@
 #endif
 
 #include "kq.h"
+#include "credits.h"
+#include "disk.h"
 #include "draw.h"
 #include "entity.h"
 #include "fade.h"
@@ -69,12 +71,10 @@
 #include "music.h"
 #include "progress.h"
 #include "res.h"
-#include "setup.h"
 #include "scrnshot.h"
+#include "setup.h"
 #include "sgame.h"
 #include "shopmenu.h"
-#include "disk.h"
-#include "credits.h"
 
 /*! Name of the current map */
 char curmap[16];
@@ -190,7 +190,6 @@ s_player party[MAXCHRS];
 s_heroinfo players[MAXCHRS];
 
 
-
 /*! Table to manage stats for the level up process (see level_up()) */
 unsigned short lup[MAXCHRS][20] = {
    {10, 70, 9, 2, 190, 90, 150, 60, 70, 15, 20, 20, 50, 50, 0, 10, 0},
@@ -202,7 +201,6 @@ unsigned short lup[MAXCHRS][20] = {
    {10, 70, 7, 5, 110, 170, 90, 120, 70, 25, 50, 20, 25, 25, 0, 30, 0},
    {10, 70, 8, 6, 50, 100, 50, 160, 160, 10, 90, 90, 5, 0, 0, 20, 0}
 };
-
 
 
 /*! Characters when they are in combat */
@@ -229,9 +227,11 @@ static void data_dump (void);
 static void allocate_stuff (void);
 static void load_heroes (void);
 static void load_map (const char *);
+static void map_alloc (void);
+static void my_counter (void);
 static void prepare_map (int, int, int, int);
-
-void reset_timer_events (void);
+static void startup (void);
+static void time_counter (void);
 
 
 /*! \note 23: for keeping time. timer_count is the game timer the main game
@@ -273,187 +273,278 @@ int cheat = 0;
 /*! The number of frames per second */
 #define KQ_TICKS 100
 
-
-
-/*! \brief Allegro timer callback
+/*! \brief Timer Event structure
  *
- * New interrupt handler set to keep game time.
+ * Holds the information relating to a forthcoming event
  */
-void my_counter (void)
+static struct timer_event
 {
-   timer++;
+   char name[32];               /*!< Name of the event */
+   int when;                    /*!< Time when it will trigger */
+} timer_events[5];
 
-   if (timer >= KQ_TICKS) {
-      timer = 0;
-      ksec++;
+static int next_event_time;     /*!< The time the next event will trigger */
+
+#ifdef DEBUGMODE
+s_progress progresses[120 + 1] = {      // 120 progress, 1 shop
+   {0, "P_START"},         {1, "P_ODDWALL"},          {2, "P_DARKIMPBOSS"},
+   {3, "P_DYINGDUDE"},     {4, "P_BUYCURE"},          {5, "P_GETPARTNER"},
+   {6, "P_PARTNER1"},      {7, "P_PARTNER2"},         {8, "P_SHOWBRIDGE"},
+   {9, "P_TALKDERIG"},     {10, "P_FIGHTONBRIDGE"},   {11, "P_FELLINPIT"},
+   {12, "P_EKLAWELCOME"},  {13, "P_LOSERONBRIDGE"},   {14, "P_ASLEEPONBRIDGE"},
+   {15, "P_ALTARSWITCH"},  {16, "P_KILLBLORD"},       {17, "P_GOBLINITEM"},
+   {18, "P_ORACLE"},       {19, "P_FTOTAL"},          {20, "P_FLOOR1"},
+   {21, "P_FLOOR2"},       {22, "P_FLOOR3"},          {23, "P_FLOOR4"},
+   {24, "P_WSTONES"},      {25, "P_BSTONES"},         {26, "P_WALL1"},
+   {27, "P_WALL2"},        {28, "P_WALL3"},           {29, "P_WALL4"},
+   {30, "P_DOOROPEN"},     {31, "P_DOOROPEN2"},       {32, "P_TOWEROPEN"},
+   {33, "P_DRAGONDOWN"},   {34, "P_TREASUREROOM"},    {35, "P_UNDEADJEWEL"},
+   {36, "P_UCOIN"},        {37, "P_CANCELROD"},       {38, "P_PORTALGONE"},
+   {39, "P_WARPEDTOT4"},   {40, "P_OLDPARTNER"},      {41, "P_BOUGHTHOUSE"},
+   {42, "P_TALKGELIK"},    {43, "P_OPALHELMET"},      {44, "P_FOUNDMAYOR"},
+   {45, "P_TALK_TEMMIN"},  {46, "P_EMBERSKEY"},       {47, "P_FOUGHTGUILD"},
+   {48, "P_GUILDSECRET"},  {49, "P_SEECOLISEUM"},     {50, "P_OPALSHIELD"},
+   {51, "P_STONE1"},       {52, "P_STONE2"},          {53, "P_STONE3"},
+   {54, "P_STONE4"},       {55, "P_DENORIAN"},        {56, "P_C4DOORSOPEN"},
+   {57, "P_DEMNASDEAD"},   {58, "P_FIRSTTIME"},       {59, "P_ROUNDNUM"},
+   {60, "P_BATTLESTATUS"}, {61, "P_USEITEMINCOMBAT"}, {62, "P_FINALPARTNER"},
+   {63, "P_TALKGRAMPA"},   {64, "P_SAVEBREANNE"},     {65, "P_PASSGUARDS"},
+   {66, "P_IRONKEY"},      {67, "P_AVATARDEAD"},      {68, "P_GIANTDEAD"},
+   {69, "P_OPALBAND"},     {70, "P_BRONZEKEY"},       {71, "P_CAVEKEY"},
+   {72, "P_TOWN6INN"},     {73, "P_WARPSTONE"},       {74, "P_DOINTRO"},
+   {75, "P_GOTOFORT"},     {76, "P_GOTOESTATE"},      {77, "P_TALKBUTLER"},
+   {78, "P_PASSDOOR1"},    {79, "P_PASSDOOR2"},       {80, "P_PASSDOOR3"},
+   {81, "P_BOMB1"},        {82, "P_BOMB2"},           {83, "P_BOMB3"},
+   {84, "P_BOMB4"},        {85, "P_BOMB5"},           {86, "P_DYNAMITE"},
+   {87, "P_TALKRUFUS"},    {88, "P_EARLYPROGRESS"},   {89, "P_OPALDRAGONOUT"},
+   {90, "P_OPALARMOUR"},   {91, "P_MANORPARTY"},      {92, "P_MANORPARTY1"},
+   {93, "P_MANORPARTY2"},  {94, "P_MANORPARTY3"},     {95, "P_MANORPARTY4"},
+   {96, "P_MANORPARTY5"},  {97, "P_MANORPARTY6"},     {98, "P_MANORPARTY7"},
+   {99, "P_MANOR"},        {100, "P_PLAYERS"},        {101, "P_TALK_AJATHAR"},
+   {102, "P_BLADE"},       {103, "P_AYLA_QUEST"},     {104, "P_BANGTHUMB"},
+   {105, "P_WALKING"},     {106, "P_MAYORGUARD1"},    {107, "P_MAYORGUARD2"},
+   {108, "P_TALK_TSORIN"}, {109, "P_TALK_CORIN"},     {110, "P_TALKOLDMAN"},
+   {111, "P_ORACLEMONSTERS"}, {112, "P_TRAVELPOINT"}, {113, "P_SIDEQUEST1"},
+   {114, "P_SIDEQUEST2"},  {115, "P_SIDEQUEST3"},     {116, "P_SIDEQUEST4"},
+   {117, "P_SIDEQUEST5"},  {118, "P_SIDEQUEST6"},     {119, "P_SIDEQUEST7"},
+   {1750, "P_SHOPSTART"},
+};
+#endif
+
+
+
+/*! \brief Alt key handler
+ *
+ * This function is called when the player presses the 'alt' key.
+ * Things that can be activated are entities and zones that are
+ * obstructed.
+ */
+void activate (void)
+{
+   int zx, zy, looking_at_x = 0, looking_at_y = 0, p, q,
+      target_char_facing = 0, tf, mb;
+
+   unpress ();
+
+   /* Determine which direction the player's character is facing.  For
+    * 'looking_at_y', a negative value means "toward north" or "facing up",
+    * and a positive means that you are "facing down".  For 'looking_at_x',
+    * negative means to face left and positive means to face right.
+    */
+
+   switch (g_ent[0].facing) {
+   case FACE_DOWN:
+      looking_at_y = 1;
+      target_char_facing = FACE_UP;
+      break;
+
+   case FACE_UP:
+      looking_at_y = -1;
+      target_char_facing = FACE_DOWN;
+      break;
+
+   case FACE_LEFT:
+      looking_at_x = -1;
+      target_char_facing = FACE_RIGHT;
+      break;
+
+   case FACE_RIGHT:
+      looking_at_x = 1;
+      target_char_facing = FACE_LEFT;
+      break;
    }
 
-   animation_count++;
-   timer_count++;
+   zx = g_ent[0].x / 16;
+   zy = g_ent[0].y / 16;
+
+   looking_at_x += zx;
+   looking_at_y += zy;
+
+   q = z_seg[looking_at_y * g_map.xsize + looking_at_x];
+
+   if (o_seg[looking_at_y * g_map.xsize + looking_at_x] != 0 && q > 0)
+      do_zone (q);
+
+   p = entityat (looking_at_x, looking_at_y, 0);
+
+   if (p >= PSIZE) {
+      tf = g_ent[p - 1].facing;
+
+      if (g_ent[p - 1].facehero == 0)
+         g_ent[p - 1].facing = target_char_facing;
+
+      drawmap ();
+      blit2screen (xofs, yofs);
+      mb = g_map.map_no;
+
+      zx = abs (g_ent[p - 1].x - g_ent[0].x);
+      zy = abs (g_ent[p - 1].y - g_ent[0].y);
+
+      if ((zx <= 16 && zy <= 3) || (zx <= 3 && zy <= 16))
+         do_entity (p - 1);
+      if (g_ent[p - 1].movemode == MM_STAND && g_map.map_no == mb)
+         g_ent[p - 1].facing = tf;
+   }
 }
 
-END_OF_FUNCTION (my_counter);
 
 
-
-static void time_counter (void)
+/* \brief Add a new timer event to the list
+ *
+ * Up to five pending events can be stored
+ * at once.
+ * \param n the name of the event
+ * \param delta the number of seconds before the
+ *        event will be called. For example 5 means
+ *        five seconds in the future
+ * \returns <0 if an error occurred (i.e. too many pending events)
+ */
+int add_timer_event (const char *n, int delta)
 {
-   kmin++;
-   if (kmin >= 60) {
-      kmin = 0;
-      khr++;
+   int w = delta + ksec;
+   int i;
+   for (i = 0; i < 5; ++i) {
+      if (*timer_events[i].name == '\0') {
+         memcpy (timer_events[i].name, n, sizeof (timer_events[i].name));
+         if (w < next_event_time)
+            next_event_time = w;
+         timer_events[i].when = w;
+         return i;
+      }
+   }
+   return -1;
+}
+
+
+
+#ifdef DEBUGMODE
+/*! \brief Create bitmap
+ *
+ * This function allocates a bitmap and kills the
+ * program if it fails. The name you supply is
+ * shown if this happens.
+ * \note PH is this really necessary?
+ *
+ * \param   bx Width
+ * \param   by Height
+ * \param   bname Name of bitmap
+ * \returns the pointer to the created bitmap
+ */
+BITMAP *alloc_bmp (int bx, int by, char *bname)
+{
+   BITMAP *tmp;
+
+   tmp = create_bitmap (bx, by);
+
+   if (!tmp) {
+      sprintf (strbuf, "Could not allocate %s!.", bname);
+      program_death (strbuf);
    }
 
+   return tmp;
 }
-
-END_OF_FUNCTION (time_counter);
-
-
-
-#ifdef ALLEGRO_BEOS
-static inline long long gettime ()
-{
-   struct timeval tv;
-   gettimeofday (&tv, 0);
-   return (tv.tv_sec * 1000000) + (tv.tv_usec);
-}
-
-
-
-int maybe_poll_joystick ()
-{
-   long long lasttime = 0;
-   long long nowtime = gettime ();
-   if ((unsigned long long) nowtime > (unsigned long long) lasttime) {
-      lasttime = nowtime + 150000;
-      return poll_joystick ();
-   } else
-      return -1;
-}
-
 #else
-#define maybe_poll_joystick poll_joystick
+#define alloc_bmp(w, h, n) create_bitmap((w), (h))
 #endif
 
 
 
-/*! \brief Handle user input.
+/*! \brief Create bitmaps
  *
- * Updates all of the game controls according to user input.
- * 2003-05-27 PH: updated to re-enable the joystick
- * 2003-09-07 Edge <hardedged@excite.com>: removed duplicate input, joystick code
- * 2003-09-07 Caz Jones: last time code workaround pci-gameport bug
- * (should not affect non-buggy drivers - please report to edge)
+ * A separate function to create all global bitmaps needed in the game.
  */
-void readcontrols (void)
+static void allocate_stuff (void)
 {
-   JOYSTICK_INFO *stk;
-   poll_music ();
+   int i, p;
 
-   /* PH 2002.09.21 in case this is needed (not sure on which platforms it is) */
-   if (keyboard_needs_poll ()) {
-      poll_keyboard ();
+   kfonts = alloc_bmp (744, 60, "kfonts");
+
+   for (i = 0; i < 5; i++)
+      sfonts[i] = alloc_bmp (60, 8, "sfonts[i]");
+
+   menuptr = alloc_bmp (16, 8, "menuptr");
+   sptr = alloc_bmp (8, 8, "sptr");
+   mptr = alloc_bmp (8, 8, "mptr");
+   stspics = alloc_bmp (8, 216, "stspics");
+   sicons = alloc_bmp (8, 640, "sicons");
+   bptr = alloc_bmp (16, 8, "bptr");
+   upptr = alloc_bmp (8, 8, "upptr");
+   dnptr = alloc_bmp (8, 8, "dnptr");
+   noway = alloc_bmp (16, 16, "noway");
+   missbmp = alloc_bmp (20, 6, "missbmp");
+
+   for (i = 0; i < 9; i++)
+      pgb[i] = alloc_bmp (9, 9, "pgb[x]");
+
+   tc = alloc_bmp (16, 16, "tc");
+   tc2 = alloc_bmp (16, 16, "tc2");
+   b_shield = alloc_bmp (48, 48, "b_shield");
+   b_shell = alloc_bmp (48, 48, "b_shell");
+   b_repulse = alloc_bmp (16, 166, "b_repulse");
+   b_mp = alloc_bmp (10, 8, "b_mp");
+
+   for (p = 0; p < MAXE; p++) {
+      for (i = 0; i < MAXEFRAMES; i++)
+         eframes[p][i] = alloc_bmp (16, 16, "eframes[x][x]");
    }
 
-   balt = key[kalt];
-   besc = key[kesc];
-   bctrl = key[kctrl];
-   benter = key[kenter];
-   bhelp = key[KEY_F1];
-
-   up = key[kup];
-   down = key[kdown];
-   left = key[kleft];
-   right = key[kright];
-
-// TT: Is there a reason this has to be called twice in one function?
-//   poll_music ();
-
-   /* Emergency kill-game set. */
-   /* PH modified - need to hold down for 0.50 sec */
-   if (key[KEY_ALT] && key[KEY_X]) {
-      int kill_time = timer_count + KQ_TICKS / 2;
-      while (key[KEY_ALT] && key[KEY_X]) {
-         if (timer_count >= kill_time) {
-            /* Pressed, now wait for release */
-            clear_bitmap (screen);
-            while (key[KEY_ALT] && key[KEY_X]) {
-            }
-            program_death ("X-ALT pressed... exiting.");
-         }
-      }
+   for (i = 0; i < MAXCHRS; i++) {
+      for (p = 0; p < MAXFRAMES; p++)
+         frames[i][p] = alloc_bmp (16, 16, "frames[x][x]");
    }
-#ifdef DEBUGMODE
-   if (debugging > 0) {
-      if (key[KEY_F11])
-         data_dump ();
 
-      /* Back to menu - by pretending all the heroes died.. hehe */
-      if (key[KEY_ALT] && key[KEY_M])
-         alldead = 1;
-   }
-#endif
-
-   /* ML,2002.09.21: Saves sequential screen captures to disk. See scrnshot.c/h for more info. */
-   if (key[KEY_F12]) {
-      save_screenshot (screen, "kq");
-      play_effect (SND_TWINKLE, 128);
-      /* Wait for key to be released before continuing */
-      /* PH 2002.09.21 n.b. keyboard not necessarily in polling mode */
-      while (key[KEY_F12]) {
-         if (keyboard_needs_poll ())
-            poll_keyboard ();
+   for (p = 0; p < MAXCFRAMES; p++) {
+      for (i = 0; i < NUM_FIGHTERS; i++) {
+         cframes[i][p] = alloc_bmp (32, 32, "cframes[x][x]");
+         tcframes[i][p] = alloc_bmp (32, 32, "tcframes[x][x]");
       }
    }
 
-   if (use_joy > 0 && maybe_poll_joystick () == 0) {
-      stk = &joy[use_joy - 1];
-      left |= stk->stick[0].axis[0].d1;
-      right |= stk->stick[0].axis[0].d2;
-      up |= stk->stick[0].axis[1].d1;
-      down |= stk->stick[0].axis[1].d2;
+   double_buffer = alloc_bmp (352, 280, "double_buffer");
+   back = alloc_bmp (352, 280, "back");
+   fx_buffer = alloc_bmp (352, 280, "fx_buffer");
 
-      balt |= stk->button[0].b;
-      bctrl |= stk->button[1].b;
-      benter |= stk->button[2].b;
-      besc |= stk->button[3].b;
+   for (p = 0; p < MAX_SHADOWS; p++)
+      shadow[p] = alloc_bmp (16, 16, "shadow[x]");
 
+   for (p = 0; p < 8; p++)
+      bub[p] = alloc_bmp (16, 16, "bub[x]");
+
+   for (p = 0; p < 3; p++) {
+      bord[p] = alloc_bmp (8, 8, "bord[x]");
+      bord[p + 5] = alloc_bmp (8, 8, "bord[x]");
    }
+
+   for (p = 3; p < 5; p++)
+      bord[p] = alloc_bmp (8, 12, "bord[x]");
+
+   for (p = 0; p < 8; p++)
+      players[p].portrait = alloc_bmp (40, 40, "portrait[x]");
+
+   for (p = 0; p < MAX_TILES; p++)
+      map_icons[p] = alloc_bmp (16, 16, "map_icons[x]");
+   allocate_credits ();
 }
-
-
-
-#ifdef DEBUGMODE
-/*! \brief Write debug data to disk
- *
- * Writes the treasure and progress arrays in text format to "treasure.log"
- * and "progress.log" respectively. This happens in response to user hitting
- * the F11 key.
- */
-void data_dump (void)
-{
-   FILE *ff;
-   int a;
-
-   if (debugging > 0) {
-      ff = fopen ("treasure.log", "w");
-      if (!ff)
-         program_death ("Could not open treasure.log!");
-      for (a = 0; a < 200; a++)
-         fprintf (ff, "%d = %d\n", a, treasure[a]);
-      fclose (ff);
-
-      ff = fopen ("progress.log", "w");
-      if (!ff)
-         program_death ("Could not open progress.log!");
-      for (a = 0; a < 200; a++)
-         fprintf (ff, "%d = %d\n", a, progress[a]);
-      for (a = P_SHOPSTART; a < P_SHOPSTART + NUMSHOPS; a++)
-         fprintf (ff, "%d = %d\n", a, progress[a]);
-      fclose (ff);
-   }
-}
-#endif
 
 
 
@@ -535,36 +626,488 @@ void calc_viewport (int center)
 
 
 
-/*! \brief allocate memory for map
+/*! \brief Free old map data and load a new one
  *
- * Allocate memory arrays for the map, shadows, obstacles etc.
- * according to the size specified in g_map
- * \author  PH 20031010
+ * This loads a new map and performs all of the functions
+ * that accompany the loading of a new map.
+ *
+ * \param   map_name Base name of map (xxx -> maps/xxx.map)
+ * \param   msx New x-coord for player. Pass 0 for msx and msy
+ *              to use the 'default' position stored in the
+ *              map file: s_map::stx and s_map::sty
+ * \param   msy New y-coord for player
+ * \param   mvx New x-coord for camera. Pass 0 for mvx and mvy
+ *              to use the default: s_map::stx and s_map::sty)
+ * \param   mvy New y-coord for camera
  */
-static void map_alloc (void)
+void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
 {
-   int tiles = g_map.xsize * g_map.ysize;
-   free (map_seg);
-   map_seg = (unsigned short *) malloc (tiles * sizeof (short));
-
-   free (b_seg);
-   b_seg = (unsigned short *) malloc (tiles * sizeof (short));
-
-   free (f_seg);
-   f_seg = (unsigned short *) malloc (tiles * sizeof (short));
-
-   free (z_seg);
-   z_seg = (unsigned char *) malloc (tiles);
-
-   free (s_seg);
-   s_seg = (unsigned char *) malloc (tiles);
-
-   free (o_seg);
-   o_seg = (unsigned char *) malloc (tiles);
+   load_map (map_name);
+   prepare_map (msx, msy, mvx, mvy);
 }
 
 
 
+/*! \brief Free old map data and load a new one
+ *
+ * This loads a new map and performs all of the functions
+ * that accompany the loading of a new map and is 99% identical to the
+ * change_map function, but uses Markers to specify the starting
+ * coords of the player instead of hard-coded coords.
+ *
+ * \param   map_name Base name of map (xxx -> maps/xxx.map)
+ * \param   marker_name Marker containing both x and y coords for player.  If
+ *              the marker's name doesn't exist on the map, pass 0 for msx and
+ *              msy to use the 'default' position stored in the map file
+ *              (s_map::stx and s_map::sty)
+ * \param   offset_x Push player left/right this many tiles from the marker
+ * \param   offset_y Push player up/down this many tiles from the marker
+ */
+void change_mapm (char *map_name, const char *marker_name, int offset_x,
+                  int offset_y)
+{
+   int msx = 0, msy = 0, mvx = 0, mvy = 0;
+   s_marker *m;
+
+   load_map (map_name);
+   /* Search for the marker with the name passed into the function. Both
+    * player's starting position and camera position will be the same
+    */
+   for (m = g_map.markers; m < g_map.markers + g_map.num_markers; ++m) {
+      if (!strcmp (marker_name, m->name)) {
+         msx = mvx = m->x + offset_x;
+         msy = mvy = m->y + offset_y;
+      }
+   }
+   prepare_map (msx, msy, mvx, mvy);
+}
+
+
+
+/*! \brief Do tile animation
+ *
+ * This updates tile indexes for animation threads.
+ */
+void check_animation (void)
+{
+   int i, j;
+   int diff = animation_count;
+   animation_count -= diff;
+   if (!diff)
+      return;
+   for (i = 0; i < MAX_ANIM; i++) {
+      if (adata[i].start != 0) {
+         if (adata[i].delay && adata[i].delay < adelay[i]) {
+            adelay[i] %= adata[i].delay;
+            for (j = adata[i].start; j <= adata[i].end; j++)
+               if (tilex[j] < adata[i].end)
+                  tilex[j]++;
+               else
+                  tilex[j] = adata[i].start;
+         }
+         adelay[i] += diff;
+      }
+   }
+}
+
+
+
+#ifdef DEBUGMODE
+/*! \brief Write debug data to disk
+ *
+ * Writes the treasure and progress arrays in text format to "treasure.log"
+ * and "progress.log" respectively. This happens in response to user hitting
+ * the F11 key.
+ */
+void data_dump (void)
+{
+   FILE *ff;
+   int a;
+
+   if (debugging > 0) {
+      ff = fopen ("treasure.log", "w");
+      if (!ff)
+         program_death ("Could not open treasure.log!");
+      for (a = 0; a < 200; a++)
+         fprintf (ff, "%d = %d\n", a, treasure[a]);
+      fclose (ff);
+
+      ff = fopen ("progress.log", "w");
+      if (!ff)
+         program_death ("Could not open progress.log!");
+      for (a = 0; a < 120; a++) {
+         fprintf (ff, "%d: %s = %d\n",
+                  progresses[a].num_progress,
+                  progresses[a].name,
+                  progress[a]);
+      }
+      fprintf (ff, "\n");
+      for (a = P_SHOPSTART; a < P_SHOPSTART + NUMSHOPS; a++)
+         fprintf (ff, "%d = %d\n", a, progress[a]);
+      fclose (ff);
+   }
+}
+#endif
+
+
+
+/*! \brief Free allocated memory
+ *
+ * This frees memory and such things.
+ */
+static void deallocate_stuff (void)
+{
+   int i, p;
+
+   destroy_bitmap (kfonts);
+
+   for (i = 0; i < 5; i++)
+      destroy_bitmap (sfonts[i]);
+
+   destroy_bitmap (menuptr);
+   destroy_bitmap (sptr);
+   destroy_bitmap (mptr);
+   destroy_bitmap (upptr);
+   destroy_bitmap (dnptr);
+   destroy_bitmap (stspics);
+   destroy_bitmap (sicons);
+   destroy_bitmap (bptr);
+   destroy_bitmap (noway);
+   destroy_bitmap (missbmp);
+
+   for (i = 0; i < 9; i++)
+      destroy_bitmap (pgb[i]);
+
+   destroy_bitmap (tc);
+   destroy_bitmap (tc2);
+   destroy_bitmap (b_shield);
+   destroy_bitmap (b_shell);
+   destroy_bitmap (b_repulse);
+   destroy_bitmap (b_mp);
+
+   for (p = 0; p < MAXE; p++)
+      for (i = 0; i < MAXEFRAMES; i++)
+         destroy_bitmap (eframes[p][i]);
+
+   for (i = 0; i < MAXFRAMES; i++)
+      for (p = 0; p < MAXCHRS; p++)
+         destroy_bitmap (frames[p][i]);
+
+   for (i = 0; i < MAXCFRAMES; i++) {
+      for (p = 0; p < NUM_FIGHTERS; p++) {
+         destroy_bitmap (cframes[p][i]);
+         destroy_bitmap (tcframes[p][i]);
+      }
+   }
+
+   destroy_bitmap (double_buffer);
+   destroy_bitmap (back);
+   destroy_bitmap (fx_buffer);
+
+   for (p = 0; p < MAX_SHADOWS; p++)
+      destroy_bitmap (shadow[p]);
+
+   for (p = 0; p < 8; p++)
+      destroy_bitmap (bub[p]);
+
+   for (p = 0; p < 8; p++)
+      destroy_bitmap (bord[p]);
+
+   for (p = 0; p < MAXCHRS; p++)
+      destroy_bitmap (players[p].portrait);
+
+   for (p = 0; p < MAX_TILES; p++)
+      destroy_bitmap (map_icons[p]);
+
+   if (map_seg)
+      free (map_seg);
+   if (b_seg)
+      free (b_seg);
+   if (f_seg)
+      free (f_seg);
+   if (z_seg)
+      free (z_seg);
+   if (s_seg)
+      free (s_seg);
+   if (o_seg)
+      free (o_seg);
+   if (progress)
+      free (progress);
+   if (treasure)
+      free (treasure);
+   if (strbuf)
+      free (strbuf);
+/*    if (savedir) */
+/*       free (savedir); */
+
+   if (is_sound) {
+      shutdown_music ();
+      free_samples ();
+   }
+   deallocate_credits ();
+
+#ifdef DEBUGMODE
+   destroy_bitmap (obj_mesh);
+#endif
+}
+
+
+
+/* \brief Get the next event if any
+ *
+ * Checks the pending events and returns the name
+ * of the next one, or NULL if nothing is ready
+ * to be triggered.
+ * If more than one event is ready, only one will be returned;
+ * the next one will be returned next time.
+ * Each event is removed after it is triggered. If a repeating
+ * event is desired, you should call add_timer_event() again
+ * in the handler function.
+ *
+ * \returns name of the next event or NULL if none is ready
+ */
+char *get_timer_event (void)
+{
+   static char buf[32];
+   int now = ksec;
+   int i;
+   int next = INT_MAX;
+   struct timer_event *t;
+
+   if (now < next_event_time)
+      return NULL;
+
+   *buf = '\0';
+   for (i = 0; i < 5; ++i) {
+      t = &timer_events[i];
+      if (*t->name) {
+         if (t->when <= now) {
+            memcpy (buf, t->name, sizeof (buf));
+            *t->name = '\0';
+         } else {
+            if (t->when < next)
+               next = t->when;
+         }
+      }
+   }
+   next_event_time = next;
+   return *buf ? buf : NULL;
+}
+
+
+
+/*! \brief Is this character in the party?
+ *
+ * Determine if a given character is currently in play.
+ *
+ * \param   pn Character to ask about
+ * \returns where it is in the party list (1 or 2), or 0 if not
+ */
+int in_party (int pn)
+{
+   int a;
+
+   for (a = 0; a < MAXCHRS; a++)
+      if (pidx[a] == pn)
+         return a + 1;
+
+   return 0;
+}
+
+
+
+/*! \brief Initialise all players
+ *
+ * Set up the player characters and load data specific
+ * to them. This happens at the start of every game.
+ */
+void init_players (void)
+{
+   DATAFILE *pb;
+   int i, j;
+
+   for (j = 0; j < MAXCHRS; j++) {
+      for (i = 0; i < 24; i++)
+         party[j].sts[i] = 0;
+
+      for (i = 0; i < 6; i++)
+         party[j].eqp[i] = 0;
+
+      for (i = 0; i < 60; i++)
+         party[j].spells[i] = 0;
+
+      learn_new_spells (j);
+   }
+
+   gp = 0;
+
+   pb = load_datafile_object (PCX_DATAFILE, "USCHRS_PCX");
+
+   if (!pb)
+      program_death ("Could not load character graphics!");
+
+   set_palette (pal);
+
+   for (i = 0; i < MAXCHRS; i++)
+      for (j = 0; j < MAXFRAMES; j++)
+         blit ((BITMAP *) pb->dat, frames[i][j], j * 16, i * 16, 0, 0, 16, 16);
+
+   unload_datafile_object (pb);
+}
+
+
+
+/*! \brief Log events
+ *
+ * This is for logging events within the program.  Very
+ * useful for debugging and tracing.
+ * \note klog is deprecated; use Allegro's TRACE instead.
+ *
+ * \param   msg String to add to log file
+ */
+void klog (char *msg)
+{
+   TRACE ("%s\n", msg);
+#if 0
+   FILE *ff;
+
+   ff = fopen ("game.log", "a");
+
+   if (!ff)
+      program_death ("Could not open log!");
+
+   fprintf (ff, "%s\n", msg);
+   fclose (ff);
+#endif
+}
+
+
+
+/*! \brief Yield processor for other tasks
+ *
+ * This function calls rest() or yield_cpu() as appropriate for
+ * the platform and allegro version
+ *
+ * \author PH
+ * \date 20050423
+ */
+void kq_yield (void)
+{
+   if (cpu_usage > 2)
+      cpu_usage = 2;
+
+   /* This can call the regular yield_timeslice() function, or we can try to
+    * use rest(0) or rest(1), depending on the user's preference (and Allegro
+    * settings).
+    */
+   if (cpu_usage == 0) {
+//      yield_timeslice ();
+   } else {
+      rest (cpu_usage - 1);
+   }
+}
+
+
+
+/*! \brief Pause for a time
+ *
+ * Why not just use rest() you ask?  Well, this function
+ * kills time, but it also processes entities.  This function
+ * is basically used to run entity scripts and for automatic
+ * party movement.
+ *
+ * \param   dtime Time in frames
+ */
+void kwait (int dtime)
+{
+   int cnt = 0;
+
+   autoparty = 1;
+   timer_count = 0;
+
+   while (cnt < dtime) {
+      poll_music ();
+      while (timer_count > 0) {
+         poll_music ();
+         timer_count--;
+         cnt++;
+         process_entities ();
+      }
+      check_animation ();
+
+      drawmap ();
+      blit2screen (xofs, yofs);
+#ifdef DEBUGMODE
+      if (debugging > 0) {
+         if (key[KEY_W] && key[KEY_ALT]) {
+            klog ("Alt+W Pressed:");
+            sprintf (strbuf, "\tkwait(); cnt=%d, dtime=%d, timer_count=%d",
+                     cnt, dtime, timer_count);
+            klog (strbuf);
+            break;
+         }
+      }
+#endif
+      if (key[KEY_X] && key[KEY_ALT]) {
+         if (debugging > 0) {
+            sprintf (strbuf, "kwait(); cnt = %d, dtime = %d, timer_count = %d",
+                     cnt, dtime, timer_count);
+         } else {
+            sprintf (strbuf, "Program terminated: user pressed Alt+X");
+         }
+         program_death (strbuf);
+      }
+   }
+
+   timer_count = 0;
+   autoparty = 0;
+}
+
+
+
+/*! \brief Load initial hero stuff from file
+ *
+ * \author PH
+ * \date 20030320
+ * Loads the hero stats from a file.
+ *
+ */
+void load_heroes (void)
+{
+   PACKFILE *f;
+   DATAFILE *pcxb;
+   int i;
+   /* Hero stats */
+   if ((f = pack_fopen (kqres (DATA_DIR, "hero.kq"), F_READ_PACKED)) == NULL) {
+      program_death ("Cannot open hero data file");
+   }
+   for (i = 0; i < MAXCHRS; ++i) {
+      /*        pack_fread (&players[i].plr, sizeof (s_player), f); */
+      load_s_player (&players[i].plr, f);
+   }
+   pack_fclose (f);
+   /* portraits */
+   pcxb = load_datafile_object (PCX_DATAFILE, "KQFACES_PCX");
+
+   if (!pcxb)
+      program_death ("Could not load kqfaces.pcx!");
+
+   for (i = 0; i < 4; ++i) {
+      blit ((BITMAP *) pcxb->dat, players[i].portrait, 0, i * 40, 0, 0, 40,
+            40);
+      blit ((BITMAP *) pcxb->dat, players[i + 4].portrait, 40, i * 40, 0, 0,
+            40, 40);
+   }
+
+   unload_datafile_object (pcxb);
+}
+
+
+
+/*! \brief Load the map
+ *
+ * \param   map_name - The name of the map and accompanying LUA file
+ */
 static void load_map (const char *map_name)
 {
    int i;
@@ -603,11 +1146,176 @@ static void load_map (const char *map_name)
    pack_fread (z_seg, (g_map.xsize * g_map.ysize), pf);
    pack_fread (s_seg, (g_map.xsize * g_map.ysize), pf);
    pack_fread (o_seg, (g_map.xsize * g_map.ysize), pf);
+
    pack_fclose (pf);
    strcpy (curmap, map_name);
 }
 
 
+
+/*! \brief Main function
+ *
+ * Well, this one is pretty obvious.
+ */
+int main (int argc, const char *argv[])
+{
+   int stop, game_on, skip_splash;
+   int i;
+
+   if (argc > 1) {
+      for (i = 1; i < argc; i++) {
+         if (!strcmp (argv[i], "-nosplash")) {
+            skip_splash = 1;
+         } else {
+            skip_splash = 0;
+         }
+      }
+   } else {
+      skip_splash = 0;
+   }
+
+   startup ();
+   game_on = 1;
+   /* Also this can be overridden by settings in config */
+   while (game_on) {
+      switch (start_menu (skip_splash)) {
+      case 0:
+         break;
+      case 1:
+         change_map ("starting", 0, 0, 0, 0);
+         break;
+      default:
+         /* Someone pressed 'EXIT'  */
+         game_on = 0;
+         break;
+      }
+      /* Only show it once at the start */
+      skip_splash = 1;
+      if (game_on) {
+         stop = 0;
+         timer_count = 0;
+         alldead = 0;
+         while (!stop) {
+            while (timer_count > 0) {
+               timer_count--;
+               process_entities ();
+            }
+            check_animation ();
+            drawmap ();
+            blit2screen (xofs, yofs);
+            poll_music ();
+
+            if (key[kesc]) {
+               stop = system_menu ();
+            }
+            if (bhelp) {
+               /* TODO: In-game help system. */
+            }
+
+            if (alldead) {
+               clear (screen);
+               do_transition (TRANS_FADE_IN, 16);
+               stop = 1;
+            }
+
+         }
+      }
+   }
+   remove_int (my_counter);
+   remove_int (time_counter);
+   deallocate_stuff ();
+   return EXIT_SUCCESS;
+}
+
+END_OF_MAIN ();
+
+
+
+/*! \brief allocate memory for map
+ *
+ * Allocate memory arrays for the map, shadows, obstacles etc.
+ * according to the size specified in g_map
+ * \author  PH 20031010
+ */
+static void map_alloc (void)
+{
+   int tiles = g_map.xsize * g_map.ysize;
+   free (map_seg);
+   map_seg = (unsigned short *) malloc (tiles * sizeof (short));
+
+   free (b_seg);
+   b_seg = (unsigned short *) malloc (tiles * sizeof (short));
+
+   free (f_seg);
+   f_seg = (unsigned short *) malloc (tiles * sizeof (short));
+
+   free (z_seg);
+   z_seg = (unsigned char *) malloc (tiles);
+
+   free (s_seg);
+   s_seg = (unsigned char *) malloc (tiles);
+
+   free (o_seg);
+   o_seg = (unsigned char *) malloc (tiles);
+}
+
+
+
+#ifdef ALLEGRO_BEOS
+static inline long long gettime ()
+{
+   struct timeval tv;
+   gettimeofday (&tv, 0);
+   return (tv.tv_sec * 1000000) + (tv.tv_usec);
+}
+
+
+
+int maybe_poll_joystick ()
+{
+   long long lasttime = 0;
+   long long nowtime = gettime ();
+   if ((unsigned long long) nowtime > (unsigned long long) lasttime) {
+      lasttime = nowtime + 150000;
+      return poll_joystick ();
+   } else
+      return -1;
+}
+
+#else
+#define maybe_poll_joystick poll_joystick
+#endif
+
+
+
+/*! \brief Allegro timer callback
+ *
+ * New interrupt handler set to keep game time.
+ */
+static void my_counter (void)
+{
+   timer++;
+
+   if (timer >= KQ_TICKS) {
+      timer = 0;
+      ksec++;
+   }
+
+   animation_count++;
+   timer_count++;
+}
+
+END_OF_FUNCTION (my_counter);
+
+
+
+/*! \brief Do everything necessary to load a map
+ *
+ * \param   msx - New x-coord for player
+ * \param   msy - Same, for y-coord
+ * \param   mvx - New x-coord for camera
+ * \param   mvy - Same, for y-coord
+ */
 static void prepare_map (int msx, int msy, int mvx, int mvy)
 {
    BITMAP *pcxb;
@@ -730,319 +1438,124 @@ static void prepare_map (int msx, int msy, int mvx, int mvy)
    timer_count = 0;
 }
 
-/*! \brief Free old map data and load a new one
+
+
+/*! \brief End program due to fatal error
  *
- * This loads a new map and performs all of the functions
- * that accompany the loading of a new map.
+ * Kill the program and spit out a message.
  *
- * \param   map_name Base name of map (xxx -> maps/xxx.map)
- * \param   msx New x-coord for player. Pass 0 for msx and msy
- *              to use the 'default' position stored in the
- *              map file (s_map::stx and s_map::sty)
- * \param   msy New y-coord for player
- * \param   mvx New x-coord for camera. Pass 0 for mvx and mvy
- *              to use the default (also s_map::stx and
- *              s_map::sty)
- * \param   mvy New y-coord for camera
+ * \param   message Text to put into log
  */
-void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
+void program_death (char *message)
 {
-   load_map (map_name);
-   prepare_map (msx, msy, mvx, mvy);
-}
-
-
-/*! \brief Free old map data and load a new one
- *
- * This loads a new map and performs all of the functions
- * that accompany the loading of a new map and is 99% identical to
- * change_map() function, but uses Markers to specify the starting
- * coords of the player instead of hard-coded coords.
- *
- * \param   map_name Base name of map (xxx -> maps/xxx.map)
- * \param   marker_name Marker containing both x and y coords for player.  If
- *              the marker's name doesn't exist on the map, pass 0 for msx and
- *              msy to use the 'default' position stored in the map file
- *              (s_map::stx and s_map::sty)
- */
-void change_mapm (char *map_name, const char *marker_name)
-{
-   int msx = 0, msy = 0, mvx = 0, mvy = 0;
-   s_marker *m;
-
-   load_map (map_name);
-   /* Search for the marker with the name passed into the function. Both
-    * player's starting position and camera position will be the same
-    */
-   for (m = g_map.markers; m < g_map.markers + g_map.num_markers; ++m) {
-      if (!strcmp (marker_name, m->name)) {
-         msx = mvx = m->x;
-         msy = mvy = m->y;
-      }
-   }
-   prepare_map (msx, msy, mvx, mvy);
+   char internal_buffer[80];
+   strcat (strncpy (internal_buffer, message, sizeof (internal_buffer) - 1),
+           "\n");
+   TRACE ("%s\n", message);
+   deallocate_stuff ();
+   allegro_message (internal_buffer);
+   set_gfx_mode (GFX_TEXT, 0, 0, 0, 0);
+   exit (EXIT_FAILURE);
 }
 
 
 
-/*! \brief Zone event handler
+/*! \brief Handle user input.
  *
- * This routine is called after every final step onto
- * a new tile (not after warps or such things).  It
- * just checks if the zone value for this co-ordinate is
- * not zero and then it calls the event handler.  However,
- * there is a member of the map structure called zero_zone
- * that let's you call the event handler on 0 zones if you
- * wish.
- * This function also handles the Repulse functionality
+ * Updates all of the game controls according to user input.
+ * 2003-05-27 PH: updated to re-enable the joystick
+ * 2003-09-07 Edge <hardedged@excite.com>: removed duplicate input, joystick code
+ * 2003-09-07 Caz Jones: last time code workaround pci-gameport bug
+ * (should not affect non-buggy drivers - please report to edge)
  */
-void zone_check (void)
+void readcontrols (void)
 {
-   unsigned short stc, zx, zy;
-   zx = g_ent[0].x / 16;
-   zy = g_ent[0].y / 16;
+   JOYSTICK_INFO *stk;
+   poll_music ();
 
-   if (progress[P_REPULSE] > 0) {
-      if (g_map.map_no == MAP_MAIN)
-         progress[P_REPULSE]--;
-      else {
-         if (progress[P_REPULSE] > 1)
-            progress[P_REPULSE] -= 2;
-         else
-            progress[P_REPULSE] = 0;
-      }
-
-      if (progress[P_REPULSE] < 1)
-         message ("Repulse has worn off!", 255, 0, xofs, yofs);
+   /* PH 2002.09.21 in case this is needed (not sure on which platforms it is) */
+   if (keyboard_needs_poll ()) {
+      poll_keyboard ();
    }
 
-   stc = z_seg[zy * g_map.xsize + zx];
+   balt = key[kalt];
+   besc = key[kesc];
+   bctrl = key[kctrl];
+   benter = key[kenter];
+   bhelp = key[KEY_F1];
 
-   if (g_map.zero_zone != 0)
-      do_zone (stc);
-   else {
-      if (stc > 0)
-         do_zone (stc);
-   }
-}
+   up = key[kup];
+   down = key[kdown];
+   left = key[kleft];
+   right = key[kright];
 
+// TT: Is there a reason this has to be called twice in one function?
+//   poll_music ();
 
-
-/*! \brief Move player(s) to new coordinates
- *
- * Fade out... change co-ordinates... fade in.
- * The wtx/wty co-ordinates indicate where to put the player.
- * The wvx/wvy co-ordinates indicate where to put the camera.
- *
- * \param   wtx New x-coord
- * \param   wty New y-coord
- * \param   fspeed Speed of fading (See do_transition())
- */
-void warp (int wtx, int wty, int fspeed)
-{
-   int i, f;
-
-   if (hold_fade == 0)
-      do_transition (TRANS_FADE_OUT, fspeed);
-
-   if (numchrs == 0)
-      f = 1;
-   else
-      f = numchrs;
-
-   for (i = 0; i < f; i++) {
-      place_ent (i, wtx, wty);
-      g_ent[i].moving = 0;
-      g_ent[i].movcnt = 0;
-      g_ent[i].framectr = 0;
-   }
-
-   vx = wtx * 16;
-   vy = wty * 16;
-
-   calc_viewport (1);
-   drawmap ();
-   blit2screen (xofs, yofs);
-
-   if (hold_fade == 0)
-      do_transition (TRANS_FADE_IN, fspeed);
-
-   timer_count = 0;
-}
-
-
-
-/*! \brief Do tile animation
- *
- * This updates tile indexes for animation threads.
- */
-void check_animation (void)
-{
-   int i, j;
-   int diff = animation_count;
-   animation_count -= diff;
-   if (!diff)
-      return;
-   for (i = 0; i < MAX_ANIM; i++) {
-      if (adata[i].start != 0) {
-         if (adata[i].delay && adata[i].delay < adelay[i]) {
-            adelay[i] %= adata[i].delay;
-            for (j = adata[i].start; j <= adata[i].end; j++)
-               if (tilex[j] < adata[i].end)
-                  tilex[j]++;
-               else
-                  tilex[j] = adata[i].start;
+   /* Emergency kill-game set. */
+   /* PH modified - need to hold down for 0.50 sec */
+   if (key[KEY_ALT] && key[KEY_X]) {
+      int kill_time = timer_count + KQ_TICKS / 2;
+      while (key[KEY_ALT] && key[KEY_X]) {
+         if (timer_count >= kill_time) {
+            /* Pressed, now wait for release */
+            clear_bitmap (screen);
+            while (key[KEY_ALT] && key[KEY_X]) {
+            }
+            program_death ("X-ALT pressed... exiting.");
          }
-         adelay[i] += diff;
       }
    }
-}
+#ifdef DEBUGMODE
+   if (debugging > 0) {
+      if (key[KEY_F11])
+         data_dump ();
 
-
-
-/*! \brief Alt key handler
- *
- * This function is called when the player presses the 'alt' key.
- * Things that can be activated are entities and zones that are
- * obstructed.
- */
-void activate (void)
-{
-   int zx, zy, looking_at_x = 0, looking_at_y = 0, p, q,
-      target_char_facing = 0, tf, mb;
-
-   unpress ();
-
-   /* Determine which direction the player's character is facing.  For
-    * 'looking_at_y', a negative value means "toward north" or "facing up",
-    * and a positive means that you are "facing down".  For 'looking_at_x',
-    * negative means to face left and positive means to face right.
-    */
-
-   switch (g_ent[0].facing) {
-   case FACE_DOWN:
-      looking_at_y = 1;
-      target_char_facing = FACE_UP;
-      break;
-
-   case FACE_UP:
-      looking_at_y = -1;
-      target_char_facing = FACE_DOWN;
-      break;
-
-   case FACE_LEFT:
-      looking_at_x = -1;
-      target_char_facing = FACE_RIGHT;
-      break;
-
-   case FACE_RIGHT:
-      looking_at_x = 1;
-      target_char_facing = FACE_LEFT;
-      break;
+      /* Back to menu - by pretending all the heroes died.. hehe */
+      if (key[KEY_ALT] && key[KEY_M])
+         alldead = 1;
    }
-
-   zx = g_ent[0].x / 16;
-   zy = g_ent[0].y / 16;
-
-   looking_at_x += zx;
-   looking_at_y += zy;
-
-   q = z_seg[looking_at_y * g_map.xsize + looking_at_x];
-
-   if (o_seg[looking_at_y * g_map.xsize + looking_at_x] != 0 && q > 0)
-      do_zone (q);
-
-   p = entityat (looking_at_x, looking_at_y, 0);
-
-   if (p >= PSIZE) {
-      tf = g_ent[p - 1].facing;
-
-      if (g_ent[p - 1].facehero == 0)
-         g_ent[p - 1].facing = target_char_facing;
-
-      drawmap ();
-      blit2screen (xofs, yofs);
-      mb = g_map.map_no;
-
-      zx = abs (g_ent[p - 1].x - g_ent[0].x);
-      zy = abs (g_ent[p - 1].y - g_ent[0].y);
-
-      if ((zx <= 16 && zy <= 3) || (zx <= 3 && zy <= 16))
-         do_entity (p - 1);
-      if (g_ent[p - 1].movemode == MM_STAND && g_map.map_no == mb)
-         g_ent[p - 1].facing = tf;
-   }
-}
-
-
-
-/*! \brief Wait for key release
- *
- * This is used to wait and make sure that the user has
- * released a key before moving on.
- * 20030728 PH re-implemented in IMHO a neater way
- *
- * \note Waits at most 20 'ticks'
- */
-void unpress (void)
-{
-   timer_count = 0;
-   while (timer_count < 20) {
-      readcontrols ();
-      if (!(balt || bctrl || benter || besc || up || down || right || left))
-         break;
-   }
-   timer_count = 0;
-}
-
-
-
-/*! \brief Wait for ALT
- *
- * Simply wait for the 'alt' key to be pressed.
- */
-void wait_enter (void)
-{
-   int stop = 0;
-
-   unpress ();
-
-   while (!stop) {
-      readcontrols ();
-      if (balt) {
-         unpress ();
-         stop = 1;
-      }
-      kq_yield ();
-   }
-
-   timer_count = 0;
-}
-
-
-
-/*! \brief Log events
- *
- * This is for logging events within the program.  Very
- * useful for debugging and tracing.
- * \note klog is deprecated; use Allegro's TRACE instead.
- *
- * \param   msg String to add to log file
- */
-void klog (char *msg)
-{
-   TRACE ("%s\n", msg);
-#if 0
-   FILE *ff;
-
-   ff = fopen ("game.log", "a");
-
-   if (!ff)
-      program_death ("Could not open log!");
-
-   fprintf (ff, "%s\n", msg);
-   fclose (ff);
 #endif
+
+   /* ML,2002.09.21: Saves sequential screen captures to disk. See scrnshot.c/h for more info. */
+   if (key[KEY_F12]) {
+      save_screenshot (screen, "kq");
+      play_effect (SND_TWINKLE, 128);
+      /* Wait for key to be released before continuing */
+      /* PH 2002.09.21 n.b. keyboard not necessarily in polling mode */
+      while (key[KEY_F12]) {
+         if (keyboard_needs_poll ())
+            poll_keyboard ();
+      }
+   }
+
+   if (use_joy > 0 && maybe_poll_joystick () == 0) {
+      stk = &joy[use_joy - 1];
+      left |= stk->stick[0].axis[0].d1;
+      right |= stk->stick[0].axis[0].d2;
+      up |= stk->stick[0].axis[1].d1;
+      down |= stk->stick[0].axis[1].d2;
+
+      balt |= stk->button[0].b;
+      bctrl |= stk->button[1].b;
+      benter |= stk->button[2].b;
+      besc |= stk->button[3].b;
+
+   }
+}
+
+
+
+/*! \brief Delete any pending events
+*
+* This removes any events from the list
+*/
+void reset_timer_events (void)
+{
+   int i;
+   for (i = 0; i < 5; ++i)
+      *timer_events[i].name = '\0';
+   next_event_time = INT_MAX;
 }
 
 
@@ -1235,351 +1748,63 @@ static void startup (void)
 
 
 
-/*! \brief Load initial hero stuff from file
- *
- * \author PH
- * \date 20030320
- * Loads the hero stats from a file.
- *
+/*! \brief Keep track of the time the game has been in play
  */
-void load_heroes (void)
+static void time_counter (void)
 {
-   PACKFILE *f;
-   DATAFILE *pcxb;
-   int i;
-   /* Hero stats */
-   if ((f = pack_fopen (kqres (DATA_DIR, "hero.kq"), F_READ_PACKED)) == NULL) {
-      program_death ("Cannot open hero data file");
-   }
-   for (i = 0; i < MAXCHRS; ++i) {
-      /*        pack_fread (&players[i].plr, sizeof (s_player), f); */
-      load_s_player (&players[i].plr, f);
-   }
-   pack_fclose (f);
-   /* portraits */
-   pcxb = load_datafile_object (PCX_DATAFILE, "KQFACES_PCX");
-
-   if (!pcxb)
-      program_death ("Could not load kqfaces.pcx!");
-
-   for (i = 0; i < 4; ++i) {
-      blit ((BITMAP *) pcxb->dat, players[i].portrait, 0, i * 40, 0, 0, 40,
-            40);
-      blit ((BITMAP *) pcxb->dat, players[i + 4].portrait, 40, i * 40, 0, 0,
-            40, 40);
+   kmin++;
+   if (kmin >= 60) {
+      kmin = 0;
+      khr++;
    }
 
-   unload_datafile_object (pcxb);
 }
 
+END_OF_FUNCTION (time_counter);
 
 
-/*! \brief Initialise all players
+
+/*! \brief Wait for key release
  *
- * Set up the player characters and load data specific
- * to them. This happens at the start of every game.
+ * This is used to wait and make sure that the user has
+ * released a key before moving on.
+ * 20030728 PH re-implemented in IMHO a neater way
+ *
+ * \note Waits at most 20 'ticks'
  */
-void init_players (void)
+void unpress (void)
 {
-   DATAFILE *pb;
-   int i, j;
-
-   for (j = 0; j < MAXCHRS; j++) {
-      for (i = 0; i < 24; i++)
-         party[j].sts[i] = 0;
-
-      for (i = 0; i < 6; i++)
-         party[j].eqp[i] = 0;
-
-      for (i = 0; i < 60; i++)
-         party[j].spells[i] = 0;
-
-      learn_new_spells (j);
-   }
-
-   gp = 0;
-
-   pb = load_datafile_object (PCX_DATAFILE, "USCHRS_PCX");
-
-   if (!pb)
-      program_death ("Could not load character graphics!");
-
-   set_palette (pal);
-
-   for (i = 0; i < MAXCHRS; i++)
-      for (j = 0; j < MAXFRAMES; j++)
-         blit ((BITMAP *) pb->dat, frames[i][j], j * 16, i * 16, 0, 0, 16, 16);
-
-   unload_datafile_object (pb);
-}
-
-
-
-#ifdef DEBUGMODE
-/*! \brief Create bitmap
- *
- * This function allocates a bitmap and kills the
- * program if it fails. The name you supply is
- * shown if this happens.
- * \note PH is this really necessary?
- *
- * \param   bx Width
- * \param   by Height
- * \param   bname Name of bitmap
- * \returns the pointer to the created bitmap
- */
-BITMAP *alloc_bmp (int bx, int by, char *bname)
-{
-   BITMAP *tmp;
-
-   tmp = create_bitmap (bx, by);
-
-   if (!tmp) {
-      sprintf (strbuf, "Could not allocate %s!.", bname);
-      program_death (strbuf);
-   }
-
-   return tmp;
-}
-#else
-#define alloc_bmp(w, h, n) create_bitmap((w), (h))
-#endif
-
-
-
-/*! \brief Create bitmaps
- *
- * A separate function to create all global bitmaps needed in the game.
- */
-static void allocate_stuff (void)
-{
-   int i, p;
-
-   kfonts = alloc_bmp (744, 60, "kfonts");
-
-   for (i = 0; i < 5; i++)
-      sfonts[i] = alloc_bmp (60, 8, "sfonts[i]");
-
-   menuptr = alloc_bmp (16, 8, "menuptr");
-   sptr = alloc_bmp (8, 8, "sptr");
-   mptr = alloc_bmp (8, 8, "mptr");
-   stspics = alloc_bmp (8, 216, "stspics");
-   sicons = alloc_bmp (8, 640, "sicons");
-   bptr = alloc_bmp (16, 8, "bptr");
-   upptr = alloc_bmp (8, 8, "upptr");
-   dnptr = alloc_bmp (8, 8, "dnptr");
-   noway = alloc_bmp (16, 16, "noway");
-   missbmp = alloc_bmp (20, 6, "missbmp");
-
-   for (i = 0; i < 9; i++)
-      pgb[i] = alloc_bmp (9, 9, "pgb[x]");
-
-   tc = alloc_bmp (16, 16, "tc");
-   tc2 = alloc_bmp (16, 16, "tc2");
-   b_shield = alloc_bmp (48, 48, "b_shield");
-   b_shell = alloc_bmp (48, 48, "b_shell");
-   b_repulse = alloc_bmp (16, 166, "b_repulse");
-   b_mp = alloc_bmp (10, 8, "b_mp");
-
-   for (p = 0; p < MAXE; p++) {
-      for (i = 0; i < MAXEFRAMES; i++)
-         eframes[p][i] = alloc_bmp (16, 16, "eframes[x][x]");
-   }
-
-   for (i = 0; i < MAXCHRS; i++) {
-      for (p = 0; p < MAXFRAMES; p++)
-         frames[i][p] = alloc_bmp (16, 16, "frames[x][x]");
-   }
-
-   for (p = 0; p < MAXCFRAMES; p++) {
-      for (i = 0; i < NUM_FIGHTERS; i++) {
-         cframes[i][p] = alloc_bmp (32, 32, "cframes[x][x]");
-         tcframes[i][p] = alloc_bmp (32, 32, "tcframes[x][x]");
-      }
-   }
-
-   double_buffer = alloc_bmp (352, 280, "double_buffer");
-   back = alloc_bmp (352, 280, "back");
-   fx_buffer = alloc_bmp (352, 280, "fx_buffer");
-
-   for (p = 0; p < MAX_SHADOWS; p++)
-      shadow[p] = alloc_bmp (16, 16, "shadow[x]");
-
-   for (p = 0; p < 8; p++)
-      bub[p] = alloc_bmp (16, 16, "bub[x]");
-
-   for (p = 0; p < 3; p++) {
-      bord[p] = alloc_bmp (8, 8, "bord[x]");
-      bord[p + 5] = alloc_bmp (8, 8, "bord[x]");
-   }
-
-   for (p = 3; p < 5; p++)
-      bord[p] = alloc_bmp (8, 12, "bord[x]");
-
-   for (p = 0; p < 8; p++)
-      players[p].portrait = alloc_bmp (40, 40, "portrait[x]");
-
-   for (p = 0; p < MAX_TILES; p++)
-      map_icons[p] = alloc_bmp (16, 16, "map_icons[x]");
-   allocate_credits ();
-}
-
-
-
-/*! \brief Free allocated memory
- *
- * This frees memory and such things.
- */
-static void deallocate_stuff (void)
-{
-   int i, p;
-
-   destroy_bitmap (kfonts);
-
-   for (i = 0; i < 5; i++)
-      destroy_bitmap (sfonts[i]);
-
-   destroy_bitmap (menuptr);
-   destroy_bitmap (sptr);
-   destroy_bitmap (mptr);
-   destroy_bitmap (upptr);
-   destroy_bitmap (dnptr);
-   destroy_bitmap (stspics);
-   destroy_bitmap (sicons);
-   destroy_bitmap (bptr);
-   destroy_bitmap (noway);
-   destroy_bitmap (missbmp);
-
-   for (i = 0; i < 9; i++)
-      destroy_bitmap (pgb[i]);
-
-   destroy_bitmap (tc);
-   destroy_bitmap (tc2);
-   destroy_bitmap (b_shield);
-   destroy_bitmap (b_shell);
-   destroy_bitmap (b_repulse);
-   destroy_bitmap (b_mp);
-
-   for (p = 0; p < MAXE; p++)
-      for (i = 0; i < MAXEFRAMES; i++)
-         destroy_bitmap (eframes[p][i]);
-
-   for (i = 0; i < MAXFRAMES; i++)
-      for (p = 0; p < MAXCHRS; p++)
-         destroy_bitmap (frames[p][i]);
-
-   for (i = 0; i < MAXCFRAMES; i++) {
-      for (p = 0; p < NUM_FIGHTERS; p++) {
-         destroy_bitmap (cframes[p][i]);
-         destroy_bitmap (tcframes[p][i]);
-      }
-   }
-
-   destroy_bitmap (double_buffer);
-   destroy_bitmap (back);
-   destroy_bitmap (fx_buffer);
-
-   for (p = 0; p < MAX_SHADOWS; p++)
-      destroy_bitmap (shadow[p]);
-
-   for (p = 0; p < 8; p++)
-      destroy_bitmap (bub[p]);
-
-   for (p = 0; p < 8; p++)
-      destroy_bitmap (bord[p]);
-
-   for (p = 0; p < MAXCHRS; p++)
-      destroy_bitmap (players[p].portrait);
-
-   for (p = 0; p < MAX_TILES; p++)
-      destroy_bitmap (map_icons[p]);
-
-   if (map_seg)
-      free (map_seg);
-   if (b_seg)
-      free (b_seg);
-   if (f_seg)
-      free (f_seg);
-   if (z_seg)
-      free (z_seg);
-   if (s_seg)
-      free (s_seg);
-   if (o_seg)
-      free (o_seg);
-   if (progress)
-      free (progress);
-   if (treasure)
-      free (treasure);
-   if (strbuf)
-      free (strbuf);
-/*    if (savedir) */
-/*       free (savedir); */
-
-   if (is_sound) {
-      shutdown_music ();
-      free_samples ();
-   }
-   deallocate_credits ();
-
-#ifdef DEBUGMODE
-   destroy_bitmap (obj_mesh);
-#endif
-}
-
-
-
-/*! \brief Pause for a time
- *
- * Why not just use rest() you ask?  Well, this function
- * kills time, but it also processes entities.  This function
- * is basically used to run entity scripts and for automatic
- * party movement.
- *
- * \param   dtime Time in frames
- */
-void kwait (int dtime)
-{
-   int cnt = 0;
-
-   autoparty = 1;
    timer_count = 0;
+   while (timer_count < 20) {
+      readcontrols ();
+      if (!(balt || bctrl || benter || besc || up || down || right || left))
+         break;
+   }
+   timer_count = 0;
+}
 
-   while (cnt < dtime) {
-      poll_music ();
-      while (timer_count > 0) {
-         poll_music ();
-         timer_count--;
-         cnt++;
-         process_entities ();
-      }
-      check_animation ();
 
-      drawmap ();
-      blit2screen (xofs, yofs);
-#ifdef DEBUGMODE
-      if (debugging > 0) {
-         if (key[KEY_W] && key[KEY_ALT]) {
-            klog ("Alt+W Pressed:");
-            sprintf (strbuf, "\tkwait(); cnt=%d, dtime=%d, timer_count=%d",
-                     cnt, dtime, timer_count);
-            klog (strbuf);
-            break;
-         }
+
+/*! \brief Wait for ALT
+ *
+ * Simply wait for the 'alt' key to be pressed.
+ */
+void wait_enter (void)
+{
+   int stop = 0;
+
+   unpress ();
+
+   while (!stop) {
+      readcontrols ();
+      if (balt) {
+         unpress ();
+         stop = 1;
       }
-#endif
-      if (key[KEY_X] && key[KEY_ALT]) {
-         if (debugging > 0) {
-            sprintf (strbuf, "kwait(); cnt = %d, dtime = %d, timer_count = %d",
-                     cnt, dtime, timer_count);
-         } else {
-            sprintf (strbuf, "Program terminated: user pressed Alt+X");
-         }
-         program_death (strbuf);
-      }
+      kq_yield ();
    }
 
    timer_count = 0;
-   autoparty = 0;
 }
 
 
@@ -1599,6 +1824,13 @@ void kwait (int dtime)
 void wait_for_entity (int est, int efi)
 {
    int e, n, m;
+
+   if (est > efi) {
+      int temp = est;
+      est = efi;
+      efi = temp;
+   }
+
    autoparty = 1;
    do {
       while (timer_count > 0) {
@@ -1631,243 +1863,95 @@ void wait_for_entity (int est, int efi)
 
 
 
-/*! \brief End program due to fatal error
+/*! \brief Move player(s) to new coordinates
  *
- * Kill the program and spit out a message.
+ * Fade out... change co-ordinates... fade in.
+ * The wtx/wty co-ordinates indicate where to put the player.
+ * The wvx/wvy co-ordinates indicate where to put the camera.
  *
- * \param   message Text to put into log
+ * \param   wtx New x-coord
+ * \param   wty New y-coord
+ * \param   fspeed Speed of fading (See do_transition())
  */
-void program_death (char *message)
+void warp (int wtx, int wty, int fspeed)
 {
-   char internal_buffer[80];
-   strcat (strncpy (internal_buffer, message, sizeof (internal_buffer) - 1),
-           "\n");
-   TRACE ("%s\n", message);
-   deallocate_stuff ();
-   allegro_message (internal_buffer);
-   set_gfx_mode (GFX_TEXT, 0, 0, 0, 0);
-   exit (EXIT_FAILURE);
-}
+   int i, f;
 
+   if (hold_fade == 0)
+      do_transition (TRANS_FADE_OUT, fspeed);
 
-
-/*! \brief Is this character in the party?
- *
- * Determine if a given character is currently in play.
- *
- * \param   pn Character to ask about
- * \returns where it is in the party list (1 or 2), or 0 if not
- */
-int in_party (int pn)
-{
-   int a;
-
-   for (a = 0; a < MAXCHRS; a++)
-      if (pidx[a] == pn)
-         return a + 1;
-
-   return 0;
-}
-
-
-
-/*! \brief Main function
- *
- * Well, this one is pretty obvious.
- */
-int main (int argc, const char *argv[])
-{
-   int stop, game_on, skip_splash;
-   int i;
-
-   if (argc > 1) {
-      for (i = 1; i < argc; i++) {
-         if (!strcmp (argv[i], "-nosplash")) {
-            skip_splash = 1;
-         } else {
-            skip_splash = 0;
-         }
-      }
-   } else {
-      skip_splash = 0;
-   }
-
-   startup ();
-   game_on = 1;
-   /* Also this can be overridden by settings in config */
-   while (game_on) {
-      switch (start_menu (skip_splash)) {
-      case 0:
-         break;
-      case 1:
-         change_map ("starting", 0, 0, 0, 0);
-         break;
-      default:
-         /* Someone pressed 'EXIT'  */
-         game_on = 0;
-         break;
-      }
-      /* Only show it once at the start */
-      skip_splash = 1;
-      if (game_on) {
-         stop = 0;
-         timer_count = 0;
-         alldead = 0;
-         while (!stop) {
-            while (timer_count > 0) {
-               timer_count--;
-               process_entities ();
-            }
-            check_animation ();
-            drawmap ();
-            blit2screen (xofs, yofs);
-            poll_music ();
-
-            if (key[kesc]) {
-               stop = system_menu ();
-            }
-            if (bhelp) {
-               /* TODO: In-game help system. */
-            }
-
-            if (alldead) {
-               clear (screen);
-               do_transition (TRANS_FADE_IN, 16);
-               stop = 1;
-            }
-
-         }
-      }
-   }
-   remove_int (my_counter);
-   remove_int (time_counter);
-   deallocate_stuff ();
-   return EXIT_SUCCESS;
-}
-
-END_OF_MAIN ();
-
-
-/*! \brief Timer Event structure
- *
- * Holds the information relating to a forthcoming event
- */
-static struct timer_event
-{
-   char name[32];               /*!< Name of the event */
-   int when;                    /*!< Time when it will trigger */
-} timer_events[5];
-
-static int next_event_time;     /*!< The time the next event will trigger */
-
-
-/*! \brief Delete any pending events
-*
-* This removes any events from the list
-*/
-void reset_timer_events (void)
-{
-   int i;
-   for (i = 0; i < 5; ++i)
-      *timer_events[i].name = '\0';
-   next_event_time = INT_MAX;
-}
-
-
-/* \brief Add a new timer event to the list
- *
- * Up to five pending events can be stored
- * at once.
- * \param n the name of the event
- * \param delta the number of seconds before the
- *        event will be called. For example 5 means
- *        five seconds in the future
- * \returns <0 if an error occurred (i.e. too many pending events)
- */
-int add_timer_event (const char *n, int delta)
-{
-   int w = delta + ksec;
-   int i;
-   for (i = 0; i < 5; ++i) {
-      if (*timer_events[i].name == '\0') {
-         memcpy (timer_events[i].name, n, sizeof (timer_events[i].name));
-         if (w < next_event_time)
-            next_event_time = w;
-         timer_events[i].when = w;
-         return i;
-      }
-   }
-   return -1;
-}
-
-
-/* \brief Get the next event if any
- *
- * Checks the pending events and returns the name
- * of the next one, or NULL if nothing is ready
- * to be triggered.
- * If more than one event is ready, only one will be returned;
- * the next one will be returned next time.
- * Each event is removed after it is triggered. If a repeating
- * event is desired, you should call add_timer_event() again
- * in the handler function.
- *
- * \returns name of the next event or NULL if none is ready
- */
-char *get_timer_event (void)
-{
-   static char buf[32];
-   int now = ksec;
-   int i;
-   int next = INT_MAX;
-   struct timer_event *t;
-
-   if (now < next_event_time)
-      return NULL;
-
-   *buf = '\0';
-   for (i = 0; i < 5; ++i) {
-      t = &timer_events[i];
-      if (*t->name) {
-         if (t->when <= now) {
-            memcpy (buf, t->name, sizeof (buf));
-            *t->name = '\0';
-         } else {
-            if (t->when < next)
-               next = t->when;
-         }
-      }
-   }
-   next_event_time = next;
-   return *buf ? buf : NULL;
-}
-
-
-/*! \brief Yield processor for other tasks
- *
- * This function calls rest() or yield_cpu() as appropriate for
- * the platform and allegro version
- *
- * \author PH
- * \date 20050423
- */
-void kq_yield (void)
-{
-   if (cpu_usage > 2)
-      cpu_usage = 2;
-
-   /* This can call the regular yield_timeslice() function, or we can try to
-    * use rest(0) or rest(1), depending on the user's preference (and Allegro
-    * settings).
-    */
-   if (cpu_usage == 0)
-      yield_timeslice ();
+   if (numchrs == 0)
+      f = 1;
    else
-      rest (cpu_usage - 1);
+      f = numchrs;
+
+   for (i = 0; i < f; i++) {
+      place_ent (i, wtx, wty);
+      g_ent[i].moving = 0;
+      g_ent[i].movcnt = 0;
+      g_ent[i].framectr = 0;
+   }
+
+   vx = wtx * 16;
+   vy = wty * 16;
+
+   calc_viewport (1);
+   drawmap ();
+   blit2screen (xofs, yofs);
+
+   if (hold_fade == 0)
+      do_transition (TRANS_FADE_IN, fspeed);
+
+   timer_count = 0;
 }
+
+
+
+/*! \brief Zone event handler
+ *
+ * This routine is called after every final step onto
+ * a new tile (not after warps or such things).  It
+ * just checks if the zone value for this co-ordinate is
+ * not zero and then it calls the event handler.  However,
+ * there is a member of the map structure called zero_zone
+ * that let's you call the event handler on 0 zones if you
+ * wish.
+ * This function also handles the Repulse functionality
+ */
+void zone_check (void)
+{
+   unsigned short stc, zx, zy;
+   zx = g_ent[0].x / 16;
+   zy = g_ent[0].y / 16;
+
+   if (progress[P_REPULSE] > 0) {
+      if (g_map.map_no == MAP_MAIN)
+         progress[P_REPULSE]--;
+      else {
+         if (progress[P_REPULSE] > 1)
+            progress[P_REPULSE] -= 2;
+         else
+            progress[P_REPULSE] = 0;
+      }
+
+      if (progress[P_REPULSE] < 1)
+         message ("Repulse has worn off!", 255, 0, xofs, yofs);
+   }
+
+   stc = z_seg[zy * g_map.xsize + zx];
+
+   if (g_map.zero_zone != 0)
+      do_zone (stc);
+   else {
+      if (stc > 0)
+         do_zone (stc);
+   }
+}
+
+
 
 /*! \mainpage KQ - The Classic Computer Role-Playing Game
- * 
+ *
  * Take the part of one of eight mighty heroes as you search for the
  * Staff of Xenarum.  Visit over twenty different locations, fight a
  * multitude of evil monsters, wield deadly weapons and cast powerful

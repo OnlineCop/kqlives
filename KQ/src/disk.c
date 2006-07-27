@@ -31,75 +31,30 @@
 
 static int load_s_marker (s_marker *, PACKFILE *);
 static int save_s_marker (const s_marker *, PACKFILE *);
+static int load_s_bound (s_bound *, PACKFILE *);
+static int save_s_bound (const s_bound *, PACKFILE *);
 
-int load_s_map (s_map * sm, PACKFILE * f)
+
+
+int load_s_bound (s_bound * b, PACKFILE * f)
 {
-   int i;
-   sm->map_no = pack_getc (f);
-   sm->zero_zone = pack_getc (f);
-   sm->map_mode = pack_getc (f);
-   sm->can_save = pack_getc (f);
-   sm->tileset = pack_getc (f);
-   sm->use_sstone = pack_getc (f);
-   sm->can_warp = pack_getc (f);
-   sm->extra_byte = pack_getc (f);
-   sm->xsize = pack_igetl (f);
-   sm->ysize = pack_igetl (f);
-   sm->pmult = pack_igetl (f);
-   sm->pdiv = pack_igetl (f);
-   sm->stx = pack_igetl (f);
-   sm->sty = pack_igetl (f);
-   sm->warpx = pack_igetl (f);
-   sm->warpy = pack_igetl (f);
-   sm->revision = pack_igetl (f);
-   sm->extra_sdword2 = pack_igetl (f);
-   pack_fread (sm->song_file, sizeof (sm->song_file), f);
-   pack_fread (sm->map_desc, sizeof (sm->map_desc), f);
-   if (sm->revision == 1) {
-      /* Markers stuff */
-      sm->num_markers = pack_igetw (f);
-      sm->markers = (s_marker *) realloc
-         (sm->markers, sm->num_markers * sizeof (s_marker));
-      for (i = 0; i < sm->num_markers; ++i) {
-         load_s_marker (&sm->markers[i], f);
-      }
-   } else {
-      sm->num_markers = 0;
-   }
+   b->x1 = pack_igetw (f);
+   b->y1 = pack_igetw (f);
+   b->x2 = pack_igetw (f);
+   b->y2 = pack_igetw (f);
+   b->btile = pack_igetw (f);
    return 0;
 }
 
 
 
-int save_s_map (s_map * sm, PACKFILE * f)
+int save_s_bound (const s_bound * b, PACKFILE * f)
 {
-   int i;
-   pack_putc (sm->map_no, f);
-   pack_putc (sm->zero_zone, f);
-   pack_putc (sm->map_mode, f);
-   pack_putc (sm->can_save, f);
-   pack_putc (sm->tileset, f);
-   pack_putc (sm->use_sstone, f);
-   pack_putc (sm->can_warp, f);
-   pack_putc (sm->extra_byte, f);
-   pack_iputl (sm->xsize, f);
-   pack_iputl (sm->ysize, f);
-   pack_iputl (sm->pmult, f);
-   pack_iputl (sm->pdiv, f);
-   pack_iputl (sm->stx, f);
-   pack_iputl (sm->sty, f);
-   pack_iputl (sm->warpx, f);
-   pack_iputl (sm->warpy, f);
-   pack_iputl (1, f);           /* Revision 1 */
-   pack_iputl (sm->extra_sdword2, f);
-   pack_fwrite (sm->song_file, sizeof (sm->song_file), f);
-   pack_fwrite (sm->map_desc, sizeof (sm->map_desc), f);
-
-   /* Markers stuff */
-   pack_iputw (sm->num_markers, f);
-   for (i = 0; i < sm->num_markers; ++i) {
-      save_s_marker (&sm->markers[i], f);
-   }
+   pack_iputw (b->x1, f);
+   pack_iputw (b->y1, f);
+   pack_iputw (b->x2, f);
+   pack_iputw (b->y2, f);
+   pack_iputw (b->btile, f);
    return 0;
 }
 
@@ -172,6 +127,127 @@ int save_s_entity (s_entity * s, PACKFILE * f)
    pack_putc (s->facehero, f);
    pack_putc (s->transl, f);
    pack_fwrite (s->script, sizeof (s->script), f);
+   return 0;
+}
+
+
+
+int load_s_map (s_map * sm, PACKFILE * f)
+{
+   int i;
+   sm->map_no = pack_getc (f);
+   sm->zero_zone = pack_getc (f);
+   sm->map_mode = pack_getc (f);
+   sm->can_save = pack_getc (f);
+   sm->tileset = pack_getc (f);
+   sm->use_sstone = pack_getc (f);
+   sm->can_warp = pack_getc (f);
+   sm->extra_byte = pack_getc (f);
+   sm->xsize = pack_igetl (f);
+   sm->ysize = pack_igetl (f);
+   sm->pmult = pack_igetl (f);
+   sm->pdiv = pack_igetl (f);
+   sm->stx = pack_igetl (f);
+   sm->sty = pack_igetl (f);
+   sm->warpx = pack_igetl (f);
+   sm->warpy = pack_igetl (f);
+   sm->revision = pack_igetl (f);
+   sm->extra_sdword2 = pack_igetl (f);
+   pack_fread (sm->song_file, sizeof (sm->song_file), f);
+   pack_fread (sm->map_desc, sizeof (sm->map_desc), f);
+
+   if (sm->revision >= 1) {
+      /* Markers stuff */
+      sm->num_markers = pack_igetw (f);
+
+      sm->markers = (s_marker *) realloc
+         (sm->markers, sm->num_markers * sizeof (s_marker));
+      for (i = 0; i < sm->num_markers; ++i) {
+         load_s_marker (&sm->markers[i], f);
+      }
+
+      if (sm->revision >= 2) {
+         /* Bounding boxes stuff */
+         sm->num_bound_boxes = pack_igetw (f);
+         sm->bound_box = (s_bound *) realloc
+            (sm->bound_box, sm->num_bound_boxes * sizeof (s_bound));
+
+         for (i = 0; i < sm->num_bound_boxes; ++i) {
+            load_s_bound (&sm->bound_box[i], f);
+         }
+      } else {
+         sm->num_bound_boxes = 0;
+      }
+   } else {
+      sm->num_markers = 0;
+      sm->num_bound_boxes = 0;
+   }
+   return 0;
+}
+
+
+
+int save_s_map (s_map * sm, PACKFILE * f)
+{
+   int i;
+   pack_putc (sm->map_no, f);
+   pack_putc (sm->zero_zone, f);
+   pack_putc (sm->map_mode, f);
+   pack_putc (sm->can_save, f);
+   pack_putc (sm->tileset, f);
+   pack_putc (sm->use_sstone, f);
+   pack_putc (sm->can_warp, f);
+   pack_putc (sm->extra_byte, f);
+   pack_iputl (sm->xsize, f);
+   pack_iputl (sm->ysize, f);
+   pack_iputl (sm->pmult, f);
+   pack_iputl (sm->pdiv, f);
+   pack_iputl (sm->stx, f);
+   pack_iputl (sm->sty, f);
+   pack_iputl (sm->warpx, f);
+   pack_iputl (sm->warpy, f);
+   //pack_iputl (1, f);           /* Revision 1 */
+   sm->revision = 2; // Force new revision: 2
+
+   pack_iputl (sm->revision, f);           /* Revision 2 */
+   pack_iputl (sm->extra_sdword2, f);
+   pack_fwrite (sm->song_file, sizeof (sm->song_file), f);
+   pack_fwrite (sm->map_desc, sizeof (sm->map_desc), f);
+
+   /* Markers */
+   pack_iputw (sm->num_markers, f);
+
+   for (i = 0; i < sm->num_markers; ++i) {
+      save_s_marker (&sm->markers[i], f);
+   }
+
+   /* Bounding boxes */
+   pack_iputw (sm->num_bound_boxes, f);
+
+   for (i = 0; i < sm->num_bound_boxes; ++i) {
+      save_s_bound (&sm->bound_box[i], f);
+   }
+
+   return 0;
+}
+
+
+
+int load_s_marker (s_marker * m, PACKFILE * f)
+{
+   pack_fread (m->name, sizeof (m->name), f);
+   m->x = pack_igetw (f);
+   m->y = pack_igetw (f);
+   return 0;
+}
+
+
+
+int save_s_marker (const s_marker * m, PACKFILE * f)
+{
+   pack_fwrite (m->name, sizeof (m->name), f);
+   pack_iputw (m->x, f);
+   pack_iputw (m->y, f);
    return 0;
 }
 
@@ -274,21 +350,5 @@ int save_s_tileset (s_tileset * s, PACKFILE * f)
       pack_iputw (s->tanim[i].end, f);
       pack_iputw (s->tanim[i].delay, f);
    }
-   return 0;
-}
-
-int load_s_marker (s_marker * m, PACKFILE * f)
-{
-   pack_fread (m->name, sizeof (m->name), f);
-   m->x = pack_igetw (f);
-   m->y = pack_igetw (f);
-   return 0;
-}
-
-int save_s_marker (const s_marker * m, PACKFILE * f)
-{
-   pack_fwrite (m->name, sizeof (m->name), f);
-   pack_iputw (m->x, f);
-   pack_iputw (m->y, f);
    return 0;
 }

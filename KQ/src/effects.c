@@ -30,38 +30,82 @@
 #include <string.h>
 
 #include "kq.h"
-#include "setup.h"
+#include "combat.h"
+#include "draw.h"
 #include "effects.h"
 #include "itemmenu.h"
-#include "draw.h"
-#include "combat.h"
 #include "magic.h"
-#include "ssprites.h"
-#include "res.h"
-#include "timing.h"
 #include "music.h"
+#include "res.h"
+#include "setup.h"
+#include "ssprites.h"
+#include "timing.h"
 
 
 
-/*! \brief Draw fighting animations
+/*! \brief Draw death animation
  *
- * Draw fighting animations.
- * Selects the correct image and calls draw_attacksprite()
+ * Heh... this one's pretty obvious.  Centered on both the x and y axis.
+ * This is the expanding circle animation.
  *
- * \sa draw_attacksprite()
- * \param   tgt Target
- * \param   who Character attacking
- * \param   ma Multiple targets
+ * \param   tgt Target, must be >=2
+ * \param   aflag If ==1, then target all. If target <PSIZE then target all
+ *          heroes, otherwise target all enemies.
  */
-void fight_animation (int tgt, int who, int ma)
+void death_animation (int tgt, int aflag)
 {
-   int a;
+   int a, f, dx, dy, n, g, p;
+   // TT: used for the slow_computer routine
+   int count;
 
-   if (who < PSIZE)
-      a = items[party[pidx[who]].eqp[0]].eff;
-   else
-      a = fighter[who].cwt;
-   draw_attacksprite (tgt, ma, a, 1);
+   if (tgt < 2)
+      return;
+   if (aflag == 1) {
+      if (tgt < PSIZE) {
+         f = 0;
+         n = numchrs;
+      } else {
+         f = PSIZE;
+         n = numens;
+      }
+   } else {
+      f = tgt;
+      n = 1;
+   }
+   curx = -1;
+   cury = -1;
+   play_effect (24, 128);
+   battle_render (0, 0, 0);
+   blit (double_buffer, back, 0, 0, 0, 0, 352, 280);
+
+   // TT: slow_computer addition for speed-ups
+   count = (slow_computer ? 4 : 1);
+   for (p = 0; p < 2; p++) {
+      // TT: slow_computer additions for speed-ups
+      for (a = 0; a < 16; a += count) {
+         convert_cframes (tgt, 1, 15 - (a / 2), aflag);
+         for (g = f; g < f + n; g++) {
+            if (deffect[g] == 1) {
+               dx = fighter[g].cx + (fighter[g].cw / 2);
+               dy = fighter[g].cy + (fighter[g].cl / 2);
+               if (p == 0) {
+                  circlefill (double_buffer, dx, dy, a, 0);
+                  draw_fighter (g, 0);
+               } else
+                  circlefill (double_buffer, dx, dy, 15 - a, 0);
+            }
+         }
+         blit2screen (0, 0);
+         kq_wait (30);
+         blit (back, double_buffer, 0, 0, 0, 0, 350, 280);
+      }
+   }
+   for (g = f; g < f + n; g++)
+      if (deffect[g] == 1)
+         deffect[g] = 0;
+   revert_cframes (tgt, aflag);
+   battle_render (0, 0, 0);
+   blit2screen (0, 0);
 }
 
 
@@ -142,170 +186,6 @@ void display_amount (int tgt, int cl, int aflag)
    }
    battle_render (0, 0, 0);
    blit2screen (0, 0);
-}
-
-
-
-/*! \brief Fighter status
- *
- * Just make sure the fighter in question is dead or not.  Sometimes, we
- * still want to return true if s/he is dead.
- * This happens during the casting of the life and full-life spells, in
- * combatspell().
- * deadeffect is normally 0, it is changed temporarily to 1
- *
- * \param   guy Id of character to check (index into fighter[] array)
- * \returns 1 if alive, 0 if dead
- */
-int is_active (int guy)
-{
-   return (fighter[guy].sts[S_DEAD] == deadeffect ? 1 : 0);
-
-/* TT REMOVE:
-   if (fighter[guy].sts[S_DEAD] == deadeffect)
-      return 1;
-   else
-      return 0;
- */
-}
-
-
-
-/*! \brief Draw spell sprite
- *
- * Draw the spell sprite as it affects one or all allies or enemies.  There
- * is one special var (part of the effect structure) called orient, which
- * affects the y-axis:
- * - A value of 0 says align the spell with the top of the fighter sprite.
- * - A value of 1 says center the spell.
- * - A value of 2 says align the spell with the bottom of the fighter sprite.
- *
- * The x alignment is always centered.
- *
- * \sa s_effect
- * \param   tgt Target
- * \param   aflag Multiple target flag
- * \param   ef Effect (which spell is being cast)
- * \param   shows Show the spell cast
- */
-void draw_spellsprite (int tgt, int aflag, int ef, int shows)
-{
-   int a, f, dx, dy = 0, n, g;
-   DATAFILE *pb;
-
-   pb = load_datafile_object (SPELL_DATAFILE, eff[ef].ename);
-   convert_cframes (tgt, eff[ef].kolor - 3, eff[ef].kolor + 3, aflag);
-   if (aflag == 1) {
-      if (tgt < PSIZE) {
-         f = 0;
-         n = numchrs;
-      } else {
-         f = PSIZE;
-         n = numens;
-      }
-   } else {
-      f = tgt;
-      n = 1;
-   }
-   curx = -1;
-   cury = -1;
-   dct = 1;
-   battle_render (0, 0, 0);
-   dct = 0;
-   blit (double_buffer, back, 0, 0, 0, 0, 352, 280);
-   play_effect (eff[ef].snd, 128);
-   for (a = 0; a < eff[ef].numf; a++) {
-      for (g = f; g < f + n; g++) {
-         if (is_active (g) == 1) {
-            dx = fighter[g].cx + (fighter[g].cw / 2) - (eff[ef].xsize / 2);
-            switch (eff[ef].orient) {
-            case 0:
-               dy = fighter[g].cy + fighter[g].cl - eff[ef].ysize;
-               break;
-            case 1:
-               dy = fighter[g].cy + (fighter[g].cl / 2) - (eff[ef].ysize / 2);
-               break;
-            case 2:
-               dy = fighter[g].cy + eff[ef].ysize;
-               break;
-            }
-            draw_fighter (g, 0);
-            if (shows == 1 && fighter[g].sts[S_RESIST] > 0)
-               draw_trans_sprite (double_buffer, b_shell,
-                                  fighter[g].cx + (fighter[g].cw / 2) - 24,
-                                  fighter[g].cy + (fighter[g].cl / 2) - 24);
-            masked_blit ((BITMAP *) pb->dat, double_buffer, 0,
-                         eff[ef].ysize * a, dx, dy, eff[ef].xsize,
-                         eff[ef].ysize);
-         }
-      }
-      blit2screen (0, 0);
-      kq_wait (eff[ef].delay);
-      blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
-   }
-   revert_cframes (tgt, aflag);
-   unload_datafile_object (pb);
-}
-
-
-
-/*! \brief Draw a large sprite
- *
- * This draws a large sprite, which is meant to affect an entire group.
- * Calling the function requires supplying exact co-ordinates, so there
- * is no need to worry about centering here... the orient var (from the
- * effect structure) is used to determine whether to draw under or over
- * the fighters.
- *
- * \param   tgt Target
- * \param   hx x-coord
- * \param   hy y-coord
- * \param   ef Magic effect
- * \param   shows Show the magic sprite
- */
-void draw_hugesprite (int tgt, int hx, int hy, int ef, int shows)
-{
-   int a, f, n, g;
-   DATAFILE *pb;
-
-   pb = load_datafile_object (SPELL_DATAFILE, eff[ef].ename);
-   convert_cframes (tgt, eff[ef].kolor - 3, eff[ef].kolor + 3, 1);
-   if (tgt < PSIZE) {
-      f = 0;
-      n = numchrs;
-   } else {
-      f = PSIZE;
-      n = numens;
-   }
-   curx = -1;
-   cury = -1;
-   dct = 1;
-   battle_render (0, 0, 0);
-   dct = 0;
-   blit (double_buffer, back, 0, 0, 0, 0, 352, 280);
-   play_effect (eff[ef].snd, 128);
-   for (a = 0; a < eff[ef].numf; a++) {
-      if (eff[ef].orient == 0)
-         masked_blit ((BITMAP *) pb->dat, double_buffer, 0, eff[ef].ysize * a,
-                      hx, hy, eff[ef].xsize, eff[ef].ysize);
-      for (g = f; g < f + n; g++) {
-         if (is_active (g) == 1) {
-            if (shows == 1 && fighter[g].sts[S_RESIST] > 0)
-               draw_trans_sprite (double_buffer, b_shell,
-                                  fighter[g].cx + (fighter[g].cw / 2) - 24,
-                                  fighter[g].cy + (fighter[g].cl / 2) - 24);
-            draw_fighter (g, 0);
-         }
-      }
-      if (eff[ef].orient == 1)
-         masked_blit ((BITMAP *) pb->dat, double_buffer, 0, eff[ef].ysize * a,
-                      hx, hy, eff[ef].xsize, eff[ef].ysize);
-      blit2screen (0, 0);
-      kq_wait (eff[ef].delay);
-      blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
-   }
-   revert_cframes (tgt, 1);
-   unload_datafile_object (pb);
 }
 
 
@@ -430,23 +310,91 @@ void draw_castersprite (int cstr, int cc)
 
 
 
-/*! \brief Draw death animation
+/*! \brief Draw a large sprite
  *
- * Heh... this one's pretty obvious.  Centered on both the x and y axis.
- * This is the expanding circle animation.
+ * This draws a large sprite, which is meant to affect an entire group.
+ * Calling the function requires supplying exact co-ordinates, so there
+ * is no need to worry about centering here... the orient var (from the
+ * effect structure) is used to determine whether to draw under or over
+ * the fighters.
  *
- * \param   tgt Target, must be >=2
- * \param   aflag If ==1, then target all. If target <PSIZE then target all
- *          heroes, otherwise target all enemies.
+ * \param   tgt Target
+ * \param   hx x-coord
+ * \param   hy y-coord
+ * \param   ef Magic effect
+ * \param   shows Show the magic sprite
  */
-void death_animation (int tgt, int aflag)
+void draw_hugesprite (int tgt, int hx, int hy, int ef, int shows)
 {
-   int a, f, dx, dy, n, g, p;
-   // TT: used for the slow_computer routine
-   int count;
+   int a, f, n, g;
+   DATAFILE *pb;
 
-   if (tgt < 2)
-      return;
+   pb = load_datafile_object (SPELL_DATAFILE, eff[ef].ename);
+   convert_cframes (tgt, eff[ef].kolor - 3, eff[ef].kolor + 3, 1);
+   if (tgt < PSIZE) {
+      f = 0;
+      n = numchrs;
+   } else {
+      f = PSIZE;
+      n = numens;
+   }
+   curx = -1;
+   cury = -1;
+   dct = 1;
+   battle_render (0, 0, 0);
+   dct = 0;
+   blit (double_buffer, back, 0, 0, 0, 0, 352, 280);
+   play_effect (eff[ef].snd, 128);
+   for (a = 0; a < eff[ef].numf; a++) {
+      if (eff[ef].orient == 0)
+         masked_blit ((BITMAP *) pb->dat, double_buffer, 0, eff[ef].ysize * a,
+                      hx, hy, eff[ef].xsize, eff[ef].ysize);
+      for (g = f; g < f + n; g++) {
+         if (is_active (g) == 1) {
+            if (shows == 1 && fighter[g].sts[S_RESIST] > 0)
+               draw_trans_sprite (double_buffer, b_shell,
+                                  fighter[g].cx + (fighter[g].cw / 2) - 24,
+                                  fighter[g].cy + (fighter[g].cl / 2) - 24);
+            draw_fighter (g, 0);
+         }
+      }
+      if (eff[ef].orient == 1)
+         masked_blit ((BITMAP *) pb->dat, double_buffer, 0, eff[ef].ysize * a,
+                      hx, hy, eff[ef].xsize, eff[ef].ysize);
+      blit2screen (0, 0);
+      kq_wait (eff[ef].delay);
+      blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
+   }
+   revert_cframes (tgt, 1);
+   unload_datafile_object (pb);
+}
+
+
+
+/*! \brief Draw spell sprite
+ *
+ * Draw the spell sprite as it affects one or all allies or enemies.  There
+ * is one special var (part of the effect structure) called orient, which
+ * affects the y-axis:
+ * - A value of 0 says align the spell with the top of the fighter sprite.
+ * - A value of 1 says center the spell.
+ * - A value of 2 says align the spell with the bottom of the fighter sprite.
+ *
+ * The x alignment is always centered.
+ *
+ * \sa s_effect
+ * \param   tgt Target
+ * \param   aflag Multiple target flag
+ * \param   ef Effect (which spell is being cast)
+ * \param   shows Show the spell cast
+ */
+void draw_spellsprite (int tgt, int aflag, int ef, int shows)
+{
+   int a, f, dx, dy = 0, n, g;
+   DATAFILE *pb;
+
+   pb = load_datafile_object (SPELL_DATAFILE, eff[ef].ename);
+   convert_cframes (tgt, eff[ef].kolor - 3, eff[ef].kolor + 3, aflag);
    if (aflag == 1) {
       if (tgt < PSIZE) {
          f = 0;
@@ -461,36 +409,81 @@ void death_animation (int tgt, int aflag)
    }
    curx = -1;
    cury = -1;
-   play_effect (24, 128);
+   dct = 1;
    battle_render (0, 0, 0);
+   dct = 0;
    blit (double_buffer, back, 0, 0, 0, 0, 352, 280);
-
-   // TT: slow_computer addition for speed-ups
-   count = (slow_computer ? 4 : 1);
-   for (p = 0; p < 2; p++) {
-      // TT: slow_computer additions for speed-ups
-      for (a = 0; a < 16; a += count) {
-         convert_cframes (tgt, 1, 15 - (a / 2), aflag);
-         for (g = f; g < f + n; g++) {
-            if (deffect[g] == 1) {
-               dx = fighter[g].cx + (fighter[g].cw / 2);
-               dy = fighter[g].cy + (fighter[g].cl / 2);
-               if (p == 0) {
-                  circlefill (double_buffer, dx, dy, a, 0);
-                  draw_fighter (g, 0);
-               } else
-                  circlefill (double_buffer, dx, dy, 15 - a, 0);
+   play_effect (eff[ef].snd, 128);
+   for (a = 0; a < eff[ef].numf; a++) {
+      for (g = f; g < f + n; g++) {
+         if (is_active (g) == 1) {
+            dx = fighter[g].cx + (fighter[g].cw / 2) - (eff[ef].xsize / 2);
+            switch (eff[ef].orient) {
+            case 0:
+               dy = fighter[g].cy + fighter[g].cl - eff[ef].ysize;
+               break;
+            case 1:
+               dy = fighter[g].cy + (fighter[g].cl / 2) - (eff[ef].ysize / 2);
+               break;
+            case 2:
+               dy = fighter[g].cy + eff[ef].ysize;
+               break;
             }
+            draw_fighter (g, 0);
+            if (shows == 1 && fighter[g].sts[S_RESIST] > 0)
+               draw_trans_sprite (double_buffer, b_shell,
+                                  fighter[g].cx + (fighter[g].cw / 2) - 24,
+                                  fighter[g].cy + (fighter[g].cl / 2) - 24);
+            masked_blit ((BITMAP *) pb->dat, double_buffer, 0,
+                         eff[ef].ysize * a, dx, dy, eff[ef].xsize,
+                         eff[ef].ysize);
          }
-         blit2screen (0, 0);
-         kq_wait (30);
-         blit (back, double_buffer, 0, 0, 0, 0, 350, 280);
       }
+      blit2screen (0, 0);
+      kq_wait (eff[ef].delay);
+      blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
    }
-   for (g = f; g < f + n; g++)
-      if (deffect[g] == 1)
-         deffect[g] = 0;
    revert_cframes (tgt, aflag);
-   battle_render (0, 0, 0);
-   blit2screen (0, 0);
+   unload_datafile_object (pb);
+}
+
+
+
+/*! \brief Draw fighting animations
+ *
+ * Draw fighting animations.
+ * Selects the correct image and calls draw_attacksprite()
+ *
+ * \sa draw_attacksprite()
+ * \param   tgt Target
+ * \param   who Character attacking
+ * \param   ma Multiple targets
+ */
+void fight_animation (int tgt, int who, int ma)
+{
+   int a;
+
+   if (who < PSIZE)
+      a = items[party[pidx[who]].eqp[0]].eff;
+   else
+      a = fighter[who].cwt;
+   draw_attacksprite (tgt, ma, a, 1);
+}
+
+
+
+/*! \brief Fighter status
+ *
+ * Just make sure the fighter in question is dead or not.  Sometimes, we
+ * still want to return true if s/he is dead.
+ * This happens during the casting of the life and full-life spells, in
+ * combatspell().
+ * deadeffect is normally 0, it is changed temporarily to 1
+ *
+ * \param   guy Id of character to check (index into fighter[] array)
+ * \returns 1 if alive, 0 if dead
+ */
+int is_active (int guy)
+{
+   return (fighter[guy].sts[S_DEAD] == deadeffect ? 1 : 0);
 }

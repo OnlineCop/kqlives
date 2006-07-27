@@ -45,7 +45,7 @@ end
 
 function zone_handler(zn)
   if (zn == 1) then
-    change_map("main", "bridge_l")
+    change_map("main", "bridge", -1, 0)
 
   elseif (zn == 2) then
     -- // TT: This is still here incase the player didn't get it on the first
@@ -58,7 +58,7 @@ function zone_handler(zn)
     refresh()
 
   elseif (zn == 4) then
-    change_map("main", "bridge_r")
+    change_map("main", "bridge", 1, 0)
 
   end
 end

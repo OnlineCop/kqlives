@@ -56,7 +56,7 @@ function zone_handler(zn)
     combat(8)
 
   elseif (zn == 1) then
-    change_map("main", "cave3a_s")
+    change_map("main", "cave3", 0, 2)
 
   elseif (zn == 2) then
     view_range(1, 44, 8, 57, 58)
@@ -132,7 +132,7 @@ function zone_handler(zn)
     warp("drstairs1", 8)
 
   elseif (zn == 18) then
-    change_map("main", "cave3a_n")
+    change_map("main", "cave3", 0, -1)
 
   elseif (zn == 19) then
     if (get_progress(P_ORACLEMONSTERS) == 1) then

@@ -28,8 +28,8 @@
  * This includes any bits which are specific for DOS platforms
  */
 
-#include "kq.h"
 #include <stdio.h>
+#include "kq.h"
 
 
 

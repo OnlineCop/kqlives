@@ -56,51 +56,29 @@ end
 
 
 function refresh()
-  if (get_treasure(33) == 1) then
-    set_mtile(83, 17, 65)
-  end
-  if (get_treasure(34) == 1) then
-    set_mtile(84, 16, 65)
-  end
-  if (get_treasure(35) == 1) then
-    set_mtile(86, 14, 65)
-  end
-  if (get_treasure(36) == 1) then
-    set_mtile(87, 13, 65)
-  end
-  if (get_treasure(37) == 1) then
-    set_mtile(86, 17, 65)
-  end
-  if (get_treasure(38) == 1) then
-    set_mtile(88, 17, 65)
-  end
-  if (get_treasure(39) == 1) then
-    set_mtile(88, 16, 65)
-  end
-  if (get_treasure(40) == 1) then
-    set_mtile(88, 15, 65)
-  end
-  if (get_treasure(41) == 1) then
-    set_mtile(90, 17, 65)
-  end
-  if (get_treasure(42) == 1) then
-    set_mtile(90, 16, 65)
-  end
-  if (get_treasure(43) == 1) then
-    set_mtile(90, 14, 65)
-  end
-  if (get_treasure(44) == 1) then
-    set_mtile(92, 32, 65)
-  end
+  local x, y
+
+  showch(33, "treasure1")
+  showch(34, "treasure2")
+  showch(35, "treasure3")
+  showch(36, "treasure4")
+  showch(37, "treasure5")
+  showch(38, "treasure6")
+  showch(39, "treasure7")
+  showch(40, "treasure8")
+  showch(41, "treasure9")
+  showch(42, "treasure10")
+  showch(43, "treasure11")
+  showch(44, "treasure12")
 
   -- Dragon guard (1: Main entrance)
   LOC_draw_dragon()
 
   -- Floor switches (2: Floor switches)
-  LOC_set_floor("floor1", P_FLOOR1, 55, 18, 58, 19)
-  LOC_set_floor("floor1", P_FLOOR2, 54, 16, 59, 16)
-  LOC_set_floor("floor1", P_FLOOR3, 53, 17, 55, 17)
-  LOC_set_floor("floor1", P_FLOOR4, 55, 19, 58, 18)
+  LOC_set_floor("floor1", P_FLOOR1, "floor1a", "floor1b")
+  LOC_set_floor("floor1", P_FLOOR2, "floor2a", "floor2b")
+  LOC_set_floor("floor1", P_FLOOR3, "floor3a", "floor3b")
+  LOC_set_floor("floor1", P_FLOOR4, "floor4a", "floor4b")
 
   -- Wall holes (3: Treasure room, top left)
   LOC_set_wall("wall1", P_WALL1)
@@ -116,9 +94,13 @@ function refresh()
 
   -- Door (4: Single treasure, left floor switch)
   if (get_progress(P_DOOROPEN) == 1) then
-    set_btile(124, 31, 190)
+    x, y = marker("switch")
+    set_btile(x, y, 190)
+    set_btile(x + 1, y, 189)
   else
-    set_btile(124, 31, 189)
+    x, y = marker("switch")
+    set_btile(x, y, 189)
+    set_btile(x + 1, y, 190)
   end
   LOC_set_door("door4", P_DOOROPEN, 10)
 
@@ -133,7 +115,7 @@ function refresh()
 
   -- Black stone (4: Single treasure, treasure chest)
   if (get_progress(P_STONE4) == 1) then
-    set_mtile(120, 19, 65)
+    showch(-1, "stone4")
   end
 end
 
@@ -144,11 +126,9 @@ end
 
 
 function zone_handler(zn)
-
-
   -- Combat can be anywhere that other zones do not populate
   if (zn == 0) then
---    combat(54)
+    combat(54)
 
   -- Front doors (1: Main entrance)
   elseif (zn == 1) then
@@ -160,35 +140,35 @@ function zone_handler(zn)
 
   -- Stairs up (1: Main entrance -> 2: Floor switches)
   elseif (zn == 2) then
-    take_stairs("dstairs2", 44, 9, 69, 36)
+    warp("dstairs2", 8)
 
   -- Stairs down (2: Floor switches -> 1: Main Entrance)
   elseif (zn == 3) then
-    take_stairs("ustairs1", 8, 8, 35, 37)
+    warp("ustairs1", 8)
 
   -- Stairs up (2: Floor switches -> 3: Treasure room)
   elseif (zn == 4) then
-    take_stairs("dstairs3", 80, 10, 103, 35)
+    warp("dstairs3", 8)
 
   -- Stairs down (3: Treasure room -> 2: Floor switches)
   elseif (zn == 5) then
-    take_stairs("ustairs2", 44, 9, 69, 36)
+    warp("ustairs2", 8)
 
   -- Stairs up (3: Treasure room -> 4: Single treasure)
   elseif (zn == 6) then
-    take_stairs("dstairs4", 116, 11, 137, 34)
+    warp("dstairs4", 8)
 
   -- Stairs down (4: Single treasure -> 3: Treasure room)
   elseif (zn == 7) then
-    take_stairs("ustairs3", 80, 10, 103, 35)
+    warp("ustairs3", 8)
 
   -- Stairs up (4: Single treasure -> 5: Oracle room)
   elseif (zn == 8) then
-    take_stairs("dstairs5", 152, 12, 171, 33)
+    warp("dstairs5", 8)
 
   -- Stairs down (5: Oracle room -> 4: Single treasure)
   elseif (zn == 9) then
-    take_stairs("ustairs4", 116, 11, 137, 34)
+    warp("ustairs4", 8)
 
   -- Locked doors (3: Treasure room) or (4: Single treasure)
   elseif (zn == 10) then
@@ -267,17 +247,15 @@ function zone_handler(zn)
       set_progress(P_BSTONES, get_progress(P_BSTONES) + 1)
       sfx(5)
       msg("Black Stone procured!", 15, 0)
-      if (get_progress(P_STONE4) == 1) then
-        set_mtile(120, 19, 65)
-      end
+      refresh()
     end
 
   -- Floor switch (4: Single treasure, left)
   elseif (zn == 24) then
     if (get_progress(P_DOOROPEN) == 0) then
       set_progress(P_DOOROPEN, 1)
-      sfx(26)
       LOC_set_door("door4", P_DOOROPEN, 10)
+      refresh()
     end
 
   -- Floor switch (4: Single treasure, right)
@@ -293,8 +271,8 @@ function zone_handler(zn)
     if (get_progress(P_DOOROPEN2) == 0) then
       bubble(HERO1, "Oh! I think I stepped on a switch!")
       set_progress(P_DOOROPEN2, 1)
-      sfx(26)
       LOC_set_door("door3_2", P_DOOROPEN2, 10)
+      refresh()
     end
 
   -- Treasure chest (3: Treasure room)
@@ -365,8 +343,8 @@ function zone_handler(zn)
   elseif (zn == 40) then
     if (get_progress(P_WALL1) == 1 and get_progress(P_WALL2) == 2 and get_progress(P_WALL3) == 2 and get_progress(P_WALL4) == 1) then
       set_progress(P_TREASUREROOM, 1)
-      sfx(26)
       LOC_set_door("door3_1", P_TREASUREROOM, 40)
+      refresh()
     end
 
   -- zn == 41: no enemies attack (3: Treasure room, 5: Oracle room)
@@ -404,7 +382,7 @@ end
 
 
 function entity_handler(en)
-
+  local x, y
   -- Oracle
   if (en == 0) then
     -- /*
@@ -609,7 +587,8 @@ function entity_handler(en)
           screen_dump()
           bubble(HERO1, "...I should probably stop talking to myself too.")
         elseif (get_numchrs() == 2) then
-          move_entity(HERO2, get_marker_tilex("oracle"), get_marker_tiley("oracle") + 1, 0)
+          x, y = marker("oracle")
+          move_entity(HERO2, x, y + 1, 0)
           wait_for_entity(HERO1, HERO2)
           orient_heroes()
 
@@ -698,33 +677,43 @@ end
 
 function LOC_draw_dragon()
   local a
+  local x, y = marker("dragon")
 
   if (get_progress(P_DRAGONDOWN) == 0) then
     -- Dragon icon tile (223..228) in the for..loop below:
     local b = 223
-    for a = get_marker_tilex("dragon"), get_marker_tilex("dragon") + 2, 1 do
-      set_ftile(a, get_marker_tiley("dragon") - 2, b)
-      set_ftile(a, get_marker_tiley("dragon") - 1, b + 3)
+    for a = x, x + 2, 1 do
+      set_ftile(a, y - 2, b)
+      set_ftile(a, y - 1, b + 3)
       b = b + 1
     end
     -- Dragon icon tile (229..230) in the for..loop below:
     b = 229
-    for a = get_marker_tilex("dragon"), get_marker_tilex("dragon") + 1, 1 do
-      set_btile(a, get_marker_tiley("dragon"), b)
-      set_obs(a, get_marker_tiley("dragon"), 1)
-      set_zone(a, get_marker_tiley("dragon"), 42)
+    for a = x, x + 1, 1 do
+      set_btile(a, y, b)
+      set_obs(a, y, 1)
+      set_zone(a, y, 42)
       b = b + 1
     end
   elseif (get_progress(P_DRAGONDOWN) == 1) then
-    for a = get_marker_tilex("dragon"), get_marker_tilex("dragon") + 2, 1 do
-      set_ftile(a, get_marker_tiley("dragon") - 2, 0)
-      set_ftile(a, get_marker_tiley("dragon") - 1, 0)
+    for a = x, x + 2, 1 do
+      set_ftile(a, y - 2, 0)
+      set_ftile(a, y - 1, 0)
     end
-    for a = get_marker_tilex("dragon"), get_marker_tilex("dragon") + 1, 1 do
-      set_btile(a, get_marker_tiley("dragon"), 160)
-      set_obs(a, get_marker_tiley("dragon"), 0)
-      set_zone(a, get_marker_tiley("dragon"), 0)
+    for a = x, x + 1, 1 do
+      set_btile(a, y, 160)
+      set_obs(a, y, 0)
+      set_zone(a, y, 0)
     end
+  end
+end
+
+
+function showch(which_chest, which_marker)
+  -- Set tiles if -1 passed in as 'which_chest' or if chest already opened
+  if (which_chest < 0 or get_treasure(which_chest) == 1) then
+    set_mtile(which_marker, 65)
+    set_zone (which_marker, 0)
   end
 end
 
@@ -744,15 +733,16 @@ end
 
 
 function LOC_get_stone(stone, p_stone, zone, color)
+  local x, y = marker(stone)
   if (get_progress(p_stone) == 0) then
-    set_ftile(get_marker_tilex(stone), get_marker_tiley(stone), color)
-    set_obs(get_marker_tilex(stone), get_marker_tiley(stone), 1)
-    set_zone(get_marker_tilex(stone), get_marker_tiley(stone), zone)
+    set_ftile(x, y, color)
+    set_zone(x, y, zone)
+    set_obs(x, y, 1)
     return
   elseif (get_progress(p_stone) == 1) then
-    set_ftile(get_marker_tilex(stone), get_marker_tiley(stone), 0)
-    set_obs(get_marker_tilex(stone), get_marker_tiley(stone), 0)
-    set_zone(get_marker_tilex(stone), get_marker_tiley(stone), 0)
+    set_ftile(x, y, 0)
+    set_zone(x, y, 0)
+    set_obs(x, y, 0)
     return
   end
 end
@@ -788,31 +778,35 @@ end
 
 
 function LOC_set_door(door, p_door, zone)
+  local x, y = marker(door)
   if (get_progress(p_door) == 0) then
-    set_ftile(get_marker_tilex(door), get_marker_tiley(door) - 1, 169)
-    set_btile(get_marker_tilex(door), get_marker_tiley(door) - 1, 178)
-    set_btile(get_marker_tilex(door), get_marker_tiley(door), 170)
-    set_obs(get_marker_tilex(door), get_marker_tiley(door) - 1, 1)
-    set_zone(get_marker_tilex(door), get_marker_tiley(door) - 1, zone)
+    set_ftile(x, y - 1, 169)
+    set_btile(x, y - 1, 178)
+    set_btile(x, y, 170)
+    set_obs(x, y - 1, 1)
+    set_zone(x, y - 1, zone)
   else
-    set_ftile(get_marker_tilex(door), get_marker_tiley(door) - 1, 175)
-    set_btile(get_marker_tilex(door), get_marker_tiley(door), 176)
-    set_obs(get_marker_tilex(door), get_marker_tiley(door) - 1, 0)
-    set_zone(get_marker_tilex(door), get_marker_tiley(door) - 1, 0)
+    set_ftile(x, y - 1, 175)
+    set_btile(x, y, 176)
+    set_obs(x, y - 1, 0)
+    set_zone(x, y - 1, 0)
   end
   sfx(26)
 end
 
 
-function LOC_set_floor(floor, p_floor, x1, y1, x2, y2)
+function LOC_set_floor(floor, p_floor, floor_a, floor_b)
+  local x, y = marker(floor)
+  local x1, y1 = marker(floor_a)
+  local x2, y2 = marker(floor_b)
   if (get_progress(p_floor) == 0) then
-    set_btile(get_marker_tilex(floor), get_marker_tiley(floor), 189)
+    set_btile(x, y, 189)
     set_btile(x1, y1, 0)
     set_obs(x1, y1, 1)
     set_btile(x2, y2, 0)
     set_obs(x2, y2, 1)
   else
-    set_btile(get_marker_tilex(floor), get_marker_tiley(floor), 190)
+    set_btile(x, y, 190)
     set_btile(x1, y1, 160)
     set_obs(x1, y1, 0)
     set_btile(x2, y2, 160)
@@ -823,15 +817,13 @@ end
 
 
 function LOC_set_wall(wall, p_wall)
+  local x, y = marker(wall)
   if (get_progress(p_wall) == 0) then
-    -- No stone
-    set_ftile(get_marker_tilex(wall), get_marker_tiley(wall), 220)
+    set_ftile(x, y, 220)  -- No stone
   elseif (get_progress(p_wall) == 1) then
-    -- White stone
-    set_ftile(get_marker_tilex(wall), get_marker_tiley(wall), 222)
+    set_ftile(x, y, 222)  -- White stone
   elseif (get_progress(p_wall) == 2) then
-    -- Black stone
-    set_ftile(get_marker_tilex(wall), get_marker_tiley(wall), 221)
+    set_ftile(x, y, 221)  -- Black stone
   end
 end
 

@@ -59,18 +59,15 @@ function autoexec()
     set_ent_active(4, 0)
   else
     -- Move granddaughter to the chair next to the table
-    set_ent_tilex(2, 64)
-    set_ent_tiley(2, 50)
+    local x, y = marker("by_derig")
+    place_ent(2, x - 1, y - 2)
+
     set_ent_facing(2, FACE_DOWN)
     set_ent_facing(4, FACE_DOWN)
     if (get_progress(P_TALKDERIG) == 4) then
       set_desc(0)
-
-      view_range(1, 52, 40, 69, 57)
       set_ent_facing(HERO1, FACE_UP)
-      if (get_numchrs() == 2) then
-        set_ent_facing(HERO2, FACE_UP)
-      end
+      set_ent_facing(HERO2, FACE_UP)
       drawmap()
       screen_dump()
     end
@@ -89,19 +86,22 @@ end
 function refresh()
   -- Chest in magic shop
   if (get_treasure(0) == 1) then
-    set_mtile(63, 27, 265)
-    set_zone(63, 27, 0)
+    x, y = marker("treasure1")
+    set_mtile(x, y, 265)
+    set_zone (x, y, 0)
   end
 
   -- Cauldron next to item shop
   if (get_treasure(6) == 1) then
-    set_zone(30, 36, 0)
+    x, y = marker("treasure2")
+    set_zone(x, y, 0)
   end
 
   -- Patch of flowers behind houses
   if (get_treasure(98) == 1) then
-    set_obs(34, 11, 0)
-    set_zone(34, 11, 0)
+    x, y = marker("treasure3")
+    set_obs (x, y, 0)
+    set_zone(x, y, 0)
   end
 end
 
@@ -156,34 +156,34 @@ function zone_handler(zn)
     shop(3)
 
   elseif (zn == 10) then
-    door_in(60, 20, 52, 11, 64, 22)
+    door_in("inn_i")
 
   elseif (zn == 11) then
-    door_out(20, 19)
+    door_out("inn_o")
 
   elseif (zn == 12) then
-    door_in(81, 33, 76, 24, 88, 35)
+    door_in("shop_4i")
 
   elseif (zn == 13) then
-    door_out(18, 40)
+    door_out("shop_4o")
 
   elseif (zn == 14) then
-    door_in(56, 33, 52, 24, 60, 35)
+    door_in("shop_2i")
 
   elseif (zn == 15) then
-    door_out(14, 45)
+    door_out("shop_2o")
 
   elseif (zn == 16) then
-    door_in(73, 19, 66, 11, 79, 22)
+    door_in("shop_1i")
 
   elseif (zn == 17) then
-    door_out(34, 37)
+    door_out("shop_1o")
 
   elseif (zn == 18) then
-    door_in(68, 31, 62, 24, 74, 33)
+    door_in("shop_3i")
 
   elseif (zn == 19) then
-    door_out(31, 27)
+    door_out("shop_3o")
 
   elseif (zn == 20) then
     chest(6, I_NLEAF, 1)
@@ -193,10 +193,10 @@ function zone_handler(zn)
     book_talk(party[0])
 
   elseif (zn == 22) then
-    door_in(62, 54, 52, 41, 69, 57)
+    door_in("derig_i")
 
   elseif (zn == 23) then
-    door_out(37, 56)
+    door_out("derig_o")
 
   elseif (zn == 24) then
     touch_fire(party[0])
@@ -248,10 +248,10 @@ function zone_handler(zn)
     bubble(HERO1, "None of these potions or herbs are useful.")
 
   elseif (zn == 40) then
-    door_in(78, 49, 73, 40, 83, 51)
+    door_in("shop_5i")
 
   elseif (zn == 41) then
-    door_out(20, 33)
+    door_out("shop_5o")
 
   end
 end
@@ -286,92 +286,7 @@ function entity_handler(en)
     end
 
   elseif (en == 2) then
-
-    -- Jen will only help you if you are not on Official Business for Tsorin
-    if (get_progress(P_TALK_TSORIN) == 0 or
-        get_progress(P_TALK_TSORIN) > 2) then
-      -- You have never spoken to Jen before
-      if (get_progress(P_UCOIN) == 0) then
-        if (get_progress(P_TALKDERIG) == 0) then
-          -- You have never gone to the grotto.
-          bubble(en, "Jen:", "I'm Derig's granddaughter. Go find Derig in the grotto north of here.")
-        elseif (get_progress(P_TALKDERIG) == 1) then
-          -- You entered the grotto, but did not fall in the pit.
-          bubble(en, "Jen:", "I'm Derig's granddaughter. Go find Derig in the grotto north of here. You've been there once before.")
-        elseif (get_progress(P_TALKDERIG) == 2) then
-          -- You entered the grotto and fell in pit (you had NOT spoken to Jen first, though).  Someone helped you get out.
-          bubble(en, "You've already been to the grotto.")
-          if (get_numchrs() > 1) then
-            bubble(HERO1, "Yes, we fell down a hole and someone pulled us out.")
-          else
-            bubble(HERO1, "Yes, I fell down a hole and someone pulled me out.")
-          end
-          bubble(en, "That is Derig, my grandfather. Go back and look for him.")
-        else
-          -- This should never occur
-          bubble(en, "Scripting Error:", "P_UCOIN == 0, but P_TALKDERIG != 0..2")
-        end
-        -- Now you have spoken to Jen
-        set_progress(P_UCOIN, 1)
-      -- You have spoken to Jen at least once
-      elseif (get_progress(P_UCOIN) == 1) then
-        if (get_progress(P_TALKDERIG) == 0) then
-          bubble(en, "I said to go talk to Derig.")
-        elseif (get_progress(P_TALKDERIG) == 1) then
-          -- You entered the grotto, but did not fall in the pit.
-          bubble(en, "You must find Derig in the grotto. He's there somewhere.")
-        elseif (get_progress(P_TALKDERIG) == 2) then
-          bubble(en, "Well? Go find Derig in the grotto!")
-        elseif (get_progress(P_TALKDERIG) == 3) then
-          bubble(en, "Okay, that was stupid. You saw him by the fire and you didn't talk to him.")
-          if (get_numchrs() == 1) then
-            bubble(en, "GO BACK AND TALK TO HIM! He's sitting by the fire you moron!")
-          else
-            bubble(en, "GO BACK AND TALK TO HIM! He's sitting by the fire you morons!")
-          end
-        elseif (get_progress(P_TALKDERIG) == 4) then
-          -- This should never occur
-          bubble(en, "Scripting Error:", "P_UCOIN == 1, but P_TALKDERIG == 4")
-        elseif (get_progress(P_TALKDERIG) == 5) then
-          -- Met Derig
-          bubble(en, "Good. Now that you found Derig, here is the Unadium Coin.")
-          set_progress(P_UCOIN, 2)
-          msg("Unadium coin procured", 255, 0)
-        end -- P_TALKDERIG
-      elseif (get_progress(P_UCOIN) == 2) then
-        -- You now have the Unadium coin
-        if (get_progress(P_TALKDERIG) == 5) then
-          if (get_progress(P_CANCELROD) == 0) then
-            -- You do not have the rod
-            bubble(en, "Go get the Rod of Cancellation.")
-          elseif (get_progress(P_CANCELROD) == 1) then
-            -- You have the rod
-            if (get_progress(P_PORTALGONE) == 0) then
-              -- The portal is still there
-              bubble(en, "Get rid of the portal now.")
-            elseif (get_progress(P_PORTALGONE) == 1) then
-              -- The portal is gone
-              bubble(en, "You got rid of the portal! Give my father the coin and rod back and I'll give you a SunStone.")
-            end -- P_PORTALGONE
-          end -- P_CANCELROD
-        else
-          -- This should never occur
-          bubble(en, "Scripting Error:", "P_UCOIN == 2, but P_TALKDERIG != 5")
-        end -- P_TALKDERIG == 5
-      elseif (get_progress(P_UCOIN) == 3) then
-        -- Returned Rod of Cancellation to Derig
-        if (get_treasure(45) == 0) then
-          bubble(en, "Thanks for returning the Rod to my grandfather. Here is a SunStone for you.")
-          chest(45, I_SSTONE, 1)
-        else
-          bubble(en, "Thanks again.")
-        end
-      end -- P_UCOIN
-    elseif (get_progress(P_TALK_TSORIN) == 1) then
-      bubble(en, "Jen:", "You must be looking for Derig, my grandfather. Find him in the grotto north of here.")
-    elseif (get_progress(P_TALK_TSORIN) == 2) then
-      bubble(en, "You should finish Derig's assignment before I give you another.")
-    end -- P_TALK_TSORIN
+    LOC_talk_jen(en)
 
   elseif (en == 3) then
     if (get_progress(P_DARKIMPBOSS) == 0) then
@@ -386,48 +301,7 @@ function entity_handler(en)
     end -- P_DARKIMPBOSS
 
   elseif (en == 4) then
-    -- P_TALK_TSORIN {
-    if (get_progress(P_TALK_TSORIN) == 0 or
-        get_progress(P_TALK_TSORIN) > 2) then
-      if (get_progress(P_TALKDERIG) == 5) then
-        if (get_progress(P_UCOIN) == 1) then
-          bubble(en, "Talk to Jen to get the Unadium coin.")
-        elseif (get_progress(P_UCOIN) == 2) then
-          if (get_progress(P_CANCELROD) == 0) then
-            bubble(en, "Go get the Rod of Cancellation out of the grotto. Use the rune.")
-          elseif (get_progress(P_CANCELROD) == 1) then
-            if (get_progress(P_PORTALGONE) == 0) then
-              bubble(en, "Now that you have the rod, go down and seal the portal.")
-            elseif (get_progress(P_PORTALGONE) == 1) then
-              bubble(en, "You've done it! The portal is gone, and you have returned the Unadium coin and Rod of Cancellation.")
-              set_progress(P_UCOIN, 3)
-              set_progress(P_CANCELROD, 2)
-              set_progress(P_TALKDERIG, 6)
-              msg("Derig takes the Rod of Cancellation and Unadium Coin.", 255, 0)
-              bubble(en, "I'll take these back to the grotto for safe keeping. Thank you.")
-            end -- P_PORTALGONE
-          end -- P_CANCELROD
-        end -- P_UCOIN
-      elseif (get_progress(P_TALKDERIG) == 6) then
-        -- Although TALKDERIG==6, Derig will still be on the screen until you leave Ekla and return
-        bubble(en, "I will take these back to the grotto. Thanks again.")
-      end -- P_TALKDERIG
-    elseif (get_progress(P_TALK_TSORIN) == 1) then
-      bubble(en, "Ah yes, $0, I... wait a minute! What is that note you are carrying?")
-      msg("You show Derig the note.", 18, 0)
-      bubble(en, "Oh, this is very important. Yes, of utmost importance.")
-      bubble(en, "Forgive me, $0, but Tsorin writes that the Oracle's Statue has been stolen. This causes great reason for concern.")
-      bubble(HERO1, "What's the big emergency?")
-      bubble(en, "No time for that now. Please, take this note to Tsorin. I authorize you to pass into the goblin lands.")
-      msg("Derig continues to mumble worredly.", 255, 0)
-      thought(HERO1, "Boy, this is just too weird all of a sudden.")
-      msg("Derig hands you a sealed envelope.", 18, 0)
-      set_progress(P_TALK_TSORIN, 2)
-    elseif (get_progress(P_TALK_TSORIN) == 2) then
-      bubble(en, "Please hurry. Take this note to Tsorin immediately!")
-    else
-      -- // Nothing here, since Derig will only focus on Tsorin's quest if P_TALK_TSORIN < 3
-    end -- P_TALK_TSORIN }
+    LOC_talk_derig(en)
 
   elseif (en == 5) then
     bubble(en, "I hid these works of art from Malkaron's forces. When they had come through here, they tried to destroy everything...")
@@ -441,3 +315,207 @@ function entity_handler(en)
   end
 end
 
+
+-- Jen will provide assistance in this order:
+--    1: Tsorin (war is top priority)
+--    2: Town (monsters in tunnel)
+--    3: Self (she wants her coin back)
+--    4: No extra assistance needed
+function LOC_talk_jen (en)
+  -- Jen will only help you if you are not on Official Business for Tsorin
+  if (get_progress(P_TALK_TSORIN) == 0 or
+      get_progress(P_TALK_TSORIN) > 2) then
+    -- You have never spoken to Jen before
+    if (get_progress(P_UCOIN) == 0) then
+      if (get_progress(P_TALKDERIG) == 0) then
+        -- You have never gone to the grotto.
+        bubble(en, "Jen:", "I'm Derig's granddaughter. Go find Derig in the grotto north of here.")
+      elseif (get_progress(P_TALKDERIG) == 1) then
+        -- You entered the grotto, but did not fall in the pit.
+        bubble(en, "Jen:", "I'm Derig's granddaughter. Go find Derig in the grotto north of here. You've been there once before.")
+      elseif (get_progress(P_TALKDERIG) == 2) then
+        -- You entered the grotto and fell in pit (you had NOT spoken to Jen first, though).  Someone helped you get out.
+        bubble(en, "You've already been to the grotto.")
+        if (get_numchrs() > 1) then
+          bubble(HERO1, "Yes, we fell down a hole and someone pulled us out.")
+        else
+          bubble(HERO1, "Yes, I fell down a hole and someone pulled me out.")
+        end
+        bubble(en, "That is Derig, my grandfather. Go back and look for him.")
+      else
+        -- This should never occur
+        bubble(en, "Scripting Error:", "P_UCOIN == 0, but P_TALKDERIG != 0..2")
+      end
+      -- Now you have spoken to Jen
+      set_progress(P_UCOIN, 1)
+    -- You have spoken to Jen at least once
+    elseif (get_progress(P_UCOIN) == 1) then
+      if (get_progress(P_TALKDERIG) == 0) then
+        bubble(en, "I said to go talk to Derig.")
+      elseif (get_progress(P_TALKDERIG) == 1) then
+        -- You entered the grotto, but did not fall in the pit.
+        bubble(en, "You must find Derig in the grotto. He's there somewhere.")
+      elseif (get_progress(P_TALKDERIG) == 2) then
+        bubble(en, "Well? Go find Derig in the grotto!")
+      elseif (get_progress(P_TALKDERIG) == 3) then
+        bubble(en, "Okay, that was stupid. You saw him by the fire and you didn't talk to him.")
+        if (get_numchrs() == 1) then
+          bubble(en, "GO BACK AND TALK TO HIM! He's sitting by the fire you moron!")
+        else
+          bubble(en, "GO BACK AND TALK TO HIM! He's sitting by the fire you morons!")
+        end
+      elseif (get_progress(P_TALKDERIG) == 4) then
+        -- This should never occur
+        bubble(en, "Scripting Error:", "P_UCOIN == 1, but P_TALKDERIG == 4")
+      elseif (get_progress(P_TALKDERIG) == 5) then
+        -- Met Derig
+        bubble(en, "Good. Now that you found Derig, here is the Unadium Coin.")
+        set_progress(P_UCOIN, 2)
+        msg("Unadium coin procured", 255, 0)
+      end -- P_TALKDERIG
+    elseif (get_progress(P_UCOIN) == 2) then
+      -- You now have the Unadium coin
+      if (get_progress(P_TALKDERIG) == 5) then
+        if (get_progress(P_CANCELROD) == 0) then
+          -- You do not have the rod
+          bubble(en, "Go get the Rod of Cancellation.")
+        elseif (get_progress(P_CANCELROD) == 1) then
+          -- You have the rod
+          if (get_progress(P_PORTALGONE) == 0) then
+            -- The portal is still there
+            bubble(en, "Get rid of the portal now.")
+          elseif (get_progress(P_PORTALGONE) == 1) then
+            -- The portal is gone
+            bubble(en, "You got rid of the portal! Give my father the coin and rod back and I'll give you a SunStone.")
+          end -- P_PORTALGONE
+        end -- P_CANCELROD
+      else
+        -- This should never occur
+        bubble(en, "Scripting Error:", "P_UCOIN == 2, but P_TALKDERIG != 5")
+      end -- P_TALKDERIG == 5
+    elseif (get_progress(P_UCOIN) == 3) then
+      -- Returned Rod of Cancellation to Derig
+      if (get_treasure(45) == 0) then
+        bubble(en, "Thanks for returning the Rod to my grandfather. Here is a SunStone for you.")
+        chest(45, I_SSTONE, 1)
+      else
+        bubble(en, "Thanks again.")
+      end
+    end -- P_UCOIN
+  elseif (get_progress(P_TALK_TSORIN) == 1) then
+    bubble(en, "Jen:", "You must be looking for Derig, my grandfather. Find him in the grotto north of here.")
+  elseif (get_progress(P_TALK_TSORIN) == 2) then
+    bubble(en, "You should finish Derig's assignment before I give you another.")
+  end -- P_TALK_TSORIN
+
+-- /*
+--  if (get_progress(P_TALK_TSORIN) == 1 or get_progress(P_TALK_TSORIN) == 2) then
+--    LOC_help_jen_tsorin(en)
+--  elseif (get_progress(P_PORTALGONE) == 0) then
+--    LOC_help_jen_portal(en)
+--  elseif (get_progress(P_UCOIN) == 3) then
+--    LOC_help_jen_coin(en)
+--  else
+--    LOC_help_jen_none(en)
+--  end
+-- */
+end
+
+
+--// Jen helps Tsorin's needs in this order:
+--//    1: Derig (She will help you find him to give him Tsorin's note)
+--//    2: Tsorin (She will tell you to give Derig's note to Tsorin)
+function LOC_help_jen_tsorin(en)
+  if (get_progress(P_TALKDERIG) == 0) then
+    LOC_help_tsorin_derig(en)
+  else
+    LOC_help_tsorin_tsorin(en)
+	end
+end
+
+
+--// Jen helps Town's needs in this order:
+--//    1: Monsters (Monsters are still attacking their town)
+--//    2: Tunnel (DarkImp is blocking the travel to Randen)
+--//    3: Trade (Trade route stopped working between Randen and the rest of the world)
+--//    4: No extra assistance needed
+function LOC_help_jen_portal(en)
+  if (get_progress(P_CANCELROD) == 0) then
+    LOC_help_town_rod(en)
+  elseif (get_progress(P_DARKIMPBOSS) == 0) then
+    LOC_help_town_boss(en)
+	elseif (get_progress(P_WARPSTONE) == 0) then
+	  LOC_help_town_warpstone(en)
+	else
+	  LOC_help_town_none(en)
+	end
+end
+
+
+--// Town's needs in this order:
+--//    1: Coin (Need coin to get rid of the monsters)
+function LOC_help_town_rod(en)
+  if (get_progress(P_UCOIN) < 2) then
+    LOC_help_town_derig(en)
+  end
+end
+
+
+--// Town helps Derig's needs in this order:
+--//    1: Coin (Jen gives it to you)
+--//    2: Rod (Derig tells you how to find it)
+
+function LOC_help_town_derig(en)
+  if (get_progress(P_TALKDERIG) < 3) then
+    LOC_help_derig_coin(en)
+	elseif (get_progress(P_CANCELROD) == 0) then
+	  LOC_help_derig_rod(en)
+	else
+	  LOC_help_derig_portal(en)
+	end
+end
+
+
+function LOC_talk_derig(en)
+  if (get_progress(P_TALK_TSORIN) == 0 or
+      get_progress(P_TALK_TSORIN) > 2) then
+    if (get_progress(P_TALKDERIG) == 5) then
+      if (get_progress(P_UCOIN) == 1) then
+        bubble(en, "Talk to Jen to get the Unadium coin.")
+      elseif (get_progress(P_UCOIN) == 2) then
+        if (get_progress(P_CANCELROD) == 0) then
+          bubble(en, "Go get the Rod of Cancellation out of the grotto. Use the rune.")
+        elseif (get_progress(P_CANCELROD) == 1) then
+          if (get_progress(P_PORTALGONE) == 0) then
+            bubble(en, "Now that you have the rod, go down and seal the portal.")
+          elseif (get_progress(P_PORTALGONE) == 1) then
+            bubble(en, "You've done it! The portal is gone, and you have returned the Unadium coin and Rod of Cancellation.")
+            set_progress(P_UCOIN, 3)
+            set_progress(P_CANCELROD, 2)
+            set_progress(P_TALKDERIG, 6)
+            msg("Derig takes the Rod of Cancellation and Unadium Coin.", 255, 0)
+            bubble(en, "I'll take these back to the grotto for safe keeping. Thank you.")
+          end -- P_PORTALGONE
+        end -- P_CANCELROD
+      end -- P_UCOIN
+    elseif (get_progress(P_TALKDERIG) == 6) then
+      -- Although TALKDERIG==6, Derig will still be on the screen until you leave Ekla and return
+      bubble(en, "I will take these back to the grotto. Thanks again.")
+    end -- P_TALKDERIG
+  elseif (get_progress(P_TALK_TSORIN) == 1) then
+    bubble(en, "Ah yes, $0, I... wait a minute! What is that note you are carrying?")
+    msg("You show Derig the note.", 18, 0)
+    bubble(en, "Oh, this is very important. Yes, of utmost importance.")
+    bubble(en, "Forgive me, $0, but Tsorin writes that the Oracle's Statue has been stolen. This causes great reason for concern.")
+    bubble(HERO1, "What's the big emergency?")
+    bubble(en, "No time for that now. Please, take this note to Tsorin. I authorize you to pass into the goblin lands.")
+    msg("Derig continues to mumble worredly.", 255, 0)
+    thought(HERO1, "Boy, this is just too weird all of a sudden.")
+    msg("Derig hands you a sealed envelope.", 18, 0)
+    set_progress(P_TALK_TSORIN, 2)
+  elseif (get_progress(P_TALK_TSORIN) == 2) then
+    bubble(en, "Please hurry. Take this note to Tsorin immediately!")
+  else
+    -- // Nothing here, since Derig will only focus on Tsorin's quest if P_TALK_TSORIN < 3
+  end -- P_TALK_TSORIN
+end

@@ -6,9 +6,7 @@ end
 
 
 function refresh()
-  if (get_treasure(20) == 1) then
-    set_mtile(11, 36, 95)
-  end
+  showch("treasure1", 20)
 end
 
 
@@ -39,4 +37,14 @@ end
 
 function entity_handler(en)
   return
+end
+
+
+-- Show the status of a chest
+function showch(which_marker, which_chest)
+  -- Set tiles if -1 passed in as 'which_chest' or if chest already opened
+  if (which_chest < 0 or get_treasure(which_chest) == 1) then
+    set_mtile(which_marker, 95)
+    set_zone(which_marker, 0)
+  end
 end

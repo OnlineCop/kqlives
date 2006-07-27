@@ -443,8 +443,10 @@ void check_map (void)
    int _map_no, _zero_zone, _map_mode, _can_save, _tileset, _use_sstone,
       _can_warp, _extra_byte, _xsize, _ysize, _pmult, _pdiv, _stx, _sty,
       _warpx, _warpy, _revision, _extra_sdword2, _song_file, _map_desc,
-      _num_markers, _num_markers1, _num_markers2, marker_num;
+      _num_markers, _num_markers1, _num_markers2, marker_num,
+      _num_bound_boxes, _num_bound_boxes1, _num_bound_boxes2, bound_box_num;
    s_marker *_m1, *_m2;
+   s_bound *_b1, *_b2;
 
    _map_no = gmap1.map_no != gmap2.map_no ? 1 : 0;
    _zero_zone = gmap1.zero_zone != gmap2.zero_zone ? 1 : 0;
@@ -485,11 +487,15 @@ void check_map (void)
    _num_markers2 = gmap2.num_markers;
    _num_markers = _num_markers1 != _num_markers2 ? 1 : 0;
 
+   _num_bound_boxes1 = gmap1.num_bound_boxes;
+   _num_bound_boxes2 = gmap2.num_bound_boxes;
+   _num_bound_boxes = _num_bound_boxes1 != _num_bound_boxes2 ? 1 : 0;
+
    if ((_map_no) || (_zero_zone) || (_map_mode) || (_can_save) || (_tileset)
        || (_use_sstone) || (_can_warp) || (_extra_byte) || (_xsize) || (_ysize)
        || (_pmult) || (_pdiv) || (_stx) || (_sty) || (_warpx) || (_warpy)
        || (_revision) || (_extra_sdword2) || (_song_file)
-       || (_map_desc) || (_num_markers)) {
+       || (_map_desc) || (_num_markers) || (_num_bound_boxes)) {
       fprintf (stdout,
                "\nStructure:\tmap 1:\t\tmap 2:\n======================================\n");
    }
@@ -535,7 +541,8 @@ void check_map (void)
    if (_warpy)
       fprintf (stdout, "  warpy:      \t%d\t\t%d\n", gmap1.warpy, gmap2.warpy);
    if (_revision)
-      fprintf (stdout, "  revision:   \t%d\t\t%d\n", gmap1.revision, gmap2.revision);
+      fprintf (stdout, "  revision:   \t%d\t\t%d\n", gmap1.revision,
+               gmap2.revision);
    if (_extra_sdword2)
       fprintf (stdout, "  extra_sdword2:%d\t\t%d\n", gmap1.extra_sdword2,
                gmap2.extra_sdword2);
@@ -551,7 +558,8 @@ void check_map (void)
 
    marker_num = 0;
    if (_num_markers1 != _num_markers2)
-      fprintf (stdout, "  num_markers:\t%d\t\t%d\n", _num_markers1, _num_markers2);
+      fprintf (stdout, "  num_markers:\t%d\t\t%d\n", _num_markers1,
+               _num_markers2);
 
    // Loop through every marker on whichever map which has more (if inequal).
    while (marker_num <
@@ -560,7 +568,7 @@ void check_map (void)
          // The other map has the same number of markers; compare the values.
          if ((_m1[marker_num].x != _m2[marker_num].x) ||
              (_m1[marker_num].y != _m2[marker_num].y) ||
-             (strcmp(_m1[marker_num].name, _m2[marker_num].name) != 0)) {
+             (strcmp (_m1[marker_num].name, _m2[marker_num].name) != 0)) {
             fprintf (stdout, "  - Map1: (%d, %d), \"%s\"\n", _m1[marker_num].x,
                      _m1[marker_num].y, _m1[marker_num].name);
             fprintf (stdout, "  - Map2: (%d, %d), \"%s\"\n", _m2[marker_num].x,
@@ -579,6 +587,63 @@ void check_map (void)
          }
       }
       marker_num++;
+   }
+   
+   _b1 = gmap1.bound_box;
+   _b2 = gmap2.bound_box;
+   
+   bound_box_num = 0;
+   if (_num_bound_boxes1 != _num_bound_boxes2)
+      fprintf (stdout, "  num_bound_boxes:\t%d\t\t%d\n", _num_bound_boxes1, _num_bound_boxes2);
+
+   if (gmap1.revision >= 2 && gmap2.revision >= 2) {
+      // Loop through every bound box on whichever map which has more (if inequal).
+      while (bound_box_num < (_num_bound_boxes1 > _num_bound_boxes2 ? _num_bound_boxes1 : _num_bound_boxes2)) {
+         if (bound_box_num < gmap1.num_bound_boxes && bound_box_num < gmap2.num_bound_boxes) {
+            // The other map has the same number of bounding boxes; compare the values.
+            if (
+                (_b1[bound_box_num].x1 != _b2[bound_box_num].x1) ||
+                (_b1[bound_box_num].y1 != _b2[bound_box_num].y1) ||
+                (_b1[bound_box_num].x2 != _b2[bound_box_num].x2) ||
+                (_b1[bound_box_num].y2 != _b2[bound_box_num].y2)
+               ) {
+               fprintf (stdout, "  - Map1 Boundary #%d: (%d, %d), (%d, %d)\n",
+               	       bound_box_num,
+               	       _b1[bound_box_num].x1,
+               	       _b1[bound_box_num].y1,
+               	       _b1[bound_box_num].x2,
+               	       _b1[bound_box_num].y2
+               	     );
+               fprintf (stdout, "  - Map2 Boundary #%d: (%d, %d), (%d, %d)\n",
+               	       bound_box_num,
+               	       _b2[bound_box_num].x1,
+               	       _b2[bound_box_num].y1,
+               	       _b2[bound_box_num].x2,
+               	       _b2[bound_box_num].y2
+               	     );
+            }
+         } else {
+            // The other map does not have that bounding box, print "only in map #"
+            if (gmap1.num_bound_boxes <= bound_box_num) {
+               fprintf (stdout, "  Bound Box #%d only in Map #2\n", bound_box_num + 1);
+               fprintf (stdout, "  - Map2: (%d, %d), (%d, %d)\n",
+               	       _b2[bound_box_num].x1,
+               	       _b2[bound_box_num].y1,
+               	       _b2[bound_box_num].x2,
+               	       _b2[bound_box_num].y2
+               	     );
+            } else if (gmap2.num_bound_boxes <= bound_box_num) {
+               fprintf (stdout, "  Bound Box #%d only in Map #1\n", bound_box_num + 1);
+               fprintf (stdout, "  - Map1: (%d, %d), (%d, %d)\n",
+               	       _b1[bound_box_num].x1,
+               	       _b1[bound_box_num].y1,
+               	       _b1[bound_box_num].x2,
+               	       _b1[bound_box_num].y2
+               	     );
+            }
+         }
+         bound_box_num++;
+      }
    }
 }                               /* check_map () */
 
@@ -790,3 +855,9 @@ int main (int argc, char *argv[])
 }                               /* main () */
 
 END_OF_MAIN ();
+
+
+void klog (char *whatever) {
+   (void) whatever;
+   return;
+}

@@ -11,11 +11,11 @@ function autoexec()
       (get_progress(P_OPALARMOUR) > 0)) then
     set_progress(P_TALKOLDMAN, 1)
   end
-  
+
   if (get_progress(P_TRAVELPOINT) == 1) then
     set_progress(P_TRAVELPOINT, 0)
   end
-  
+
   refresh()
 end
 
@@ -29,9 +29,12 @@ function refresh()
   if (get_progress(P_TALKOLDMAN) == 1) then
     set_obs("door1", 0)
   elseif (get_progress(P_TALKOLDMAN) > 1) then
-    place_ent(6, 103, 10)
-    set_zone(104, 23, 0)
-    set_zone(104, 26, 0)
+    local x, y
+    x, y = marker("around_table")
+    place_ent(6, x, y)
+    x, y = marker("counter")
+    set_zone(x, y - 3, 0)
+    set_zone(x, y, 0)
     if (get_progress(P_TALKOLDMAN) == 5) then
       -- // Unlock the doors leading to the old man's counters
       set_obs("hdoor1", 0)
@@ -51,39 +54,38 @@ function zone_handler(zn)
     change_map("main", "town7")
 
   elseif (zn == 2) then
-    door_in(74, 36, 69, 22, 97, 39)
+    door_in("shop_1i")
 
   elseif (zn == 3) then
-    door_in(83, 36, 69, 22, 97, 39)
+    door_in("shop_2i")
 
   elseif (zn == 4) then
-    door_in(92, 36, 69, 22, 97, 39)
+    door_in("shop_3i")
 
   elseif (zn == 5) then
-    door_in(75, 50, 69, 40, 81, 53)
+    door_in("room_1i")
 
   elseif (zn == 6) then
-    door_in(89, 50, 83, 40, 95, 53)
+    door_in("room_2i")
 
   elseif (zn == 7) then
-    door_out(32, 33)
+    door_out("shop_1o")
 
   elseif (zn == 8) then
-    door_out(37, 33)
+    door_out("shop_2o")
 
   elseif (zn == 9) then
-    door_out(42, 33)
+    door_out("shop_3o")
 
   elseif (zn == 10) then
-    door_out(31, 21)
+    door_out("room_1o")
 
   elseif (zn == 11) then
-    door_out(49, 43)
+    door_out("room_2o")
 
   elseif (zn == 12) then
     if (get_progress(P_TALKOLDMAN) > 0) then
-      door_in(104, 33, 99, 4, 111, 36)
-      -- HERE
+      door_in("counter_i")
     else
       bubble(HERO1, "Locked.")
     end
@@ -101,19 +103,15 @@ function zone_handler(zn)
     inn("Pulcannen Inn", 200, 1)
 
   elseif (zn == 17) then
-    view_range(1, 69, 4, 97, 20)
     warp("dstairs1", 8)
 
   elseif (zn == 18) then
-    view_range(1, 69, 4, 97, 20)
     warp("dstairs2", 8)
 
   elseif (zn == 19) then
-    view_range(1, 69, 22, 97, 39)
     warp("ustairs1", 8)
 
   elseif (zn == 20) then
-    view_range(1, 69, 22, 97, 39)
     warp("ustairs2", 8)
 
   elseif (zn == 21) then
@@ -130,7 +128,7 @@ function zone_handler(zn)
     touch_fire(party[0])
 
   elseif (zn == 25) then
-    door_out(52, 26)
+    door_out("counter_o")
 
   elseif (zn == 26) then
     entity_handler(6)
@@ -178,56 +176,64 @@ function entity_handler(en)
     bubble(en, "This town does not get a lot of visitors.")
 
   elseif (en == 6) then
-    if (get_progress(P_TALKOLDMAN) == 0) then
-      bubble(en, "Hey, how did you get in here? Get out!")
-    elseif (get_progress(P_TALKOLDMAN) == 1) then
-      set_ent_speed(en, 5)
-      set_ent_movemode(en, 2)
-      -- Move the old man to the counter closest to you
-      if (get_ent_tiley(HERO1) == 22) then
-        -- Move old man to top (northern) counter
-        move_entity(en, 104, 24, 0)
-        wait_for_entity(en, en)
-        set_ent_facing(en, FACE_UP)
-      else
-        -- Move old man to bottom (southern) counter
-        move_entity(en, 104, 25, 0)
-        wait_for_entity(en, en)
-        set_ent_facing(en, FACE_DOWN)
-      end
-      bubble(en, "Wow! You have all the Opal items! Quick, come up here to my study and let me see them!")
-      -- Unlock doors that lead behind his counters
-      set_obs("hdoor1", 0)
-      set_obs("hdoor2", 0)
-      set_ent_speed(en, 5)
+    LOC_talk_oldman(en)
 
-      move_entity(en, 103, 10, 0)
+  end
+end
+
+
+function LOC_talk_oldman(en)
+  local x, y = marker("counter")
+  if (get_progress(P_TALKOLDMAN) == 0) then
+    bubble(en, "Hey, how did you get in here? Get out!")
+  elseif (get_progress(P_TALKOLDMAN) == 1) then
+    set_ent_speed(en, 5)
+    set_ent_movemode(en, 2)
+    -- Move the old man to the counter closest to you
+    if (get_ent_tiley(HERO1) == 22) then
+      -- Move old man to top (northern) counter
+      move_entity(en, x, y - 2, 0)
+      wait_for_entity(en, en)
+      set_ent_facing(en, FACE_UP)
+    else
+      -- Move old man to bottom (southern) counter
+      move_entity(en, x, y - 1, 0)
       wait_for_entity(en, en)
       set_ent_facing(en, FACE_DOWN)
-      set_ent_movemode(en, 0)
-
-      set_progress(P_TALKOLDMAN, 2)
-      refresh()
-    elseif (get_progress(P_TALKOLDMAN) == 2) then
-      bubble(en, "I see you have everything! Here, take this key.")
-      sfx(5)
-      msg("Rusty key procured", 63, 0)
-      bubble(en, "This key will open the temple found in the Grotto around Ekla.")
-      if (get_numchrs() == 1) then
-        bubble(HERO1, "The Grotto by Ekla? What will I find there?")
-      else
-        bubble(HERO1, "The Grotto by Ekla? What will we find there?")
-      end
-      bubble(en, "It's an underwater tunnel that leads from the grotto to the island Malkaron is staying.")
-      bubble(HERO1, "Oh. Thanks!")
-      set_progress(P_TALKOLDMAN, 3)
-    elseif (get_progress(P_TALKOLDMAN) == 3) then
-      bubble(en, "I hope the key still fits in the temple down in the Grotto by Ekla. It's a bit rusty.")
-    elseif (get_progress(P_TALKOLDMAN) == 4) then
-      bubble(en, "I see the key worked. Excellent.")
-      set_progress(P_TALKOLDMAN, 5)
-    else
-      bubble(en, "Good luck on your journey.")
     end
+    bubble(en, "Wow! You have all the Opal items! Quick, come up here to my study and let me see them!")
+    -- Unlock doors that lead behind his counters
+    set_obs("hdoor1", 0)
+    set_obs("hdoor2", 0)
+    set_ent_speed(en, 5)
+
+    x, y = marker("around_table")
+    move_entity(en, x, y, 0)
+    wait_for_entity(en, en)
+    set_ent_facing(en, FACE_DOWN)
+    set_ent_movemode(en, 0)
+
+    set_progress(P_TALKOLDMAN, 2)
+    refresh()
+  elseif (get_progress(P_TALKOLDMAN) == 2) then
+    bubble(en, "I see you have everything! Here, take this key.")
+    sfx(5)
+    msg("Rusty key procured", 63, 0)
+    bubble(en, "This key will open the temple found in the Grotto around Ekla.")
+    if (get_numchrs() == 1) then
+      bubble(HERO1, "The Grotto by Ekla? What will I find there?")
+    else
+      bubble(HERO1, "The Grotto by Ekla? What will we find there?")
+    end
+    bubble(en, "It's an underwater tunnel that leads from the grotto to the island Malkaron is staying.")
+    bubble(HERO1, "Oh. Thanks!")
+    set_progress(P_TALKOLDMAN, 3)
+  elseif (get_progress(P_TALKOLDMAN) == 3) then
+    bubble(en, "I hope the key still fits in the temple down in the Grotto by Ekla. It's a bit rusty.")
+  elseif (get_progress(P_TALKOLDMAN) == 4) then
+    bubble(en, "I see the key worked. Excellent.")
+    set_progress(P_TALKOLDMAN, 5)
+  else
+    bubble(en, "Good luck on your journey.")
   end
 end

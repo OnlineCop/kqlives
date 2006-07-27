@@ -27,9 +27,10 @@
 --   (0) The second of the mayor's guards is still being held in the orc camp
 --   (1) The second guard was released
 --
--- P_PORTALGONE: Whether the portal in the tunnel is still working
---   (0) Still letting monsters through
---   (1) The Portal is sealed shut
+-- P_SIDEQUEST1: Whether you finished the 1st sidequest to seal the portal in
+--               the tunnel
+--   (0) Still letting monsters through, Ajathar doesn't join
+--   (1) The Portal is sealed shut, Ajathar joins
 --
 -- P_SHOWBRIDGE:
 --   (0) Bridge is incomplete
@@ -53,7 +54,7 @@ function autoexec()
   if (get_progress(P_WARPSTONE) == 1) then
     -- // Move the guard guarding the houses in the north-east section of town
     -- // over one tile so we can get in
-    set_ent_tilex(6, 57)
+    place_ent(6, "guard")
 
     -- // The bridge repairs will now be completed
     if (get_progress(P_SHOWBRIDGE) == 1) then
@@ -72,43 +73,53 @@ end
 
 
 function refresh()
+  local x, y
   if (get_treasure(3) == 1) then
-    set_mtile(110, 19, 265)
-    set_zone(110, 19, 0)
+    x, y = marker("treasures")
+    set_mtile(x - 1, y, 265)
+    set_zone(x - 1, y, 0)
   end
   if (get_treasure(4) == 1) then
-    set_mtile(111, 19, 265)
-    set_zone(111, 19, 0)
+    x, y = marker("treasures")
+    set_mtile(x, y, 265)
+    set_zone(x, y, 0)
   end
   if (get_treasure(5) == 1) then
-    set_mtile(112, 19, 265)
-    set_zone(112, 19, 0)
+    x, y = marker("treasures")
+    set_mtile(x + 1, y, 265)
+    set_zone(x + 1, y, 0)
   end
   if (get_treasure(7) == 1) then
-    set_obs(14, 47, 0)
-    set_zone(14, 47, 0)
+    x, y = marker("treasure2")
+    set_obs(x, y, 0)
+    set_zone(x, y, 0)
   end
   if (get_treasure(10) == 1) then
-    set_obs(35, 38, 0)
-    set_zone(35, 38, 0)
+    x, y = marker("treasure3")
+    set_obs(x, y, 0)
+    set_zone(x, y, 0)
   end
   if (get_treasure(31) == 1) then
-    set_mtile(115, 38, 265)
-    set_zone(115, 38, 0)
+    x, y = marker("treasure4")
+    set_mtile(x, y, 265)
+    set_zone(x, y, 0)
   end
   if (get_treasure(46) == 1) then
-    set_mtile(116, 38, 265)
-    set_zone(116, 38, 0)
+    x, y = marker("treasure4")
+    set_mtile(x + 1, y, 265)
+    set_zone(x + 1, y, 0)
   end
   if (get_treasure(97) == 1) then
-    set_mtile(135, 10, 265)
-    set_zone(135, 10, 0)
+    x, y = marker("treasure5")
+    set_mtile(x, y, 265)
+    set_zone(x, y, 0)
   end
 
+  x, y = marker("travelpoint")
   if (get_progress(P_WARPSTONE) == 1) then
-    set_mtile(35, 15, 0)
+    set_mtile(x, y, 0)
   else
-    set_zone(35, 15, 0)
+    set_zone(x, y, 0)
   end
 
   -- // This NPC will only appear if you spoke with him in the camp
@@ -118,8 +129,9 @@ function refresh()
 
   -- // Ditto, plus make sure you can't speak to a "ghost" over the counter
   if (get_progress(P_MAYORGUARD2) == 0) then
+    x, y = marker("treasure5")
     set_ent_active(11, 0)
-    set_zone(134, 11, 0)
+    set_zone(x - 1, y + 1, 0)
   end
 
   if (not LOC_manor_or_party(AJATHAR)) then
@@ -157,49 +169,49 @@ function zone_handler(zn)
     change_map("cave1", "exit")
 
   elseif (zn == 2) then
-    door_in(85, 13, 80, 6, 90, 16)
+    door_in("room_1i")
 
   elseif (zn == 3) then
-    door_in(86, 26, 80, 17, 92, 29)
+    door_in("room_3i")
 
   elseif (zn == 4) then
-    door_in(102, 13, 93, 6, 105, 16)
+    door_in("room_2i")
 
   elseif (zn == 5) then
-    door_in(97, 25, 94, 17, 107, 28)
+    door_in("room_4i")
 
   elseif (zn == 6) then
-    door_in(96, 39, 80, 30, 102, 51)
+    door_in("inn_i")
 
   elseif (zn == 7) then
-    door_in(112, 13, 107, 6, 117, 16)
+    door_in("shop_1i")
 
   elseif (zn == 8) then
-    door_in(114, 43, 104, 30, 117, 45)
+    door_in("shop_4i")
 
   elseif (zn == 9) then
     bubble(HERO1, "Locked.")
 
   elseif (zn == 10) then
-    door_out(20, 19)
+    door_out("room_1o")
 
   elseif (zn == 11) then
-    door_out(28, 20)
+    door_out("room_3o")
 
   elseif (zn == 12) then
-    door_out(24, 31)
+    door_out("room_2o")
 
   elseif (zn == 13) then
-    door_out(63, 29)
+    door_out("room_4o")
 
   elseif (zn == 14) then
-    door_out(18, 42)
+    door_out("inn_o")
 
   elseif (zn == 15) then
-    door_out(49, 37)
+    door_out("shop_1o")
 
   elseif (zn == 16) then
-    door_out(66, 39)
+    door_out("shop_4o")
 
   elseif (zn == 17) then
     -- /* PH added code to check if you do stay over night.
@@ -222,20 +234,16 @@ function zone_handler(zn)
     shop(5)
 
   elseif (zn == 20) then
-    view_range(1, 119, 6, 122, 29)
-    warp(121, 9, 8)
+    warp("hall_stairs1", 8)
 
   elseif (zn == 21) then
-    view_range(1, 109, 17, 117, 25)
-    warp(116, 20, 8)
+    warp("room_5i", 8)
 
   elseif (zn == 22) then
-    view_range(1, 94, 17, 107, 28)
-    warp(106, 21, 8)
+    warp("room_4stairs", 8)
 
   elseif (zn == 23) then
-    view_range(1, 119, 6, 122, 29)
-    warp(121, 27, 8)
+    warp("hall_stairs2", 8)
 
   elseif (zn == 24) then
     chest(3, I_KNIFE2, 1)
@@ -275,7 +283,7 @@ function zone_handler(zn)
 
   elseif (zn == 34) then
     if (get_progress(P_FOUNDMAYOR) > 1) then
-      door_in(129, 30, 124, 20, 140, 33)
+      door_in("mayor_i")
     else
       bubble(HERO1, "Locked.")
     end
@@ -290,12 +298,10 @@ function zone_handler(zn)
     touch_fire(party[0])
 
   elseif (zn == 38) then
-    view_range(1, 104, 30, 117, 45)
-    warp(116, 34, 8)
+    warp("shop_4hidden", 8)
 
   elseif (zn == 39) then
-    view_range(1, 109, 17, 117, 25)
-    warp(113, 23, 8)
+    warp("room_5door", 8)
 
   elseif (zn == 40) then
     chest(31, 0, 150)
@@ -315,19 +321,21 @@ function zone_handler(zn)
     end
 
   elseif (zn == 44) then
-    set_btile(139, 8, 0)
-    set_ftile(139, 8, 518)
-    set_mtile(139, 9, 519)
-    set_obs(139, 8, 0)
-    set_zone(139, 8, 0)
+    x, y = marker("door_guard1")
+    set_btile(x, y, 0)
+    set_ftile(x, y, 518)
+    set_mtile(x, y + 1, 519)
+    set_obs  (x, y, 0)
+    set_zone (x, y, 0)
     sfx(25)
 
   elseif (zn == 45) then
-    set_btile(134, 8, 0)
-    set_ftile(134, 8, 518)
-    set_mtile(134, 9, 519)
-    set_obs(134, 8, 0)
-    set_zone(134, 8, 0)
+    x, y = marker("door_guard2")
+    set_btile(x, y, 0)
+    set_ftile(x, y, 518)
+    set_mtile(x, y + 1, 519)
+    set_obs  (x, y, 0)
+    set_zone (x, y, 0)
     sfx(25)
 
   elseif (zn == 46) then
@@ -335,19 +343,19 @@ function zone_handler(zn)
     refresh()
 
   elseif (zn == 47) then
-    door_in(129, 16, 124, 6, 140, 19)
+    door_in("shop_2i")
 
   elseif (zn == 48) then
-    door_out(48, 18)
+    door_out("shop_2o")
 
   elseif (zn == 49) then
-    door_in(137, 16, 124, 6, 140, 19)
+    door_in("shop_3i")
 
   elseif (zn == 50) then
-    door_out(52, 18)
+    door_out("shop_3o")
 
   elseif (zn == 51) then
-    door_out(61, 18)
+    door_out("mayor_o")
 
   end
 end
@@ -390,9 +398,9 @@ function entity_handler(en)
 
   elseif (en == 3) then
     if (get_progress(P_FOUNDMAYOR) > 1 and get_progress(P_MAYORGUARD1) > 0 and get_progress(P_MAYORGUARD2) > 0) then
-      bubble(en, "My husband gets so forgetful. Sometimes he doesn't lock up after himself.")
-      set_obs(113, 23, 0)
-      set_zone(113, 23, 0)
+      bubble(en, "My husband is so excited that everyone returned safely. He tends to get forgetful when he's like this. Sometimes he doesn't even lock up after himself on his way to work.")
+      set_obs("room_5door", 0)
+      set_zone("room_5door", 0)
     elseif (get_progress(P_FIGHTONBRIDGE) > 4) then
       bubble(en, "Good day.")
     else
@@ -459,7 +467,7 @@ function entity_handler(en)
   elseif (en == 6) then
     if (get_progress(P_WARPSTONE) == 1) then
       if (get_progress(P_FOUNDMAYOR) < 2) then
-        bubble(en, "The mayor isn't seeing any visitors at present.")
+        bubble(en, "Our mayor is still missing. We're not sure what to do at this point.")
       elseif (get_progress(P_FOUNDMAYOR) == 2) then
         bubble(en, "$0! The mayor is back now, thank you! He wants to see you right away!")
       else
@@ -536,7 +544,7 @@ end
 
 function LOC_join_ajathar(en)
   local id
-  if (get_progress(P_PORTALGONE) == 0) then
+  if (get_progress(P_SIDEQUEST1) == 0) then
     if (get_progress(P_TALK_AJATHAR) == 0) then
       bubble(HERO1, "Hello! You haven't ventured very far!")
       bubble(en, "I have been maintaining a constant prayer vigil at this point. It should discourage the monsters from emerging into the town.")
@@ -616,8 +624,8 @@ function LOC_join_casandra(en)
       bubble(en, "If you need us, we'll be back at the manor.")
       set_ent_speed(8, 4)
       set_ent_speed(en, 4)
-      move_entity(en, 32, 31, 1)
-      move_entity(8, 32, 31, 1)
+--      move_entity(en, 32, 31, 1)
+--      move_entity(8, 32, 31, 1)
       set_ent_script(en, "U8K")
       set_ent_script(8,  "U9K")
       wait_for_entity(8, en)

@@ -63,11 +63,10 @@ PACKAGE_OBJ = fix.bat    \
 ###############################################################################
 
 RES_C=src/res.c
-FILES:= combat.c effects.c eskill.c intrface.c masmenu.c scrnshot.c shopmenu.c\
-	credits.c enemyc.c fade.c itemmenu.c menu.c selector.c timing.c\
-	disk.c entity.c heroc.c kq.c music.c setup.c\
-	draw.c eqpmenu.c hskill.c magic.c res.c sgame.c\
-	movement.c $(EXTRAFILES)
+FILES:= bounds.c combat.c credits.c disk.c draw.c effects.c enemyc.c entity.c \
+	eqpmenu.c eskill.c fade.c heroc.c hskill.c intrface.c itemmenu.c kq.c \
+	magic.c masmenu.c menu.c movement.c music_dumb.c music_jgmod.c res.c \
+	scrnshot.c selector.c setup.c sgame.c shopmenu.c timing.c $(EXTRAFILES)
 
 
 #                                                                             #
@@ -102,7 +101,7 @@ BUNDLE:=$(ID_SHORT).app
 APPR:=$(BUNDLE)/Contents/Resources
 bundle: $(EXEC)
 	install -d $(BUNDLE)/Contents/MacOS
-	install -d $(APPR)/data $(APPR)/music $(APPR)/scripts $(APPR)/maps 
+	install -d $(APPR)/data $(APPR)/music $(APPR)/scripts $(APPR)/maps
 	install -C Mac/Info.plist $(BUNDLE)/Contents
 	install -C bin/kq $(BUNDLE)/Contents/MacOS
 	install -C data/*.dat data/*.kq data/*.mon $(APPR)/data

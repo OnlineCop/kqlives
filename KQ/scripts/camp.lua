@@ -16,17 +16,22 @@
 
 
 function autoexec()
-  local a
+  local en
 
-  if (get_progress(P_FOUNDMAYOR) == 0) then
-    set_ent_id(37, CASANDRA)
+  en = 37
+  if (get_progress(P_SIDEQUEST2) == 0) then
+    set_ent_id(en, CASANDRA)
   else
-    set_ent_active(37, 0)
-    for a = 0, 4, 1 do
-      set_ent_active(a, 0)
+    set_ent_active(en, 0)
+    set_ent_tiley(2, get_ent_tiley(en))
+  end
+
+  if (get_progress(P_FOUNDMAYOR) > 0) then
+    for en = 0, 4, 1 do
+      set_ent_active(en, 0)
     end
-    for a = 25, 28, 1 do
-      set_ent_active(a, 0)
+    for en = 25, 28, 1 do
+      set_ent_active(en, 0)
     end
   end
 
@@ -43,40 +48,64 @@ end
 
 
 function refresh()
+  local x, y
+
   if (get_treasure(55) == 1) then
-    set_mtile(66, 45, 265)
-    set_zone(66, 45, 0)
+    x = 66
+    y = 45
+    set_mtile(x, y, 265)
+    set_zone(x, y, 0)
   end
 
   if (get_treasure(56) == 1) then
-    set_mtile(73, 43, 265)
-    set_zone(73, 43, 0)
+    x = 73
+    y = 43
+    set_mtile(x, y, 265)
+    set_zone(x, y, 0)
   end
 
   if (get_treasure(57) == 1) then
-    set_mtile(81, 24, 265)
-    set_zone(81, 24, 0)
+    x = 81
+    y = 24
+    set_mtile(x, y, 265)
+    set_zone(x, y, 0)
   end
 
   if (get_treasure(58) == 1) then
-    set_mtile(83, 11, 265)
-    set_zone(83, 11, 0)
+    x = 83
+    y = 11
+    set_mtile(x, y, 265)
+    set_zone(x, y, 0)
   end
 
   if (get_treasure(59) == 1) then
-    set_mtile(84, 11, 265)
-    set_zone(84, 11, 0)
+    x = 84
+    y = 11
+    set_mtile(x, y, 265)
+    set_zone(x, y, 0)
   end
 
   if (get_treasure(60) == 1) then
-    set_mtile(13, 57, 265)
-    set_zone(13, 57, 0)
+    x = 13
+    y = 57
+    set_mtile(x, y, 265)
+    set_zone(x, y, 0)
   end
 
   if (get_treasure(61) == 1) then
-    set_mtile(14, 57, 265)
-    set_zone(14, 57, 0)
+    x = 14
+    y = 57
+    set_mtile(x, y, 265)
+    set_zone(x, y, 0)
   end
+
+  if (get_progress(P_FOUNDMAYOR) > 0) then
+    x, y = marker("cage")
+
+    set_ftile(x, y - 3, 0)
+    set_obs(x, y - 3, 0)
+  end
+
 end
 
 
@@ -87,109 +116,35 @@ end
 
 function zone_handler(zn)
   if (zn == 1) then
-    change_map("main", "camp_n")
+    change_map("main", "camp", 0, -1)
 
   elseif (zn == 2) then
-    change_map("main", "camp_s")
+    change_map("main", "camp", 0, 1)
 
   elseif (zn == 3) then
-    set_ent_script(7, "L1U2")
-    set_ent_script(8, "L1U3")
-    wait_for_entity(7, 8)
-    bubble(7, "You're not welcome here!")
-    drawmap()
-    screen_dump()
-    set_run(0)
-    combat(2)
-    set_run(1)
-    if (get_alldead() == 1) then
+    if (LOC_orc_battle(1, 8) == 1) then
       return
     end
-    set_ent_active(7, 0)
-    set_ent_active(8, 0)
-    set_zone(23, 24, 0)
-    set_zone(24, 24, 0)
 
   elseif (zn == 4) then
-    set_ent_script(12, "U1L2U1")
-    set_ent_script(13, "L2U3")
-    set_ent_script(14, "U2L2U2")
-    set_ent_script(15, "R1U6L2F1")
-    wait_for_entity(12, 15)
-    set_run(0)
-    combat(4)
-    set_run(1)
-    if (get_alldead() == 1) then
+    if (LOC_orc_battle(3, 12) == 1) then
       return
     end
-    set_ent_active(12, 0)
-    set_ent_active(13, 0)
-    set_ent_active(14, 0)
-    set_ent_active(15, 0)
-    set_zone(20, 43, 0)
-    set_zone(21, 43, 0)
 
   elseif (zn == 5) then
-    set_ent_script(16, "R1D4L3D3")
-    set_ent_script(17, "L8U3")
-    if (get_numchrs() == 2 and get_ent_tilex(HERO2) == 32 and get_ent_tiley(HERO2) == 49) then
-      set_ent_script(18, "U1L8U2")
-    else
-      set_ent_script(18, "U1L8U3")
-    end
-    wait_for_entity(16, 18)
-
-    set_run(0)
-    combat(3)
-    set_run(1)
-    if (get_alldead() == 1) then
+    if (LOC_orc_battle(4, 16) == 1) then
       return
     end
-    set_ent_active(16, 0)
-    set_ent_active(17, 0)
-    set_ent_active(18, 0)
-    set_zone(32, 48, 0)
-    set_zone(34, 52, 0)
-    set_zone(34, 53, 0)
 
   elseif (zn == 6) then
-    set_ent_script(19, "R1D3")
-    set_ent_script(20, "D1R1D1")
-    set_ent_script(21, "D6R2F0")
-    set_ent_script(22, "D4R1D2")
-    wait_for_entity(19, 22)
-    set_run(0)
-    combat(4)
-    set_run(1)
-    if (get_alldead() == 1) then
+    if (LOC_orc_battle(5, 20) == 1) then
       return
     end
-    set_ent_active(19, 0)
-    set_ent_active(20, 0)
-    set_ent_active(21, 0)
-    set_ent_active(22, 0)
-    set_zone(36, 28, 0)
-    set_zone(37, 28, 0)
 
   elseif (zn == 7) then
-    set_ent_speed(16, 6)
-    set_ent_script(16, "R1D4L3D7R1F0")
-    set_ent_script(17, "L2D1L2")
-    set_ent_script(18, "U1L5")
-    wait_for_entity(16, 18)
-
-    set_run(0)
-    combat(3)
-    set_run(1)
-    if (get_alldead() == 1) then
+    if (LOC_orc_battle(6, 17) == 1) then
       return
     end
-    set_ent_active(16, 0)
-    set_ent_active(17, 0)
-    set_ent_active(18, 0)
-    set_zone(32, 48, 0)
-    set_zone(34, 52, 0)
-    set_zone(34, 53, 0)
 
   elseif (zn == 8) then
     chest(55, I_NLEAF, 2)
@@ -227,8 +182,12 @@ end
 
 
 function entity_handler(en)
-  if (en >= 0) and (en <= 4) then
+  if (en == 0 or en == 1 or en == 3 or en == 4) then
     bubble(en, "It sure it clammy in here...")
+
+  elseif (en == 2) then
+    -- This should never happen, but just incase...
+    LOC_rescue_mayor(en)
 
   elseif (en == 5) then
     if (get_progress(P_MAYORGUARD1) == 0) then
@@ -246,138 +205,286 @@ function entity_handler(en)
       bubble(en, "Don't worry about me. I'm still looking for the exit...")
     end
 
-  elseif (en == 9) then
+  elseif (en == 7 or en == 8) then
+    if (LOC_orc_battle(1, en) == 1) then
+      return
+    end
+
+  elseif (en >= 9 and en <= 11) then
+    if (LOC_orc_battle(2, en) == 1) then
+      return
+    end
+
+  elseif (en >= 12 and en <= 15) then
+    if (LOC_orc_battle(3, en) == 1) then
+      return
+    end
+
+  elseif (en >= 16 and en <= 18) then
+    if (LOC_orc_battle(4, en) == 1) then
+      return
+    end
+
+  elseif (en >= 19 and en <= 22) then
+    if (LOC_orc_battle(5, en) == 1) then
+      return
+    end
+
+  elseif (en == 23 or en == 24 or (en >= 29 and en <= 36) or en == 38) then
+    if (LOC_orc_battle(8, en) == 1) then
+      return
+    end
+    set_ent_active(en, 0)
+
+  elseif (en >= 25 and en <= 28) then
+    if (LOC_orc_battle(7, en) == 1) then
+      return
+    end
+
+  elseif (en == 37) then
+    LOC_rescue_mayor(en)
+  end
+end
+
+
+function LOC_orc_battle(fight_num, en)
+  local x, y, which_combat = 0
+
+  if (fight_num == 1) then
+    x, y = marker("fight_1")
+    move_entity(7, x + 1, y, 0)
+    move_entity(8, x, y, 0)
+    wait_for_entity(7, 8)
+    set_ent_facing(7, FACE_UP)
+    set_ent_facing(8, FACE_UP)
+    bubble(en, "You're not welcome here!")
+    which_combat = 2
+  elseif (fight_num == 2) then
     if (get_numchrs() > 1) then
       bubble(en, "Intruders!")
     else
       bubble(en, "Intruder!")
     end
-
-    set_ent_script(10, "D1R6U1")
-    set_ent_script(11, "D1R3U2")
+    x, y = marker("fight_2")
+    move_entity(10, x + 1, y + 1, 0)
+    move_entity(11, x, y, 0)
     wait_for_entity(10, 11)
-    drawmap()
-    set_run(0)
-    combat(3)
-    set_run(1)
-    if (get_alldead() == 1) then
-      return
+    set_ent_facing(10, FACE_UP)
+    set_ent_facing(11, FACE_UP)
+    which_combat = 3
+  elseif (fight_num == 3) then
+    x, y = marker("fight_3")
+    set_ent_movemode(14, 2)
+    move_entity(12, x + 1, y, 0)
+    move_entity(13, x, y, 0)
+    move_entity(14, x, y + 1, 0)
+    move_entity(15, x + 1, y + 1, 0)
+    wait_for_entity(12, 15)
+    set_ent_facing(12, FACE_UP)
+    set_ent_facing(13, FACE_UP)
+    set_ent_facing(14, FACE_UP)
+    set_ent_facing(15, FACE_UP)
+    which_combat = 4
+  elseif (fight_num == 4) then
+    x, y = marker("fight_4a")
+    move_entity(16, x, y - 1, 0)
+    move_entity(17, x - 1, y + 1, 0)
+    if (get_numchrs() == 2) then
+      if (get_ent_tiley(HERO2) > get_ent_tiley(HERO1)) then
+        move_entity(18, x, y + 2, 0)
+      else
+        move_entity(18, x, y + 1, 0)
+      end
     end
+    wait_for_entity(16, 18)
+    which_combat = 3
+  elseif (fight_num == 5) then
+    x, y = marker("fight_5")
+    move_entity(19, x + 1, y)
+    move_entity(20, x, y)
+    move_entity(21, x, y - 1)
+    move_entity(22, x + 1, y - 1)
+    wait_for_entity(19, 22)
+    set_ent_facing(19, FACE_DOWN)
+    set_ent_facing(20, FACE_DOWN)
+    set_ent_facing(21, FACE_DOWN)
+    set_ent_facing(22, FACE_DOWN)
+    which_combat = 4
+  elseif (fight_num == 6) then
+    -- Move this monster as close as possible to you before fighting
+    x = get_ent_tilex(HERO1) - 1
+    y = get_ent_tiley(HERO1) - 1
+    move_entity(16, x, y)
+
+    x, y = marker("fight_4b")
+    set_ent_speed(16, 6)
+    move_entity(17, x + 1, y)
+    move_entity(18, x + 1, y + 1)
+    wait_for_entity(16, 18)
+    set_ent_facing(16, FACE_DOWN)
+    set_ent_facing(17, FACE_LEFT)
+    set_ent_facing(18, FACE_LEFT)
+    which_combat = 3
+  elseif (fight_num == 7) then
+    bubble(en, "You have to get through us to get to them.")
+    which_combat = 5
+  elseif (fight_num == 8) then
+    if (get_numchrs() > 1) then
+      bubble(en, "Intruders!")
+    else
+      bubble(en, "Intruder!")
+    end
+    which_combat = 1
+  end
+
+  if (which_combat == 0) then
+    return 0
+  end
+
+  drawmap()
+  screen_dump()
+
+  set_run(0)
+--  combat(which_combat)
+  set_run(1)
+
+  if (get_alldead() == 1) then
+    return 1
+  end
+
+  LOC_fight_cleanup(fight_num)
+  return 0
+end
+
+
+function LOC_fight_cleanup(fight_num)
+  local x, y
+  if (fight_num == 1) then
+    set_ent_active(7, 0)
+    set_ent_active(8, 0)
+    x, y = marker("fight_1")
+    set_zone(x, y - 1, 0)
+    set_zone(x + 1, y - 1, 0)
+  elseif (fight_num == 2) then
     set_ent_active(9, 0)
     set_ent_active(10, 0)
     set_ent_active(11, 0)
-
-  elseif (en == 23 or en == 24 or (en >= 29 and en <= 36) or en == 38) then
-    if (get_numchrs() > 1) then
-      bubble(en, "Intruders!")
-    else
-      bubble(en, "Intruder!")
-    end
-    drawmap()
-
-    set_run(0)
-    combat(1)
-    set_run(1)
-
-    if (get_alldead() == 1) then
-      return
-    end
-
-    set_ent_active(en, 0)
-
-  elseif (en == 28) then
-    bubble(en, "You have to get through us to get to them.")
-    drawmap()
-    set_run(0)
-    combat(5)
-    set_run(1)
-    if (get_alldead() == 1) then
-      return
-    end
+  elseif (fight_num == 3) then
+    set_ent_active(12, 0)
+    set_ent_active(13, 0)
+    set_ent_active(14, 0)
+    set_ent_active(15, 0)
+    x, y = marker("fight_3")
+    set_zone(x, y - 1, 0)
+    set_zone(x + 1, y - 1, 0)
+  elseif (fight_num == 4) then
+    set_ent_active(16, 0)
+    set_ent_active(17, 0)
+    set_ent_active(18, 0)
+    set_zone(32, 48, 0)
+    set_zone(34, 52, 0)
+    set_zone(34, 53, 0)
+  elseif (fight_num == 5) then
+    set_ent_active(19, 0)
+    set_ent_active(20, 0)
+    set_ent_active(21, 0)
+    set_ent_active(22, 0)
+    set_zone(36, 28, 0)
+    set_zone(37, 28, 0)
+  elseif (fight_num == 6) then
+    set_ent_active(16, 0)
+    set_ent_active(17, 0)
+    set_ent_active(18, 0)
+    set_zone(32, 48, 0)
+    set_zone(34, 52, 0)
+    set_zone(34, 53, 0)
+  elseif (fight_num == 7) then
     set_ent_active(28, 0)
     set_ent_active(25, 0)
     set_ent_active(26, 0)
     set_ent_active(27, 0)
 
-  elseif (en == 37) then
-    local a
+  end
 
-    bubble(en, "Hey, $0! Am I ever glad to see you! We're in a bit of a jam here.")
+end
+
+
+function LOC_rescue_mayor(en)
+  local a, x, y
+
+  x, y = marker("cage")
+  bubble(en, "Hey, $0! Am I ever glad to see you! We're in a bit of a jam here.")
+  if (en ~= 2) then
     bubble(en, "I took a small job to help guard the mayor on his trip to Andra.")
-    bubble(en, "We were on the Brayden bridge when we were ambushed by these orcs. During the fight, one of them used a fire spell.")
-    bubble(en, "The bridge was engulfed in flames and we were trapped.")
-    bubble(HERO1, "But how did you end up here?")
-    bubble(en, "Well, we had no choice but to go back the way we came, and we ran into the whole tribe.")
-    bubble(en, "We were horribly out-numbered and forced to surrender. They brought us here and then most of them left for somewhere else.")
-    bubble(HERO1, "Hmm... this almost sounds as though the whole thing was planned.")
-    bubble(en, "Hmm...")
+  end
+  bubble(en, "We were on the Brayden bridge when we were ambushed by these orcs. During the fight, one of them used a fire spell.")
+  bubble(en, "The bridge was engulfed in flames and we were trapped.")
+  bubble(HERO1, "But how did you end up here?")
+  bubble(en, "Well, we had no choice but to go back the way we came, and we ran into the whole tribe.")
+  bubble(en, "We were horribly out-numbered and forced to surrender. They brought us here and then most of them left for somewhere else.")
+  bubble(HERO1, "Hmm... this almost sounds as though the whole thing was planned.")
+  bubble(en, "Hmm...")
+  if (en ~= 2) then
     bubble(HERO1, "Excuse me, Mr. Mayor.")
     bubble(2, "Yes?")
-    bubble(HERO1, "Do you think that this could have possibly been a planned attack with the purpose of trying to kidnap you?")
-    bubble(2, "I don't see why they would want to kidnap me, but uh... could we possibly get out of here now?")
+  end
+  bubble(HERO1, "Do you think that this could have possibly been a planned attack with the purpose of trying to kidnap you?")
+  bubble(2, "I don't see why they would want to kidnap me, but uh... could we possibly get out of here now?")
+  if (en ~= 2) then
     set_ent_facing(en, FACE_UP)
     bubble(en, "Yes sir!")
     set_ent_facing(en, FACE_DOWN)
     bubble(en, "I'll go back to Randen with the mayor. Why don't you meet me there after?")
-    bubble(HERO1, "Sure.")
+  end
+  bubble(HERO1, "Sure.")
 
-    set_ftile(41, 14, 0)
-    set_obs(41, 14, 0)
-    set_autoparty(1)
+  set_progress(P_FOUNDMAYOR, 1)
+  set_progress(P_SIDEQUEST2, 1)
+  refresh()
+  set_autoparty(1)
 
-    set_ent_script(HERO1, "D2R1F2")
-    if (get_numchrs() == 2) then
-      if (get_ent_tilex(HERO2) == get_ent_tilex(HERO1) + 1) then
-        set_ent_script(HERO2, "L1D3R1F2")
-        wait_for_entity(HERO1, HERO2)
-      elseif (get_ent_tilex(HERO2) == get_ent_tilex(HERO1) - 1) then
-        set_ent_script(HERO2, "R1D3R1F2")
-        wait_for_entity(HERO1, HERO2)
-      else
-        set_ent_script(HERO2, "D2R1F2")
-        wait_for_entity(HERO1, HERO2)
-      end
-    else
-      wait_for_entity(HERO1, HERO1)
-    end
+  move_entity(HERO1, x + 1, y)
+  if (get_numchrs() == 2) then
+    move_entity(HERO2, x + 1, y + 1)
+  end
+  wait_for_entity(HERO1, HERO2)
+  set_ent_facing(HERO1, FACE_LEFT)
+  set_ent_facing(HERO2, FACE_LEFT)
 
-    set_autoparty(0)
-    orient_heroes()
+  set_autoparty(0)
+  orient_heroes()
 
-    -- TT: This keeps the dead brigands from trying to move too
-    for a = 5, 36, 1 do
-      set_ent_movemode(a, 0)
-    end
+  -- TT: This keeps the dead brigands from trying to move too
+  for a = 5, 36, 1 do
+    set_ent_movemode(a, 0)
+  end
 
-    set_ent_script(37, "D5")
-    set_ent_script(4, "L1D4")
-    set_ent_script(3, "D1L1D3")
-    set_ent_script(2, "R1D1L1D2")
-    set_ent_script(1, "R2D1L1D1")
-    set_ent_script(0, "R3D1L1F0")
+  if (en == 2) then
+    move_entity(2, get_ent_tilex(2), get_ent_tiley(2) - 1)
+    wait_for_entity(2)
+  end
 
-    wait_for_entity(0, 37)
+  set_ent_script(37, "D5")
+  set_ent_script(4, "L1D4")
+  set_ent_script(3, "D1L1D3")
+  set_ent_script(2, "R1D1L1D2")
+  set_ent_script(1, "R2D1L1D1")
+  set_ent_script(0, "R3D1L1F0")
 
-    set_ent_script(37, "L4D10K")
-    set_ent_script(4, "D1L4D10K")
-    set_ent_script(3, "D2L4D10K")
-    set_ent_script(2, "D3L4D10K")
-    set_ent_script(1, "D4L4D10K")
-    set_ent_script(0, "D5L4D10K")
+  wait_for_entity(0, 37)
 
-    wait_for_entity(0, 37)
+  set_ent_script(37, "L4D10K")
+  set_ent_script(4, "D1L4D10K")
+  set_ent_script(3, "D2L4D10K")
+  set_ent_script(2, "D3L4D10K")
+  set_ent_script(1, "D4L4D10K")
+  set_ent_script(0, "D5L4D10K")
 
-    set_ent_active(en, 0)
+  wait_for_entity(0, 37)
 
-    for a = 0, 4, 1 do
-      set_ent_active(a, 0)
-    end
+  set_ent_active(en, 0)
 
-    set_progress(P_FOUNDMAYOR, 1)
-    set_progress(P_PARTNER1, 1 + get_pidx(0))
-    if (get_numchrs() > 1) then
-      set_progress(P_PARTNER2, 1 + get_pidx(1))
-    end
-
+  for a = 0, 4, 1 do
+    set_ent_active(a, 0)
   end
 end

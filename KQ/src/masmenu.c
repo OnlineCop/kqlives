@@ -23,16 +23,16 @@
 #include <string.h>
 
 #include "kq.h"
-#include "masmenu.h"
-#include "draw.h"
-#include "setup.h"
-#include "menu.h"
-#include "skills.h"
-#include "magic.h"
-#include "res.h"
-#include "progress.h"
 #include "combat.h"
+#include "draw.h"
+#include "magic.h"
+#include "masmenu.h"
+#include "menu.h"
+#include "progress.h"
+#include "res.h"
 #include "selector.h"
+#include "setup.h"
+#include "skills.h"
 
 /*! \file
  * \brief Menus for spells
@@ -43,136 +43,34 @@
  * \date ????????
  */
 
-/*  global variables  */
+/*  Global variables  */
 int close_menu;
 
-
-
-/*  internal functions  */
+/*  Internal functions  */
 static int need_spell (int, int, int);
 static void camp_draw_spell_menu (int, int, int);
 static void camp_spell_targeting (int, int);
 static int camp_castable (int, int);
 
 
-
-/*! \brief Does target need spell?
+/*! \brief Check if spell is castable
  *
- * Does the target even need the spell that's been selected?
+ * Perform the necessary checking to determine if a spell can be
+ * cast while camping and if the mp exists to do so.
  *
- * \param   ca Caster
- * \param   ta Target
- * \param   sn Index of spell
- * \returns 0 if spell failed, 1 if success
+ * \param   who Index of caster
+ * \param   sno Spell number
+ * \returns 1 if spell was cast, 0 otherwise
  */
-static int need_spell (int ca, int ta, int sn)
+static int camp_castable (int who, int sno)
 {
-   int a, b, vc = 0, cs;
-
-   cs = pidx[ca];
-   if (ta < numchrs)
-      vc = pidx[ta];
-   switch (sn) {
-   case M_RESTORE:
-      if (party[vc].sts[S_POISON] == 0 && party[vc].sts[S_BLIND] == 0)
-         return 0;
-      break;
-   case M_RECOVERY:
-      a = 0;
-      for (b = 0; b < 7; b++)
-         if (party[vc].sts[b] != 0)
-            a++;
-      if (a == 0 || party[vc].sts[S_DEAD] != 0)
-         return 0;
-      break;
-   case M_LIFE:
-   case M_FULLLIFE:
-      if (party[vc].sts[S_DEAD] == 0)
-         return 0;
-      break;
-   case M_CURE1:
-   case M_CURE2:
-   case M_CURE3:
-   case M_CURE4:
-      if (ta == SEL_ALL_ALLIES) {
-         b = 0;
-         for (a = 0; a < numchrs; a++)
-            if (party[pidx[a]].hp == party[pidx[a]].mhp
-                || party[pidx[a]].sts[S_STONE] != 0
-                || party[pidx[a]].sts[S_DEAD] != 0)
-               b++;
-         if (b == numchrs)
-            return 0;
-      } else {
-         if (party[vc].hp == party[vc].mhp)
-            return 0;
-      }
-      break;
-   case M_WARP:
-/* RB FIXME What was this supposed to do? */
-/* TT: This means that if you're on a map where you can warp from (main.map)
-       you can get away from this battle.  But if you're somewhere that the
-       map is defined as 'can_warp = 0', you can't use the warp spell there.
- */
-      if (g_map.can_warp == 0)
-         return 0;
-      break;
-   case M_REPULSE:
-      return 1;
-   default:
+   if (sno == M_VISION || (sno == M_WARP && g_map.can_warp == 0))
       return 0;
+   if (magic[sno].use == USE_ANY_INF || magic[sno].use == USE_CAMP_INF) {
+      if (party[pidx[who]].mp >= mp_needed (who, sno))
+         return 1;
    }
-   return 1;
-}
-
-
-
-/*! \brief Character learned new spells?
- *
- * This function is called by level_up() and checks to see
- * if the character has learned any new spells (that s/he did
- * not already know).
- *
- * \param   who Character's index
- * \returns 0 if no spell learned, else spell(s) learned
- */
-int learn_new_spells (int who)
-{
-   int a, p, i, nog, g = 0;
-
-   blit (double_buffer, back, 0, 0, 0, 0, 352, 280);
-   for (a = 1; a < NUM_SPELLS; a++) {
-      nog = 1;
-      for (i = 0; i < 60; i++)
-         if (party[who].spells[i] == a)
-            nog = 0;
-      if (magic[a].clvl[who] == 0 || magic[a].clvl[who] > party[who].lvl)
-         nog = 0;
-      if (nog == 1) {
-         p = 60;
-         for (i = 59; i >= 0; i--)
-            if (party[who].spells[i] == 0)
-               p = i;
-         if (p < 60) {
-            if (in_combat == 1) {
-               sprintf (strbuf, "%s learned!", magic[a].name);
-               blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
-               menubox (double_buffer, 148 - (strlen (strbuf) * 4), 152,
-                        strlen (strbuf) + 1, 1, BLUE);
-               draw_icon (double_buffer, magic[a].icon,
-                          156 - (strlen (strbuf) * 4), 160);
-               print_font (double_buffer, 164 - (strlen (strbuf) * 4), 160,
-                           strbuf, FNORMAL);
-               blit2screen (0, 0);
-               wait_enter ();
-               g++;
-            }
-            party[who].spells[p] = a;
-         }
-      }
-   }
-   blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
-   return g;
+   return 0;
 }
 
 
@@ -377,22 +275,121 @@ static void camp_spell_targeting (int mc, int sn)
 
 
 
-/*! \brief Check if spell is castable
+/*! \brief Character learned new spells?
  *
- * Perform the necessary checking to determine if a spell can be
- * cast while camping and if the mp exists to do so.
+ * This function is called by level_up() and checks to see
+ * if the character has learned any new spells (that s/he did
+ * not already know).
  *
- * \param   who Index of caster
- * \param   sno Spell number
- * \returns 1 if spell was cast, 0 otherwise
+ * \param   who Character's index
+ * \returns 0 if no spell learned, else spell(s) learned
  */
-static int camp_castable (int who, int sno)
+int learn_new_spells (int who)
 {
-   if (sno == M_VISION || (sno == M_WARP && g_map.can_warp == 0))
-      return 0;
-   if (magic[sno].use == USE_ANY_INF || magic[sno].use == USE_CAMP_INF) {
-      if (party[pidx[who]].mp >= mp_needed (who, sno))
-         return 1;
+   int a, p, i, nog, g = 0;
+
+   blit (double_buffer, back, 0, 0, 0, 0, 352, 280);
+   for (a = 1; a < NUM_SPELLS; a++) {
+      nog = 1;
+      for (i = 0; i < 60; i++)
+         if (party[who].spells[i] == a)
+            nog = 0;
+      if (magic[a].clvl[who] == 0 || magic[a].clvl[who] > party[who].lvl)
+         nog = 0;
+      if (nog == 1) {
+         p = 60;
+         for (i = 59; i >= 0; i--)
+            if (party[who].spells[i] == 0)
+               p = i;
+         if (p < 60) {
+            if (in_combat == 1) {
+               sprintf (strbuf, "%s learned!", magic[a].name);
+               blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
+               menubox (double_buffer, 148 - (strlen (strbuf) * 4), 152,
+                        strlen (strbuf) + 1, 1, BLUE);
+               draw_icon (double_buffer, magic[a].icon,
+                          156 - (strlen (strbuf) * 4), 160);
+               print_font (double_buffer, 164 - (strlen (strbuf) * 4), 160,
+                           strbuf, FNORMAL);
+               blit2screen (0, 0);
+               wait_enter ();
+               g++;
+            }
+            party[who].spells[p] = a;
+         }
+      }
    }
-   return 0;
+   blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
+   return g;
+}
+
+
+
+/*! \brief Does target need spell?
+ *
+ * Does the target even need the spell that's been selected?
+ *
+ * \param   ca Caster
+ * \param   ta Target
+ * \param   sn Index of spell
+ * \returns 0 if spell failed, 1 if success
+ */
+static int need_spell (int ca, int ta, int sn)
+{
+   int a, b, vc = 0, cs;
+
+   cs = pidx[ca];
+   if (ta < numchrs)
+      vc = pidx[ta];
+   switch (sn) {
+   case M_RESTORE:
+      if (party[vc].sts[S_POISON] == 0 && party[vc].sts[S_BLIND] == 0)
+         return 0;
+      break;
+   case M_RECOVERY:
+      a = 0;
+      for (b = 0; b < 7; b++)
+         if (party[vc].sts[b] != 0)
+            a++;
+      if (a == 0 || party[vc].sts[S_DEAD] != 0)
+         return 0;
+      break;
+   case M_LIFE:
+   case M_FULLLIFE:
+      if (party[vc].sts[S_DEAD] == 0)
+         return 0;
+      break;
+   case M_CURE1:
+   case M_CURE2:
+   case M_CURE3:
+   case M_CURE4:
+      if (ta == SEL_ALL_ALLIES) {
+         b = 0;
+         for (a = 0; a < numchrs; a++)
+            if (party[pidx[a]].hp == party[pidx[a]].mhp
+                || party[pidx[a]].sts[S_STONE] != 0
+                || party[pidx[a]].sts[S_DEAD] != 0)
+               b++;
+         if (b == numchrs)
+            return 0;
+      } else {
+         if (party[vc].hp == party[vc].mhp)
+            return 0;
+      }
+      break;
+   case M_WARP:
+/* RB FIXME What was this supposed to do? */
+/* TT: This means that if you're on a map where you can warp from (main.map)
+       you can get away from this battle.  But if you're somewhere that the
+       map is defined as 'can_warp = 0', you can't use the warp spell there.
+ */
+      if (g_map.can_warp == 0)
+         return 0;
+      break;
+   case M_REPULSE:
+      return 1;
+   default:
+      return 0;
+   }
+   return 1;
 }

@@ -173,8 +173,7 @@ void maptopcx (int format)
       }
    }
 
-   if (format == 1)
-   {
+   if (format == 1) {
       save_pcx ("mdback.bmp", pcx_background, pal);
       save_pcx ("mdmid.bmp", pcx_middleground, pal);
       save_pcx ("mdfore.bmp", pcx_foreground, pal);
@@ -182,9 +181,7 @@ void maptopcx (int format)
       /* Confirmation message */
       cmessage ("Saved to BMP!");
       wait_enter ();
-   }
-   else if (format == 2)
-   {
+   } else if (format == 2) {
       save_pcx ("mdback.pcx", pcx_background, pal);
       save_pcx ("mdmid.pcx", pcx_middleground, pal);
       save_pcx ("mdfore.pcx", pcx_foreground, pal);
@@ -329,12 +326,18 @@ void new_map (void)
    gmap.sty = 0;
    gmap.warpx = 0;
    gmap.warpy = 0;
-   gmap.revision = 1;
+   gmap.revision = 2;
    gmap.extra_sdword2 = 0;
    gmap.song_file[0] = 0;
    gmap.map_desc[0] = 0;
    gmap.num_markers = 0;
    gmap.markers = NULL;
+   gmap.num_bound_boxes = 0;
+   gmap.bound_box = NULL;
+
+   num_bound_boxes = gmap.num_bound_boxes;
+   active_bound = 0;
+
    bufferize ();
    update_tileset ();
    init_entities ();
@@ -348,7 +351,7 @@ void new_map (void)
 void prompt_load_map (void)
 {
    char fname[40];
-   int response, done, i;
+   int response, done;
 
    make_rect (double_buffer, 3, 50);
    print_sfont (6, 6, "Load a map", double_buffer);
@@ -394,13 +397,6 @@ void prompt_load_map (void)
          draw_map ();
          load_map (fname);
 
-         /* Recount the number of entities on the map */
-         number_of_ents = 0;
-
-         for (i = 0; i < 50; i++) {
-            if (gent[i].active == 1)
-               number_of_ents = i + 1;
-         }
          done = 1;
       }                         /* if (yninput ()) */
    }

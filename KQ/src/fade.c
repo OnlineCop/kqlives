@@ -30,8 +30,8 @@
 #include "kq.h"
 
 #include <allegro/internal/aintern.h>
-#include "fade.h"
 #include "draw.h"
+#include "fade.h"
 #include "music.h"
 #include "res.h"
 

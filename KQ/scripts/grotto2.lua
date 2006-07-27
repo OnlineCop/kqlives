@@ -7,15 +7,18 @@ end
 
 function refresh()
   if (get_progress(P_CANCELROD) > 0) then
-    set_mtile(20, 23, 265)
+    set_mtile("cancel", 265)
+    set_zone("cancel", 0)
   end
 
   if (get_treasure(48) == 1) then
-    set_mtile(17, 52, 265)
+    set_mtile("treasure1", 265)
+    set_zone("treasure1", 0)
   end
 
   if (get_treasure(49) == 1) then
-    set_mtile(18, 47, 265)
+    set_mtile("treasure2", 265)
+    set_zone("treasure2", 0)
   end
 end
 

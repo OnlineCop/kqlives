@@ -11,7 +11,8 @@
 function autoexec()
   set_ent_active(12, 0)
   if (get_progress(P_ROUNDNUM) > 0) then
-    place_ent(6, 67, 20+4)
+    x, y = marker("after_battle")
+    place_ent(6, x + 1, y + 1)
   end
 end
 
@@ -28,22 +29,22 @@ function zone_handler(zn)
     change_map("main", "coliseum")
 
   elseif (zn == 2) then
-    door_in(72, 11+4, 62, 0+4, 82, 14+4)
+    door_in("inn_i")
 
   elseif (zn == 3) then
-    door_in(66, 30+4, 62, 16+4, 70, 33+4)
+    door_in("tournament_i")
 
   elseif (zn == 4) then
-    door_in(79, 27+4, 72, 16+4, 86, 30+4)
+    door_in("shop_i")
 
   elseif (zn == 5) then
-    door_out(20, 21)
+    door_out("inn_o")
 
   elseif (zn == 6) then
-    door_out(30, 22)
+    door_out("tournament_o")
 
   elseif (zn == 7) then
-    door_out(40, 20)
+    door_out("shop_o")
 
   elseif (zn == 8) then
     inn("The Coliseum Inn", 250, 1)
@@ -52,7 +53,7 @@ function zone_handler(zn)
     shop(22)
 
   elseif (zn == 10) then
-    door_out(get_marker_tilex("battle"), get_marker_tiley("battle"))
+    door_out("battle")
   
   elseif (zn == 11) then
     set_save(0)
@@ -65,7 +66,7 @@ function zone_handler(zn)
     touch_fire(party[0])
 
   elseif (zn == 14) then
-    door_in(66, 23, 62, 16+4, 70, 33+4)
+    door_in("after_battle")
     
   elseif (zn == 15) then
     if (get_progress(P_BATTLESTATUS) > 0) then
@@ -77,7 +78,8 @@ function zone_handler(zn)
     combat(11 + get_progress(P_ROUNDNUM))
     set_progress(P_USEITEMINCOMBAT, 0)
     set_run(1)
-    warp(get_marker_tilex("battle"), get_marker_tiley("battle") - 3, 16)
+    local x, y = marker("battle")
+    warp(x, y - 3, 16)
     if (get_alldead() == 1) then
       set_progress(P_BATTLESTATUS, 2)
       set_party_hp(party[0], 1)
@@ -146,8 +148,8 @@ function entity_handler(en)
 
           set_gp(get_gp() - 2000)
           bubble(en, "Consider yourself registered. After each battle, come back and talk to me.")
-          set_ent_script(6, "U2R1F2")
-          wait_for_entity(6, 6)
+          set_ent_script(en, "U2R1F2")
+          wait_for_entity(en, en)
           set_progress(P_ROUNDNUM, 1)
           set_progress(P_BATTLESTATUS, 0)
         else
@@ -169,7 +171,7 @@ function entity_handler(en)
           sfx(5)
           msg("Opal Shield procured", 255, 0, xofs, yofs)
           set_progress(P_OPALSHIELD, 1)
-          if (get_ent_tilex(HERO1) == get_ent_tilex(6)) then
+          if (get_ent_tilex(HERO1) == get_ent_tilex(en)) then
             set_ent_script(HERO1, "L1")
             wait_for_entity(HERO1, HERO1)
           end
@@ -186,13 +188,13 @@ function entity_handler(en)
             set_ent_facing(HERO2, FACE_UP)
             orient_heroes()
           end
-          set_ent_script(6, "L1D2")
-          wait_for_entity(6, 6)
-          bubble(6, "Good luck in your endeavours.")
+          set_ent_script(en, "L1D2")
+          wait_for_entity(en, en)
+          bubble(en, "Good luck in your endeavours.")
 	  if (get_numchrs() > 1) then -- Skip this partnering up bit.
 	     return
 	  end
-          bubble(en, "Good luck in your endeavours.")
+
           if (get_progress(P_OLDPARTNER) > 0) then
             set_progress(P_FINALPARTNER, get_progress(P_OLDPARTNER))
           else
@@ -226,8 +228,8 @@ function entity_handler(en)
         set_progress(P_ROUNDNUM, 0)
         set_ent_script(HERO1, "D3F1")
         wait_for_entity(0, 0)
-        set_ent_script(6, "L1D2")
-        wait_for_entity(6, 6)
+        set_ent_script(en, "L1D2")
+        wait_for_entity(en, en)
         play_map_song()
       end
     end

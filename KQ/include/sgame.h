@@ -25,7 +25,7 @@
 
 
 /* Number of save game slots */
-#define NUMSG 5
+#define NUMSG 20
 
 #include "kq.h"
 

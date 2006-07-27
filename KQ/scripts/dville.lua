@@ -31,40 +31,40 @@ function zone_handler(zn)
     bubble(HERO1, "Locked.")
 
   elseif (zn == 3) then
-    door_in(61, 16, 56, 8, 66, 20)
+    door_in("room_1i")
 
   elseif (zn == 4) then
-    door_in(71, 16, 66, 8, 76, 20)
+    door_in("room_2i")
 
   elseif (zn == 5) then
-    door_in(61, 28, 56, 20, 66, 32)
+    door_in("room_3i")
 
   elseif (zn == 6) then
-    door_in(71, 28, 66, 20, 76, 32)
+    door_in("room_4i")
 
   elseif (zn == 7) then
-    door_in(61, 40, 56, 32, 66, 44)
+    door_in("room_5i")
 
   elseif (zn == 8) then
-    door_in(71, 40, 66, 32, 76, 44)
+    door_in("room_6i")
 
   elseif (zn == 9) then
-    door_out(13, 18)
+    door_out("room_1o")
 
   elseif (zn == 10) then
-    door_out(18, 27)
+    door_out("room_2o")
 
   elseif (zn == 11) then
-    door_out(27, 21)
+    door_out("room_3o")
 
   elseif (zn == 12) then
-    door_out(34, 28)
+    door_out("room_4o")
 
   elseif (zn == 13) then
-    door_out(40, 18)
+    door_out("room_5o")
 
   elseif (zn == 14) then
-    door_out(30, 40)
+    door_out("room_6o")
 
   elseif (zn == 15) then
     touch_fire(party[0])
@@ -140,94 +140,7 @@ function entity_handler(en)
     end
 
   elseif (en == 7) then
-    if (get_progress(P_DENORIAN) == 0) then
-      bubble(en, "The council would like to ask for your help in retrieving our statue. We will tell you what we know.")
-      if (prompt(en, 2, 0, "However, I must first ask if",
-                 "you are willing to help us?",
-                 "  yes",
-                 "  no") == 0) then
-        LOC_trollstory(en)
-      else
-        bubble(en, "I see. Well, then you should be on your way then. My people will show you out.")
-        view_range(0, 0, 0, 0, 0)
-        set_progress(P_DENORIAN, 1)
-        change_map("main", "dville")
-      end
-    elseif (get_progress(P_DENORIAN) == 1) then
-      if (prompt(en, 2, 0, "Have you changed your mind?",
-                 "  yes",
-                 "  no") == 0) then
-        LOC_trollstory(en)
-      else
-        bubble(en, "I thought as much. Begone!")
-        view_range(0, 0, 0, 0, 0)
-        change_map("main", "dville")
-      end
-    elseif (get_progress(P_DENORIAN) == 2) then
-      bubble(en, "Good luck.")
-    elseif (get_progress(P_DENORIAN) == 3 or
-            get_progress(P_DENORIAN) == 4) then
-      bubble(en, "This is incredible... you actually got the statue back...")
-      bubble(HERO1, "...Well, hold on a second. I didn't get the WHOLE statue back; just a part of it. It looks like it had been broken before I got there.")
-      bubble(en, "Regardless, this much is wonderful. I wish we had some way of paying you back.")
-      bubble(en, "Unfortunately our village has next to nothing.")
-      bubble(HERO1, "Don't worry... not everything we adventurers do is for a reward.")
-      bubble(en, "What about the troll?")
-
-      msg("You tell the head of the village council what you found.", 0, 0)
-      bubble(en, "Demnas... that name is familiar.")
-      bubble(en, "I remember that a tribe of Narakians once lived around here somewhere. I thought they were all wiped out by Malkaron's armies.")
-
-      msg("You shrug.", 0, 0)
-      bubble(en, "Hmm...")
-      bubble(en, "Wait... I think I remember now. Demnas was the name of the Narakian's tribal leader who supposedly went crazy many years ago. It's possible that you found where he has been hiding all of this time.")
-
-      if (get_progress(P_DENORIAN) == 3) then
-        bubble(HERO1, "Well, him being crazy explains why he was rambling on about someone trying to steal the statue from him.")
-      else
-        bubble(HERO1, "He was rambling on about someone trying to seal the statue from him.")
-        if (get_progress(P_TALK_CORIN) == 0) then
-          bubble(HERO1, "It still doesn't make any sense.")
-          bubble(HERO1, "Wait a minute! I remember that CORIN was down there...")
-          if (get_numchrs() == 1) then
-            bubble(HERO1, "I might be able to go back there and talk to him.")
-          else
-            bubble(HERO1, "We might be able to go back there and talk to him.")
-          end
-          bubble(HERO1, "Maybe he'd know more about it.")
-        else
-          if (party[0] == CORIN) then
-            CorinInParty = HERO1
-            cp = "I thought"
-          elseif (get_numchrs() == 2 and party[1] == CORIN) then
-            CorinInParty = HERO2
-            cp = "I thought"
-          else
-            CorinInParty = HERO1
-            cp = "He thought"
-          end
-
-          -- // You met with Corin, but he's not in your party
-          if (CorinInParty == 0) then
-            if (get_numchrs() == 1) then
-              bubble(HERO1, "It didn't make any sense until I met up with CORIN.")
-            else
-              bubble(HERO1, "It didn't make any sense until we met up with CORIN.")
-            end
-          end
-          bubble(CorinInParty, cp.." that Malkaron's armies got to Demnas and the troll first because they were able to get away with half of the statue.")
-        end
-      end
-      bubble(en, "Well, I guess I'm a little relieved that we don't have a troll problem.")
-      bubble(HERO1, "Well, yeah I guess that's good. And you don't have to worry about any crazed Nerakians for awhile either.")
-      bubble(en, "That's good to hear. At the very least I can say that you will always be welcome in our village.")
-      bubble(HERO1, "Thank you.")
-      set_progress(P_DENORIAN, 5)
-    elseif (get_progress(P_DENORIAN) == 5) then
-      bubble(en, "Good luck in your journey. If you come across the other half of our statue...")
-    else
-      bubble(en, "Good journey friend.")
-    end
+    LOC_council(en)
 
   elseif (en == 8) then
     if (get_progress(P_DENORIAN) == 0) then
@@ -307,6 +220,96 @@ function entity_handler(en)
       bubble(en, "It sure would be nice to have a little more excitement around here. It's too... boring.")
     end
 
+  end
+end
+
+
+function LOC_council(en)
+  if (get_progress(P_DENORIAN) == 0) then
+    bubble(en, "The council would like to ask for your help in retrieving our statue. We will tell you what we know.")
+    if (prompt(en, 2, 0, "However, I must first ask if",
+               "you are willing to help us?",
+               "  yes",
+               "  no") == 0) then
+      LOC_trollstory(en)
+    else
+      bubble(en, "I see. Well, then you should be on your way then. My people will show you out.")
+      set_progress(P_DENORIAN, 1)
+      change_map("main", "dville")
+    end
+  elseif (get_progress(P_DENORIAN) == 1) then
+    if (prompt(en, 2, 0, "Have you changed your mind?",
+               "  yes",
+               "  no") == 0) then
+      LOC_trollstory(en)
+    else
+      bubble(en, "I thought as much. Begone!")
+      change_map("main", "dville")
+    end
+  elseif (get_progress(P_DENORIAN) == 2) then
+    bubble(en, "Good luck.")
+  elseif (get_progress(P_DENORIAN) == 3 or
+          get_progress(P_DENORIAN) == 4) then
+    bubble(en, "This is incredible... you actually got the statue back...")
+    bubble(HERO1, "...Well, hold on a second. I didn't get the WHOLE statue back; just a part of it. It looks like it had been broken before I got there.")
+    bubble(en, "Regardless, this much is wonderful. I wish we had some way of paying you back.")
+    bubble(en, "Unfortunately our village has next to nothing.")
+    bubble(HERO1, "Don't worry... not everything we adventurers do is for a reward.")
+    bubble(en, "What about the troll?")
+
+    msg("You tell the head of the village council what you found.", 0, 0)
+    bubble(en, "Demnas... that name is familiar.")
+    bubble(en, "I remember that a tribe of Narakians once lived around here somewhere. I thought they were all wiped out by Malkaron's armies.")
+
+    msg("You shrug.", 0, 0)
+    bubble(en, "Hmm...")
+    bubble(en, "Wait... I think I remember now. Demnas was the name of the Narakian's tribal leader who supposedly went crazy many years ago. It's possible that you found where he has been hiding all of this time.")
+
+    if (get_progress(P_DENORIAN) == 3) then
+      bubble(HERO1, "Well, him being crazy explains why he was rambling on about someone trying to steal the statue from him.")
+    else
+      bubble(HERO1, "He was rambling on about someone trying to seal the statue from him.")
+      if (get_progress(P_TALK_CORIN) == 0) then
+        bubble(HERO1, "It still doesn't make any sense.")
+        bubble(HERO1, "Wait a minute! I remember that CORIN was down there...")
+        if (get_numchrs() == 1) then
+          bubble(HERO1, "I might be able to go back there and talk to him.")
+        else
+          bubble(HERO1, "We might be able to go back there and talk to him.")
+        end
+        bubble(HERO1, "Maybe he'd know more about it.")
+      else
+        if (party[0] == CORIN) then
+          CorinInParty = HERO1
+          cp = "I thought"
+        elseif (get_numchrs() == 2 and party[1] == CORIN) then
+          CorinInParty = HERO2
+          cp = "I thought"
+        else
+          CorinInParty = HERO1
+          cp = "He thought"
+        end
+
+        -- // You met with Corin, but he's not in your party
+        if (CorinInParty == 0) then
+          if (get_numchrs() == 1) then
+            bubble(HERO1, "It didn't make any sense until I met up with CORIN.")
+          else
+            bubble(HERO1, "It didn't make any sense until we met up with CORIN.")
+          end
+        end
+        bubble(CorinInParty, cp.." that Malkaron's armies got to Demnas and the troll first because they were able to get away with half of the statue.")
+      end
+    end
+    bubble(en, "Well, I guess I'm a little relieved that we don't have a troll problem.")
+    bubble(HERO1, "Well, yeah I guess that's good. And you don't have to worry about any crazed Nerakians for awhile either.")
+    bubble(en, "That's good to hear. At the very least I can say that you will always be welcome in our village.")
+    bubble(HERO1, "Thank you.")
+    set_progress(P_DENORIAN, 5)
+  elseif (get_progress(P_DENORIAN) == 5) then
+    bubble(en, "Good luck in your journey. If you come across the other half of our statue...")
+  else
+    bubble(en, "Good journey friend.")
   end
 end
 

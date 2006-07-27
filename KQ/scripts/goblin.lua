@@ -18,40 +18,40 @@ function zone_handler(zn)
     touch_fire(party[0])
 
   elseif (zn == 3) then
-    door_in(67+7, 12+8, 63+7, 5+8, 71+7, 15+8)
+    door_in("room_1i")
 
   elseif (zn == 4) then
-    door_out(30+7, 7+8)
+    door_out("room_1o")
 
   elseif (zn == 5) then
-    door_in(77+7, 12+8, 73+7, 5+8, 81+7, 15+8)
+    door_in("room_2i")
 
   elseif (zn == 6) then
-    door_out(42+7, 15+8)
+    door_out("room_2o")
 
   elseif (zn == 7) then
-    door_in(67+7, 24+8, 63+7, 17+8, 71+7, 27+8)
+    door_in("room_3i")
 
   elseif (zn == 8) then
-    door_out(7+7, 20+8)
+    door_out("room_3o")
 
   elseif (zn == 9) then
-    door_in(77+7, 24+8, 73+7, 17+8, 81+7, 27+8)
+    door_in("room_4i")
 
   elseif (zn == 10) then
-    door_out(41+7, 32+8)
+    door_out("room_4o")
 
   elseif (zn == 11) then
-    door_in(67+7, 36+8, 63+7, 29+8, 71+7, 39+8)
+    door_in("room_5i")
 
   elseif (zn == 12) then
-    door_out(11+7, 36+8)
+    door_out("room_5o")
 
   elseif (zn == 13) then
-    door_in(77+7, 36+8, 73+7, 29+8, 81+7, 39+8)
+    door_in("room_6i")
 
   elseif (zn == 14) then
-    door_out(39+7, 38+8)
+    door_out("room_6o")
 
   end
 end

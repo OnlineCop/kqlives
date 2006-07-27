@@ -13,28 +13,16 @@ function autoexec()
 end
 
 
--- show the status of a chest
-function showch(x, y, tr)
-  local ch
-  if (get_treasure(tr) == 1) then
-    ch = 39
-  else
-    ch = 38
-  end
-  set_mtile(x, y, ch)
-end
-
-
 function refresh()
   if (get_progress(P_CAVEKEY) > 0) then
     -- Move Rufus into his house
     place_ent(2, 152, 12)
   end
 
-  showch(74, 47, 73)
-  showch(75, 47, 74)
-  showch(84, 23, 82)
-  showch(93, 21, 83)
+  showch("treasure1", 73)
+  showch("treasure2", 74)
+  showch("treasure3", 82)
+  showch("treasure4", 83)
 end
 
 
@@ -44,6 +32,7 @@ end
 
 
 function zone_handler(zn)
+  local x, y
 --  if (zn == 0) then
 --    combat(50)
 
@@ -55,21 +44,8 @@ function zone_handler(zn)
     change_map("main", "pass_e")
 
   elseif (zn == 3) then -- northern door
-    if (get_progress(P_CAVEKEY) == 0) then
-      bubble(HERO1, "What's wrong with the code?",
-                    "I just walked through here.",
-                    "Therefore, I have the key.",
-                    "Check the code for bugs.")
-    else
-      -- Open the door before going in
-      sfx(26)
-      set_mtile(83, 27, 57)
-      set_mtile(83, 28, 33)
-      drawmap()
-      screen_dump()
+    LOC_door("door3", "cave5", "door1")
 
-      change_map("cave5", "door1")
-    end
   elseif (zn == 4) then
     chest(73, I_VITSEED, 1)
     refresh()
@@ -80,44 +56,24 @@ function zone_handler(zn)
 
   -- Western door
   elseif (zn == 6) then
-    if (get_progress(P_CAVEKEY) == 0) then
-      bubble(HERO1, "Locked.")
-    else
-      -- Open the door before going in
-      sfx(26)
-      set_mtile(78, 38, 57)
-      set_mtile(78, 39, 33)
-      drawmap()
-      screen_dump()
-
-      change_map("cave5", "door2")
-    end
+    LOC_door("door1", "cave5", "door2")
 
   elseif (zn == 7) then
-    if (get_progress(P_CAVEKEY) == 0) then
-      bubble(HERO1, "Locked.")
-    else
-      -- Open the door before going in
-      sfx(26)
-      set_mtile(106, 35, 57)
-      set_mtile(106, 36, 33)
-      drawmap()
-      screen_dump()
-
-      change_map("cave5", "entrance")
-    end
+    LOC_door("door2", "cave5", "entrance")
 
   -- Door into cabin
   elseif (zn == 8) then
+    x, y = marker("cabin_in")
     -- Avoid parallax problems: remove the background temporarily
     set_background(0)
-    door_in(get_marker_tilex("cabin_in"), get_marker_tiley("cabin_in"), 147, 7, 155, 18)
+    door_in(x, y)
 
   -- Door out of the cabin
   elseif (zn == 9) then
+    x, y = marker("cabin_out")
     -- Reset the background for correct parallax
     set_background(1)
-    door_out(get_marker_tilex("cabin_out"), get_marker_tiley("cabin_out"))
+    door_out(x, y)
 
   -- Treasure
   elseif (zn == 10) then
@@ -135,7 +91,51 @@ function zone_handler(zn)
 end
 
 
-function miner(en)
+function entity_handler(en)
+  if (en == 0 or en == 1) then
+    if (get_progress(P_SAVEBREANNE) == 0) then
+      bubble(en, "This pass is reserved for use by caravans only.")
+    else
+      bubble(en, "You are free to use the pass. Just be careful.")
+    end
+  elseif (en == 2) then
+    -- Cabin bloke
+    LOC_miner(en)
+  end
+end
+
+
+function LOC_door(door, map, mark)
+  local x, y = marker(door)
+
+  if (get_progress(P_CAVEKEY) == 0) then
+    bubble(HERO1, "Locked.")
+    return
+  end
+
+  -- Open the door before going in
+  set_mtile(x, y - 1, 57)
+  set_mtile(x, y, 33)
+
+  sfx(26)
+  drawmap()
+  screen_dump()
+
+  change_map(map, mark)
+end
+
+
+-- Show the status of a chest
+function showch(which_marker, which_chest)
+  -- Set tiles if -1 passed in as 'which_chest' or if chest already opened
+  if (which_chest < 0 or get_treasure(which_chest) == 1) then
+    set_mtile(which_marker, 39)
+    set_zone(which_marker, 0)
+  end
+end
+
+
+function LOC_miner(en)
   if (get_progress(P_TALKRUFUS) == 0) then
     bubble(en, "Howdy!")
     bubble(HERO1, "Hello. Is this your cabin?")
@@ -165,18 +165,4 @@ function miner(en)
   end
 
   shop(23)
-end
-
-
-function entity_handler(en)
-  if (en == 0 or en == 1) then
-    if (get_progress(P_SAVEBREANNE) == 0) then
-      bubble(en, "This pass is reserved for use by caravans only.")
-    else
-      bubble(en, "You are free to use the pass. Just be careful.")
-    end
-  elseif (en == 2) then
-    -- Cabin bloke
-    miner(en)
-  end
 end

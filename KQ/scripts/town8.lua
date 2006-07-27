@@ -95,59 +95,57 @@ function zone_handler(zn)
     refresh()
 
   elseif (zn == 15) then
-    door_in(100, 40, 92, 32, 110, 43)
+    door_in("inn_1i")
 
   elseif (zn == 16) then
-    door_in(102, 40, 92, 32, 110, 43)
+    door_in("inn_2i")
 
   elseif (zn == 17) then
-    door_out(37, 23)
+    door_out("inn_1o")
 
   elseif (zn == 18) then
-    door_out(38, 23)
+    door_out("inn_2o")
 
   elseif (zn == 19) then
-    door_in(86, 16, 81, 8, 91, 19)
+    door_in("room_1i")
 
   elseif (zn == 20) then
-    door_out(15, 11)
+    door_out("room_1o")
 
   elseif (zn == 21) then
-    door_in(96, 16, 91, 8, 101, 19)
+    door_in("room_2i")
 
   elseif (zn == 22) then
-    door_out(8, 21)
+    door_out("room_2o")
 
   elseif (zn == 23) then
-    door_in(106, 16, 101, 8, 111, 19)
+    door_in("door_3i")
 
   elseif (zn == 24) then
-    door_out(38, 9)
+    door_out("door_3o")
 
   elseif (zn == 25) then
-    door_in(86, 28, 81, 20, 91, 31)
+    door_in("room_4i")
 
   elseif (zn == 26) then
-    door_out(16, 34)
+    door_out("room_4o")
 
   elseif (zn == 27) then
-    door_in(96, 28, 91, 20, 101, 31)
+    door_in("room_5i")
 
   elseif (zn == 28) then
-    door_out(50, 13)
+    door_out("room_5o")
 
   elseif (zn == 29) then
-    door_in(106, 28, 101, 20, 111, 31)
+    door_in("room_6i")
 
   elseif (zn == 30) then
-    door_out(64, 20)
+    door_out("room_6o")
 
   elseif (zn == 31) then
-    view_range(1, 81, 31, 91, 42)
     warp("dstairs3", 8)
 
   elseif (zn == 32) then
-    view_range(1, 101, 19, 111, 31)
     warp("ustairs1", 8)
 
   elseif (zn == 33) then

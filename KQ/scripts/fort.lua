@@ -39,36 +39,16 @@ function refresh()
 end
 
 function postexec()
-/*
-  local en = 5
-
-  if (get_progress(P_TALKDERIG) == 3) then
-    view_range(1, 36, 11, 44, 19)
-    set_ent_facing(HERO1, FACE_UP)
-    if (get_numchrs() == 2) then
-      set_ent_facing(HERO2, FACE_UP)
-    end
-    drawmap()
-    screen_dump()
-    do_fadein(4)
-    set_holdfade(0)
-    bubble(en, "So that's about it... cross the river and head for the small group of mountains due west from there.")
-    bubble(en, "You just have to go through some caves to reach the valley beyond.")
-    bubble(en, "Then make your way to the Oracle's tower. Is that understood?")
-    bubble(HERO1, "Yeah, I guess so... it all seems clear enough.")
-    bubble(en, "Great! Head out whenever you're ready.")
-    set_progress(P_TALKDERIG, 4)
-  end
-*/
+  return
 end
 
 
 function zone_handler(zn)
   if (zn == 1) then
-    change_map("main", "fort_n")
+    change_map("main", "fort", 0, -1)
 
   elseif (zn == 2) then
-    change_map("main", "fort_s")
+    change_map("main", "fort", 0, 2)
 
   elseif (zn == 3) then
     door_in(40, 16, 36, 10, 44, 18)

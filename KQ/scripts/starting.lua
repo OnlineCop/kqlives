@@ -26,7 +26,7 @@ function postexec()
   -- TT: This makes it a hundred times faster to update scripts and see how
   -- it will appear in real time.  Just comment out everything that you do not
   -- want to sit through every time you recompile the script.
-
+-- /*
   LOC_storyline(SENSAR)
   LOC_storyline(SARINA)
   LOC_storyline(CORIN)
@@ -37,7 +37,7 @@ function postexec()
   LOC_storyline(NOSLOM)
 
   LOC_meet_nostik()
-
+-- */
   LOC_choose_hero()
 end
 
@@ -52,55 +52,7 @@ function entity_handler(en)
 end
 
 
-function LOC_meet_nostik()
-  local a
-
-  view_range(1, 116, 12, 141, 31)
-  screen_dump()
-
-  set_ent_active(HERO1, 0)
-
-  -- Put a bunch of people around Hunert the butler
-  place_ent(3, 127, 24)
-  set_ent_facing(3, FACE_RIGHT)
-  place_ent(4, 133, 24)
-  set_ent_facing(4, FACE_LEFT)
-  place_ent(5, 127, 25)
-  set_ent_facing(5, FACE_RIGHT)
-  place_ent(6, 133, 25)
-  set_ent_facing(6, FACE_LEFT)
-  place_ent(7, 128, 26)
-  set_ent_facing(7, FACE_UP)
-  place_ent(8, 132, 26)
-  set_ent_facing(8, FACE_UP)
-  place_ent(9, 129, 27)
-  set_ent_facing(9, FACE_UP)
-  place_ent(10, 131, 27)
-  set_ent_facing(10, FACE_UP)
-
-  for a = 0, 7, 1 do
-    set_ent_id(3 + a, a)
-    set_ent_active(3 + a, 1)
-    set_ent_movemode(3 + a, 0)
-  end
-  set_noe(get_noe() + 8)
-  warp(130, 24, 4)
-  set_desc(1)
-
-  bubble(0, "I would like to thank you all for coming.")
-  bubble(0, "I appreciate all those willing to help. My master has summoned eight of you. Are you all accounted for?")
-
-  set_ent_script(0, "W25F2W25F0W25F3W25F0W30")
-  wait_for_entity(0, 0)
-
-  bubble(0, "Excellent. If everyone is ready, I will take you to meet master Nostik...")
-  wait(50)
-
-  set_autoparty(1)
-end
-
 function LOC_choose_hero()
--- /*
   local ptr = 0
 
   local stop = 0
@@ -158,13 +110,60 @@ function LOC_choose_hero()
       stop = 1
     end
   end
--- */
 
 -- TT add:
-  local ptr = NOSLOM
+--  local ptr = NOSLOM
   add_chr(ptr)
   set_all_equip(ptr, I_KNIFE1, 0, 0, I_SUIT1, 0, 0)
-  change_map("manor", 0, 0, 0, 0)
+  change_map("manor", "entrance")
+end
+
+
+function LOC_meet_nostik()
+  local a, en = 0
+
+  view_range(1, 116, 12, 141, 31)
+  screen_dump()
+
+  set_ent_active(HERO1, 0)
+
+  -- Put a bunch of people around Hunert the butler
+  place_ent(3, "butler1")
+  set_ent_facing(3, FACE_RIGHT)
+  place_ent(4, "butler2")
+  set_ent_facing(4, FACE_LEFT)
+  place_ent(5, "butler3")
+  set_ent_facing(5, FACE_RIGHT)
+  place_ent(6, "butler4")
+  set_ent_facing(6, FACE_LEFT)
+  place_ent(7, "butler5")
+  set_ent_facing(7, FACE_UP)
+  place_ent(8, "butler6")
+  set_ent_facing(8, FACE_UP)
+  place_ent(9, "butler7")
+  set_ent_facing(9, FACE_UP)
+  place_ent(10, "butler8")
+  set_ent_facing(10, FACE_UP)
+
+  for a = 0, 7, 1 do
+    set_ent_id(3 + a, a)
+    set_ent_active(3 + a, 1)
+    set_ent_movemode(3 + a, 0)
+  end
+  set_noe(get_noe() + 8)
+  warp("butler", 4)
+  set_desc(1)
+
+  bubble(en, "I would like to thank you all for coming.")
+  bubble(en, "I appreciate all those willing to help. My master has summoned eight of you. Are you all accounted for?")
+
+  set_ent_script(en, "W25F2W25F0W25F3W25F0W30")
+  wait_for_entity(en, en)
+
+  bubble(en, "Excellent. If everyone is ready, I will take you to meet master Nostik...")
+  wait(50)
+
+  set_autoparty(1)
 end
 
 
@@ -174,41 +173,39 @@ function LOC_storyline(en)
 
   if (en == SENSAR) then
     set_ent_facing(HERO1, FACE_UP)
-
-    view_range(1, 8, 10, 22, 27)
-    warp(10, 16, 16)
+    warp("start_sensar", 16)
 
     set_ent_speed(HERO1, 4)
 
     wait(90)
 
     for a = 0, 1, 1 do
-      set_ftile(11, 17, 537)
+      set_ftile("fire", 537)
       wait(5)
-      set_ftile(11, 17, 538)
+      set_ftile("fire", 538)
       wait(5)
-      set_ftile(11, 17, 539)
+      set_ftile("fire", 539)
       wait(5)
-      set_ftile(11, 17, 538)
+      set_ftile("fire", 538)
       wait(5)
     end
 
-    set_ftile(11, 17, 537)
+    set_ftile("fire", 537)
     wait(10)
 
-    set_ftile(11, 17, 0)
+    set_ftile("fire", 0)
     set_ent_script(HERO1, "W40D1")
     wait_for_entity(HERO1, HERO1)
 
     bubble(HERO1, "What the..? What was that?")
 
     wait(25)
-    set_ftile(11, 17, 311)
+    set_ftile("fire", 311)
     set_ent_script(HERO1, "W25F3W25")
     wait_for_entity(HERO1, HERO1)
 
     bubble(HERO1, "Hey, a note!")
-    set_ftile(11, 17, 0)
+    set_ftile("fire", 0)
 
     bubble(HERO1, "The note is addressed to me!")
 
@@ -241,8 +238,7 @@ function LOC_storyline(en)
     sfx(25)
 
   elseif (en == SARINA) then
-    view_range(1, 0, 31, 41, 59)
-    warp(27, 43, 4)
+    warp("start_sarina", 4)
 
     set_ent_speed(HERO1, 4)
 
@@ -250,20 +246,20 @@ function LOC_storyline(en)
     wait_for_entity(HERO1, HERO1)
 
     for a = 0, 1, 1 do
-      set_ftile(12, 41, 537)
+      set_ftile("wall", 537)
       wait(10)
-      set_ftile(12, 41, 538)
+      set_ftile("wall", 538)
       wait(10)
-      set_ftile(12, 41, 539)
+      set_ftile("wall", 539)
       wait(10)
-      set_ftile(12, 41, 538)
+      set_ftile("wall", 538)
       wait(10)
     end
 
-    set_ftile(12, 41, 537)
+    set_ftile("wall", 537)
     wait(20)
 
-    set_ftile(12, 41, 0)
+    set_ftile("wall", 0)
     bubble(HERO1, "..huh?")
 
     set_ent_script(HERO1, "R2F1W30")
@@ -271,7 +267,7 @@ function LOC_storyline(en)
 
     bubble(HERO1, "$0:",
                   "What was that?")
-    set_ftile(12, 41, 310)
+    set_ftile("wall", 310)
     wait(30)
     bubble(HERO1, "$0:",
                   "That wasn't there a second ago!")
@@ -285,13 +281,12 @@ function LOC_storyline(en)
 
     set_ent_speed(HERO1, 5)
 
-    set_ftile(12, 41, 0)
+    set_ftile("wall", 0)
     set_ent_script(HERO1, "W25D1R15")
     wait_for_entity(HERO1, HERO1)
 
   elseif (en == CORIN) then
-    view_range(1, 26, 10, 49, 35)
-    warp(37, 27, 4)
+    warp("start_corin", 4)
 
     set_ent_speed(HERO1, 4)
     set_ent_script(HERO1, "U7")
@@ -301,7 +296,7 @@ function LOC_storyline(en)
                   "Oh, no. I hope this isn't another eviction notice.")
 
     wait(25)
-    set_mtile(37, 19, 0)
+    set_mtile("door", 0)
     wait(50)
     bubble(HERO1, "Hey now, what's this?")
     wait(50)
@@ -317,8 +312,7 @@ function LOC_storyline(en)
     wait_for_entity(HERO1, HERO1)
 
   elseif (en == AJATHAR) then
-    view_range(1, 50, 0, 64, 16)
-    warp(57, 15, 4)
+    warp("start_ajathar", 4)
 
     set_ent_speed(HERO1, 4)
 
@@ -332,10 +326,10 @@ function LOC_storyline(en)
     bubble(1, "A note addressed to you has mysteriously appeared on the door of your private chambers. It was brought to me.")
     bubble(1, "Read over this and tell me what you may know about the sender.")
 
-    set_ftile(57, 6, 311)
+    set_ftile("alter", 311)
     set_ent_script(HERO1, "U1W50")
     wait_for_entity(HERO1, HERO1)
-    set_ftile(57, 6, 0)
+    set_ftile("alter", 0)
     wait(50)
     set_ent_facing(HERO1, FACE_DOWN)
     wait(100)
@@ -357,8 +351,7 @@ function LOC_storyline(en)
   elseif (en == CASANDRA) then
     set_ent_facing(HERO1, FACE_UP)
 
-    view_range(1, 37, 29, 70, 59)
-    warp(53, 58, 16)
+    warp("start_casandra", 16)
 
     set_ent_speed(HERO1, 5)
 
@@ -377,28 +370,28 @@ function LOC_storyline(en)
 
     bubble(HERO1, "Nella, YOU ARE SO DEAD MEAT WHEN I FIND YOU!")
 
-    set_ftile(55, 38, 537)
+    set_ftile("room", 537)
     wait(10)
-    set_ftile(55, 38, 538)
+    set_ftile("room", 538)
     wait(10)
-    set_ftile(55, 38, 539)
+    set_ftile("room", 539)
     wait(10)
-    set_ftile(55, 38, 538)
+    set_ftile("room", 538)
     wait(10)
-    set_ftile(55, 38, 537)
+    set_ftile("room", 537)
     wait(10)
 
     set_ent_script(HERO1, "U1W50")
     wait_for_entity(HERO1, HERO1)
 
-    set_ftile(55, 38, 310)
+    set_ftile("room", 310)
     wait(50)
 
     bubble(HERO1, "Wait a minute...")
     set_ent_script(HERO1, "U5W75")
     wait_for_entity(HERO1, HERO1)
     bubble(HERO1, "Who put this letter here? Wait a second... I've heard of this `Reisha Mountain' before...")
-    set_ftile(55, 38, 0)
+    set_ftile("room", 0)
     bubble(HERO1, "I've got to take a look into this right away!")
 
     set_ent_speed(HERO1, 5)
@@ -417,8 +410,7 @@ function LOC_storyline(en)
     bubble(1, "$0? Hello?")
 
   elseif (en == TEMMIN) then
-    view_range(1, 67, 20, 98, 41)
-    warp(88, 29, 4)
+    warp("start_temmin", 4)
 
     set_ent_speed(HERO1, 4)
 
@@ -443,15 +435,14 @@ function LOC_storyline(en)
     wait_for_entity(HERO1, HERO1)
 
   elseif (en == AYLA) then
-    view_range(1, 101, 12, 113, 22)
-    warp(107, 22, 4)
+    warp("start_ayla", 4)
 
     set_ent_speed(HERO1, 4)
 
     set_ent_script(HERO1, "U6R2W50")
     wait_for_entity(HERO1, HERO1)
 
-    set_ftile(110, 16, 312)
+    set_ftile("table", 312)
     wait(50)
 
     bubble(HERO1, "$0:",
@@ -469,8 +460,7 @@ function LOC_storyline(en)
 
   elseif (en == NOSLOM) then
     set_ent_facing(HERO1, FACE_UP)
-    view_range(1, 101, 31, 111, 47)
-    warp(106, 35, 4)
+    warp("start_noslom", 4)
 
     set_ent_speed(HERO1, 5)
 

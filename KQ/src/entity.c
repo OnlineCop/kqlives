@@ -30,201 +30,96 @@
 #include <string.h>
 
 #include "kq.h"
-#include "entity.h"
-#include "setup.h"
-#include "menu.h"
 #include "combat.h"
-#include "itemdefs.h"
+#include "entity.h"
 #include "intrface.h"
+#include "itemdefs.h"
+#include "menu.h"
+#include "setup.h"
 
 
 
 /*  internal functions  */
+static void chase (int);
 static int entity_near (int, int, int);
-static void speed_adjust (int);
-static void process_entity (int);
-// TT: Is this even used?
-// static void lastm_check (int);
+static void entscript (int);
 static void follow (int tx, int ty);
-static void wander (int);
-static void player_move (void);
+static void getcommand (int);
 static int move (int, int, int);
 static int obstruction (int, int, int, int, int);
 static void parsems (int);
-static void getcommand (int);
-static void entscript (int);
+static void player_move (void);
+static void process_entity (int);
+static void speed_adjust (int);
 static void target (int);
-static void chase (int);
+static void wander (int);
 
 
 
-/*! \brief Main entity routine
+/*! \brief Chase player
  *
- * The main routine that loops through the entity list and processes each
- * one.
- */
-void process_entities (void)
-{
-   int i;
-   const char *t_evt;
-   for (i = 0; i < MAX_ENT; i++)
-      if (g_ent[i].active == 1)
-         speed_adjust (i);
-   /* Do timers */
-   t_evt = get_timer_event ();
-   if (t_evt)
-      do_timefunc (t_evt);
-}
-
-
-
-/*! \brief Adjust movement speed
- *
- * This has to adjust for each entity's speed.
- * 'Normal' speed appears to be 4.
+ * Chase after the main player #0, if he/she is near.
+ * Speed up until at maximum. If the player goes out
+ * of range, wander for a bit.
  *
  * \param   target_entity Index of entity
  */
-static void speed_adjust (int target_entity)
+static void chase (int target_entity)
 {
-   if (g_ent[target_entity].speed < 4) {
-      switch (g_ent[target_entity].speed) {
-      case 1:
-         if (g_ent[target_entity].scount < 3) {
-            g_ent[target_entity].scount++;
-            return;
-         }
-         break;
-      case 2:
-         if (g_ent[target_entity].scount < 2) {
-            g_ent[target_entity].scount++;
-            return;
-         }
-         break;
-      case 3:
-         if (g_ent[target_entity].scount < 1) {
-            g_ent[target_entity].scount++;
-            return;
-         }
-         break;
-      }
+   int emoved = 0;
+   if (g_ent[target_entity].chasing == 0) {
+      if (entity_near (target_entity, 0, 3) == 1
+          && rand () % 100 <= g_ent[target_entity].extra) {
+         g_ent[target_entity].chasing = 1;
+         if (g_ent[target_entity].speed < 7)
+            g_ent[target_entity].speed++;
+         g_ent[target_entity].delay = 0;
+      } else
+         wander (target_entity);
    }
-   if (g_ent[target_entity].speed < 5)
-      process_entity (target_entity);
-   switch (g_ent[target_entity].speed) {
-   case 5:
-      process_entity (target_entity);
-      process_entity (target_entity);
-      break;
-   case 6:
-      process_entity (target_entity);
-      process_entity (target_entity);
-      process_entity (target_entity);
-      break;
-   case 7:
-      process_entity (target_entity);
-      process_entity (target_entity);
-      process_entity (target_entity);
-      process_entity (target_entity);
-      break;
-   }
-   /* TT: This is to see if the player is "running" */
-   if (key[kctrl] && target_entity < PSIZE)
-      process_entity (target_entity);
-}
-
-
-
-/*! \brief Actions for one entity
- * \date    20040310 PH added TARGET movemode, broke out chase into separate function
- *
- * Process an individual active entity.  If the entity in question
- * is #0 (main character) and the party is not automated, then allow
- * for player input.
- *
- * \param   target_entity Index of entity
- * \date    20040310 PH added TARGET movemode, broke out chase into separate function
- */
-static void process_entity (int target_entity)
-{
-   s_entity *ent = &g_ent[target_entity];
-   s_player *player = 0;
-   ent->scount = 0;
-   if (ent->active) {
-      if (!ent->moving) {
-         if (target_entity == 0 && !autoparty) {
-            player_move ();
-            if (ent->moving && display_desc == 1)
-               display_desc = 0;
-            return;
-         }
-         switch (ent->movemode) {
-         case MM_STAND:
-            return;
-         case MM_WANDER:
+   if (g_ent[target_entity].chasing == 1) {
+      if (entity_near (target_entity, 0, 4) == 1) {
+         if (g_ent[0].tilex > g_ent[target_entity].tilex)
+            emoved = move (target_entity, 1, 0);
+         if (g_ent[0].tilex < g_ent[target_entity].tilex && !emoved)
+            emoved = move (target_entity, -1, 0);
+         if (g_ent[0].tiley > g_ent[target_entity].tiley && !emoved)
+            emoved = move (target_entity, 0, 1);
+         if (g_ent[0].tiley < g_ent[target_entity].tiley && !emoved)
+            emoved = move (target_entity, 0, -1);
+         if (!emoved)
             wander (target_entity);
-            break;
-         case MM_SCRIPT:
-            entscript (target_entity);
-            break;
-         case MM_CHASE:
-            chase (target_entity);
-            break;
-         case MM_TARGET:
-            target (target_entity);
-            break;
-         }
-      } else {                  /* if (.moving==0) */
-         if (ent->moving) {
-            if (ent->tilex * 16 > ent->x)
-               ++ent->x;
-            if (ent->tilex * 16 < ent->x)
-               --ent->x;
-            if (ent->tiley * 16 > ent->y)
-               ++ent->y;
-            if (ent->tiley * 16 < ent->y)
-               --ent->y;
-            ent->movcnt--;
-            ent->framectr++;
-         }
-         if (ent->framectr > 20)
-            ent->framectr = 0;
-         if (ent->movcnt == 0 && ent->moving) {
-            /* Was:
-             * if ((ent->movcnt == 0 || (ent->tilex * 16 == ent->x && ent->tiley * 16 == ent->y)) && ent->moving) {
-             */
-            ent->moving = 0;
-            if (target_entity < PSIZE) {
-               player = &party[pidx[target_entity]];
-               steps++;
-               if (steps >= STEPS_NEEDED)
-                  steps = STEPS_NEEDED;
-               if (player->sts[S_POISON] > 0) {
-                  player->hp--;
-                  if (player->hp < 1)
-                     player->hp = 1;
-                  play_effect (21, 128);
-               }
-               if (player->eqp[5] == I_REGENERATOR) {
-                  player->hp++;
-                  if (player->hp > player->mhp)
-                     player->hp = player->mhp;
-               }
-            }
-            if (target_entity == 0)
-               zone_check ();
-         }
-         if (target_entity == 0 && vfollow == 1)
-            calc_viewport (0);
+      } else {
+         g_ent[target_entity].chasing = 0;
+         if (g_ent[target_entity].speed > 1)
+            g_ent[target_entity].speed--;
+         g_ent[target_entity].delay = 25 + rand () % 25;
+         wander (target_entity);
       }
    }
+}
+
+
+
+/*! \brief Count active entities
+ *
+ * Force calculation of the 'noe' variable.
+ */
+void count_entities (void)
+{
+   int p;
+
+   noe = 0;
+   for (p = 0; p < MAX_ENT; p++)
+      if (g_ent[p].active == 1)
+         noe = p + 1;
 }
 
 
 
 /*! \brief Check proximity
  *
- * Check to see if the target is within rad squares.
+ * Check to see if the target is within "rad" squares.
  * Test area is a square box rather than a circle
  * target entity needs to be within the view area
  * to be visible
@@ -253,6 +148,113 @@ static int entity_near (int eno, int tgt, int rad)
 
 
 
+/*! \brief Check entites at location
+ *
+ * Check for any entities in the specified co-ordinates.
+ * Runs combat routines if a character and an enemy meet,
+ * and de-activate the enemy if it was defeated.
+ *
+ * \sa combat_check()
+ * \param   ox x-coord to check
+ * \param   oy y-coord to check
+ * \param   who Id of entity doing the checking
+ * \returns index of entity found+1 or 0 if none found
+ */
+int entityat (int ox, int oy, int who)
+{
+   int i;
+
+   for (i = 0; i < MAX_ENT; i++) {
+      if (g_ent[i].active && ox == g_ent[i].tilex && oy == g_ent[i].tiley) {
+         if (who >= PSIZE) {
+            if (g_ent[who].eid == ID_ENEMY && i < PSIZE) {
+               if (combat_check (ox, oy) == 1)
+                  g_ent[who].active = 0;
+               return 0;
+            }
+            return i + 1;
+         } else {
+            if (g_ent[i].eid == ID_ENEMY) {
+               if (combat_check (ox, oy) == 1)
+                  g_ent[i].active = 0;
+               return 0;
+            }
+            if (i >= PSIZE)
+               return i + 1;
+         }
+      }
+
+   }
+   return 0;
+}
+
+
+
+/*! \brief Run script
+ *
+ * This executes script commands.  This is from Verge1.
+ *
+ * \param   target_entity Entity to process
+ */
+static void entscript (int target_entity)
+{
+   if (g_ent[target_entity].active == 0)
+      return;
+   if (g_ent[target_entity].cmd == 0)
+      getcommand (target_entity);
+   switch (g_ent[target_entity].cmd) {
+   case 1:
+      if (move (target_entity, 0, -1))
+         g_ent[target_entity].cmdnum--;
+      break;
+   case 2:
+      if (move (target_entity, 0, 1))
+         g_ent[target_entity].cmdnum--;
+      break;
+   case 3:
+      if (move (target_entity, -1, 0))
+         g_ent[target_entity].cmdnum--;
+      break;
+   case 4:
+      if (move (target_entity, 1, 0))
+         g_ent[target_entity].cmdnum--;
+      break;
+   case 5:
+      g_ent[target_entity].cmdnum--;
+      break;
+   case 6:
+      return;
+   case 7:
+      g_ent[target_entity].sidx = 0;
+      g_ent[target_entity].cmdnum = 0;
+      break;
+   case 8:
+      if (g_ent[target_entity].tilex < g_ent[target_entity].cmdnum)
+         move (target_entity, 1, 0);
+      if (g_ent[target_entity].tilex > g_ent[target_entity].cmdnum)
+         move (target_entity, -1, 0);
+      if (g_ent[target_entity].tilex == g_ent[target_entity].cmdnum)
+         g_ent[target_entity].cmdnum = 0;
+      break;
+   case 9:
+      if (g_ent[target_entity].tiley < g_ent[target_entity].cmdnum)
+         move (target_entity, 0, 1);
+      if (g_ent[target_entity].tiley > g_ent[target_entity].cmdnum)
+         move (target_entity, 0, -1);
+      if (g_ent[target_entity].tiley == g_ent[target_entity].cmdnum)
+         g_ent[target_entity].cmdnum = 0;
+      break;
+   case 10:
+      g_ent[target_entity].facing = g_ent[target_entity].cmdnum;
+      g_ent[target_entity].cmdnum = 0;
+      break;
+   }
+   if (g_ent[target_entity].cmdnum == 0)
+      g_ent[target_entity].cmd = 0;
+}
+
+
+
 /*! \brief Party following leader
  *
  * This makes any characters (after the first) follow the leader.
@@ -274,64 +276,96 @@ static void follow (int tx, int ty)
 
 
 
-/*! \brief Move randomly
+/*! \brief Read a command and parameter from a script
  *
- * Choose a random direction for the entity to walk in and set up the
- * vars to do so.
+ * This processes entity commands from the movement script.
+ * This is from Verge1.
  *
- * \param   target_entity Index of entity to move
+ * Script commands are:
+ * - U,R,D,L + param:  move up, right, down, left by param spaces
+ * - W+param: wait param frames
+ * - B: start script again
+ * - X+param: move to x-coord param
+ * - Y+param: move to y-coord param
+ * - F+param: face direction param (0=S, 1=N, 2=W, 3=E)
+ * - K: kill (remove) entity
+ *
+ * \param   target_entity Entity to process
  */
-static void wander (int target_entity)
+static void getcommand (int target_entity)
 {
-   if (g_ent[target_entity].delayctr < g_ent[target_entity].delay) {
-      g_ent[target_entity].delayctr++;
-      return;
-   }
-   g_ent[target_entity].delayctr = 0;
-   switch (rand () % 8) {
-   case 0:
-      move (target_entity, 0, -1);
+   char s;
+   /* PH FIXME: prevented from running off end of string */
+   if (g_ent[target_entity].sidx < sizeof (g_ent[target_entity].script))
+      s = g_ent[target_entity].script[g_ent[target_entity].sidx++];
+   else
+      s = '\0';
+   switch (s) {
+   case 'u':
+   case 'U':
+      g_ent[target_entity].cmd = 1;
+      parsems (target_entity);
       break;
-   case 1:
-      move (target_entity, 0, 1);
+   case 'd':
+   case 'D':
+      g_ent[target_entity].cmd = 2;
+      parsems (target_entity);
       break;
-   case 2:
-      move (target_entity, -1, 0);
+   case 'l':
+   case 'L':
+      g_ent[target_entity].cmd = 3;
+      parsems (target_entity);
       break;
-   case 3:
-      move (target_entity, 1, 0);
+   case 'r':
+   case 'R':
+      g_ent[target_entity].cmd = 4;
+      parsems (target_entity);
       break;
-   }
-}
-
-
-
-/*! \brief Process movement for player
- *
- * This is the replacement for process_controls that used to be in kq.c
- * I realized that all the work in process_controls was already being
- * done in process_entity... I just had to make this exception for the
- * player-controlled dude.
- */
-static void player_move (void)
-{
-   int oldx = g_ent[0].tilex;
-   int oldy = g_ent[0].tiley;
-   readcontrols ();
-
-   if (balt)
-      activate ();
-   if (benter)
-      menu ();
-#ifdef KQ_CHEATS
-   if (key[KEY_F10]) {
-      unpress ();
-      do_luacheat ();
-   }
+   case 'w':
+   case 'W':
+      g_ent[target_entity].cmd = 5;
+      parsems (target_entity);
+      break;
+   case '\0':
+      g_ent[target_entity].cmd = 6;
+      g_ent[target_entity].movemode = MM_STAND;
+      g_ent[target_entity].cmdnum = 0;
+      g_ent[target_entity].sidx = 0;
+      break;
+   case 'b':
+   case 'B':
+      g_ent[target_entity].cmd = 7;
+      break;
+   case 'x':
+   case 'X':
+      g_ent[target_entity].cmd = 8;
+      parsems (target_entity);
+      break;
+   case 'y':
+   case 'Y':
+      g_ent[target_entity].cmd = 9;
+      parsems (target_entity);
+      break;
+   case 'f':
+   case 'F':
+      g_ent[target_entity].cmd = 10;
+      parsems (target_entity);
+      break;
+   case 'k':
+   case 'K':
+      /* PH add: command K makes the ent disappear */
+      g_ent[target_entity].active = 0;
+      break;
+   default:
+#ifdef DEBUGMODE
+      if (debugging > 0) {
+         sprintf (strbuf,
+                  "Invalid entity command (%c) at position %d for ent %d", s,
+                  g_ent[target_entity].sidx, target_entity);
+         program_death (strbuf);
+      }
 #endif
-   move (0, right ? 1 : left ? -1 : 0, down ? 1 : up ? -1 : 0);
-   if (g_ent[0].moving) {
-      follow (oldx, oldy);
+      break;
    }
 }
 
@@ -361,10 +395,8 @@ static int move (int target_entity, int dx, int dy)
       ent->facing = FACE_DOWN;
    else if (dy < 0)
       ent->facing = FACE_UP;
-   if (tx + dx == -1
-       || tx + dx == g_map.xsize
-       || ty + dy == -1
-       || ty + dy == g_map.ysize)
+   if (tx + dx == -1 || tx + dx == g_map.xsize ||
+       ty + dy == -1 || ty + dy == g_map.ysize)
       return 0;
    if (ent->obsmode == 1) {
       if (dx && obstruction (tx, ty, dx, 0, FALSE)) {
@@ -465,48 +497,6 @@ static int obstruction (int ox, int oy, int mx, int my, int check_entity)
 
 
 
-/*! \brief Check entites at location
- *
- * Check for any entities in the specified co-ordinates.
- * Runs combat routines if a character and an enemy meet,
- * and de-activate the enemy if it was defeated.
- *
- * \sa combat_check()
- * \param   ox x-coord to check
- * \param   oy y-coord to check
- * \param   who Id of entity doing the checking
- * \returns index of entity found+1 or 0 if none found
- */
-int entityat (int ox, int oy, int who)
-{
-   int i;
-
-   for (i = 0; i < MAX_ENT; i++) {
-      if (g_ent[i].active && ox == g_ent[i].tilex && oy == g_ent[i].tiley) {
-         if (who >= PSIZE) {
-            if (g_ent[who].eid == ID_ENEMY && i < PSIZE) {
-               if (combat_check (ox, oy) == 1)
-                  g_ent[who].active = 0;
-               return 0;
-            }
-            return i + 1;
-         } else {
-            if (g_ent[i].eid == ID_ENEMY) {
-               if (combat_check (ox, oy) == 1)
-                  g_ent[i].active = 0;
-               return 0;
-            }
-            if (i >= PSIZE)
-               return i + 1;
-         }
-      }
-
-   }
-   return 0;
-}
-
-
-
 /*! \brief Read an int from a script
  *
  * This parses the movement script for a value that relates
@@ -533,192 +523,6 @@ static void parsems (int target_entity)
 
 
 
-/*! \brief Read a command and parameter from a script
- *
- * This processes entity commands from the movement script.
- * This is from Verge1.
- *
- * Script commands are:
- * - U,R,D,L + param:  move up, right, down, left by param spaces
- * - W+param: wait param frames
- * - B: start script again
- * - X+param: move to x-coord param
- * - Y+param: move to y-coord param
- * - F+param: face direction param (0=S, 1=N, 2=W, 3=E)
- * - K: kill (remove) entity
- *
- * \param   target_entity Entity to process
- */
-static void getcommand (int target_entity)
-{
-   char s;
-   /* PH FIXME: prevented from running off end of string */
-   if (g_ent[target_entity].sidx < sizeof (g_ent[target_entity].script))
-      s = g_ent[target_entity].script[g_ent[target_entity].sidx++];
-   else
-      s = '\0';
-   switch (s) {
-   case 'u':
-   case 'U':
-      g_ent[target_entity].cmd = 1;
-      parsems (target_entity);
-      break;
-   case 'd':
-   case 'D':
-      g_ent[target_entity].cmd = 2;
-      parsems (target_entity);
-      break;
-   case 'l':
-   case 'L':
-      g_ent[target_entity].cmd = 3;
-      parsems (target_entity);
-      break;
-   case 'r':
-   case 'R':
-      g_ent[target_entity].cmd = 4;
-      parsems (target_entity);
-      break;
-   case 'w':
-   case 'W':
-      g_ent[target_entity].cmd = 5;
-      parsems (target_entity);
-      break;
-   case '\0':
-      g_ent[target_entity].cmd = 6;
-      g_ent[target_entity].movemode = MM_STAND;
-      g_ent[target_entity].cmdnum = 0;
-      g_ent[target_entity].sidx = 0;
-      break;
-   case 'b':
-   case 'B':
-      g_ent[target_entity].cmd = 7;
-      break;
-   case 'x':
-   case 'X':
-      g_ent[target_entity].cmd = 8;
-      parsems (target_entity);
-      break;
-   case 'y':
-   case 'Y':
-      g_ent[target_entity].cmd = 9;
-      parsems (target_entity);
-      break;
-   case 'f':
-   case 'F':
-      g_ent[target_entity].cmd = 10;
-      parsems (target_entity);
-      break;
-   case 'k':
-   case 'K':
-      /* PH add: command K makes the ent disappear */
-      g_ent[target_entity].active = 0;
-      break;
-   default:
-#ifdef DEBUGMODE
-      if (debugging > 0) {
-         sprintf (strbuf,
-                  "Invalid entity command (%c) at position %d for ent %d", s,
-                  g_ent[target_entity].sidx, target_entity);
-         program_death (strbuf);
-      }
-#endif
-      break;
-   }
-}
-
-
-
-/*! \brief Run script
- *
- * This executes script commands.  This is from Verge1.
- *
- * \param   target_entity Entity to process
- */
-static void entscript (int target_entity)
-{
-   if (g_ent[target_entity].active == 0)
-      return;
-   if (g_ent[target_entity].cmd == 0)
-      getcommand (target_entity);
-   switch (g_ent[target_entity].cmd) {
-   case 1:
-      if (move (target_entity, 0, -1))
-         g_ent[target_entity].cmdnum--;
-      break;
-   case 2:
-      if (move (target_entity, 0, 1))
-         g_ent[target_entity].cmdnum--;
-      break;
-   case 3:
-      if (move (target_entity, -1, 0))
-         g_ent[target_entity].cmdnum--;
-      break;
-   case 4:
-      if (move (target_entity, 1, 0))
-         g_ent[target_entity].cmdnum--;
-      break;
-   case 5:
-      g_ent[target_entity].cmdnum--;
-      break;
-   case 6:
-      return;
-   case 7:
-      g_ent[target_entity].sidx = 0;
-      g_ent[target_entity].cmdnum = 0;
-      break;
-   case 8:
-      if (g_ent[target_entity].tilex < g_ent[target_entity].cmdnum)
-         move (target_entity, 1, 0);
-      if (g_ent[target_entity].tilex > g_ent[target_entity].cmdnum)
-         move (target_entity, -1, 0);
-      if (g_ent[target_entity].tilex == g_ent[target_entity].cmdnum)
-         g_ent[target_entity].cmdnum = 0;
-      break;
-   case 9:
-      if (g_ent[target_entity].tiley < g_ent[target_entity].cmdnum)
-         move (target_entity, 0, 1);
-      if (g_ent[target_entity].tiley > g_ent[target_entity].cmdnum)
-         move (target_entity, 0, -1);
-      if (g_ent[target_entity].tiley == g_ent[target_entity].cmdnum)
-         g_ent[target_entity].cmdnum = 0;
-      break;
-   case 10:
-      g_ent[target_entity].facing = g_ent[target_entity].cmdnum;
-      g_ent[target_entity].cmdnum = 0;
-      break;
-   }
-   if (g_ent[target_entity].cmdnum == 0)
-      g_ent[target_entity].cmd = 0;
-}
-
-
-
-/*! \brief Initialise script
- *
- * This is used to set up an entity with a movement script so that
- * it can be automatically controlled.
- *
- * \param   target_entity Entity to process
- * \param   movestring The script
- */
-void set_script (int target_entity, char *movestring)
-{
-   /* TT remove: I don't understand why we are making the entity active here;
-    * this should be something that would come from a LUA script before it.
-    */
-   /*   g_ent[target_entity].active = 1; */
-   g_ent[target_entity].moving = 0;
-   g_ent[target_entity].movcnt = 0;
-   g_ent[target_entity].cmd = 0;
-   g_ent[target_entity].sidx = 0;
-   g_ent[target_entity].cmdnum = 0;
-   g_ent[target_entity].movemode = MM_SCRIPT;
-   strncpy (g_ent[target_entity].script, movestring,
-            sizeof (g_ent[target_entity].script));
-}
-
-
-
 /*! \brief Set position
  *
  * Position an entity manually.
@@ -737,18 +541,219 @@ void place_ent (int en, int ex, int ey)
 
 
 
-/*! \brief Count active entities
+/*! \brief Process movement for player
  *
- * Force calculation of the 'noe' variable.
+ * This is the replacement for process_controls that used to be in kq.c
+ * I realized that all the work in process_controls was already being
+ * done in process_entity... I just had to make this exception for the
+ * player-controlled dude.
  */
-void count_entities (void)
+static void player_move (void)
 {
-   int p;
+   int oldx = g_ent[0].tilex;
+   int oldy = g_ent[0].tiley;
+   readcontrols ();
 
-   noe = 0;
-   for (p = 0; p < MAX_ENT; p++)
-      if (g_ent[p].active == 1)
-         noe = p + 1;
+   if (balt)
+      activate ();
+   if (benter)
+      menu ();
+#ifdef KQ_CHEATS
+   if (key[KEY_F10]) {
+      unpress ();
+      do_luacheat ();
+   }
+#endif
+   move (0, right ? 1 : left ? -1 : 0, down ? 1 : up ? -1 : 0);
+   if (g_ent[0].moving) {
+      follow (oldx, oldy);
+   }
+}
+
+
+
+/*! \brief Main entity routine
+ *
+ * The main routine that loops through the entity list and processes each
+ * one.
+ */
+void process_entities (void)
+{
+   int i;
+   const char *t_evt;
+   for (i = 0; i < MAX_ENT; i++)
+      if (g_ent[i].active == 1)
+         speed_adjust (i);
+   /* Do timers */
+   t_evt = get_timer_event ();
+   if (t_evt)
+      do_timefunc (t_evt);
+}
+
+
+
+/*! \brief Actions for one entity
+ * \date    20040310 PH added TARGET movemode, broke out chase into separate function
+ *
+ * Process an individual active entity.  If the entity in question
+ * is #0 (main character) and the party is not automated, then allow
+ * for player input.
+ *
+ * \param   target_entity Index of entity
+ * \date    20040310 PH added TARGET movemode, broke out chase into separate function
+ */
+static void process_entity (int target_entity)
+{
+   s_entity *ent = &g_ent[target_entity];
+   s_player *player = 0;
+   ent->scount = 0;
+   
+   if (!ent->active)
+      return;
+
+   if (!ent->moving) {
+      if (target_entity == 0 && !autoparty) {
+         player_move ();
+         if (ent->moving && display_desc == 1)
+            display_desc = 0;
+         return;
+      }
+      switch (ent->movemode) {
+      case MM_STAND:
+         return;
+      case MM_WANDER:
+         wander (target_entity);
+         break;
+      case MM_SCRIPT:
+         entscript (target_entity);
+         break;
+      case MM_CHASE:
+         chase (target_entity);
+         break;
+      case MM_TARGET:
+         target (target_entity);
+         break;
+      }
+   } else {                  /* if (.moving==0) */
+      if (ent->tilex * 16 > ent->x)
+         ++ent->x;
+      if (ent->tilex * 16 < ent->x)
+         --ent->x;
+      if (ent->tiley * 16 > ent->y)
+         ++ent->y;
+      if (ent->tiley * 16 < ent->y)
+         --ent->y;
+      ent->movcnt--;
+      ent->framectr++;
+
+      if (ent->framectr > 20)
+         ent->framectr = 0;
+
+      if (ent->movcnt == 0) {
+         ent->moving = 0;
+         if (target_entity < PSIZE) {
+            player = &party[pidx[target_entity]];
+            steps++;
+            if (steps > STEPS_NEEDED)
+               steps = STEPS_NEEDED;
+            if (player->sts[S_POISON] > 0) {
+               player->hp--;
+               if (player->hp < 1)
+                  player->hp = 1;
+               play_effect (21, 128);
+            }
+            if (player->eqp[5] == I_REGENERATOR) {
+               player->hp++;
+               if (player->hp > player->mhp)
+                  player->hp = player->mhp;
+            }
+         }
+         if (target_entity == 0)
+            zone_check ();
+      }
+
+      if (target_entity == 0 && vfollow == 1)
+         calc_viewport (0);
+   }
+}
+
+
+
+/*! \brief Initialise script
+ *
+ * This is used to set up an entity with a movement script so that
+ * it can be automatically controlled.
+ *
+ * \param   target_entity Entity to process
+ * \param   movestring The script
+ */
+void set_script (int target_entity, char *movestring)
+{
+   g_ent[target_entity].moving = 0;
+   g_ent[target_entity].movcnt = 0;
+   g_ent[target_entity].cmd = 0;
+   g_ent[target_entity].sidx = 0;
+   g_ent[target_entity].cmdnum = 0;
+   g_ent[target_entity].movemode = MM_SCRIPT;
+   strncpy (g_ent[target_entity].script, movestring,
+            sizeof (g_ent[target_entity].script));
+}
+
+
+
+/*! \brief Adjust movement speed
+ *
+ * This has to adjust for each entity's speed.
+ * 'Normal' speed appears to be 4.
+ *
+ * \param   target_entity Index of entity
+ */
+static void speed_adjust (int target_entity)
+{
+   if (g_ent[target_entity].speed < 4) {
+      switch (g_ent[target_entity].speed) {
+      case 1:
+         if (g_ent[target_entity].scount < 3) {
+            g_ent[target_entity].scount++;
+            return;
+         }
+         break;
+      case 2:
+         if (g_ent[target_entity].scount < 2) {
+            g_ent[target_entity].scount++;
+            return;
+         }
+         break;
+      case 3:
+         if (g_ent[target_entity].scount < 1) {
+            g_ent[target_entity].scount++;
+            return;
+         }
+         break;
+      }
+   }
+   if (g_ent[target_entity].speed < 5)
+      process_entity (target_entity);
+   switch (g_ent[target_entity].speed) {
+   case 5:
+      process_entity (target_entity);
+      process_entity (target_entity);
+      break;
+   case 6:
+      process_entity (target_entity);
+      process_entity (target_entity);
+      process_entity (target_entity);
+      break;
+   case 7:
+      process_entity (target_entity);
+      process_entity (target_entity);
+      process_entity (target_entity);
+      process_entity (target_entity);
+      break;
+   }
+   /* TT: This is to see if the player is "running" */
+   if (key[kctrl] && target_entity < PSIZE)
+      process_entity (target_entity);
 }
 
 
@@ -809,45 +814,32 @@ static void target (int target_entity)
 
 
 
-/*! \brief Chase player
+/*! \brief Move randomly
  *
- * Chase after the main player #0, if he/she is near.
- * Speed up until at maximum. If the player goes out
- * of range, wander for a bit.
+ * Choose a random direction for the entity to walk in and set up the
+ * vars to do so.
  *
- * \param   target_entity Index of entity
+ * \param   target_entity Index of entity to move
  */
-static void chase (int target_entity)
+static void wander (int target_entity)
 {
-   int emoved = 0;
-   if (g_ent[target_entity].chasing == 0) {
-      if (entity_near (target_entity, 0, 3) == 1
-          && rand () % 100 <= g_ent[target_entity].extra) {
-         g_ent[target_entity].chasing = 1;
-         if (g_ent[target_entity].speed < 7)
-            g_ent[target_entity].speed++;
-         g_ent[target_entity].delay = 0;
-      } else
-         wander (target_entity);
+   if (g_ent[target_entity].delayctr < g_ent[target_entity].delay) {
+      g_ent[target_entity].delayctr++;
+      return;
    }
-   if (g_ent[target_entity].chasing == 1) {
-      if (entity_near (target_entity, 0, 4) == 1) {
-         if (g_ent[0].tilex > g_ent[target_entity].tilex)
-            emoved = move (target_entity, 1, 0);
-         if (g_ent[0].tilex < g_ent[target_entity].tilex && !emoved)
-            emoved = move (target_entity, -1, 0);
-         if (g_ent[0].tiley > g_ent[target_entity].tiley && !emoved)
-            emoved = move (target_entity, 0, 1);
-         if (g_ent[0].tiley < g_ent[target_entity].tiley && !emoved)
-            emoved = move (target_entity, 0, -1);
-         if (!emoved)
-            wander (target_entity);
-      } else {
-         g_ent[target_entity].chasing = 0;
-         if (g_ent[target_entity].speed > 1)
-            g_ent[target_entity].speed--;
-         g_ent[target_entity].delay = 25 + rand () % 25;
-         wander (target_entity);
-      }
+   g_ent[target_entity].delayctr = 0;
+   switch (rand () % 8) {
+   case 0:
+      move (target_entity, 0, -1);
+      break;
+   case 1:
+      move (target_entity, 0, 1);
+      break;
+   case 2:
+      move (target_entity, -1, 0);
+      break;
+   case 3:
+      move (target_entity, 1, 0);
+      break;
    }
 }

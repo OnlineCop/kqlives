@@ -29,24 +29,23 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "effects.h"
 #include "kq.h"
-#include "hskill.h"
-#include "selector.h"
-#include "itemmenu.h"
-#include "draw.h"
 #include "combat.h"
-#include "magic.h"
-#include "heroc.h"
-#include "setup.h"
-#include "res.h"
-#include "progress.h"
-#include "timing.h"
+#include "draw.h"
+#include "effects.h"
 #include "fade.h"
+#include "heroc.h"
+#include "hskill.h"
+#include "itemmenu.h"
+#include "magic.h"
+#include "progress.h"
+#include "res.h"
+#include "selector.h"
+#include "setup.h"
+#include "timing.h"
 
 
-
-/*  internal function  */
+/* Internal function */
 static void infusion (int, int);
 void reveal (int);
 
@@ -141,6 +140,251 @@ int hero_skillcheck (int dude)
       break;
    }
    return 0;
+}
+
+
+
+/*! \brief Do infusion skill
+ *
+ * This function is only used for Corin when he
+ * uses his Infuse ability.
+ *
+ * \param   c Hero (index in fighter[] array)
+ * \param   sn Thing to infuse
+ */
+static void infusion (int c, int sn)
+{
+   int j;
+
+   switch (sn) {
+/* TT TODO: Sort all of these by element type
+ * (poison, fire, etc) then by damage.
+ */
+
+/* Increase resistance to Earthquake attacks */
+   case M_TREMOR:
+      fighter[c].res[R_EARTH] += 5;
+      fighter[c].stats[A_DEF] += 15;
+      fighter[c].stats[A_MAG] += 10;
+      fighter[c].welem = 0;
+      break;
+   case M_EARTHQUAKE:
+      fighter[c].res[R_EARTH] += 10;
+      fighter[c].stats[A_DEF] += 30;
+      fighter[c].stats[A_MAG] += 20;
+      fighter[c].welem = 0;
+      break;
+
+/* Increase resistance to Dark attacks */
+/* Decrease resistance to Light attacks */
+   case M_GLOOM:
+      fighter[c].res[R_BLACK] += 8;
+      fighter[c].res[R_WHITE] -= 4;
+      fighter[c].stats[A_AUR] += 20;
+      fighter[c].welem = 1;
+      break;
+   case M_NEGATIS:
+      fighter[c].res[R_BLACK] += 16;
+      fighter[c].res[R_WHITE] -= 8;
+      fighter[c].stats[A_AUR] += 40;
+      fighter[c].welem = 1;
+      break;
+
+/* Increase resistance to Fire attacks */
+/* Decrease resistance to Water & Ice attacks */
+   case M_SCORCH:
+      fighter[c].res[R_FIRE] += 4;
+      fighter[c].res[R_WATER]--;
+      fighter[c].res[R_ICE]--;
+      fighter[c].stats[A_ATT] += 10;
+      fighter[c].stats[A_HIT] += 10;
+      fighter[c].welem = 2;
+      break;
+   case M_FIREBLAST:
+      fighter[c].res[R_FIRE] += 8;
+      fighter[c].res[R_WATER] -= 2;
+      fighter[c].res[R_ICE] -= 2;
+      fighter[c].stats[A_ATT] += 20;
+      fighter[c].stats[A_HIT] += 20;
+      fighter[c].welem = 2;
+      break;
+   case M_FLAMEWALL:
+      fighter[c].res[R_FIRE] += 12;
+      fighter[c].res[R_WATER] -= 4;
+      fighter[c].res[R_ICE] -= 4;
+      fighter[c].stats[A_ATT] += 40;
+      fighter[c].stats[A_HIT] += 40;
+      fighter[c].welem = 2;
+      break;
+
+/* Increase resistance to Thunder attacks */
+   case M_SHOCK:
+      fighter[c].res[R_THUNDER] += 3;
+      fighter[c].stats[A_EVD] += 10;
+      fighter[c].welem = 3;
+      break;
+   case M_LIGHTNING:
+      fighter[c].res[R_THUNDER] += 6;
+      fighter[c].stats[A_EVD] += 25;
+      fighter[c].welem = 3;
+      break;
+   case M_THUNDERSTORM:
+      fighter[c].res[R_THUNDER] += 12;
+      fighter[c].stats[A_EVD] += 50;
+      fighter[c].welem = 3;
+      break;
+
+/* Increase resistance to Air attacks */
+   case M_WHIRLWIND:
+      fighter[c].res[R_AIR] += 5;
+      fighter[c].stats[A_EVD] += 15;
+      fighter[c].stats[A_SPD] += 10;
+      fighter[c].welem = 4;
+      break;
+   case M_TORNADO:
+      fighter[c].res[R_AIR] += 10;
+      fighter[c].stats[A_EVD] += 30;
+      fighter[c].stats[A_SPD] += 20;
+      fighter[c].welem = 4;
+      break;
+
+/* Increase resistance to Light attacks */
+/* Decrease resistance to Dark attacks */
+   case M_FADE:
+      fighter[c].res[R_WHITE] += 5;
+      fighter[c].res[R_BLACK] -= 2;
+      fighter[c].stats[A_SPI] += 10;
+      fighter[c].welem = 5;
+      break;
+   case M_LUMINE:
+      fighter[c].res[R_WHITE] += 10;
+      fighter[c].res[R_BLACK] -= 5;
+      fighter[c].stats[A_SPI] += 25;
+      fighter[c].welem = 5;
+      break;
+
+/* Increase resistance to Water attacks */
+/* Decrease resistance to Thunder attacks */
+   case M_FLOOD:
+      fighter[c].res[R_WATER] += 5;
+      fighter[c].res[R_THUNDER] -= 5;
+      for (j = 9; j < 16; j++) {
+         fighter[c].res[j] += 3;
+         if (fighter[c].res[j] > 10)
+            fighter[c].res[j] = 10;
+      }
+      fighter[c].welem = 6;
+      break;
+   case M_TSUNAMI:
+      fighter[c].res[R_WATER] += 10;
+      fighter[c].res[R_THUNDER] -= 10;
+      for (j = 9; j < 16; j++) {
+         fighter[c].res[j] += 6;
+         if (fighter[c].res[j] > 10)
+            fighter[c].res[j] = 10;
+      }
+      fighter[c].welem = 6;
+      break;
+
+/* Increase resistance to Ice & Water attacks */
+/* Decrease resistance to Fire attacks */
+   case M_FROST:
+      fighter[c].res[R_ICE] += 7;
+      fighter[c].res[R_WATER] += 4;
+      fighter[c].res[R_FIRE] -= 5;
+      fighter[c].stats[A_DEF] += 10;
+      fighter[c].welem = 7;
+      break;
+   case M_BLIZZARD:
+      fighter[c].res[R_ICE] += 14;
+      fighter[c].res[R_WATER] += 8;
+      fighter[c].res[R_FIRE] -= 10;
+      fighter[c].stats[A_DEF] += 25;
+      fighter[c].welem = 7;
+      break;
+
+/* Increase resistance to Poison attacks */
+   case M_VENOM:
+      fighter[c].res[R_POISON] += 4;
+      j = fighter[c].mhp / 10;
+      if (j < 10)
+         j = 10;
+      fighter[c].hp += j;
+      fighter[c].mhp += j;
+      fighter[c].welem = 8;
+      break;
+   case M_VIRUS:
+      fighter[c].res[R_POISON] += 8;
+      j = fighter[c].mhp * 25 / 100;
+      if (j < 40)
+         j = 40;
+      fighter[c].hp += j;
+      fighter[c].mhp += j;
+      fighter[c].welem = 8;
+      break;
+   case M_PLAGUE:
+      fighter[c].res[R_POISON] += 12;
+      j = fighter[c].mhp * 4 / 10;
+      if (j < 80)
+         j = 80;
+      fighter[c].hp += j;
+      fighter[c].mhp += j;
+      fighter[c].welem = 8;
+      break;
+   }
+
+   for (j = 0; j < 9; j++) {
+      if (fighter[c].res[j] < -10)
+         fighter[c].res[j] = -10;
+      if (fighter[c].res[j] > 20)
+         fighter[c].res[j] = 20;
+   }
+}
+
+
+
+void reveal (int tgt)
+{
+   int c, d = 0, g = 0, b;
+   do_transition (TRANS_FADE_OUT, 4);
+   menubox (double_buffer, 84, 56, 17, 13, BLUE);
+   sprintf (strbuf, "Name: %s", fighter[tgt].name);
+   print_font (double_buffer, 92, 64, strbuf, FNORMAL);
+   sprintf (strbuf, "Level: %d", fighter[tgt].lvl);
+   print_font (double_buffer, 92, 72, strbuf, FNORMAL);
+   sprintf (strbuf, "HP: %d/%d", fighter[tgt].hp, fighter[tgt].mhp);
+   print_font (double_buffer, 92, 80, strbuf, FNORMAL);
+   sprintf (strbuf, "MP: %d/%d", fighter[tgt].mp, fighter[tgt].mmp);
+   print_font (double_buffer, 92, 88, strbuf, FNORMAL);
+   print_font (double_buffer, 92, 96, "Earth", FNORMAL);
+   print_font (double_buffer, 92, 104, "Black", FNORMAL);
+   print_font (double_buffer, 92, 112, "Fire", FNORMAL);
+   print_font (double_buffer, 92, 120, "Thunder", FNORMAL);
+   print_font (double_buffer, 92, 128, "Air", FNORMAL);
+   print_font (double_buffer, 92, 136, "White", FNORMAL);
+   print_font (double_buffer, 92, 144, "Water", FNORMAL);
+   print_font (double_buffer, 92, 152, "Ice", FNORMAL);
+   for (c = 0; c < 8; c++) {
+      rectfill (double_buffer, 156, c * 8 + 97, 226, c * 8 + 103, 3);
+      if (fighter[tgt].res[c] < 0) {
+         g = 18;                // bright red, meaning WEAK defense
+         d = abs (fighter[tgt].res[c]);
+      } else if (fighter[tgt].res[c] >= 0 && fighter[tgt].res[c] <= 10) {
+         g = 34;                // bright green, meaning so-so defense
+         d = fighter[tgt].res[c];
+      } else if (fighter[tgt].res[c] > 10) {
+         g = 50;                // bright blue, meaning STRONG defense
+         d = fighter[tgt].res[c] - 10;
+      }
+
+      if (d > 0)
+         for (b = 0; b < d; b++)
+            rectfill (double_buffer, b * 7 + 157, c * 8 + 98, b * 7 + 162,
+                      c * 8 + 102, g + b);
+   }
+   blit2screen (0, 0);
+   do_transition (TRANS_FADE_IN, 4);
+   wait_enter ();
 }
 
 
@@ -443,249 +687,4 @@ int skill_use (int who)
       break;
    }
    return 1;
-}
-
-
-
-void reveal (int tgt)
-{
-   int c, d = 0, g = 0, b;
-   do_transition (TRANS_FADE_OUT, 4);
-   menubox (double_buffer, 84, 56, 17, 13, BLUE);
-   sprintf (strbuf, "Name: %s", fighter[tgt].name);
-   print_font (double_buffer, 92, 64, strbuf, FNORMAL);
-   sprintf (strbuf, "Level: %d", fighter[tgt].lvl);
-   print_font (double_buffer, 92, 72, strbuf, FNORMAL);
-   sprintf (strbuf, "HP: %d/%d", fighter[tgt].hp, fighter[tgt].mhp);
-   print_font (double_buffer, 92, 80, strbuf, FNORMAL);
-   sprintf (strbuf, "MP: %d/%d", fighter[tgt].mp, fighter[tgt].mmp);
-   print_font (double_buffer, 92, 88, strbuf, FNORMAL);
-   print_font (double_buffer, 92, 96, "Earth", FNORMAL);
-   print_font (double_buffer, 92, 104, "Black", FNORMAL);
-   print_font (double_buffer, 92, 112, "Fire", FNORMAL);
-   print_font (double_buffer, 92, 120, "Thunder", FNORMAL);
-   print_font (double_buffer, 92, 128, "Air", FNORMAL);
-   print_font (double_buffer, 92, 136, "White", FNORMAL);
-   print_font (double_buffer, 92, 144, "Water", FNORMAL);
-   print_font (double_buffer, 92, 152, "Ice", FNORMAL);
-   for (c = 0; c < 8; c++) {
-      rectfill (double_buffer, 156, c * 8 + 97, 226, c * 8 + 103, 3);
-      if (fighter[tgt].res[c] < 0) {
-         g = 18;                // bright red, meaning WEAK defense
-         d = abs (fighter[tgt].res[c]);
-      } else if (fighter[tgt].res[c] >= 0 && fighter[tgt].res[c] <= 10) {
-         g = 34;                // bright green, meaning so-so defense
-         d = fighter[tgt].res[c];
-      } else if (fighter[tgt].res[c] > 10) {
-         g = 50;                // bright blue, meaning STRONG defense
-         d = fighter[tgt].res[c] - 10;
-      }
-
-      if (d > 0)
-         for (b = 0; b < d; b++)
-            rectfill (double_buffer, b * 7 + 157, c * 8 + 98, b * 7 + 162,
-                      c * 8 + 102, g + b);
-   }
-   blit2screen (0, 0);
-   do_transition (TRANS_FADE_IN, 4);
-   wait_enter ();
-}
-
-
-
-/*! \brief Do infusion skill
- *
- * This function is only used for Corin when he
- * uses his Infuse ability.
- *
- * \param   c Hero (index in fighter[] array)
- * \param   sn Thing to infuse
- */
-static void infusion (int c, int sn)
-{
-   int j;
-
-   switch (sn) {
-/* TT TODO: Sort all of these by element type
- * (poison, fire, etc) then by damage.
- */
-
-/* Increase resistance to Earthquake attacks */
-   case M_TREMOR:
-      fighter[c].res[R_EARTH] += 5;
-      fighter[c].stats[A_DEF] += 15;
-      fighter[c].stats[A_MAG] += 10;
-      fighter[c].welem = 0;
-      break;
-   case M_EARTHQUAKE:
-      fighter[c].res[R_EARTH] += 10;
-      fighter[c].stats[A_DEF] += 30;
-      fighter[c].stats[A_MAG] += 20;
-      fighter[c].welem = 0;
-      break;
-
-/* Increase resistance to Dark attacks */
-/* Decrease resistance to Light attacks */
-   case M_GLOOM:
-      fighter[c].res[R_BLACK] += 8;
-      fighter[c].res[R_WHITE] -= 4;
-      fighter[c].stats[A_AUR] += 20;
-      fighter[c].welem = 1;
-      break;
-   case M_NEGATIS:
-      fighter[c].res[R_BLACK] += 16;
-      fighter[c].res[R_WHITE] -= 8;
-      fighter[c].stats[A_AUR] += 40;
-      fighter[c].welem = 1;
-      break;
-
-/* Increase resistance to Fire attacks */
-/* Decrease resistance to Water & Ice attacks */
-   case M_SCORCH:
-      fighter[c].res[R_FIRE] += 4;
-      fighter[c].res[R_WATER]--;
-      fighter[c].res[R_ICE]--;
-      fighter[c].stats[A_ATT] += 10;
-      fighter[c].stats[A_HIT] += 10;
-      fighter[c].welem = 2;
-      break;
-   case M_FIREBLAST:
-      fighter[c].res[R_FIRE] += 8;
-      fighter[c].res[R_WATER] -= 2;
-      fighter[c].res[R_ICE] -= 2;
-      fighter[c].stats[A_ATT] += 20;
-      fighter[c].stats[A_HIT] += 20;
-      fighter[c].welem = 2;
-      break;
-   case M_FLAMEWALL:
-      fighter[c].res[R_FIRE] += 12;
-      fighter[c].res[R_WATER] -= 4;
-      fighter[c].res[R_ICE] -= 4;
-      fighter[c].stats[A_ATT] += 40;
-      fighter[c].stats[A_HIT] += 40;
-      fighter[c].welem = 2;
-      break;
-
-/* Increase resistance to Thunder attacks */
-   case M_SHOCK:
-      fighter[c].res[R_THUNDER] += 3;
-      fighter[c].stats[A_EVD] += 10;
-      fighter[c].welem = 3;
-      break;
-   case M_LIGHTNING:
-      fighter[c].res[R_THUNDER] += 6;
-      fighter[c].stats[A_EVD] += 25;
-      fighter[c].welem = 3;
-      break;
-   case M_THUNDERSTORM:
-      fighter[c].res[R_THUNDER] += 12;
-      fighter[c].stats[A_EVD] += 50;
-      fighter[c].welem = 3;
-      break;
-
-/* Increase resistance to Air attacks */
-   case M_WHIRLWIND:
-      fighter[c].res[R_AIR] += 5;
-      fighter[c].stats[A_EVD] += 15;
-      fighter[c].stats[A_SPD] += 10;
-      fighter[c].welem = 4;
-      break;
-   case M_TORNADO:
-      fighter[c].res[R_AIR] += 10;
-      fighter[c].stats[A_EVD] += 30;
-      fighter[c].stats[A_SPD] += 20;
-      fighter[c].welem = 4;
-      break;
-
-/* Increase resistance to Light attacks */
-/* Decrease resistance to Dark attacks */
-   case M_FADE:
-      fighter[c].res[R_WHITE] += 5;
-      fighter[c].res[R_BLACK] -= 2;
-      fighter[c].stats[A_SPI] += 10;
-      fighter[c].welem = 5;
-      break;
-   case M_LUMINE:
-      fighter[c].res[R_WHITE] += 10;
-      fighter[c].res[R_BLACK] -= 5;
-      fighter[c].stats[A_SPI] += 25;
-      fighter[c].welem = 5;
-      break;
-
-/* Increase resistance to Water attacks */
-/* Decrease resistance to Thunder attacks */
-   case M_FLOOD:
-      fighter[c].res[R_WATER] += 5;
-      fighter[c].res[R_THUNDER] -= 5;
-      for (j = 9; j < 16; j++) {
-         fighter[c].res[j] += 3;
-         if (fighter[c].res[j] > 10)
-            fighter[c].res[j] = 10;
-      }
-      fighter[c].welem = 6;
-      break;
-   case M_TSUNAMI:
-      fighter[c].res[R_WATER] += 10;
-      fighter[c].res[R_THUNDER] -= 10;
-      for (j = 9; j < 16; j++) {
-         fighter[c].res[j] += 6;
-         if (fighter[c].res[j] > 10)
-            fighter[c].res[j] = 10;
-      }
-      fighter[c].welem = 6;
-      break;
-
-/* Increase resistance to Ice & Water attacks */
-/* Decrease resistance to Fire attacks */
-   case M_FROST:
-      fighter[c].res[R_ICE] += 7;
-      fighter[c].res[R_WATER] += 4;
-      fighter[c].res[R_FIRE] -= 5;
-      fighter[c].stats[A_DEF] += 10;
-      fighter[c].welem = 7;
-      break;
-   case M_BLIZZARD:
-      fighter[c].res[R_ICE] += 14;
-      fighter[c].res[R_WATER] += 8;
-      fighter[c].res[R_FIRE] -= 10;
-      fighter[c].stats[A_DEF] += 25;
-      fighter[c].welem = 7;
-      break;
-
-/* Increase resistance to Poison attacks */
-   case M_VENOM:
-      fighter[c].res[R_POISON] += 4;
-      j = fighter[c].mhp / 10;
-      if (j < 10)
-         j = 10;
-      fighter[c].hp += j;
-      fighter[c].mhp += j;
-      fighter[c].welem = 8;
-      break;
-   case M_VIRUS:
-      fighter[c].res[R_POISON] += 8;
-      j = fighter[c].mhp * 25 / 100;
-      if (j < 40)
-         j = 40;
-      fighter[c].hp += j;
-      fighter[c].mhp += j;
-      fighter[c].welem = 8;
-      break;
-   case M_PLAGUE:
-      fighter[c].res[R_POISON] += 12;
-      j = fighter[c].mhp * 4 / 10;
-      if (j < 80)
-         j = 80;
-      fighter[c].hp += j;
-      fighter[c].mhp += j;
-      fighter[c].welem = 8;
-      break;
-   }
-
-   for (j = 0; j < 9; j++) {
-      if (fighter[c].res[j] < -10)
-         fighter[c].res[j] = -10;
-      if (fighter[c].res[j] > 20)
-         fighter[c].res[j] = 20;
-   }
 }

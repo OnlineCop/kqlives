@@ -76,10 +76,10 @@ function zone_handler(zn)
     end
 
   elseif (zn == 1) then
-    change_map("town1", "dstairs1")
+    change_map("town1", "stairway")
 
   elseif (zn == 2) then
-    change_map("town2", "dstairs1")
+    change_map("town2", "stairway")
 
   elseif (zn == 4) then
     chest(1, I_MHERB, 1)
@@ -130,6 +130,7 @@ function zone_handler(zn)
         bubble(HERO1, "Hmmm... I guess if I just touch it with the rod...")
         do_fadeout(4)
         set_progress(P_PORTALGONE, 1)
+        set_progress(P_SIDEQUEST1, 1)
         refresh()
         drawmap()
         screen_dump()

@@ -30,21 +30,4 @@ void enemy_chooseaction (int);  /*  combat.c  */
 void enemy_charmaction (int);   /*  combat.c, heroc.c  */
 
 
-
-#if 0
-void load_enemyframes (int, int, int);  /*  staticed  */
-int enemy_cancast (int, int);   /*  staticed  */
-void enemy_curecheck (int);     /*  staticed  */
-void enemy_spellcheck (int, int);       /*  staticed  */
-int enemy_stscheck (int, int);  /*  staticed  */
-void enemy_skillcheck (int, int);       /*  staticed  */
-int spell_setup (int, int);     /*  staticed  */
-int skill_setup (int, int);     /*  staticed  */
-void enemy_attack (int);        /*  staticed  */
-void enemy_run (int);           /*  unused  */
-void enemy_spell (int);         /*  did not exist  */
-#endif /*  0  */
-
-
-
 #endif /*  __ENEMYC_H  */

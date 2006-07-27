@@ -23,6 +23,6 @@
 #define __TIMING_H
 
 void kq_wait (long ms);
-int limit_frame_rate(int fps);
+int limit_frame_rate (int fps);
 
 #endif

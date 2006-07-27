@@ -34,29 +34,19 @@ end
 
 
 function refresh()
-  if (get_treasure(62) == 1) then
-    set_btile(45, 51, 256)
-  end
-  if (get_treasure(63) == 1) then
-    set_btile(43, 35, 256)
-  end
-  if (get_treasure(64) == 1) then
-    set_btile(36, 17, 256)
-  end
-  if (get_treasure(65) == 1) then
-    set_btile(16, 35, 256)
-  end
-  if (get_treasure(66) == 1) then
-    set_btile(36, 60, 256)
-  end
+  showch("treasure1", 62)
+  showch("treasure2", 63)
+  showch("treasure3", 64)
+  showch("treasure4", 65)
+  showch("treasure5", 66)
 
   if (get_progress(P_DEMNASDEAD) > 0) then
     set_ent_active(0, 0)
   end
 
   if (get_progress(P_BRONZEKEY) == 2) then
-    set_obs(37, 66, 0)
-    set_zone(37, 66, 2)
+    set_zone("door4", 2)
+    set_obs("door4", 0)
   end
 
   if (not LOC_manor_or_party(CORIN)) then
@@ -80,56 +70,30 @@ end
 
 function zone_handler(zn)
   if (zn == 0) then
-    combat(10)
+    -- combat(10)
 
   elseif (zn == 1) then
     change_map("main", "cave4")
 
-  elseif (zn == 2) then
-    if (get_progress(P_C4DOORSOPEN) == 0) then
-      set_foreground(0)
-      set_btile(5, 9, 240)
-      set_btile(34, 20, 240)
-      set_btile(13, 64, 240)
-      set_btile(37, 66, 240)
-      set_btile(18, 80, 240)
-      set_btile(13, 73, 240)
-      set_btile(13, 53, 240)
-      set_btile(14, 32, 240)
-      set_mtile(5, 9, 251)
-      set_mtile(34, 20, 251)
-      set_mtile(13, 64, 251)
-      set_mtile(37, 66, 251)
-      set_mtile(18, 80, 251)
-      set_mtile(13, 73, 251)
-      set_mtile(13, 53, 251)
-      set_mtile(14, 32, 251)
-      sfx(26)
-      set_progress(P_C4DOORSOPEN, 1)
-    end
+  elseif (zn == 2) or (zn == 3) then
+    LOC_doors_in("door1")
+    LOC_doors_in("door2")
+    LOC_doors_in("door3")
+    LOC_doors_in("door4")
+    LOC_doors_in("door5")
+    LOC_doors_in("door6")
+    LOC_doors_in("door7")
+    LOC_doors_in("door8")
 
   elseif (zn == 3) then
-    if (get_progress(P_C4DOORSOPEN) == 1) then
-      set_btile(5, 9, 250)
-      set_btile(34, 20, 250)
-      set_btile(13, 64, 250)
-      set_btile(37, 66, 250)
-      set_btile(18, 80, 250)
-      set_btile(13, 73, 250)
-      set_btile(13, 53, 250)
-      set_btile(14, 32, 250)
-      set_mtile(5, 9, 0)
-      set_mtile(34, 20, 0)
-      set_mtile(13, 64, 0)
-      set_mtile(37, 66, 0)
-      set_mtile(18, 80, 0)
-      set_mtile(13, 73, 0)
-      set_mtile(13, 53, 0)
-      set_mtile(14, 32, 0)
-      sfx(26)
-      set_foreground(1)
-      set_progress(P_C4DOORSOPEN, 0)
-    end
+    LOC_doors_out("door1")
+    LOC_doors_out("door2")
+    LOC_doors_out("door3")
+    LOC_doors_out("door4")
+    LOC_doors_out("door5")
+    LOC_doors_out("door6")
+    LOC_doors_out("door7")
+    LOC_doors_out("door8")
 
   elseif (zn == 4) then
     if (get_progress(P_BRONZEKEY) == 0) then
@@ -169,7 +133,6 @@ function zone_handler(zn)
     --  * tiles from the bottom-right of the screen to the appropriate place.
     --  */
     copy_tile_all(45, 92, 21, 46, 5, 8)
-    view_range(1, 20, 46, 26, 54)
     warp("ustairs", 8)
 
     -- /* Now, so you don't see this after you leave that room, send back
@@ -178,7 +141,6 @@ function zone_handler(zn)
     --  */
   elseif (zn == 12) then
     autoexec()
-    view_range(0, 0, 0, 0, 0)
     warp("dstairs", 8)
 
   elseif (zn == 13) then
@@ -266,6 +228,40 @@ function entity_handler(en)
     set_ent_facing(HERO1, FACE_DOWN)
     LOC_talk_demnas(en)
 
+  end
+end
+
+
+-- Show the status of a chest
+function showch(which_marker, which_chest)
+  -- Set tiles if -1 passed in as 'which_chest' or if chest already opened
+  if (which_chest < 0 or get_treasure(which_chest) == 1) then
+    set_mtile(which_marker, 256)
+    set_zone(which_marker, 0)
+  end
+end
+
+
+function LOC_doors_in(which_marker)
+  sfx(26)
+
+  if (get_progress(P_C4DOORSOPEN) == 0) then
+    set_foreground(0)
+    set_btile(which_marker, 240)
+    set_mtile(which_marker, 251)
+    set_progress(P_C4DOORSOPEN, 1)
+  end
+end
+
+
+function LOC_doors_out(which_marker)
+  sfx(26)
+
+  if (get_progress(P_C4DOORSOPEN) == 1) then
+    set_btile(which_marker, 250)
+    set_mtile(which_marker, 0)
+    set_foreground(1)
+    set_progress(P_C4DOORSOPEN, 0)
   end
 end
 

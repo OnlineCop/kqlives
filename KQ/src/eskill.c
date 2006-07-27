@@ -22,20 +22,20 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "effects.h"
 #include "kq.h"
-#include "menu.h"
-#include "itemmenu.h"
-#include "masmenu.h"
-#include "draw.h"
 #include "combat.h"
+#include "draw.h"
+#include "effects.h"
 #include "enemyc.h"
 #include "eskill.h"
-#include "magic.h"
 #include "heroc.h"
-#include "setup.h"
-#include "res.h"
+#include "itemmenu.h"
+#include "magic.h"
+#include "masmenu.h"
+#include "menu.h"
 #include "progress.h"
+#include "res.h"
+#include "setup.h"
 
 /*! \file 
  * \brief Enemy skills 

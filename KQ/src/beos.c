@@ -29,8 +29,8 @@
  * Take from diffs supplied by Edge (<hardedged@excite.com>)
  */
 
-#include "kq.h"
 #include <stdio.h>
+#include "kq.h"
 
 
 

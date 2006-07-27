@@ -11,6 +11,9 @@
 #ifndef __MAPDRAW_H
 #define __MAPDRAW_H
 
+#include "../include/structs.h"
+#include "../include/bounds.h"
+
 #define MAX_WIDTH    1024
 #define MAX_HEIGHT   800
 
@@ -21,8 +24,8 @@
 #define MAX_SHADOWS    12
 #define MAX_OBSTACLES   5
 #define MAX_MARKERS   256
-#define SW            640
-#define SH            480
+#define SW            800       // 640
+#define SH            600       // 480
 #define WBUILD          1
 
 #define MAP_LAYER1      1       /* Map (sea-level) */
@@ -40,10 +43,10 @@
 #define BLOCK_PASTE   256       /* Mode to paste the copied area */
 #define MAP_PREVIEW   512       /* Draw a proper preview with layer ordering and parallax */
 #define MAP_MARKERS  1024       /* Markers mode */
+#define MAP_BOUNDS   2048       /* Boundary mode */
 
 #define ICONSET_SIZE   20       /* Number of icons shown in the icon map */
 
-#include "../include/structs.h"
 
 /* Something for allegro version compatibility */
 /* ..can we use the textout_ex() and friends? */
@@ -54,7 +57,8 @@
 typedef struct
 {
    int entities, obstacles, shadows, zones;
-   int markers;
+   int markers;                 /* Markers */
+   int boundaries;              /* Bounding boxes */
    int last_layer;              /* Tracks last-used layer */
    int layer[3];                /* Back, Mid, Fore */
 }
@@ -104,7 +108,6 @@ void klog (char *);
 void kq_yield (void);
 void make_rect (BITMAP *, const int, const int);
 void normalize_view (void);
-void orient_markers (void);
 void paste_region (const int, const int);
 void paste_region_special (const int, const int);
 void preview_map (void);
@@ -125,14 +128,12 @@ void wipe_map (void);
 int yninput (void);
 
 /* From mapent.c */
-void add_change_marker (int, int, int);
 void displace_entities (void);
 void draw_entdata (const int);
 void draw_ents (void);
 void erase_entity (const int, const int);
 void init_entities (void);
 void place_entity (int, int);
-void rename_marker (s_marker *);
 void update_entities (void);
 
 /* From mapfile.c */
@@ -151,6 +152,19 @@ void set_pcx (BITMAP **, const char *, PALETTE, const int);
 void shared_cleanup (void);
 void shared_startup (void);
 void visual_map (s_show, const char *);
+
+/* From mapstructs.c */
+void add_change_bounding (int, int, int, int *);
+void add_change_marker (int, int, int, int *);
+void bound_rect (BITMAP *, s_bound, int);
+int find_marker (int, int *);
+int find_bound (int, int *);
+int is_contained_marker (s_marker, int, int);
+void orient_bounds (int);
+void orient_markers (int);
+void rename_bound_tile (s_bound *);
+void rename_marker (s_marker *);
+
 
 
 extern BITMAP *double_buffer, *pcx_buffer, *icons[MAX_TILES],
@@ -186,4 +200,5 @@ extern unsigned short *map, *b_map, *f_map, *c_map, *cf_map, *cb_map;
 extern unsigned char *z_map, *sh_map, *o_map, *cz_map, *csh_map, *co_map;
 extern unsigned char *search_map;
 
+extern short active_bound;
 #endif

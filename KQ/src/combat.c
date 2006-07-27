@@ -32,7 +32,6 @@
 
 #include "kq.h"
 #include "combat.h"
-
 #include "draw.h"
 #include "effects.h"
 #include "enemyc.h"
@@ -47,6 +46,7 @@
 #include "res.h"
 #include "setup.h"
 #include "timing.h"
+
 /*! \name global variables  */
 
 int combatend;
@@ -62,367 +62,163 @@ unsigned char ms;
 DATAFILE *backart;
 
 
-/*  internal variables  */
+/* Internal variables */
 static int curw;
 static int nspeed[NUM_FIGHTERS];
 static int bspeed[NUM_FIGHTERS];
 static unsigned char hs;
 
 
-
-/*  internal prototypes  */
-static void heroes_win (void);
-static void enemies_win (void);
+/* Internal prototypes */
 static int attack_result (int, int);
 static int check_end (void);
 static void do_action (int);
+static int do_combat (char *gb, char *mus, int is_rnd);
 static void do_round (void);
+static void enemies_win (void);
+static void heroes_win (void);
+static void init_fighters (void);
 static void roll_initiative (void);
 static void snap_togrid (void);
-static void init_fighters (void);
-static int do_combat (char *gb, char *mus, int is_rnd);
 
 
-
-/*! \brief Does current location call for combat?
+/*! \brief Attack all enemies at once
+ * \author Josh Bolduc
+ * \date Created ????????
+ * \date Updated
  *
- * This function checks the zone at the specified co-ordinates
- * and calls combat based on the map and zone.
+ * This does the actual attack calculation. The damage done to
+ * the target is kept in the ta[] array.
  *
- * PH: it seems that this is rarely used (?) - only called by
- * entityat().
- *
- * \param   comx x-coord of player
- * \param   comy y-coord of player
- * \returns outcome of combat() or 0 if no combat
- *
+ * \param   ar Attacker
+ * \param   dr Defender
+ * \returns 0 if attack was a miss, 1 if attack was successful,
+ *          or 2 if attack was a critical hit.
  */
-int combat_check (int comx, int comy)
+static int attack_result (int ar, int dr)
 {
-   int zn;
-   int i;
+   int c;
+   int check_for_critical_hit;
+   int attacker_critical_status = 0;
+   int crit_hit = 0;
+   int base;
+   int to_hit;
+   int mult;
+   int dmg;                     /* extra */
+   int attacker_attack;
+   int attacker_hit;
+   int attacker_weapon_element;
+   int defender_defense;
+   int defender_evade;
 
-   zn = z_seg[comy * g_map.xsize + comx];
+   attacker_attack = tempa.stats[A_ATT];
+   attacker_hit = tempa.stats[A_HIT];
+   attacker_weapon_element = tempa.welem;
+   defender_defense = tempd.stats[A_DEF];
+   defender_evade = tempd.stats[A_EVD];
 
-   /*  RB TODO: adding a break will make this a bit faster, plus
-    *           calling combat with the FIRST zone, not the LAST
-    *           one.
-    * PH: done this 20020222
-    */
-   for (i = 0; i < NUM_BATTLES; i++) {
-      if (battles[i].mapnum == g_map.map_no && battles[i].zonenum == zn) {
-         return combat (i);
-      }
-   }
-   return 0;
-}
-
-
-
-/*! \brief Main combat function
- *
- * The big one... I say that because the game is mostly combat :p
- * First, check to see if a random encounter has occured. The check is skipped
- * if it's a scripted battle.  Then call all the helper and setup functions
- * and start the combat by calling do_round.
- *
- * \param   bno Combat identifier (index into battles[])
- * \returns 0 if no combat, 1 otherwise
- */
-int combat (int bno)
-{
-   int hero_level;
-   int encounter;
-   int lc;
-
-   /* PH: some checking! */
-   if (bno < 0 || bno >= NUM_BATTLES) {
-      sprintf (strbuf, "Combat: battle %d does not exist.", bno);
-      program_death (strbuf);
+   /*  JB: check to see if the attacker is in critical status...  */
+   /*      increases chance for a critical hit                    */
+   if (tempa.mhp > 250) {
+      if (tempa.hp <= 50)
+         attacker_critical_status = 1;
+   } else {
+      if (tempa.hp <= (tempa.mhp / 5))
+         attacker_critical_status = 1;
    }
 
-   /* TT: no battles during scripted/target movements */
-   if (g_ent[0].movemode != MM_STAND) {
-      return 0;
+   /*  JB: check to see if the defender is 'defending'  */
+   if (tempd.defend == 1)
+      defender_defense = (defender_defense * 15) / 10;
+
+   /*  JB: if the attacker is empowered by trueshot  */
+   if (tempa.sts[S_TRUESHOT] > 0) {
+      fighter[ar].sts[S_TRUESHOT] = 0;
+      defender_evade = 0;
    }
 
-   /*  RB: check if we had had a random encounter  */
-   if (battles[bno].enc > 1) {
-      /* TT: This will skip battles if the player hasn't moved the necessary
-       *     number of steps AND a random number does not equal zero.
-       */
-      if ((steps < STEPS_NEEDED) || ((rand () % battles[bno].enc) > 0)) {
-         return 0;
-      }
-   }
+   attacker_attack += (tempa.stats[tempa.bstat] * tempa.bonus / 100);
+   if (attacker_attack < DMG_RND_MIN * 5)
+      base = (rand () % DMG_RND_MIN) + attacker_attack;
+   else
+      base = (rand () % (attacker_attack / 5)) + attacker_attack;
 
-   /*  RB: had one! choose what we had just found  */
-   steps = 0;
-   hero_level = party[pidx[0]].lvl;
-   encounter = select_encounter (battles[bno].etnum, battles[bno].eidx);
+   base -= defender_defense;
+   if (base < 1)
+      base = 1;
 
-   if (hero_level >= erows[encounter].lvl + 5 && battles[bno].eidx == 99) {
-      lc = (hero_level - erows[encounter].lvl) * 5;
+   mult = 0;
+   to_hit = attacker_hit + defender_evade;
+   if (to_hit < 1)
+      to_hit = 1;
 
-      /* TT: This will skip battles based on a random number from hero's
-       *     level minus enemy's level.
-       */
-      if ((rand () % 100) < lc) {
-         return 0;
-      }
-   }
+   if (rand () % to_hit < attacker_hit)
+      mult++;
 
-   if (progress[P_REPULSE] > 0) {
-      lc = (hero_level - erows[encounter].lvl) * 20;
-      if (lc < 5)
-         lc = 5;
+   /*  JB: If the defender is etherealized, set mult to 0  */
+   if (tempd.sts[S_ETHER] > 0)
+      mult = 0;
 
-      /* Although Repulse is active, there's still a 1-in-20 chance of
-         battle */
-      if ((rand () % 100) < lc) {
-         return 0;
-      }
-   }
+   if (mult > 0) {
+      if (tempd.crit == 1) {
+         check_for_critical_hit = 1;
+         if (attacker_critical_status == 1)
+            check_for_critical_hit = 2;
+         /* PH I _think_ this makes Sensar 2* as likely to make a critical hit */
+         if (pidx[ar] == SENSAR)
+            check_for_critical_hit = check_for_critical_hit * 2;
 
-   init_fighters ();
-   return do_combat (battles[bno].backimg, battles[bno].bmusic,
-                     battles[bno].eidx == 99);
-}
-
-
-
-/*! \brief Really do combat once fighters have been inited
- *
- * \param   bg Background image
- * \param   mus Music
- * \param   is_rnd If !=0 then this is a random combat
- * \returns 1 if battle occurred
- */
-static int do_combat (char *bg, char *mus, int is_rnd)
-{
-   int zoom_step;
-   in_combat = 1;
-   backart = load_datafile_object (PCX_DATAFILE, bg);
-   if (is_rnd) {
-      if ((numchrs == 1) && (pidx[0] == AYLA)) {
-         hs = rand () % 100 + 1;
-         ms = rand () % 3 + 1;
-      } else {
-         if (numchrs > 1 && (in_party (AYLA) > 0)) {
-            hs = rand () % 20 + 1;
-            ms = rand () % 5 + 1;
-         } else {
-            hs = rand () % 10 + 1;
-            ms = rand () % 10 + 1;
+         check_for_critical_hit = (20 - check_for_critical_hit);
+         if (rand () % 20 >= check_for_critical_hit) {
+            crit_hit = 1;
+            /* TT: Changed following line from:
+             * base = base * 15 / 10;
+             */
+            base = ((int) base * 3) / 2;
          }
       }
-   } else {
-      hs = 10;
-      ms = 10;
-   }
 
-   /*  RB: do the zoom at the beginning of the combat.  */
-   pause_music ();
-   set_music_volume ((gmvol / 250.0) * 0.75);
-   play_music (mus, 0);
-   if (stretch_view == 2) {
-      do_transition (TRANS_FADE_OUT, 2);
-      clear_bitmap (double_buffer);
-      do_transition (TRANS_FADE_IN, 64);
-   } else
-      /* TT TODO:
-       * Change this so when we zoom into the battle, it won't just zoom into the middle
-       * of the screen.  Instead, it's going to zoom into the location where the player
-       * is, so if he's on the side of the map somewhere...
-       */
-      for (zoom_step = 0; zoom_step < 9; zoom_step++) {
-         poll_music ();
+      /*  JB: if affected by a NAUSEA/MALISON spell, the defender  */
+      /*      takes more damage than normal                        */
+      if (tempd.sts[S_MALISON] > 0)
+         base *= (int) 5 / 4;
 
-         /*  RB FIXME: stretching when 640x480, stretching when 320x240?  */
-         /*            shouldn't one of those be the "common" size, and   */
-         /*            therefore not needing to stretch it?               */
-         /*            320x240 is the double_buffer size...               */
-         if (stretch_view == 1)
-            stretch_blit (double_buffer, screen, zoom_step * 16 + xofs,
-                          zoom_step * 12 + yofs, 320 - (zoom_step * 32),
-                          240 - (zoom_step * 24), 0, 0, 640, 480);
+      /*  JB: check for elemental/status weapons  */
+      if (base < 1)
+         base = 1;
 
-         else
-            stretch_blit (double_buffer, screen, zoom_step * 16 + xofs,
-                          zoom_step * 12 + yofs, 320 - (zoom_step * 32),
-                          240 - (zoom_step * 24), 0, 0, 320, 240);
+      c = attacker_weapon_element - 1;
+      if ((c >= R_EARTH) && (c <= R_ICE))
+         base = res_adjust (dr, c, base);
 
-         /*  RB FIXME: should we vsync here rather than rest?  */
-         kq_wait (100);
-      }
-   snap_togrid ();
-   roll_initiative ();
-   curx = 0;
-   cury = 0;
-   vspell = 0;
-   combatend = 0;
-
-   /*  RB: execute combat  */
-   do_round ();
-   unload_datafile_object (backart);
-   set_music_volume (gmvol / 250.0);
-   resume_music ();
-   if (alldead)
-      stop_music ();
-   steps = 0;
-   in_combat = 0;
-   timer_count = 0;
-   return (1);
-}
-
-
-
-/*! \brief Initiate fighter structs and initial vars
- * \author Josh Bolduc
- * \date Created ????????
- * \date Updated
- *
- * Pre-combat setup of fighter structures and initial vars.
- */
-static void init_fighters (void)
-{
-   int index;
-
-   for (index = 0; index < NUM_FIGHTERS; index++) {
-      deffect[index] = 0;
-      fighter[index].mhp = 0;
-      fighter[index].aux = 0;
-      /* .defend was not initialized; patch supplied by Sam H */
-      fighter[index].defend = 0;
-   }
-
-   /* TT: These two are only called once in the game.
-    *     Should we move them here?
-    */
-   hero_init ();
-   enemy_init ();
-   for (index = 0; index < (PSIZE + numens); index++)
-      nspeed[index] = (fighter[index].stats[A_SPD] + 50) / 5;
-}
-
-
-
-/*! \brief Fighter on-screen locations in battle
- * \author Josh Bolduc
- * \date Created ????????
- * \date Updated
- *
- * Calculate where the fighters should be drawn.
- */
-static void snap_togrid (void)
-{
-   int index;
-   int hf = 0;
-   int mf = 1;
-   int a;
-
-   if (hs == 1)
-      hf = 1;
-   if (ms == 1)
-      mf = 0;
-
-   for (index = 0; index < numchrs; index++)
-      fighter[index].facing = hf;
-
-   for (index = PSIZE; index < (PSIZE + numens); index++)
-      fighter[index].facing = mf;
-
-   hf = 170 - (numchrs * 24);
-   for (index = 0; index < numchrs; index++) {
-      fighter[index].cx = index * 48 + hf;
-      fighter[index].cy = 128;
-   }
-
-   a = fighter[PSIZE].cw + 16;
-   mf = 170 - (numens * a / 2);
-   for (index = PSIZE; index < PSIZE + numens; index++) {
-      fighter[index].cx = (index - PSIZE) * a + mf;
-
-      if (fighter[index].cl < 104)
-         fighter[index].cy = 104 - fighter[index].cl;
-      else
-         fighter[index].cy = 8;
-   }
-}
-
-
-
-/*! \brief Choose who attacks first, speeds, etc.
- * \author Josh Bolduc
- * \date Created ????????
- * \date Updated
- *
- * Set up surprise vars, speeds, act vars, etc.
- */
-static void roll_initiative (void)
-{
-   int i, j;
-
-   if (hs == 1 && ms == 1) {
-      hs = 10;
-      ms = 10;
-   }
-
-   for (i = 0; i < NUM_FIGHTERS; i++) {
-      fighter[i].csmem = 0;
-      fighter[i].ctmem = 0;
-      cact[i] = 1;
-      j = ROUND_MAX * 66 / 100;
-      if (j < 1)
-         j = 1;
-
-      bspeed[i] = rand () % j;
-   }
-
-   for (i = 0; i < numchrs; i++) {
-      if (ms == 1)
-         bspeed[i] = ROUND_MAX;
-      else if (hs == 1)
-         bspeed[i] = 0;
-   }
-
-   for (i = PSIZE; i < PSIZE + numens; i++) {
-      if (hs == 1)
-         bspeed[i] = ROUND_MAX;
-      else if (ms == 1)
-         bspeed[i] = 0;
-   }
-
-   rcount = 0;
-   /* PH: this isn't right because not all members of the fighter[] array
-    * are valid - e.g. if you are attacked by 1 enemy, there are 4 enemy
-    * slots that aren't used. Currently, no enemies use imbued stuff, but
-    * this may change (?)
-    */
-#if 0
-   for (i = 0; i < NUM_FIGHTERS; i++) {
-      /*  TODO: Unroll this loop  */
-      for (j = 0; j < 2; j++)
-         if (fighter[i].imb[j] > 0)
-            cast_imbued_spell (i, fighter[i].imb[j], 1, TGT_CASTER);
-   }
-#endif
-   /* PH: This should be ok */
-   for (i = 0; i < NUM_FIGHTERS; i++) {
-      if (i < numchrs || (i >= PSIZE && i < (PSIZE + numens))) {
-         for (j = 0; j < 2; j++)
-            if (fighter[i].imb[j] > 0)
-               cast_imbued_spell (i, fighter[i].imb[j], 1, TGT_CASTER);
+      if ((c >= R_POISON) && (c <= R_SLEEP)) {
+         if ((res_throw (dr, c) == 0) && (fighter[dr].sts[c - 8] == 0)) {
+            if (non_dmg_save (dr, 50) == 0) {
+               if ((c == R_POISON) || (c == R_PETRIFY) || (c == R_SILENCE))
+                  tempd.sts[c - 8] = 1;
+               else
+                  tempd.sts[c - 8] = rand () % 3 + 2;
+            }
+         }
       }
    }
 
-   battle_render (-1, -1, 0);
-   blit2screen (0, 0);
-   if ((hs == 1) && (ms > 1))
-      message ("You have been ambushed!", 255, 1500, 0, 0);
+   /*  JB: Apply the damage multiplier  */
+   /*  RB FIXME: check if the changes I made here didn't break something  */
+   /* TT TODO:
+    * If magic, attacks, etc. are zero, they should return as a miss.
+    * For some reason, this isn't properly being reported.
+    */
+   dmg = mult * base;
+   if (dmg == 0)
+      dmg = MISS;
+   else {
+      ta[dr] = 0 - dmg;
+      return ((crit_hit == 1) ? 2 : 1);
+   }
 
-   if ((hs > 1) && (ms == 1))
-      message ("You've surprised the enemy!", 255, 1500, 0, 0);
+   ta[dr] = dmg;
+   return 0;
 }
 
 
@@ -602,6 +398,287 @@ void battle_render (int plyr, int hl, int sall)
 
 
 
+/*! \brief Check if all heroes/enemies dead.
+ * \author Josh Bolduc
+ * \date Created ????????
+ * \date Updated
+ *
+ * Just check to see if all the enemies or heroes are dead.
+ *
+ * \returns 1 if the battle ended (either the heroes or the enemies won);
+ *            0 otherwise.
+ */
+static int check_end (void)
+{
+   int index;
+   int alive = 0;
+
+   /*  RB: count the number of heroes alive. If there is none, the   */
+   /*      enemies won the battle.                                   */
+   for (index = 0; index < numchrs; index++)
+      if (fighter[index].sts[S_DEAD] == 0)
+         alive++;
+
+   if (alive == 0) {
+      enemies_win ();
+      return 1;
+   }
+
+   /*  RB: count the number of enemies alive. If there is none, the  */
+   /*      heroes won the battle.                                    */
+   alive = 0;
+   for (index = 0; index < numens; index++)
+      if (fighter[index + PSIZE].sts[S_DEAD] == 0)
+         alive++;
+
+   if (alive == 0) {
+      heroes_win ();
+      return 1;
+   }
+
+   return 0;
+}
+
+
+
+/*! \brief Main combat function
+ *
+ * The big one... I say that because the game is mostly combat :p
+ * First, check to see if a random encounter has occured. The check is skipped
+ * if it's a scripted battle.  Then call all the helper and setup functions
+ * and start the combat by calling do_round.
+ *
+ * \param   bno Combat identifier (index into battles[])
+ * \returns 0 if no combat, 1 otherwise
+ */
+int combat (int bno)
+{
+   int hero_level;
+   int encounter;
+   int lc;
+
+   /* PH: some checking! */
+   if (bno < 0 || bno >= NUM_BATTLES) {
+      sprintf (strbuf, "Combat: battle %d does not exist.", bno);
+      program_death (strbuf);
+   }
+
+   /* TT: no battles during scripted/target movements */
+   if (g_ent[0].movemode != MM_STAND) {
+      return 0;
+   }
+
+   /*  RB: check if we had had a random encounter  */
+   if (battles[bno].enc > 1) {
+      /* TT: This will skip battles if the player hasn't moved the necessary
+       *     number of steps AND a random number does not equal zero.
+       */
+      if ((steps < STEPS_NEEDED) || ((rand () % battles[bno].enc) > 0)) {
+         return 0;
+      }
+   }
+
+   /*  RB: had one! choose what we had just found  */
+   steps = 0;
+   hero_level = party[pidx[0]].lvl;
+   encounter = select_encounter (battles[bno].etnum, battles[bno].eidx);
+
+   if (hero_level >= erows[encounter].lvl + 5 && battles[bno].eidx == 99) {
+      lc = (hero_level - erows[encounter].lvl) * 5;
+
+      /* TT: This will skip battles based on a random number from hero's
+       *     level minus enemy's level.
+       */
+      if ((rand () % 100) < lc) {
+         return 0;
+      }
+   }
+
+   if (progress[P_REPULSE] > 0) {
+      lc = (hero_level - erows[encounter].lvl) * 20;
+      if (lc < 5)
+         lc = 5;
+
+      /* Although Repulse is active, there's still a 1-in-20 chance of
+         battle */
+      if ((rand () % 100) < lc) {
+         return 0;
+      }
+   }
+
+   init_fighters ();
+   return do_combat (battles[bno].backimg, battles[bno].bmusic,
+                     battles[bno].eidx == 99);
+}
+
+
+
+/*! \brief Does current location call for combat?
+ *
+ * This function checks the zone at the specified co-ordinates
+ * and calls combat based on the map and zone.
+ *
+ * PH: it seems that this is rarely used (?) - only called by
+ * entityat().
+ *
+ * \param   comx x-coord of player
+ * \param   comy y-coord of player
+ * \returns outcome of combat() or 0 if no combat
+ *
+ */
+int combat_check (int comx, int comy)
+{
+   int zn;
+   int i;
+
+   zn = z_seg[comy * g_map.xsize + comx];
+
+   /*  RB TODO: adding a break will make this a bit faster, plus
+    *           calling combat with the FIRST zone, not the LAST
+    *           one.
+    * PH: done this 20020222
+    */
+   for (i = 0; i < NUM_BATTLES; i++) {
+      if (battles[i].mapnum == g_map.map_no && battles[i].zonenum == zn) {
+         return combat (i);
+      }
+   }
+   return 0;
+}
+
+
+
+/*! \brief Choose an action
+ * \author Josh Bolduc
+ * \date Created ????????
+ * \date Updated
+ *
+ * Choose a fighter action.
+ */
+static void do_action (int dude)
+{
+   int index;
+
+   for (index = 0; index < 2; index++)
+      if (fighter[dude].imb[index] > 0)
+         cast_imbued_spell (dude, fighter[dude].imb[index], 1, TGT_CASTER);
+
+   if (fighter[dude].sts[S_MALISON] > 0) {
+      if ((rand () % 100) < fighter[dude].sts[S_MALISON] * 5)
+         cact[dude] = 0;
+   }
+
+   if (fighter[dude].sts[S_CHARM] > 0) {
+      fighter[dude].sts[S_CHARM]--;
+
+      if (dude < PSIZE)
+         auto_herochooseact (dude);
+      else
+         enemy_charmaction (dude);
+   }
+
+   if (cact[dude] != 0) {
+      revert_cframes (dude, 0);
+      if (dude < PSIZE) {
+         if (fighter[dude].sts[S_CHARM] == 0)
+            hero_choose_action (dude);
+      } else
+         enemy_chooseaction (dude);
+   }
+
+   cact[dude] = 0;
+   if (check_end () == 1)
+      combatend = 1;
+}
+
+
+
+/*! \brief Really do combat once fighters have been inited
+ *
+ * \param   bg Background image
+ * \param   mus Music
+ * \param   is_rnd If !=0 then this is a random combat
+ * \returns 1 if battle occurred
+ */
+static int do_combat (char *bg, char *mus, int is_rnd)
+{
+   int zoom_step;
+   in_combat = 1;
+   backart = load_datafile_object (PCX_DATAFILE, bg);
+   if (is_rnd) {
+      if ((numchrs == 1) && (pidx[0] == AYLA)) {
+         hs = rand () % 100 + 1;
+         ms = rand () % 3 + 1;
+      } else {
+         if (numchrs > 1 && (in_party (AYLA) > 0)) {
+            hs = rand () % 20 + 1;
+            ms = rand () % 5 + 1;
+         } else {
+            hs = rand () % 10 + 1;
+            ms = rand () % 10 + 1;
+         }
+      }
+   } else {
+      hs = 10;
+      ms = 10;
+   }
+
+   /*  RB: do the zoom at the beginning of the combat.  */
+   pause_music ();
+   set_music_volume ((gmvol / 250.0) * 0.75);
+   play_music (mus, 0);
+   if (stretch_view == 2) {
+      do_transition (TRANS_FADE_OUT, 2);
+      clear_bitmap (double_buffer);
+      do_transition (TRANS_FADE_IN, 64);
+   } else
+      /* TT TODO:
+       * Change this so when we zoom into the battle, it won't just zoom into the middle
+       * of the screen.  Instead, it's going to zoom into the location where the player
+       * is, so if he's on the side of the map somewhere...
+       */
+      for (zoom_step = 0; zoom_step < 9; zoom_step++) {
+         poll_music ();
+
+         /*  RB FIXME: stretching when 640x480, stretching when 320x240?  */
+         /*            shouldn't one of those be the "common" size, and   */
+         /*            therefore not needing to stretch it?               */
+         /*            320x240 is the double_buffer size...               */
+         if (stretch_view == 1)
+            stretch_blit (double_buffer, screen, zoom_step * 16 + xofs,
+                          zoom_step * 12 + yofs, 320 - (zoom_step * 32),
+                          240 - (zoom_step * 24), 0, 0, 640, 480);
+
+         else
+            stretch_blit (double_buffer, screen, zoom_step * 16 + xofs,
+                          zoom_step * 12 + yofs, 320 - (zoom_step * 32),
+                          240 - (zoom_step * 24), 0, 0, 320, 240);
+
+         /*  RB FIXME: should we vsync here rather than rest?  */
+         kq_wait (100);
+      }
+   snap_togrid ();
+   roll_initiative ();
+   curx = 0;
+   cury = 0;
+   vspell = 0;
+   combatend = 0;
+
+   /*  RB: execute combat  */
+   do_round ();
+   unload_datafile_object (backart);
+   set_music_volume (gmvol / 250.0);
+   resume_music ();
+   if (alldead)
+      stop_music ();
+   steps = 0;
+   in_combat = 0;
+   timer_count = 0;
+   return (1);
+}
+
+
+
 /*! \brief Battle gauge, action controls
  * \author Josh Bolduc
  * \date Created ????????
@@ -743,51 +820,6 @@ static void do_round (void)
 
 
 
-/*! \brief Choose an action
- * \author Josh Bolduc
- * \date Created ????????
- * \date Updated
- *
- * Choose a fighter action.
- */
-static void do_action (int dude)
-{
-   int index;
-
-   for (index = 0; index < 2; index++)
-      if (fighter[dude].imb[index] > 0)
-         cast_imbued_spell (dude, fighter[dude].imb[index], 1, TGT_CASTER);
-
-   if (fighter[dude].sts[S_MALISON] > 0) {
-      if ((rand () % 100) < fighter[dude].sts[S_MALISON] * 5)
-         cact[dude] = 0;
-   }
-
-   if (fighter[dude].sts[S_CHARM] > 0) {
-      fighter[dude].sts[S_CHARM]--;
-
-      if (dude < PSIZE)
-         auto_herochooseact (dude);
-      else
-         enemy_charmaction (dude);
-   }
-
-   if (cact[dude] != 0) {
-      revert_cframes (dude, 0);
-      if (dude < PSIZE) {
-         if (fighter[dude].sts[S_CHARM] == 0)
-            hero_choose_action (dude);
-      } else
-         enemy_chooseaction (dude);
-   }
-
-   cact[dude] = 0;
-   if (check_end () == 1)
-      combatend = 1;
-}
-
-
-
 /*! \brief Display one fighter on the screen
  * \author Josh Bolduc
  * \date Created ????????
@@ -866,45 +898,30 @@ void draw_fighter (int dude, int dcur)
 
 
 
-/*! \brief Check if all heroes/enemies dead.
+/*! \brief Enemies defeated the player
  * \author Josh Bolduc
- * \date Created ????????
- * \date Updated
+ * \date created ????????
+ * \date updated
  *
- * Just check to see if all the enemies or heroes are dead.
- *
- * \returns 1 if the battle ended (either the heroes or the enemies won);
- *            0 otherwise.
+ * Play some sad music and set the dead flag so that the game
+ * will return to the main menu.
  */
-static int check_end (void)
+static void enemies_win (void)
 {
-   int index;
-   int alive = 0;
-
-   /*  RB: count the number of heroes alive. If there is none, the   */
-   /*      enemies won the battle.                                   */
-   for (index = 0; index < numchrs; index++)
-      if (fighter[index].sts[S_DEAD] == 0)
-         alive++;
-
-   if (alive == 0) {
-      enemies_win ();
-      return 1;
-   }
-
-   /*  RB: count the number of enemies alive. If there is none, the  */
-   /*      heroes won the battle.                                    */
-   alive = 0;
-   for (index = 0; index < numens; index++)
-      if (fighter[index + PSIZE].sts[S_DEAD] == 0)
-         alive++;
-
-   if (alive == 0) {
-      heroes_win ();
-      return 1;
-   }
-
-   return 0;
+   play_music ("rain.s3m", 0);
+   battle_render (0, 0, 0);
+   /*  RB FIXME: rest()?  */
+   blit2screen (0, 0);
+   kq_wait (1000);
+   sprintf (strbuf, "%s was defeated!", party[pidx[0]].name);
+   menubox (double_buffer, 152 - (strlen (strbuf) * 4), 48, strlen (strbuf), 1,
+            BLUE);
+   print_font (double_buffer, 160 - (strlen (strbuf) * 4), 56, strbuf,
+               FNORMAL);
+   blit2screen (0, 0);
+   wait_enter ();
+   do_transition (TRANS_FADE_OUT, 4);
+   alldead = 1;
 }
 
 
@@ -1013,269 +1030,39 @@ int fight (int ar, int dr, int sk)
 
 
 
-/*! \brief Attack all enemies at once
+/*! \brief Kill a fighter
  * \author Josh Bolduc
  * \date Created ????????
- * \date Updated
+ * \date Updated 20020917 (PH) -- added cheat mode
  *
- * This is different than fight in that all enemies are attacked
- * simultaneously, once. As a note, the attackers stats are
- * always over-ridden in this function. As well, critical hits
- * are possible, but the screen doesn't flash.
+ * Do what it takes to put a fighter out of commission.
  *
- * \param   ar Attacker
+ * \param   victim The one who will die
  */
-void multi_fight (int ar)
+void fkill (int victim)
 {
    int index;
-   int b;
-   int st;
-   int nd;
-   int deadcount;
-   int kw[NUM_FIGHTERS];
-   int ares[NUM_FIGHTERS];
 
-   st = nd = deadcount = 0;
-   for (index = 0; index < NUM_FIGHTERS; index++) {
-      deffect[index] = 0;
-      ta[index] = 0;
-      kw[index] = 0;
-   }
-
-   // if the attacker is you, target enemies
-   if (ar < PSIZE) {
-      st = PSIZE;
-      nd = numens;
-   }
-   // if the attacker is enemy, target your party
-   else {
-      st = 0;
-      nd = numchrs;
-   }
-
-   for (index = st; index < st + nd; index++) {
-      tempd = status_adjust (index);
-      if ((fighter[index].sts[S_DEAD] == 0) && (fighter[index].mhp > 0)) {
-         ares[index] = attack_result (ar, index);
-         for (b = 0; b < 24; b++)
-            fighter[index].sts[b] = tempd.sts[b];
-      }
-
-      if (ta[index] != MISS) {
-         if (ta[index] != MISS)
-            ta[index] = do_shield_check (index, ta[index]);
-
-         fighter[index].hp += ta[index];
-         if ((fighter[index].hp <= 0) && (fighter[index].sts[S_DEAD] == 0)) {
-            fighter[index].hp = 0;
-            kw[index] = 1;
-         }
-
-         /*  RB: check we always have less health points than the maximun  */
-         if (fighter[index].hp > fighter[index].mhp)
-            fighter[index].hp = fighter[index].mhp;
-
-         /*  RB: if sleeping, a good hit wakes him/her up  */
-         if (fighter[index].sts[S_SLEEP] > 0)
-            fighter[index].sts[S_SLEEP] = 0;
-
-         /*  RB: if charmed, a good hit wakes him/her up  */
-         if ((fighter[index].sts[S_CHARM] > 0) && (ta[index] > 0)
-             && (ar == index))
-            fighter[index].sts[S_CHARM] = 0;
-      }
-   }
-
-   if (ar < PSIZE)
-      fighter[ar].aframe = 7;
-   else
-      fighter[ar].cy += 10;
-
-   fight_animation (st, ar, 1);
-   if (ar < PSIZE)
-      fighter[ar].aframe = 0;
-   else
-      fighter[ar].cy -= 10;
-
-   display_amount (st, FDECIDE, 1);
-   for (index = st; index < st + nd; index++) {
-      if (kw[index] == 1) {
-         fkill (index);
-         deadcount++;
-      }
-   }
-
-   if (deadcount > 0)
-      death_animation (st, 1);
-}
-
-
-
-/*! \brief Attack all enemies at once
- * \author Josh Bolduc
- * \date Created ????????
- * \date Updated
- *
- * This does the actual attack calculation. The damage done to
- * the target is kept in the ta[] array.
- *
- * \param   ar Attacker
- * \param   dr Defender
- * \returns 0 if attack was a miss, 1 if attack was successful,
- *          or 2 if attack was a critical hit.
- */
-static int attack_result (int ar, int dr)
-{
-   int c;
-   int check_for_critical_hit;
-   int attacker_critical_status = 0;
-   int crit_hit = 0;
-   int base;
-   int to_hit;
-   int mult;
-   int dmg;                     /* extra */
-   int attacker_attack;
-   int attacker_hit;
-   int attacker_weapon_element;
-   int defender_defense;
-   int defender_evade;
-
-   attacker_attack = tempa.stats[A_ATT];
-   attacker_hit = tempa.stats[A_HIT];
-   attacker_weapon_element = tempa.welem;
-   defender_defense = tempd.stats[A_DEF];
-   defender_evade = tempd.stats[A_EVD];
-
-   /*  JB: check to see if the attacker is in critical status...  */
-   /*      increases chance for a critical hit                    */
-   if (tempa.mhp > 250) {
-      if (tempa.hp <= 50)
-         attacker_critical_status = 1;
-   } else {
-      if (tempa.hp <= (tempa.mhp / 5))
-         attacker_critical_status = 1;
-   }
-
-   /*  JB: check to see if the defender is 'defending'  */
-   if (tempd.defend == 1)
-      defender_defense = (defender_defense * 15) / 10;
-
-   /*  JB: if the attacker is empowered by trueshot  */
-   if (tempa.sts[S_TRUESHOT] > 0) {
-      fighter[ar].sts[S_TRUESHOT] = 0;
-      defender_evade = 0;
-   }
-
-   attacker_attack += (tempa.stats[tempa.bstat] * tempa.bonus / 100);
-   if (attacker_attack < DMG_RND_MIN * 5)
-      base = (rand () % DMG_RND_MIN) + attacker_attack;
-   else
-      base = (rand () % (attacker_attack / 5)) + attacker_attack;
-
-   base -= defender_defense;
-   if (base < 1)
-      base = 1;
-
-   mult = 0;
-   to_hit = attacker_hit + defender_evade;
-   if (to_hit < 1)
-      to_hit = 1;
-
-   if (rand () % to_hit < attacker_hit)
-      mult++;
-
-   /*  JB: If the defender is etherealized, set mult to 0  */
-   if (tempd.sts[S_ETHER] > 0)
-      mult = 0;
-
-   if (mult > 0) {
-      if (tempd.crit == 1) {
-         check_for_critical_hit = 1;
-         if (attacker_critical_status == 1)
-            check_for_critical_hit = 2;
-         /* PH I _think_ this makes Sensar 2* as likely to make a critical hit */
-         if (pidx[ar] == SENSAR)
-            check_for_critical_hit = check_for_critical_hit * 2;
-
-         check_for_critical_hit = (20 - check_for_critical_hit);
-         if (rand () % 20 >= check_for_critical_hit) {
-            crit_hit = 1;
-            /* TT: Changed following line from:
-             * base = base * 15 / 10;
-             */
-            base = ((int) base * 3) / 2;
-         }
-      }
-
-      /*  JB: if affected by a NAUSEA/MALISON spell, the defender  */
-      /*      takes more damage than normal                        */
-      if (tempd.sts[S_MALISON] > 0)
-         base *= (int) 5 / 4;
-
-      /*  JB: check for elemental/status weapons  */
-      if (base < 1)
-         base = 1;
-
-      c = attacker_weapon_element - 1;
-      if ((c >= R_EARTH) && (c <= R_ICE))
-         base = res_adjust (dr, c, base);
-
-      if ((c >= R_POISON) && (c <= R_SLEEP)) {
-         if ((res_throw (dr, c) == 0) && (fighter[dr].sts[c - 8] == 0)) {
-            if (non_dmg_save (dr, 50) == 0) {
-               if ((c == R_POISON) || (c == R_PETRIFY) || (c == R_SILENCE))
-                  tempd.sts[c - 8] = 1;
-               else
-                  tempd.sts[c - 8] = rand () % 3 + 2;
-            }
-         }
-      }
-   }
-
-   /*  JB: Apply the damage multiplier  */
-   /*  RB FIXME: check if the changes I made here didn't break something  */
-   /* TT TODO:
-    * If magic, attacks, etc. are zero, they should return as a miss.
-    * For some reason, this isn't properly being reported.
+#ifdef KQ_CHEATS
+   /* PH Combat cheat - when a hero dies s/he is mysteriously boosted back
+    * to full HP.
     */
-   dmg = mult * base;
-   if (dmg == 0)
-      dmg = MISS;
-   else {
-      ta[dr] = 0 - dmg;
-      return ((crit_hit == 1) ? 2 : 1);
+   if (cheat && victim < 2) {
+      fighter[victim].hp = fighter[victim].mhp;
+      return;
    }
+#endif
 
-   ta[dr] = dmg;
-   return 0;
-}
+   for (index = 0; index < 24; index++)
+      fighter[victim].sts[index] = 0;
 
+   fighter[victim].sts[S_DEAD] = 1;
+   fighter[victim].hp = 0;
+   if (victim < PSIZE)
+      fighter[victim].defeat_item_common = 0;
 
-
-/*! \brief Enemies defeated the player
- * \author Josh Bolduc
- * \date created ????????
- * \date updated
- *
- * Play some sad music and set the dead flag so that the game
- * will return to the main menu.
- */
-static void enemies_win (void)
-{
-   play_music ("rain.s3m", 0);
-   battle_render (0, 0, 0);
-   /*  RB FIXME: rest()?  */
-   blit2screen (0, 0);
-   kq_wait (1000);
-   sprintf (strbuf, "%s was defeated!", party[pidx[0]].name);
-   menubox (double_buffer, 152 - (strlen (strbuf) * 4), 48, strlen (strbuf), 1,
-            BLUE);
-   print_font (double_buffer, 160 - (strlen (strbuf) * 4), 56, strbuf,
-               FNORMAL);
-   blit2screen (0, 0);
-   wait_enter ();
-   do_transition (TRANS_FADE_OUT, 4);
-   alldead = 1;
+   deffect[victim] = 1;
+   cact[victim] = 0;
 }
 
 
@@ -1434,37 +1221,248 @@ static void heroes_win (void)
 
 
 
-/*! \brief Kill a fighter
+/*! \brief Initiate fighter structs and initial vars
  * \author Josh Bolduc
  * \date Created ????????
- * \date Updated 20020917 (PH) -- added cheat mode
+ * \date Updated
  *
- * Do what it takes to put a fighter out of commission.
- *
- * \param   victim The one who will die
+ * Pre-combat setup of fighter structures and initial vars.
  */
-void fkill (int victim)
+static void init_fighters (void)
 {
    int index;
 
-#ifdef KQ_CHEATS
-   /* PH Combat cheat - when a hero dies s/he is mysteriously boosted back
-    * to full HP.
+   for (index = 0; index < NUM_FIGHTERS; index++) {
+      deffect[index] = 0;
+      fighter[index].mhp = 0;
+      fighter[index].aux = 0;
+      /* .defend was not initialized; patch supplied by Sam H */
+      fighter[index].defend = 0;
+   }
+
+   /* TT: These two are only called once in the game.
+    *     Should we move them here?
     */
-   if (cheat && victim < 2) {
-      fighter[victim].hp = fighter[victim].mhp;
-      return;
+   hero_init ();
+   enemy_init ();
+   for (index = 0; index < (PSIZE + numens); index++)
+      nspeed[index] = (fighter[index].stats[A_SPD] + 50) / 5;
+}
+
+
+
+/*! \brief Attack all enemies at once
+ * \author Josh Bolduc
+ * \date Created ????????
+ * \date Updated
+ *
+ * This is different than fight in that all enemies are attacked
+ * simultaneously, once. As a note, the attackers stats are
+ * always over-ridden in this function. As well, critical hits
+ * are possible, but the screen doesn't flash.
+ *
+ * \param   ar Attacker
+ */
+void multi_fight (int ar)
+{
+   int index;
+   int b;
+   int st;
+   int nd;
+   int deadcount;
+   int kw[NUM_FIGHTERS];
+   int ares[NUM_FIGHTERS];
+
+   st = nd = deadcount = 0;
+   for (index = 0; index < NUM_FIGHTERS; index++) {
+      deffect[index] = 0;
+      ta[index] = 0;
+      kw[index] = 0;
+   }
+
+   // if the attacker is you, target enemies
+   if (ar < PSIZE) {
+      st = PSIZE;
+      nd = numens;
+   }
+   // if the attacker is enemy, target your party
+   else {
+      st = 0;
+      nd = numchrs;
+   }
+
+   for (index = st; index < st + nd; index++) {
+      tempd = status_adjust (index);
+      if ((fighter[index].sts[S_DEAD] == 0) && (fighter[index].mhp > 0)) {
+         ares[index] = attack_result (ar, index);
+         for (b = 0; b < 24; b++)
+            fighter[index].sts[b] = tempd.sts[b];
+      }
+
+      if (ta[index] != MISS) {
+         if (ta[index] != MISS)
+            ta[index] = do_shield_check (index, ta[index]);
+
+         fighter[index].hp += ta[index];
+         if ((fighter[index].hp <= 0) && (fighter[index].sts[S_DEAD] == 0)) {
+            fighter[index].hp = 0;
+            kw[index] = 1;
+         }
+
+         /*  RB: check we always have less health points than the maximun  */
+         if (fighter[index].hp > fighter[index].mhp)
+            fighter[index].hp = fighter[index].mhp;
+
+         /*  RB: if sleeping, a good hit wakes him/her up  */
+         if (fighter[index].sts[S_SLEEP] > 0)
+            fighter[index].sts[S_SLEEP] = 0;
+
+         /*  RB: if charmed, a good hit wakes him/her up  */
+         if ((fighter[index].sts[S_CHARM] > 0) && (ta[index] > 0)
+             && (ar == index))
+            fighter[index].sts[S_CHARM] = 0;
+      }
+   }
+
+   if (ar < PSIZE)
+      fighter[ar].aframe = 7;
+   else
+      fighter[ar].cy += 10;
+
+   fight_animation (st, ar, 1);
+   if (ar < PSIZE)
+      fighter[ar].aframe = 0;
+   else
+      fighter[ar].cy -= 10;
+
+   display_amount (st, FDECIDE, 1);
+   for (index = st; index < st + nd; index++) {
+      if (kw[index] == 1) {
+         fkill (index);
+         deadcount++;
+      }
+   }
+
+   if (deadcount > 0)
+      death_animation (st, 1);
+}
+
+
+
+/*! \brief Choose who attacks first, speeds, etc.
+ * \author Josh Bolduc
+ * \date Created ????????
+ * \date Updated
+ *
+ * Set up surprise vars, speeds, act vars, etc.
+ */
+static void roll_initiative (void)
+{
+   int i, j;
+
+   if (hs == 1 && ms == 1) {
+      hs = 10;
+      ms = 10;
+   }
+
+   for (i = 0; i < NUM_FIGHTERS; i++) {
+      fighter[i].csmem = 0;
+      fighter[i].ctmem = 0;
+      cact[i] = 1;
+      j = ROUND_MAX * 66 / 100;
+      if (j < 1)
+         j = 1;
+
+      bspeed[i] = rand () % j;
+   }
+
+   for (i = 0; i < numchrs; i++) {
+      if (ms == 1)
+         bspeed[i] = ROUND_MAX;
+      else if (hs == 1)
+         bspeed[i] = 0;
+   }
+
+   for (i = PSIZE; i < PSIZE + numens; i++) {
+      if (hs == 1)
+         bspeed[i] = ROUND_MAX;
+      else if (ms == 1)
+         bspeed[i] = 0;
+   }
+
+   rcount = 0;
+   /* PH: this isn't right because not all members of the fighter[] array
+    * are valid - e.g. if you are attacked by 1 enemy, there are 4 enemy
+    * slots that aren't used. Currently, no enemies use imbued stuff, but
+    * this may change (?)
+    */
+#if 0
+   for (i = 0; i < NUM_FIGHTERS; i++) {
+      /*  TODO: Unroll this loop  */
+      for (j = 0; j < 2; j++)
+         if (fighter[i].imb[j] > 0)
+            cast_imbued_spell (i, fighter[i].imb[j], 1, TGT_CASTER);
    }
 #endif
+   /* PH: This should be ok */
+   for (i = 0; i < NUM_FIGHTERS; i++) {
+      if (i < numchrs || (i >= PSIZE && i < (PSIZE + numens))) {
+         for (j = 0; j < 2; j++)
+            if (fighter[i].imb[j] > 0)
+               cast_imbued_spell (i, fighter[i].imb[j], 1, TGT_CASTER);
+      }
+   }
 
-   for (index = 0; index < 24; index++)
-      fighter[victim].sts[index] = 0;
+   battle_render (-1, -1, 0);
+   blit2screen (0, 0);
+   if ((hs == 1) && (ms > 1))
+      message ("You have been ambushed!", 255, 1500, 0, 0);
 
-   fighter[victim].sts[S_DEAD] = 1;
-   fighter[victim].hp = 0;
-   if (victim < PSIZE)
-      fighter[victim].defeat_item_common = 0;
+   if ((hs > 1) && (ms == 1))
+      message ("You've surprised the enemy!", 255, 1500, 0, 0);
+}
 
-   deffect[victim] = 1;
-   cact[victim] = 0;
+
+
+/*! \brief Fighter on-screen locations in battle
+ * \author Josh Bolduc
+ * \date Created ????????
+ * \date Updated
+ *
+ * Calculate where the fighters should be drawn.
+ */
+static void snap_togrid (void)
+{
+   int index;
+   int hf = 0;
+   int mf = 1;
+   int a;
+
+   if (hs == 1)
+      hf = 1;
+   if (ms == 1)
+      mf = 0;
+
+   for (index = 0; index < numchrs; index++)
+      fighter[index].facing = hf;
+
+   for (index = PSIZE; index < (PSIZE + numens); index++)
+      fighter[index].facing = mf;
+
+   hf = 170 - (numchrs * 24);
+   for (index = 0; index < numchrs; index++) {
+      fighter[index].cx = index * 48 + hf;
+      fighter[index].cy = 128;
+   }
+
+   a = fighter[PSIZE].cw + 16;
+   mf = 170 - (numens * a / 2);
+   for (index = PSIZE; index < PSIZE + numens; index++) {
+      fighter[index].cx = (index - PSIZE) * a + mf;
+
+      if (fighter[index].cl < 104)
+         fighter[index].cy = 104 - fighter[index].cl;
+      else
+         fighter[index].cy = 8;
+   }
 }

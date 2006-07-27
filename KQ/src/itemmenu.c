@@ -30,86 +30,27 @@
 #include <string.h>
 
 #include "kq.h"
-#include "itemmenu.h"
-#include "draw.h"
-#include "setup.h"
-#include "menu.h"
-#include "skills.h"
-#include "res.h"
-#include "itemdefs.h"
 #include "combat.h"
-#include "magic.h"
+#include "draw.h"
 #include "effects.h"
+#include "itemdefs.h"
+#include "itemmenu.h"
+#include "magic.h"
+#include "menu.h"
+#include "res.h"
 #include "selector.h"
+#include "setup.h"
+#include "skills.h"
 
 char item_act;
 
 
-
-/*  internal functions  */
+/* Internal functions */
 static void draw_itemmenu (int, int, int);
 static void sort_items (void);
 static void join_items (void);
 static void camp_item_targetting (int);
 static void sort_inventory (void);
-
-
-
-/*! \brief Display menu
- *
- * This displays the party's list of items.
- *
- * \param   ptr Location of the cursor
- * \param   pg Item menu page number
- * \param   sl 1 if selecting an action, 0 if selecting an item to use/drop
- */
-static void draw_itemmenu (int ptr, int pg, int sl)
-{
-   int z, j, k, a, ck;
-
-   menubox (double_buffer, 72 + xofs, 12 + yofs, 20, 1, BLUE);
-   print_font (double_buffer, 140 + xofs, 20 + yofs, "Items", FGOLD);
-   menubox (double_buffer, 72 + xofs, 36 + yofs, 20, 1, BLUE);
-   if (sl == 1) {
-      menubox (double_buffer, item_act * 56 + 72 + xofs, 36 + yofs, 6, 1,
-               DARKBLUE);
-      print_font (double_buffer, 92 + xofs, 44 + yofs, "Use", FGOLD);
-      print_font (double_buffer, 144 + xofs, 44 + yofs, "Sort   Drop", FGOLD);
-   } else {
-      if (item_act == 0)
-         print_font (double_buffer, 148 + xofs, 44 + yofs, "Use", FGOLD);
-      else
-         print_font (double_buffer, 144 + xofs, 44 + yofs, "Drop", FGOLD);
-   }
-   menubox (double_buffer, 72 + xofs, 60 + yofs, 20, 16, BLUE);
-   for (k = 0; k < 16; k++) {
-      // j == item index #
-      j = g_inv[pg * 16 + k][0];
-      // z == quantity of item
-      z = g_inv[pg * 16 + k][1];
-      draw_icon (double_buffer, items[j].icon, 88 + xofs, k * 8 + 68 + yofs);
-      if (items[j].use >= USE_ANY_ONCE && items[j].use <= USE_CAMP_INF)
-         ck = FNORMAL;
-      else
-         ck = FDARK;
-      if (j == I_SSTONE && use_sstone == 0)
-         ck = FDARK;
-      print_font (double_buffer, 96 + xofs, k * 8 + 68 + yofs, items[j].name,
-                  ck);
-      if (z > 1) {
-         sprintf (strbuf, "^%d", z);
-         print_font (double_buffer, 224 + xofs, k * 8 + 68 + yofs, strbuf, ck);
-      }
-   }
-   menubox (double_buffer, 72 + xofs, 204 + yofs, 20, 1, BLUE);
-   if (sl == 0) {
-      a = strlen (items[g_inv[pg * 16 + ptr][0]].desc) * 4;
-      print_font (double_buffer, 160 - a + xofs, 212 + yofs,
-                  items[g_inv[pg * 16 + ptr][0]].desc, FNORMAL);
-      draw_sprite (double_buffer, menuptr, 72 + xofs, ptr * 8 + 68 + yofs);
-   }
-   draw_sprite (double_buffer, pgb[pg], 238 + xofs, 194 + yofs);
-}
 
 
 
@@ -237,78 +178,6 @@ void camp_item_menu (void)
 
 
 
-/*! \brief Sort the items in inventory
- *
- * This runs through all the items in your inventory and sorts them.
- */
-static void sort_items (void)
-{
-   unsigned short t_inv[MAX_INV][2];
-   int a, b, c = 0, tt[7] = { 6, 0, 1, 2, 3, 4, 5 };
-
-   join_items ();
-   for (a = 0; a < MAX_INV; a++) {
-      // Temporary item index #
-      t_inv[a][0] = g_inv[a][0];
-      // Temporary item quantity
-      t_inv[a][1] = g_inv[a][1];
-      g_inv[a][0] = 0;
-      g_inv[a][1] = 0;
-   }
-   for (a = 0; a < 7; a++) {
-      for (b = 0; b < MAX_INV; b++) {
-         if (t_inv[b][0] > 0 && items[t_inv[b][0]].type == tt[a]) {
-            // Re-assign group's inventory items
-            g_inv[c][0] = t_inv[b][0];
-            // ...and item quantities
-            g_inv[c][1] = t_inv[b][1];
-            t_inv[b][0] = 0;
-            t_inv[b][1] = 0;
-            c++;
-         }
-      }
-   }
-}
-
-
-
-/*! \brief Combine items quantities
- *
- * Join like items into groups of nine or less.
- */
-static void join_items (void)
-{
-   unsigned short t_inv[NUM_ITEMS + 1];
-   int a;
-
-   for (a = 0; a < NUM_ITEMS; a++)
-      t_inv[a] = 0;
-   for (a = 0; a < MAX_INV; a++) {
-      /* foreach instance of item, put the quantity into a temp
-       * inventory then remove that item from the real inventory
-       */
-      t_inv[g_inv[a][0]] += g_inv[a][1];
-      g_inv[a][0] = 0;
-      g_inv[a][1] = 0;
-   }
-   for (a = 1; a < NUM_ITEMS; a++) {
-      // While there is something in the temp inventory
-      while (t_inv[a] > 0) {
-         if (t_inv[a] > 9) {
-            // Portion out 9 items per slot
-            check_inventory (a, 9);
-            t_inv[a] -= 9;
-         } else {
-            // Portion out remaining items into another slot
-            check_inventory (a, t_inv[a]);
-            t_inv[a] = 0;
-         }
-      }
-   }
-}
-
-
-
 /*! \brief Use item on selected target
  *
  * Do target selection for using an item and then use it.
@@ -375,7 +244,7 @@ int check_inventory (int ii, int qq)
       /* Check if this item index == ii, and if it is,
        * check if there is enough room in that slot to fit all of qq.
        */
-      if (g_inv[n][0] == ii && g_inv[n][1] <= 9 - qq)
+      if (g_inv[n][0] == ii && g_inv[n][1] <= MAX_ITEMS - qq)
          d = n;
    }
    // Inventory is full!
@@ -398,90 +267,60 @@ int check_inventory (int ii, int qq)
 
 
 
-/*! \brief Use up an item, if we have any
- * \author PH
- * \date 20030102
+/*! \brief Display menu
  *
- * Go through the inventory; if there is one or more of an item, remove it.
+ * This displays the party's list of items.
  *
- * \param   item_id The identifier (I_* constant) of the item.
- * \returns 1 if we had it, 0 otherwise
+ * \param   ptr Location of the cursor
+ * \param   pg Item menu page number
+ * \param   sl 1 if selecting an action, 0 if selecting an item to use/drop
  */
-int useup_item (int item_id)
+static void draw_itemmenu (int ptr, int pg, int sl)
 {
-   int i;
-   for (i = 0; i < MAX_INV; ++i) {
-      if (g_inv[i][0] == item_id) {
-         remove_item (i, 1);
-         return 1;
+   int z, j, k, a, ck;
+
+   menubox (double_buffer, 72 + xofs, 12 + yofs, 20, 1, BLUE);
+   print_font (double_buffer, 140 + xofs, 20 + yofs, "Items", FGOLD);
+   menubox (double_buffer, 72 + xofs, 36 + yofs, 20, 1, BLUE);
+   if (sl == 1) {
+      menubox (double_buffer, item_act * 56 + 72 + xofs, 36 + yofs, 6, 1,
+               DARKBLUE);
+      print_font (double_buffer, 92 + xofs, 44 + yofs, "Use", FGOLD);
+      print_font (double_buffer, 144 + xofs, 44 + yofs, "Sort   Drop", FGOLD);
+   } else {
+      if (item_act == 0)
+         print_font (double_buffer, 148 + xofs, 44 + yofs, "Use", FGOLD);
+      else
+         print_font (double_buffer, 144 + xofs, 44 + yofs, "Drop", FGOLD);
+   }
+   menubox (double_buffer, 72 + xofs, 60 + yofs, 20, 16, BLUE);
+   for (k = 0; k < 16; k++) {
+      // j == item index #
+      j = g_inv[pg * 16 + k][0];
+      // z == quantity of item
+      z = g_inv[pg * 16 + k][1];
+      draw_icon (double_buffer, items[j].icon, 88 + xofs, k * 8 + 68 + yofs);
+      if (items[j].use >= USE_ANY_ONCE && items[j].use <= USE_CAMP_INF)
+         ck = FNORMAL;
+      else
+         ck = FDARK;
+      if (j == I_SSTONE && use_sstone == 0)
+         ck = FDARK;
+      print_font (double_buffer, 96 + xofs, k * 8 + 68 + yofs, items[j].name,
+                  ck);
+      if (z > 1) {
+         sprintf (strbuf, "^%d", z);
+         print_font (double_buffer, 224 + xofs, k * 8 + 68 + yofs, strbuf, ck);
       }
    }
-   return 0;
-}
-
-
-
-/*! \brief Remove item from inventory
- *
- * Remove an item from inventory and re-sort the list.
- *
- * \param   ii Index of item to remove
- * \param   qi Quantity of item
- */
-void remove_item (int ii, int qi)
-{
-   // Remove a certain quantity (qi) of this item
-   g_inv[ii][1] -= qi;
-
-   // Check to see if that was the last one in the slot
-   if (g_inv[ii][1] < 1) {
-      g_inv[ii][0] = 0;
-      g_inv[ii][1] = 0;
-      // We don't have to sort if it's the last slot
-      if (ii == MAX_INV - 1)
-         return;
-      // ...But we will if it's not
-      sort_inventory ();
+   menubox (double_buffer, 72 + xofs, 204 + yofs, 20, 1, BLUE);
+   if (sl == 0) {
+      a = strlen (items[g_inv[pg * 16 + ptr][0]].desc) * 4;
+      print_font (double_buffer, 160 - a + xofs, 212 + yofs,
+                  items[g_inv[pg * 16 + ptr][0]].desc, FNORMAL);
+      draw_sprite (double_buffer, menuptr, 72 + xofs, ptr * 8 + 68 + yofs);
    }
-}
-
-
-
-/*! \brief Re-arrange the items in our inventory
- *
- * This simply re-arranges the group inventory to remove blank rows.
- */
-static void sort_inventory (void)
-{
-   int a, b, stop;
-
-   for (a = 0; a < MAX_INV - 1; a++) {
-      // This slot is empty
-      if (g_inv[a][0] == 0) {
-         b = a + 1;
-         stop = 0;
-         while (!stop) {
-            // Check if there is something in the next slot
-            if (g_inv[b][0] > 0) {
-               // Move the item in the next slot into this one
-               g_inv[a][0] = g_inv[b][0];
-               // Move its quantity as well
-               g_inv[a][1] = g_inv[b][1];
-               // Clear the next slot of items now
-               g_inv[b][0] = 0;
-               // Clear if quantity as well
-               g_inv[b][1] = 0;
-               // Break out of the "check the slot ahead" loop
-               stop = 1;
-            }
-            // Since there's not, continue searching
-            else
-               b++;
-            if (b > MAX_INV - 1)
-               stop = 1;
-         }
-      }
-   }
+   draw_sprite (double_buffer, pgb[pg], 238 + xofs, 194 + yofs);
 }
 
 
@@ -721,4 +560,164 @@ int item_effects (int sa, int t, int ti)
       }
    }
    return 1;
+}
+
+
+
+/*! \brief Combine items quantities
+ *
+ * Join like items into groups of nine or less.
+ */
+static void join_items (void)
+{
+   unsigned short t_inv[NUM_ITEMS + 1];
+   int a;
+
+   for (a = 0; a < NUM_ITEMS; a++)
+      t_inv[a] = 0;
+   for (a = 0; a < MAX_INV; a++) {
+      /* foreach instance of item, put the quantity into a temp
+       * inventory then remove that item from the real inventory
+       */
+      t_inv[g_inv[a][0]] += g_inv[a][1];
+      g_inv[a][0] = 0;
+      g_inv[a][1] = 0;
+   }
+   for (a = 1; a < NUM_ITEMS; a++) {
+      // While there is something in the temp inventory
+      while (t_inv[a] > 0) {
+         if (t_inv[a] > MAX_ITEMS) {
+            // Portion out 9 items per slot
+            check_inventory (a, MAX_ITEMS);
+            t_inv[a] -= MAX_ITEMS;
+         } else {
+            // Portion out remaining items into another slot
+            check_inventory (a, t_inv[a]);
+            t_inv[a] = 0;
+         }
+      }
+   }
+}
+
+
+
+/*! \brief Remove item from inventory
+ *
+ * Remove an item from inventory and re-sort the list.
+ *
+ * \param   ii Index of item to remove
+ * \param   qi Quantity of item
+ */
+void remove_item (int ii, int qi)
+{
+   // Remove a certain quantity (qi) of this item
+   g_inv[ii][1] -= qi;
+
+   // Check to see if that was the last one in the slot
+   if (g_inv[ii][1] < 1) {
+      g_inv[ii][0] = 0;
+      g_inv[ii][1] = 0;
+      // We don't have to sort if it's the last slot
+      if (ii == MAX_INV - 1)
+         return;
+      // ...But we will if it's not
+      sort_inventory ();
+   }
+}
+
+
+
+/*! \brief Re-arrange the items in our inventory
+ *
+ * This simply re-arranges the group inventory to remove blank rows.
+ */
+static void sort_inventory (void)
+{
+   int a, b, stop;
+
+   for (a = 0; a < MAX_INV - 1; a++) {
+      // This slot is empty
+      if (g_inv[a][0] == 0) {
+         b = a + 1;
+         stop = 0;
+         while (!stop) {
+            // Check if there is something in the next slot
+            if (g_inv[b][0] > 0) {
+               // Move the item in the next slot into this one
+               g_inv[a][0] = g_inv[b][0];
+               // Move its quantity as well
+               g_inv[a][1] = g_inv[b][1];
+               // Clear the next slot of items now
+               g_inv[b][0] = 0;
+               // Clear if quantity as well
+               g_inv[b][1] = 0;
+               // Break out of the "check the slot ahead" loop
+               stop = 1;
+            }
+            // Since there's not, continue searching
+            else
+               b++;
+            if (b > MAX_INV - 1)
+               stop = 1;
+         }
+      }
+   }
+}
+
+
+
+/*! \brief Sort the items in inventory
+ *
+ * This runs through all the items in your inventory and sorts them.
+ */
+static void sort_items (void)
+{
+   unsigned short t_inv[MAX_INV][2];
+   int a, b, c = 0, tt[7] = { 6, 0, 1, 2, 3, 4, 5 };
+
+   join_items ();
+   for (a = 0; a < MAX_INV; a++) {
+      // Temporary item index #
+      t_inv[a][0] = g_inv[a][0];
+      // Temporary item quantity
+      t_inv[a][1] = g_inv[a][1];
+      g_inv[a][0] = 0;
+      g_inv[a][1] = 0;
+   }
+   for (a = 0; a < 7; a++) {
+      for (b = 0; b < MAX_INV; b++) {
+         if (t_inv[b][0] > 0 && items[t_inv[b][0]].type == tt[a]) {
+            // Re-assign group's inventory items
+            g_inv[c][0] = t_inv[b][0];
+            // ...and item quantities
+            g_inv[c][1] = t_inv[b][1];
+            t_inv[b][0] = 0;
+            t_inv[b][1] = 0;
+            c++;
+         }
+      }
+   }
+}
+
+
+
+/*! \brief Use up an item, if we have any
+ * \author PH
+ * \date 20030102
+ *
+ * Go through the inventory; if there is one or more of an item, remove it.
+ *
+ * \param   item_id The identifier (I_* constant) of the item.
+ * \returns 1 if we had it, 0 otherwise
+ */
+int useup_item (int item_id)
+{
+   int i;
+   for (i = 0; i < MAX_INV; ++i) {
+      if (g_inv[i][0] == item_id) {
+         remove_item (i, 1);
+         return 1;
+      }
+   }
+   return 0;
 }

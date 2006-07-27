@@ -1,34 +1,38 @@
 -- main - "World map of Anistal"
 
 function autoexec()
-
+  local x, y
   if (get_progress(P_SHOWBRIDGE) < 2) then
+    x, y = marker("bridge")
     if (get_progress(P_SHOWBRIDGE) == 0) then
-      set_mtile(241, 29, 82)
+      set_mtile(x, y, 82)
     end
-    set_btile(240, 29, 80)
-    set_btile(242, 29, 80)
-    set_obs(241, 29, 1)
-    set_zone(240, 29, 7)
-    set_zone(242, 29, 71)
+    set_btile(x - 1, y, 80)
+    set_btile(x + 1, y, 80)
+    set_obs(x, y, 1)
+    set_zone(x - 1, y, 7)
+    set_zone(x + 1, y, 71)
   end
 
   if (get_progress(P_TOWEROPEN) == 1 or
       get_progress(P_TOWEROPEN) == 3) then
-    set_obs(263, 52, 0)
+    x, y = marker("tower")
+    set_obs(x, y - 1, 0)
   end
 
   if (get_progress(P_FOUNDMAYOR) > 0 and
       get_progress(P_MAYORGUARD1) > 0 and
       get_progress(P_MAYORGUARD2) > 0) then
-    set_zone(235, 37, 0)
+    x, y = marker("camp")
+    set_zone(x, y, 0)
   end
 
   if ((get_progress(P_OPALHELMET) == 1) and
       (get_progress(P_OPALSHIELD) == 1) and
       (get_progress(P_OPALBAND) == 1) and
       (get_progress(P_OPALARMOUR) == 1)) then
-    set_zone(264, 164, 73)
+    x, y = marker("cave6a")
+    set_zone(x, y - 1, 73)
   end
 end
 
@@ -39,6 +43,8 @@ end
 
 
 function zone_handler(zn)
+  local x, y
+
   if (zn == 1) then
     change_map("manor", "entrance")
 
@@ -52,10 +58,10 @@ function zone_handler(zn)
     end
 
   elseif (zn == 3) then
-    change_map("town1", 0, 0, 0, 0)
+    change_map("town1", "entrance")
 
   elseif (zn == 4) then
-    change_map("town2", 0, 0, 0, 0)
+    change_map("town2", "entrance")
 
   elseif (zn == 5) then
     if (in_forest(HERO1)) then
@@ -74,17 +80,17 @@ function zone_handler(zn)
   elseif (zn == 7) then
     if (get_progress(P_FIGHTONBRIDGE) == 5) then
       set_ent_facing(HERO1, FACE_LEFT)
-      change_map("bridge2", 0, 0, 0, 0)
+      change_map("bridge2", "entrance")
     else
       set_ent_facing(HERO1, FACE_LEFT)
-      change_map("bridge", 0, 0, 0, 0)
+      change_map("bridge", "entrance")
     end
 
   elseif (zn == 8) then
-    change_map("town3", 0, 0, 0, 0)
+    change_map("town3", "entrance")
 
   elseif (zn == 9) then
-    change_map("grotto", 0, 0, 0, 0)
+    change_map("grotto", "entrance")
 
   elseif (zn == 10) then
     change_map("fort", "entrance")
@@ -116,7 +122,7 @@ function zone_handler(zn)
     if (get_progress(P_TOWEROPEN) == 2) then
       bubble(HERO1, "I can't get in here anymore!")
     elseif (get_progress(P_TOWEROPEN) > 0) then
-      change_map("tower", 0, 0, 0, 0)
+      change_map("tower", "entrance")
     end
 
   elseif (zn == 15) then
@@ -134,19 +140,19 @@ function zone_handler(zn)
     end
 
   elseif (zn == 17) then
-    change_map("temple1", 0, 0, 0, 0)
+    change_map("temple1", "entrance")
 
   elseif (zn == 18) then
-    change_map("town4", 0, 0, 0, 0)
+    change_map("town4", "entrance")
 
   elseif (zn == 19) then
-    change_map("camp", 0, 0, 0, 0)
+    change_map("camp", "entrance")
 
   elseif (zn == 20) then
-    change_map("estate", 0, 0, 0, 0)
+    change_map("estate", "entrance")
 
   elseif (zn == 21) then
-    change_map("town5", 0, 0, 0, 0)
+    change_map("town5", "entrance")
 
   elseif (zn == 22) then
     if (in_forest(HERO1)) then
@@ -197,7 +203,7 @@ function zone_handler(zn)
         set_progress(P_SEECOLISEUM, 1)
       end
     else
-      change_map("coliseum", 0, 0, 0, 0)
+      change_map("coliseum", "entrance")
     end
 
   elseif (zn == 29) then
@@ -205,27 +211,16 @@ function zone_handler(zn)
       bubble(255, "You are not allowed in the village.")
       msg("You sneak in anyway.", 255, 0)
     end
-    change_map("dville", 0, 0, 0, 0)
+    change_map("dville", "entrance")
 
   elseif (zn == 30) then
-    change_map("cave4", 0, 0, 0, 0)
+    change_map("cave4", "entrance")
 
   elseif (zn == 31) then
-    if (get_progress(P_DENORIAN) == 0) then
-      bubble(HERO1, "Hmm... there's a huge iron door blocking the entrance to this cave.")
-    elseif (get_progress(P_DENORIAN) == 1) then
-      bubble(HERO1, "This seems strange. I wonder if this has something to do with the Denorian's request.")
-    else
-      bubble(HERO1, "Stones 1, 4 then 3...")
-      set_btile(244, 66, 54)
-      set_zone(244, 66, 30)
-      set_obs(244, 66, 0)
-      sfx(26)
-      bubble(HERO1, "Bingo.")
-    end
+    LOC_cave4()
 
   elseif (zn == 32) then
-    change_map("town6", 0, 0, 0, 0)
+    change_map("town6", "entrance")
 
   elseif (zn == 33) then
     warp("colis_w", 16)
@@ -240,34 +235,26 @@ function zone_handler(zn)
     change_map("pass", "exit")
 
   elseif (zn == 37) then
-    change_map("town7", 0, 0, 0, 0)
+    change_map("town7", "entrance")
 
   elseif (zn == 38) then
-    if (get_progress(P_GIANTDEAD) == 0) then
-      combat(49)
-      if (get_alldead() == 1) then
-        return
-      else
-        set_progress(P_GIANTDEAD, 1)
-      end
-    else
-      warp("giant_w", 16)
-    end
+    LOC_giant()
 
   elseif (zn == 39) then
     warp("giant_e", 16)
 
   elseif (zn == 40) then
-    change_map("cult", 0, 0, 0, 0)
+    change_map("cult", "entrance")
 
   elseif (zn == 41) then
-    change_map("goblin", 0, 0, 0, 0)
+    change_map("goblin", "entrance")
 
   elseif (zn == 42) then
+    -- Will be fortress for Malkaron
     change_map("unfinished", 0, 0, 0, 0)
 
   elseif (zn == 43) then
-    change_map("town8", 0, 0, 0, 0)
+    change_map("town8", "entrance")
 
   elseif (zn == 44) then
     warp(255, 73, 16)
@@ -355,18 +342,7 @@ function zone_handler(zn)
     change_map("bridge2", "exit")
 
   elseif (zn == 72) then
-    if ((get_progress(P_OPALHELMET) == 1) and
-        (get_progress(P_OPALSHIELD) == 1) and
-        (get_progress(P_OPALBAND) == 1) and
-        (get_progress(P_OPALARMOUR) == 1)) then
-      set_btile(264, 164, 54)
-      set_zone(264, 164, 73)
-      set_obs(264, 164, 0)
-      sfx(26)
-      bubble(HERO1, "Ah, there we go.")
-    else
-      bubble(HERO1, "I think this entrance will open once I have all the opal stuff.")
-    end
+    LOC_cave6()
 
   elseif (zn == 73) then
     change_map("cave6a", "entrance")
@@ -376,11 +352,13 @@ function zone_handler(zn)
 
   elseif (zn == 75) then
     bubble(HERO1, "The underwater tunnel should go here.")
-    warp(203, 182, 16)
+    x, y = marker("underwater_w")
+    warp(x, y, 16)
 
   elseif (zn == 76) then
     bubble(HERO1, "The second part of the underwater tunnel should go here.")
-    warp(262, 159, 16)
+    x, y = marker("underwater_e")
+    warp(x, y, 16)
 
   elseif (zn == 77) then
     bubble(HERO1, "This is where the castle town of Xenar goes.")
@@ -391,11 +369,23 @@ function zone_handler(zn)
 
   elseif (zn == 79) then
     bubble(HERO1, "This is as far as the dock goes.")
-    warp(187, 141, 16)
+    x, y = marker("dock_n")
+    warp(x, y, 16)
 
   elseif (zn == 80) then
     bubble(HERO1, "This is as far as the dock goes.")
-    warp(202, 147, 16)
+    x, y = marker("dock_s")
+    warp(x, y, 16)
+
+  elseif (zn == 81) then
+    msg("This is where a short pass or cave goes.", 255, 0)
+    x, y = marker("malk_pass_w")
+    warp(x, y, 8)
+
+  elseif (zn == 82) then
+    msg("This is where a short pass or cave goes.", 255, 0)
+    x, y = marker("malk_pass_e")
+    warp(x, y, 8)
 
   end
 end
@@ -403,4 +393,52 @@ end
 
 function entity_handler(en)
   return
+end
+
+
+function LOC_cave4()
+  local x, y = marker("cave4")
+  if (get_progress(P_DENORIAN) == 0) then
+    bubble(HERO1, "Hmm... there's a huge iron door blocking the entrance to this cave.")
+  elseif (get_progress(P_DENORIAN) == 1) then
+    bubble(HERO1, "This seems strange. I wonder if this has something to do with the Denorian's request.")
+  else
+    bubble(HERO1, "Stones 1, 4 then 3...")
+    set_btile(x, y - 1, 54)
+    set_zone(x, y - 1, 30)
+    set_obs(x, y - 1, 0)
+    sfx(26)
+    bubble(HERO1, "Bingo.")
+  end
+end
+
+
+function LOC_cave6()
+  local x, y = marker("cave6a")
+  if ((get_progress(P_OPALARMOUR) == 1) and
+      (get_progress(P_OPALHELMET) == 1) and
+      (get_progress(P_OPALSHIELD) == 1) and
+      (get_progress(P_OPALBAND) == 1)) then
+    set_btile(x, y - 1, 54)
+    set_zone(x, y - 1, 73)
+    set_obs(x, y - 1, 0)
+    sfx(26)
+    bubble(HERO1, "Ah, there we go.")
+  else
+    bubble(HERO1, "I think this entrance will open once I have all the opal stuff.")
+  end
+end
+
+
+function LOC_giant()
+  if (get_progress(P_GIANTDEAD) == 0) then
+    combat(49)
+    if (get_alldead() == 1) then
+      return
+    else
+      set_progress(P_GIANTDEAD, 1)
+    end
+  else
+    warp("giant_w", 16)
+  end
 end
