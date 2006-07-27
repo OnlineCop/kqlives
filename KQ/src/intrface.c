@@ -37,6 +37,8 @@
 #include <string.h>
 #ifdef HAVE_LUA50_LUA_H
 #include <lua50/lua.h>
+#elif defined HAVE_LUA5_1_LUA_H
+#include <lua5.1/lua.h>
 #else
 #include <lua.h>
 #endif /* HAVE_LUA50_LUA_H */
@@ -622,6 +624,7 @@ void do_luainit (char *fname)
    if (theL != NULL) {
       do_luakill ();
    }
+   /* In Lua 5.1, this is a compatibility #define to luaL_newstate */
    theL = lua_open ();
    if (theL == NULL)
       program_death ("Could not initialise scripting engine");

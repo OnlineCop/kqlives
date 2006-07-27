@@ -2,7 +2,7 @@ SUBDIRS = scripts
 bin_PROGRAMS = kq mapdraw mapdiff mapdump $(MAPDRAW2)
 EXTRA_PROGRAMS = mapdraw2
 
-kq_SOURCES = src/enemyc.c src/intrface.c src/sgame.c \
+kq_SOURCES = src/enemyc.c src/intrface.c src/sgame.c src/bounds.c \
 	src/combat.c src/entity.c src/movement.c src/shopmenu.c \
 	src/credits.c src/eqpmenu.c src/itemmenu.c src/music.c src/timing.c \
 	src/disk.c src/eskill.c src/kq.c  src/res.c \
