@@ -24,7 +24,7 @@ kq_DEPENDENCIES = $(kq_extra_files)
 
 mapdraw_SOURCES = maps/mapdata.c maps/mapdraw.h maps/mapedit.c \
 	maps/mapfile.c maps/mapent.c maps/mapshared.c src/disk.c \
-	include/disk.h include/structs.h
+	maps/mapstructs.c src/bounds.c include/disk.h include/structs.h
 mapdraw_LDADD = $(ALLEGRO_LIBS)
 
 mapdraw2_SOURCES = maps/mapdraw2.c maps/mapdraw2.h \
