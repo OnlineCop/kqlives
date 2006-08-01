@@ -518,7 +518,7 @@ static int KQ_check_map_change (void)
          changing_map = NOT_CHANGING;
          break;
       case CHANGE_TO_MARKER:
-         change_mapm (tmap_name, marker_name, 0, 0);
+         change_mapm (tmap_name, marker_name, tmx, tmy);
          changing_map = NOT_CHANGING;
          break;
       default:
@@ -1574,15 +1574,19 @@ static int KQ_door_in (lua_State * L)
 static int KQ_door_out (lua_State * L)
 {
    use_sstone = 1;
+   int x, y;
 
    if (lua_type (L, 1) == LUA_TSTRING) {
       /* It's in "marker" form */
       s_marker *m = find_marker (lua_tostring (L, 1), 1);
-      warp (m->x, m->y, 8);
+      x = m->x + (int) lua_tonumber (L, 2);
+      y = m->y + (int) lua_tonumber (L, 3);
    } else {
       /* It's in the (x, y) form */
-      warp ((int) lua_tonumber (L, 1), (int) lua_tonumber (L, 2), 8);
+      x = (int) lua_tonumber (L, 1) + (int) lua_tonumber (L, 3);
+      y = (int) lua_tonumber (L, 2) + (int) lua_tonumber (L, 4);
    }
+   warp (x, y, 8);
 
    return 0;
 }
@@ -3663,7 +3667,9 @@ int KQ_thought_ex (lua_State * L)
 static int KQ_traceback (lua_State * theL)
 {
    lua_Debug ar;
-   int level = 1;               /* Function at index 0 is always KQ_traceback; don't show it */
+
+   /* Function at index 0 is always KQ_traceback; don't show it */
+   int level = 1;
    TRACE ("%s\nStack trace:\n", lua_tostring (theL, -1));
    while (lua_getstack (theL, level, &ar) != 0) {
       lua_getinfo (theL, "Sln", &ar);

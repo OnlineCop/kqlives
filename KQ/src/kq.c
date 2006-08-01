@@ -1159,7 +1159,7 @@ static void load_map (const char *map_name)
  */
 int main (int argc, const char *argv[])
 {
-   int stop, game_on, skip_splash;
+   int stop, game_on, skip_splash = 0;
    int i;
 
    if (argc > 1) {

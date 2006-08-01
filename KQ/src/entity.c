@@ -771,7 +771,7 @@ static void speed_adjust (int target_entity)
  */
 static void target (int target_entity)
 {
-   int dx, dy, ax, ay, emoved;
+   int dx, dy, ax, ay, emoved = 0;
    s_entity *ent = &g_ent[target_entity];
    ax = dx = ent->target_x - ent->tilex;
    ay = dy = ent->target_y - ent->tiley;
