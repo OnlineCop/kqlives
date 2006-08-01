@@ -87,7 +87,7 @@ function zone_handler(zn)
     bubble(HERO1, "These look rare.")
 
   elseif (zn == 10) then
-    door_out("hut_out")
+    door_out("hut_o")
 
   elseif (zn == 11) then
     if (get_progress(P_TALKGELIK) < 4) then

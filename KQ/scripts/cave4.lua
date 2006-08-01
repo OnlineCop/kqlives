@@ -7,10 +7,6 @@
 --   (1) Got the key from Demnas
 --   (2) Used the key to open the bronze door
 --
--- P_C4DOORSOPEN: See-through ceilings or not
---   (0) Ceilings visible
---   (1) Ceilings invisible
---
 -- P_DEMNASDEAD: Whether you defeated Demnas
 --   (0) Still kickin'
 --   (1) Dead
@@ -50,10 +46,10 @@ function refresh()
   end
 
   if (not LOC_manor_or_party(CORIN)) then
-    -- // Make the NPC look like Corin if he hasn't been recruited yet
+    -- Make the NPC look like Corin if he has not been recruited yet
     set_ent_id(1, CORIN)
   else
-    -- // Otherwise, remove him from the screen
+    -- Otherwise, remove him from the screen
     set_ent_active(1, 0)
   end
 
@@ -70,12 +66,12 @@ end
 
 function zone_handler(zn)
   if (zn == 0) then
-    -- combat(10)
+    combat(10)
 
   elseif (zn == 1) then
     change_map("main", "cave4")
 
-  elseif (zn == 2) or (zn == 3) then
+  elseif (zn == 2) then
     LOC_doors_in("door1")
     LOC_doors_in("door2")
     LOC_doors_in("door3")
@@ -236,7 +232,7 @@ end
 function showch(which_marker, which_chest)
   -- Set tiles if -1 passed in as 'which_chest' or if chest already opened
   if (which_chest < 0 or get_treasure(which_chest) == 1) then
-    set_mtile(which_marker, 256)
+    set_btile(which_marker, 256)
     set_zone(which_marker, 0)
   end
 end
@@ -245,24 +241,18 @@ end
 function LOC_doors_in(which_marker)
   sfx(26)
 
-  if (get_progress(P_C4DOORSOPEN) == 0) then
-    set_foreground(0)
-    set_btile(which_marker, 240)
-    set_mtile(which_marker, 251)
-    set_progress(P_C4DOORSOPEN, 1)
-  end
+  set_foreground(0)
+  set_btile(which_marker, 240)
+  set_mtile(which_marker, 251)
 end
 
 
 function LOC_doors_out(which_marker)
   sfx(26)
 
-  if (get_progress(P_C4DOORSOPEN) == 1) then
-    set_btile(which_marker, 250)
-    set_mtile(which_marker, 0)
-    set_foreground(1)
-    set_progress(P_C4DOORSOPEN, 0)
-  end
+  set_btile(which_marker, 250)
+  set_mtile(which_marker, 0)
+  set_foreground(1)
 end
 
 

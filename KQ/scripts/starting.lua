@@ -26,7 +26,6 @@ function postexec()
   -- TT: This makes it a hundred times faster to update scripts and see how
   -- it will appear in real time.  Just comment out everything that you do not
   -- want to sit through every time you recompile the script.
--- /*
   LOC_storyline(SENSAR)
   LOC_storyline(SARINA)
   LOC_storyline(CORIN)
@@ -37,7 +36,6 @@ function postexec()
   LOC_storyline(NOSLOM)
 
   LOC_meet_nostik()
--- */
   LOC_choose_hero()
 end
 
@@ -54,7 +52,13 @@ end
 
 function LOC_choose_hero()
   local ptr = 0
+  ptr = NOSLOM
+  add_chr(ptr)
+  set_all_equip(ptr, I_KNIFE1, 0, 0, I_SUIT1, 0, 0)
+  change_map("manor", "entrance")
 
+-- We are no longer using this
+-- /*
   local stop = 0
   local rd = 1
   local a, p
@@ -110,12 +114,7 @@ function LOC_choose_hero()
       stop = 1
     end
   end
-
--- TT add:
---  local ptr = NOSLOM
-  add_chr(ptr)
-  set_all_equip(ptr, I_KNIFE1, 0, 0, I_SUIT1, 0, 0)
-  change_map("manor", "entrance")
+-- */
 end
 
 

@@ -86,22 +86,19 @@ end
 function refresh()
   -- Chest in magic shop
   if (get_treasure(0) == 1) then
-    x, y = marker("treasure1")
-    set_mtile(x, y, 265)
-    set_zone (x, y, 0)
+    set_mtile("treasure1", 265)
+    set_zone("treasure1", 0)
   end
 
   -- Cauldron next to item shop
   if (get_treasure(6) == 1) then
-    x, y = marker("treasure2")
-    set_zone(x, y, 0)
+    set_zone("treasure2", 0)
   end
 
   -- Patch of flowers behind houses
   if (get_treasure(98) == 1) then
-    x, y = marker("treasure3")
-    set_obs (x, y, 0)
-    set_zone(x, y, 0)
+    set_zone("treasure3", 0)
+    set_obs("treasure3", 0)
   end
 end
 
@@ -259,24 +256,7 @@ end
 
 function entity_handler(en)
   if (en == 0) then
-    if (get_progress(P_WARPSTONE) == 0) then
-      if (get_progress(P_EKLAWELCOME) == 0) then
-        bubble(en, "Welcome to the town of Ekla.")
-        bubble(en, "Yes! That makes eight. If I welcome enough newcomers to this town, I will get promoted.")
-        bubble(en, "I might get a job sitting in a house all day saying the same thing over and over to anyone who talks to me.")
-        bubble(en, "I should start practicing.")
-        set_progress(P_EKLAWELCOME, 1)
-      elseif (get_progress(P_EKLAWELCOME) == 1) then
-        bubble(en, "I like cheese.")
-      end
-    else
-      if (get_progress(P_EKLAWELCOME) == 0) then
-        bubble(en, "I welcome people to Ekla.")
-        bubble(en, "Welcome back.")
-      elseif (get_progress(P_EKLAWELCOME) == 1) then
-        bubble(en, "I welcomed you already. You're in Ekla.")
-      end
-    end
+    LOC_ekla_welcome(en)
 
   elseif (en == 1) then
     if (get_progress(P_DARKIMPBOSS) == 0) then
@@ -518,4 +498,26 @@ function LOC_talk_derig(en)
   else
     -- // Nothing here, since Derig will only focus on Tsorin's quest if P_TALK_TSORIN < 3
   end -- P_TALK_TSORIN
+end
+
+
+function LOC_ekla_welcome(en)
+  if (get_progress(P_WARPSTONE) == 0) then
+    if (get_progress(P_EKLAWELCOME) == 0) then
+      bubble(en, "Welcome to the town of Ekla.")
+      bubble(en, "Yes! That makes eight. If I welcome enough newcomers to this town, I will get promoted.")
+      bubble(en, "I might get a job sitting in a house all day saying the same thing over and over to anyone who talks to me.")
+      bubble(en, "I should start practicing.")
+      set_progress(P_EKLAWELCOME, 1)
+    else
+      bubble(en, "I like cheese.")
+    end
+  else -- P_WARPSTONE
+    if (get_progress(P_EKLAWELCOME) == 0) then
+      bubble(en, "I welcome people to Ekla.")
+      bubble(en, "Welcome back.")
+    elseif
+      bubble(en, "I welcomed you already. You're in Ekla.")
+    end
+  end -- P_WARPSTONE
 end

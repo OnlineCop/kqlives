@@ -32,6 +32,10 @@
 --   (0) Still letting monsters through, Ajathar doesn't join
 --   (1) The Portal is sealed shut, Ajathar joins
 --
+-- P_SIDEQUEST2: Whether you finished the 2nd sidequest to save the mayor
+--   (0) Mayor still missing
+--   (1) Mayor found, Casandra joins
+--
 -- P_SHOWBRIDGE:
 --   (0) Bridge is incomplete
 --   (1) Monsters on bridge defeated; slept at Inn: bridge is passable
@@ -49,20 +53,20 @@
 
 
 function autoexec()
-  -- // WARPSTONE is found late in the game, so some things are now available
-  -- // that weren't available earlier
+  -- WARPSTONE is found late in the game, so some things are now available
+  -- that were not available earlier
   if (get_progress(P_WARPSTONE) == 1) then
-    -- // Move the guard guarding the houses in the north-east section of town
-    -- // over one tile so we can get in
+    -- Move the guard guarding the houses in the north-east section of town
+    -- over one tile so we can get in
     place_ent(6, "guard")
 
-    -- // The bridge repairs will now be completed
+    -- The bridge repairs will now be completed
     if (get_progress(P_SHOWBRIDGE) == 1) then
       set_progress(P_SHOWBRIDGE, 2)
     end
 
-    -- // If the Mayor had been found, he will now have recovered from his
-    -- // ordeal and will be willing to speak to you
+    -- If the Mayor had been found, he will now have recovered from his ordeal
+    -- and will be willing to speak to you
     if (get_progress(P_FOUNDMAYOR) == 1) then
       set_progress(P_FOUNDMAYOR, 2)
     end
@@ -74,77 +78,47 @@ end
 
 function refresh()
   local x, y
-  if (get_treasure(3) == 1) then
-    x, y = marker("treasures")
-    set_mtile(x - 1, y, 265)
-    set_zone(x - 1, y, 0)
-  end
-  if (get_treasure(4) == 1) then
-    x, y = marker("treasures")
-    set_mtile(x, y, 265)
-    set_zone(x, y, 0)
-  end
-  if (get_treasure(5) == 1) then
-    x, y = marker("treasures")
-    set_mtile(x + 1, y, 265)
-    set_zone(x + 1, y, 0)
-  end
-  if (get_treasure(7) == 1) then
-    x, y = marker("treasure2")
-    set_obs(x, y, 0)
-    set_zone(x, y, 0)
-  end
-  if (get_treasure(10) == 1) then
-    x, y = marker("treasure3")
-    set_obs(x, y, 0)
-    set_zone(x, y, 0)
-  end
-  if (get_treasure(31) == 1) then
-    x, y = marker("treasure4")
-    set_mtile(x, y, 265)
-    set_zone(x, y, 0)
-  end
-  if (get_treasure(46) == 1) then
-    x, y = marker("treasure4")
-    set_mtile(x + 1, y, 265)
-    set_zone(x + 1, y, 0)
-  end
-  if (get_treasure(97) == 1) then
-    x, y = marker("treasure5")
-    set_mtile(x, y, 265)
-    set_zone(x, y, 0)
-  end
+  showch("treasure1", -1)
+  showch("treasure2", -1)
+
+  showch("treasure3", 96)
+  showch("treasure4", 3)
+  showch("treasure5", 4)
+  showch("treasure6", 5)
+  showch("treasure7", 31)
+  showch("treasure8", 46)
+  showch("treasure9", 97)
 
   x, y = marker("travelpoint")
   if (get_progress(P_WARPSTONE) == 1) then
     set_mtile(x, y, 0)
   else
-    set_zone(x, y, 0)
+    set_zone (x, y, 0)
   end
 
-  -- // This NPC will only appear if you spoke with him in the camp
+  -- This NPC will only appear if you spoke with him in the camp
   if (get_progress(P_MAYORGUARD1) == 0) then
     set_ent_active(12, 0)
   end
 
-  -- // Ditto, plus make sure you can't speak to a "ghost" over the counter
+  -- Ditto, plus make sure you cannot speak to a "ghost" over the counter
   if (get_progress(P_MAYORGUARD2) == 0) then
-    x, y = marker("treasure5")
+    x, y = get_ent_tile(11)
     set_ent_active(11, 0)
-    set_zone(x - 1, y + 1, 0)
+    set_zone (x, y + 1, 0)
   end
 
   if (not LOC_manor_or_party(AJATHAR)) then
-    -- // Make the NPC look like Ajathar if he hasn't been recruited yet
+    -- Make the NPC look like Ajathar if he has not been recruited yet
     set_ent_id(10, AJATHAR)
   else
-    -- // Otherwise, remove him from screen
+    -- Otherwise, remove him from screen
     set_ent_active(10, 0)
   end
 
   if (get_progress(P_FOUNDMAYOR) > 0 and
       not LOC_manor_or_party(CASANDRA)) then
-    -- // Casandra should be available to join your party
+    -- Casandra should be available to join your party
     set_ent_id(13, CASANDRA)
   else
     set_ent_active(13, 0)
@@ -154,7 +128,7 @@ function refresh()
       get_progress(P_SHOWBRIDGE) > 1) then
     set_ent_active(8, 0)
     set_ent_active(9, 0)
-  end    
+  end
 
 end
 
@@ -219,7 +193,7 @@ function zone_handler(zn)
     --    means you must have slept here. */
     local old_gp = get_gp()
     inn("Wayside Inn", 30, 1)
-    -- // This means you MUST stay at the inn before the bridge gets repaired.
+    -- This means you MUST stay at the inn before the bridge gets repaired.
     if (get_gp() < old_gp) then
       if (get_progress(P_FIGHTONBRIDGE) == 4) then
         set_progress(P_FIGHTONBRIDGE, 5)
@@ -321,22 +295,10 @@ function zone_handler(zn)
     end
 
   elseif (zn == 44) then
-    x, y = marker("door_guard1")
-    set_btile(x, y, 0)
-    set_ftile(x, y, 518)
-    set_mtile(x, y + 1, 519)
-    set_obs  (x, y, 0)
-    set_zone (x, y, 0)
-    sfx(25)
+    LOC_door("door_guard1")
 
   elseif (zn == 45) then
-    x, y = marker("door_guard2")
-    set_btile(x, y, 0)
-    set_ftile(x, y, 518)
-    set_mtile(x, y + 1, 519)
-    set_obs  (x, y, 0)
-    set_zone (x, y, 0)
-    sfx(25)
+    LOC_door("door_guard2")
 
   elseif (zn == 46) then
     chest(97, 0, 1500)
@@ -355,7 +317,7 @@ function zone_handler(zn)
     door_out("shop_3o")
 
   elseif (zn == 51) then
-    door_out("mayor_o")
+    door_out("mayor_o", 0, -1)
 
   end
 end
@@ -400,12 +362,12 @@ function entity_handler(en)
     if (get_progress(P_FOUNDMAYOR) > 1 and get_progress(P_MAYORGUARD1) > 0 and get_progress(P_MAYORGUARD2) > 0) then
       bubble(en, "My husband is so excited that everyone returned safely. He tends to get forgetful when he's like this. Sometimes he doesn't even lock up after himself on his way to work.")
       set_obs("room_5door", 0)
-      set_zone("room_5door", 0)
+      set_zone ("room_5door", 0)
     elseif (get_progress(P_FIGHTONBRIDGE) > 4) then
       bubble(en, "Good day.")
     else
       if (get_progress(P_BLADE) == 0)  then
-        -- // PH: Just my little joke hehe
+        -- PH: Just my little joke hehe
         bubble(en, "I'm just preparing some vegetables.")
         bubble(HERO1, "That's a strange knife you've got there.")
         bubble(en, "What? Oh, this. Yes, it's a Phoenix Blade.")
@@ -542,8 +504,34 @@ function entity_handler(en)
 end
 
 
+-- Show the status of a treasures
+function showch(which_marker, which_chest)
+  -- If -1 passed in,  as 'which_chest' or if chest already opened
+  if (which_chest < 0) then
+    set_obs(which_marker, 0)
+  elseif (get_treasure(which_chest) == 1) then
+    set_mtile(which_marker, 265)
+  end
+  set_zone(which_marker, 0)
+end
+
+
+function LOC_door(which_marker)
+  sfx(25)
+
+  local x, y = which_marker
+  set_btile(x, y, 0)
+  set_mtile(x, y + 1, 519)
+  set_ftile(x, y, 518)
+  set_zone(x, y, 0)
+  set_obs(x, y, 0)
+end
+
+
 function LOC_join_ajathar(en)
   local id
+  local hero = 9
+
   if (get_progress(P_SIDEQUEST1) == 0) then
     if (get_progress(P_TALK_AJATHAR) == 0) then
       bubble(HERO1, "Hello! You haven't ventured very far!")
@@ -554,50 +542,56 @@ function LOC_join_ajathar(en)
     elseif (get_progress(P_TALK_AJATHAR) == 1) then
       bubble(en, "I hope I am doing the right thing here.")
     end
-  else
-    if (get_progress(P_TALK_AJATHAR) == 0) then
-      bubble(en, "Be careful! That tunnel is infested with monsters.")
-      bubble(HERO1, "Fortunately, I have been successful in closing the Portal. No more monsters will trouble us now.")
-      set_progress(P_TALK_AJATHAR, 1)
-    else
-      bubble(HERO1, "You can rest easy now. I have closed the Portal that let the monsters through.")
-    end
-    bubble(en, "Great! Can I offer my services?")
-    -- // Give Ajathar his default equipment
-    set_all_equip(AJATHAR, I_MACE2, I_SHIELD1, I_HELM1, I_ROBE2, I_BAND1, 0)
-    id = select_team{AJATHAR}
-    -- /* Add the characters that weren't selected to the manor */
-    add_to_manor(id)
-
-    if (id[1]) then
-      set_ent_id(en, id[1])
-
-      if (id[2]) then
-        -- // Two heroes were de-selected
-        set_ent_id(9, id[2])
-        set_ent_active(9, 1)
-        set_ent_tilex(9, get_ent_tilex(en))
-        set_ent_tiley(9, get_ent_tiley(en) + 1)
-        bubble(en, "If you need us, we'll be back at the manor.")
-        set_ent_script(en, "L1U1L1U2L2U1K")
-        set_ent_script(9,  "L1U2L1U2L2U1K")
-        wait_for_entity(9, en)
-      else
-        -- // One hero was de-selected
-        bubble(en, "If you need me, I'll be back at the manor.")
-        set_ent_script(en, "L1U1L1U2L2U1K")
-        wait_for_entity(en, en)
-      end
-    end
-    set_ent_active(9, 0)
-    set_ent_active(en, 0)
-    set_progress(P_PLAYERS, get_progress(P_PLAYERS) + 1)
+    return
   end
+
+  if (get_progress(P_TALK_AJATHAR) == 0) then
+    bubble(en, "Be careful! That tunnel is infested with monsters.")
+    bubble(HERO1, "Fortunately, I have been successful in closing the Portal. No more monsters will trouble us now.")
+    set_progress(P_TALK_AJATHAR, 1)
+  else
+    bubble(HERO1, "You can rest easy now. I have closed the Portal that let the monsters through.")
+  end
+  bubble(en, "Great! Can I offer my services?")
+
+  -- Give Ajathar his default equipment
+  set_all_equip(AJATHAR, I_MACE2, I_SHIELD1, I_HELM1, I_ROBE2, I_BAND1, 0)
+  id = select_team{AJATHAR}
+  -- Add the characters that were not selected to the manor
+  add_to_manor(id)
+
+  if (id[1]) then
+    local script = "L1U2L2U1K"
+    set_ent_id(en, id[1])
+    set_ent_script(en, "L1U1"..script)
+
+    if (id[2]) then
+      -- Two heroes were de-selected
+      set_ent_id(hero, id[2])
+      set_ent_active(hero, 1)
+
+      local x, y = get_ent_tile(en)
+      place_ent(hero, x, y + 1)
+      bubble(en, "If you need us, we'll be back at the manor.")
+      set_ent_speed(hero, 4)
+      set_ent_speed(en, 4)
+      set_ent_script(hero,  "L1U2"..script)
+      wait_for_entity(hero, en)
+    else
+      -- One hero was de-selected
+      bubble(en, "If you need me, I'll be back at the manor.")
+      wait_for_entity(en, en)
+    end
+  end
+  set_ent_active(hero, 0)
+  set_ent_active(en, 0)
+  set_progress(P_PLAYERS, get_progress(P_PLAYERS) + 1)
 end
 
 
 function LOC_join_casandra(en)
   local id
+  local hero = 8
 
   bubble(en, "$0, thank you for helping us escape from the orc's camp!")
   bubble(HERO1, "Don't mention it. How did you get caught up in that mess anyway?")
@@ -606,38 +600,35 @@ function LOC_join_casandra(en)
   bubble(HERO1, "Hmm, still sounds a bit fishy.")
   bubble(en, "I'd gladly join you to find out what this is all about!")
 
-  -- // Give Casandra her default equipment
+  -- Give Casandra her default equipment
   set_all_equip(CASANDRA, I_MACE2, I_SHIELD1, I_HELM1, I_ROBE2, I_BAND1, 0)
   id = select_team{CASANDRA}
-  -- /* Add the characters that weren't selected to the manor */
+  -- Add the characters that were not selected to the manor
   add_to_manor(id)
 
   if (id[1]) then
     set_ent_id(en, id[1])
+    set_ent_script(en, "U8K")
 
     if (id[2]) then
-      -- // Two heroes were de-selected
-      set_ent_id(8, id[2])
-      set_ent_active(8, 1)
-      set_ent_tilex(8, get_ent_tilex(en))
-      set_ent_tiley(8, get_ent_tiley(en) - 1)
+      -- Two heroes were de-selected
+      set_ent_id(hero, id[2])
+      set_ent_active(hero, 1)
+      
+      local x, y = get_ent_tile(en)
+      place_ent(hero, x, y - 1)
       bubble(en, "If you need us, we'll be back at the manor.")
-      set_ent_speed(8, 4)
+      set_ent_speed(hero, 4)
       set_ent_speed(en, 4)
---      move_entity(en, 32, 31, 1)
---      move_entity(8, 32, 31, 1)
-      set_ent_script(en, "U8K")
-      set_ent_script(8,  "U9K")
-      wait_for_entity(8, en)
-      set_ent_active(8, 0)
+      set_ent_script(hero,  "U9K")
+      wait_for_entity(hero, en)
     else
-      -- // One hero was de-selected
+      -- One hero was de-selected
       bubble(en, "If you need me, I'll be back at the manor.")
-      set_ent_script(en, "U8K")
       wait_for_entity(en, en)
     end
   end
-  set_ent_active(8, 0)
+  set_ent_active(hero, 0)
   set_ent_active(en, 0)
   set_progress(P_PLAYERS, get_progress(P_PLAYERS) + 1)
 end

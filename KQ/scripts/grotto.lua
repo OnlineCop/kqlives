@@ -89,16 +89,14 @@ end
 function refresh()
   -- Treasure on NE corner, in trees
   if (get_treasure(15) == 1) then
-    x, y = marker("treasure1")
-    set_zone(x, y, 0)
-    set_obs(x, y, 0)
+    set_zone("treasure1", 0)
+    set_obs("treasure1", 0)
   end
 
   -- Treasure under flowers on E corner
   if (get_treasure(80) == 1) then
-    x, y = marker("treasure2")
-    set_zone(x, y, 0)
-    set_obs(x, y, 0)
+    set_zone("treasure2", 0)
+    set_obs("treasure2", 0)
   end
 
 end

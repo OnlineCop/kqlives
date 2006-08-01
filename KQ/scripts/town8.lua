@@ -17,25 +17,11 @@ end
 
 
 function refresh()
-  if (get_treasure(91) == 1) then
-    set_obs("treas_1", 0)
-    set_zone("treas_1", 0)
-  end
-
-  if (get_treasure(92) == 1) then
-    set_obs("treas_2", 0)
-    set_zone("treas_1", 0)
-  end
-
-  if (get_treasure(93) == 1) then
-    set_obs("treas_3", 0)
-    set_zone("treas_3", 0)
-  end
-
-  if (get_treasure(95) == 1) then
-    set_obs("treas_4", 0)
-    set_zone("treas_4", 0)
-  end
+  showch("treasure1", 91)
+  showch("treasure2", 92)
+  showch("treasure3", 93)
+  showch("treasure4", 94)
+  showch("treasure5", 95)
 end
 
 
@@ -50,11 +36,11 @@ function zone_handler(zn)
 
   elseif (zn == 2) then
     set_progress(P_WALKING, 0)
-    TOC_switch_layers()
+    TOC_switch_layers(zn)
 
   elseif (zn == 3) then
     set_progress(P_WALKING, 1)
-    TOC_switch_layers()
+    TOC_switch_layers(zn)
 
   elseif (zn == 4) then
     chest(91, 0, 1200)
@@ -150,7 +136,7 @@ function zone_handler(zn)
 
   elseif (zn == 33) then
     thought(HERO1, "This spa is relaxing.")
-    
+
   elseif (zn == 34) then
     touch_fire(party[0])
 
@@ -188,49 +174,66 @@ end
 
 
 function TOC_switch_layers()
+  local x1, y1 = marker("bridge1")
+  local x2, y2 = marker("bridge2")
+
   if (get_progress(P_WALKING) == 0) then
-    set_obs(17, 45, 3)
-    set_obs(18, 43, 0)
-    set_obs(18, 47, 0)
-    set_obs(19, 44, 5)
-    set_obs(19, 45, 5)
-    set_obs(19, 46, 5)
+    set_obs(x1 - 1, y1    , 3)
+    set_obs(x1    , y1 - 2, 0)
+    set_obs(x1    , y1 + 2, 0)
+    set_obs(x1 + 1, y1 - 1, 5)
+    set_obs(x1 + 1, y1    , 5)
+    set_obs(x1 + 1, y1 + 1, 5)
 
-    set_mtile(18, 44, 33)
-    set_ftile(18, 44, 0)
-    set_mtile(18, 45, 33)
-    set_ftile(18, 45, 0)
-    set_mtile(18, 46, 33)
-    set_ftile(18, 46, 0)
+    set_mtile(x1, y1 - 1, 33)
+    set_ftile(x1, y1 - 1, 0)
+    set_mtile(x1, y1    , 33)
+    set_ftile(x1, y1    , 0)
+    set_mtile(x1, y1 + 1, 33)
+    set_ftile(x1, y1 + 1, 0)
 
-    set_obs(57, 5, 0)
-    set_obs(56, 6, 3)
-    set_obs(58, 6, 5)
-    set_obs(57, 7, 0)
+    set_obs(x2    , y2 - 1, 0)
+    set_obs(x2 - 1, y2    , 3)
+    set_obs(x2 + 1, y2    , 5)
+    set_obs(x2    , y2 + 1, 0)
 
-    set_mtile(57, 6, 33)
-    set_ftile(57, 6, 0)
-  else
-    set_obs(17, 45, 0)
-    set_obs(18, 43, 1)
-    set_obs(18, 47, 1)
-    set_obs(19, 44, 0)
-    set_obs(19, 45, 0)
-    set_obs(19, 46, 0)
+    set_mtile(x2, y2, 33)
+    set_ftile(x2, y2, 0)
+  elseif (get_progress(P_WALKING) == 1) then
+    set_obs(x1 - 1, y1    , 0)
+    set_obs(x1    , y1 - 2, 1)
+    set_obs(x1    , y1 + 2, 1)
+    set_obs(x1 + 1, y1 - 1, 0)
+    set_obs(x1 + 1, y1    , 0)
+    set_obs(x1 + 1, y1 + 1, 0)
 
-    set_mtile(18, 44, 0)
-    set_ftile(18, 44, 33)
-    set_mtile(18, 45, 0)
-    set_ftile(18, 45, 33)
-    set_mtile(18, 46, 0)
-    set_ftile(18, 46, 33)
+    set_mtile(x1, y1 - 1, 0)
+    set_ftile(x1, y1 - 1, 33)
+    set_mtile(x1, y1    , 0)
+    set_ftile(x1, y1    , 33)
+    set_mtile(x1, y1 + 1, 0)
+    set_ftile(x1, y1 + 1, 33)
 
-    set_obs(57, 5, 1)
-    set_obs(56, 6, 0)
-    set_obs(58, 6, 0)
-    set_obs(57, 7, 2)
+    set_obs(x2    , y2 - 1, 1)
+    set_obs(x2 - 1, y2    , 0)
+    set_obs(x2 + 1, y2    , 0)
+    set_obs(x2    , y2 + 1, 2)
 
-    set_mtile(57, 6, 0)
-    set_ftile(57, 6, 33)
+    set_mtile(x2, y2, 0)
+    set_ftile(x2, y2, 33)
+  end
+end
+
+
+-- Show the status of a treasures
+function showch(which_marker, which_chest)
+  -- Set tiles if -1 passed in as 'which_chest' or if chest already opened
+  if (which_chest < 0 or get_treasure(which_chest) == 1) then
+    set_zone(which_marker, 0)
+  end
+  
+  -- Only treasure4 needs to keep its obstacle setting
+  if (which_marker ~= "treasure4") then
+    set_obs(which_marker, 0)
   end
 end

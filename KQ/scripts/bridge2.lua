@@ -31,15 +31,8 @@ end
 
 
 function refresh()
-  if (get_treasure(8) == 1) then
-    set_obs("treas_1", 0)
-    set_zone("treas_1", 0)
-  end
-
-  if (get_treasure(90) == 1) then
-    set_ftile("treas_2", 0)
-    set_zone("treas_2", 0)
-  end
+  showch("treasure1", 8)
+  showch("treasure2", 90)
 end
 
 
@@ -124,5 +117,20 @@ function entity_handler(en)
   elseif (en == 9) then
     bubble(en, "Some moron rode a wagon over here with STONE RIMS! I'd like to find the no-good, lousy...")
 
+  end
+end
+
+
+-- Show the status of a treasures
+function showch(which_marker, which_chest)
+  -- Set tiles if -1 passed in as 'which_chest' or if chest already opened
+  if (get_treasure(which_chest) == 1) then
+    set_zone(which_marker, 0)
+  end
+  if (which_marker == "treasure1") then
+    set_obs(which_marker, 0)
+  end
+  if (which_marker == "treasure2") then
+    set_ftile(which_marker, 0)
   end
 end

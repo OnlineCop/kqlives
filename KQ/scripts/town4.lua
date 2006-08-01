@@ -36,24 +36,23 @@ function autoexec()
 end
 
 
+-- Show the status of a treasures
+function showch(which_marker, which_chest)
+  -- Set tiles if -1 passed in as 'which_chest' or if chest already opened
+  if (which_chest < 0 or get_treasure(which_chest) == 1) then
+    set_zone(which_marker, 0)
+  end
+  if (which_chest == 81) then
+    set_mtile(which_marker, 237)
+  end
+end
+
+
 function refresh()
-  local x, y
-  if (get_treasure(51) == 1) then
-    set_zone("treasure1", 0)
-  end
-
-  if (get_treasure(52) == 1) then
-    set_zone("treasure2", 0)
-  end
-
-  if (get_treasure(53) == 1) then
-    set_zone("treasure3", 0)
-  end
-
-  if (get_treasure(81) == 1) then
-    set_ftile("warp_spell", 237)
-    set_zone("warp_spell", 0)
-  end
+  showch("treasure1", 51)
+  showch("treasure2", 52)
+  showch("treasure3", 53)
+  showch("warp_spell", 81)
 end
 
 

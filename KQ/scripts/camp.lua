@@ -50,62 +50,19 @@ end
 function refresh()
   local x, y
 
-  if (get_treasure(55) == 1) then
-    x = 66
-    y = 45
-    set_mtile(x, y, 265)
-    set_zone(x, y, 0)
-  end
-
-  if (get_treasure(56) == 1) then
-    x = 73
-    y = 43
-    set_mtile(x, y, 265)
-    set_zone(x, y, 0)
-  end
-
-  if (get_treasure(57) == 1) then
-    x = 81
-    y = 24
-    set_mtile(x, y, 265)
-    set_zone(x, y, 0)
-  end
-
-  if (get_treasure(58) == 1) then
-    x = 83
-    y = 11
-    set_mtile(x, y, 265)
-    set_zone(x, y, 0)
-  end
-
-  if (get_treasure(59) == 1) then
-    x = 84
-    y = 11
-    set_mtile(x, y, 265)
-    set_zone(x, y, 0)
-  end
-
-  if (get_treasure(60) == 1) then
-    x = 13
-    y = 57
-    set_mtile(x, y, 265)
-    set_zone(x, y, 0)
-  end
-
-  if (get_treasure(61) == 1) then
-    x = 14
-    y = 57
-    set_mtile(x, y, 265)
-    set_zone(x, y, 0)
-  end
+  showch("treasure1", 55)
+  showch("treasure2", 56)
+  showch("treasure3", 57)
+  showch("treasure4", 58)
+  showch("treasure5", 59)
+  showch("treasure6", 60)
+  showch("treasure7", 61)
 
   if (get_progress(P_FOUNDMAYOR) > 0) then
     x, y = marker("cage")
-
     set_ftile(x, y - 3, 0)
     set_obs(x, y - 3, 0)
   end
-
 end
 
 
@@ -247,6 +204,16 @@ function entity_handler(en)
 end
 
 
+-- Show the status of a chest
+function showch(which_marker, which_chest)
+  -- Set tiles if -1 passed in as 'which_chest' or if chest already opened
+  if (which_chest < 0 or get_treasure(which_chest) == 1) then
+    set_mtile(which_marker, 265)
+    set_zone(which_marker, 0)
+  end
+end
+
+
 function LOC_orc_battle(fight_num, en)
   local x, y, which_combat = 0
 
@@ -312,9 +279,8 @@ function LOC_orc_battle(fight_num, en)
     which_combat = 4
   elseif (fight_num == 6) then
     -- Move this monster as close as possible to you before fighting
-    x = get_ent_tilex(HERO1) - 1
-    y = get_ent_tiley(HERO1) - 1
-    move_entity(16, x, y)
+    x, y = get_ent_tile(HERO1)
+    move_entity(16, x - 1, y - 1)
 
     x, y = marker("fight_4b")
     set_ent_speed(16, 6)
@@ -345,7 +311,7 @@ function LOC_orc_battle(fight_num, en)
   screen_dump()
 
   set_run(0)
---  combat(which_combat)
+  combat(which_combat)
   set_run(1)
 
   if (get_alldead() == 1) then
@@ -377,35 +343,29 @@ function LOC_fight_cleanup(fight_num)
     x, y = marker("fight_3")
     set_zone(x, y - 1, 0)
     set_zone(x + 1, y - 1, 0)
-  elseif (fight_num == 4) then
+  elseif (fight_num == 4 or fight_num == 6) then
     set_ent_active(16, 0)
     set_ent_active(17, 0)
     set_ent_active(18, 0)
-    set_zone(32, 48, 0)
-    set_zone(34, 52, 0)
-    set_zone(34, 53, 0)
+    set_zone("fight_4a", 0)
+    x, y = marker("fight_4b")
+    set_zone(x, y, 0)
+    set_zone(x, y + 1, 0)
   elseif (fight_num == 5) then
     set_ent_active(19, 0)
     set_ent_active(20, 0)
     set_ent_active(21, 0)
     set_ent_active(22, 0)
-    set_zone(36, 28, 0)
-    set_zone(37, 28, 0)
-  elseif (fight_num == 6) then
-    set_ent_active(16, 0)
-    set_ent_active(17, 0)
-    set_ent_active(18, 0)
-    set_zone(32, 48, 0)
-    set_zone(34, 52, 0)
-    set_zone(34, 53, 0)
+    x, y = marker("fight_5")
+    set_zone(x, y + 1, 0)
+    set_zone(x + 1, y + 1, 0)
   elseif (fight_num == 7) then
-    set_ent_active(28, 0)
     set_ent_active(25, 0)
     set_ent_active(26, 0)
     set_ent_active(27, 0)
+    set_ent_active(28, 0)
 
   end
-
 end
 
 
@@ -460,7 +420,8 @@ function LOC_rescue_mayor(en)
   end
 
   if (en == 2) then
-    move_entity(2, get_ent_tilex(2), get_ent_tiley(2) - 1)
+    x, y = get_ent_tile(2)
+    move_entity(2, x, y - 1)
     wait_for_entity(2)
   end
 

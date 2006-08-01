@@ -5,6 +5,7 @@
 -- P_ODDWALL: Whether the player is told that the wall looks odd
 --   (0) Have not yet seen the message
 --   (1) Saw the message (only see it 1 time whenever you enter the map)
+--   (2) Stairs to the guild available
 --
 -- P_DARKIMPBOSS: Defeated the monster blocking the tunnel
 --   (0) Still there
@@ -22,44 +23,46 @@
 
 function autoexec()
   if (get_treasure(2) == 0) then
-    set_progress(P_ODDWALL, 0)
+    if (get_progress(P_ODDWALL) < 2) then
+      set_progress(P_ODDWALL, 0)
+    end
   end
-  
+
   -- PH added refresh here to get rid of DarkImp
   refresh()
 end
 
 
 function refresh()
-  
+
   -- Pot in SW corner
   if (get_treasure(1) == 1) then
-    set_zone(36, 52, 0)
+    set_zone("treasure1", 0)
   end
 
   -- Treasure chest on W
   if (get_treasure(2) == 1) then
-    set_zone(9, 25, 41)
-    set_mtile(9, 25, 41)
+    set_mtile("treasure2", 41)
+    set_zone("treasure2", 41)
   end
 
   -- Dark Imp boss in SE corner
   if (get_progress(P_DARKIMPBOSS) == 1) then
-    set_ftile(48, 49, 0)
-    set_obs(48, 49, 0)
-    set_zone(48, 49, 7)
+    set_ftile("imp", 0)
+    set_zone("imp", 7)
+    set_obs("imp", 0)
   end
 
   -- Dying man in NE corner
   if (get_progress(P_DYINGDUDE) == 1 or get_progress(P_DARKIMPBOSS) == 1) then
-    set_btile(52, 21, 25)
-    set_obs(52, 21, 0)
-    set_zone(52, 21, 0)
+    set_btile("dead", 25)
+    set_zone("dead", 0)
+    set_obs("dead", 0)
   end
 
   -- Portal in SW corner
   if (get_progress(P_PORTALGONE) == 1) then
-    set_ftile(14, 50, 217)
+    set_ftile("portal", 217)
   end
 end
 
@@ -90,7 +93,11 @@ function zone_handler(zn)
     refresh()
 
   elseif (zn == 6) then
-    bubble(HERO1, "These stairs are blocked!")
+    if (get_progress(P_ODDWALL) < 2) then
+      bubble(HERO1, "These stairs are blocked!")
+    else
+      change_map("guild", "cave1")
+    end
 
   elseif (zn == 7) then
     -- This is simply a monster-free zone

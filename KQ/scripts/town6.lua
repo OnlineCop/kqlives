@@ -17,8 +17,18 @@ end
 
 
 function refresh()
+  if (get_treasure(67) == 1) then
+    set_zone("treasure1", 0)
+  end
+  if (get_treasure(68) == 1) then
+    set_zone("treasure2", 0)
+  end
+  if (get_treasure(69) == 1) then
+    set_zone("treasure3", 0)
+  end
   if (get_treasure(70) == 1) then
-    set_obs("flowers", 0)
+    set_zone("treasure4", 0)
+    set_obs("treasure4", 0)
   end
 end
 
@@ -45,7 +55,7 @@ function zone_handler(zn)
     door_in("shop_1i")
 
   elseif (zn == 6) then
-    door_in("room1_i")
+    door_in("room_1i")
 
   elseif (zn == 7) then
     door_in("shop_2i")

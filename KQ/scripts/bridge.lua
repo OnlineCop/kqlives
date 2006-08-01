@@ -34,10 +34,7 @@ end
 
 
 function refresh()
-  if (get_treasure(8) == 1) then
-    set_obs("treas_1", 0)
-    set_zone("treas_1", 0)
-  end
+  showch("treasure1", 8)
 end
 
 
@@ -65,9 +62,10 @@ function zone_handler(zn)
       set_ent_movemode(5, 0)
       set_ent_movemode(6, 0)
       set_progress(P_FIGHTONBRIDGE, 2)
-      set_btile(29, 17, 176)
-      set_obs(29, 17, 1)
-      set_zone(29, 17, 3)
+      x, y = marker("monster")
+      set_btile(x, y, 176)
+      set_zone(x, y, 3)
+      set_obs(x, y, 1)
     end
 
   elseif (zn == 2) then
@@ -80,9 +78,10 @@ function zone_handler(zn)
       combat(0)
       can_run = 1
       set_progress(P_FIGHTONBRIDGE, 3)
-      set_btile(29, 17, 160)
-      set_obs(29, 17, 1)
-      set_zone(29, 17, 0)
+      x, y = marker("monster")
+      set_btile(x, y, 160)
+      set_zone(x, y, 0)
+      set_obs(x, y, 1)
     end
 
   end
@@ -186,5 +185,15 @@ function entity_handler(en)
       bubble(en, "Now you see why I should've been a florist...")
     end
 
+  end
+end
+
+
+-- Show the status of a treasures
+function showch(which_marker, which_chest)
+  -- Set tiles if -1 passed in as 'which_chest' or if chest already opened
+  if (get_treasure(which_chest) == 1) then
+    set_ftile(which_marker, 0)
+    set_zone(which_marker, 0)
   end
 end

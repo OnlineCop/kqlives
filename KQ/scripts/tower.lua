@@ -58,18 +58,18 @@ end
 function refresh()
   local x, y
 
-  showch(33, "treasure1")
-  showch(34, "treasure2")
-  showch(35, "treasure3")
-  showch(36, "treasure4")
-  showch(37, "treasure5")
-  showch(38, "treasure6")
-  showch(39, "treasure7")
-  showch(40, "treasure8")
-  showch(41, "treasure9")
-  showch(42, "treasure10")
-  showch(43, "treasure11")
-  showch(44, "treasure12")
+  showch("treasure1", 33)
+  showch("treasure2", 34)
+  showch("treasure3", 35)
+  showch("treasure4", 36)
+  showch("treasure5", 37)
+  showch("treasure6", 38)
+  showch("treasure7", 39)
+  showch("treasure8", 40)
+  showch("treasure9", 41)
+  showch("treasure10", 42)
+  showch("treasure11", 43)
+  showch("treasure12", 44)
 
   -- Dragon guard (1: Main entrance)
   LOC_draw_dragon()
@@ -115,7 +115,7 @@ function refresh()
 
   -- Black stone (4: Single treasure, treasure chest)
   if (get_progress(P_STONE4) == 1) then
-    showch(-1, "stone4")
+    showch("stone4", -1)
   end
 end
 
@@ -709,11 +709,12 @@ function LOC_draw_dragon()
 end
 
 
-function showch(which_chest, which_marker)
+-- Show the status of a chest
+function showch(which_marker, which_chest)
   -- Set tiles if -1 passed in as 'which_chest' or if chest already opened
   if (which_chest < 0 or get_treasure(which_chest) == 1) then
     set_mtile(which_marker, 65)
-    set_zone (which_marker, 0)
+    set_zone(which_marker, 0)
   end
 end
 

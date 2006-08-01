@@ -55,7 +55,8 @@ end
 
 function refresh()
   if (get_treasure(32) == 1) then
-    set_obs("treas1", 0)
+    set_zone("treasure1", 0)
+    set_obs("treasure1", 0)
   end
 
   if (get_progress(P_AYLA_QUEST) > 3) then
@@ -111,7 +112,7 @@ function zone_handler(zn)
         set_progress(P_AYLA_QUEST, 7)
       end
     end
-    change_map("main", "town5")
+    change_map("main", "town5", -1, 0)
 
   elseif (zn == 2) then
     bubble(HERO1, "Locked.")
@@ -362,7 +363,7 @@ function LOC_ayla_gates()
     wait_for_entity(guard, guard)
     LOC_check_costume()
     set_progress(P_AYLA_QUEST, 6)
-    change_map("main", "town5")
+    change_map("main", "town5", 1, 0)
     set_vfollow(1)
   else
     bubble(HERO1, "I was wondering if you did tours around the castle?")

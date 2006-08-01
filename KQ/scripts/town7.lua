@@ -21,26 +21,10 @@ end
 
 
 function refresh()
-  if (get_treasure(72) == 1) then
-    set_obs("treas_1", 0)
-    set_zone("treas_1", 0)
-  end
+  showch("treasure1", 71)
+  showch("treasure2", 72)
 
-  if (get_progress(P_TALKOLDMAN) == 1) then
-    set_obs("door1", 0)
-  elseif (get_progress(P_TALKOLDMAN) > 1) then
-    local x, y
-    x, y = marker("around_table")
-    place_ent(6, x, y)
-    x, y = marker("counter")
-    set_zone(x, y - 3, 0)
-    set_zone(x, y, 0)
-    if (get_progress(P_TALKOLDMAN) == 5) then
-      -- // Unlock the doors leading to the old man's counters
-      set_obs("hdoor1", 0)
-      set_obs("hdoor2", 0)
-    end
-  end
+  LOC_setup_oldman(6)
 end
 
 
@@ -182,8 +166,40 @@ function entity_handler(en)
 end
 
 
+-- Show the status of a treasures
+function showch(which_marker, which_chest)
+  -- Set tiles if -1 passed in as 'which_chest' or if chest already opened
+  if (which_chest < 0 or get_treasure(which_chest) == 1) then
+    set_obs(which_marker, 0)
+  end
+  if (which_marker ~= "treasure1") then
+    set_zone(which_marker, 0)
+  end
+end
+
+
+-- Allow player to go visit the old man
+function LOC_setup_oldman(en)
+  if (get_progress(P_TALKOLDMAN) == 1) then
+    set_obs("door1", 0)
+  elseif (get_progress(P_TALKOLDMAN) > 1) then
+    place_ent(en, "around_table")
+    set_ent_facing(en, FACE_DOWN)
+    local x, y = marker("counter")
+    set_zone(x, y - 3, 0)
+    set_zone(x, y, 0)
+    if (get_progress(P_TALKOLDMAN) == 5) then
+      -- // Unlock the doors leading to the old man's counters
+      set_obs("hdoor1", 0)
+      set_obs("hdoor2", 0)
+    end
+  end
+end
+
+
 function LOC_talk_oldman(en)
   local x, y = marker("counter")
+
   if (get_progress(P_TALKOLDMAN) == 0) then
     bubble(en, "Hey, how did you get in here? Get out!")
   elseif (get_progress(P_TALKOLDMAN) == 1) then
@@ -207,8 +223,7 @@ function LOC_talk_oldman(en)
     set_obs("hdoor2", 0)
     set_ent_speed(en, 5)
 
-    x, y = marker("around_table")
-    move_entity(en, x, y, 0)
+    move_entity(en, "around_table", 0)
     wait_for_entity(en, en)
     set_ent_facing(en, FACE_DOWN)
     set_ent_movemode(en, 0)

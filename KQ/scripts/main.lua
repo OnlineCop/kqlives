@@ -352,13 +352,11 @@ function zone_handler(zn)
 
   elseif (zn == 75) then
     bubble(HERO1, "The underwater tunnel should go here.")
-    x, y = marker("underwater_w")
-    warp(x, y, 16)
+    warp("underwater_w", 16)
 
   elseif (zn == 76) then
     bubble(HERO1, "The second part of the underwater tunnel should go here.")
-    x, y = marker("underwater_e")
-    warp(x, y, 16)
+    warp("underwater_e", 16)
 
   elseif (zn == 77) then
     bubble(HERO1, "This is where the castle town of Xenar goes.")
@@ -369,23 +367,28 @@ function zone_handler(zn)
 
   elseif (zn == 79) then
     bubble(HERO1, "This is as far as the dock goes.")
-    x, y = marker("dock_n")
-    warp(x, y, 16)
+    warp("dock_n", 16)
 
   elseif (zn == 80) then
     bubble(HERO1, "This is as far as the dock goes.")
-    x, y = marker("dock_s")
-    warp(x, y, 16)
+    warp("dock_s", 16)
 
   elseif (zn == 81) then
     msg("This is where a short pass or cave goes.", 255, 0)
-    x, y = marker("malk_pass_w")
-    warp(x, y, 8)
+    warp("malk_pass_w", 8)
 
   elseif (zn == 82) then
     msg("This is where a short pass or cave goes.", 255, 0)
-    x, y = marker("malk_pass_e")
-    warp(x, y, 8)
+    warp("malk_pass_e", 8)
+
+  elseif (zn == 83) then
+    msg("This is where a new cave goes.", 255, 0)
+
+  elseif (zn == 84) then
+    msg("This is Binderak's cave.", 255, 0)
+
+  elseif (zn == 85) then
+    msg("This will be the Sunarin tower.", 255, 0)
 
   end
 end

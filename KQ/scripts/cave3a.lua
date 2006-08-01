@@ -3,11 +3,12 @@
 -- // P_TRAVELPOINT: Whether we've just come through the TravelPoint
 
 function autoexec()
-  if (get_ent_tilex(HERO1) == get_marker_tilex("exit") and
-      get_ent_tiley(HERO1) == get_marker_tiley("exit")) then
+  local x1, y1 = marker("exit")
+  local x2, y2 = marker("uldoor1")
+  local herox, heroy = get_ent_tile(HERO1)
+  if (herox == x1 and heroy == y1) then
     set_warp(1, 264, 57)
-  elseif (get_ent_tilex(HERO1) == get_marker_tilex("uldoor1") and
-          get_ent_tiley(HERO1) == get_marker_tiley("uldoor1")) then
+  elseif (herox == x2 and heroy == y2) then
     set_warp(1, 264, 60)
   end
 
@@ -19,7 +20,6 @@ function autoexec()
   end
 
   if (get_progress(P_TRAVELPOINT) == 1) then
-    view_range(1, 22, 23, 43, 39)
     set_progress(P_TRAVELPOINT, 0)
   else
     set_desc(0)
@@ -30,18 +30,14 @@ end
 
 
 function refresh()
-  if (get_treasure(17) == 1) then
-    set_btile(51, 13, 95)
-  end
-  if (get_treasure(18) == 1) then
-    set_btile(52, 14, 95)
-  end
-  if (get_treasure(19) == 1) then
-    set_btile(53, 13, 95)
-  end
+  showch("treasure1", 17)
+  showch("treasure2", 18)
+  showch("treasure3", 19)
+
   if (get_progress(P_WARPEDTOT4) > 0) then
-    set_ftile(get_marker_tilex("dldoor1"), get_marker_tiley("dldoor1") - 1, 119)    -- set_ftile(13, 49, 119)
-    set_obs(get_marker_tilex("dldoor1"), get_marker_tiley("dldoor1") - 1, 0)    -- set_obs(13, 49, 0)
+    local x, y = marker("dldoor1")
+    set_ftile(x, y - 1, 119)    -- set_ftile(13, 49, 119)
+    set_obs(x, y - 1, 0)    -- set_obs(13, 49, 0)
   end
 end
 
@@ -59,18 +55,15 @@ function zone_handler(zn)
     change_map("main", "cave3", 0, 2)
 
   elseif (zn == 2) then
-    view_range(1, 44, 8, 57, 58)
     warp("halldoor", 8)
 
   elseif (zn == 3) then
-    view_range(1, 8, 47, 20, 57)
     warp("dldoor2", 8)
 
   elseif (zn == 4) then
     change_map("cave3b", "entrance")
 
   elseif (zn == 5) then
-    view_range(1, 9, 8, 22, 21)
     warp("uldoor3", 8)
 
   elseif (zn == 6) then
@@ -86,7 +79,6 @@ function zone_handler(zn)
     refresh()
 
   elseif (zn == 9) then
-    view_range(1, 9, 8, 22, 21)
     warp("uldoor2", 8)
 
   elseif (zn == 10) then
@@ -95,7 +87,6 @@ function zone_handler(zn)
       set_progress(P_WARPEDTOT4, 1)
       refresh()
     else
-      view_range(1, 22, 23, 43, 39)
       warp("mrdoor1", 8)
       if (get_progress(P_ORACLEMONSTERS) == 0) then
         LOC_monsters_statue()
@@ -105,7 +96,6 @@ function zone_handler(zn)
   -- zn == 11 is a no-combat zone
 
   elseif (zn == 12) then
-    view_range(1, 8, 47, 20, 57)
     warp("dldoor1", 8)
 
   elseif (zn == 13) then
@@ -124,11 +114,9 @@ function zone_handler(zn)
     change_map("cave3b", "exit")
 
   elseif (zn == 16) then
-    view_range(1, 29, 9, 38, 19)
     warp("urstairs1", 8)
 
   elseif (zn == 17) then
-    view_range(1, 32, 48, 39, 58)
     warp("drstairs1", 8)
 
   elseif (zn == 18) then
@@ -136,11 +124,16 @@ function zone_handler(zn)
 
   elseif (zn == 19) then
     if (get_progress(P_ORACLEMONSTERS) == 1) then
+      local or1, or2
       if (get_numchrs() == 1) then
-        bubble(HERO1, "No, really. I need to tell the Oracle about this before I go through this TravelPoint!")
+        or1 = "I"
+        or2 = "I"
       else
-        bubble(HERO1, "No, really. We need to tell the Oracle about this before we go through this TravelPoint!")
+        or1 = "We"
+        or2 = "we"
       end
+
+      bubble(HERO1, "No, really. "..or1.." need to tell the Oracle about this before "..or2.." go through this TravelPoint!")
     end
 
   end
@@ -158,6 +151,16 @@ function entity_handler(en)
     bubble(en, "We will die before we give you the statue!")
   elseif (en == 4) then
     bubble(en, "A curse be upon you... a curse upon you all!")
+  end
+end
+
+
+-- Show the status of a chest
+function showch(which_marker, which_chest)
+  -- Set tiles if -1 passed in as 'which_chest' or if chest already opened
+  if (which_chest < 0 or get_treasure(which_chest) == 1) then
+    set_mtile(which_marker, 41)
+    set_zone(which_marker, 0)
   end
 end
 

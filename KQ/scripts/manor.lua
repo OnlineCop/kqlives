@@ -143,6 +143,9 @@ function zone_handler(zn)
       set_ent_speed(en, 5)
 
       -- Check location on map
+      set_ent_script(en, "R3D3L5D8")
+      wait_for_entity(en, en)
+
       move_entity(en, x, y - 1, 0)
 
       -- Process movement script

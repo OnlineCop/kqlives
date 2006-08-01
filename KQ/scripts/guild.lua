@@ -48,13 +48,14 @@ function refresh()
     set_ftile(x + 4, y - 1, 0)
   end
 
-  if (get_progress(P_FOUGHTGUILD) > 1) then
+  if (get_progress(P_FOUGHTGUILD) > 0) then
     set_ent_active(0, 0)
     set_ent_active(1, 0)
   end
 
-  if (get_progress(P_OPALHELMET) == 1) then
+  if (get_progress(P_OPALHELMET) > 0) then
     set_mtile("helm", 265)
+    set_zone("helm", 0)
   end
 
   -- Should Ayla appear or not?
@@ -175,21 +176,73 @@ function zone_handler(zn)
     -- Gold! Between 170 and 210 GP, depending on the zone number
     chest(101 + zn - 17, 0, zn * 10)
 
+  elseif (zn == 22) then
+    if (party[0] == Ayla or party[1] == Ayla) then
+      local hero
+      if (party[0] == Ayla) then
+        hero = HERO1
+      else
+        hereo = HERO2
+      end
+      bubble(hero, "I can't seem to pick this lock.")
+    else
+      bubble(en, "The lock on this door looks very strange.")
+    end
+
+  elseif (zn == 23) then
+    -- This will lead to a room with a TravelPoint which leads to cave1
+    warp("dstairs3", 8)
+
+  elseif (zn == 24) then
+    warp("dstairs4", 8)
+
+  elseif (zn == 25) then
+    bubble(HERO1, "This note says that there is a portal behind the fireplace.")
+
+  elseif (zn == 26) then
+    warp("fireplace2", 8)
+
+  elseif (zn == 27) then
+    warp("fireplace1", 8)
+
+  elseif (zn == 28) then
+    change_map("cave1", "dstairs1")
+
   end
 end
 
 
 function entity_handler(en)
-   if (en == 2) then -- // You've met Ayla
-      bubble(en, "Wha...? Oh, it's you!")
-      bubble(HERO1, "Hello... I recognise you from Nostik's manor, don't I?")
-      bubble(en, "Yes, I broke into the house, but I couldn't find the secret passage.", "Can I join you now?")
-      set_ent_active(en, 0)
-      set_all_equip(AYLA, I_SWORD4, I_SHIELD3, I_CAP3, I_SUIT3, I_BAND2, 0)
-      id = select_team{AYLA}
-      --  Add the characters that were deselected to the manor
-      add_to_manor(id)
-   end
+  if (en == 2) then -- // You've met Ayla
+    LOC_ayla_join(en)
+  end
+end
+
+
+function LOC_ayla_join(en)
+  if (get_progress(P_AYLA_QUEST) == 0) then
+    bubble(en, "Wha...? Oh, it's you!")
+    bubble(HERO1, "Hello... I recognise you from Nostik's manor, don't I?")
+    bubble(en, "Yes, I broke into the house, but I couldn't find the secret passage.")
+    bubble(HERO1, "You must be pretty good at... uh...")
+    bubble(en, "Thievery? Yea, I am.")
+    bubble(HERO1, "Well, nice meeting you.")
+  else
+    bubble(en, "Hey, $0. Rumor has it that the guild has a bunch of treasure hoarded somewhere.")
+    bubble(HERO1, "That's possible. Why?")
+    bubble(en, "Let's just suppose that you help me find it. I wouldn't mind joining your little party and helping you out.")
+    bubble(HERO1, "Well, I can always use a little extra help. What do we have to do?")
+    bubble(en, "Let's have a talk around town. I'm sure someone's bound to spill something about the guild's whereabouts.")
+    bubble(HERO1, "Well, alright then.")
+    set_ent_active(en, 0)
+    set_all_equip(AYLA, I_SWORD4, I_SHIELD3, I_CAP3, I_SUIT3, I_BAND2, 0)
+    id = select_team{AYLA}
+    --  Add the characters that were deselected to the manor
+    add_to_manor(id)
+    
+    if (id[1]) then
+      -- Need the whole "okay, meet you back at the manor" dialog here
+    end
 end
 
 
