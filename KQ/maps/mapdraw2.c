@@ -247,10 +247,10 @@ int do_place_entity (unsigned int x, unsigned int y)
 
    /* Set its personality/attributes/stats */
    gent[number_of_ents].chrx = 0;       /* What it looks like */
-   gent[number_of_ents].tilex = x;  /* which tile it's standing on */
-   gent[number_of_ents].tiley = y;  /* ..same.. */
-   gent[number_of_ents].x = x * 16; /* Will be the same as tilex unless moving */
-   gent[number_of_ents].y = y * 16; /* ..same.. */
+   gent[number_of_ents].tilex = x;      /* which tile it's standing on */
+   gent[number_of_ents].tiley = y;      /* ..same.. */
+   gent[number_of_ents].x = x * 16;     /* Will be the same as tilex unless moving */
+   gent[number_of_ents].y = y * 16;     /* ..same.. */
    gent[number_of_ents].active = 1;     /* Showing on map or not */
    gent[number_of_ents].eid = 255;      /* */
    gent[number_of_ents].movemode = 0;   /* 0=stand, 1=wander, 2=script, 3=chase */
@@ -277,7 +277,7 @@ void remove_entity (int entity)
    }
    --number_of_ents;
    /* clean up the now unused entry */
-   memset (&gent[number_of_ents], sizeof(gent[number_of_ents]),0);
+   memset (&gent[number_of_ents], sizeof (gent[number_of_ents]), 0);
 }
 
 int get_entity_at (unsigned int x, unsigned int y)
