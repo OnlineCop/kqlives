@@ -17,8 +17,41 @@ function autoexec()
 end
 
 
-function refresh()
-  return
+function entity_handler(en)
+  if (en == 0) then
+    bubble(0, "I'm the grounds keeper here.")
+
+  elseif (en == 1) then
+    if (get_progress(P_OPALHELMET) == 0) then
+      if (get_progress(P_TALKGELIK) == 0) then
+        bubble(en, "Hello, are you a friend of my husband's?")
+      elseif (get_progress(P_TALKGELIK) == 1) then
+        bubble(en, "You need the Opal helmet? I'm afraid you are too late... It was stolen!")
+        bubble(en, "My husband left for Sunarin to try and get it back. If you go there you will probably find him.")
+        set_progress(P_TALKGELIK, 2)
+      elseif (get_progress(P_TALKGELIK) == 2) then
+        bubble(en, "Did you find my husband?")
+      elseif (get_progress(P_TALKGELIK) == 3) then
+        bubble(en, "Good luck!")
+      else
+        bubble(en, "Hello, I'm Emma.")
+      end
+    else
+      if (get_progress(P_TALKGELIK) == 3) then
+        bubble(en, "Fabulous!")
+      else
+        bubble(en, "...")
+      end
+    end
+
+  elseif (en == 2) then
+    if (get_progress(P_OPALHELMET) == 0) then
+      bubble(en, "Just return here with the Helmet once you find it. I'd like to see it before you borrow it.")
+    else
+      LOC_murder(en)
+    end
+
+  end
 end
 
 
@@ -50,6 +83,11 @@ function postexec()
     bubble(en, "I just want to make sure that they haven't damaged it.")
     bubble(HERO1, "No problem. I'll be back in a bit.")
   end
+end
+
+
+function refresh()
+  return
 end
 
 
@@ -141,44 +179,6 @@ function zone_handler(zn)
 
   elseif (zn == 14) then
     touch_fire(party[0])
-
-  end
-end
-
-
-function entity_handler(en)
-  if (en == 0) then
-    bubble(0, "I'm the grounds keeper here.")
-
-  elseif (en == 1) then
-    if (get_progress(P_OPALHELMET) == 0) then
-      if (get_progress(P_TALKGELIK) == 0) then
-        bubble(en, "Hello, are you a friend of my husband's?")
-      elseif (get_progress(P_TALKGELIK) == 1) then
-        bubble(en, "You need the Opal helmet? I'm afraid you are too late... It was stolen!")
-        bubble(en, "My husband left for Sunarin to try and get it back. If you go there you will probably find him.")
-        set_progress(P_TALKGELIK, 2)
-      elseif (get_progress(P_TALKGELIK) == 2) then
-        bubble(en, "Did you find my husband?")
-      elseif (get_progress(P_TALKGELIK) == 3) then
-        bubble(en, "Good luck!")
-      else
-        bubble(en, "Hello, I'm Emma.")
-      end
-    else
-      if (get_progress(P_TALKGELIK) == 3) then
-        bubble(en, "Fabulous!")
-      else
-        bubble(en, "...")
-      end
-    end
-
-  elseif (en == 2) then
-    if (get_progress(P_OPALHELMET) == 0) then
-      bubble(en, "Just return here with the Helmet once you find it. I'd like to see it before you borrow it.")
-    else
-      LOC_murder(en)
-    end
 
   end
 end

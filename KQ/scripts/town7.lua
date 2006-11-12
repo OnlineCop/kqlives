@@ -20,6 +20,37 @@ function autoexec()
 end
 
 
+function entity_handler(en)
+  if (en == 0) then
+    bubble(en, "You'll find great things here.")
+
+  elseif (en == 1) then
+    bubble(en, "Things here are rather pricey.")
+
+  elseif (en == 2) then
+    bubble(en, "It's quite peaceful here.", "I like it.")
+
+  elseif (en == 3) then
+    bubble(en, "I love the sea.")
+
+  elseif (en == 4) then
+    bubble(en, "Nothing exciting ever happens here.")
+
+  elseif (en == 5) then
+    bubble(en, "This town does not get a lot of visitors.")
+
+  elseif (en == 6) then
+    LOC_talk_oldman(en)
+
+  end
+end
+
+
+function postexec()
+  return
+end
+
+
 function refresh()
   showch("treasure1", 71)
   showch("treasure2", 72)
@@ -28,8 +59,17 @@ function refresh()
 end
 
 
-function postexec()
-  return
+-- Show the status of a treasures
+function showch(which_marker, which_chest)
+  -- Set tiles if chest already opened
+  if (get_treasure(which_chest) == 1) then
+    set_zone(which_marker, 0)
+  end
+  
+  -- Only treasure1 needs to keep its obstacle setting
+  if (which_marker ~= "treasure1") then
+    set_obs(which_marker, 0)
+  end
 end
 
 
@@ -136,44 +176,6 @@ function zone_handler(zn)
     set_progress(P_TRAVELPOINT, 1)
     change_map("cave3a", "portal")
 
-  end
-end
-
-
-function entity_handler(en)
-  if (en == 0) then
-    bubble(en, "You'll find great things here.")
-
-  elseif (en == 1) then
-    bubble(en, "Things here are rather pricey.")
-
-  elseif (en == 2) then
-    bubble(en, "It's quite peaceful here.", "I like it.")
-
-  elseif (en == 3) then
-    bubble(en, "I love the sea.")
-
-  elseif (en == 4) then
-    bubble(en, "Nothing exciting ever happens here.")
-
-  elseif (en == 5) then
-    bubble(en, "This town does not get a lot of visitors.")
-
-  elseif (en == 6) then
-    LOC_talk_oldman(en)
-
-  end
-end
-
-
--- Show the status of a treasures
-function showch(which_marker, which_chest)
-  -- Set tiles if -1 passed in as 'which_chest' or if chest already opened
-  if (which_chest < 0 or get_treasure(which_chest) == 1) then
-    set_obs(which_marker, 0)
-  end
-  if (which_marker ~= "treasure1") then
-    set_zone(which_marker, 0)
   end
 end
 

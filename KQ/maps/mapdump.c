@@ -9,9 +9,6 @@
  * from the map files                                                      *
 \***************************************************************************/
 
-#include <stdio.h>
-#include <string.h>
-#include <allegro.h>
 #include "mapdraw.h"
 #include "../include/disk.h"
 

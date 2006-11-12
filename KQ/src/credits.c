@@ -153,6 +153,3 @@ static int ease (int x)
    else
       return etab[x];
 }
-
-
-

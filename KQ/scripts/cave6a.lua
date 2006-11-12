@@ -13,6 +13,11 @@ function autoexec()
 end
 
 
+function entity_handler(en)
+  return
+end
+
+
 function postexec()
   return
 end
@@ -26,9 +31,4 @@ function zone_handler(zn)
     change_map("cave6b", "entrance")
 
   end
-end
-
-
-function entity_handler(en)
-  return
 end

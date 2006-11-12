@@ -9,8 +9,6 @@
 \***************************************************************************/
 
 
-#include <allegro.h>
-#include <string.h>
 #include "mapdraw.h"
 
 
@@ -94,13 +92,13 @@ void add_change_bounding (int x, int y, int mouse_b, int *current)
 
             /* Used only to check if boundaries are okay */
             s_bound temp;
-            set_bounds(&temp, b->x1, b->y1, x, y);
+            set_bounds (&temp, b->x1, b->y1, x, y);
             /* Don't allow the user to begin (or end) any portion of a bounding
              * area if it has any points contained in another bounding area's
              * region.
              */
             if (!bound_in_bound (&temp, num_bound_boxes)) {
-               set_bounds(b, temp.x1, temp.y1, temp.x2, temp.y2);
+               set_bounds (b, temp.x1, temp.y1, temp.x2, temp.y2);
                num_bound_boxes++;
                active_bound = 0;
             }
@@ -400,7 +398,7 @@ void rename_bound_tile (s_bound *box)
       /* Make sure this line isn't blank */
       if (strlen (strbuf) > 0) {
          selected_tile = atoi (strbuf);
-         
+
          /* Make sure the value is valid */
          if (selected_tile < 0 || selected_tile >= ICONSET_SIZE * max_sets) {
             sprintf (strbuf, "Invalid tile: %d", selected_tile);

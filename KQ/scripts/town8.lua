@@ -16,6 +16,40 @@ function autoexec()
 end
 
 
+function entity_handler(en)
+  if (en == 0) then
+    bubble(en, "This is a warm fire.")
+
+  elseif (en == 1) then
+    bubble(en, "I am an NPC. Do you know what that means? It means I have no will of my own, and must obey my programmer.")
+
+  elseif (en == 2) then
+    bubble(en, "I get teased a lot because I'm the only one with blonde hair. Neither of my parents have blonde hair...")
+
+  elseif (en == 3) then
+    bubble(en, "For a long time, we lived in peace. Now that monsters have attacked, we can't even leave the safety of our village.")
+
+  elseif (en == 4) then
+    bubble(en, "I wish I could find some opal armour. I hear there's some sort of magic that can make it very strong.")
+
+  elseif (en == 5) then
+    bubble(en, "I am a silhouette of the Oracle. I can't figure out how you're talking to me, as I'm floating above the water like this. Hmm... must be a bug in this game.")
+
+  elseif (en == 6) then
+    shop(24)
+
+  elseif (en == 7) then
+    inn("Long Journey Inn", 65, 1)
+
+  end
+end
+
+
+function postexec()
+  return
+end
+
+
 function refresh()
   showch("treasure1", 91)
   showch("treasure2", 92)
@@ -25,8 +59,17 @@ function refresh()
 end
 
 
-function postexec()
-  return
+-- Show the status of a treasures
+function showch(which_marker, which_chest)
+  -- Set tiles if chest already opened
+  if (get_treasure(which_chest) == 1) then
+    set_zone(which_marker, 0)
+
+    -- Only treasure4 needs to keep its obstacle setting
+    if (which_marker ~= "treasure4") then
+      set_obs(which_marker, 0)
+    end
+  end
 end
 
 
@@ -144,35 +187,6 @@ function zone_handler(zn)
 end
 
 
-function entity_handler(en)
-  if (en == 0) then
-    bubble(en, "This is a warm fire.")
-
-  elseif (en == 1) then
-    bubble(en, "I am an NPC. Do you know what that means? It means I have no will of my own, and must obey my programmer.")
-
-  elseif (en == 2) then
-    bubble(en, "I get teased a lot because I'm the only one with blonde hair. Neither of my parents have blonde hair...")
-
-  elseif (en == 3) then
-    bubble(en, "For a long time, we lived in peace. Now that monsters have attacked, we can't even leave the safety of our village.")
-
-  elseif (en == 4) then
-    bubble(en, "I wish I could find some opal armour. I hear there's some sort of magic that can make it very strong.")
-
-  elseif (en == 5) then
-    bubble(en, "I am a silhouette of the Oracle. I can't figure out how you're talking to me, as I'm floating above the water like this. Hmm... must be a bug in this game.")
-
-  elseif (en == 6) then
-    shop(24)
-
-  elseif (en == 7) then
-    inn("Long Journey Inn", 65, 1)
-
-  end
-end
-
-
 function TOC_switch_layers()
   local x1, y1 = marker("bridge1")
   local x2, y2 = marker("bridge2")
@@ -221,19 +235,5 @@ function TOC_switch_layers()
 
     set_mtile(x2, y2, 0)
     set_ftile(x2, y2, 33)
-  end
-end
-
-
--- Show the status of a treasures
-function showch(which_marker, which_chest)
-  -- Set tiles if -1 passed in as 'which_chest' or if chest already opened
-  if (which_chest < 0 or get_treasure(which_chest) == 1) then
-    set_zone(which_marker, 0)
-  end
-  
-  -- Only treasure4 needs to keep its obstacle setting
-  if (which_marker ~= "treasure4") then
-    set_obs(which_marker, 0)
   end
 end

@@ -9,9 +9,6 @@
  * than one instance of main(), including disk I/O, etc.                   *
 \***************************************************************************/
 
-#include <allegro.h>
-#include <string.h>
-#include <stdio.h>
 #include "mapdraw.h"
 #include "../include/disk.h"
 
@@ -110,10 +107,11 @@ PALETTE pal = {
 
 char *icon_files[NUM_TILESETS] = {
    "land.pcx", "newtown.pcx", "castle.pcx", "Incave.pcx", "village.pcx",
-   "mount.pcx", "shrine.pcx"
+   "mount.pcx", "shrine.pcx", "fortress.pcx"
 };
 
 char map_fname[40], *strbuf;
+char map_path[MAX_PATH] = "./";
 
 /* Used for the icons */
 short active_bound = 0;
@@ -166,17 +164,17 @@ void load_iconsets (PALETTE pal)
  *
  * \param   filename File to load
  */
-void load_map (const char *filename)
+void load_map (const char *path)
 {
    int p, q, i;
    PACKFILE *pf;
    char load_fname[PATH_MAX];
 
    ASSERT (load_fname);
-   strcpy (load_fname, filename);
+   strcpy (load_fname, path);
 
    if (!exists (load_fname)) {
-      replace_extension (load_fname, filename, "map", sizeof (load_fname));
+      replace_extension (load_fname, load_fname, "map", sizeof (load_fname));
       if (!exists (load_fname)) {
          error_load (load_fname);
          return;
@@ -189,7 +187,9 @@ void load_map (const char *filename)
       return;
    }
 
-   strcpy (map_fname, load_fname);
+   strcpy (map_path, load_fname);
+   strcpy (map_fname, get_filename(load_fname));
+
    load_s_map (&gmap, pf);
 
    /* Recount the number of entities on the map */

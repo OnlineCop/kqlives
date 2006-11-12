@@ -5,11 +5,11 @@ function autoexec()
 end
 
 
-function postexec()
+function entity_handler(en)
   return
 end
 
 
-function entity_handler(en)
+function postexec()
   return
 end

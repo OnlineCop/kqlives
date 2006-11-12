@@ -5,6 +5,19 @@ function autoexec()
 end
 
 
+function entity_handler(en)
+  if (en == 0) then
+    bubble(en, "I'm a goblin. Fear me.")
+
+  elseif (en == 1) then
+    bubble(en, "This village is often overlooked by Malkaron's armies, so we are relatively safe.")
+
+  else
+    bubble(en, "Booga-booga! I'm a goblin! Rowr!")
+  end
+end
+
+
 function postexec()
   return
 end
@@ -53,18 +66,5 @@ function zone_handler(zn)
   elseif (zn == 14) then
     door_out("room_6o")
 
-  end
-end
-
-
-function entity_handler(en)
-  if (en == 0) then
-    bubble(en, "I'm a goblin. Fear me.")
-
-  elseif (en == 1) then
-    bubble(en, "This village is often overlooked by Malkaron's armies, so we are relatively safe.")
-
-  else
-    bubble(en, "Booga-booga! I'm a goblin! Rowr!")
   end
 end

@@ -73,6 +73,49 @@ function autoexec()
 end
 
 
+function entity_handler(en)
+  -- You are talking to other party members
+  if (get_ent_id(en) == SENSAR) then
+    bubble(en, "I would be useful to you, since I can use Rage in battle.")
+  elseif (get_ent_id(en) == SARINA) then
+    bubble(en, "In battle, I can attack multiple targets at once if I'm equipped with the right weapon.")
+  elseif (get_ent_id(en) == CORIN) then
+    bubble(en, "I can infuse weapons with magic during battle.")
+  elseif (get_ent_id(en) == AJATHAR) then
+    bubble(en, "I notice that chanting a prayer during battle can heal your party or dispells the undead monsters.")
+  elseif (get_ent_id(en) == CASANDRA) then
+    bubble(en, "I can use my Boost ability to strengthen spells when I am attacking.")
+  elseif (get_ent_id(en) == TEMMIN) then
+    bubble(en, "I am very protective of my team members and will take a beating in their place.")
+  elseif (get_ent_id(en) == AYLA) then
+    bubble(en, "I'm a thief by trade. You might be surprised what you can steal from enemies!")
+  elseif (get_ent_id(en) == NOSLOM) then
+    bubble(en, "I have a very keen eye. Not even enemies can hide their weaknesses from me!")
+
+  -- Nostik
+  elseif (en == 8) then
+    LOC_explain_mission3(en)
+
+  -- Butler Hunert
+  elseif (en == 9) then
+    if (get_progress(P_MANOR) == 0 or get_progress(P_MANOR) == 1) then
+      bubble(en, "Ah yes, Master Nostik asked me to give you this.")
+      LOC_talk_butler(en)
+    elseif (get_progress(P_MANOR) == 2) then
+      bubble(en, "Books are an amazing source of knowledge. Nostik has spent many years writing his own.")
+    elseif (get_progress(P_MANOR) >= 3) then
+      bubble(en, "Welcome back, $0. The others are here waiting for you.")
+      bubble(en, "You can exchange your party members here.")
+
+      -- PH, this is where your script comes in?
+      select_manor()
+      LOC_at_table()
+    end
+  end
+
+end
+
+
 function postexec()
   local en = 8
   local x, y = marker("entrance")
@@ -168,73 +211,31 @@ function zone_handler(zn)
 end
 
 
-function entity_handler(en)
-  -- You are talking to other party members
-  if (get_ent_id(en) == SENSAR) then
-    bubble(en, "I would be useful to you, since I can use Rage in battle.")
-  elseif (get_ent_id(en) == SARINA) then
-    bubble(en, "In battle, I can attack multiple targets at once if I'm equipped with the right weapon.")
-  elseif (get_ent_id(en) == CORIN) then
-    bubble(en, "I can infuse weapons with magic during battle.")
-  elseif (get_ent_id(en) == AJATHAR) then
-    bubble(en, "I notice that chanting a prayer during battle can heal your party or dispells the undead monsters.")
-  elseif (get_ent_id(en) == CASANDRA) then
-    bubble(en, "I can use my Boost ability to strengthen spells when I am attacking.")
-  elseif (get_ent_id(en) == TEMMIN) then
-    bubble(en, "I am very protective of my team members and will take a beating in their place.")
-  elseif (get_ent_id(en) == AYLA) then
-    bubble(en, "I'm a thief by trade. You might be surprised what you can steal from enemies!")
-  elseif (get_ent_id(en) == NOSLOM) then
-    bubble(en, "I have a very keen eye. Not even enemies can hide their weaknesses from me!")
 
-  -- Nostik
-  elseif (en == 8) then
-    LOC_explain_mission3(en)
 
-  -- Butler Hunert
-  elseif (en == 9) then
-    if (get_progress(P_MANOR) == 0 or get_progress(P_MANOR) == 1) then
-      bubble(en, "Ah yes, Master Nostik asked me to give you this.")
-      LOC_talk_butler(en)
-    elseif (get_progress(P_MANOR) == 2) then
-      bubble(en, "Books are an amazing source of knowledge. Nostik has spent many years writing his own.")
-    elseif (get_progress(P_MANOR) >= 3) then
-      bubble(en, "Welcome back, $0. The others are here waiting for you.")
-      bubble(en, "You can exchange your party members here.")
-
-      -- PH, this is where your script comes in?
-      select_manor()
-      LOC_at_table()
+-- Decide who should be sitting around the table
+function LOC_at_table()
+  local id, a
+  for a = 0, 7 do
+    -- You have not recruited this person into your team
+    id = get_progress(a + P_MANORPARTY) - 1
+    if (id == get_pidx(0)) then
+      id = -1
+    end
+    if (get_numchrs() == 2 and id == get_pidx(1)) then
+      id = -1
+    end
+    if (id < 0) then
+      -- Remove entity from the map
+      set_ent_active(a, 0)
+    else
+      -- Place around the table
+      set_ent_active(a, 1)
+      set_ent_chrx(a, 255)
+      set_ent_id(a, id)
+      set_ent_obsmode(a, 1)
     end
   end
-
-end
-
-
-function LOC_setup_newgame()
-  local a
-  local x, y = get_ent_tile(get_pidx(0))
-
-  -- Set up entities 0-7 in manor.map as your team members
-  for a = 0, 7, 1 do
-    set_ent_active(a, 1)
-    set_ent_id(a, a)
-    set_ent_obsmode(a, 1)
-    set_ent_chrx(a, 255)
-  end
-
-  -- Remove the NPC that looks like you, from the map
-  set_ent_active(get_pidx(0), 0)
-
-  -- Set the REAL hero in the old NPCs place
-  place_ent(HERO1, x, y)
-
-  -- Set your facing direction
-  set_ent_facing(HERO1, get_ent_facing(get_pidx(0)))
-
-  -- Center map on your character coords
-  calc_viewport(1)
-
 end
 
 
@@ -310,6 +311,33 @@ function LOC_explain_mission3(en)
 end
 
 
+function LOC_setup_newgame()
+  local a
+  local x, y = get_ent_tile(get_pidx(0))
+
+  -- Set up entities 0-7 in manor.map as your team members
+  for a = 0, 7, 1 do
+    set_ent_active(a, 1)
+    set_ent_id(a, a)
+    set_ent_obsmode(a, 1)
+    set_ent_chrx(a, 255)
+  end
+
+  -- Remove the NPC that looks like you, from the map
+  set_ent_active(get_pidx(0), 0)
+
+  -- Set the REAL hero in the old NPCs place
+  place_ent(HERO1, x, y)
+
+  -- Set your facing direction
+  set_ent_facing(HERO1, get_ent_facing(get_pidx(0)))
+
+  -- Center map on your character coords
+  calc_viewport(1)
+
+end
+
+
 function LOC_talk_butler(en)
   drawmap()
   screen_dump()
@@ -330,30 +358,4 @@ function LOC_talk_butler(en)
   bubble(en, "Hopefully, it will give you a chance to buy some better weapons and armour.")
   bubble(HERO1, "Well, thank you for the information.")
   set_progress(P_MANOR, 2)
-end
-
-
--- Decide who should be sitting around the table
-function LOC_at_table()
-  local id, a
-  for a = 0, 7 do
-    -- You have not recruited this person into your team
-    id = get_progress(a + P_MANORPARTY) - 1
-    if (id == get_pidx(0)) then
-      id = -1
-    end
-    if (get_numchrs() == 2 and id == get_pidx(1)) then
-      id = -1
-    end
-    if (id < 0) then
-      -- Remove entity from the map
-      set_ent_active(a, 0)
-    else
-      -- Place around the table
-      set_ent_active(a, 1)
-      set_ent_chrx(a, 255)
-      set_ent_id(a, id)
-      set_ent_obsmode(a, 1)
-    end
-  end
 end

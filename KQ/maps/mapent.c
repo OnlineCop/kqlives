@@ -10,9 +10,6 @@
 \***************************************************************************/
 
 
-#include <allegro.h>
-#include <stdio.h>
-#include <string.h>
 #include "mapdraw.h"
 
 /* Number of entities, index of currently-selected entity */

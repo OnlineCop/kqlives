@@ -16,12 +16,6 @@
 #define HAVE_TEXT_EX
 #endif
 
-#include <allegro.h>
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
 #include "mapdraw.h"
 
 /* globals */
@@ -77,7 +71,9 @@ s_anim tanim[NUM_TILESETS][MAX_ANIM] = {
    /* mount.pcx */
    {{58, 59, 50}, {40, 42, 50}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}},
    /* shrine.bmp */
-   {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}}
+   {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}},
+   /* fortress.pcx */
+   {{120, 123, 30}, {124, 129, 25}, {130, 133, 30}, {134, 137, 25}, {138, 139, 30}},
 };
 
 /*! Tile animation specifiers for the current tileset */
@@ -120,6 +116,17 @@ int cpu_usage = 2;              // Default to rest(1)
 
 /*! Bounding areas on the map */
 int curbound_box;
+
+/*! Joystick-related stuff */
+
+/*********************************************************/
+/*! Joystick buttons */
+int jbalt, jbctrl, jbenter, jbesc;
+
+/*! Should we use the joystick */
+int use_joy = 1;
+/*********************************************************/
+
 
 /****************************************************************************/
 
@@ -401,6 +408,15 @@ int confirm_exit (void)
    cmessage ("Are you sure you want to exit? (y/n)");
    return yninput ();
 }                               /* confirm_exit () */
+
+
+/*! \brief Call the copy features from the menu or keyboard
+ */
+void copy (void)
+{
+   draw_mode = BLOCK_COPY;
+   grab_tile = 0;
+}
 
 
 /*! \brief Copy an entire layer into another
@@ -895,23 +911,24 @@ void draw_map (void)
 
    /* Displays the rectangle around the Block Copy coords */
    if (draw_mode == BLOCK_COPY && copyx1 != -1 && copyy1 != -1) {
-      int rectx1, rectx2, recty1, recty2;
-      if ((copyx1 >= window_x && copyx1 < window_x + htiles) &&
-          (copyy1 >= window_y && copyy1 < window_y + vtiles)) {
-         rectx1 = (copyx1 - window_x) * 16;
-         recty1 = (copyy1 - window_y) * 16;
-         rectx2 = copyx2 < window_x + htiles ?
-            (copyx2 - window_x) * 16 + 15 : htiles * 16;
-         recty2 = copyy2 < window_y + vtiles ?
-            (copyy2 - window_y) * 16 + 15 : vtiles * 16;
+      // Using this simply because it will hold our 4 coords easier
+      s_bound crect;
 
-         if (copying == 0) {
-            /* Highlight the selected tile (takes into account window's coords) */
-            rect (double_buffer, rectx1 - 1, recty1 - 1, rectx2 + 1, recty2 + 1, 25);
-         } else {
-            /* Only the initial tile is selected */
-            rect (double_buffer, rectx1 - 1, recty1 - 1, rectx1 + 16, recty1 + 16, 25);
-         }
+      crect.x1 = (copyx1 - window_x) * 16;
+      crect.y1 = (copyy1 - window_y) * 16;
+      crect.x2 = copyx2 < window_x + htiles ?
+         (copyx2 - window_x) * 16 + 15 : htiles * 16;
+      crect.y2 = copyy2 < window_y + vtiles ?
+         (copyy2 - window_y) * 16 + 15 : vtiles * 16;
+
+      if (copying == 0) {
+         /* Highlight the selected tile (takes into account window's coords) */
+         rect (double_buffer, crect.x1 - 1, crect.y1 - 1,
+                              crect.x2 + 1, crect.y2 + 1, 25);
+      } else {
+         /* Only the initial tile is selected */
+         rect (double_buffer, crect.x1 - 1, crect.y1 - 1,
+                              crect.x1 + 16, crect.y1 + 16, 25);
       }
    }
 
@@ -1127,7 +1144,7 @@ void draw_menubars (void)
    /* Show the revision of the map */
    sprintf (strbuf, "Revision: %d", gmap.revision);
    print_sfont (column[2], row[0], strbuf, double_buffer);
-   
+
    /* Default area to warp to when a map is entered */
    sprintf (strbuf, "Start X: %d", gmap.stx);
    print_sfont (column[2], row[1], strbuf, double_buffer);
@@ -1241,10 +1258,14 @@ void draw_menubars (void)
 
    /* Displays whether or not we are over a bounded area */
    if (draw_mode == MAP_BOUNDS && num_bound_boxes > 0) {
-      sprintf (strbuf, "Bounding Area #%d: (%d, %d) (%d, %d), tile=%d", curbound_box,
-                     bound_box[curbound_box].x1, bound_box[curbound_box].y1,
-                     bound_box[curbound_box].x2, bound_box[curbound_box].y2,
-                     bound_box[curbound_box].btile);
+      sprintf (strbuf, "Bounding Area #%d: (%d, %d) (%d, %d), tile=%d",
+               curbound_box,
+               bound_box[curbound_box].x1,
+               bound_box[curbound_box].y1,
+               bound_box[curbound_box].x2,
+               bound_box[curbound_box].y2,
+               bound_box[curbound_box].btile
+              );
       print_sfont (column[4], row[0], strbuf, double_buffer);
       xp = mouse_x / 16 + window_x;
       yp = mouse_y / 16 + window_y;
@@ -1564,7 +1585,7 @@ int find_cursor (int direction)
       if (find_bound (direction, &curbound_box)) {
          orient_bounds (curbound_box);
 
-         normalize_view();
+         normalize_view ();
          return 1;
       } else {
          return 0;
@@ -1837,8 +1858,8 @@ void get_tile (void)
          }
       }
       break;
-   /* Put here to be thorough, but it won't really do us any good */
    case MAP_BOUNDS:
+      /* Put here to be thorough, but it won't really do us any good */
       for (i = 0; i < num_bound_boxes; i++) {
          if (is_contained_bound (bound_box[i], window_x + x, window_y + y)) {
             curbound_box = i;
@@ -2216,6 +2237,15 @@ void normalize_view (void)
 }                               /* normalize_view () */
 
 
+/*! \brief Paste function called from keyboard or menu
+ */
+void paste (void)
+{
+   draw_mode = BLOCK_PASTE;
+   grab_tile = 0;
+}
+
+
 /*! \brief Paste the copied selection to all Layers
  *
  * Copy all the layers in a block area to a user-defined point in the map
@@ -2414,8 +2444,7 @@ void print_sfont (const int print_x, const int print_y, const char *string,
 }                               /* print_sfont () */
 
 
-/*! \brief Keyboard input
- * Keyboard inputs -- sorry, no joystick support
+/*! \brief Keyboard input, not related to screen movement
  *
  * \param   k The keyboard key to process
  */
@@ -2455,15 +2484,7 @@ int process_keyboard (const int k)
       break;
    case (KEY_A):
       /* Display Layers 1+2+3 and all Attributes */
-      draw_mode = MAP_LAYER123;
-      showing.entities = 1;
-      showing.shadows = 1;
-      showing.obstacles = 1;
-      showing.zones = 1;
-      showing.markers = 1;
-      showing.boundaries = 1;
-      showing.last_layer = draw_mode;
-      grab_tile = 0;
+      show_all ();
       break;
    case (KEY_B):
       /* This will call the function where we draw the bounding boxes of all
@@ -2495,15 +2516,7 @@ int process_keyboard (const int k)
       /* View Layers 1+2+3, plus Entities and Shadows, as the player would see
        * the map in the game
        */
-      draw_mode = MAP_PREVIEW;
-      showing.entities = 1;
-      showing.shadows = 1;
-      showing.obstacles = 0;
-      showing.zones = 0;
-      showing.markers = 0;
-      showing.boundaries = 0;
-      showing.last_layer = MAP_LAYER123;
-      grab_tile = 0;
+      show_preview ();
       break;
    case (KEY_D):
       /* Move (displace) the location of all the entities on the map */
@@ -2625,8 +2638,7 @@ int process_keyboard (const int k)
       break;
    case (KEY_P):
       /* Paste the copied selection area */
-      draw_mode = BLOCK_PASTE;
-      grab_tile = 0;
+      paste ();
       break;
    case (KEY_R):
       /* Resize the map's height and width */
@@ -2655,8 +2667,7 @@ int process_keyboard (const int k)
       break;
    case (KEY_T):
       /* Copy a selection */
-      draw_mode = BLOCK_COPY;
-      grab_tile = 0;
+      copy ();
       break;
    case (KEY_U):
       if (++cpu_usage > 2)
@@ -2769,7 +2780,7 @@ int process_keyboard (const int k)
       memcpy (gmap.bound_box, bound_box, num_bound_boxes * sizeof (s_bound));
       gmap.num_bound_boxes = num_bound_boxes;
 
-      save_map ();
+      prompt_save_map ();
       break;
    case (KEY_F4):
       /* Erase an entire layer from the map */
@@ -2899,66 +2910,9 @@ int process_keyboard (const int k)
          break;
       }
       break;
-   case (KEY_PGUP):
-      /* Move the view-window up one page */
-      window_y -= vtiles;
-      break;
-   case (KEY_PGDN):
-      /* Move the view-window down one page */
-      window_y += vtiles;
-      break;
-   case (KEY_TAB):
-      /* Move the view-window right one page */
-      window_x += htiles;
-      break;
-   case (KEY_BACKSPACE):
-      /* Move the view-window left one page */
-      window_x -= htiles;
-      break;
-   case (KEY_END):
-      /* Move the view-window to the bottom-right edge of the map */
-      window_x = gmap.xsize - htiles;
-      window_y = gmap.ysize - vtiles;
-      break;
-   case (KEY_HOME):
-      /* Move the view-window to the top-left edge of the map */
-      window_x = 0;
-      window_y = 0;
-      break;
-   case (KEY_1_PAD):
-   case (KEY_2_PAD):
-   case (KEY_3_PAD):
-   case (KEY_4_PAD):
-   case (KEY_6_PAD):
-   case (KEY_7_PAD):
-   case (KEY_8_PAD):
-   case (KEY_9_PAD):
-   case (KEY_DOWN):
-   case (KEY_LEFT):
-   case (KEY_RIGHT):
-   case (KEY_UP):
-      /* We will evaluate these outside of this switch() statement, but it's
-       * important to break out before "default:" returns a zero-value
-       */
-      break;
    default:
       return 0;
    }                            /* switch (k) */
-
-   /* Move the view-window up one tile */
-   if (k == KEY_UP || k == KEY_7_PAD || k == KEY_8_PAD || k == KEY_9_PAD)
-      window_y--;
-   /* Move the view-window down one tile */
-   if (k == KEY_DOWN || k == KEY_1_PAD || k == KEY_2_PAD || k == KEY_3_PAD)
-      window_y++;
-   /* Move the view-window right one tile */
-   if (k == KEY_RIGHT || k == KEY_3_PAD || k == KEY_6_PAD || k == KEY_9_PAD)
-      window_x++;
-   /* Move the view-window left one tile */
-   if (k == KEY_LEFT || k == KEY_1_PAD || k == KEY_4_PAD || k == KEY_7_PAD)
-      window_x--;
-
-   normalize_view ();
    return 1;
 }                               /* process_keyboard () */
 
@@ -3541,6 +3495,165 @@ void process_mouse (const int mouse_button)
 }                               /* process_mouse () */
 
 
+/*! \brief Keyboard input associated specifically for moving around the screen
+ *
+ * This is a feeble attempt to support joysticks, but untested
+ */
+void process_movement (int val)
+{
+   switch (val) {
+      case (KEY_PGUP):
+         /* Move the view-window up one page */
+         window_y -= vtiles;
+         break;
+      case (KEY_PGDN):
+         /* Move the view-window down one page */
+         window_y += vtiles;
+         break;
+      case (KEY_TAB):
+         /* Move the view-window right one page */
+         window_x += htiles;
+         break;
+      case (KEY_BACKSPACE):
+         /* Move the view-window left one page */
+         window_x -= htiles;
+         break;
+      case (KEY_END):
+         /* Move the view-window to the bottom-right edge of the map */
+         window_x = gmap.xsize - htiles;
+         window_y = gmap.ysize - vtiles;
+         break;
+      case (KEY_HOME):
+         /* Move the view-window to the top-left edge of the map */
+         window_x = 0;
+         window_y = 0;
+         break;
+      default:
+         break;
+   }
+
+   /* Process single-tile movements.
+    * This is broken into two 'switch' statements on purpose (else we break
+    * out of the function before we can process the horizontal movement)
+    */
+   switch (val) {
+      case (KEY_UP):
+      case (KEY_7_PAD):
+      case (KEY_8_PAD):
+      case (KEY_9_PAD):
+         window_y--;
+         break;
+      case (KEY_DOWN):
+      case (KEY_1_PAD):
+      case (KEY_2_PAD):
+      case (KEY_3_PAD):
+         window_y++;
+         break;
+      default:
+         break;
+   }
+
+   switch (val) {
+      case (KEY_LEFT):
+      case (KEY_1_PAD):
+      case (KEY_4_PAD):
+      case (KEY_7_PAD):
+         window_x--;
+         break;
+      case (KEY_RIGHT):
+      case (KEY_3_PAD):
+      case (KEY_6_PAD):
+      case (KEY_9_PAD):
+         window_x++;
+         break;
+      default:
+         break;
+   }
+}                               /* process_movement () */
+
+
+/*! \brief Joystick input associated specifically for moving around the screen
+ *
+ * This is a feeble attempt to support joysticks, but untested
+ */
+void process_movement_joy (void)
+{
+   JOYSTICK_INFO *stk;
+
+   /* Process joystick movement as if it were the mouse or keyboard used */
+   int left = 0, right = 0, up = 0, down = 0;
+
+   int jaccept = 0,  // simulates the mouse left-click
+       jcancel = 0,  // simulates the mouse right-click
+       jmove   = 0,  // move view-window in given direction by 1-tile
+       jjump   = 0;  // move view-window in given direction 1-screen
+
+   /* Decides by how much to move the view_window */
+   int increment_x = 0, increment_y = 0;
+
+   if (use_joy > 0 && poll_joystick () == 0) {
+      stk = &joy[use_joy - 1];
+      left |= stk->stick[0].axis[0].d1;
+      right |= stk->stick[0].axis[0].d2;
+      up |= stk->stick[0].axis[1].d1;
+      down |= stk->stick[0].axis[1].d2;
+
+      jaccept |= stk->button[0].b;  // Not really used here
+      jcancel |= stk->button[1].b;  // Ditto
+      jmove   |= stk->button[2].b;
+      jjump   |= stk->button[3].b;
+   }
+
+   /* We cannot have left AND right movement simultaneously */
+   if (left) {
+      left = 1;
+      right = 0;
+   } else if (right) {
+      left = 0;
+      right = 1;
+   }
+
+   /* Same for simultaneous up AND down movement */
+   if (up) {
+      up = 1;
+      down = 0;
+   } else if (down) {
+      up = 0;
+      down = 1;
+   }
+
+   if (jjump) {
+      /* Move the view-window by one page */
+      increment_x = htiles;
+      increment_y = vtiles;
+   } else if (jmove) {
+      /* Move the view-window by one tile */
+      increment_x = 1;
+      increment_y = 1;
+   }
+
+   if (jjump || jmove) {
+      if (left) {
+         window_x -= increment_x;
+      } else if (right) {
+         window_x += increment_x;
+      }
+
+      if (up) {
+         window_y -= increment_y;
+      } else if (down) {
+         window_y += increment_y;
+      }
+   } else {
+      // Move the mouse instead of the view_window
+      mouse_x += right;
+      mouse_x -= left;
+      mouse_y += down;
+      mouse_y -= up;
+   }
+}                               /* process_movement_joy () */
+
+
 /*! \brief Similar to yninput function, but for 'b/p' response
  *
  * Asks user which format to output the image in:
@@ -3581,14 +3694,23 @@ int prompt_BMP_PCX (void)
 void read_controls (void)
 {
    int mouse_button, oldx, oldy;
+   int val;
    needupdate = 0;
 
    /******************************************
     * Check for, and process, keyboard input *
     ******************************************/
    if (keypressed ()) {
-      process_keyboard ((int) (readkey () >> 8));
+      val = readkey () >> 8;
+      process_keyboard (val);
+      process_movement (val);
+      normalize_view ();
+
       needupdate = 1;
+   }
+
+   if (use_joy > 0 && poll_joystick () == 0) {
+      process_movement_joy ();
    }
 
    /***************************************
@@ -3901,6 +4023,15 @@ void resize_map (const int selection)
 }                               /* resize_map () */
 
 
+int select_layer1   (void) { select_only (1, MAP_LAYER1); return D_O_K;}
+int select_layer2   (void) { select_only (1, MAP_LAYER2); return D_O_K;}
+int select_layer3   (void) { select_only (1, MAP_LAYER3); return D_O_K;}
+int select_layer12  (void) { select_only (1, MAP_LAYER12); return D_O_K;}
+int select_layer13  (void) { select_only (1, MAP_LAYER13); return D_O_K;}
+int select_layer23  (void) { select_only (1, MAP_LAYER23); return D_O_K;}
+int select_layer123 (void) { select_only (1, MAP_LAYER123); return D_O_K;}
+
+
 /* When the user presses keys 1-7, we need to remove all the Attributes.
  * \param   lastlayer 1 if this layer can be a "showing.last_layer"
  *                    0 otherwise
@@ -3921,11 +4052,27 @@ void select_only (const int lastlayer, const int which_layer)
 }                               /* select_only () */
 
 
+int show_all (void)
+{
+   draw_mode = MAP_LAYER123;
+   showing.entities = 1;
+   showing.shadows = 1;
+   showing.obstacles = 1;
+   showing.zones = 1;
+   showing.markers = 1;
+   showing.boundaries = 1;
+   showing.last_layer = draw_mode;
+   grab_tile = 0;
+
+   return D_O_K;
+}
+
+
 /*! \brief Handy-dandy help screen
  *
  * This is a simple help screen that displays when F1 is pressed
  */
-void show_help (void)
+int show_help (void)
 {
    /* Fonts are 6x6; calculate 7x7 to include some whitespace between them. */
    int FH = 6, FW = 6;
@@ -3939,7 +4086,8 @@ void show_help (void)
     * calculation later on
     */
    char *help_keys[NUMBER_OF_ITEMS] = {
-      "                              THIS IS THE HELP DIALOG (F1)",
+      // This first line needs to be the length of the longest line to display correctly
+      "                              THIS IS THE HELP DIALOG (F1)                              ",
       "                              ============================",
       "",
       "F2 . . . . . . . . . . . . . . . . Load Map  G  . . . . . . . . . . . . . . .  Grab Tile",
@@ -4000,7 +4148,27 @@ void show_help (void)
    blit2screen ();
    yninput ();
 
+   return D_O_K;
 }                               /* show_help () */
+
+
+/*! \brief Show a preview of the map that the player would see during the game
+ * including parallax, layers, NPCs, and attributes
+ */
+int show_preview (void)
+{
+   draw_mode = MAP_PREVIEW;
+   showing.entities = 1;
+   showing.shadows = 1;
+   showing.obstacles = 0;
+   showing.zones = 0;
+   showing.markers = 0;
+   showing.boundaries = 0;
+   showing.last_layer = MAP_LAYER123;
+   grab_tile = 0;
+
+   return D_O_K;
+}
 
 
 /*! \brief The opposite of shutdown, maybe?
@@ -4009,7 +4177,7 @@ void show_help (void)
  */
 int startup (void)
 {
-   int k, kx, ky, a;
+   int kx, ky, a;
    COLOR_MAP cmap;
 
    if (allegro_init () != 0)
@@ -4129,16 +4297,6 @@ int startup (void)
          mesh3->line[ky][kx] = diag_bars[ky * 16 + kx];
 
    /* Entity images */
-   set_pcx (&pcx_buffer, "entities.pcx", pal, 1);
-
-   for (k = 0; k < MAX_EPICS; k++) {
-      for (a = 0; a < 12; a++) {
-         eframes[k][a] = create_bitmap (16, 16);
-         blit (pcx_buffer, eframes[k][a], a * 16, k * 16, 0, 0, 16, 16);
-      }
-   }
-   destroy_bitmap (pcx_buffer);
-
    init_entities ();
    showing.entities = 0;
    showing.obstacles = 0;
@@ -4301,6 +4459,42 @@ int startup (void)
    for (ky = 0; ky < 16; ky++)
       for (kx = 0; kx < 16; kx++)
          mesh_h->line[ky][kx] = hilite_attrib[ky * 16 + kx];
+
+   /* Check for availability of joystick */
+   if (use_joy == 1)
+      install_joystick (JOY_TYPE_AUTODETECT);
+
+   if (num_joysticks == 0) {
+      use_joy = 0;
+   } else {
+      use_joy = 0;
+
+      int i;
+      if (poll_joystick () == 0) {
+         for (i = num_joysticks - 1; i >= 0; i--) {
+            if (joy[i].num_buttons >= 4) {
+               /* Only accept joysticks/gamepads with >= 4 buttons */
+               use_joy = i + 1;
+            }
+         }
+      }
+
+      if (use_joy == 0) {
+         /* None found, or none that meet criteria, so remove */
+         remove_joystick ();
+      }
+   }
+
+#if WANT_DIALOG
+   /* Set up menu-driven colors */
+   gui_fg_color = makecol(255, 255, 255);
+   gui_mg_color = makecol(128, 128, 128);
+   gui_bg_color = makecol(0, 0, 0);
+   set_dialog_color(the_dialog, gui_fg_color, gui_bg_color);
+
+   /* Make the dialog background color black */
+   the_dialog[0].bg = makecol(0, 0, 0);
+#endif
 
    return 1;
 }                               /* startup () */

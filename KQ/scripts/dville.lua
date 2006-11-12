@@ -18,61 +18,6 @@ function autoexec()
 end
 
 
-function postexec()
-  return
-end
-
-
-function zone_handler(zn)
-  if (zn == 1) then
-    change_map("main", "dville")
-
-  elseif (zn == 2) then
-    bubble(HERO1, "Locked.")
-
-  elseif (zn == 3) then
-    door_in("room_1i")
-
-  elseif (zn == 4) then
-    door_in("room_2i")
-
-  elseif (zn == 5) then
-    door_in("room_3i")
-
-  elseif (zn == 6) then
-    door_in("room_4i")
-
-  elseif (zn == 7) then
-    door_in("room_5i")
-
-  elseif (zn == 8) then
-    door_in("room_6i")
-
-  elseif (zn == 9) then
-    door_out("room_1o")
-
-  elseif (zn == 10) then
-    door_out("room_2o")
-
-  elseif (zn == 11) then
-    door_out("room_3o")
-
-  elseif (zn == 12) then
-    door_out("room_4o")
-
-  elseif (zn == 13) then
-    door_out("room_5o")
-
-  elseif (zn == 14) then
-    door_out("room_6o")
-
-  elseif (zn == 15) then
-    touch_fire(party[0])
-
-  end
-end
-
-
 function entity_handler(en)
   local CorinInParty = 0, cp
   -- Anyone except head of town council kicks you out if you refuse to help
@@ -219,6 +164,61 @@ function entity_handler(en)
     else
       bubble(en, "It sure would be nice to have a little more excitement around here. It's too... boring.")
     end
+
+  end
+end
+
+
+function postexec()
+  return
+end
+
+
+function zone_handler(zn)
+  if (zn == 1) then
+    change_map("main", "dville")
+
+  elseif (zn == 2) then
+    bubble(HERO1, "Locked.")
+
+  elseif (zn == 3) then
+    door_in("room_1i")
+
+  elseif (zn == 4) then
+    door_in("room_2i")
+
+  elseif (zn == 5) then
+    door_in("room_3i")
+
+  elseif (zn == 6) then
+    door_in("room_4i")
+
+  elseif (zn == 7) then
+    door_in("room_5i")
+
+  elseif (zn == 8) then
+    door_in("room_6i")
+
+  elseif (zn == 9) then
+    door_out("room_1o")
+
+  elseif (zn == 10) then
+    door_out("room_2o")
+
+  elseif (zn == 11) then
+    door_out("room_3o")
+
+  elseif (zn == 12) then
+    door_out("room_4o")
+
+  elseif (zn == 13) then
+    door_out("room_5o")
+
+  elseif (zn == 14) then
+    door_out("room_6o")
+
+  elseif (zn == 15) then
+    touch_fire(party[0])
 
   end
 end

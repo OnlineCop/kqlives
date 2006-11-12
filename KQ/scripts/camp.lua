@@ -47,6 +47,77 @@ function autoexec()
 end
 
 
+function entity_handler(en)
+  if (en == 0 or en == 1 or en == 3 or en == 4) then
+    bubble(en, "It sure it clammy in here...")
+
+  elseif (en == 2) then
+    -- This should never happen, but just incase...
+    LOC_rescue_mayor(en)
+
+  elseif (en == 5) then
+    if (get_progress(P_MAYORGUARD1) == 0) then
+      bubble(en, "Wow, thanks for helping me! When we get back to my place, feel free to stop by sometime!")
+      set_progress(P_MAYORGUARD1, 1)
+    else
+      bubble(en, "My place is right next to the mayor's.")
+    end
+
+  elseif (en == 6) then
+    if (get_progress(P_MAYORGUARD2) == 0) then
+      bubble(en, "Thanks for your help! I should be able to find my way out.")
+      set_progress(P_MAYORGUARD2, 1)
+    else
+      bubble(en, "Don't worry about me. I'm still looking for the exit...")
+    end
+
+  elseif (en == 7 or en == 8) then
+    if (LOC_orc_battle(1, en) == 1) then
+      return
+    end
+
+  elseif (en >= 9 and en <= 11) then
+    if (LOC_orc_battle(2, en) == 1) then
+      return
+    end
+
+  elseif (en >= 12 and en <= 15) then
+    if (LOC_orc_battle(3, en) == 1) then
+      return
+    end
+
+  elseif (en >= 16 and en <= 18) then
+    if (LOC_orc_battle(4, en) == 1) then
+      return
+    end
+
+  elseif (en >= 19 and en <= 22) then
+    if (LOC_orc_battle(5, en) == 1) then
+      return
+    end
+
+  elseif (en == 23 or en == 24 or (en >= 29 and en <= 36) or en == 38) then
+    if (LOC_orc_battle(8, en) == 1) then
+      return
+    end
+    set_ent_active(en, 0)
+
+  elseif (en >= 25 and en <= 28) then
+    if (LOC_orc_battle(7, en) == 1) then
+      return
+    end
+
+  elseif (en == 37) then
+    LOC_rescue_mayor(en)
+  end
+end
+
+
+function postexec()
+  return
+end
+
+
 function refresh()
   local x, y
 
@@ -66,8 +137,13 @@ function refresh()
 end
 
 
-function postexec()
-  return
+-- Show the status of a chest
+function showch(which_marker, which_chest)
+  -- Set tiles if -1 passed in as 'which_chest' or if chest already opened
+  if (which_chest < 0 or get_treasure(which_chest) == 1) then
+    set_mtile(which_marker, 265)
+    set_zone(which_marker, 0)
+  end
 end
 
 
@@ -138,78 +214,48 @@ function zone_handler(zn)
 end
 
 
-function entity_handler(en)
-  if (en == 0 or en == 1 or en == 3 or en == 4) then
-    bubble(en, "It sure it clammy in here...")
+function LOC_fight_cleanup(fight_num)
+  local x, y
+  if (fight_num == 1) then
+    set_ent_active(7, 0)
+    set_ent_active(8, 0)
+    x, y = marker("fight_1")
+    set_zone(x, y - 1, 0)
+    set_zone(x + 1, y - 1, 0)
+  elseif (fight_num == 2) then
+    set_ent_active(9, 0)
+    set_ent_active(10, 0)
+    set_ent_active(11, 0)
+  elseif (fight_num == 3) then
+    set_ent_active(12, 0)
+    set_ent_active(13, 0)
+    set_ent_active(14, 0)
+    set_ent_active(15, 0)
+    x, y = marker("fight_3")
+    set_zone(x, y - 1, 0)
+    set_zone(x + 1, y - 1, 0)
+  elseif (fight_num == 4 or fight_num == 6) then
+    set_ent_active(16, 0)
+    set_ent_active(17, 0)
+    set_ent_active(18, 0)
+    set_zone("fight_4a", 0)
+    x, y = marker("fight_4b")
+    set_zone(x, y, 0)
+    set_zone(x, y + 1, 0)
+  elseif (fight_num == 5) then
+    set_ent_active(19, 0)
+    set_ent_active(20, 0)
+    set_ent_active(21, 0)
+    set_ent_active(22, 0)
+    x, y = marker("fight_5")
+    set_zone(x, y + 1, 0)
+    set_zone(x + 1, y + 1, 0)
+  elseif (fight_num == 7) then
+    set_ent_active(25, 0)
+    set_ent_active(26, 0)
+    set_ent_active(27, 0)
+    set_ent_active(28, 0)
 
-  elseif (en == 2) then
-    -- This should never happen, but just incase...
-    LOC_rescue_mayor(en)
-
-  elseif (en == 5) then
-    if (get_progress(P_MAYORGUARD1) == 0) then
-      bubble(en, "Wow, thanks for helping me! When we get back to my place, feel free to stop by sometime!")
-      set_progress(P_MAYORGUARD1, 1)
-    else
-      bubble(en, "My place is right next to the mayor's.")
-    end
-
-  elseif (en == 6) then
-    if (get_progress(P_MAYORGUARD2) == 0) then
-      bubble(en, "Thanks for your help! I should be able to find my way out.")
-      set_progress(P_MAYORGUARD2, 1)
-    else
-      bubble(en, "Don't worry about me. I'm still looking for the exit...")
-    end
-
-  elseif (en == 7 or en == 8) then
-    if (LOC_orc_battle(1, en) == 1) then
-      return
-    end
-
-  elseif (en >= 9 and en <= 11) then
-    if (LOC_orc_battle(2, en) == 1) then
-      return
-    end
-
-  elseif (en >= 12 and en <= 15) then
-    if (LOC_orc_battle(3, en) == 1) then
-      return
-    end
-
-  elseif (en >= 16 and en <= 18) then
-    if (LOC_orc_battle(4, en) == 1) then
-      return
-    end
-
-  elseif (en >= 19 and en <= 22) then
-    if (LOC_orc_battle(5, en) == 1) then
-      return
-    end
-
-  elseif (en == 23 or en == 24 or (en >= 29 and en <= 36) or en == 38) then
-    if (LOC_orc_battle(8, en) == 1) then
-      return
-    end
-    set_ent_active(en, 0)
-
-  elseif (en >= 25 and en <= 28) then
-    if (LOC_orc_battle(7, en) == 1) then
-      return
-    end
-
-  elseif (en == 37) then
-    LOC_rescue_mayor(en)
-  end
-end
-
-
--- Show the status of a chest
-function showch(which_marker, which_chest)
-  -- Set tiles if -1 passed in as 'which_chest' or if chest already opened
-  if (which_chest < 0 or get_treasure(which_chest) == 1) then
-    set_mtile(which_marker, 265)
-    set_zone(which_marker, 0)
   end
 end
 
@@ -320,52 +366,6 @@ function LOC_orc_battle(fight_num, en)
 
   LOC_fight_cleanup(fight_num)
   return 0
-end
-
-
-function LOC_fight_cleanup(fight_num)
-  local x, y
-  if (fight_num == 1) then
-    set_ent_active(7, 0)
-    set_ent_active(8, 0)
-    x, y = marker("fight_1")
-    set_zone(x, y - 1, 0)
-    set_zone(x + 1, y - 1, 0)
-  elseif (fight_num == 2) then
-    set_ent_active(9, 0)
-    set_ent_active(10, 0)
-    set_ent_active(11, 0)
-  elseif (fight_num == 3) then
-    set_ent_active(12, 0)
-    set_ent_active(13, 0)
-    set_ent_active(14, 0)
-    set_ent_active(15, 0)
-    x, y = marker("fight_3")
-    set_zone(x, y - 1, 0)
-    set_zone(x + 1, y - 1, 0)
-  elseif (fight_num == 4 or fight_num == 6) then
-    set_ent_active(16, 0)
-    set_ent_active(17, 0)
-    set_ent_active(18, 0)
-    set_zone("fight_4a", 0)
-    x, y = marker("fight_4b")
-    set_zone(x, y, 0)
-    set_zone(x, y + 1, 0)
-  elseif (fight_num == 5) then
-    set_ent_active(19, 0)
-    set_ent_active(20, 0)
-    set_ent_active(21, 0)
-    set_ent_active(22, 0)
-    x, y = marker("fight_5")
-    set_zone(x, y + 1, 0)
-    set_zone(x + 1, y + 1, 0)
-  elseif (fight_num == 7) then
-    set_ent_active(25, 0)
-    set_ent_active(26, 0)
-    set_ent_active(27, 0)
-    set_ent_active(28, 0)
-
-  end
 end
 
 

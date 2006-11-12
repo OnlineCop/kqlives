@@ -13,6 +13,25 @@ function autoexec()
 end
 
 
+function entity_handler(en)
+  if (en == 0 or en == 1) then
+    if (get_progress(P_SAVEBREANNE) == 0) then
+      bubble(en, "This pass is reserved for use by caravans only.")
+    else
+      bubble(en, "You are free to use the pass. Just be careful.")
+    end
+  elseif (en == 2) then
+    -- Cabin bloke
+    LOC_miner(en)
+  end
+end
+
+
+function postexec()
+  return
+end
+
+
 function refresh()
   if (get_progress(P_CAVEKEY) > 0) then
     -- Move Rufus into his house
@@ -26,8 +45,13 @@ function refresh()
 end
 
 
-function postexec()
-  return
+-- Show the status of a chest
+function showch(which_marker, which_chest)
+  -- Set tiles if -1 passed in as 'which_chest' or if chest already opened
+  if (which_chest < 0 or get_treasure(which_chest) == 1) then
+    set_mtile(which_marker, 39)
+    set_zone(which_marker, 0)
+  end
 end
 
 
@@ -91,20 +115,6 @@ function zone_handler(zn)
 end
 
 
-function entity_handler(en)
-  if (en == 0 or en == 1) then
-    if (get_progress(P_SAVEBREANNE) == 0) then
-      bubble(en, "This pass is reserved for use by caravans only.")
-    else
-      bubble(en, "You are free to use the pass. Just be careful.")
-    end
-  elseif (en == 2) then
-    -- Cabin bloke
-    LOC_miner(en)
-  end
-end
-
-
 function LOC_door(door, map, mark)
   local x, y = marker(door)
 
@@ -122,16 +132,6 @@ function LOC_door(door, map, mark)
   screen_dump()
 
   change_map(map, mark)
-end
-
-
--- Show the status of a chest
-function showch(which_marker, which_chest)
-  -- Set tiles if -1 passed in as 'which_chest' or if chest already opened
-  if (which_chest < 0 or get_treasure(which_chest) == 1) then
-    set_mtile(which_marker, 39)
-    set_zone(which_marker, 0)
-  end
 end
 
 

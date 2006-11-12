@@ -55,332 +55,6 @@ function autoexec()
 end
 
 
-function refresh()
-  local x, y
-
-  showch("treasure1", 33)
-  showch("treasure2", 34)
-  showch("treasure3", 35)
-  showch("treasure4", 36)
-  showch("treasure5", 37)
-  showch("treasure6", 38)
-  showch("treasure7", 39)
-  showch("treasure8", 40)
-  showch("treasure9", 41)
-  showch("treasure10", 42)
-  showch("treasure11", 43)
-  showch("treasure12", 44)
-
-  -- Dragon guard (1: Main entrance)
-  LOC_draw_dragon()
-
-  -- Floor switches (2: Floor switches)
-  LOC_set_floor("floor1", P_FLOOR1, "floor1a", "floor1b")
-  LOC_set_floor("floor1", P_FLOOR2, "floor2a", "floor2b")
-  LOC_set_floor("floor1", P_FLOOR3, "floor3a", "floor3b")
-  LOC_set_floor("floor1", P_FLOOR4, "floor4a", "floor4b")
-
-  -- Wall holes (3: Treasure room, top left)
-  LOC_set_wall("wall1", P_WALL1)
-  LOC_set_wall("wall2", P_WALL2)
-  LOC_set_wall("wall3", P_WALL3)
-  LOC_set_wall("wall4", P_WALL4)
-
-  -- Door (3: Treasure room, top)
-  LOC_set_door("door3_1", P_TREASUREROOM, 40)
-
-  -- Door (3: Treasure room, bottom)
-  LOC_set_door("door3_2", P_DOOROPEN2, 10)
-
-  -- Door (4: Single treasure, left floor switch)
-  if (get_progress(P_DOOROPEN) == 1) then
-    x, y = marker("switch")
-    set_btile(x, y, 190)
-    set_btile(x + 1, y, 189)
-  else
-    x, y = marker("switch")
-    set_btile(x, y, 189)
-    set_btile(x + 1, y, 190)
-  end
-  LOC_set_door("door4", P_DOOROPEN, 10)
-
-  -- Black stone (1: Main entrance, right)
---  LOC_get_stone("stone1", P_STONE1, 20, 222)
-
-  -- White stone (2: Floor switches, bottom left)
---  LOC_get_stone("stone2", P_STONE2, 21, 221)
-
-  -- White stone (3: Treasure room, top right)
---  LOC_get_stone("stone3", P_STONE3, 22, 221)
-
-  -- Black stone (4: Single treasure, treasure chest)
-  if (get_progress(P_STONE4) == 1) then
-    showch("stone4", -1)
-  end
-end
-
-
-function postexec()
-  return
-end
-
-
-function zone_handler(zn)
-  -- Combat can be anywhere that other zones do not populate
-  if (zn == 0) then
-    combat(54)
-
-  -- Front doors (1: Main entrance)
-  elseif (zn == 1) then
-    if (get_progress(P_ORACLE) > 0) then
-      set_progress(P_TOWEROPEN, 2)
-    end
-    LOC_reset_progress()
-    change_map("main", "tower")
-
-  -- Stairs up (1: Main entrance -> 2: Floor switches)
-  elseif (zn == 2) then
-    warp("dstairs2", 8)
-
-  -- Stairs down (2: Floor switches -> 1: Main Entrance)
-  elseif (zn == 3) then
-    warp("ustairs1", 8)
-
-  -- Stairs up (2: Floor switches -> 3: Treasure room)
-  elseif (zn == 4) then
-    warp("dstairs3", 8)
-
-  -- Stairs down (3: Treasure room -> 2: Floor switches)
-  elseif (zn == 5) then
-    warp("ustairs2", 8)
-
-  -- Stairs up (3: Treasure room -> 4: Single treasure)
-  elseif (zn == 6) then
-    warp("dstairs4", 8)
-
-  -- Stairs down (4: Single treasure -> 3: Treasure room)
-  elseif (zn == 7) then
-    warp("ustairs3", 8)
-
-  -- Stairs up (4: Single treasure -> 5: Oracle room)
-  elseif (zn == 8) then
-    warp("dstairs5", 8)
-
-  -- Stairs down (5: Oracle room -> 4: Single treasure)
-  elseif (zn == 9) then
-    warp("ustairs4", 8)
-
-  -- Locked doors (3: Treasure room) or (4: Single treasure)
-  elseif (zn == 10) then
-    bubble(HERO1, "Locked.")
-
-  -- Oracle bookshelves (5: Oracle room)
-  elseif (zn == 11) then
-    bubble(HERO1, "Wow! There are a lot of strange books here.")
-
-  -- Floor switch (2: Floor switches, top left)
-  elseif (zn == 12) then
-    LOC_floor_switch(P_FLOOR1)
-
-  -- Floor switch (2: Floor switches, bottom left)
-  elseif (zn == 13) then
-    LOC_floor_switch(P_FLOOR2)
-
-  -- Floor switch (2: Floor switches, top right)
-  elseif (zn == 14) then
-    LOC_floor_switch(P_FLOOR3)
-
-  -- Floor switch (2: Floor switches, bottom right)
-  elseif (zn == 15) then
-    LOC_floor_switch(P_FLOOR4)
-
-  -- Wall switch (3: Treasure room, top left)
-  elseif (zn == 16) then
-    LOC_stoner("wall1", P_WALL1)
-
-  -- Wall switch (3: Treasure room, top right)
-  elseif (zn == 17) then
-    LOC_stoner("wall2", P_WALL2)
-
-  -- Wall switch (3: Treasure room, bottom left)
-  elseif (zn == 18) then
-    LOC_stoner("wall3", P_WALL3)
-
-  -- Wall switch (3: Treasure room, bottom right)
-  elseif (zn == 19) then
-    LOC_stoner("wall4", P_WALL4)
-
-  -- Black stone (1: Main entrance, right)
-  elseif (zn == 20) then
-    if (get_progress(P_STONE1) == 0) then
-      set_progress(P_STONE1, 1)
-      set_progress(P_BSTONES, get_progress(P_BSTONES) + 1)
-      sfx(5)
-      msg("Black Stone procured!", 15, 0)
-      LOC_get_stone("stone1", P_STONE1, 20, 222)
-    end
-
-  -- White stone (2: Floor switches, bottom left)
-  elseif (zn == 21) then
-    if (get_progress(P_STONE2) == 0) then
-      set_progress(P_STONE2, 1)
-      set_progress(P_WSTONES, get_progress(P_WSTONES) + 1)
-      sfx(5)
-      msg("White Stone procured!", 15, 0)
-      LOC_get_stone("stone2", P_STONE2, 21, 221)
-    end
-
-  -- White stone (3: Treasure room)
-  elseif (zn == 22) then
-    if (get_progress(P_STONE3) == 0) then
-      set_progress(P_STONE3, 1)
-      set_progress(P_WSTONES, get_progress(P_WSTONES) + 1)
-      sfx(5)
-      msg("White Stone procured!", 15, 0)
-      LOC_get_stone("stone3", P_STONE3, 22, 221)
-    end
-
-  -- Treasure chest (4: Single treasure)
-  elseif (zn == 23) then
-    if (get_progress(P_STONE4) == 0) then
-      set_progress(P_STONE4, 1)
-      set_progress(P_BSTONES, get_progress(P_BSTONES) + 1)
-      sfx(5)
-      msg("Black Stone procured!", 15, 0)
-      refresh()
-    end
-
-  -- Floor switch (4: Single treasure, left)
-  elseif (zn == 24) then
-    if (get_progress(P_DOOROPEN) == 0) then
-      set_progress(P_DOOROPEN, 1)
-      LOC_set_door("door4", P_DOOROPEN, 10)
-      refresh()
-    end
-
-  -- Floor switch (4: Single treasure, right)
-  elseif (zn == 25) then
-    if (get_progress(P_DOOROPEN) == 1) then
-      set_progress(P_DOOROPEN, 0)
-      sfx(26)
-      refresh()
-    end
-
-  -- Floor switch (5: Oracle room, left)
-  elseif (zn == 26) then
-    if (get_progress(P_DOOROPEN2) == 0) then
-      bubble(HERO1, "Oh! I think I stepped on a switch!")
-      set_progress(P_DOOROPEN2, 1)
-      LOC_set_door("door3_2", P_DOOROPEN2, 10)
-      refresh()
-    end
-
-  -- Treasure chest (3: Treasure room)
-  elseif (zn == 27) then
-    chest(33, I_PCURING, 1)
-    refresh()
-
-  -- Treasure chest (3: Treasure room)
-  elseif (zn == 28) then
-    chest(34, I_LTONIC, 1)
-    refresh()
-
-  -- Treasure chest (3: Treasure room)
-  elseif (zn == 29) then
-    chest(35, I_SPEEDBOOTS, 1)
-    refresh()
-
-  -- Treasure chest (3: Treasure room)
-  elseif (zn == 30) then
-    chest(36, I_SWORD3, 1)
-    refresh()
-
-  -- Treasure chest (3: Treasure room)
-  elseif (zn == 31) then
-    chest(37, I_ROBE3, 1)
-    refresh()
-
-  -- Treasure chest (3: Treasure room)
-  elseif (zn == 32) then
-    chest(38, 0, 400)
-    refresh()
-
-  -- Treasure chest (3: Treasure room)
-  elseif (zn == 33) then
-    chest(39, I_B_WHIRLWIND, 1)
-    refresh()
-
-  -- Treasure chest (3: Treasure room)
-  elseif (zn == 34) then
-    chest(40, I_EDAENRA, 1)
-    refresh()
-
-  -- Treasure chest (3: Treasure room)
-  elseif (zn == 35) then
-    chest(41, I_SSTONE, 1)
-    refresh()
-
-  -- Treasure chest (3: Treasure room)
-  elseif (zn == 36) then
-    chest(42, I_MESRA, 1)
-    refresh()
-
-  -- Treasure chest (3: Treasure room)
-  elseif (zn == 37) then
-    chest(43, I_STAFF2, 1)
-    refresh()
-
-  -- Treasure chest (3: Treasure room)
-  elseif (zn == 38) then
-    chest(44, I_GAUNTLET2, 1)
-    refresh()
-
-  -- Fire (5: Oracle room)
-  elseif (zn == 39) then
-    touch_fire(party[0])
-
-  -- Locked door (3: Treasure room)
-  elseif (zn == 40) then
-    if (get_progress(P_WALL1) == 1 and get_progress(P_WALL2) == 2 and get_progress(P_WALL3) == 2 and get_progress(P_WALL4) == 1) then
-      set_progress(P_TREASUREROOM, 1)
-      LOC_set_door("door3_1", P_TREASUREROOM, 40)
-      refresh()
-    end
-
-  -- zn == 41: no enemies attack (3: Treasure room, 5: Oracle room)
-
-  -- Guardian Dragon (1: Main entrance)
-  elseif (zn == 42) then
-    if (get_progress(P_DRAGONDOWN) == 0) then
-      bubble(255, "The Oracle is not to be disturbed!")
-      drawmap()
-      screen_dump()
-      set_run(0)
-      combat(55)
-      set_run(1)
-      if (get_alldead() == 0) then
-        set_progress(P_DRAGONDOWN, 1)
-        LOC_draw_dragon()
-      else
-        return
-      end
-    end
-
-  -- Save spot (5: Oracle room)
-  elseif (zn == 43) then
-    set_save(1)
-    set_sstone(1)
-    sfx(7)
-
-  -- Off of Save spot (5: Oracle room)
-  elseif (zn == 44) then
-    set_save(0)
-    set_sstone(0)
-
-  end
-end
-
-
 function entity_handler(en)
   local x, y
   -- Oracle
@@ -675,6 +349,342 @@ function entity_handler(en)
 end
 
 
+function postexec()
+  return
+end
+
+
+function refresh()
+  local x, y
+
+  showch("treasure1", 33)
+  showch("treasure2", 34)
+  showch("treasure3", 35)
+  showch("treasure4", 36)
+  showch("treasure5", 37)
+  showch("treasure6", 38)
+  showch("treasure7", 39)
+  showch("treasure8", 40)
+  showch("treasure9", 41)
+  showch("treasure10", 42)
+  showch("treasure11", 43)
+  showch("treasure12", 44)
+
+  -- Dragon guard (1: Main entrance)
+  LOC_draw_dragon()
+
+  -- Floor switches (2: Floor switches)
+  LOC_set_floor("floor1", P_FLOOR1, "floor1a", "floor1b")
+  LOC_set_floor("floor1", P_FLOOR2, "floor2a", "floor2b")
+  LOC_set_floor("floor1", P_FLOOR3, "floor3a", "floor3b")
+  LOC_set_floor("floor1", P_FLOOR4, "floor4a", "floor4b")
+
+  -- Wall holes (3: Treasure room, top left)
+  LOC_set_wall("wall1", P_WALL1)
+  LOC_set_wall("wall2", P_WALL2)
+  LOC_set_wall("wall3", P_WALL3)
+  LOC_set_wall("wall4", P_WALL4)
+
+  -- Door (3: Treasure room, top)
+  LOC_set_door("door3_1", P_TREASUREROOM, 40)
+
+  -- Door (3: Treasure room, bottom)
+  LOC_set_door("door3_2", P_DOOROPEN2, 10)
+
+  -- Door (4: Single treasure, left floor switch)
+  if (get_progress(P_DOOROPEN) == 1) then
+    x, y = marker("switch")
+    set_btile(x, y, 190)
+    set_btile(x + 1, y, 189)
+  else
+    x, y = marker("switch")
+    set_btile(x, y, 189)
+    set_btile(x + 1, y, 190)
+  end
+  LOC_set_door("door4", P_DOOROPEN, 10)
+
+  -- Black stone (1: Main entrance, right)
+--  LOC_get_stone("stone1", P_STONE1, 20, 222)
+
+  -- White stone (2: Floor switches, bottom left)
+--  LOC_get_stone("stone2", P_STONE2, 21, 221)
+
+  -- White stone (3: Treasure room, top right)
+--  LOC_get_stone("stone3", P_STONE3, 22, 221)
+
+  -- Black stone (4: Single treasure, treasure chest)
+  if (get_progress(P_STONE4) == 1) then
+    showch("stone4", -1)
+  end
+end
+
+
+-- Show the status of a chest
+function showch(which_marker, which_chest)
+  -- Set tiles if -1 passed in as 'which_chest' or if chest already opened
+  if (which_chest < 0 or get_treasure(which_chest) == 1) then
+    set_mtile(which_marker, 65)
+    set_zone(which_marker, 0)
+  end
+end
+
+
+function zone_handler(zn)
+  -- Combat can be anywhere that other zones do not populate
+  if (zn == 0) then
+    combat(54)
+
+  -- Front doors (1: Main entrance)
+  elseif (zn == 1) then
+    if (get_progress(P_ORACLE) > 0) then
+      set_progress(P_TOWEROPEN, 2)
+    end
+    LOC_reset_progress()
+    change_map("main", "tower")
+
+  -- Stairs up (1: Main entrance -> 2: Floor switches)
+  elseif (zn == 2) then
+    warp("dstairs2", 8)
+
+  -- Stairs down (2: Floor switches -> 1: Main Entrance)
+  elseif (zn == 3) then
+    warp("ustairs1", 8)
+
+  -- Stairs up (2: Floor switches -> 3: Treasure room)
+  elseif (zn == 4) then
+    warp("dstairs3", 8)
+
+  -- Stairs down (3: Treasure room -> 2: Floor switches)
+  elseif (zn == 5) then
+    warp("ustairs2", 8)
+
+  -- Stairs up (3: Treasure room -> 4: Single treasure)
+  elseif (zn == 6) then
+    warp("dstairs4", 8)
+
+  -- Stairs down (4: Single treasure -> 3: Treasure room)
+  elseif (zn == 7) then
+    warp("ustairs3", 8)
+
+  -- Stairs up (4: Single treasure -> 5: Oracle room)
+  elseif (zn == 8) then
+    warp("dstairs5", 8)
+
+  -- Stairs down (5: Oracle room -> 4: Single treasure)
+  elseif (zn == 9) then
+    warp("ustairs4", 8)
+
+  -- Locked doors (3: Treasure room) or (4: Single treasure)
+  elseif (zn == 10) then
+    bubble(HERO1, "Locked.")
+
+  -- Oracle bookshelves (5: Oracle room)
+  elseif (zn == 11) then
+    bubble(HERO1, "Wow! There are a lot of strange books here.")
+
+  -- Floor switch (2: Floor switches, top left)
+  elseif (zn == 12) then
+    LOC_floor_switch(P_FLOOR1)
+
+  -- Floor switch (2: Floor switches, bottom left)
+  elseif (zn == 13) then
+    LOC_floor_switch(P_FLOOR2)
+
+  -- Floor switch (2: Floor switches, top right)
+  elseif (zn == 14) then
+    LOC_floor_switch(P_FLOOR3)
+
+  -- Floor switch (2: Floor switches, bottom right)
+  elseif (zn == 15) then
+    LOC_floor_switch(P_FLOOR4)
+
+  -- Wall switch (3: Treasure room, top left)
+  elseif (zn == 16) then
+    LOC_stoner("wall1", P_WALL1)
+
+  -- Wall switch (3: Treasure room, top right)
+  elseif (zn == 17) then
+    LOC_stoner("wall2", P_WALL2)
+
+  -- Wall switch (3: Treasure room, bottom left)
+  elseif (zn == 18) then
+    LOC_stoner("wall3", P_WALL3)
+
+  -- Wall switch (3: Treasure room, bottom right)
+  elseif (zn == 19) then
+    LOC_stoner("wall4", P_WALL4)
+
+  -- Black stone (1: Main entrance, right)
+  elseif (zn == 20) then
+    if (get_progress(P_STONE1) == 0) then
+      set_progress(P_STONE1, 1)
+      set_progress(P_BSTONES, get_progress(P_BSTONES) + 1)
+      sfx(5)
+      msg("Black Stone procured!", 15, 0)
+      LOC_get_stone("stone1", P_STONE1, 20, 222)
+    end
+
+  -- White stone (2: Floor switches, bottom left)
+  elseif (zn == 21) then
+    if (get_progress(P_STONE2) == 0) then
+      set_progress(P_STONE2, 1)
+      set_progress(P_WSTONES, get_progress(P_WSTONES) + 1)
+      sfx(5)
+      msg("White Stone procured!", 15, 0)
+      LOC_get_stone("stone2", P_STONE2, 21, 221)
+    end
+
+  -- White stone (3: Treasure room)
+  elseif (zn == 22) then
+    if (get_progress(P_STONE3) == 0) then
+      set_progress(P_STONE3, 1)
+      set_progress(P_WSTONES, get_progress(P_WSTONES) + 1)
+      sfx(5)
+      msg("White Stone procured!", 15, 0)
+      LOC_get_stone("stone3", P_STONE3, 22, 221)
+    end
+
+  -- Treasure chest (4: Single treasure)
+  elseif (zn == 23) then
+    if (get_progress(P_STONE4) == 0) then
+      set_progress(P_STONE4, 1)
+      set_progress(P_BSTONES, get_progress(P_BSTONES) + 1)
+      sfx(5)
+      msg("Black Stone procured!", 15, 0)
+      refresh()
+    end
+
+  -- Floor switch (4: Single treasure, left)
+  elseif (zn == 24) then
+    if (get_progress(P_DOOROPEN) == 0) then
+      set_progress(P_DOOROPEN, 1)
+      LOC_set_door("door4", P_DOOROPEN, 10)
+      refresh()
+    end
+
+  -- Floor switch (4: Single treasure, right)
+  elseif (zn == 25) then
+    if (get_progress(P_DOOROPEN) == 1) then
+      set_progress(P_DOOROPEN, 0)
+      sfx(26)
+      refresh()
+    end
+
+  -- Floor switch (5: Oracle room, left)
+  elseif (zn == 26) then
+    if (get_progress(P_DOOROPEN2) == 0) then
+      bubble(HERO1, "Oh! I think I stepped on a switch!")
+      set_progress(P_DOOROPEN2, 1)
+      LOC_set_door("door3_2", P_DOOROPEN2, 10)
+      refresh()
+    end
+
+  -- Treasure chest (3: Treasure room)
+  elseif (zn == 27) then
+    chest(33, I_PCURING, 1)
+    refresh()
+
+  -- Treasure chest (3: Treasure room)
+  elseif (zn == 28) then
+    chest(34, I_LTONIC, 1)
+    refresh()
+
+  -- Treasure chest (3: Treasure room)
+  elseif (zn == 29) then
+    chest(35, I_SPEEDBOOTS, 1)
+    refresh()
+
+  -- Treasure chest (3: Treasure room)
+  elseif (zn == 30) then
+    chest(36, I_SWORD3, 1)
+    refresh()
+
+  -- Treasure chest (3: Treasure room)
+  elseif (zn == 31) then
+    chest(37, I_ROBE3, 1)
+    refresh()
+
+  -- Treasure chest (3: Treasure room)
+  elseif (zn == 32) then
+    chest(38, 0, 400)
+    refresh()
+
+  -- Treasure chest (3: Treasure room)
+  elseif (zn == 33) then
+    chest(39, I_B_WHIRLWIND, 1)
+    refresh()
+
+  -- Treasure chest (3: Treasure room)
+  elseif (zn == 34) then
+    chest(40, I_EDAENRA, 1)
+    refresh()
+
+  -- Treasure chest (3: Treasure room)
+  elseif (zn == 35) then
+    chest(41, I_SSTONE, 1)
+    refresh()
+
+  -- Treasure chest (3: Treasure room)
+  elseif (zn == 36) then
+    chest(42, I_MESRA, 1)
+    refresh()
+
+  -- Treasure chest (3: Treasure room)
+  elseif (zn == 37) then
+    chest(43, I_STAFF2, 1)
+    refresh()
+
+  -- Treasure chest (3: Treasure room)
+  elseif (zn == 38) then
+    chest(44, I_GAUNTLET2, 1)
+    refresh()
+
+  -- Fire (5: Oracle room)
+  elseif (zn == 39) then
+    touch_fire(party[0])
+
+  -- Locked door (3: Treasure room)
+  elseif (zn == 40) then
+    if (get_progress(P_WALL1) == 1 and get_progress(P_WALL2) == 2 and get_progress(P_WALL3) == 2 and get_progress(P_WALL4) == 1) then
+      set_progress(P_TREASUREROOM, 1)
+      LOC_set_door("door3_1", P_TREASUREROOM, 40)
+      refresh()
+    end
+
+  -- zn == 41: no enemies attack (3: Treasure room, 5: Oracle room)
+
+  -- Guardian Dragon (1: Main entrance)
+  elseif (zn == 42) then
+    if (get_progress(P_DRAGONDOWN) == 0) then
+      bubble(255, "The Oracle is not to be disturbed!")
+      drawmap()
+      screen_dump()
+      set_run(0)
+      combat(55)
+      set_run(1)
+      if (get_alldead() == 0) then
+        set_progress(P_DRAGONDOWN, 1)
+        LOC_draw_dragon()
+      else
+        return
+      end
+    end
+
+  -- Save spot (5: Oracle room)
+  elseif (zn == 43) then
+    set_save(1)
+    set_sstone(1)
+    sfx(7)
+
+  -- Off of Save spot (5: Oracle room)
+  elseif (zn == 44) then
+    set_save(0)
+    set_sstone(0)
+
+  end
+end
+
+
 function LOC_draw_dragon()
   local a
   local x, y = marker("dragon")
@@ -705,16 +715,6 @@ function LOC_draw_dragon()
       set_obs(a, y, 0)
       set_zone(a, y, 0)
     end
-  end
-end
-
-
--- Show the status of a chest
-function showch(which_marker, which_chest)
-  -- Set tiles if -1 passed in as 'which_chest' or if chest already opened
-  if (which_chest < 0 or get_treasure(which_chest) == 1) then
-    set_mtile(which_marker, 65)
-    set_zone(which_marker, 0)
   end
 end
 

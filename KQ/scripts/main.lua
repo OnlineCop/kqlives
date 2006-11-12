@@ -37,6 +37,11 @@ function autoexec()
 end
 
 
+function entity_handler(en)
+  return
+end
+
+
 function postexec()
   return
 end
@@ -152,7 +157,12 @@ function zone_handler(zn)
     change_map("estate", "entrance")
 
   elseif (zn == 21) then
-    change_map("town5", "entrance")
+    if (get_progress(P_AYLA_QUEST) == 7) then
+      set_progress(P_AYLA_QUEST, 6)
+      change_map("town5", "exit")
+    else
+      change_map("town5", "entrance")
+    end
 
   elseif (zn == 22) then
     if (in_forest(HERO1)) then
@@ -388,14 +398,9 @@ function zone_handler(zn)
     msg("This is Binderak's cave.", 255, 0)
 
   elseif (zn == 85) then
-    msg("This will be the Sunarin tower.", 255, 0)
+    change_map("sunarin", "entrance")
 
   end
-end
-
-
-function entity_handler(en)
-  return
 end
 
 

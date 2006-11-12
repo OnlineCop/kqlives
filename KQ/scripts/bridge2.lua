@@ -25,38 +25,6 @@ function autoexec()
 end
 
 
-function postexec()
-  return
-end
-
-
-function refresh()
-  showch("treasure1", 8)
-  showch("treasure2", 90)
-end
-
-
-function zone_handler(zn)
-  if (zn == 1) then
-    change_map("main", "bridge", -1, 0)
-
-  elseif (zn == 2) then
-    -- // TT: This is still here incase the player didn't get it on the first
-    -- //     (incomplete) bridge.  They can only get it once.
-    chest(8, I_OSEED, 2)
-    refresh()
-
-  elseif (zn == 3) then
-    chest(90, I_REGENERATOR, 1)
-    refresh()
-
-  elseif (zn == 4) then
-    change_map("main", "bridge", 1, 0)
-
-  end
-end
-
-
 function entity_handler(en)
   if (en == 0) then
     bubble(en, "There have been no further threats. Thank you.")
@@ -121,6 +89,17 @@ function entity_handler(en)
 end
 
 
+function postexec()
+  return
+end
+
+
+function refresh()
+  showch("treasure1", 8)
+  showch("treasure2", 90)
+end
+
+
 -- Show the status of a treasures
 function showch(which_marker, which_chest)
   -- Set tiles if -1 passed in as 'which_chest' or if chest already opened
@@ -132,5 +111,26 @@ function showch(which_marker, which_chest)
   end
   if (which_marker == "treasure2") then
     set_ftile(which_marker, 0)
+  end
+end
+
+
+function zone_handler(zn)
+  if (zn == 1) then
+    change_map("main", "bridge", -1, 0)
+
+  elseif (zn == 2) then
+    -- // TT: This is still here incase the player didn't get it on the first
+    -- //     (incomplete) bridge.  They can only get it once.
+    chest(8, I_OSEED, 2)
+    refresh()
+
+  elseif (zn == 3) then
+    chest(90, I_REGENERATOR, 1)
+    refresh()
+
+  elseif (zn == 4) then
+    change_map("main", "bridge", 1, 0)
+
   end
 end

@@ -11,9 +11,6 @@
 \***************************************************************************/
 
 
-#include <allegro.h>
-#include <stdio.h>
-#include <string.h>
 #include "mapdraw.h"
 #include "../include/disk.h"
 
@@ -201,15 +198,16 @@ void maptopcx (int format)
  *
  * Create a new, blank map
  */
-void new_map (void)
+int new_map (void)
 {
    int response;
    int new_height = 0, new_width = 0, new_tileset = 0;
    int done;
+   s_marker *m;
 
    cmessage ("Do you want to create a new map?");
    if (!yninput ())
-      return;
+      return D_O_K;
 
    draw_map ();
    rect (double_buffer, 2, 2, 317, 43, 255);
@@ -224,7 +222,7 @@ void new_map (void)
 
       /* If the user hits ESC, break out of the function entirely */
       if (response == 0)
-         return;
+         return D_O_K;
 
       /* Make sure this line isn't blank */
       if (strlen (strbuf) > 0) {
@@ -253,7 +251,7 @@ void new_map (void)
 
       /* If the user hits ESC, break out of the new_map() loop entirely */
       if (response == 0)
-         return;
+         return D_O_K;
 
       /* Make sure the line isn't blank */
       if (strlen (strbuf) > 0) {
@@ -283,7 +281,7 @@ void new_map (void)
 
       /* If the user hits ESC, break out of the new_map() loop entirely */
       if (response == 0)
-         return;
+         return D_O_K;
 
       /* Make sure the line isn't blank */
       if (strlen (strbuf) > 0) {
@@ -308,6 +306,13 @@ void new_map (void)
 
    /* Redraw the screen, blank */
    blit2screen ();
+
+   // Remove the markers from the map
+   for (m = markers + num_markers; m >= markers; --m) {
+      int curmarker = num_markers;
+      // This removes the marker
+      add_change_marker (m->x, m->y, 2, &curmarker);
+   }
 
    /* Default values for the new map */
    gmap.map_no = 0;
@@ -341,84 +346,74 @@ void new_map (void)
    bufferize ();
    update_tileset ();
    init_entities ();
+
+   return D_CLOSE;
 }                               /* new_map () */
 
 
 /*! \brief Confirm before loading a map
  *
+ * This keeps track of the map's absolute path so we know if we are reloading
+ * the same file, or opening a map from a different directory but with the
+ * same name.
  *
  */
 void prompt_load_map (void)
 {
-   char fname[40];
-   int response, done;
+   char path[MAX_PATH];
+   int response;
 
-   make_rect (double_buffer, 3, 50);
-   print_sfont (6, 6, "Load a map", double_buffer);
-   sprintf (strbuf, "Current: %s", map_fname);
-   print_sfont (6, 12, strbuf, double_buffer);
-   print_sfont (6, 18, "Filename: ", double_buffer);
+   strcpy(path, map_path);
 
-   done = 0;
-   while (!done) {
-      blit2screen ();
-      response = get_line (66, 18, fname, sizeof (fname));
+   response = file_select_ex ("Open map...", path, "MAP;/-h-s-r", 1024, 300, 200);
 
-      /* If the user hits ESC, break out of the function entirely */
-      if (response == 0)
-         return;
-
-      /* If the line was blank, simply reload the current map */
-      if (strlen (fname) < 1) {
-         strcpy (fname, map_fname);
-
-         if (!exists (fname)) {
-            replace_extension (fname, fname, "map", sizeof (fname));
-            if (!exists (fname)) {
-               error_load (fname);
-               return;
-            }
-         }
-         sprintf (strbuf, "Reload %s? (y/n)", fname);
-      } else {
-         if (!exists (fname)) {
-            replace_extension (fname, fname, "map", sizeof (fname));
-            if (!exists (fname)) {
-               error_load (fname);
-               return;
-            }
-         }
-         sprintf (strbuf, "Load %s? (y/n)", fname);
-      }
-
-      cmessage (strbuf);
-
-      if (yninput ()) {
-         draw_map ();
-         load_map (fname);
-
-         done = 1;
-      }                         /* if (yninput ()) */
+   // User hit CANCEL
+   if (!response) {
+      return;
    }
+
+   replace_extension (path, path, "map", sizeof (path));
+
+   if (!strcmp(path, map_path)) {
+      // Filenames are the same; reload (only display filename, not whole path)
+      sprintf (strbuf, "Reload %s? (y/n)", get_filename(path));
+   } else {
+      // Filename different; load
+      sprintf (strbuf, "Load %s? (y/n)", path);
+   }
+
+   cmessage (strbuf);
+
+   if (yninput ()) {
+      draw_map ();
+      load_map (path);
+   }
+   return;
 }                               /* prompt_load_map () */
 
 
-/*! \brief Save the current map
+/*! \brief Confirm before saving a map
  *
- * Another very useful function
+ *
  */
-void save_map (void)
+void prompt_save_map (void)
 {
    char fname[40];
    int response, done;
-   int p, q;
-   PACKFILE *pf;
 
    make_rect (double_buffer, 3, 49);
    print_sfont (6, 6, "Save a map", double_buffer);
    sprintf (strbuf, "Current: %s", map_fname);
    print_sfont (6, 12, strbuf, double_buffer);
    print_sfont (6, 18, "Filename: ", double_buffer);
+
+   // TODO: Modify the code here so 'path' is used instead of only a filename
+   /* See "prompt_load_map()" for an example.
+    * We need to know whether we are saving to a different directory or to
+    * the same, and if to a different one, 40 characters (for fname[40]) may
+    * not be enough.  Also, it may trip up and overwrite something in our
+    * current directory instead of saving to the user-specified location.
+    */
 
    done = 0;
    while (!done) {
@@ -448,6 +443,19 @@ void save_map (void)
       if (yninput ())
          done = 1;
    }
+
+   save_map (fname);
+}
+
+
+/*! \brief Save the current map
+ *
+ * Another very useful function
+ */
+void save_map (const char *fname)
+{
+   int p, q;
+   PACKFILE *pf;
 
    strcpy (map_fname, fname);
    pf = pack_fopen (fname, F_WRITE_PACKED);

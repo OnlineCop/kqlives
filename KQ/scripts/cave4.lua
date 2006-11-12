@@ -29,6 +29,70 @@ function autoexec()
 end
 
 
+function entity_handler(en)
+  if (en == 0) then
+    LOC_talk_demnas(en)
+
+  elseif (en == 1) then
+    -- You have not spoken to Corin about the troll
+    if (get_progress(P_TALK_CORIN) == 0) then
+      if (get_progress(P_DENORIAN) < 4) then
+        -- You have not yet faced the troll down the stairs
+        bubble(en, "Oh, $0, it's great to see you!")
+        bubble(en, "I traced the missing statue here to Demnas, but before I could confront him, a horde of Malkaron's followers attacked him.")
+        bubble(HERO1, "Malkaron's minions have been here?")
+        bubble(en, "Yes, and during the battle, the statue was broken in half and Malkaron's men took off with it.")
+        bubble(en, "Demnas was so enraged that when he found me, he locked me in this room with this troll.")
+        bubble(HERO1, "A troll? So there really IS a troll? How did you defeat it?")
+        bubble(en, "I haven't. I hit it with a sleep spell as soon as I was locked in here.")
+        set_ent_facing(en, FACE_RIGHT)
+        bubble(en, "It's down the stairs right there. Why don't you go take care of it now?")
+        set_progress(P_TALK_CORIN, 1)
+      else
+        -- You have defeated the troll
+        bubble(en, "$0! I saw you run down the stairs there before I could tell you about the troll!")
+        bubble(HERO1, "Yea, the troll was asleep, but it wasn't much of a problem to beat.")
+        bubble(en, "My, my. So modest.")
+        if (get_numchrs() == 1) then
+          bubble(HERO1, "Well, what can I say? I'm just that good!")
+        else
+          bubble(HERO2, "Well, what can we say? We're just that good!")
+        end
+        bubble(en, "If that's so, then let me join your party!")
+        LOC_join_corin(en)
+      end
+    -- Corin told you about the troll
+    elseif (get_progress(P_TALK_CORIN) == 1) then
+      -- You have not fought the troll yet
+      if (get_progress(P_DENORIAN) < 4) then
+        bubble(en, "I'll wait up here. I'm not ready to take on a troll just yet.")
+      -- You fought the troll
+      else
+        bubble(en, "Good work! Let me join your team!")
+        LOC_join_corin(en)
+      end
+    else
+      bubble(en, "Hi, $0. Let me join your team!")
+      LOC_join_corin(en)
+    end
+    refresh()
+
+  elseif (en == 2) then
+    -- Statue will not talk, but Demnas attacks if you try to grab it
+    en = 0
+    bubble(en, "Not so fast!")
+    set_ent_facing(HERO1, FACE_DOWN)
+    LOC_talk_demnas(en)
+
+  end
+end
+
+
+function postexec()
+  return
+end
+
+
 function refresh()
   showch("treasure1", 62)
   showch("treasure2", 63)
@@ -56,11 +120,6 @@ function refresh()
   if (get_progress(P_DENORIAN) > 2) then
     set_ent_active(2, 0)
   end
-end
-
-
-function postexec()
-  return
 end
 
 
@@ -165,65 +224,6 @@ function zone_handler(zn)
     else
       bubble(HERO1, "This statue of the Oracle appears to be broken in half!")
     end
-  end
-end
-
-
-function entity_handler(en)
-  if (en == 0) then
-    LOC_talk_demnas(en)
-
-  elseif (en == 1) then
-    -- You have not spoken to Corin about the troll
-    if (get_progress(P_TALK_CORIN) == 0) then
-      if (get_progress(P_DENORIAN) < 4) then
-        -- You have not yet faced the troll down the stairs
-        bubble(en, "Oh, $0, it's great to see you!")
-        bubble(en, "I traced the missing statue here to Demnas, but before I could confront him, a horde of Malkaron's followers attacked him.")
-        bubble(HERO1, "Malkaron's minions have been here?")
-        bubble(en, "Yes, and during the battle, the statue was broken in half and Malkaron's men took off with it.")
-        bubble(en, "Demnas was so enraged that when he found me, he locked me in this room with this troll.")
-        bubble(HERO1, "A troll? So there really IS a troll? How did you defeat it?")
-        bubble(en, "I haven't. I hit it with a sleep spell as soon as I was locked in here.")
-        set_ent_facing(en, FACE_RIGHT)
-        bubble(en, "It's down the stairs right there. Why don't you go take care of it now?")
-        set_progress(P_TALK_CORIN, 1)
-      else
-        -- You have defeated the troll
-        bubble(en, "$0! I saw you run down the stairs there before I could tell you about the troll!")
-        bubble(HERO1, "Yea, the troll was asleep, but it wasn't much of a problem to beat.")
-        bubble(en, "My, my. So modest.")
-        if (get_numchrs() == 1) then
-          bubble(HERO1, "Well, what can I say? I'm just that good!")
-        else
-          bubble(HERO2, "Well, what can we say? We're just that good!")
-        end
-        bubble(en, "If that's so, then let me join your party!")
-        LOC_join_corin(en)
-      end
-    -- Corin told you about the troll
-    elseif (get_progress(P_TALK_CORIN) == 1) then
-      -- You have not fought the troll yet
-      if (get_progress(P_DENORIAN) < 4) then
-        bubble(en, "I'll wait up here. I'm not ready to take on a troll just yet.")
-      -- You fought the troll
-      else
-        bubble(en, "Good work! Let me join your team!")
-        LOC_join_corin(en)
-      end
-    else
-      bubble(en, "Hi, $0. Let me join your team!")
-      LOC_join_corin(en)
-    end
-    refresh()
-
-  elseif (en == 2) then
-    -- Statue will not talk, but Demnas attacks if you try to grab it
-    en = 0
-    bubble(en, "Not so fast!")
-    set_ent_facing(HERO1, FACE_DOWN)
-    LOC_talk_demnas(en)
-
   end
 end
 

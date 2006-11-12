@@ -30,6 +30,11 @@ function autoexec()
 end
 
 
+function entity_handler(en)
+  return
+end
+
+
 function postexec()
   if (get_progress(P_FELLINPIT) == 0) then
     bubble(HERO1, "Ouch!")
@@ -93,9 +98,4 @@ function zone_handler(zn)
       change_map("grotto", "by_fire")
     end
   end
-end
-
-
-function entity_handler(en)
-  return
 end

@@ -17,81 +17,6 @@ function autoexec()
 end
 
 
-function postexec()
-  return
-end
-
-
-function zone_handler(zn)
-  if (zn == 1) then
-    set_progress(P_ROUNDNUM, 0)
-    set_progress(P_BATTLESTATUS, 0)
-    change_map("main", "coliseum")
-
-  elseif (zn == 2) then
-    door_in("inn_i")
-
-  elseif (zn == 3) then
-    door_in("tournament_i")
-
-  elseif (zn == 4) then
-    door_in("shop_i")
-
-  elseif (zn == 5) then
-    door_out("inn_o")
-
-  elseif (zn == 6) then
-    door_out("tournament_o")
-
-  elseif (zn == 7) then
-    door_out("shop_o")
-
-  elseif (zn == 8) then
-    inn("The Coliseum Inn", 250, 1)
-
-  elseif (zn == 9) then
-    shop(22)
-
-  elseif (zn == 10) then
-    door_out("battle")
-  
-  elseif (zn == 11) then
-    set_save(0)
-
-  elseif (zn == 12) then
-    bubble(HERO1, "Hmm. The sun feels very warm right here.")
-    set_save(1)
-
-  elseif (zn == 13) then
-    touch_fire(party[0])
-
-  elseif (zn == 14) then
-    door_in("after_battle")
-    
-  elseif (zn == 15) then
-    if (get_progress(P_BATTLESTATUS) > 0) then
-      bubble(HERO1, "I'm not ready yet.")
-      return
-    end
-    set_run(0)
-    set_progress(P_USEITEMINCOMBAT, 1)
-    combat(11 + get_progress(P_ROUNDNUM))
-    set_progress(P_USEITEMINCOMBAT, 0)
-    set_run(1)
-    local x, y = marker("battle")
-    warp(x, y - 3, 16)
-    if (get_alldead() == 1) then
-      set_progress(P_BATTLESTATUS, 2)
-      set_party_hp(party[0], 1)
-      set_alldead(0)
-    else
-      set_progress(P_BATTLESTATUS, 1)
-    end
-
-  end
-end
-
-
 function entity_handler(en)
   if (en == 0) then
     bubble(en, "I actually made it to the second round!")
@@ -302,6 +227,81 @@ function entity_handler(en)
       drawmap()
       screen_dump()
       msg("$1 joined!", 255, 0)
+    end
+
+  end
+end
+
+
+function postexec()
+  return
+end
+
+
+function zone_handler(zn)
+  if (zn == 1) then
+    set_progress(P_ROUNDNUM, 0)
+    set_progress(P_BATTLESTATUS, 0)
+    change_map("main", "coliseum")
+
+  elseif (zn == 2) then
+    door_in("inn_i")
+
+  elseif (zn == 3) then
+    door_in("tournament_i")
+
+  elseif (zn == 4) then
+    door_in("shop_i")
+
+  elseif (zn == 5) then
+    door_out("inn_o")
+
+  elseif (zn == 6) then
+    door_out("tournament_o")
+
+  elseif (zn == 7) then
+    door_out("shop_o")
+
+  elseif (zn == 8) then
+    inn("The Coliseum Inn", 250, 1)
+
+  elseif (zn == 9) then
+    shop(22)
+
+  elseif (zn == 10) then
+    door_out("battle")
+  
+  elseif (zn == 11) then
+    set_save(0)
+
+  elseif (zn == 12) then
+    bubble(HERO1, "Hmm. The sun feels very warm right here.")
+    set_save(1)
+
+  elseif (zn == 13) then
+    touch_fire(party[0])
+
+  elseif (zn == 14) then
+    door_in("after_battle")
+    
+  elseif (zn == 15) then
+    if (get_progress(P_BATTLESTATUS) > 0) then
+      bubble(HERO1, "I'm not ready yet.")
+      return
+    end
+    set_run(0)
+    set_progress(P_USEITEMINCOMBAT, 1)
+    combat(11 + get_progress(P_ROUNDNUM))
+    set_progress(P_USEITEMINCOMBAT, 0)
+    set_run(1)
+    local x, y = marker("battle")
+    warp(x, y - 3, 16)
+    if (get_alldead() == 1) then
+      set_progress(P_BATTLESTATUS, 2)
+      set_party_hp(party[0], 1)
+      set_alldead(0)
+    else
+      set_progress(P_BATTLESTATUS, 1)
     end
 
   end

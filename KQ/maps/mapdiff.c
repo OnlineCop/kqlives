@@ -9,9 +9,6 @@
  * maps.                                                                   *
 \***************************************************************************/
 
-#include <string.h>
-#include <stdio.h>
-#include <allegro.h>
 #include "mapdraw.h"
 #include "../include/disk.h"
 
@@ -588,57 +585,58 @@ void check_map (void)
       }
       marker_num++;
    }
-   
+
    _b1 = gmap1.bound_box;
    _b2 = gmap2.bound_box;
-   
+
    bound_box_num = 0;
    if (_num_bound_boxes1 != _num_bound_boxes2)
-      fprintf (stdout, "  num_bound_boxes:\t%d\t\t%d\n", _num_bound_boxes1, _num_bound_boxes2);
+      fprintf (stdout, "  num_bound_boxes:\t%d\t\t%d\n", _num_bound_boxes1,
+               _num_bound_boxes2);
 
    if (gmap1.revision >= 2 && gmap2.revision >= 2) {
       // Loop through every bound box on whichever map which has more (if inequal).
       while (bound_box_num < (_num_bound_boxes1 > _num_bound_boxes2 ? _num_bound_boxes1 : _num_bound_boxes2)) {
-         if (bound_box_num < gmap1.num_bound_boxes && bound_box_num < gmap2.num_bound_boxes) {
+         if (bound_box_num < gmap1.num_bound_boxes
+             && bound_box_num < gmap2.num_bound_boxes) {
             // The other map has the same number of bounding boxes; compare the values.
-            if (
-                (_b1[bound_box_num].x1 != _b2[bound_box_num].x1) ||
+            if ((_b1[bound_box_num].x1 != _b2[bound_box_num].x1) ||
                 (_b1[bound_box_num].y1 != _b2[bound_box_num].y1) ||
                 (_b1[bound_box_num].x2 != _b2[bound_box_num].x2) ||
                 (_b1[bound_box_num].y2 != _b2[bound_box_num].y2)
                ) {
                fprintf (stdout, "  - Map1 Boundary #%d: (%d, %d), (%d, %d)\n",
-               	       bound_box_num,
-               	       _b1[bound_box_num].x1,
-               	       _b1[bound_box_num].y1,
-               	       _b1[bound_box_num].x2,
-               	       _b1[bound_box_num].y2
-               	     );
+                        bound_box_num,
+                        _b1[bound_box_num].x1,
+                        _b1[bound_box_num].y1,
+                        _b1[bound_box_num].x2, _b1[bound_box_num].y2);
                fprintf (stdout, "  - Map2 Boundary #%d: (%d, %d), (%d, %d)\n",
-               	       bound_box_num,
-               	       _b2[bound_box_num].x1,
-               	       _b2[bound_box_num].y1,
-               	       _b2[bound_box_num].x2,
-               	       _b2[bound_box_num].y2
-               	     );
+                        bound_box_num,
+                        _b2[bound_box_num].x1,
+                        _b2[bound_box_num].y1,
+                        _b2[bound_box_num].x2,
+                        _b2[bound_box_num].y2
+                       );
             }
          } else {
             // The other map does not have that bounding box, print "only in map #"
             if (gmap1.num_bound_boxes <= bound_box_num) {
-               fprintf (stdout, "  Bound Box #%d only in Map #2\n", bound_box_num + 1);
+               fprintf (stdout, "  Bound Box #%d only in Map #2\n",
+                        bound_box_num + 1);
                fprintf (stdout, "  - Map2: (%d, %d), (%d, %d)\n",
-               	       _b2[bound_box_num].x1,
-               	       _b2[bound_box_num].y1,
-               	       _b2[bound_box_num].x2,
-               	       _b2[bound_box_num].y2
+                        _b2[bound_box_num].x1,
+                        _b2[bound_box_num].y1,
+                        _b2[bound_box_num].x2,
+                        _b2[bound_box_num].y2
                	     );
             } else if (gmap2.num_bound_boxes <= bound_box_num) {
-               fprintf (stdout, "  Bound Box #%d only in Map #1\n", bound_box_num + 1);
+               fprintf (stdout, "  Bound Box #%d only in Map #1\n",
+                        bound_box_num + 1);
                fprintf (stdout, "  - Map1: (%d, %d), (%d, %d)\n",
-               	       _b1[bound_box_num].x1,
-               	       _b1[bound_box_num].y1,
-               	       _b1[bound_box_num].x2,
-               	       _b1[bound_box_num].y2
+                        _b1[bound_box_num].x1,
+                        _b1[bound_box_num].y1,
+                        _b1[bound_box_num].x2,
+                        _b1[bound_box_num].y2
                	     );
             }
          }
@@ -857,7 +855,8 @@ int main (int argc, char *argv[])
 END_OF_MAIN ();
 
 
-void klog (char *whatever) {
+void klog (char *whatever)
+{
    (void) whatever;
    return;
 }

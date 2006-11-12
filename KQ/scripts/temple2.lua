@@ -4,6 +4,7 @@
 --     coords appropriately below (left the xx+6 and xx+4 format in the code
 --     until all coordinates can be thoroughly tested).
 
+
 function autoexec()
   set_ent_active(0, 0)
   if (get_progress(P_TALK_TEMMIN) == 1 or
@@ -14,6 +15,23 @@ function autoexec()
   end
 
   refresh()
+end
+
+
+function entity_handler(en)
+  if (en == 0) then
+    -- We should never encounter a direct conversation with
+    -- the blord, but if we do, go ahead and deal with it
+    LOC_blord(en)
+
+  elseif (en == 1) then
+    LOC_talk_temmin(en)
+  end
+end
+
+
+function postexec()
+  return
 end
 
 
@@ -35,14 +53,19 @@ function refresh()
   if (get_progress(P_TALK_TEMMIN) == 2) then
     set_ent_facehero(1, 1)
   end
-  if (get_progress(P_UNDEADJEWEL) == 2) then
+  if (get_progress(P_UNDEADJEWEL) ~= 0) then
     set_btile("jewel", 237)
   end
 end
 
 
-function postexec()
-  return
+-- Show the status of a chest
+function showch(which_marker, which_chest)
+  -- Set tiles if -1 passed in as 'which_chest' or if chest already opened
+  if (get_treasure(which_chest) == 1) then
+    set_mtile(which_marker, 41)
+    set_zone(which_marker, 0)
+  end
 end
 
 
@@ -71,8 +94,9 @@ function zone_handler(zn)
   elseif (zn == 7) then
     if (get_progress(P_KILLBLORD) == 0) then
       LOC_blord(0)
+    else
+      warp("ustairs4", 8)
     end
-    warp("ustairs4", 8)
 
   elseif (zn == 8) then
     warp("ustairs3", 8)
@@ -136,28 +160,6 @@ function zone_handler(zn)
 end
 
 
-function entity_handler(en)
-  if (en == 0) then
-    -- We should never encounter a direct conversation with
-    -- the blord, but if it does, go ahead and deal with it
-    LOC_blord(en)
-
-  elseif (en == 1) then
-    LOC_talk_temmin(en)
-  end
-end
-
-
--- Show the status of a chest
-function showch(which_marker, which_chest)
-  -- Set tiles if -1 passed in as 'which_chest' or if chest already opened
-  if (which_chest < 0 or get_treasure(which_chest) == 1) then
-    set_mtile(which_marker, 41)
-    set_zone(which_marker, 0)
-  end
-end
-
-
 function LOC_blord(en)
   local x, y = marker("dstairs4")
 
@@ -183,14 +185,18 @@ function LOC_blord(en)
   set_run(en)
   combat(53)
   set_run(1)
-  set_progress(P_KILLBLORD, 1)
+
   bubble(en, "Argh!")
   drawmap()
+
   set_ent_active(en, 0)
-  set_progress(P_UNDEADJEWEL, 1)
-  msg("Goblin jewel procured", 19, 0);
-  set_progress(P_TALK_TEMMIN, 3)
   set_ent_active(1, 0)
+
+  msg("Goblin jewel procured", 19, 0);
+
+  set_progress(P_KILLBLORD, 1)
+  set_progress(P_TALK_TEMMIN, 3)
+
 end
 
 
@@ -199,7 +205,8 @@ function LOC_goblin_king(en)
     bubble(HERO1, "Ooohh... shiny.")
     return
   end
-  if (get_progress(P_UNDEADJEWEL) == 1 and get_progress(P_GOBLINITEM) == 0) then
+
+  if (get_progress(P_SIDEQUEST3) == 0) then
     local en = 255
 
     bubble(HERO1, "Hey, that gem would fit here.")
@@ -225,7 +232,6 @@ function LOC_goblin_king(en)
       bubble(HERO1, "Well, I'm not the one who figured this all out.")
     end
     bubble(en, "Regardless, my brethren and I can rest again. Take this.")
-    set_progress(P_GOBLINITEM, 1)
     sfx(5)
     msg("Jade pendant procured", 255, 0)
     refresh()
@@ -239,7 +245,9 @@ function LOC_goblin_king(en)
     wait(50)
     bubble(HERO1, "Hello?")
     bubble(HERO1, "Urgh! I hate when they do that!")
-    set_progress(P_UNDEADJEWEL, 2)
+    set_progress(P_GOBLINITEM, 1)
+    set_progress(P_SIDEQUEST3, 1)
+    set_progress(P_UNDEADJEWEL, 1)
     return
   else
     bubble(HERO1, "It looks like there should be something here.")

@@ -39,7 +39,7 @@ function autoexec()
   -- You have fallen in the pit at least once; the hole is showing on the map
   if (get_progress(P_FELLINPIT) > 0) then
     x, y = marker("by_pit")
-    set_btile(x + 1, y, 153)
+    set_btile(x - 1, y, 153)
   end
 
   -- // You've entered the grotto at least once
@@ -86,6 +86,56 @@ function autoexec()
 end
 
 
+function entity_handler(en)
+  if (en == 0) then
+    -- We've never spoken to Tsorin, or we've finished his quest already
+    if (get_progress(P_TALK_TSORIN) == 0 or
+        get_progress(P_TALK_TSORIN) > 2) then
+      -- TALKDERIG will always == 3 the first time you talk to him
+      if (get_progress(P_TALKDERIG) == 3) then
+        if (get_progress(P_TALK_TSORIN) > 2) then
+          -- You have spoken to Derig because of Tsorin
+          bubble(en, "Thank you for your assistance, $0. I have another request for you.")
+        else
+          -- You have never spoken to him before
+          bubble(en, "Hello, I'm Derig. I presume that my granddaughter sent you here?")
+        end
+        bubble(en, "Let's go back to town.")
+        set_progress(P_FELLINPIT, 2)
+        set_progress(P_TALKDERIG, 4)
+        change_map("town1", "by_derig")
+      elseif (get_progress(P_TALKDERIG) == 6) then
+        -- // Derig would only be here after you've finished with the Rod of Cancellation
+        bubble(en, "Good job with the portal. I have returned the Rod of Cancellation.")
+      end
+    elseif (get_progress(P_TALK_TSORIN) == 1) then
+      bubble(en, "That note you're carrying... I recognize the seal on there; let me see it!")
+      msg("You show Derig the note.", 255, 0)
+      bubble(en, "$0, Tsorin says that a special treasure of the goblins, the Oracle Statue, has been stolen.")
+      bubble(en, "Apparently, the goblins are so upset that he's sealed off any entrance to the goblin lands until this is resolved.")
+      if (get_numchrs() == 1) then
+        bubble(HERO1, "So what am I supposed to do?")
+      else
+        bubble(HERO1, "So what are we supposed to do?")
+      end
+      bubble(en, "I agree that you must get through there. Here, deliver this note to Tsorin so he'll let you proceed.")
+      msg("Derig hands you a sealed envelope.", 18, 0)
+      set_progress(P_TALK_TSORIN, 2)
+      set_progress(P_TALKDERIG, 3)
+    elseif (get_progress(P_TALK_TSORIN) == 2) then
+      bubble(en, "You must deliver that note to Tsorin so he'll let you through the fort.")
+    else
+      bubble(en, "Good luck.")
+    end
+  end
+end
+
+
+function postexec()
+  return
+end
+
+
 function refresh()
   -- Treasure on NE corner, in trees
   if (get_treasure(15) == 1) then
@@ -99,11 +149,6 @@ function refresh()
     set_obs("treasure2", 0)
   end
 
-end
-
-
-function postexec()
-  return
 end
 
 
@@ -154,50 +199,5 @@ function zone_handler(zn)
     chest(80, I_MACE1, 1)
     refresh()
 
-  end
-end
-
-
-function entity_handler(en)
-  if (en == 0) then
-    -- We've never spoken to Tsorin, or we've finished his quest already
-    if (get_progress(P_TALK_TSORIN) == 0 or
-        get_progress(P_TALK_TSORIN) > 2) then
-      -- TALKDERIG will always == 3 the first time you talk to him
-      if (get_progress(P_TALKDERIG) == 3) then
-        if (get_progress(P_TALK_TSORIN) > 2) then
-          -- You have spoken to Derig because of Tsorin
-          bubble(en, "Thank you for your assistance, $0. I have another request for you.")
-        else
-          -- You have never spoken to him before
-          bubble(en, "Hello, I'm Derig. I presume that my granddaughter sent you here?")
-        end
-        bubble(en, "Let's go back to town.")
-        set_progress(P_FELLINPIT, 2)
-        set_progress(P_TALKDERIG, 4)
-        change_map("town1", "by_derig")
-      elseif (get_progress(P_TALKDERIG) == 6) then
-        -- // Derig would only be here after you've finished with the Rod of Cancellation
-        bubble(en, "Good job with the portal. I have returned the Rod of Cancellation.")
-      end
-    elseif (get_progress(P_TALK_TSORIN) == 1) then
-      bubble(en, "That note you're carrying... I recognize the seal on there; let me see it!")
-      msg("You show Derig the note.", 255, 0)
-      bubble(en, "$0, Tsorin says that a special treasure of the goblins, the Oracle Statue, has been stolen.")
-      bubble(en, "Apparently, the goblins are so upset that he's sealed off any entrance to the goblin lands until this is resolved.")
-      if (get_numchrs() == 1) then
-        bubble(HERO1, "So what am I supposed to do?")
-      else
-        bubble(HERO1, "So what are we supposed to do?")
-      end
-      bubble(en, "I agree that you must get through there. Here, deliver this note to Tsorin so he'll let you proceed.")
-      msg("Derig hands you a sealed envelope.", 18, 0)
-      set_progress(P_TALK_TSORIN, 2)
-      set_progress(P_TALKDERIG, 3)
-    elseif (get_progress(P_TALK_TSORIN) == 2) then
-      bubble(en, "You must deliver that note to Tsorin so he'll let you through the fort.")
-    else
-      bubble(en, "Good luck.")
-    end
   end
 end

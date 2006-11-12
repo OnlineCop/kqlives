@@ -55,6 +55,7 @@
    all frames are identical for enemies?
  */
 #define MAXCFRAMES          8
+#define MAX_TILESETS        8
 #define NUM_FIGHTERS        7
 #define NUM_STATS          13
 #define MISS             9999
@@ -262,6 +263,8 @@ const char *kqres (int dir_id, const char *file);
 #define MAP_TUNNEL         32
 #define MAP_TOWN8          33
 #define MAP_GOBLIN         34
+#define MAP_CASTLE         35
+#define MAP_SUNARIN        36
 /*\}*/
 
 
@@ -450,7 +453,7 @@ extern unsigned char *progress, *z_seg, *s_seg, *o_seg, *treasure;
 extern BITMAP *kfonts, *portrait[MAXCHRS];
 extern s_map g_map;
 extern s_entity g_ent[MAX_ENT + PSIZE];
-extern s_anim tanim[7][MAX_ANIM];
+extern s_anim tanim[MAX_TILESETS][MAX_ANIM];
 extern s_anim adata[MAX_ANIM];
 extern int noe, pidx[MAXCHRS], numchrs, gp, xofs, yofs, gsvol, gmvol;
 extern unsigned char autoparty, alldead, is_sound, deadeffect, vfollow,

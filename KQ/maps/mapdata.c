@@ -9,7 +9,6 @@
 \***************************************************************************/
 
 
-#include <allegro.h>
 #include "mapdraw.h"
 
 /*! \brief Font layout

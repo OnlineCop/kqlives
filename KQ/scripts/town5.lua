@@ -39,7 +39,7 @@ function autoexec()
     set_desc(0)
   end
 
-  if (get_progress(P_AYLA_QUEST) == 7) then
+  if (get_progress(P_AYLA_QUEST) == 6) then
     if (party[0] == Ayla or party[1] == Ayla) then
       if (get_numchrs() == 2) then
         set_ent_tiley(HERO2, get_ent_tiley(HERO1) - 1)
@@ -48,28 +48,82 @@ function autoexec()
     end
   end
 
+  if (get_progress(P_SIDEQUEST6) == 1) then
+    LOC_remove_gate()
+  end
+
   set_ent_active(8, 0) -- Guard inside city gates
   refresh()
 end
 
 
-function refresh()
-  if (get_treasure(32) == 1) then
-    set_zone("treasure1", 0)
-    set_obs("treasure1", 0)
-  end
+function entity_handler(en)
+  if (en == 0) then
+    bubble(en, "Do you like this shirt?")
 
-  if (get_progress(P_AYLA_QUEST) > 3) then
-    local x, y = marker("wall")
-    local hero = LOC_get_ayla()
+  elseif (en == 1) then
+    bubble(en, "I really like that guy's shirt.")
 
-    set_obs(x, y, 0)
-    set_zone(x, y, 0)
- 
-    -- Put Ayla into her disguise
-    if (get_progress(P_AYLA_QUEST) == 5 and hero ~= 0) then
-      set_ent_chrx(hero, 8)
+  elseif (en == 2) then
+    bubble(en, "I have to stop bringing my wife with me.")
+
+  elseif (en == 3) then
+    bubble(en, "I must have had too many drinks.",
+              "My husband is starting to look handsome.")
+
+  elseif (en == 4) then
+    if (party[0] == Ayla) then
+      LOC_ayla_bar(en)
+    else
+      bubble(en, "These two are weird... but at least I don't have to sit alone.")
     end
+
+  elseif (en == 5) then
+    if (party[0] == Ayla) then
+      LOC_ayla_girl(en)
+    else
+      if (get_progress(P_SIDEQUEST6) == 1) then
+        bubble(en, "The, uh, gates to the inner city are open now. It's very unusual...")
+      else
+        bubble(en, "Those gates to the inner city never open. Strangers are not allowed in.")
+      end
+    end
+
+  elseif (en == 6) then
+    local face
+
+    if (party[0] == Ayla and get_progress(P_AYLA_QUEST) == 5) then
+      bubble(en, "Hey there, hot mama!", "", "        Rowr!")
+      face = get_ent_facing(en)
+      msg("SLAP!", 255, 0)
+        set_ent_facing(en, 0) set_ent_script(en, "W7") wait_for_entity(en, en)
+        set_ent_facing(en, 2) set_ent_script(en, "W7") wait_for_entity(en, en)
+        set_ent_facing(en, 1) set_ent_script(en, "W7") wait_for_entity(en, en)
+        set_ent_facing(en, 3) set_ent_script(en, "W50") wait_for_entity(en, en)
+        set_ent_facing(en, face)
+        bubble(en, "Ouch!")
+      set_ent_movemode(en, 1)
+    else
+      bubble(en, "Welcome to Sunarin!",
+                 "Please feel free to leave at any time.")
+    end
+
+  elseif (en == 7) then
+    bubble(en, "Please... help me... I brought soldiers with me... but the Embers killed them. I barely escaped with my life!")
+    bubble(HERO1, "Who are you? And who are the Embers?")
+    bubble(en, "My name is Dungar. The Embers is the short name for the Thieves of the Ember Crest. They run this town.")
+    bubble(en, "I came to get back something they stole from me...")
+    bubble(HERO1, "The Opal Helmet?")
+    bubble(en, "Why yes! The Opal Helmet.",
+               "Who are you? You're not one of them are you?")
+    bubble(HERO1, "No. My name is $0. I am on a quest, and I need to borrow that helmet to traverse the underwater passage.")
+    bubble(en, "I see. Well, if you can get it back, I will certainly let you use it.")
+    bubble(HERO1, "Well, how do we get it back?")
+    bubble(en, "We can discuss that back at my place. It is not safe here.")
+    bubble(HERO1, "Okay.")
+    set_progress(P_EMBERSKEY, 1)
+    set_progress(P_TALKGELIK, 3)
+    change_map("estate", "by_table")
   end
 
 end
@@ -84,10 +138,10 @@ function postexec()
     bubble(HERO1, "Oh well, I got what I came for.")
   end
 
-  if (get_progress(P_AYLA_QUEST) == 7) then
+  if (get_progress(P_AYLA_QUEST) == 6) then
     local hero = LOC_get_ayla()
 
-    if (hero ~= 0) then
+    if (hero ~= 0 and get_ent_chrx(hero) ~= 8) then
       bubble(hero, "Let me hop into the maid's outfit real quick.")
 
       do_fadeout(4)
@@ -102,6 +156,27 @@ function postexec()
 end
 
 
+function refresh()
+  showch("treasure1", 32)
+
+  LOC_wall()
+end
+
+
+-- Show the status of treasures
+function showch(which_marker, which_chest)
+  -- Set tiles if chest already opened
+  if (get_treasure(which_chest) == 1) then
+    set_zone(which_marker, 0)
+  end
+
+  -- Only treasure1 needs to change its obstacle setting
+  if (which_marker == "treasure1") then
+    set_obs(which_marker, 0)
+  end
+end
+
+
 function zone_handler(zn)
   local x, y
 
@@ -109,7 +184,7 @@ function zone_handler(zn)
     if (party[0] == Ayla or party[1] == Ayla) then
       if (get_progress(P_AYLA_QUEST) == 5) then
         LOC_check_costume()
-        set_progress(P_AYLA_QUEST, 7)
+        set_progress(P_AYLA_QUEST, 6)
       end
     end
     change_map("main", "town5", -1, 0)
@@ -118,20 +193,16 @@ function zone_handler(zn)
     bubble(HERO1, "Locked.")
 
   elseif (zn == 3) then
-    x, y = marker("inn")
-    door_in(x - 4, y)
+    door_in("inn", -4, 0)
 
   elseif (zn == 4) then
-    x, y = marker("inn")
-    door_in(x + 4, y)
+    door_in("inn", 4, 0)
 
   elseif (zn == 5) then
-    x, y = marker("shop")
-    door_in(x - 3, y)
+    door_in("shop", -3, 0)
 
   elseif (zn == 6) then
-    x, y = marker("shop")
-    door_in(x + 3, y)
+    door_in("shop", 3, 0)
 
   elseif (zn == 7) then
     door_out("inn1")
@@ -225,75 +296,29 @@ function zone_handler(zn)
   elseif (zn == 25) then
     bubble(HERO1, "Nothing in here but old clothes.")
 
+  elseif (zn == 26) then
+    bubble(HERO1, "Locked.")
+
+  elseif (zn == 27) then
+    bubble(HERO1, "Locked.")
+
+  elseif (zn == 28) then
+    bubble(HERO1, "Locked.")
+
+  elseif (zn == 29) then
+    door_in("room_1i")
+
+  elseif (zn == 30) then
+    set_progress(P_AYLA_QUEST, 7)
+    change_map("main", "town5", 1, 0)
+
+  elseif (zn == 31) then
+    door_out("room_1o")
+
+  elseif (zn == 32) then
+    bubble(HERO1, "Nothing of interest here.")
+
   end
-end
-
-
-function entity_handler(en)
-  if (en == 0) then
-    bubble(en, "Do you like this shirt?")
-
-  elseif (en == 1) then
-    bubble(en, "I really like that guy's shirt.")
-
-  elseif (en == 2) then
-    bubble(en, "I have to stop bringing my wife with me.")
-
-  elseif (en == 3) then
-    bubble(en, "I must have had too many drinks.",
-              "My husband is starting to look handsome.")
-
-  elseif (en == 4) then
-    if (party[0] == Ayla) then
-      LOC_ayla_bar(en)
-    else
-      bubble(en, "These two are weird... but at least I don't have to sit alone.")
-    end
-
-  elseif (en == 5) then
-    if (party[0] == Ayla) then
-      LOC_ayla_girl(en)
-    else
-      bubble(en, "Those gates to the inner city never open. Strangers are not allowed in.")
-    end
-
-  elseif (en == 6) then
-    local face
-
-    if (party[0] == Ayla and get_progress(P_AYLA_QUEST) == 5) then
-      bubble(en, "Hey there, hot mama!", "", "        Rowr!")
-      face = get_ent_facing(en)
-      msg("SLAP!", 255, 0)
-        set_ent_facing(en, 0) set_ent_script(en, "W7") wait_for_entity(en, en)
-        set_ent_facing(en, 2) set_ent_script(en, "W7") wait_for_entity(en, en)
-        set_ent_facing(en, 1) set_ent_script(en, "W7") wait_for_entity(en, en)
-        set_ent_facing(en, 3) set_ent_script(en, "W50") wait_for_entity(en, en)
-        set_ent_facing(en, face)
-        bubble(en, "Ouch!")
-      set_ent_movemode(en, 1)
-    else
-      bubble(en, "Welcome to Sunarin!",
-                 "Please feel free to leave at any time.")
-    end
-
-  elseif (en == 7) then
-    bubble(en, "Please... help me... I brought soldiers with me... but the Embers killed them. I barely escaped with my life!")
-    bubble(HERO1, "Who are you? And who are the Embers?")
-    bubble(en, "My name is Dungar. The Embers is the short name for the Thieves of the Ember Crest. They run this town.")
-    bubble(en, "I came to get back something they stole from me...")
-    bubble(HERO1, "The Opal Helmet?")
-    bubble(en, "Why yes! The Opal Helmet.",
-               "Who are you? You're not one of them are you?")
-    bubble(HERO1, "No. My name is $0. I am on a quest, and I need to borrow that helmet to traverse the underwater passage.")
-    bubble(en, "I see. Well, if you can get it back, I will certainly let you use it.")
-    bubble(HERO1, "Well, how do we get it back?")
-    bubble(en, "We can discuss that back at my place. It is not safe here.")
-    bubble(HERO1, "Okay.")
-    set_progress(P_EMBERSKEY, 1)
-    set_progress(P_TALKGELIK, 3)
-    change_map("estate", "by_table")
-  end
-
 end
 
 
@@ -338,33 +363,38 @@ function LOC_ayla_gates()
   x, y = marker("gate")
   guard = 8
   bubble(255, "WHO GOES THERE?!?")
-  if (get_progress(P_AYLA_QUEST) == 5 and get_ent_chrx(HERO1) ~= 0) then
-    bubble(HERO1, "Just a little serving-girl, reporting for duty.")
-    bubble(255, "Wait there, I'm coming.")
-    set_ent_active(guard, 1)
-    move_entity(guard, x, y)
-    wait_for_entity(guard, guard)
-    bubble(guard, "Come through.")
-    sfx(25)
-    warp(x, y - 1, 8)
-    set_ent_facing(HERO1, FACE_DOWN)
-    set_ent_facing(guard, FACE_UP)
-    bubble(guard, "Well, you are a cute little thing, aren't you?")
-    bubble(HERO1, "Cute??")
-    bubble(guard, "I'm sorry, miss, I didn't mean to offend. Follow me.")
-    ----
-    bubble(255, "CUT!")
-    bubble(255, "That's a wrap for today.",
-                "PH hasn't written the rest of this script yet!")
-    set_vfollow(0)
-    set_ent_script(guard, "R12")
-    bubble(255, "Ayla, great work. Sir Alec, you were fabulous, sweetie.")
-    bubble(guard, "I'm still not sure of my motivation in this scene...")
-    wait_for_entity(guard, guard)
-    LOC_check_costume()
-    set_progress(P_AYLA_QUEST, 6)
-    change_map("main", "town5", 1, 0)
-    set_vfollow(1)
+
+  if (get_ent_chrx(HERO1) ~= 0) then
+    if (get_progress(P_AYLA_QUEST) == 5) then
+      bubble(HERO1, "Just a little serving-girl, reporting for duty.")
+      bubble(255, "Wait there, I'm coming.")
+      set_ent_active(guard, 1)
+      move_entity(guard, x, y)
+      wait_for_entity(guard, guard)
+      bubble(guard, "Come through.")
+      sfx(25)
+      warp(x, y - 1, 8)
+      set_ent_facing(HERO1, FACE_DOWN)
+      set_ent_facing(guard, FACE_UP)
+      bubble(guard, "Well, you are a cute little thing, aren't you?")
+      bubble(HERO1, "Cute??")
+      bubble(guard, "I'm sorry, miss, I didn't mean to offend. Follow me.")
+      ----
+      bubble(255, "CUT!")
+      bubble(255, "That's a wrap for today.",
+                  "PH hasn't written the rest of this script yet!")
+      set_vfollow(0)
+      set_ent_script(guard, "R12")
+      bubble(255, "Ayla, great work. Sir Alec, you were fabulous, sweetie.")
+      bubble(guard, "I'm still not sure of my motivation in this scene...")
+      wait_for_entity(guard, guard)
+      LOC_check_costume()
+      set_progress(P_AYLA_QUEST, 7)
+      change_map("main", "town5", 1, 0)
+      set_vfollow(1)
+    else
+      bubble(255, "Gates are closed. Come back later.")
+    end
   else
     bubble(HERO1, "I was wondering if you did tours around the castle?")
     bubble(255, "I will show you the inside of the dungeon if you bother me again. Clear off!")
@@ -415,6 +445,7 @@ function LOC_check_costume()
 
   if (hero ~= 0 and get_ent_chrx(hero) ~= 0) then
     bubble(hero, "Just wait a second whilst I change out of this costume.")
+
     do_fadeout(4)
     set_holdfade(1)
     set_ent_chrx(hero, 0)
@@ -426,6 +457,8 @@ end
 
 
 function LOC_get_ayla()
+  local hero
+
   if (party[0] == Ayla) then
     hero = HERO1
   elseif (party[1] == Ayla) then
@@ -472,5 +505,32 @@ function LOC_maid_clothes()
     end
   else
     bubble(HERO1, "Nothing in here but old clothes.")
+  end
+end
+
+
+function LOC_remove_gate()
+  -- Get rid of the gate doors
+  local y
+  local x, a = marker("gate")
+  for y = a - 1, a + 1, 1 do
+    set_zone(x - 1, y, 0)
+    set_obs(x - 1, y, 0)
+  end
+end
+
+
+function LOC_wall()
+  if (get_progress(P_AYLA_QUEST) > 3) then
+    local x, y = marker("wall")
+    local hero = LOC_get_ayla()
+
+    set_zone(x, y, 0)
+    set_obs(x, y, 0)
+
+    -- Put Ayla into her disguise
+    if (get_progress(P_AYLA_QUEST) == 5 and hero ~= 0) then
+      set_ent_chrx(hero, 8)
+    end
   end
 end

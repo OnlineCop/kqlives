@@ -498,7 +498,8 @@ static lua_State *theL;
 static char tmap_name[16];
 static char marker_name[255];
 
-static enum {
+static enum
+{
    NOT_CHANGING,
    CHANGE_TO_COORDS,
    CHANGE_TO_MARKER
@@ -988,7 +989,7 @@ static int KQ_add_chr (lua_State * L)
 
 
 
-int KQ_add_quest_item (lua_State * L)
+static int KQ_add_quest_item (lua_State * L)
 {
    const char *keyname = lua_tostring (L, 1);
    const char *info = lua_tostring (L, 2);
@@ -998,7 +999,7 @@ int KQ_add_quest_item (lua_State * L)
 
 
 
-int KQ_add_timer (lua_State * L)
+static int KQ_add_timer (lua_State * L)
 {
    const char *funcname = lua_tostring (L, 1);
    int delta = (int) lua_tonumber (L, 2);
@@ -1021,7 +1022,7 @@ int KQ_add_timer (lua_State * L)
  * monster: name of a monster
  * \note Not implemented yet!
  */
-int KQ_battle (lua_State * L)
+static int KQ_battle (lua_State * L)
 {
    L = L;
    return 1;
@@ -1049,7 +1050,7 @@ static int KQ_blit (lua_State * L)
  * You can use either, but bubble_ex() does avoid some extra processing.
  * The 'ent' param can be a number, or an object e.g. party[0].
  */
-int KQ_bubble_ex (lua_State * L)
+static int KQ_bubble_ex (lua_State * L)
 {
    int entity = real_entity_num (L, 1);
    const char *msg = lua_tostring (L, 2);
@@ -1529,6 +1530,7 @@ static int KQ_do_inn_effects (lua_State * L)
 static int KQ_door_in (lua_State * L)
 {
    int hx, hy, hy2, db, dt;
+   int x, y;
 
    use_sstone = 0;
 
@@ -1554,11 +1556,14 @@ static int KQ_door_in (lua_State * L)
    if (lua_type (L, 1) == LUA_TSTRING) {
       /* It's in "marker" form */
       s_marker *m = find_marker (lua_tostring (L, 1), 1);
-      warp (m->x, m->y, 8);
+      x = m->x + (int) lua_tonumber (L, 2);
+      y = m->y + (int) lua_tonumber (L, 3);
    } else {
       /* It's in the (x, y) form */
-      warp ((int) lua_tonumber (L, 1), (int) lua_tonumber (L, 2), 8);
+      x = (int) lua_tonumber (L, 1) + (int) lua_tonumber (L, 3);
+      y = (int) lua_tonumber (L, 2) + (int) lua_tonumber (L, 4);
    }
+   warp (x, y, 8);
 
    // Don't forget to set the door tile back to its "unopened" state
    set_btile (hx, hy, db);
@@ -2259,7 +2264,7 @@ static int KQ_inn (lua_State * L)
  * \returns 1 if it was a table, nil otherwise
  * \author PH
  */
-int KQ_istable (lua_State * L)
+static int KQ_istable (lua_State * L)
 {
    if (lua_istable (L, 1)) {
       lua_pushnumber (L, 1);
@@ -2750,7 +2755,7 @@ static int KQ_screen_dump (lua_State * L)
  * \returns Table containing heroes that weren't selected.
  * \author PH
  */
-int KQ_select_team (lua_State * L)
+static int KQ_select_team (lua_State * L)
 {
    static int team[MAXCHRS];
    int i, t;
@@ -3641,7 +3646,7 @@ static int KQ_stop_song (lua_State * L)
 
 
 
-int KQ_thought_ex (lua_State * L)
+static int KQ_thought_ex (lua_State * L)
 {
    int entity = real_entity_num (L, 1);
    const char *msg = lua_tostring (L, 2);
@@ -3787,7 +3792,8 @@ static int KQ_warp (lua_State * L)
 #if 0
 #ifndef HAVE_LUA_OPEN
 /* We have to make our own! */
-static void *l_alloc (void *ud, void *ptr, size_t osize, size_t nsize) {
+static void *l_alloc (void *ud, void *ptr, size_t osize, size_t nsize)
+{
    (void) ud;     /* not used */
    (void) osize;  /* not used */
    if (nsize == 0) {
@@ -3795,12 +3801,12 @@ static void *l_alloc (void *ud, void *ptr, size_t osize, size_t nsize) {
       return NULL;
    } else
       /* ANSI requires that realloc(NULL, size) == malloc(size) */
-      return realloc(ptr, nsize);
+      return realloc (ptr, nsize);
 }
 
 
 
-static lua_State *lua_open()
+static lua_State *lua_open ()
 {
    return lua_newstate (l_alloc, NULL);
 }

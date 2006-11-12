@@ -14,6 +14,11 @@ function autoexec()
 end
 
 
+function entity_handler(en)
+  return
+end
+
+
 function postexec()
   if (get_progress(P_SKIPINTRO) == 1) then
     LOC_choose_hero()
@@ -41,11 +46,6 @@ end
 
 
 function zone_handler(zn)
-  return
-end
-
-
-function entity_handler(en)
   return
 end
 
@@ -119,7 +119,8 @@ end
 
 
 function LOC_meet_nostik()
-  local a, en = 0
+  local a
+  local en = 0
 
   view_range(1, 116, 12, 141, 31)
   screen_dump()

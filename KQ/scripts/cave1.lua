@@ -33,6 +33,16 @@ function autoexec()
 end
 
 
+function entity_handler(en)
+  return
+end
+
+
+function postexec()
+  return
+end
+
+
 function refresh()
 
   -- Pot in SW corner
@@ -64,11 +74,6 @@ function refresh()
   if (get_progress(P_PORTALGONE) == 1) then
     set_ftile("portal", 217)
   end
-end
-
-
-function postexec()
-  return
 end
 
 
@@ -151,9 +156,4 @@ function zone_handler(zn)
     end
 
   end
-end
-
-
-function entity_handler(en)
-  return
 end

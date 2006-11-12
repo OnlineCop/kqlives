@@ -25,7 +25,29 @@ function autoexec()
     set_desc(0)
   end
 
+  set_progress(P_WALKING, 0)
+
   refresh()
+end
+
+
+function entity_handler(en)
+  if (en == 0) then
+    bubble(en, "You cannot stop us! Begone!")
+  elseif (en == 1) then
+    bubble(en, "This statue is ours! You cannot have it!")
+  elseif (en == 2) then
+    bubble(HERO1, "This is the other broken half of the stolen Oracle Statue!")
+  elseif (en == 3) then
+    bubble(en, "We will die before we give you the statue!")
+  elseif (en == 4) then
+    bubble(en, "A curse be upon you... a curse upon you all!")
+  end
+end
+
+
+function postexec()
+  return
 end
 
 
@@ -39,11 +61,18 @@ function refresh()
     set_ftile(x, y - 1, 119)    -- set_ftile(13, 49, 119)
     set_obs(x, y - 1, 0)    -- set_obs(13, 49, 0)
   end
+
+  TOC_switch_layers()
 end
 
 
-function postexec()
-  return
+-- Show the status of a chest
+function showch(which_marker, which_chest)
+  -- Set tiles if -1 passed in as 'which_chest' or if chest already opened
+  if (which_chest < 0 or get_treasure(which_chest) == 1) then
+    set_mtile(which_marker, 41)
+    set_zone(which_marker, 0)
+  end
 end
 
 
@@ -108,7 +137,7 @@ function zone_handler(zn)
     end
 
   elseif (zn == 14) then
-    change_map("cave1", "dstairs1")
+    warp("usportal1", 8)
 
   elseif (zn == 15) then
     change_map("cave3b", "exit")
@@ -136,31 +165,42 @@ function zone_handler(zn)
       bubble(HERO1, "No, really. "..or1.." need to tell the Oracle about this before "..or2.." go through this TravelPoint!")
     end
 
-  end
-end
+  elseif (zn == 20) then
+    local cancombat = 0
 
+    -- 25% chance of battle by looking into the empty chests
+    cancombat = pick({pr=25, value = 1}, {pr=75, value = 0}).value
 
-function entity_handler(en)
-  if (en == 0) then
-    bubble(en, "You cannot stop us! Begone!")
-  elseif (en == 1) then
-    bubble(en, "This statue is ours! You cannot have it!")
-  elseif (en == 2) then
-    bubble(HERO1, "This is the other broken half of the stolen Oracle Statue!")
-  elseif (en == 3) then
-    bubble(en, "We will die before we give you the statue!")
-  elseif (en == 4) then
-    bubble(en, "A curse be upon you... a curse upon you all!")
-  end
-end
+    if (cancombat == 0) then
+      bubble(HERO1, "Looks like it's empty.")
+    else
+      msg("Something from inside grabs you!", 255, 0)
+      combat(60)
+    end
 
+  elseif (zn == 21) then
+    warp("dsportal1", 8)
 
--- Show the status of a chest
-function showch(which_marker, which_chest)
-  -- Set tiles if -1 passed in as 'which_chest' or if chest already opened
-  if (which_chest < 0 or get_treasure(which_chest) == 1) then
-    set_mtile(which_marker, 41)
-    set_zone(which_marker, 0)
+  elseif (zn == 22) then
+    bubble(HERO1, "What a strange, glowing portal we have here...")
+
+  elseif (zn == 23) then
+    set_progress(P_WALKING, 0)
+    refresh()
+
+  elseif (zn == 24) then
+    set_progress(P_WALKING, 1)
+    refresh()
+
+  elseif (zn == 25) then
+    local x, y = marker("dsportal1")
+    bubble(HERO1, "This wall looks funny...")
+    msg("You push at the wall. Something shifts.", 255, 0)
+    set_zone(x + 16, y + 2, 0)
+    set_zone(x + 17, y + 2, 0)
+    set_obs(x + 16, y + 2, 0)
+    set_obs(x + 17, y + 2, 0)
+
   end
 end
 
@@ -205,4 +245,38 @@ function LOC_monsters_statue()
     bubble(HERO1, "We've got to report this to the Oracle!")
   end
 
+end
+
+
+function TOC_switch_layers()
+  local x1, y1 = marker("monster_portal")
+  local a
+
+  if (get_progress(P_WALKING) == 0) then
+    set_obs(x1 - 2, y1 - 1, 4)
+    set_obs(x1 + 2, y1 - 1, 4)
+    set_ftile(x1 - 2, y1 - 1, 45)
+    set_ftile(x1 + 2, y1 - 1, 47)
+    set_mtile(x1 - 2, y1 - 1, 0)
+    set_mtile(x1 + 2, y1 - 1, 0)
+
+    for a = x1 - 1, x1 + 1, 1 do
+      set_obs(a, y1 - 1, 4)
+      set_ftile(a, y1 - 1, 46)
+      set_mtile(a, y1 - 1, 0)
+    end
+  else
+    set_obs(x1 - 2, y1 - 1, 1)
+    set_obs(x1 + 2, y1 - 1, 1)
+    set_ftile(x1 - 2, y1 - 1, 0)
+    set_ftile(x1 + 2, y1 - 1, 0)
+    set_mtile(x1 - 2, y1 - 1, 45)
+    set_mtile(x1 + 2, y1 - 1, 47)
+
+    for a = x1 - 1, x1 + 1, 1 do
+      set_obs(a, y1 - 1, 2)
+      set_ftile(a, y1 - 1, 0)
+      set_mtile(a, y1 - 1, 46)
+    end
+  end
 end

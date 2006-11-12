@@ -22,13 +22,23 @@ function autoexec()
 end
 
 
--- Show the status of a chest
-function showch(which_marker, which_chest)
-  -- Set tiles if -1 passed in as 'which_chest' or if chest already opened
-  if (which_chest < 0 or get_treasure(which_chest) == 1) then
-    set_mtile(which_marker, 41)
-    set_zone(which_marker, 0)
-  end
+function entity_handler(en)
+  local returning
+  if (en == 0) then -- Sensar
+    bubble(HERO1, "What happened? Are you OK?")
+    bubble(en, "I was attacked, but I couldn't use my RAGE against those ghosts.")
+    bubble(en, "Then I felt everthing fade away...")
+    bubble(HERO1, "If you're feeling better you can join up, or go back to the Manor to rest.")
+    returning = select_team({SENSAR})
+    add_to_manor(returning)
+    set_progress(P_SIDEQUEST7, 2)
+    refresh()
+  end 
+end
+
+
+function postexec()
+  return
 end
 
 
@@ -73,19 +83,102 @@ function refresh()
 end
 
 
-function postexec()
-  return
+-- Show the status of a chest
+function showch(which_marker, which_chest)
+  -- Set tiles if -1 passed in as 'which_chest' or if chest already opened
+  if (which_chest < 0 or get_treasure(which_chest) == 1) then
+    set_mtile(which_marker, 41)
+    set_zone(which_marker, 0)
+  end
 end
 
 
--- Return non-nil if the player has some dynamite to use
-function has_dynamite()
-  local d = use_up(190)
-  if (d == 0) then
-    bubble(HERO1, "I need some dynamite here.")
-    return nil
+function zone_handler(zn)
+  if (zn == 0) then
+    combat(57)
+  elseif (zn == 1) then
+    destroy1()
+  elseif (zn == 2) then
+    destroy2()
+  elseif (zn == 3) then
+    destroy3()
+  elseif (zn == 4) then
+    destroy4a()
+  elseif (zn == 5) then
+    destroy4b()
+  elseif (zn == 6) then
+    destroy5()
+  elseif (zn == 7) then
+    -- Save point south
+    set_save(1)
+    warp("save_1i", 10)
+  elseif (zn == 8) then
+    -- Save point north
+    set_save(1)
+    warp("save_2i", 10)
+  elseif (zn == 9) then
+    change_map("pass", "door1")
+  elseif (zn == 10) then
+    change_map("pass", "door2")
+  elseif (zn == 11) then
+    -- Dragon
+    sfx(26)
+    warp("battle_i", 10)
+    opaldragon()
+  elseif (zn == 12) then
+    change_map("pass", "door3")
+  elseif (zn == 13) then
+    -- Behind pillar
+    set_save(0)
+    warp("save_1o", 10)
+  elseif (zn == 14) then
+    -- Long room south
+    set_save(0)
+    warp("save_2o", 10)
+  elseif (zn == 15) then
+    -- Long room north
+    warp("battle_o", 10)
+  elseif (zn == 16) then
+    chest(84, I_PCURING, 1)
+    refresh()
+  elseif (zn == 17) then
+    chest(85, I_B_VISION, 1)
+    refresh()
+  elseif (zn == 18) then
+    chest(86, I_WATERRING, 1)
+    refresh()
+  elseif (zn == 19) then
+    chest(87, I_KBREW, 1)
+    refresh()
+  elseif (zn == 20) then
+    chest(88, 0, 1000)
+    refresh()
+  elseif (zn == 21) then
+    chest(89, I_VITSEED, 2)
+    refresh()
+  elseif (zn == 22) then
+    if (get_progress(P_OPALARMOUR) == 0) then
+      set_progress(P_OPALARMOUR, 1)
+      sfx(5)
+      msg("Opal Armour procured!", 255, 0)
+      refresh()
+    end
+  elseif (zn == 23) then
+    -- Clear the zone so it does not repeat the combat
+    local x, y = get_ent_tile(HERO1)
+    set_zone(x, y, 0)
+
+    combat(59)
+
+    num_miners = num_miners - 1
+    -- Killed all miners?
+    if (num_miners == 0) and (get_progress(P_SIDEQUEST7) == 0) then
+      -- Place Sensar in position
+      set_progress(P_SIDEQUEST7, 1)
+      refresh()
+      bubble(0, "Uhhh...", "Where am I?")
+    end
   end
-  return d
 end
 
 
@@ -220,11 +313,14 @@ function destroy5()
 end
 
 
-function oneliner(id, tbl)
-  -- Display a one-line Bruce Willis-style quip; a different one for each hero
-  local pid = get_pidx(id - HERO1)
-  local str = tbl[pid + 1]
-  bubble(id, str or "What?!?")
+-- Return non-nil if the player has some dynamite to use
+function has_dynamite()
+  local d = use_up(190)
+  if (d == 0) then
+    bubble(HERO1, "I need some dynamite here.")
+    return nil
+  end
+  return d
 end
 
 
@@ -257,6 +353,14 @@ function hero_escape(script)
   end
   set_autoparty(0)
   orient_heroes()
+end
+
+
+function oneliner(id, tbl)
+  -- Display a one-line Bruce Willis-style quip; a different one for each hero
+  local pid = get_pidx(id - HERO1)
+  local str = tbl[pid + 1]
+  bubble(id, str or "What?!?")
 end
 
 
@@ -298,110 +402,6 @@ function opaldragon()
     orient_heroes()
     refresh()
   end
-end
-
-
-function zone_handler(zn)
-  if (zn == 0) then
-    combat(57)
-  elseif (zn == 1) then
-    destroy1()
-  elseif (zn == 2) then
-    destroy2()
-  elseif (zn == 3) then
-    destroy3()
-  elseif (zn == 4) then
-    destroy4a()
-  elseif (zn == 5) then
-    destroy4b()
-  elseif (zn == 6) then
-    destroy5()
-  elseif (zn == 7) then
-    -- Save point south
-    set_save(1)
-    warp("save_1i", 10)
-  elseif (zn == 8) then
-    -- Save point north
-    set_save(1)
-    warp("save_2i", 10)
-  elseif (zn == 9) then
-    change_map("pass", "door1")
-  elseif (zn == 10) then
-    change_map("pass", "door2")
-  elseif (zn == 11) then
-    -- Dragon
-    sfx(26)
-    warp("battle_i", 10)
-    opaldragon()
-  elseif (zn == 12) then
-    change_map("pass", "door3")
-  elseif (zn == 13) then
-    -- Behind pillar
-    set_save(0)
-    warp("save_1o", 10)
-  elseif (zn == 14) then
-    -- Long room south
-    set_save(0)
-    warp("save_2o", 10)
-  elseif (zn == 15) then
-    -- Long room north
-    warp("battle_o", 10)
-  elseif (zn == 16) then
-    chest(84, I_PCURING, 1)
-    refresh()
-  elseif (zn == 17) then
-    chest(85, I_B_VISION, 1)
-    refresh()
-  elseif (zn == 18) then
-    chest(86, I_WATERRING, 1)
-    refresh()
-  elseif (zn == 19) then
-    chest(87, I_KBREW, 1)
-    refresh()
-  elseif (zn == 20) then
-    chest(88, 0, 1000)
-    refresh()
-  elseif (zn == 21) then
-    chest(89, I_VITSEED, 2)
-    refresh()
-  elseif (zn == 22) then
-    if (get_progress(P_OPALARMOUR) == 0) then
-      set_progress(P_OPALARMOUR, 1)
-      sfx(5)
-      msg("Opal Armour procured!", 255, 0)
-      refresh()
-    end
-  elseif (zn == 23) then
-    -- Clear the zone so it does not repeat the combat
-    local x, y = get_ent_tile(HERO1)
-    set_zone(x, y, 0)
-
-    combat(59)
-
-    num_miners = num_miners - 1
-    -- Killed all miners?
-    if (num_miners == 0) and (get_progress(P_SIDEQUEST7) == 0) then
-      -- Place Sensar in position
-      set_progress(P_SIDEQUEST7, 1)
-      refresh()
-      bubble(0, "Uhhh...", "Where am I?")
-    end
-  end
-end
-
-
-function entity_handler(en)
-  local returning
-  if (en == 0) then -- Sensar
-    bubble(HERO1, "What happened? Are you OK?")
-    bubble(en, "I was attacked, but I couldn't use my RAGE against those ghosts.")
-    bubble(en, "Then I felt everthing fade away...")
-    bubble(HERO1, "If you're feeling better you can join up, or go back to the Manor to rest.")
-    returning = select_team({SENSAR})
-    add_to_manor(returning)
-    set_progress(P_SIDEQUEST7, 2)
-    refresh()
-  end 
 end
 
 

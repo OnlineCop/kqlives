@@ -607,7 +607,7 @@ static void process_entity (int target_entity)
    s_entity *ent = &g_ent[target_entity];
    s_player *player = 0;
    ent->scount = 0;
-   
+
    if (!ent->active)
       return;
 

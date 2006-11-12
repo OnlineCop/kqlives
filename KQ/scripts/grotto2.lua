@@ -5,6 +5,16 @@ function autoexec()
 end
 
 
+function entity_handler(en)
+  return
+end
+
+
+function postexec()
+  return
+end
+
+
 function refresh()
   if (get_progress(P_CANCELROD) > 0) then
     set_mtile("cancel", 265)
@@ -20,11 +30,6 @@ function refresh()
     set_mtile("treasure2", 265)
     set_zone("treasure2", 0)
   end
-end
-
-
-function postexec()
-  return
 end
 
 
@@ -62,9 +67,4 @@ function zone_handler(zn)
     refresh()
 
   end
-end
-
-
-function entity_handler(en)
-  return
 end

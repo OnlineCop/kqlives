@@ -5,13 +5,28 @@ function autoexec()
 end
 
 
-function refresh()
-  showch("treasure1", 20)
+function entity_handler(en)
+  return
 end
 
 
 function postexec()
   return
+end
+
+
+function refresh()
+  showch("treasure1", 20)
+end
+
+
+-- Show the status of a chest
+function showch(which_marker, which_chest)
+  -- Set tiles if -1 passed in as 'which_chest' or if chest already opened
+  if (which_chest < 0 or get_treasure(which_chest) == 1) then
+    set_mtile(which_marker, 95)
+    set_zone(which_marker, 0)
+  end
 end
 
 
@@ -31,20 +46,5 @@ function zone_handler(zn)
 
   -- zn == 4 is a no-combat tile
 
-  end
-end
-
-
-function entity_handler(en)
-  return
-end
-
-
--- Show the status of a chest
-function showch(which_marker, which_chest)
-  -- Set tiles if -1 passed in as 'which_chest' or if chest already opened
-  if (which_chest < 0 or get_treasure(which_chest) == 1) then
-    set_mtile(which_marker, 95)
-    set_zone(which_marker, 0)
   end
 end

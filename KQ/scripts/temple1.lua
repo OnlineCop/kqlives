@@ -22,8 +22,6 @@
 -- */
 
 
-
-
 function autoexec()
   local b
 
@@ -48,82 +46,6 @@ function autoexec()
   end    
 
   refresh()
-end
-
-
-function refresh()
-  local x, y
-  if (get_progress(P_ALTARSWITCH) == 1) then
-    x, y = marker("move_statue")
-    set_ftile(x, y - 1, 0)
-    set_btile(x, y, 29)
-    set_obs(x, y, 0)
-    set_ftile(x - 1, y - 1, 118)
-    set_btile(x - 1, y, 119)
-    set_obs(x - 1, y, 1)
-    set_zone(x, y, 9)
-    set_zone(x + 4, y + 1, 0)
-  end
-end
-
-
-function postexec()
-  return
-end
-
-
-function zone_handler(zn)
-  if (zn == 1) then
-    change_map("main", "temple1")
-
-  elseif (zn == 2) then
-    LOC_door("door2")
-
-  elseif (zn == 3) then
-    LOC_door("door3")
-
-  elseif (zn == 4) then
-    LOC_door("door4")
-
-  elseif (zn == 5) then
-    LOC_door("door5")
-
-  elseif (zn == 6) then
-    LOC_door("door6")
-
-  elseif (zn == 7) then
-    LOC_door("to_alter")
-    set_zone("to_alter", 12)
-
-  elseif (zn == 8) then
-    LOC_alter()
-
-  elseif (zn == 9) then
-    warp("ustairs1", 8)
-
-  elseif (zn == 10) then
-    change_map("temple2", "entrance")
-
-  elseif (zn == 11) then
-    bubble(HERO1, "Locked.")
-
-  elseif (zn == 12) then
-    warp("alter", 8)
-
-  elseif (zn == 13) then
-    LOC_door("to_alter")
-    set_zone("to_alter", 12)
-    warp("to_alter", 8)
-
-  elseif (zn == 14) then
-    warp("move_statue", 8)
-
-  elseif (zn == 15) then
-    if (get_progress(P_GOBLINITEM) == 0) then
-      combat(51)
-    end
-
-  end
 end
 
 
@@ -245,6 +167,102 @@ function entity_handler(en)
 end
 
 
+function postexec()
+  return
+end
+
+
+function refresh()
+  local x, y
+  if (get_progress(P_ALTARSWITCH) == 1) then
+    x, y = marker("move_statue")
+    set_ftile(x, y - 1, 0)
+    set_btile(x, y, 29)
+    set_obs(x, y, 0)
+    set_ftile(x - 1, y - 1, 118)
+    set_btile(x - 1, y, 119)
+    set_obs(x - 1, y, 1)
+    set_zone(x, y, 9)
+    set_zone(x + 4, y + 1, 0)
+  end
+end
+
+
+function zone_handler(zn)
+  if (zn == 1) then
+    change_map("main", "temple1")
+
+  elseif (zn == 2) then
+    LOC_door("door2")
+
+  elseif (zn == 3) then
+    LOC_door("door3")
+
+  elseif (zn == 4) then
+    LOC_door("door4")
+
+  elseif (zn == 5) then
+    LOC_door("door5")
+
+  elseif (zn == 6) then
+    LOC_door("door6")
+
+  elseif (zn == 7) then
+    LOC_door("to_alter")
+    set_zone("to_alter", 12)
+
+  elseif (zn == 8) then
+    LOC_alter()
+
+  elseif (zn == 9) then
+    warp("ustairs1", 8)
+
+  elseif (zn == 10) then
+    change_map("temple2", "entrance")
+
+  elseif (zn == 11) then
+    bubble(HERO1, "Locked.")
+
+  elseif (zn == 12) then
+    warp("alter", 8)
+
+  elseif (zn == 13) then
+    LOC_door("to_alter")
+    set_zone("to_alter", 12)
+    warp("to_alter", 8)
+
+  elseif (zn == 14) then
+    warp("move_statue", 8)
+
+  elseif (zn == 15) then
+    if (get_progress(P_GOBLINITEM) == 0) then
+      combat(51)
+    end
+
+  end
+end
+
+
+function LOC_alter()
+  if (get_progress(P_ALTARSWITCH) == 0) then
+    bubble(HERO1, "A switch!")
+    sfx(26)
+    set_progress(P_ALTARSWITCH, 1)
+    refresh()
+  end
+end
+
+
+function LOC_door(door)
+  local x, y = marker(door)
+  set_obs  (x, y, 0)
+  set_zone (x, y, 0)
+  set_ftile(x, y, 154)
+  set_btile(x, y + 1, 156)
+  sfx(26)
+end
+
+
 function LOC_join_temmin(en)
   local id, a
 
@@ -293,24 +311,4 @@ function LOC_join_temmin(en)
   set_ent_active(en, 0)
   set_progress(P_PLAYERS, get_progress(P_PLAYERS) + 1)
   set_progress(P_TALK_TEMMIN, 4)
-end
-
-
-function LOC_alter()
-  if (get_progress(P_ALTARSWITCH) == 0) then
-    bubble(HERO1, "A switch!")
-    sfx(26)
-    set_progress(P_ALTARSWITCH, 1)
-    refresh()
-  end
-end
-
-
-function LOC_door(door)
-  local x, y = marker(door)
-  set_obs  (x, y, 0)
-  set_zone (x, y, 0)
-  set_ftile(x, y, 154)
-  set_btile(x, y + 1, 156)
-  sfx(26)
 end

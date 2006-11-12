@@ -31,38 +31,6 @@ function autoexec()
 end
 
 
-function refresh()
-  if (get_progress(P_TALK_TSORIN) > 3) then
-    place_ent(4, 39, 14)
-    set_ent_facing(4, FACE_DOWN)
-  end
-end
-
-function postexec()
-  return
-end
-
-
-function zone_handler(zn)
-  if (zn == 1) then
-    change_map("main", "fort", 0, -1)
-
-  elseif (zn == 2) then
-    change_map("main", "fort", 0, 2)
-
-  elseif (zn == 3) then
-    door_in(40, 16, 36, 10, 44, 18)
-
-  elseif (zn == 4) then
-    door_out(17, 31)
-
-  elseif (zn == 5) then
-    touch_fire(party[0])
-
-  end
-end
-
-
 function entity_handler(en)
   if (en == 0) then
     bubble(en, "We have no outposts in goblin territory. If you get into real trouble, you'll have to go all the way back to Andra.")
@@ -118,6 +86,39 @@ function entity_handler(en)
     else
       bubble(en, "Best of luck to you.")
     end
+
+  end
+end
+
+
+function postexec()
+  return
+end
+
+
+function refresh()
+  if (get_progress(P_TALK_TSORIN) > 3) then
+    place_ent(4, 39, 14)
+    set_ent_facing(4, FACE_DOWN)
+  end
+end
+
+
+function zone_handler(zn)
+  if (zn == 1) then
+    change_map("main", "fort", 0, -1)
+
+  elseif (zn == 2) then
+    change_map("main", "fort", 0, 2)
+
+  elseif (zn == 3) then
+    door_in("room_i")
+
+  elseif (zn == 4) then
+    door_out("room_o")
+
+  elseif (zn == 5) then
+    touch_fire(party[0])
 
   end
 end

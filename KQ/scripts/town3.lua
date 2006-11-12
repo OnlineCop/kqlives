@@ -30,33 +30,73 @@ function autoexec()
 end
 
 
-function refresh()
-  if (get_treasure(12) == 1) then
-    set_obs("treasure1", 0)
-    set_zone("treasure1", 0)
-  end
+function entity_handler(en)
+  if (en == 0) then
+    bubble(en, "This is the town of Andra.")
 
-  if (get_treasure(13) == 1) then
-    set_zone("treasure2", 0)
-  end
+  elseif (en == 1) then
+    LOC_talk_tsorin(en)
 
-  if (get_treasure(14) == 1) then
-    set_zone("treasure3", 0)
-  end
+  elseif (en == 2) then
+    bubble(en, "I wish the weapon shop sold slingshots.")
 
-  if (get_treasure(100) == 1) then
-    set_zone("treasure4", 0)
-  end
+  elseif (en == 3 or en == 4) then
+    bubble(en, "We're guarding against goblins.")
 
-  if (get_treasure(99) == 1) then
-    set_mtile("treasure5", 0)
-    set_zone("treasure5", 0)
+  elseif (en == 8) then
+    bubble(en, "Caffeine, caffeine, caffeine, caffeine...")
+
+  elseif (en == 9) then
+    LOC_talk_oldguy(en)
+
   end
 end
 
 
 function postexec()
   return
+end
+
+
+function refresh()
+  showch("treasure1", 12)
+  showch("treasure2", 13)
+  showch("treasure3", 14)
+  showch("treasure4", 99)
+  showch("treasure5", 100)
+end
+
+
+-- Show the status of treasures
+function showch(which_marker, which_chest)
+  -- Set tiles if chest already opened
+  if (get_treasure(which_chest) == 1) then
+    set_zone(which_marker, 0)
+  end
+  
+  -- Only treasure1 needs to change its obstacle setting
+  if (which_marker == "treasure1") then
+    set_obs(which_marker, 0)
+  end
+
+  -- Only treasure4 needs to change its Layer2 tile
+  if (which_marker == "treasure4") then
+    set_mtile(which_marker, 0)
+  end
+end
+
+
+-- Show the status of treasures
+function showch(which_marker, which_chest)
+  -- Set tiles if chest already opened
+  if (get_treasure(which_chest) == 1) then
+    set_zone(which_marker, 0)
+  end
+  
+  -- Only treasure1 needs to change its obstacle setting
+  if (which_marker == "treasure1") then
+    set_obs(which_marker, 0)
+  end
 end
 
 
@@ -165,29 +205,6 @@ function zone_handler(zn)
   elseif (zn == 34) then
     chest(100, 0, 200)
     refresh()
-
-  end
-end
-
-
-function entity_handler(en)
-  if (en == 0) then
-    bubble(en, "This is the town of Andra.")
-
-  elseif (en == 1) then
-    LOC_talk_tsorin(en)
-
-  elseif (en == 2) then
-    bubble(en, "I wish the weapon shop sold slingshots.")
-
-  elseif (en == 3 or en == 4) then
-    bubble(en, "We're guarding against goblins.")
-
-  elseif (en == 8) then
-    bubble(en, "Caffeine, caffeine, caffeine, caffeine...")
-
-  elseif (en == 9) then
-    LOC_talk_oldguy(en)
 
   end
 end

@@ -5,6 +5,11 @@ function autoexec()
 end
 
 
+function entity_handler(en)
+  return
+end
+
+
 function postexec()
   return
 end
@@ -24,9 +29,4 @@ function zone_handler(zn)
     set_save(1)
 
   end
-end
-
-
-function entity_handler(en)
-  return
 end

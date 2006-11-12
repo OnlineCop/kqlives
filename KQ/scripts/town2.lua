@@ -76,6 +76,192 @@ function autoexec()
 end
 
 
+function entity_handler(en)
+  if (en == 0) then
+    if (get_progress(P_WARPSTONE) == 1) then
+      bubble(en, "Back again, are you?")
+    else
+      bubble(en, "You must be an adventurer. There has been an unusual number of you people around lately.")
+    end
+    if (get_progress(P_FOUNDMAYOR) > 0) then
+      bubble(en, "Oh, and thank you for finding the mayor.")
+    end
+
+  elseif (en == 1) then
+    if (get_progress(P_FOUNDMAYOR) == 0) then
+      bubble(en, "My husband is late again.")
+    elseif (get_progress(P_FOUNDMAYOR) == 1) then
+      bubble(en, "I'm getting so worried...")
+      bubble(en, "You don't think Malkaron has something to do with it?")
+    elseif (get_progress(P_FOUNDMAYOR) == 2) then
+      bubble(en, "Where is that man?")
+    else
+      bubble(en, "Oh... that bad man, making me worry like this, I'm gonna kill him!")
+    end
+
+  elseif (en == 2) then
+    if (get_progress(P_FIGHTONBRIDGE) > 4) then
+      if (get_progress(P_SHOWBRIDGE) == 2) then
+        bubble(en, "Thank you so much for restoring the trade route to the citizens of Randen!")
+      else
+        bubble(en, "Welcome to Randen.")
+      end
+    else
+      bubble(en, "This is the town of Randen. We're mostly a coastal trade town, but with the bridge out, trade is extremely slow.")
+      bubble(en, "Do you think it has something to do with Malkaron? We've heard a lot of rumors about him as of late...")
+    end
+
+  elseif (en == 3) then
+    if (get_progress(P_FOUNDMAYOR) > 1 and get_progress(P_MAYORGUARD1) > 0 and get_progress(P_MAYORGUARD2) > 0) then
+      bubble(en, "My husband is so excited that everyone returned safely. He tends to get forgetful when he's like this. Sometimes he doesn't even lock up after himself on his way to work.")
+      set_obs("room_5door", 0)
+      set_zone ("room_5door", 0)
+    elseif (get_progress(P_FIGHTONBRIDGE) > 4) then
+      bubble(en, "Good day.")
+    else
+      if (get_progress(P_BLADE) == 0)  then
+        -- PH: Just my little joke hehe
+        bubble(en, "I'm just preparing some vegetables.")
+        bubble(HERO1, "That's a strange knife you've got there.")
+        bubble(en, "What? Oh, this. Yes, it's a Phoenix Blade.")
+        bubble(en, "I found it lying about under a pile of leaves in the forest.")
+        bubble(HERO1, "Isn't there supposed to be someone out looking for that?")
+        bubble(en, "I heard that, too, but it's been ages and no-one has turned up.")
+        bubble(en, "I would give it back, but I need it for slicing carrots!")
+        bubble(HERO1, "Your secret's safe with me.")
+        set_progress(P_BLADE, 1)
+      else
+        bubble(en, "Oh, goodness, I didn't make enough for company... sorry.")
+      end
+    end
+
+  elseif (en == 4) then
+    if (get_progress(P_FIGHTONBRIDGE) > 4) then
+      if (get_progress(P_SHOWBRIDGE) == 2) then
+        bubble(en, "Wow! Mom says you're the ones who beat up the bad guys! You're so cool!")
+      else
+        bubble(en, "Hi!")
+      end
+    else
+      bubble(en, "I'm hungry, I hope mom is done making lunch soon.")
+    end
+
+  elseif (en == 5) then
+    if (get_progress(P_FIGHTONBRIDGE) > 4) then
+      if (get_progress(P_WARPSTONE) == 1) then
+        bubble(en, "Business is good.")
+      else
+        bubble(en, "Now that the bridge is repaired I'm back in business!")
+      end
+
+      if (get_treasure(9) == 0) then
+        bubble(en, "I hear you had something to do with speeding along the bridge's construction. I'd like you to have this.")
+        chest(9, I_B_SHOCK, 1)
+      end
+
+      if (get_progress(P_SHOWBRIDGE) < 2) then
+        bubble(en, "You should look around there to see if the workers left anything behind.")
+      else
+        if (get_treasure(8) == 0) then
+          bubble(en, "I found this Olginar Seed on the bridge. You can have it.")
+          chest(8, I_OSEED, 1)
+        end
+        if (get_treasure(90) == 0) then
+          bubble(en, "Oh, and I found this curious artifact there as well...")
+          chest(90, I_REGENERATOR, 1)
+        end
+      end
+    else
+      bubble(en, "If you haven't already noticed, the bridge across Brayden river is gone.")
+      bubble(en, "It appears that some travelers were stopped by Malkaron's brigands on the bridge, resulting in a volley of magic that left it in cinders.")
+      set_ent_script(en, "W25")
+      wait_for_entity(en)
+      bubble(en, "A new bridge is supposed to be built soon. This town can't survive for long without our major trade route.")
+    end
+
+  elseif (en == 6) then
+    if (get_progress(P_WARPSTONE) == 1) then
+      if (get_progress(P_FOUNDMAYOR) < 2) then
+        bubble(en, "Our mayor is still missing. We're not sure what to do at this point.")
+      elseif (get_progress(P_FOUNDMAYOR) == 2) then
+        bubble(en, "$0! The mayor is back now, thank you! He wants to see you right away!")
+      else
+        bubble(en, "Thank you again for everything!")
+      end
+    else
+      if (get_progress(P_FOUNDMAYOR) == 0) then
+        if (get_progress(P_FIGHTONBRIDGE) > 4) then
+          bubble(en, "The mayor has yet to return from Andra. A few of our men are out looking for him as we speak.")
+        else
+          bubble(en, "The mayor was going to Andra to talk to the Council there. I think that he should have been back by now.")
+          bubble(en, "We may have to go and look for him soon. We need to make sure that he is safe.")
+        end
+      elseif (get_progress(P_FOUNDMAYOR) < 2) then
+        bubble(en, "The mayor is back now, thanks to you. However, the mayor is not seeing any visitors for a while.")
+        bubble(en, "He is still recovering from his ordeal.")
+      else
+        bubble(en, "I have a scripting error.")
+      end
+    end
+
+  elseif (en == 7) then
+    if (get_progress(P_WARPSTONE) == 1) then
+      bubble(en, "Are you enjoying your stay?")
+    else
+      if (get_progress(P_FOUNDMAYOR) == 0) then
+        bubble(en, "The mayor left for Andra with an adventurer that he had just hired and his usual contingent of guards.")
+        bubble(en, "I wonder if they avoided the trouble at the bridge?")
+      else
+        bubble(en, "Thank you!")
+      end
+    end
+
+  elseif (en == 8) then
+    bubble(en, "I wonder why those adventurers were stopped at the bridge? I'm not sure I want to try crossing it just yet.")
+
+  elseif (en == 9) then
+    bubble(en, "How long does it take to build a bridge?")
+
+  elseif (en == 10) then
+    LOC_join_ajathar(en)
+    refresh()
+
+  elseif (en == 11) then
+    bubble(en, "Hey, you can't be back here! What are you trying to do, steal from me?")
+
+  elseif (en == 12) then
+    if (get_progress(P_MAYORGUARD1) == 1) then
+      bubble(en, "Thanks for rescuing me back there! Here, have this:")
+      set_gp(get_gp() + 1000)
+      msg("You acquired 1000 gold pieces!")
+      set_progress(P_MAYORGUARD1, 2)
+    else
+      bubble(en, "Those forces of Malkaron's sure are tough!")
+    end
+
+  elseif (en == 13) then
+    LOC_join_casandra(en)
+    refresh()
+
+  elseif (en == 14) then
+    if (get_progress(P_FOUNDMAYOR) < 2) then
+      bubble(en, "How did you get in here past my locked door?")
+    elseif (get_progress(P_FOUNDMAYOR) == 2) then
+      bubble(en, "Oh, $0, thank you for rescuing me!")
+      set_progress(P_FOUNDMAYOR, 3)
+    else
+      bubble(en, "I had a spa installed in my house! What do you think?")
+    end
+
+  end
+end
+
+
+function postexec()
+  return
+end
+
+
 function refresh()
   local x, y
   showch("treasure1", -1)
@@ -133,8 +319,15 @@ function refresh()
 end
 
 
-function postexec()
-  return
+-- Show the status of a treasures
+function showch(which_marker, which_chest)
+  -- If -1 passed in,  as 'which_chest' or if chest already opened
+  if (which_chest < 0) then
+    set_obs(which_marker, 0)
+  elseif (get_treasure(which_chest) == 1) then
+    set_mtile(which_marker, 265)
+  end
+  set_zone(which_marker, 0)
 end
 
 
@@ -323,203 +516,10 @@ function zone_handler(zn)
 end
 
 
-function entity_handler(en)
-  if (en == 0) then
-    if (get_progress(P_WARPSTONE) == 1) then
-      bubble(en, "Back again, are you?")
-    else
-      bubble(en, "You must be an adventurer. There has been an unusual number of you people around lately.")
-    end
-    if (get_progress(P_FOUNDMAYOR) > 0) then
-      bubble(en, "Oh, and thank you for finding the mayor.")
-    end
-
-  elseif (en == 1) then
-    if (get_progress(P_FOUNDMAYOR) == 0) then
-      bubble(en, "My husband is late again.")
-    elseif (get_progress(P_FOUNDMAYOR) == 1) then
-      bubble(en, "I'm getting so worried...")
-      bubble(en, "You don't think Malkaron has something to do with it?")
-    elseif (get_progress(P_FOUNDMAYOR) == 2) then
-      bubble(en, "Where is that man?")
-    else
-      bubble(en, "Oh... that bad man, making me worry like this, I'm gonna kill him!")
-    end
-
-  elseif (en == 2) then
-    if (get_progress(P_FIGHTONBRIDGE) > 4) then
-      if (get_progress(P_SHOWBRIDGE) == 2) then
-        bubble(en, "Thank you so much for restoring the trade route to the citizens of Randen!")
-      else
-        bubble(en, "Welcome to Randen.")
-      end
-    else
-      bubble(en, "This is the town of Randen. We're mostly a coastal trade town, but with the bridge out, trade is extremely slow.")
-      bubble(en, "Do you think it has something to do with Malkaron? We've heard a lot of rumors about him as of late...")
-    end
-
-  elseif (en == 3) then
-    if (get_progress(P_FOUNDMAYOR) > 1 and get_progress(P_MAYORGUARD1) > 0 and get_progress(P_MAYORGUARD2) > 0) then
-      bubble(en, "My husband is so excited that everyone returned safely. He tends to get forgetful when he's like this. Sometimes he doesn't even lock up after himself on his way to work.")
-      set_obs("room_5door", 0)
-      set_zone ("room_5door", 0)
-    elseif (get_progress(P_FIGHTONBRIDGE) > 4) then
-      bubble(en, "Good day.")
-    else
-      if (get_progress(P_BLADE) == 0)  then
-        -- PH: Just my little joke hehe
-        bubble(en, "I'm just preparing some vegetables.")
-        bubble(HERO1, "That's a strange knife you've got there.")
-        bubble(en, "What? Oh, this. Yes, it's a Phoenix Blade.")
-        bubble(en, "I found it lying about under a pile of leaves in the forest.")
-        bubble(HERO1, "Isn't there supposed to be someone out looking for that?")
-        bubble(en, "I heard that, too, but it's been ages and no-one has turned up.")
-        bubble(en, "I would give it back, but I need it for slicing carrots!")
-        bubble(HERO1, "Your secret's safe with me.")
-        set_progress(P_BLADE, 1)
-      else
-        bubble(en, "Oh, goodness, I didn't make enough for company... sorry.")
-      end
-    end
-
-  elseif (en == 4) then
-    if (get_progress(P_FIGHTONBRIDGE) > 4) then
-      if (get_progress(P_SHOWBRIDGE) == 2) then
-        bubble(en, "Wow! Mom says you're the ones who beat up the bad guys! You're so cool!")
-      else
-        bubble(en, "Hi!")
-      end
-    else
-      bubble(en, "I'm hungry, I hope mom is done making lunch soon.")
-    end
-
-  elseif (en == 5) then
-    if (get_progress(P_FIGHTONBRIDGE) > 4) then
-      if (get_progress(P_WARPSTONE) == 1) then
-        bubble(en, "Business is good.")
-      else
-        bubble(en, "Now that the bridge is repaired I'm back in business!")
-      end
-
-      if (get_treasure(9) == 0) then
-        bubble(en, "I hear you had something to do with speeding along the bridge's construction. I'd like you to have this.")
-        chest(9, I_B_SHOCK, 1)
-      end
-
-      if (get_progress(P_SHOWBRIDGE) < 2) then
-        bubble(en, "You should look around there to see if the workers left anything behind.")
-      else
-        if (get_treasure(8) == 0) then
-          bubble(en, "I found this Olginar Seed on the bridge. You can have it.")
-          chest(8, I_OSEED, 1)
-        end
-        if (get_treasure(90) == 0) then
-          bubble(en, "Oh, and I found this curious artifact there as well...")
-          chest(90, I_REGENERATOR, 1)
-        end
-      end
-    else
-      bubble(en, "If you haven't already noticed, the bridge across Brayden river is gone.")
-      bubble(en, "It appears that some travelers were stopped by Malkaron's brigands on the bridge, resulting in a volley of magic that left it in cinders.")
-      set_ent_script(en, "W25")
-      wait_for_entity(en)
-      bubble(en, "A new bridge is supposed to be built soon. This town can't survive for long without our major trade route.")
-    end
-
-  elseif (en == 6) then
-    if (get_progress(P_WARPSTONE) == 1) then
-      if (get_progress(P_FOUNDMAYOR) < 2) then
-        bubble(en, "Our mayor is still missing. We're not sure what to do at this point.")
-      elseif (get_progress(P_FOUNDMAYOR) == 2) then
-        bubble(en, "$0! The mayor is back now, thank you! He wants to see you right away!")
-      else
-        bubble(en, "Thank you again for everything!")
-      end
-    else
-      if (get_progress(P_FOUNDMAYOR) == 0) then
-        if (get_progress(P_FIGHTONBRIDGE) > 4) then
-          bubble(en, "The mayor has yet to return from Andra. A few of our men are out looking for him as we speak.")
-        else
-          bubble(en, "The mayor was going to Andra to talk to the Council there. I think that he should have been back by now.")
-          bubble(en, "We may have to go and look for him soon. We need to make sure that he is safe.")
-        end
-      elseif (get_progress(P_FOUNDMAYOR) < 2) then
-        bubble(en, "The mayor is back now, thanks to you. However, the mayor is not seeing any visitors for a while.")
-        bubble(en, "He is still recovering from his ordeal.")
-      else
-        bubble(en, "I have a scripting error.")
-      end
-    end
-
-  elseif (en == 7) then
-    if (get_progress(P_WARPSTONE) == 1) then
-      bubble(en, "Are you enjoying your stay?")
-    else
-      if (get_progress(P_FOUNDMAYOR) == 0) then
-        bubble(en, "The mayor left for Andra with an adventurer that he had just hired and his usual contingent of guards.")
-        bubble(en, "I wonder if they avoided the trouble at the bridge?")
-      else
-        bubble(en, "Thank you!")
-      end
-    end
-
-  elseif (en == 8) then
-    bubble(en, "I wonder why those adventurers were stopped at the bridge? I'm not sure I want to try crossing it just yet.")
-
-  elseif (en == 9) then
-    bubble(en, "How long does it take to build a bridge?")
-
-  elseif (en == 10) then
-    LOC_join_ajathar(en)
-    refresh()
-
-  elseif (en == 11) then
-    bubble(en, "Hey, you can't be back here! What are you trying to do, steal from me?")
-
-  elseif (en == 12) then
-    if (get_progress(P_MAYORGUARD1) == 1) then
-      bubble(en, "Thanks for rescuing me back there! Here, have this:")
-      set_gp(get_gp() + 1000)
-      msg("You acquired 1000 gold pieces!")
-      set_progress(P_MAYORGUARD1, 2)
-    else
-      bubble(en, "Those forces of Malkaron's sure are tough!")
-    end
-
-  elseif (en == 13) then
-    LOC_join_casandra(en)
-    refresh()
-
-  elseif (en == 14) then
-    if (get_progress(P_FOUNDMAYOR) < 2) then
-      bubble(en, "How did you get in here past my locked door?")
-    elseif (get_progress(P_FOUNDMAYOR) == 2) then
-      bubble(en, "Oh, $0, thank you for rescuing me!")
-      set_progress(P_FOUNDMAYOR, 3)
-    else
-      bubble(en, "I had a spa installed in my house! What do you think?")
-    end
-
-  end
-end
-
-
--- Show the status of a treasures
-function showch(which_marker, which_chest)
-  -- If -1 passed in,  as 'which_chest' or if chest already opened
-  if (which_chest < 0) then
-    set_obs(which_marker, 0)
-  elseif (get_treasure(which_chest) == 1) then
-    set_mtile(which_marker, 265)
-  end
-  set_zone(which_marker, 0)
-end
-
-
 function LOC_door(which_marker)
   sfx(25)
 
-  local x, y = which_marker
+  local x, y = marker(which_marker)
   set_btile(x, y, 0)
   set_mtile(x, y + 1, 519)
   set_ftile(x, y, 518)

@@ -28,66 +28,6 @@ function autoexec()
 end
 
 
-function postexec()
-  return
-end
-
-
-function refresh()
-  showch("treasure1", 8)
-end
-
-
-function zone_handler(zn)
-  if (zn == 1) then
-    if (get_progress(P_FIGHTONBRIDGE) == 0 or get_progress(P_FIGHTONBRIDGE) > 2) then
-      if (get_progress(P_FIGHTONBRIDGE) == 3) then
-        set_progress(P_FIGHTONBRIDGE, 4)
-      end
-      change_map("main", "bridge", -1, 0)
-      return
-    end
-    if (get_progress(P_FIGHTONBRIDGE) == 1) then
-      bubble(255, "Ahhhhh!!!")
-      bubble(255, "Help!")
-      set_ent_movemode(2, 2)
-      set_ent_movemode(3, 2)
-      set_ent_movemode(4, 2)
-      set_ent_movemode(5, 2)
-      set_ent_movemode(6, 2)
-      wait_for_entity(2, 6)
-      set_ent_movemode(2, 0)
-      set_ent_movemode(3, 0)
-      set_ent_movemode(4, 0)
-      set_ent_movemode(5, 0)
-      set_ent_movemode(6, 0)
-      set_progress(P_FIGHTONBRIDGE, 2)
-      x, y = marker("monster")
-      set_btile(x, y, 176)
-      set_zone(x, y, 3)
-      set_obs(x, y, 1)
-    end
-
-  elseif (zn == 2) then
-    chest(8, I_OSEED, 2)
-    refresh()
-
-  elseif (zn == 3) then
-    if (get_progress(P_FIGHTONBRIDGE) == 2) then
-      can_run = 0
-      combat(0)
-      can_run = 1
-      set_progress(P_FIGHTONBRIDGE, 3)
-      x, y = marker("monster")
-      set_btile(x, y, 160)
-      set_zone(x, y, 0)
-      set_obs(x, y, 1)
-    end
-
-  end
-end
-
-
 function entity_handler(en)
   local a = get_progress(P_FIGHTONBRIDGE)
   -- TT comments:
@@ -189,11 +129,71 @@ function entity_handler(en)
 end
 
 
+function postexec()
+  return
+end
+
+
+function refresh()
+  showch("treasure1", 8)
+end
+
+
 -- Show the status of a treasures
 function showch(which_marker, which_chest)
   -- Set tiles if -1 passed in as 'which_chest' or if chest already opened
   if (get_treasure(which_chest) == 1) then
     set_ftile(which_marker, 0)
     set_zone(which_marker, 0)
+  end
+end
+
+
+function zone_handler(zn)
+  if (zn == 1) then
+    if (get_progress(P_FIGHTONBRIDGE) == 0 or get_progress(P_FIGHTONBRIDGE) > 2) then
+      if (get_progress(P_FIGHTONBRIDGE) == 3) then
+        set_progress(P_FIGHTONBRIDGE, 4)
+      end
+      change_map("main", "bridge", -1, 0)
+      return
+    end
+    if (get_progress(P_FIGHTONBRIDGE) == 1) then
+      bubble(255, "Ahhhhh!!!")
+      bubble(255, "Help!")
+      set_ent_movemode(2, 2)
+      set_ent_movemode(3, 2)
+      set_ent_movemode(4, 2)
+      set_ent_movemode(5, 2)
+      set_ent_movemode(6, 2)
+      wait_for_entity(2, 6)
+      set_ent_movemode(2, 0)
+      set_ent_movemode(3, 0)
+      set_ent_movemode(4, 0)
+      set_ent_movemode(5, 0)
+      set_ent_movemode(6, 0)
+      set_progress(P_FIGHTONBRIDGE, 2)
+      x, y = marker("monster")
+      set_btile(x, y, 176)
+      set_zone(x, y, 3)
+      set_obs(x, y, 1)
+    end
+
+  elseif (zn == 2) then
+    chest(8, I_OSEED, 2)
+    refresh()
+
+  elseif (zn == 3) then
+    if (get_progress(P_FIGHTONBRIDGE) == 2) then
+      can_run = 0
+      combat(0)
+      can_run = 1
+      set_progress(P_FIGHTONBRIDGE, 3)
+      x, y = marker("monster")
+      set_btile(x, y, 160)
+      set_zone(x, y, 0)
+      set_obs(x, y, 1)
+    end
+
   end
 end

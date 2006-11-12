@@ -17,6 +17,18 @@ function autoexec()
 end
 
 
+function entity_handler(en)
+  if (en == 2) then -- You have met Ayla
+    LOC_ayla_join(en)
+  end
+end
+
+
+function postexec()
+  return
+end
+
+
 function refresh()
   local x, y
 
@@ -88,11 +100,6 @@ function refresh()
   if (get_treasure(105) == 1) then
     set_mtile(x + 1, y + 1, 265)
   end
-end
-
-
-function postexec()
-  return
 end
 
 
@@ -212,13 +219,6 @@ function zone_handler(zn)
 end
 
 
-function entity_handler(en)
-  if (en == 2) then -- // You've met Ayla
-    LOC_ayla_join(en)
-  end
-end
-
-
 function LOC_ayla_join(en)
   if (get_progress(P_AYLA_QUEST) == 0) then
     bubble(en, "Wha...? Oh, it's you!")
@@ -243,6 +243,7 @@ function LOC_ayla_join(en)
     if (id[1]) then
       -- Need the whole "okay, meet you back at the manor" dialog here
     end
+  end
 end
 
 

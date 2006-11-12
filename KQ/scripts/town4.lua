@@ -36,14 +36,74 @@ function autoexec()
 end
 
 
--- Show the status of a treasures
-function showch(which_marker, which_chest)
-  -- Set tiles if -1 passed in as 'which_chest' or if chest already opened
-  if (which_chest < 0 or get_treasure(which_chest) == 1) then
-    set_zone(which_marker, 0)
+function entity_handler(en)
+  if (en == 0) then
+    if (get_progress(P_TALKGELIK) == 0) then
+      bubble(en, "Opal armor? I have no idea where you would find something like that.")
+      bubble(en, "You should go talk to Gelik. He's old... he knows all kinds of stuff. He lives up in the north end of town.")
+    else
+      bubble(en, "So how do you like our little town?")
+      if (party[0] == CASANDRA) then
+        bubble(HERO1, "Oh, not too bad. Needs more flowers, though...")
+      end
+    end
+
+  elseif (en == 1) then
+    bubble(en, "I planted all of the flowers in this town. I love flowers.")
+    if (party[0] == CASANDRA) then
+      bubble(HERO1, "Well, you've certainly done a good job on them. Have you ever considered birchleaf fertilizer for extra color?")
+      wait(50)
+    end
+    bubble(en, "Did I mention that I love flowers?")
+
+  elseif (en == 2) then
+    bubble(en, "Did you meet the old flower lady? She's nuts!")
+
+  elseif (en == 3) then
+    bubble(en, "You should go talk to Trezin on the other side of town. He's selling his house, and it's a really good deal.")
+
+  elseif (en == 4) then
+    bubble(en, "Oh, how I love to look into your eyes...")
+
+  elseif (en == 5) then
+    bubble(en, "Oh, you're so sweet!")
+
+  elseif (en == 6) then
+    LOC_buy_house(en)
+
+  elseif (en == 7) then
+    LOC_talk_gelik(en)
+
+  elseif (en == 8) then
+    bubble(en, "Hello, nice day isn't it?")
+
+  elseif (en == 9) then
+    bubble(en, "So the duck says, 200 gp... same as in town.")
+    bubble(en, "Ha ha ha ha!")
+    bubble(en, "Don't you get it?")
+    wait(50)
+    bubble(en, "You don't get it.")
+
+  elseif (en == 10) then
+    bubble(en, "My roommate tells the worst jokes.")
+
+  elseif (en == 11) then
+    bubble(en, "...Huh?",
+           "Oh, hi... I'm sick.")
+
+  elseif (en == 12) then
+    bubble(en, pick("zzz", "ZZZ", "ZZZ... Long live KQlives!... zzz..."))
+
+  elseif (en == 13) then
+    bubble(en, "My son is sick in bed.")
+
   end
-  if (which_chest == 81) then
-    set_mtile(which_marker, 237)
+end
+
+
+function postexec()
+  if (get_progress(P_WARPEDTOT4) == 2) then
+    LOC_lost_partner()
   end
 end
 
@@ -56,9 +116,16 @@ function refresh()
 end
 
 
-function postexec()
-  if (get_progress(P_WARPEDTOT4) == 2) then
-    LOC_lost_partner()
+-- Show the status of treasures
+function showch(which_marker, which_chest)
+  -- Set tiles if chest already opened
+  if (get_treasure(which_chest) == 1) then
+    set_zone(which_marker, 0)
+  end
+
+  -- Only the table where the warp spell is located needs to change its tile
+  if (which_marker == "warp_spell") then
+    set_mtile(which_marker, 237)
   end
 end
 
@@ -204,71 +271,6 @@ function zone_handler(zn)
 
   elseif (zn == 45) then-- armor shop door
     bubble(HERO1, "Locked.")
-
-  end
-end
-
-
-function entity_handler(en)
-  if (en == 0) then
-    if (get_progress(P_TALKGELIK) == 0) then
-      bubble(en, "Opal armor? I have no idea where you would find something like that.")
-      bubble(en, "You should go talk to Gelik. He's old... he knows all kinds of stuff. He lives up in the north end of town.")
-    else
-      bubble(en, "So how do you like our little town?")
-      if (party[0] == CASANDRA) then
-        bubble(HERO1, "Oh, not too bad. Needs more flowers, though...")
-      end
-    end
-
-  elseif (en == 1) then
-    bubble(en, "I planted all of the flowers in this town. I love flowers.")
-    if (party[0] == CASANDRA) then
-      bubble(HERO1, "Well, you've certainly done a good job on them. Have you ever considered birchleaf fertilizer for extra color?")
-      wait(50)
-    end
-    bubble(en, "Did I mention that I love flowers?")
-
-  elseif (en == 2) then
-    bubble(en, "Did you meet the old flower lady? She's nuts!")
-
-  elseif (en == 3) then
-    bubble(en, "You should go talk to Trezin on the other side of town. He's selling his house, and it's a really good deal.")
-
-  elseif (en == 4) then
-    bubble(en, "Oh, how I love to look into your eyes...")
-
-  elseif (en == 5) then
-    bubble(en, "Oh, you're so sweet!")
-
-  elseif (en == 6) then
-    LOC_buy_house(en)
-
-  elseif (en == 7) then
-    LOC_talk_gelik(en)
-
-  elseif (en == 8) then
-    bubble(en, "Hello, nice day isn't it?")
-
-  elseif (en == 9) then
-    bubble(en, "So the duck says, 200 gp... same as in town.")
-    bubble(en, "Ha ha ha ha!")
-    bubble(en, "Don't you get it?")
-    wait(50)
-    bubble(en, "You don't get it.")
-
-  elseif (en == 10) then
-    bubble(en, "My roommate tells the worst jokes.")
-
-  elseif (en == 11) then
-    bubble(en, "...Huh?",
-           "Oh, hi... I'm sick.")
-
-  elseif (en == 12) then
-    bubble(en, pick("zzz", "ZZZ", "ZZZ... Long live KQlives!... zzz..."))
-
-  elseif (en == 13) then
-    bubble(en, "My son is sick in bed.")
 
   end
 end

@@ -68,7 +68,8 @@ static void set_textpos (int);
  *
  * \sa relay()
  */
-enum m_mode {
+enum m_mode
+{
    M_UNDEF,
    M_SPACE,
    M_NONSPACE,
@@ -419,6 +420,7 @@ static void draw_char (int xw, int yw)
                vert = -1;  // Up
             }
 
+            /* Moving diagonally means both horiz and vert are non-zero */
             if (horiz && vert) {
 
                /* When moving down, we will draw over the spot directly below
@@ -466,7 +468,7 @@ static void draw_char (int xw, int yw)
              && g_ent[i].tiley <= view_y2) {
             if (dx >= -16 && dx <= 336 && dy >= -16 && dy <= 256) {
                spr = (g_ent[i].eid >= ID_ENEMY) ? eframes[g_ent[i].chrx][fr] :
-                                                  frames[g_ent[i].eid][fr];
+                  frames[g_ent[i].eid][fr];
 
                if (g_ent[i].transl == 0)
                   draw_sprite (double_buffer, spr, dx, dy);
@@ -743,8 +745,7 @@ static void draw_playerbound ()
    s_bound *b, *found = NULL;
 
    /* Is the player standing inside a bounding area? */
-   for (b = g_map.bound_box; b < g_map.bound_box + g_map.num_bound_boxes;
-        ++b) {
+   for (b = g_map.bound_box; b < g_map.bound_box + g_map.num_bound_boxes; ++b) {
       /* Check if first person in party is standing inside a bounded area */
       if (is_contained_bound (*b, g_ent[0].tilex, g_ent[0].tiley)) {
          found = b;

@@ -11,6 +11,10 @@
 #ifndef __MAPDRAW_H
 #define __MAPDRAW_H
 
+#include <allegro.h>
+#include <stdio.h>
+#include <string.h>
+
 #include "../include/structs.h"
 #include "../include/bounds.h"
 
@@ -18,7 +22,7 @@
 #define MAX_HEIGHT   800
 
 #define MAX_TILES    1024
-#define NUM_TILESETS    7
+#define NUM_TILESETS    8
 #define MAX_EPICS      41
 #define MAX_ZONES     256
 #define MAX_SHADOWS    12
@@ -26,6 +30,8 @@
 #define MAX_MARKERS   256
 #define SW            800       // 640
 #define SH            600       // 480
+#define TH             16       /* Tile Height */
+#define TW             16       /* Tile Width */
 #define WBUILD          1
 
 #define MAP_LAYER1      1       /* Map (sea-level) */
@@ -90,6 +96,7 @@ void clear_obstructs (void);
 void clear_shadows (void);
 void cmessage (char *);
 int confirm_exit (void);
+void copy (void);
 void copy_layer (void);
 void copy_region (void);
 int count_current_obstacles (void);
@@ -108,6 +115,7 @@ void klog (char *);
 void kq_yield (void);
 void make_rect (BITMAP *, const int, const int);
 void normalize_view (void);
+void paste (void);
 void paste_region (const int, const int);
 void paste_region_special (const int, const int);
 void preview_map (void);
@@ -116,11 +124,22 @@ int process_keyboard (const int);
 void process_menu_bottom (const int, const int);
 void process_menu_right (const int, const int);
 void process_mouse (const int);
+void process_movement (int);
+void process_movement_joy (void);
 int prompt_BMP_PCX (void);
 void read_controls (void);
 void resize_map (const int);
+int select_layer1   (void);
+int select_layer2   (void);
+int select_layer3   (void);
+int select_layer12  (void);
+int select_layer13  (void);
+int select_layer23  (void);
+int select_layer123 (void);
 void select_only (const int, const int);
-void show_help (void);
+int show_all (void);
+int show_help (void);
+int show_preview (void);
 int startup (void);
 void update_tileset (void);
 void wait_enter (void);
@@ -140,9 +159,10 @@ void update_entities (void);
 void error_load (const char *);
 void make_mapfrompcx (void);
 void maptopcx (int format);
-void new_map (void);
+int new_map (void);
 void prompt_load_map (void);
-void save_map (void);
+void prompt_save_map (void);
+void save_map (const char *);
 
 /* From mapshared.c */
 void blit2screen (void);
@@ -173,7 +193,7 @@ extern BITMAP *font6, *mesh1[MAX_OBSTACLES], *mesh2, *mesh3,
    *shadow[MAX_SHADOWS], *marker_image;
 extern PALETTE pal;
 
-extern char map_fname[40], *strbuf;
+extern char map_fname[40], map_path[MAX_PATH], *strbuf;
 extern short icon_set, num_markers;
 
 extern s_marker markers[MAX_MARKERS];

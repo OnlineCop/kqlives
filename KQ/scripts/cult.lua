@@ -22,6 +22,39 @@ function autoexec()
 end
 
 
+function entity_handler(en)
+  if (en == 0) then
+    if (get_progress(P_IRONKEY) == 0) then
+      bubble(0, "What th...")
+      bubble(HERO1, "Where's the girl?")
+      bubble(0, "Do you really think that I'm going to tell you?")
+      bubble(HERO1, "That depends... do you want to live?")
+      bubble(0, "Bah! Don't be deceived by the robes. I'm all muscle under here.")
+      drawmap()
+      screen_dump()
+      set_run(0)
+      combat(22)
+      set_run(1)
+      if (get_alldead() == 1) then
+        return
+      end
+      drawmap()
+      screen_dump()
+      set_ent_active(0, 0)
+      set_progress(P_IRONKEY, 1)
+      sfx(5)
+      msg("Iron key procured", 255, 0)
+    end
+
+  end
+end
+
+
+function postexec()
+  return
+end
+
+
 function refresh()
   showch("treasure1", 75)
   showch("treasure2", 76)
@@ -31,8 +64,13 @@ function refresh()
 end
 
 
-function postexec()
-  return
+-- Show the status of a chest
+function showch(which_marker, which_chest)
+  -- Set tiles if -1 passed in as 'which_chest' or if chest already opened
+  if (which_chest < 0 or get_treasure(which_chest) == 1) then
+    set_mtile(which_marker, 65)
+    set_zone(which_marker, 0)
+  end
 end
 
 
@@ -171,44 +209,6 @@ function zone_handler(zn)
   elseif (zn == 33) then
     touch_fire(party[0])
 
-  end
-end
-
-
-function entity_handler(en)
-  if (en == 0) then
-    if (get_progress(P_IRONKEY) == 0) then
-      bubble(0, "What th...")
-      bubble(HERO1, "Where's the girl?")
-      bubble(0, "Do you really think that I'm going to tell you?")
-      bubble(HERO1, "That depends... do you want to live?")
-      bubble(0, "Bah! Don't be deceived by the robes. I'm all muscle under here.")
-      drawmap()
-      screen_dump()
-      set_run(0)
-      combat(22)
-      set_run(1)
-      if (get_alldead() == 1) then
-        return
-      end
-      drawmap()
-      screen_dump()
-      set_ent_active(0, 0)
-      set_progress(P_IRONKEY, 1)
-      sfx(5)
-      msg("Iron key procured", 255, 0)
-    end
-
-  end
-end
-
-
--- Show the status of a chest
-function showch(which_marker, which_chest)
-  -- Set tiles if -1 passed in as 'which_chest' or if chest already opened
-  if (which_chest < 0 or get_treasure(which_chest) == 1) then
-    set_mtile(which_marker, 65)
-    set_zone(which_marker, 0)
   end
 end
 

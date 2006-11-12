@@ -16,25 +16,98 @@ function autoexec()
 end
 
 
-function refresh()
-  if (get_treasure(67) == 1) then
-    set_zone("treasure1", 0)
-  end
-  if (get_treasure(68) == 1) then
-    set_zone("treasure2", 0)
-  end
-  if (get_treasure(69) == 1) then
-    set_zone("treasure3", 0)
-  end
-  if (get_treasure(70) == 1) then
-    set_zone("treasure4", 0)
-    set_obs("treasure4", 0)
+function entity_handler(en)
+  if (en == 0) then
+    LOC_lord_ajantara(en)
+
+  elseif (en == 1) then
+    LOC_lady_ajantara(en)
+
+  elseif (en == 2) then
+    bubble(en, "This is a lovely little town. Don't you think so?")
+
+  elseif (en == 3) then
+    if (get_progress(P_OPALSHIELD) == 0) then
+      bubble(en, "Wanna play tag with me?")
+      return
+    end
+    if (get_progress(P_SAVEBREANNE) < 3) then
+      bubble(en, "I miss Breanne.")
+    else
+      bubble(en, "This town rocks!")
+    end
+
+  elseif (en == 4) then
+    bubble(en, "Sorry, I'm far too busy and you have terrible breath.")
+
+  elseif (en == 5) then
+    if (get_progress(P_SAVEBREANNE) < 3) then
+      bubble(en, "There has been a lot of Cult activity around these parts lately.")
+    else
+      bubble(en, "Has the Cult really been rousted?")
+    end
+
+  elseif (en == 6) then
+    bubble(en, "Lord and Lady Ajantara have hired us to watch the town.")
+
+  elseif (en == 7) then
+    if (get_progress(P_OPALSHIELD) == 0) then
+      bubble(en, "Lord Ajantara's grandfather founded this town.")
+      return
+    end
+    if (get_progress(P_SAVEBREANNE) == 0) then
+      if (get_progress(P_TALKGRAMPA) == 0) then
+        bubble(en, "Lord and Lady Ajantara's daughter, Breanne, was kidnapped last night. They are looking for someone to help find her!")
+        set_progress(P_TALKGRAMPA, 1)
+      else
+        bubble(en, "You should go and speak with the Ajantaras.")
+      end
+    else
+      if (get_progress(P_SAVEBREANNE) < 3) then
+        bubble(en, "You truly are kind.")
+      else
+        bubble(en, "It's a lovely day isn't it?")
+      end
+    end
+
+  elseif (en == 8) then
+    bubble(en, "Everything in this town is owned by Lord and Lady Ajantara.")
+
+  elseif (en == 9) then
+    if (get_progress(P_OPALSHIELD) == 0) then
+      bubble(en, "Hiya!")
+      return
+    end
+    bubble(en, "Thank you very much. Please feel free to come and visit any time.")
+
   end
 end
 
 
 function postexec()
   return
+end
+
+
+function refresh()
+  showch("treasure1", 67)
+  showch("treasure2", 68)
+  showch("treasure3", 69)
+  showch("treasure4", 70)
+end
+
+
+-- Show the status of a treasures
+function showch(which_marker, which_chest)
+  -- Set tiles if chest already opened
+  if (get_treasure(which_chest) == 1) then
+    set_zone(which_marker, 0)
+  end
+  
+  -- Only treasure4 needs to change its obstacle setting
+  if (which_marker == "treasure4") then
+    set_obs(which_marker, 0)
+  end
 end
 
 
@@ -148,74 +221,6 @@ function zone_handler(zn)
 end
 
 
-function entity_handler(en)
-  if (en == 0) then
-    LOC_lord_ajantara(en)
-
-  elseif (en == 1) then
-    LOC_lady_ajantara(en)
-
-  elseif (en == 2) then
-    bubble(en, "This is a lovely little town. Don't you think so?")
-
-  elseif (en == 3) then
-    if (get_progress(P_OPALSHIELD) == 0) then
-      bubble(en, "Wanna play tag with me?")
-      return
-    end
-    if (get_progress(P_SAVEBREANNE) < 3) then
-      bubble(en, "I miss Breanne.")
-    else
-      bubble(en, "This town rocks!")
-    end
-
-  elseif (en == 4) then
-    bubble(en, "Sorry, I'm far too busy and you have terrible breath.")
-
-  elseif (en == 5) then
-    if (get_progress(P_SAVEBREANNE) < 3) then
-      bubble(en, "There has been a lot of Cult activity around these parts lately.")
-    else
-      bubble(en, "Has the Cult really been rousted?")
-    end
-
-  elseif (en == 6) then
-    bubble(en, "Lord and Lady Ajantara have hired us to watch the town.")
-
-  elseif (en == 7) then
-    if (get_progress(P_OPALSHIELD) == 0) then
-      bubble(en, "Lord Ajantara's grandfather founded this town.")
-      return
-    end
-    if (get_progress(P_SAVEBREANNE) == 0) then
-      if (get_progress(P_TALKGRAMPA) == 0) then
-        bubble(en, "Lord and Lady Ajantara's daughter, Breanne, was kidnapped last night. They are looking for someone to help find her!")
-        set_progress(P_TALKGRAMPA, 1)
-      else
-        bubble(en, "You should go and speak with the Ajantaras.")
-      end
-    else
-      if (get_progress(P_SAVEBREANNE) < 3) then
-        bubble(en, "You truly are kind.")
-      else
-        bubble(en, "It's a lovely day isn't it?")
-      end
-    end
-
-  elseif (en == 8) then
-    bubble(en, "Everything in this town is owned by Lord and Lady Ajantara.")
-
-  elseif (en == 9) then
-    if (get_progress(P_OPALSHIELD) == 0) then
-      bubble(en, "Hiya!")
-      return
-    end
-    bubble(en, "Thank you very much. Please feel free to come and visit any time.")
-
-  end
-end
-
-
 function LOC_complain()
   if (get_progress(P_SAVEBREANNE) == 1) then
     if (get_numchrs() == 1) then
@@ -243,6 +248,23 @@ function LOC_complain()
       bubble(HERO1, "Stuff it, I'm on a roll here.")
     end
     set_progress(P_SAVEBREANNE, 2)
+  end
+end
+
+
+function LOC_lady_ajantara(en)
+  if (get_progress(P_OPALSHIELD) == 0) then
+    bubble(en, "Welcome... enjoy your stay.")
+    return
+  end
+  if (get_progress(P_SAVEBREANNE) == 0) then
+    bubble(en, "Oh poor Breanne!")
+  else
+    if (get_progress(P_SAVEBREANNE) < 3) then
+      bubble(en, "Good luck to you!")
+    else
+      bubble(en, "Breanne is a dear.")
+    end
   end
 end
 
@@ -310,22 +332,5 @@ function LOC_lord_ajantara(en)
     bubble(en, "A dark race of Larinon live in the dungeons down there and they are most unpleasant.")
     bubble(HERO1, "Thanks for the warning, and thank you again for the key.")
     set_progress(P_SAVEBREANNE, 4)
-  end
-end
-
-
-function LOC_lady_ajantara(en)
-  if (get_progress(P_OPALSHIELD) == 0) then
-    bubble(en, "Welcome... enjoy your stay.")
-    return
-  end
-  if (get_progress(P_SAVEBREANNE) == 0) then
-    bubble(en, "Oh poor Breanne!")
-  else
-    if (get_progress(P_SAVEBREANNE) < 3) then
-      bubble(en, "Good luck to you!")
-    else
-      bubble(en, "Breanne is a dear.")
-    end
   end
 end
