@@ -1,48 +1,49 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" />
 <html>
 <head>
-  <title>KQ</title>
-  <meta http-equiv="content-type"
- content="text/html; charset=ISO-8859-1">
-  <meta name="author" content="Peter Hull">
-  <style>
-img {border: 0px solid; }
-  </style>
+	<title>KQ</title>
+	<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1" />
+	<meta name="author" content="Peter Hull" />
+
+<style>
+img
+{
+	border: 0px solid;
+}
+</style>
 </head>
-<body style="color: rgb(192, 192, 192); background-color: rgb(0, 0, 0);"
- link="#ffffff" vlink="#ffffff" alink="#99ff99">
+
+<body style="color: rgb(192, 192, 192); background-color: rgb(0, 0, 0);" link="#ffffff" vlink="#ffffff" alink="#99ff99">
+
 <h1 align="center">KQ - Screenshots</h1>
-Here are some screenshots for the current version of KQ (click for a
-larger image).<br>
-<br>
-<!--#include virtual="navigation_bar.html" --> <br>
-<a href="gfx/menu.png" target="_blank"><img src="gfx/shot1.png"
- alt="Shot1" title=""
- style="width: 192px; height: 144px;"></a> <a
- href="gfx/land.png" target="_blank"><img src="gfx/shot2.png"
- alt="Shot 2" title=""
- style="width: 192px; height: 144px;"></a> <a
- href="gfx/quest.png" target="_blank"><img src="gfx/shot3.png"
- alt="Shot 3" title=""
- style="width: 192px; height: 144px;"></a> <br>
-Here are the new enemies, and the new Opal cave level:<br>
-<a href="tmp/new_enemy.jpg" target="_blank"><img src="tmp/new_enemy.jpg"
- alt="New enemies" width="240" height="180"></a> &nbsp; <a
- href="gfx/cave5.jpg" target="_blank"><img src="gfx/cave5.jpg"
- alt="Opal cave" width="240" height="180"></a><br>
-<br>
-This is the KQ map editor:<br>
-<a href="gfx/mapeditor.jpg" target="_blank"> <img
- src="gfx/mapeditor.jpg" alt="Map Editor" width="240" height="180"> </a><br>
-<small> KQ was originally written by DoubleEdge software <br>
-This page hosted by </small><br>
-<a href="http://sourceforge.net"><img
- src="http://sourceforge.net/sflogo.php?group_id=61344&amp;type=5"
- width="210" height="62" border="0" alt="SourceForge Logo"> </a> <br>
-<br>
-<br>
-<br>
-<br>
+
+<p>Here are some screenshots for the current version of KQ (click for a larger image).</p>
+
+<!--#include virtual="navigation_bar.html" -->
+
+<p>
+<a href="gfx/menu.png" target="_blank"><img src="gfx/shot1.png" alt="Shot1" title="" style="width: 192px; height: 144px;" /></a>
+<a href="gfx/land.png" target="_blank"><img src="gfx/shot2.png" alt="Shot 2" title="" style="width: 192px; height: 144px;" /></a>
+<a href="gfx/quest.png" target="_blank"><img src="gfx/shot3.png" alt="Shot 3" title="" style="width: 192px; height: 144px;" /></a>
+</p>
+
+<p>Here are the new enemies, and the new Opal cave level:</p>
+
+<p>
+<a href="tmp/new_enemy.jpg" target="_blank"><img src="tmp/new_enemy.jpg" alt="New enemies" width="240" height="180" /></a>
+<a href="gfx/cave5.jpg" target="_blank"><img src="gfx/cave5.jpg" alt="Opal cave" width="240" height="180" /></a>
+</p>
+
+<p>This is the KQ map editor:</p>
+
+<p><a href="gfx/mapeditor.jpg" target="_blank"><img src="gfx/mapeditor.jpg" alt="Map Editor" width="240" height="180" /></a></p>
+
+<small>KQ was originally written by DoubleEdge software<br/>
+This page hosted by</small><br/>
+
+<a href="http://sourceforge.net"><img src="http://sourceforge.net/sflogo.php?group_id=61344&amp;type=5" width="210" height="62" border="0" alt="SourceForge Logo" /></a>
+<br/><br/><br/><br/><br/>
+
 </body>
 </html>
 
