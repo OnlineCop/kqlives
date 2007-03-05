@@ -3,14 +3,20 @@
 # makefile by PH
 DISK_H=../include/structs.h ../include/disk.h
 
+LDFLAGS :=
+LDFLAGS += -lalld
+
 CFLAGS+=-I../include
 
 all: mapdraw$(EXE_SUFFIX) mapdump$(EXE_SUFFIX) mapdiff$(EXE_SUFFIX)
 
-mapdraw$(EXE_SUFFIX): mapedit.o mapfile.o mapshared.o mapent.o mapdata.o disk.o
+mapdraw$(EXE_SUFFIX): mapedit.o mapfile.o mapshared.o mapent.o mapdata.o disk.o bounds.o
 	$(LINK.o) $^ -o $@ $(LDFLAGS)
 
 disk.o: ../src/disk.c $(DISK_H)
+	$(COMPILE.c)  $< -o $@
+
+bounds.o: ../src/bounds.c $(DISK_H)
 	$(COMPILE.c)  $< -o $@
 
 mapedit.o: mapedit.c mapdraw.h $(DISK_H)
