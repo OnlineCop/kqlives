@@ -460,7 +460,8 @@ int combat (int bno)
    /* PH: some checking! */
    if (bno < 0 || bno >= NUM_BATTLES) {
       sprintf (strbuf, "Combat: battle %d does not exist.", bno);
-      program_death (strbuf);
+      return 1;
+      //program_death (strbuf);
    }
 
    /* TT: no battles during scripted/target movements */
