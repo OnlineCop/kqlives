@@ -820,31 +820,36 @@ int start_menu (int c)
  */
 int system_menu (void)
 {
-   int stop = 0, ptr = 0;
+   int stop = 0, ptr = 0, temp = 0;
+   char *save_str = "Save  ";
+   int text_color = FNORMAL;
 
-   unpress ();
+   if (cansave == 0) {
+      text_color = FDARK;
+#ifdef KQ_CHEATS
+      if (cheat) {
+         strcpy(save_str, "[Save]");
+         text_color = FNORMAL;
+      }
+#endif /* KQ_CHEATS */
+   }
+
    while (!stop) {
       check_animation ();
       drawmap ();
       menubox (double_buffer, xofs, yofs, 8, 4, BLUE);
-      if (cansave == 1)
-         print_font (double_buffer, 16 + xofs, 8 + yofs, "Save", FNORMAL);
-      else {
-#ifdef KQ_CHEATS
-         if (cheat)
-            print_font (double_buffer, 16 + xofs, 8 + yofs, "[Save]", FNORMAL);
-         else
-            print_font (double_buffer, 16 + xofs, 8 + yofs, "Save", FDARK);
-#else
-         print_font (double_buffer, 16 + xofs, 8 + yofs, "Save", FDARK);
-#endif /* KQ_CHEATS */
-      }
-      print_font (double_buffer, 16 + xofs, 16 + yofs, "Load", FNORMAL);
+
+      print_font (double_buffer, 16 + xofs, 8 + yofs, save_str,  text_color);
+      print_font (double_buffer, 16 + xofs, 16 + yofs, "Load",   FNORMAL);
       print_font (double_buffer, 16 + xofs, 24 + yofs, "Config", FNORMAL);
-      print_font (double_buffer, 16 + xofs, 32 + yofs, "Exit", FNORMAL);
+      print_font (double_buffer, 16 + xofs, 32 + yofs, "Exit",   FNORMAL);
+
       draw_sprite (double_buffer, menuptr, 0 + xofs, ptr * 8 + 8 + yofs);
       blit2screen (xofs, yofs);
       readcontrols ();
+
+#if 0
+      // Commented out by TT
       if (up) {
          unpress ();
          ptr--;
@@ -859,9 +864,27 @@ int system_menu (void)
             ptr = 0;
          play_effect (SND_CLICK, 128);
       }
+#endif
+
+      // TT:
+      // When pressed, 'up' or 'down' == 1.  Otherwise, they equal 0.  So:
+      //    ptr = ptr - up + down;
+      // will correctly modify the pointer, but with less code.
+      if (up || down) {
+         ptr = ptr + up - down;
+         if (ptr < 0)
+            ptr = 3;
+         else if (ptr > 3)
+            ptr = 0;
+         play_effect (SND_CLICK, 128);
+			unpress ();
+      }
+
       if (balt) {
-         unpress ();
+			unpress ();
+
          if (ptr == 0) {
+            // Pointer is over the SAVE option
 #ifdef KQ_CHEATS
             if (cansave == 1 || cheat)
 #else
@@ -870,24 +893,34 @@ int system_menu (void)
                /* TT: This open bracket here so match-brace doesn't choke */
             {
                saveload (1);
-               return 0;
+               stop = 1;
             } else
                play_effect (SND_BAD, 128);
          }
+
          if (ptr == 1) {
-            if (snc[0] != 0 || snc[1] != 0 || snc[2] != 0)
-               if (saveload (0) == 1)
-                  return 0;
+            // Pointer is over the LOAD option
+            for (temp = 0; temp < NUMSG; temp++) {
+               if ((snc[temp] != 0) && (saveload (0) == 1))
+               {
+                  stop = 1;
+                  break;
+               }
+            }
          }
+
          if (ptr == 2)
             config_menu ();
+
          if (ptr == 3)
             return confirm_quit ();
       }
+
       if (bctrl) {
+         stop = 1;
          unpress ();
-         return 0;
       }
    }
+
    return 0;
 }
