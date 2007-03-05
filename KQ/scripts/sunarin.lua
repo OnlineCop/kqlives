@@ -13,14 +13,14 @@ function entity_handler(en)
 
     bubble(en, "I am the king of thieves!")
     if (get_progress(P_AYLA_QUEST) == 7 and get_ent_chrx(HERO1) ~= 0) then
-      bubble(HERO1, "Yea? Well I'm Ayla, "..pick("Daughter of Malkaron",
-        "Princess Ayla", "heir to Dungar's estate".."!")
+      bubble(HERO1, "Yea? Well I'm Ayla... you know, "..pick("Daughter of Malkaron",
+        "Princess Ayla", "heir to Dungar's estate").."!")
       bubble(en, "Oh really. Is that a fact?")
       thought(HERO1, "Uh, oh. Wrong thing to say...")
       bubble(en, "Guards!!")
       move_entity(1, x - 1, y)
-      move_entity(2, x + 1, y)
-      move_entity(3, x - 1, y + 1)
+      move_entity(2, x - 1, y + 1)
+      move_entity(3, x + 1, y)
       move_entity(4, x + 1, y + 1)
       wait_for_entity(1, 4)
       set_run(0)
@@ -42,14 +42,14 @@ function entity_handler(en)
       wait(50)
       bubble(HERO1, "Whoa! He just disappeared! Oh well, that treasure is still down there.")
     else
-      bubble(en, "Honor me!"
+      bubble(en, "Honor me, for I am king!")
     end
   elseif (en == 1) then
     bubble(en, "WE GUARD THE SACRED TREASURE!")
   elseif (en == 2) then
     bubble(en, "None shall inherit the treasure except who joins the guild!")
   elseif (en == 3) then
-    bubble(en, "Who are you? Are you trying to steal from us?"
+    bubble(en, "Who are you? Are you trying to steal from us?")
   elseif (en == 4) then
     bubble(255, "The man glowers at you, but says nothing.")
   end
@@ -61,11 +61,36 @@ function postexec()
 end
 
 
+function refresh()
+  showch("treasure1", 32)
+end
+
+
+-- Show the status of treasures
+function showch(which_marker, which_chest)
+  -- Set tiles if chest already opened
+  if (get_treasure(which_chest) == 1) then
+    set_zone(which_marker, 0)
+  end
+
+  -- Only treasure1 needs to change its obstacle setting
+  if (which_marker == "treasure1") then
+    set_obs(which_marker, 0)
+  end
+end
+
+
 function zone_handler(zn)
   if (zn == 1) then
     change_map("main", "town5", 2, -1)
   elseif (zn == 2) then
     LOC_door("door1")
+  elseif (zn == 3) then
+    touch_fire(party[0]);
+  elseif (zn == 4) then
+    bubble(HERO1, "The door appears to be locked.")
+  elseif (zn == 5) then
+    
   end
 
 end
