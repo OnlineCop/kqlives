@@ -19,7 +19,7 @@
 #define DESTITLE_PCX                     13       /* BMP  */
 #define ENEMY_PCX                        14       /* BMP  */
 #define ENTITIES_PCX                     15       /* BMP  */
-#define FORTRESS.PCX                     16       /* BMP  */
+#define FORTRESS_PCX                     16       /* BMP  */
 #define INCAVE_PCX                       17       /* BMP  */
 #define KQFACES_PCX                      18       /* BMP  */
 #define KQT_PCX                          19       /* BMP  */
