@@ -119,8 +119,6 @@ s_map g_map;
 /*! Current entities (players+NPCs) */
 s_entity g_ent[MAX_ENT + PSIZE];
 
-#define MAX_TILESETS 10
-/*! The different tilesets allowed in the game (loaded in from tileset.kq) */
 s_tileset tilesets[MAX_TILESETS];
 int num_tilesets = 0;
 
@@ -1697,8 +1695,7 @@ static void startup (void)
    pb = load_datafile_object (PCX_DATAFILE, "ENTITIES_PCX");
    for (q = 0; q < MAXE; q++)
       for (p = 0; p < MAXEFRAMES; p++)
-         blit ((BITMAP *) pb->dat, eframes[q][p], p * 16, q * 16, 0, 0, 16,
-               16);
+         blit ((BITMAP *)pb->dat, eframes[q][p], p * 16, q * 16, 0, 0, 16, 16);
    unload_datafile_object (pb);
 
    /* Initialize tilesets */
@@ -1709,7 +1706,8 @@ static void startup (void)
    while (!pack_feof (pf)) {
       load_s_tileset (&tilesets[num_tilesets], pf);
       TRACE ("%d. %s\n", num_tilesets, tilesets[num_tilesets].icon_set);
-      if ((++num_tilesets) >= MAX_TILESETS)
+      num_tilesets++;
+      if (num_tilesets > MAX_TILESETS)
          program_death ("Too many tilesets defined in tileset.kq");
    }
    pack_fclose (pf);
