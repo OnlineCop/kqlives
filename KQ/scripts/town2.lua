@@ -321,13 +321,26 @@ end
 
 -- Show the status of a treasures
 function showch(which_marker, which_chest)
-  -- If -1 passed in,  as 'which_chest' or if chest already opened
+
+  -- The zones 'which_chest == -1' means that there is no "chest" where the
+  -- current treasure is found, but is something like a flower patch that
+  -- can't be walked upon.  If those treasures have been found, remove the
+  -- obstacle at that location, as well as the triggering zone.
+
   if (which_chest < 0) then
+    -- Evaluate the chest-less treasure at this location
     set_obs(which_marker, 0)
+
+    -- We have already found the "treasure chest-less" secret treasure here,
+    -- so get rid of the 'activating zone' for it
+    set_zone(which_marker, 0)
   elseif (get_treasure(which_chest) == 1) then
     set_mtile(which_marker, 265)
+
+    -- We have already collected this treasure,
+    -- so get rid of the 'activating zone' for it
+    set_zone(which_marker, 0)
   end
-  set_zone(which_marker, 0)
 end
 
 
@@ -614,7 +627,7 @@ function LOC_join_casandra(en)
       -- Two heroes were de-selected
       set_ent_id(hero, id[2])
       set_ent_active(hero, 1)
-      
+
       local x, y = get_ent_tile(en)
       place_ent(hero, x, y - 1)
       bubble(en, "If you need us, we'll be back at the manor.")
