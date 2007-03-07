@@ -30,7 +30,7 @@ mapdraw_LDADD = $(ALLEGRO_LIBS)
 mapdraw2_SOURCES = maps/mapdraw2.c maps/mapdraw2.h \
 	maps/mainwindow.c maps/mapedit2.c maps/mapedit2.h \
 	maps/mapshared.c maps/mapdraw.h src/disk.c \
-        include/disk.h include/structs.h
+        src/bounds.c include/disk.h include/structs.h
 mapdraw2_LDADD = $(GTK_LIBS) $(ALLEGRO_LIBS)
 mapdraw2_CPPFLAGS = $(GTK_CFLAGS) $(WARNING_CFLAGS)
 
@@ -39,7 +39,7 @@ mapdiff_SOURCES = maps/mapdraw.h maps/mapdiff.c src/disk.c \
 mapdiff_LDADD = $(ALLEGRO_LIBS)
 
 mapdump_SOURCES = maps/mapdump.c maps/mapshared.c maps/mapdata.c \
-	src/disk.c include/disk.h include/structs.h
+	src/disk.c src/bounds.c include/disk.h include/structs.h
 mapdump_LDADD = $(ALLEGRO_LIBS)
 
 APPR=KQ.app/Contents/Resources

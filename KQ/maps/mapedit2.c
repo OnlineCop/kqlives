@@ -224,8 +224,8 @@ void do_draw_map (cairo_t * cr, GdkRectangle * area, unsigned int layerflags)
    if (layerflags & ENTITIES_FLAG) {
       for (i = 0; i < number_of_ents; ++i) {
          /* Draw only the entities within the view-screen */
-         if (gent[i].tilex >= x && gent[i].tilex < w + x
-             && gent[i].tiley >= y && gent[i].tiley < h + y) {
+         if (gent[i].tilex >= x && gent[i].tilex < w + x && gent[i].tiley >= y
+             && gent[i].tiley < h + y) {
             if (gent[i].transl) {
                /* FIXME: Draw a translucent sprite */
             }
@@ -254,9 +254,8 @@ void do_draw_tile (cairo_t * cr, unsigned int tile)
    cairo_paint (cr);
 }
 
-void
-do_draw_palette (cairo_t * cr, GdkRectangle * area, unsigned int w,
-                 unsigned int layer, unsigned int tile)
+void do_draw_palette (cairo_t * cr, GdkRectangle * area, unsigned int w,
+                      unsigned int layer, unsigned int tile)
 {
    unsigned int i, j, t;
    for (i = area->y / 16; i <= (area->y + area->height) / 16; ++i) {
@@ -300,9 +299,8 @@ unsigned int get_tile_at (unsigned int x, unsigned int y, unsigned int layer)
    }
 }
 
-void
-set_tile_at (unsigned int tile, unsigned int x, unsigned int y,
-             unsigned int layer)
+void set_tile_at (unsigned int tile, unsigned int x, unsigned int y,
+                  unsigned int layer)
 {
    if (x >= (unsigned int) gmap.xsize)
       x = gmap.xsize - 1;
@@ -394,13 +392,13 @@ void fill_entity_model (GtkListStore * store, int entity)
          break;
       case 2:
          gtk_list_store_set (store, &iter, ENTITY_VALUE_COLUMN,
-                             *(int16_t *) (((char *) &gent[entity]) +
-                                           offset), -1);
+                             *(int16_t *) (((char *) &gent[entity]) + offset),
+                             -1);
          break;
       case 4:
          gtk_list_store_set (store, &iter, ENTITY_VALUE_COLUMN,
-                             *(int32_t *) (((char *) &gent[entity]) +
-                                           offset), -1);
+                             *(int32_t *) (((char *) &gent[entity]) + offset),
+                             -1);
          break;
       default:
          break;
@@ -409,9 +407,8 @@ void fill_entity_model (GtkListStore * store, int entity)
    while (gtk_tree_model_iter_next (GTK_TREE_MODEL (store), &iter));
 }
 
-void
-change_entity_model (GtkListStore * store, int entity, char *valuepath,
-                     char *value)
+void change_entity_model (GtkListStore * store, int entity, char *valuepath,
+                          char *value)
 {
    if (!value || !value[0])
       return;

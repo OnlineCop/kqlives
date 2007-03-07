@@ -58,7 +58,6 @@ END_OF_MAIN ();
 
 /*! Current sequence position of animated tiles */
 unsigned short tilex[MAX_TILES];
-int number_of_ents = 0;
 
 
 /*! Tile animation specifiers for each tile set */

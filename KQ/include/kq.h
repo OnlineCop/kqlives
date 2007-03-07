@@ -28,18 +28,19 @@
 #ifndef __KQ_H
 #define __KQ_H
 
+#include <allegro.h>
+
 #ifdef HAVE_CONFIG_H
 /* Have to undef some stuff because Allegro defines it - thanks guys
 */
-#include "config.h"
 #undef PACKAGE_TARNAME
 #undef PACKAGE_VERSION
 #undef PACKAGE_NAME
 #undef PACKAGE_STRING
 #undef PACKAGE_BUGREPORT
+#include "config.h"
 #endif
 
-#include <allegro.h>
 #include "entity.h"
 #include "structs.h"
 #include "bounds.h"
