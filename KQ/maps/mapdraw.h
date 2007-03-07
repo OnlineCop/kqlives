@@ -11,6 +11,11 @@
 #ifndef __MAPDRAW_H
 #define __MAPDRAW_H
 
+/* TT: Added per request, as MAX_PATH is not defined on some archetectures */
+#ifndef MAX_PATH
+#define MAX_PATH 1024
+#endif
+
 #include <allegro.h>
 #include <stdio.h>
 #include <string.h>
