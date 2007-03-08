@@ -151,7 +151,12 @@ function entity_handler(en)
       bubble(HERO1, "Thank you.")
       set_progress(P_ALTARSWITCH, 1)
       refresh()
-      set_ent_script(38, "L1F3")
+      -- If we are facing right, then we are in the priest's way, so he moves the other way.
+      if (get_ent_facing(HERO1) == FACE_RIGHT) then
+         set_ent_script(38, "R1F3")
+      else
+         set_ent_script(38, "L1F3")
+      end
       wait_for_entity(38, 38)
       set_progress(P_TALK_TEMMIN, 1)
     elseif (get_progress(P_TALK_TEMMIN) < 3) then 
