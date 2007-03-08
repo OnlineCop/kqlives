@@ -821,7 +821,7 @@ int start_menu (int c)
 int system_menu (void)
 {
    int stop = 0, ptr = 0, temp = 0;
-   char *save_str = "Save  ";
+   char save_str[] = "Save  ";
    int text_color = FNORMAL;
 
    if (cansave == 0) {
