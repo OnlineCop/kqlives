@@ -465,6 +465,11 @@ int combat (int bno)
    int encounter;
    int lc;
 
+#ifdef KQ_CHEATS
+   if (no_monsters)
+      return 0;
+#endif
+
    /* PH: some checking! */
    if (bno < 0 || bno >= NUM_BATTLES) {
       sprintf (strbuf, "Combat: battle %d does not exist.", bno);
@@ -479,15 +484,26 @@ int combat (int bno)
 
    /*  RB: check if we had had a random encounter  */
    if (battles[bno].enc > 1) {
-      /* TT: This will skip battles if the player hasn't moved the necessary
-       *     number of steps AND a random number does not equal zero.
-       */
 #ifdef KQ_CHEATS
+      /* skip battle if no_random_encouters cheat is set */
       if (no_random_encounters)
          return 0;
 #endif
+      /* skip battle if haven't moved enough steps since last battle,
+       * or if it's just not time for one yet */
       if ((steps < STEPS_NEEDED) || ((rand () % battles[bno].enc) > 0)) {
          return 0;
+      }
+      /* Likely (not always) skip random battle if repluse is active */
+      if (progress[P_REPULSE] > 0) {
+         lc = (hero_level - erows[encounter].lvl) * 20;
+         if (lc < 5)
+            lc = 5;
+
+         /* Although Repulse is active, there's still a chance of battle */
+         if ((rand () % 100) < lc) {
+            return 0;
+         }
       }
    }
 
@@ -502,18 +518,6 @@ int combat (int bno)
       /* TT: This will skip battles based on a random number from hero's
        *     level minus enemy's level.
        */
-      if ((rand () % 100) < lc) {
-         return 0;
-      }
-   }
-
-   if (progress[P_REPULSE] > 0) {
-      lc = (hero_level - erows[encounter].lvl) * 20;
-      if (lc < 5)
-         lc = 5;
-
-      /* Although Repulse is active, there's still a 1-in-20 chance of
-         battle */
       if ((rand () % 100) < lc) {
          return 0;
       }
