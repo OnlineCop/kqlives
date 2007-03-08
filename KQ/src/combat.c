@@ -210,7 +210,7 @@ static int attack_result (int ar, int dr)
     * For some reason, this isn't properly being reported.
     */
 
-#ifdef CHEATS
+#ifdef KQ_CHEATS
    if (every_hit_999) {
       ta[dr] = -999;
       return 1;
