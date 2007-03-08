@@ -130,6 +130,7 @@ unsigned char *z_map, *sh_map, *o_map, *cz_map, *csh_map, *co_map;
 unsigned char *search_map;
 
 s_marker markers[MAX_MARKERS];
+s_bound bound_box[MAX_BOUNDS]; // WK - not redundant. Used on line 266
 
 /*! \brief Blit to screen
  *
