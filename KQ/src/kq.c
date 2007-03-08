@@ -266,6 +266,8 @@ int use_joy = 1;
 #ifdef KQ_CHEATS
 /*! Is cheat mode activated? */
 int cheat = 0;
+int no_random_encounters = 0;
+int every_hit_999 = 0;
 #endif
 
 /*! The number of frames per second */

@@ -209,16 +209,24 @@ static int attack_result (int ar, int dr)
     * If magic, attacks, etc. are zero, they should return as a miss.
     * For some reason, this isn't properly being reported.
     */
+
+#ifdef CHEATS
+   if (every_hit_999) {
+      ta[dr] = -999;
+      return 1;
+   }
+#endif
+
    dmg = mult * base;
-   if (dmg == 0)
+   if (dmg == 0) {
       dmg = MISS;
+      ta[dr] = dmg;
+      return 0;
+   }
    else {
       ta[dr] = 0 - dmg;
       return ((crit_hit == 1) ? 2 : 1);
    }
-
-   ta[dr] = dmg;
-   return 0;
 }
 
 
@@ -474,6 +482,10 @@ int combat (int bno)
       /* TT: This will skip battles if the player hasn't moved the necessary
        *     number of steps AND a random number does not equal zero.
        */
+#ifdef KQ_CHEATS
+      if (no_random_encounters)
+         return 0;
+#endif
       if ((steps < STEPS_NEEDED) || ((rand () % battles[bno].enc) > 0)) {
          return 0;
       }
