@@ -658,6 +658,7 @@ static void parse_allegro_setup (void)
 #ifdef KQ_CHEATS
    cheat = get_config_int (NULL, "cheat", 0);
    no_random_encounters = get_config_int (NULL, "no_random_encounters", 0);
+   no_monsters = get_config_int (NULL, "no_monsters", 0);
    every_hit_999 = get_config_int (NULL, "every_hit_999", 0);
 #endif
 #ifdef DEBUGMODE

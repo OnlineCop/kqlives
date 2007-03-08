@@ -482,6 +482,7 @@ extern int show_frate, use_joy;
 extern int cheat;
 extern int no_random_encounters;
 extern int every_hit_999;
+extern int no_monsters;
 extern int warx, wary;
 
 /*! Yield processor to other tasks */
