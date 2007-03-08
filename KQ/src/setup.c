@@ -629,6 +629,11 @@ static void parse_allegro_setup (void)
       set_config_int (NULL, "kalt", kalt);
       set_config_int (NULL, "kctrl", kctrl);
       set_config_int (NULL, "kenter", kenter);
+
+#ifdef DEBUGMODE
+      set_config_int (NULL, "debugging", debugging);
+#endif
+
       pop_config_state ();
       return;
    }
@@ -652,6 +657,8 @@ static void parse_allegro_setup (void)
    cpu_usage = get_config_int (NULL, "cpu_usage", 2);
 #ifdef KQ_CHEATS
    cheat = get_config_int (NULL, "cheat", 0);
+   no_random_encounters = get_config_int (NULL, "no_random_encounters", 0);
+   every_hit_999 = get_config_int (NULL, "every_hit_999", 0);
 #endif
 #ifdef DEBUGMODE
    debugging = get_config_int (NULL, "debugging", 0);
