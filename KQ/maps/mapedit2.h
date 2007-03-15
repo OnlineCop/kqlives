@@ -1,10 +1,10 @@
 /*
     This file is part of KQ.
-		
-		Copyright (C) 2002 Josh Bolduc
-		Copyright (C) 2003-2005 Peter Hull
-		Copyright (C) 2003-2005 Team Terradactyl
-		Copyright (C) 2006 Günther Brammer
+
+      Copyright (C) 2002 Josh Bolduc
+      Copyright (C) 2003-2005 Peter Hull
+      Copyright (C) 2003-2005 Team Terradactyl
+      Copyright (C) 2006 Günther Brammer
 
     KQ is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -45,6 +45,10 @@ enum
    ENTITY_SIZEOF_COLUMN,
    ENTITY_N_COLUMNS
 };
+
+#define OBSTACLES_CYCLE 6 /* MAX_OBSTACLES + 1 */
+#define ZONES_UP 257 /* MAX_ZONES + 1 */
+#define ZONES_DOWN 258 /* MAX_ZONES + 2 */
 
 void do_draw_map (cairo_t * cr, GdkRectangle * area, unsigned int layerflags);
 void do_draw_palette (cairo_t * cr, GdkRectangle * area, unsigned int w,

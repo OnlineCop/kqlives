@@ -1,7 +1,7 @@
 /*
     This file is part of KQ.
-		
-		Copyright (C) 2006 Günther Brammer
+
+      Copyright (C) 2006 Günther Brammer
 
     KQ is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
 static GtkWidget *map_drawing_area;
 static GtkWidget *tile_drawing_area;
 static GtkWidget *palette_drawing_area;
+static GtkWidget *text_current_value;
 static GtkWindow *window;
 static GtkWindow *entitydialog;
 static GtkListStore *layers;
@@ -174,26 +175,117 @@ static gboolean on_map_button_press_event (GtkWidget * widget, GdkEventButton * 
 {
    unsigned int x = event->x / 16;
    unsigned int y = event->y / 16;
-   if (current_layer == ENTITIES_FLAG) {
-      gtk_widget_show (GTK_WIDGET (entitydialog));
-      selected_entity = get_entity_at (x, y);
-      if (selected_entity == -1) {
-         selected_entity = do_place_entity (x, y);
+   unsigned int i = 0;
+
+   /* current_value is a generic string that the user can edit before clicking
+    * on the map. It is the box in the bottom left corner. */
+   char * current_value = g_strdup(gtk_entry_get_text(GTK_ENTRY(text_current_value)));
+
+   /* Ignore double and triple clicks. Treat them as multiple normal clicks.
+   * Without this line, you end up getting two normal clicks and a third, double
+   * click for every two, fast, consecutive clicks */
+   if (event->type == GDK_2BUTTON_PRESS || event->type == GDK_3BUTTON_PRESS)
+      return FALSE;
+
+   /* Can't edit what you can't see. This prevents accidents. */
+   if (!(current_layer & layer_showing_flags))
+      return FALSE;
+
+   /* Temporary */
+   /* End of temp *****/
+
+   /* What is the gdk constant for left mouse button? */
+   if (event->button == 1) {
+      switch(current_layer) {
+      case LAYER_1_FLAG:
+      case LAYER_2_FLAG:
+      case LAYER_3_FLAG:
+         if (event->state & GDK_CONTROL_MASK) {
+            current_tile = get_tile_at (x, y, current_layer);
+            gtk_widget_queue_draw_area (tile_drawing_area, 0, 0, 16, 16);
+         } else {
+            set_tile_at (current_tile, x, y, current_layer);
+            map_change (x, y);
+         }
+         break;
+      case OBSTACLES_FLAG:
+         set_obstacle_at(OBSTACLES_CYCLE, x, y);
          map_change (x, y);
+         break;
+      case ENTITIES_FLAG:
+         gtk_widget_show (GTK_WIDGET (entitydialog));
+         selected_entity = get_entity_at (x, y);
+         if (selected_entity == -1) {
+            selected_entity = do_place_entity (x, y);
+            map_change (x, y);
+         }
+         if (selected_entity == -1) {
+            gtk_widget_hide (GTK_WIDGET (entitydialog));
+         } else {
+            fill_entity_model (eprops, selected_entity);
+         }
+         break;
+      case ZONES_FLAG:
+         i = atoi(current_value);
+         set_zone_at(i, x, y);
+         map_change (x, y);
+         break;
+      case MARKERS_FLAG:
+         if (event->state & GDK_CONTROL_MASK) {
+            if ((current_value = get_marker_value(x, y)) != NULL)
+               gtk_entry_set_text(GTK_ENTRY(text_current_value), current_value);
+         } else {
+            set_marker_at_loc(current_value, x, y);
+            map_change (x, y); map_change (x + 1, y);
+            map_change (x, y - 1); map_change (x + 1, y - 1);
+         }
+         break;
+      case SHADOW_FLAG:
+
+      default:
+         break;
+      } /* End of switch */
+
+   /* What is the gdk constant for right mouse button? */
+   } else if (event->button == 3) {
+      switch(current_layer) {
+      case LAYER_1_FLAG:
+      case LAYER_2_FLAG:
+      case LAYER_3_FLAG:
+            set_tile_at (0, x, y, current_layer);
+            map_change (x, y);
+            break;
+      case OBSTACLES_FLAG:
+            set_obstacle_at(0, x, y);
+            map_change (x, y);
+            break;
+      case ZONES_FLAG:
+         set_zone_at(0, x, y);
+         map_change (x, y);
+         break;
+      case MARKERS_FLAG:
+         remove_marker(x, y);
+         map_change (x, y); map_change (x + 1, y);
+         map_change (x, y - 1); map_change (x + 1, y -1);
+         break;
+      case ENTITIES_FLAG:
+         /* Should delete the entity at this square */
+      case SHADOW_FLAG:
+      default:
+         break;
       }
-      if (selected_entity == -1) {
-         gtk_widget_hide (GTK_WIDGET (entitydialog));
-      } else {
-         fill_entity_model (eprops, selected_entity);
+   /* What is the gdk constant for middle mouse button? */
+   } else if (event->button == 2) {
+      switch(current_layer) {
+      case ZONES_FLAG:
+         set_zone_at(ZONES_UP, x, y);
+         map_change (x, y);
+         break;
+      default:
+         break;
       }
-   } else if (event->state & GDK_CONTROL_MASK) {
-      current_tile = get_tile_at (x, y, current_layer);
-      //printf("clicked at %d,%d -> %d\n", x, y, current_tile);
-      gtk_widget_queue_draw_area (tile_drawing_area, 0, 0, 16, 16);
-   } else {
-      set_tile_at (current_tile, x, y, current_layer);
-      map_change (x, y);
    }
+
    return FALSE;
 }
 
@@ -324,6 +416,7 @@ void mainwindow (int *argc, char **argv[])
    map_drawing_area = glade_xml_get_widget (xml, "map");
    tile_drawing_area = glade_xml_get_widget (xml, "currenttile");
    palette_drawing_area = glade_xml_get_widget (xml, "palette");
+   text_current_value = glade_xml_get_widget (xml, "text_current_value");
 
    /* connect signal handlers */
 #define SIGNAL_CONNECT(s,p) glade_xml_signal_connect_data (xml, #s, G_CALLBACK(s), p)

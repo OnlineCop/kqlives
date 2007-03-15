@@ -1,7 +1,7 @@
 /*
     This file is part of KQ.
-		
-		Copyright (C) 2006 Günther Brammer
+
+      Copyright (C) 2006 Günther Brammer
 
     KQ is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -32,11 +32,13 @@
 #include "mapdraw.h"
 #include "mapedit2.h"
 
+
 static cairo_surface_t *gdk_icons[MAX_TILES];
 static cairo_surface_t *gdk_shadows[MAX_SHADOWS];
 static cairo_surface_t *gdk_eframes[MAX_EPICS][12];
 static cairo_surface_t *gdk_marker_image;
 static cairo_user_data_key_t cairo_user_data_key;
+
 
 static cairo_surface_t *convert_icon (BITMAP * icon, gboolean transparency)
 {
@@ -291,8 +293,6 @@ unsigned int get_tile_at (unsigned int x, unsigned int y, unsigned int layer)
       return sh_map[i];
    case OBSTACLES_FLAG:
       return o_map[i];
-   case ZONES_FLAG:
-   case MARKERS_FLAG:
    case ENTITIES_FLAG:
    default:
       return 0;
@@ -320,15 +320,92 @@ void set_tile_at (unsigned int tile, unsigned int x, unsigned int y,
    case SHADOW_FLAG:
       sh_map[i] = tile;
       break;
-   case OBSTACLES_FLAG:
-      o_map[i] = tile;
-      break;
-   case ZONES_FLAG:
-   case MARKERS_FLAG:
    case ENTITIES_FLAG:
    default:
       break;
    }
+}
+
+void set_obstacle_at (unsigned int obstacle, unsigned int x, unsigned int y)
+{
+   int i;
+   i = y * gmap.xsize + x;
+
+   if (obstacle <= MAX_OBSTACLES)
+      o_map[i] = obstacle;
+   else if (obstacle == OBSTACLES_CYCLE)
+      o_map[i] = (o_map[i] + 1) % (MAX_OBSTACLES + 1);
+}
+
+/* Set the zone. ZONES_UP means increase by one.
+ * ZONES_DOWN means decrease by one.*/
+void set_zone_at (unsigned int zone, unsigned int x, unsigned int y)
+{
+   int i;
+   i = y * gmap.xsize + x;
+
+   if (zone < MAX_ZONES)
+      z_map[i] = zone;
+   else if (zone == ZONES_UP)
+      z_map[i] = (z_map[i] + 1) % MAX_ZONES;
+   else if (zone == ZONES_DOWN)
+      z_map[i] = (z_map[i] - 1) % MAX_ZONES;
+}
+
+/* returns which marker if there is a marker at the specified location.
+ * or returns MAX_MARKERS if this square does not have a marker */
+unsigned int is_marker (unsigned int x, unsigned int y)
+{
+   int i;
+   for (i = 0; i < MAX_MARKERS; i++)
+      if (gmap.markers[i].x == x && gmap.markers[i].y == y)
+         return i;
+
+   return MAX_MARKERS;
+}
+
+void new_marker (char * value, unsigned int x, unsigned int y)
+{
+   if (num_markers >= MAX_MARKERS)
+      return;
+   strcpy(gmap.markers[num_markers].name, value);
+   gmap.markers[num_markers].x = x;
+   gmap.markers[num_markers].y = y;
+   num_markers++;
+   gmap.num_markers++;
+}
+
+void remove_marker (unsigned int x, unsigned int y)
+{
+   int i;
+   if ((i = is_marker(x, y)) < MAX_MARKERS) {
+      for (; i < num_markers; i++) {
+         gmap.markers[i].x = gmap.markers[i + 1].x;
+         gmap.markers[i].y = gmap.markers[i + 1].y;
+         strcpy(gmap.markers[i].name, gmap.markers[i + 1].name);
+      }
+      num_markers--;
+      gmap.num_markers--;
+   }
+}
+
+void set_marker_at_loc (char * value, unsigned int x, unsigned int y)
+{
+   unsigned int i;
+   if ((i = is_marker(x, y)) < MAX_MARKERS) {
+      strcpy(gmap.markers[i].name, value);
+   } else {
+      new_marker(value, x, y);
+   }
+}
+
+char * get_marker_value (unsigned int x, unsigned int y)
+{
+   int i;
+   if ((i = is_marker(x, y)) < MAX_MARKERS)
+      return gmap.markers[i].name;
+   else
+      return NULL;
 }
 
 // FIXME: this offsetof usage is a bit too hackish
