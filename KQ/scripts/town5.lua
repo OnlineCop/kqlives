@@ -130,7 +130,9 @@ end
 
 
 function postexec()
-  if (get_progress(P_FOUGHTGUILD) == 2) then
+--  If we remove the Ember's Key, we can't get Ayla later. So, we don't remove
+--  the Ember's Key if we don't have Ayla yet.
+  if (get_progress(P_FOUGHTGUILD) == 2 and get_progress(P_AYLA_QUEST) > 0) then
     set_progress(P_FOUGHTGUILD, 3)
     set_progress(P_EMBERSKEY, 0)
     bubble(HERO1, "Oh no!")
