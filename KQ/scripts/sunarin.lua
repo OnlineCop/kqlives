@@ -90,7 +90,8 @@ function zone_handler(zn)
   elseif (zn == 4) then
     bubble(HERO1, "The door appears to be locked.")
   elseif (zn == 5) then
-    
+    bubble(HERO1, "That's a treasure chest!")
+    bubble(HERO1, "Stay tuned for KQ 1.0 Final!")
   end
 
 end

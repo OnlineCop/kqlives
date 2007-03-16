@@ -6,7 +6,7 @@
 -- P_ORACLE: Spoke to Oracle in the Tower
 --   (0) Haven't spoken to her yet
 --   (1) She told you your quest, requested help from monsters
---   (2) You helped with monsters (stopped them from getting to the portal)
+--   (2) You helped with monsters (stopped them from getting to the portal) (not done)
 --
 -- P_ORACLEMONSTERS: Status of the monsters in the caves below
 --   (0) You haven't even seen the monsters take the Statue thru the portal
@@ -14,7 +14,7 @@
 --   (2) Monsters thru portal: Told Oracle about it
 --   (3) Followed monsters thru portal: monsters still in cave
 --   (4) Oracle asks you to take care of monsters; they're still there
---   (5) Monsters are gone
+--   (5) Monsters are gone (not done)
 --
 -- P_FTOTAL: Total number of floor switches activated
 -- P_FLOOR1..P_FLOOR4: Status of this floor switch
@@ -32,7 +32,7 @@
 --   (0) Never spoke to Oracle, cannot enter Tower
 --   (1) Never spoke to Oracle, can enter Tower
 --   (2) Spoke to Oracle, cannot enter Tower
---   (3) Spoke to Oracle, can enter Tower
+--   (3) Spoke to Oracle, can enter Tower (not done)
 --
 -- P_DRAGONDOWN: Whether the stone dragon is alive or not
 --
@@ -43,9 +43,9 @@
 --   (3) You found Demnas: haven't found the troll
 --   (4) You found the troll
 --   (5) Broken statue returned to the Denorians
---   (6) 2nd half of broken statue returned to Denorians
+--   (6) 2nd half of broken statue returned to Denorians (not done)
 --
--- Pretty much done as it is; no real changes need to be made.
+-- still need to complete P_ORACLE and P_ORACLEMONSTERS
 -- }
 -- */
 

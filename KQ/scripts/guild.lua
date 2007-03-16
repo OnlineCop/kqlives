@@ -221,12 +221,17 @@ end
 
 function LOC_ayla_join(en)
   if (get_progress(P_AYLA_QUEST) == 0) then
+    -- This code creates an unsolvable catch-22. Probably to prevent trapping the player in an unfinished quest.
     bubble(en, "Wha...? Oh, it's you!")
     bubble(HERO1, "Hello... I recognise you from Nostik's manor, don't I?")
     bubble(en, "Yes, I broke into the house, but I couldn't find the secret passage.")
     bubble(HERO1, "You must be pretty good at... uh...")
     bubble(en, "Thievery? Yea, I am.")
     bubble(HERO1, "Well, nice meeting you.")
+    bubble(en, "I would join you, but my quest isn't written yet.")
+    bubble(HERO1, "Oh. Ok. Perhaps when this game is finished?")
+    bubble(en, "Yeah, probably then.")
+    bubble(HERO1, "OK.")
   else
     bubble(en, "Hey, $0. Rumor has it that the guild has a bunch of treasure hoarded somewhere.")
     bubble(HERO1, "That's possible. Why?")
@@ -239,7 +244,7 @@ function LOC_ayla_join(en)
     id = select_team{AYLA}
     --  Add the characters that were deselected to the manor
     add_to_manor(id)
-    
+
     if (id[1]) then
       -- Need the whole "okay, meet you back at the manor" dialog here
     end

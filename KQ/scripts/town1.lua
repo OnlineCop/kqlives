@@ -38,7 +38,7 @@
 --   (2) Derig gave you a note to return to Tsorin
 --   (3) Tsorin gave you his seal to get through the fort
 --   (4) You've shown the seal to the guards at the fort
---   (5) You are free pass through the fort anytime (no contention in goblin lands)
+--   (5) You are free pass through the fort anytime (no contention in goblin lands) (not done)
 --
 -- P_UCOIN: Unadium Coin from Jen
 --   (0) Have not yet spoken with the granddaughter, Jen
@@ -328,11 +328,11 @@ function LOC_help_jen_portal(en)
     LOC_help_town_rod(en)
   elseif (get_progress(P_DARKIMPBOSS) == 0) then
     LOC_help_town_boss(en)
-	elseif (get_progress(P_WARPSTONE) == 0) then
-	  LOC_help_town_warpstone(en)
-	else
-	  LOC_help_town_none(en)
-	end
+  elseif (get_progress(P_WARPSTONE) == 0) then
+    LOC_help_town_warpstone(en)
+  else
+    LOC_help_town_none(en)
+  end
 end
 
 
@@ -344,7 +344,7 @@ function LOC_help_jen_tsorin(en)
     LOC_help_tsorin_derig(en)
   else
     LOC_help_tsorin_tsorin(en)
-	end
+  end
 end
 
 
