@@ -172,10 +172,10 @@ function zone_handler(zn)
     door_out("room_6o")
 
   elseif (zn == 31) then
-    warp("dstairs3", 8)
+    warp("room_7d", 8)
 
   elseif (zn == 32) then
-    warp("ustairs1", 8)
+    warp("room_6u", 8)
 
   elseif (zn == 33) then
     thought(HERO1, "This spa is relaxing.")
