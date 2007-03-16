@@ -261,7 +261,7 @@ function zone_handler(zn)
 
   elseif (zn == 42) then
     -- Will be fortress for Malkaron
-    change_map("unfinished", 0, 0, 0, 0)
+    msg("This will be fortress for Malkaron", 255, 0)
 
   elseif (zn == 43) then
     change_map("town8", "entrance")
