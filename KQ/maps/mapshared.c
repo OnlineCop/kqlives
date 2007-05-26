@@ -284,7 +284,10 @@ void set_pcx (BITMAP ** pcx_buf, const char *pcx_file, PALETTE pcx_pal,
    if (exists (pcx_file))
       *pcx_buf = load_pcx (pcx_file, pcx_pal);
    else {
-      sprintf (strbuf, "PCX image could not be found: %s", pcx_file);
+      sprintf (strbuf, "Could not find file: %s.\n%s\n%s\n", pcx_file,
+         "To run mapdraw, your current directory must contain certain pcx files.",
+         "It must also contain the map file you want to edit.");
+
       allegro_message (strbuf);
       if (critical) {
          /* This means that this file is critical to the program, so we need to
