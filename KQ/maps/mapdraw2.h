@@ -1,7 +1,7 @@
 /*
     This file is part of KQ.
-		
-		Copyright (C) 2006 Günther Brammer
+
+      Copyright (C) 2006 Günther Brammer
 
     KQ is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@ int get_entity_at (unsigned int x, unsigned int y);
 
 #ifndef __MAPDRAW_H
 #include "structs.h"
+#include "mapdraw.h"
 
 extern s_map gmap;
 extern s_entity gent[];

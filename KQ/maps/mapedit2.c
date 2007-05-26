@@ -37,6 +37,7 @@ static cairo_surface_t *gdk_icons[MAX_TILES];
 static cairo_surface_t *gdk_shadows[MAX_SHADOWS];
 static cairo_surface_t *gdk_eframes[MAX_EPICS][12];
 static cairo_surface_t *gdk_marker_image;
+static cairo_surface_t *gdk_marker_image_active;
 static cairo_user_data_key_t cairo_user_data_key;
 
 
@@ -102,6 +103,7 @@ static void convert_icons (void)
          gdk_eframes[i][j] = convert_icon (eframes[i][j], FALSE);
       }
    gdk_marker_image = convert_icon (marker_image, FALSE);
+   gdk_marker_image_active = convert_icon (marker_image_active, FALSE);
 }
 
 void do_load_map (const char *filename)
@@ -239,7 +241,7 @@ void do_draw_map (cairo_t * cr, GdkRectangle * area, unsigned int layerflags)
          }
       }
    }
-   if (layerflags & MARKERS_FLAG && gmap.num_markers > 0) {
+   if (layerflags & MARKERS_FLAG) {
       for (i = 0; i < gmap.num_markers; ++i) {
          // do not do manual clipping, I'm too lazy to get that right here
          cairo_set_source_surface (cr, gdk_marker_image,
@@ -324,6 +326,7 @@ void set_tile_at (unsigned int tile, unsigned int x, unsigned int y,
    default:
       break;
    }
+   map_change(x, y);
 }
 
 void set_obstacle_at (unsigned int obstacle, unsigned int x, unsigned int y)
@@ -335,6 +338,12 @@ void set_obstacle_at (unsigned int obstacle, unsigned int x, unsigned int y)
       o_map[i] = obstacle;
    else if (obstacle == OBSTACLES_CYCLE)
       o_map[i] = (o_map[i] + 1) % (MAX_OBSTACLES + 1);
+   map_change(x, y);
+}
+
+unsigned int get_zone_at (unsigned int x, unsigned int y)
+{
+   return z_map[y * gmap.xsize + x];
 }
 
 /* Set the zone. ZONES_UP means increase by one.
@@ -350,11 +359,12 @@ void set_zone_at (unsigned int zone, unsigned int x, unsigned int y)
       z_map[i] = (z_map[i] + 1) % MAX_ZONES;
    else if (zone == ZONES_DOWN)
       z_map[i] = (z_map[i] - 1) % MAX_ZONES;
+   map_change(x, y);
 }
 
 /* returns which marker if there is a marker at the specified location.
  * or returns MAX_MARKERS if this square does not have a marker */
-unsigned int is_marker (unsigned int x, unsigned int y)
+unsigned int which_marker (unsigned int x, unsigned int y)
 {
    int i;
    for (i = 0; i < MAX_MARKERS; i++)
@@ -378,7 +388,7 @@ void new_marker (char * value, unsigned int x, unsigned int y)
 void remove_marker (unsigned int x, unsigned int y)
 {
    int i;
-   if ((i = is_marker(x, y)) < MAX_MARKERS) {
+   if ((i = which_marker(x, y)) < MAX_MARKERS) {
       for (; i < num_markers; i++) {
          gmap.markers[i].x = gmap.markers[i + 1].x;
          gmap.markers[i].y = gmap.markers[i + 1].y;
@@ -387,26 +397,31 @@ void remove_marker (unsigned int x, unsigned int y)
       num_markers--;
       gmap.num_markers--;
    }
+   map_change (x, y); map_change (x + 1, y);
+   map_change (x, y - 1); map_change (x + 1, y - 1);
 }
 
 void set_marker_at_loc (char * value, unsigned int x, unsigned int y)
 {
    unsigned int i;
-   if ((i = is_marker(x, y)) < MAX_MARKERS) {
+   if ((i = which_marker(x, y)) < MAX_MARKERS) {
       strcpy(gmap.markers[i].name, value);
    } else {
       new_marker(value, x, y);
+      map_change (x, y); map_change (x + 1, y);
+      map_change (x, y - 1); map_change (x + 1, y - 1);
    }
 }
 
 char * get_marker_value (unsigned int x, unsigned int y)
 {
    int i;
-   if ((i = is_marker(x, y)) < MAX_MARKERS)
+   if ((i = which_marker(x, y)) < MAX_MARKERS)
       return gmap.markers[i].name;
    else
       return NULL;
 }
+
 
 // FIXME: this offsetof usage is a bit too hackish
 
@@ -513,5 +528,6 @@ void change_entity_model (GtkListStore * store, int entity, char *valuepath,
    default:
       break;
    }
+//   make_entity_sane(entity);
    gtk_list_store_set (store, &iter, ENTITY_VALUE_COLUMN, ivalue, -1);
 }

@@ -195,7 +195,7 @@ void rename_marker (s_marker *);
 extern BITMAP *double_buffer, *pcx_buffer, *icons[MAX_TILES],
    *eframes[MAX_EPICS][12];
 extern BITMAP *font6, *mesh1[MAX_OBSTACLES], *mesh2, *mesh3,
-   *shadow[MAX_SHADOWS], *marker_image;
+   *shadow[MAX_SHADOWS], *marker_image, *marker_image_active;
 extern PALETTE pal;
 
 extern char map_fname[40], map_path[MAX_PATH], *strbuf;

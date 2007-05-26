@@ -46,8 +46,10 @@ enum
    LAYER_N_COLUMNS
 };
 unsigned int layer_showing_flags = LAYER_1_FLAG | LAYER_2_FLAG | LAYER_3_FLAG | SHADOW_FLAG | ENTITIES_FLAG;
+unsigned int active_x = 0;
+unsigned int active_y = 0;
 
-static void map_change (unsigned int x, unsigned int y)
+void map_change (unsigned int x, unsigned int y)
 {
    gtk_widget_queue_draw_area (map_drawing_area, x * 16, y * 16, 16, 16);
    map_has_changed = TRUE;
@@ -179,7 +181,8 @@ static gboolean on_map_button_press_event (GtkWidget * widget, GdkEventButton * 
 
    /* current_value is a generic string that the user can edit before clicking
     * on the map. It is the box in the bottom left corner. */
-   char * current_value = g_strdup(gtk_entry_get_text(GTK_ENTRY(text_current_value)));
+   const char * current_value = gtk_entry_get_text(GTK_ENTRY(text_current_value));
+   char ch[32];
 
    /* Ignore double and triple clicks. Treat them as multiple normal clicks.
    * Without this line, you end up getting two normal clicks and a third, double
@@ -191,8 +194,8 @@ static gboolean on_map_button_press_event (GtkWidget * widget, GdkEventButton * 
    if (!(current_layer & layer_showing_flags))
       return FALSE;
 
-   /* Temporary */
-   /* End of temp *****/
+   active_x = x;
+   active_y = y;
 
    /* What is the gdk constant for left mouse button? */
    if (event->button == 1) {
@@ -205,19 +208,16 @@ static gboolean on_map_button_press_event (GtkWidget * widget, GdkEventButton * 
             gtk_widget_queue_draw_area (tile_drawing_area, 0, 0, 16, 16);
          } else {
             set_tile_at (current_tile, x, y, current_layer);
-            map_change (x, y);
          }
          break;
       case OBSTACLES_FLAG:
          set_obstacle_at(OBSTACLES_CYCLE, x, y);
-         map_change (x, y);
          break;
       case ENTITIES_FLAG:
          gtk_widget_show (GTK_WIDGET (entitydialog));
          selected_entity = get_entity_at (x, y);
          if (selected_entity == -1) {
             selected_entity = do_place_entity (x, y);
-            map_change (x, y);
          }
          if (selected_entity == -1) {
             gtk_widget_hide (GTK_WIDGET (entitydialog));
@@ -226,22 +226,27 @@ static gboolean on_map_button_press_event (GtkWidget * widget, GdkEventButton * 
          }
          break;
       case ZONES_FLAG:
-         i = atoi(current_value);
-         set_zone_at(i, x, y);
-         map_change (x, y);
+         // If there is a zone here, fill the current value with the zone's value.
+         // If there is no zone, fill the zone with the value in current_value.
+         if (!(i = get_zone_at(x, y))) {
+            i = atoi(current_value);
+            set_zone_at(i, x, y);
+         }
+         sprintf(ch, "%d", i);
+         gtk_entry_set_text(GTK_ENTRY(text_current_value), ch);
          break;
       case MARKERS_FLAG:
-         if (event->state & GDK_CONTROL_MASK) {
-            if ((current_value = get_marker_value(x, y)) != NULL)
-               gtk_entry_set_text(GTK_ENTRY(text_current_value), current_value);
+      // If there is a marker here, fill current_value edit box
+      // with value of marker.
+         if (get_marker_value(x, y)) {
+            strcpy(ch, (char *) get_marker_value(x, y));
+            gtk_entry_set_text(GTK_ENTRY(text_current_value), ch);
          } else {
+         // If there is no marker here, put one here, with current value of edit box.
             set_marker_at_loc(current_value, x, y);
-            map_change (x, y); map_change (x + 1, y);
-            map_change (x, y - 1); map_change (x + 1, y - 1);
          }
          break;
       case SHADOW_FLAG:
-
       default:
          break;
       } /* End of switch */
@@ -253,40 +258,57 @@ static gboolean on_map_button_press_event (GtkWidget * widget, GdkEventButton * 
       case LAYER_2_FLAG:
       case LAYER_3_FLAG:
             set_tile_at (0, x, y, current_layer);
-            map_change (x, y);
             break;
       case OBSTACLES_FLAG:
             set_obstacle_at(0, x, y);
-            map_change (x, y);
             break;
       case ZONES_FLAG:
          set_zone_at(0, x, y);
-         map_change (x, y);
          break;
       case MARKERS_FLAG:
          remove_marker(x, y);
-         map_change (x, y); map_change (x + 1, y);
-         map_change (x, y - 1); map_change (x + 1, y -1);
          break;
       case ENTITIES_FLAG:
-         /* Should delete the entity at this square */
+         selected_entity = get_entity_at(x, y);
+         remove_entity (selected_entity);
+         selected_entity = -1;
+         break;
       case SHADOW_FLAG:
       default:
          break;
-      }
+      } /* End of switch */
+
    /* What is the gdk constant for middle mouse button? */
    } else if (event->button == 2) {
       switch(current_layer) {
       case ZONES_FLAG:
          set_zone_at(ZONES_UP, x, y);
-         map_change (x, y);
+         i = get_zone_at(x, y);
+         sprintf(ch, "%d", i);
+         gtk_entry_set_text(GTK_ENTRY(text_current_value), ch);
          break;
       default:
          break;
       }
    }
-
+   gtk_widget_grab_focus(text_current_value);
    return FALSE;
+}
+
+static void on_text_current_value_changed(GtkEntry * entry, gpointer user_data)
+{
+   char * current_value = g_strdup(gtk_entry_get_text(GTK_ENTRY(entry)));
+   int i = 0;
+
+   switch(current_layer) {
+   case ZONES_FLAG:
+      i = atoi(current_value);
+      set_zone_at(i, active_x, active_y);
+      break;
+   case MARKERS_FLAG:
+      set_marker_at_loc(current_value, active_x, active_y);
+      break;
+   }
 }
 
 static void on_deletebutton_clicked (GtkButton * button, gpointer user_data)
@@ -295,6 +317,12 @@ static void on_deletebutton_clicked (GtkButton * button, gpointer user_data)
    remove_entity (selected_entity);
    selected_entity = -1;
    gtk_widget_hide (GTK_WIDGET (entitydialog));
+}
+
+static gboolean on_entitydialog_delete_event (GtkWidget * w, GdkEvent * e, gpointer user_data)
+{
+   gtk_widget_hide(GTK_WIDGET(entitydialog));
+   return TRUE;
 }
 
 static void eprops_edited_callback (GtkCellRendererText * cell, gchar * path_string, gchar * new_text, gpointer user_data)
@@ -384,6 +412,7 @@ static void init_entitydialog (void)
    GladeXML *xml = glade_xml_new (GLADE_FILENAME, "entitydialog", NULL);
 #define SIGNAL_CONNECT(s,p) glade_xml_signal_connect_data (xml, #s, G_CALLBACK(s), p)
    SIGNAL_CONNECT (on_deletebutton_clicked, NULL);
+   SIGNAL_CONNECT (on_entitydialog_delete_event, NULL);
    SIGNAL_CONNECT (gtk_widget_hide, NULL);
 #undef SIGNAL_CONNECT
    entitydialog = GTK_WINDOW (glade_xml_get_widget (xml, "entitydialog"));
@@ -432,7 +461,9 @@ void mainwindow (int *argc, char **argv[])
    SIGNAL_CONNECT (on_currenttile_expose_event, NULL);
    SIGNAL_CONNECT (on_map_button_press_event, NULL);
    SIGNAL_CONNECT (on_palette_button_press_event, NULL);
+   SIGNAL_CONNECT (on_text_current_value_changed, NULL);
    SIGNAL_CONNECT (on_deletebutton_clicked, NULL);
+   SIGNAL_CONNECT (on_entitydialog_delete_event, NULL);
    SIGNAL_CONNECT (gtk_widget_hide, NULL);
 #undef SIGNAL_CONNECT
 

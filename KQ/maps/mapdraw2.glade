@@ -263,7 +263,10 @@
 		  <child>
 		    <widget class="GtkEntry" id="text_current_value">
 		      <property name="visible">True</property>
+		      <property name="can_default">True</property>
+		      <property name="has_default">True</property>
 		      <property name="can_focus">True</property>
+		      <property name="has_focus">True</property>
 		      <property name="editable">True</property>
 		      <property name="visibility">True</property>
 		      <property name="max_length">0</property>
@@ -271,6 +274,7 @@
 		      <property name="has_frame">True</property>
 		      <property name="invisible_char">*</property>
 		      <property name="activates_default">False</property>
+		      <signal name="changed" handler="on_text_current_value_changed" after="yes" last_modification_time="Sat, 26 May 2007 07:02:21 GMT"/>
 		    </widget>
 		    <packing>
 		      <property name="padding">0</property>
@@ -520,6 +524,7 @@
   <property name="focus_on_map">True</property>
   <property name="urgency_hint">False</property>
   <property name="has_separator">False</property>
+  <signal name="delete_event" handler="on_entitydialog_delete_event" last_modification_time="Thu, 15 Mar 2007 23:32:38 GMT"/>
 
   <child internal-child="vbox">
     <widget class="GtkVBox" id="dialog-vbox1">

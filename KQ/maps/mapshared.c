@@ -16,7 +16,7 @@
 BITMAP *icons[MAX_TILES];
 BITMAP *double_buffer, *pcx_buffer, *eframes[MAX_EPICS][12];
 BITMAP *font6, *mesh1[MAX_OBSTACLES], *shadow[MAX_SHADOWS];
-BITMAP *marker_image;
+BITMAP *marker_image, *marker_image_active;
 
 // This line turns off other/indent.pro indentation settings:
 // *INDENT-OFF*
@@ -250,9 +250,11 @@ void load_map (const char *path)
       if (sh_map[p] >= MAX_SHADOWS)
          sh_map[p] = 0;
 
-      /* Zone layer */
-      if (z_map[p] > MAX_ZONES)
-         z_map[p] = 0;
+/*    Commented out to prevent compiler warning about always returning false
+ *    due to limited range of data type (char)
+      /* Zone layer *
+      if (z_map[p] >= MAX_ZONES)
+         z_map[p] = 0; */
    }
 
    for (i = 0; i < MAX_TILES; i++)
@@ -302,6 +304,7 @@ void shared_cleanup (void)
 
    destroy_bitmap (font6);
    destroy_bitmap (marker_image);
+   destroy_bitmap (marker_image_active);
    for (i = 0; i < MAX_TILES; i++)
       destroy_bitmap (icons[i]);
    for (i = 0; i < MAX_SHADOWS; i++)
@@ -384,6 +387,13 @@ void shared_startup (void)
    vline (marker_image, 0, 0, 16, makecol (255, 255, 255));
    vline (marker_image, 1, 0, 16, makecol (192, 192, 192));
    rectfill (marker_image, 2, 0, 10, 8, makecol (255, 0, 0));
+
+   /* Create the active marker image */
+   marker_image_active = create_bitmap (16, 16);
+   clear_bitmap (marker_image_active);
+   vline (marker_image_active, 0, 0, 16, makecol (255, 255, 255));
+   vline (marker_image_active, 1, 0, 16, makecol (192, 192, 192));
+   rectfill (marker_image_active, 2, 0, 10, 8, makecol (0, 0, 255));
 }
 
 

@@ -58,6 +58,8 @@ void do_load_map (const char *filename);
 unsigned int get_tile_at (unsigned int x, unsigned int y, unsigned int layer);
 void set_tile_at (unsigned int tile, unsigned int x, unsigned int y,
                   unsigned int layer);
+void map_change (unsigned int x, unsigned int y);
+
 GtkListStore *create_entity_model (void);
 void fill_entity_model (GtkListStore * store, int entity);
 void change_entity_model (GtkListStore * store, int entity, char *valuepath,
