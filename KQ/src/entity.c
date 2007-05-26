@@ -381,8 +381,11 @@ static void getcommand (int target_entity)
  */
 static int move (int target_entity, int dx, int dy)
 {
-   int tx, ty, oldfacing;
+   int tx, ty, source_tile, oldfacing;
    s_entity *ent = &g_ent[target_entity];
+
+   if (dx == 0 && dy == 0)      // Speed optimization.
+      return 0;
 
    tx = ent->x / 16;
    ty = ent->y / 16;
@@ -399,8 +402,8 @@ static int move (int target_entity, int dx, int dy)
        ty + dy == -1 || ty + dy == g_map.ysize)
       return 0;
    if (ent->obsmode == 1) {
+      // Try to automatically walk/run around obstacle.
       if (dx && obstruction (tx, ty, dx, 0, FALSE)) {
-         /* Try to avoid the obstacle if facing it */
          if (dy != -1 && oldfacing == ent->facing
              && !obstruction (tx, ty + 1, dx, 0, TRUE)
              && !obstruction (tx, ty, 0, 1, TRUE))
@@ -432,6 +435,30 @@ static int move (int target_entity, int dx, int dy)
       return 0;
    if (ent->obsmode == 1 && entityat (tx + dx, ty + dy, target_entity))
       return 0;
+
+   // Make sure that the player can't avoid special zones by moving diagonally.
+   if (dx && dy)
+   {
+      source_tile = ty * g_map.xsize + tx;
+      if (z_seg[source_tile] != z_seg[source_tile + dx]
+         || z_seg[source_tile] != z_seg[source_tile + dy * g_map.xsize])
+            if (ent->facing == FACE_LEFT || ent->facing == FACE_RIGHT)
+               if (!obstruction(tx, ty, dx, 0, TRUE))
+                  dy = 0;
+               else
+                  dx = 0;
+            else  // They are facing up or down.
+               if (!obstruction(tx, ty, 0, dy, TRUE))
+                  dx = 0;
+               else
+                  dy = 0;
+   }
+
+   // Make sure player can't walk diagonally between active entities.
+   if (dx && dy)
+      if (obstruction(tx, ty, dx, 0, TRUE) && obstruction(tx, ty, 0, dy, TRUE))
+         return 0;
+
    ent->tilex = tx + dx;
    ent->tiley = ty + dy;
    ent->y += dy;
