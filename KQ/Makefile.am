@@ -83,7 +83,7 @@ cscripts_DATA = scripts/bridge2.lob scripts/dville.lob \
 	scripts/town6.lob scripts/cave6b.lob scripts/manor.lob \
 	scripts/town7.lob scripts/town8.lob scripts/coliseum.lob \
 	scripts/pass.lob scripts/tunnel.lob scripts/cult.lob \
-	scripts/shrine.lob
+	scripts/shrine.lob scripts/sunarin.lob
 MOSTLYCLEANFILES = $(cscripts_DATA)
 cscriptsdir = $(pkglibdir)/scripts
 
