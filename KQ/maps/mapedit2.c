@@ -376,12 +376,11 @@ unsigned int which_marker (unsigned int x, unsigned int y)
 
 void new_marker (char * value, unsigned int x, unsigned int y)
 {
-   if (num_markers >= MAX_MARKERS)
+   if (gmap.num_markers >= MAX_MARKERS)
       return;
-   strcpy(gmap.markers[num_markers].name, value);
-   gmap.markers[num_markers].x = x;
-   gmap.markers[num_markers].y = y;
-   num_markers++;
+   strcpy(gmap.markers[gmap.num_markers].name, value);
+   gmap.markers[gmap.num_markers].x = x;
+   gmap.markers[gmap.num_markers].y = y;
    gmap.num_markers++;
 }
 
@@ -389,12 +388,11 @@ void remove_marker (unsigned int x, unsigned int y)
 {
    int i;
    if ((i = which_marker(x, y)) < MAX_MARKERS) {
-      for (; i < num_markers; i++) {
+      for (; i < gmap.num_markers; i++) {
          gmap.markers[i].x = gmap.markers[i + 1].x;
          gmap.markers[i].y = gmap.markers[i + 1].y;
          strcpy(gmap.markers[i].name, gmap.markers[i + 1].name);
       }
-      num_markers--;
       gmap.num_markers--;
    }
    map_change (x, y); map_change (x + 1, y);

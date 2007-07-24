@@ -297,7 +297,7 @@ static gboolean on_map_button_press_event (GtkWidget * widget, GdkEventButton * 
 
 static void on_text_current_value_changed(GtkEntry * entry, gpointer user_data)
 {
-   char * current_value = g_strdup(gtk_entry_get_text(GTK_ENTRY(entry)));
+   const char * current_value = (char *) gtk_entry_get_text(GTK_ENTRY(entry));
    int i = 0;
 
    switch(current_layer) {

@@ -262,8 +262,13 @@ void load_map (const char *path)
    for (i = 0; i < MAX_ANIM; i++)
       adata[i] = tanim[gmap.tileset][i];
 
+	/* Note: try to use gmap.num_markers, rather than num_markers. It is bad
+	programming practice to store the same variable in multiple places.
+	mapdraw2 uses gmap.num_markers exclusively. */
+
    num_markers = gmap.num_markers;
    memcpy (markers, gmap.markers, gmap.num_markers * sizeof (s_marker));
+	gmap.markers = markers; // these pointers point to same place in memory.
    num_bound_boxes = gmap.num_bound_boxes;
    memcpy (bound_box, gmap.bound_box, gmap.num_bound_boxes * sizeof (s_bound));
 }                               /* load_map () */
