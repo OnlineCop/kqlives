@@ -66,7 +66,7 @@ static cairo_surface_t *convert_icon (BITMAP * icon, gboolean transparency)
    }
    cairo_surface_t *s =
       cairo_image_surface_create_for_data (gdk_icon_data, CAIRO_FORMAT_ARGB32,
-                                           icon->w, icon->h, 0);
+                                           icon->w, icon->h, icon->w * 4);
    cairo_surface_set_user_data (s, &cairo_user_data_key, gdk_icon_data, free);
    return s;
 }
