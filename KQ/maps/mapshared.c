@@ -268,7 +268,6 @@ void load_map (const char *path)
 
    num_markers = gmap.num_markers;
    memcpy (markers, gmap.markers, gmap.num_markers * sizeof (s_marker));
-	gmap.markers = markers; // these pointers point to same place in memory.
    num_bound_boxes = gmap.num_bound_boxes;
    memcpy (bound_box, gmap.bound_box, gmap.num_bound_boxes * sizeof (s_bound));
 }                               /* load_map () */
