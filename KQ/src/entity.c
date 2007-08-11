@@ -441,17 +441,19 @@ static int move (int target_entity, int dx, int dy)
    {
       source_tile = ty * g_map.xsize + tx;
       if (z_seg[source_tile] != z_seg[source_tile + dx]
-         || z_seg[source_tile] != z_seg[source_tile + dy * g_map.xsize])
-            if (ent->facing == FACE_LEFT || ent->facing == FACE_RIGHT)
-               if (!obstruction(tx, ty, dx, 0, TRUE))
-                  dy = 0;
-               else
-                  dx = 0;
-            else  // They are facing up or down.
-               if (!obstruction(tx, ty, 0, dy, TRUE))
-                  dx = 0;
-               else
-                  dy = 0;
+         || z_seg[source_tile] != z_seg[source_tile + dy * g_map.xsize]) {
+         if (ent->facing == FACE_LEFT || ent->facing == FACE_RIGHT) {
+            if (!obstruction(tx, ty, dx, 0, TRUE))
+               dy = 0;
+            else
+               dx = 0;
+         } else {   // They are facing up or down.
+            if (!obstruction(tx, ty, 0, dy, TRUE))
+               dx = 0;
+            else
+               dy = 0;
+         }
+      }
    }
 
    // Make sure player can't walk diagonally between active entities.

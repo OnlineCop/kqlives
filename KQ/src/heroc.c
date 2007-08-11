@@ -179,8 +179,16 @@ static int combat_castable (int spell_caster, int spell_number)
    int b, c = 0;
 
    b = party[pidx[spell_caster]].spells[spell_number];
-   if (b == M_WARP && can_run == 0)
-      return 0;
+   if (b == M_WARP)
+#ifdef DEBUGMODE
+      // They can only run if we are in debugging mode >= 3
+      if (can_run == 0 && debugging < 3)
+         return 0;
+#else
+      if (can_run == 0)
+         return 0;
+#endif
+
    if (magic[b].use == USE_ANY_INF || magic[b].use == USE_COMBAT_INF) {
       if (pidx[spell_caster] == CORIN && fighter[c].aux == 2) {
          c = mp_needed (spell_caster, b);
@@ -689,6 +697,15 @@ void hero_choose_action (int who)
       if (right) {
          unpress ();
          sptr++;
+#ifdef DEBUGMODE
+         // If we're debugging, we will force the ability to RUN
+         if (debugging >= 3)
+            sptr = 2;
+         else        // This "else" isn't aligned with the following line,
+                     // but the following line needs to be accessed regardless
+                     // of whether DEBUGMODE is declared or not.
+                     // It also needs to run incase "debugging" is NOT >= 3.
+#endif
          if (sptr > 1 + can_run)
             sptr = 1 + can_run;
       }
@@ -755,9 +772,9 @@ void hero_choose_action (int who)
  * - Victory
  * - Arms forward
  *
- * Then an array to the right where each character is wielding 
+ * Then an array to the right where each character is wielding
  * some different luminous green weapons.
- * These colours are replaced by the 'true' weapon colours as 
+ * These colours are replaced by the 'true' weapon colours as
  * determined by s_item::kol .
  * The shape is chosen by s_fighter::cwt
  */

@@ -238,7 +238,7 @@ static void time_counter (void);
  * function just below
  */
 volatile int timer = 0, ksec = 0, kmin = 0, khr = 0,
-   timer_count = 0, animation_count;
+   timer_count = 0, animation_count = 0;
 
 /*! Current colour map */
 COLOR_MAP cmap;
@@ -287,6 +287,12 @@ static struct timer_event
 static int next_event_time;     /*!< The time the next event will trigger */
 
 #ifdef DEBUGMODE
+// TT notes:
+// All this  is, is the name of the "progress" that we use in the *.lua files.
+// It is only really helpful if you check the "progress.log" file (when you
+// hit F11 if DEBUGMODE is defined), so you can know the current progress of
+// your characters in any given save game.  This is not compiled into the non-
+// debug version of the KQ binary.
 s_progress progresses[120 + 1] = {      // 120 progress, 1 shop
    {0, "P_START"},         {1, "P_ODDWALL"},          {2, "P_DARKIMPBOSS"},
    {3, "P_DYINGDUDE"},     {4, "P_BUYCURE"},          {5, "P_GETPARTNER"},
