@@ -249,12 +249,6 @@ void load_map (const char *path)
       /* Shadow layer */
       if (sh_map[p] >= MAX_SHADOWS)
          sh_map[p] = 0;
-
-/*    Commented out to prevent compiler warning about always returning false
- *    due to limited range of data type (char)
-      /* Zone layer *
-      if (z_map[p] >= MAX_ZONES)
-         z_map[p] = 0; */
    }
 
    for (i = 0; i < MAX_TILES; i++)
@@ -262,9 +256,9 @@ void load_map (const char *path)
    for (i = 0; i < MAX_ANIM; i++)
       adata[i] = tanim[gmap.tileset][i];
 
-	/* Note: try to use gmap.num_markers, rather than num_markers. It is bad
-	programming practice to store the same variable in multiple places.
-	mapdraw2 uses gmap.num_markers exclusively. */
+   /* Note: try to use gmap.num_markers, rather than num_markers. It is bad
+   programming practice to store the same variable in multiple places.
+   mapdraw2 uses gmap.num_markers exclusively. */
 
    num_markers = gmap.num_markers;
    memcpy (markers, gmap.markers, gmap.num_markers * sizeof (s_marker));
@@ -407,8 +401,8 @@ void shared_startup (void)
 /*! \brief Save the whole map as a pcx
  *
  * Make one giant bitmap and draw all the layers on it, so you can get an
- * overview of what's going on.  Doesn't draw entities, and doesn't work well
- * with parallax (any ideas how to handle parallax?).
+ * overview of what's going on.  Doesn't work well with parallax (any ideas
+ * how to handle parallax?).
  * \author PH
  * \date 20030412
  * \updated 20040730 by TT
@@ -440,7 +434,7 @@ void visual_map (s_show showing, const char *save_fname)
          if (showing.obstacles && o_map[w] > 0)
             draw_sprite (bmp, mesh1[o_map[w] - 1], i * 16, j * 16);
 
-         if ((showing.zones) && (z_map[w] > 0) && (z_map[w] < MAX_ZONES)) {
+         if ((showing.zones) && (z_map[w] > 0)) {
 /* This check is here because of the differing versions of the Allegro library */
 #ifdef HAVE_TEXT_EX
             if (z_map[w] < 10) {
@@ -451,7 +445,7 @@ void visual_map (s_show showing, const char *save_fname)
                /* The zone's number is double-digit, center only vert */
                textprintf_ex (bmp, font, i * 16, j * 16 + 4,
                               makecol (255, 255, 255), 0, "%d", z_map[w]);
-            } else if (z_map[w] < 1000) {
+            } else {
                /* The zone's number is triple-digit.  Print the 100's digit in
                 * top-center of the square; the 10's and 1's digits on bottom
                 * of the square
@@ -472,7 +466,7 @@ void visual_map (s_show showing, const char *save_fname)
                /* The zone's number is double-digit, center only vert */
                textprintf (bmp, font, i * 16, j * 16 + 4,
                            makecol (255, 255, 255), "%d", z_map[w]);
-            } else if (z_map[w] < 1000) {
+            } else {
                /* The zone's number is triple-digit.  Print the 100's digit in
                 * top-center of the square; the 10's and 1's digits on bottom
                 * of the square
@@ -506,12 +500,21 @@ void visual_map (s_show showing, const char *save_fname)
       }
    }
 
+   /* Show marker flags */
    if (showing.markers == 1 && gmap.num_markers > 0) {
       num_markers = gmap.num_markers;
       memcpy (markers, gmap.markers, gmap.num_markers * sizeof (s_marker));
       for (i = 0; i < num_markers; ++i) {
          draw_sprite (bmp, marker_image, markers[i].x * 16 + 8,
                       markers[i].y * 16 - 8);
+      }
+   }
+
+   /* Show boundary boxes */
+   if (showing.boundaries == 1) {
+      for (i = 0; i < gmap.num_bound_boxes; i++) {
+         rect (bmp, bound_box[i].x1 * 16, bound_box[i].y1 * 16,
+               bound_box[i].x2 * 16 + 15, bound_box[i].y2 * 16 + 15, 24);
       }
    }
 

@@ -20,14 +20,23 @@
 
 /* globals */
 
-s_anim tanim[NUM_TILESETS][MAX_ANIM];
-s_anim adata[MAX_ANIM];
+s_anim tanim[NUM_TILESETS][MAX_ANIM];     // Animated tiles like water, fire
+s_anim adata[MAX_ANIM];                   // Defined for use in mapshared.c
 unsigned short tilex[MAX_TILES];
 
 /* Show details when parsing MAP files */
 int verbose = 0;
 
 char *filenames[PATH_MAX];
+
+const char OPTION_BMP[]            = "-B";
+const char OPTION_BMP_LONG[]       = "--bmp";
+const char OPTION_OVERWRITE[]      = "-F";
+const char OPTION_OVERWRITE_LONG[] = "--force-overwrite";
+const char OPTION_VERBOSE[]        = "-V";
+const char OPTION_VERBOSE_LONG[]   = "--verbose";
+const char OPTION_HELP[]           = "-H";
+const char OPTION_HELP_LONG[]      = "--help";
 
 
 /*! \brief Memory allocation
@@ -93,33 +102,34 @@ void error_load (const char *problem_file)
 /*! \brief Display help on the command syntax */
 void usage (const char *argv)
 {
-   fprintf (stdout, "Map to image converter for KQ.\n");
-   fprintf (stdout, "Usage: %s [+/-][options] [-v] [-b] [-f] filename(s)\n",
-            argv);
+   fprintf (stdout, "Map-to-image converter for KQ.\n\n");
+   fprintf (stdout, "Usage: %s [{+/-}options] file(s)...\n", argv);
    fprintf (stdout, "Options:\n");
-   fprintf (stdout,
-            "   +  includes the option: it WILL appear in the image.\n");
-   fprintf (stdout,
-            "   -  negates an option: it WILL NOT appear in the image.\n");
-   fprintf (stdout, "   1  shows layer 1 (default ON)\n");
-   fprintf (stdout, "   2  shows layer 2 (default ON)\n");
-   fprintf (stdout, "   3  shows layer 3 (default ON)\n");
-   fprintf (stdout, "   e  shows the Entities (default OFF)\n");
-   fprintf (stdout, "   o  shows the Obstacles (default OFF)\n");
-   fprintf (stdout, "   s  shows the Shadows (default ON)\n");
-   fprintf (stdout, "   z  shows the Zones (default OFF)\n");
-   fprintf (stdout, "   m  shows the Markers (default OFF)\n");
-   fprintf (stdout, "   b  shows the Bounding Areas (default OFF)\n\n");
-   fprintf (stdout, "   -v displays %s output in verbose mode\n\n", argv);
-   fprintf (stdout, "   -b output as Windows bitmap instead of PCX\n\n");
-   fprintf (stdout, "   -f overwrite image, even if it already exists\n\n");
-   fprintf (stdout, "   filename  is the .MAP file(s) to be used\n");
-   fprintf (stdout, "Example: %s +1oz -23es town1.map town2.map\n\n", argv);
-   fprintf (stdout,
-            "  Output will be `town1.pcx' and `town2.pcx' with only Layer 1, Obstacles,\n");
+   fprintf (stdout, "  %s, %s\t\tshows this help dialog\n", OPTION_HELP, OPTION_HELP_LONG);
+   fprintf (stdout, "\n");
+   fprintf (stdout, "  %s, %s\t\toutput as Windows bitmap instead of PCX\n", OPTION_BMP, OPTION_BMP_LONG);
+   fprintf (stdout, "  %s, %s\toverwrite image, even if it already exists\n", OPTION_OVERWRITE, OPTION_OVERWRITE_LONG);
+   fprintf (stdout, "  %s, %s\t\tdisplays %s output in verbose mode\n", OPTION_VERBOSE, OPTION_VERBOSE_LONG, argv);
+   fprintf (stdout, "\n");
+   fprintf (stdout, "  [+] includes the option: it WILL appear in the image\n");
+   fprintf (stdout, "  [-] negates an option: it WILL NOT appear in the image\n");
+   fprintf (stdout, "      1  shows layer 1            (default ON) \n");
+   fprintf (stdout, "      2  shows layer 2            (default ON) \n");
+   fprintf (stdout, "      3  shows layer 3            (default ON) \n");
+   fprintf (stdout, "      e  shows the Entities       (default OFF)\n");
+   fprintf (stdout, "      o  shows the Obstacles      (default OFF)\n");
+   fprintf (stdout, "      s  shows the Shadows        (default ON) \n");
+   fprintf (stdout, "      z  shows the Zones          (default OFF)\n");
+   fprintf (stdout, "      m  shows the Markers        (default OFF)\n");
+   fprintf (stdout, "      b  shows the Bounding Areas (default OFF)\n");
+   fprintf (stdout, "\n");
+   fprintf (stdout, "  file(s) are the .MAP file(s) to be used\n");
+   fprintf (stdout, "\n");
+   fprintf (stdout, "Example: %s +1oz -23es town1.map town2.map\n", argv);
+   fprintf (stdout, "\n");
+   fprintf (stdout, "  Output will be `town1.pcx' and `town2.pcx' with only Layer 1, Obstacles,\n");
    fprintf (stdout, "    and Zones showing.\n");
-   fprintf (stdout,
-            "  Layers 2 and 3, Entities, and Shadows will NOT be included.\n");
+   fprintf (stdout, "  Layers 2 and 3, Entities, and Shadows will NOT be included.\n");
 }                               /* usage () */
 
 
@@ -171,15 +181,15 @@ int main (int argc, char *argv[])
 
    /* Some command-line switches must have preference, so sweep twice */
    for (i = 1; i < argc; i++) {
-      if (!strcmp (argv[i], "--help") || !strcmp (argv[i], "-h")) {
+      if (!strcmp (argv[i], OPTION_HELP) || !strcmp (argv[i], OPTION_HELP_LONG)) {
          usage (argv[0]);
          return 0;
       }
-      if (!strcmp (argv[i], "-v") || !strcmp (argv[i], "--verbose"))
+      if (!strcmp (argv[i], OPTION_VERBOSE) || !strcmp (argv[i], OPTION_VERBOSE_LONG))
          verbose = 1;
-      if (!strcmp (argv[i], "-b"))
+      if (!strcmp (argv[i], OPTION_BMP) || !strcmp (argv[i], OPTION_BMP_LONG))
          output_ext = "bmp";
-      if (!strcmp (argv[i], "-f"))
+      if (!strcmp (argv[i], OPTION_OVERWRITE) || !strcmp (argv[i], OPTION_OVERWRITE_LONG))
          force_overwrite = 1;
    }
 
@@ -275,9 +285,8 @@ int main (int argc, char *argv[])
                fprintf (stdout, "  - \"%s\" created with mode \"%d\"\n", fn,
                         gmap.map_mode);
          } else {
-            fprintf (stdout,
-                     "Warning: the file %s already exists. Use the -f option to force overwrite.\n",
-                     fn);
+            fprintf (stdout, "Warning: The file \"%s\" already exists.\n         Use the \"%s\" or \"%s\" option to force overwrite.\n",
+                     fn, OPTION_OVERWRITE, OPTION_OVERWRITE_LONG);
          }
       }
    }

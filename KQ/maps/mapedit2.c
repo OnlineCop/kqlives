@@ -395,8 +395,10 @@ void remove_marker (unsigned int x, unsigned int y)
       }
       gmap.num_markers--;
    }
-   map_change (x, y); map_change (x + 1, y);
-   map_change (x, y - 1); map_change (x + 1, y - 1);
+   map_change (x, y);
+   map_change (x + 1, y);
+   map_change (x, y - 1);
+   map_change (x + 1, y - 1);
 }
 
 void set_marker_at_loc (char * value, unsigned int x, unsigned int y)

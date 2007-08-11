@@ -786,7 +786,7 @@ void draw_map (void)
          }                      // if (showing.obstacles)
 
          /* Draw the Zones */
-         if ((showing.zones) && (z_map[w] > 0) && (z_map[w] < MAX_ZONES)) {
+         if ((showing.zones) && (z_map[w] > 0)) {
 /* This check is here because of the differing versions of the Allegro library */
 #ifdef HAVE_TEXT_EX
             if (z_map[w] < 10) {
@@ -797,7 +797,7 @@ void draw_map (void)
                /* The zone's number is double-digit, center only vert */
                textprintf_ex (double_buffer, font, dx * 16, dy * 16 + 4,
                               makecol (255, 255, 255), 0, "%d", z_map[w]);
-            } else if (z_map[w] < 1000) {
+            } else {
                /* The zone's number is triple-digit.  Print the 100's digit in
                 * top-center of the square; the 10's and 1's digits on bottom
                 * of the square
@@ -818,7 +818,7 @@ void draw_map (void)
                /* The zone's number is double-digit, center only vert */
                textprintf (double_buffer, font, dx * 16, dy * 16 + 4,
                            makecol (255, 255, 255), "%d", z_map[w]);
-            } else if (z_map[w] < 1000) {
+            } else {
                /* The zone's number is triple-digit.  Print the 100's digit in
                 * top-center of the square; the 10's and 1's digits on bottom
                 * of the square

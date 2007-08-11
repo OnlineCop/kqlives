@@ -23,20 +23,20 @@
 #include "../include/structs.h"
 #include "../include/bounds.h"
 
-#define MAX_WIDTH    1024
-#define MAX_HEIGHT   800
+#define MAX_WIDTH       1024
+#define MAX_HEIGHT      800
 
-#define MAX_TILES    1024
+#define MAX_TILES       1024
 #define NUM_TILESETS    8
-#define MAX_EPICS      41
-#define MAX_ZONES     256
-#define MAX_SHADOWS    12
+#define MAX_EPICS       41
+#define MAX_ZONES       256
+#define MAX_SHADOWS     12
 #define MAX_OBSTACLES   5
-#define MAX_MARKERS   256
-#define SW            800       // 640
-#define SH            600       // 480
-#define TH             16       /* Tile Height */
-#define TW             16       /* Tile Width */
+#define MAX_MARKERS     256
+#define SW              800      // Must be a multiple of 16
+#define SH              600      // Must be a multiple of 16
+#define TH              16       /* Tile Height */
+#define TW              16       /* Tile Width */
 #define WBUILD          1
 
 #define MAP_LAYER1      1       /* Map (sea-level) */
