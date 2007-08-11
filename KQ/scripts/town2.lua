@@ -162,6 +162,7 @@ function entity_handler(en)
       if (get_progress(P_SHOWBRIDGE) < 2) then
         bubble(en, "You should look around there to see if the workers left anything behind.")
       else
+        -- If the bridge has been completed and you did not get one or more of the treasures on the incomplete bridge, he will give them to you
         if (get_treasure(8) == 0) then
           bubble(en, "I found this Olginar Seed on the bridge. You can have it.")
           chest(8, I_OSEED, 1)
@@ -322,10 +323,12 @@ end
 -- Show the status of a treasures
 function showch(which_marker, which_chest)
 
+  -- /*
   -- The zones 'which_chest == -1' means that there is no "chest" where the
   -- current treasure is found, but is something like a flower patch that
   -- can't be walked upon.  If those treasures have been found, remove the
   -- obstacle at that location, as well as the triggering zone.
+  -- */
 
   if (which_chest < 0) then
     -- Evaluate the chest-less treasure at this location

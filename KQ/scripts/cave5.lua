@@ -5,7 +5,7 @@
 -- Side quest 7: Sensar
 --  P_SIDEQUEST7 = 0 - not started
 --               = 1 - you have defeated all Ghost Miners
---               = 2 - you've met Sensar and he's joined 
+--               = 2 - you've met Sensar and he's joined
 --                     or been dismissed
 -- */
 
@@ -33,7 +33,7 @@ function entity_handler(en)
     add_to_manor(returning)
     set_progress(P_SIDEQUEST7, 2)
     refresh()
-  end 
+  end
 end
 
 
@@ -97,17 +97,17 @@ function zone_handler(zn)
   if (zn == 0) then
     combat(57)
   elseif (zn == 1) then
-    destroy1()
+    blowup(1)
   elseif (zn == 2) then
-    destroy2()
+    blowup(2)
   elseif (zn == 3) then
-    destroy3()
+    blowup(3)
   elseif (zn == 4) then
-    destroy4a()
+    blowup(4)
   elseif (zn == 5) then
-    destroy4b()
+    blowup(6)
   elseif (zn == 6) then
-    destroy5()
+    blowup(6)
   elseif (zn == 7) then
     -- Save point south
     set_save(1)
@@ -185,6 +185,114 @@ end
 --
 -- These are the destroy functions, one for each area.
 --
+
+
+function blowup(loc)
+  if (not has_dynamite()) then
+    return
+  end
+
+  -- We know that we have dynamite, so continue logic to determine blast site
+  if (loc == 1) then
+  -- First zone
+    hero_escape("L3D2L10D2")
+    sfx(42)
+    oneliner(HERO1, {"Great dynamite!",
+                     "Ohh gosh!",
+                     "This is risky!",
+                     "If only my master could see me!",
+                     "This could be fun!",
+                     "Good. On to the next.",
+                     "So much for stealth!",
+                     "Crude, but effective..."})
+    set_progress(P_BOMB1, 1)
+  elseif (loc == 2) then
+  -- Second zone (cliff)
+    hero_escape("R3D3R3D5R8")
+    sfx(42)
+    if (get_numchrs() > 1) then
+      bubble(HERO2, "I think you might have overdone it!")
+      oneliner(HERO1, {"Good, wasn't it?",
+                       "It scared me too.",
+                       "I'm afraid I have.",
+                       "Do you think so?",
+                       "Shut up!",
+                       "No way!",
+                       "I'd prefer a different way.",
+                       "Let's see."})
+    else
+      bubble(HERO1, "Argh. I think I used too much!")
+    end
+    set_progress(P_BOMB2, 1)
+  elseif (loc == 3) then
+    -- On left
+    hero_escape("R1U2R5U10")
+    sfx(42)
+    oneliner(HERO1, {"I'm enjoying this!",
+                     "I wish I were home.",
+                     "This is very wasteful.",
+                     "My training didn't cover this.",
+                     "If only life was so simple...",
+                     "Satisfactory.",
+                     "Too noisy!",
+                     "Hmm."})
+    set_progress(P_BOMB3, 1)
+  elseif (loc == 4) then
+    -- Double pillar (left)
+    local p = get_progress(P_BOMB4)
+    if (p == 0 or p == 2) then
+      hero_escape("L7D2L4D4L2")
+      sfx(42)
+      oneliner(HERO1, {"I must have utterly destroyed it.",
+                       "I wish I'd never seen this dreadful cave.",
+                       "I don't like this one bit.",
+                       "Perhaps I will become the first Master of Dynamite!",
+                       "I don't even care if this is necessary or not.",
+                       "Another goal attained.",
+                       "This is almost painful.",
+                       "As one sows, so shall he reap..."})
+      set_progress(P_BOMB4, p + 1)
+    elseif (p == 1) then
+      -- Already destroyed this side
+      bubble(HERO1, "I weakened it, but it might need another hit to destroy it")
+    end
+  elseif (loc == 5) then
+    -- Double pillar (right)
+    local p = get_progress(P_BOMB4)
+    if (p == 0 or p == 1) then
+      hero_escape("R5D4R7D1R5")
+      sfx(42)
+      oneliner(HERO1, {"Another great hit!",
+                       "Ow. This is so dusty.",
+                       "This is totally unsafe.",
+                       "I wonder if I will be able to make use of these skills?",
+                       "I should have just blown the whole mountain up.",
+                       "No collateral damage here.",
+                       "This can't be good for my health.",
+                       "I feel the need to reflect upon my actions."})
+      set_progress(P_BOMB4, p + 2)
+    elseif (p == 2) then
+      -- Already destroyed this side
+      bubble(HERO1, "I weakened it, but it might need another hit to destroy it.")
+    end
+  elseif (loc == 6) then
+    -- Last wall before fight with Opal Dragon
+    hero_escape("D1R2L2W19R20")
+    sfx(42)
+    oneliner(HERO1, {"I'm getting the hang of this!",
+                     "I hope there's no more!",
+                     "This will weaken the ceiling!",
+                     "I'm not cut out for this.",
+                     "That was pathetic!",
+                     "Mission accomplished!",
+                     "My ears are ringing!",
+                     "So much destruction..."})
+    set_progress(P_BOMB5, 1)
+  end
+
+  -- After all is said and done, refresh the screen to show effects
+  refresh()
+end
 
 
 function destroy1()

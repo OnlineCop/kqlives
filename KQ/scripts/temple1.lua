@@ -43,7 +43,7 @@ function autoexec()
     for b = 38, 40, 1 do
       set_ent_active(b, 0)
     end
-  end    
+  end
 
   refresh()
 end
@@ -151,7 +151,10 @@ function entity_handler(en)
       bubble(HERO1, "Thank you.")
       set_progress(P_ALTARSWITCH, 1)
       refresh()
-      -- If we are facing right, then we are in the priest's way, so he moves the other way.
+      -- /*
+      -- If we are facing right, then we are in the priest's way, so he
+      -- moves the other way.
+      -- */
       if (get_ent_facing(HERO1) == FACE_RIGHT) then
          set_ent_script(38, "R1F3")
       else
@@ -159,7 +162,7 @@ function entity_handler(en)
       end
       wait_for_entity(38, 38)
       set_progress(P_TALK_TEMMIN, 1)
-    elseif (get_progress(P_TALK_TEMMIN) < 3) then 
+    elseif (get_progress(P_TALK_TEMMIN) < 3) then
       bubble(en, "The spirits are restless.")
     else
       bubble(en, "The spirits are at peace.")
