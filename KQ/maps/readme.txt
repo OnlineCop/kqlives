@@ -1,5 +1,5 @@
 Mapdraw: a map editor for KQ
-Mapdump: a .MAP to .PCX image extractor
+Mapdump: a .MAP to .PCX (or .BMP) image extractor
 Mapdiff: a map comparison utility
 
 Thank you in your interest in the KQ game's map tools:
@@ -16,6 +16,7 @@ Maps contain the following:
   Shadows
   Zones
   Markers
+  Bounding Boxes
 
 The background, middle, and foreground layers are broken down as follows:
 - Layer 1, background: 90% of the drawing goes here.  This includes the base of trees, tables, ground tiles (such as dirt or flowers), and buildings.
@@ -40,15 +41,21 @@ Maps also contain the following:
     - The other types are the T-shaped obstacles.  These will block movement only in one direction, meaning you can enter the tile from 3 directions, but cannot move onto or off of the tile from the 4th.
     - Examples where these are used are beds, pillars, and cliff edges, such as in town8.
   - Zones are trigger-points (hotspots), and are not shown.
-    - Zones are activated when the Player's character steps on it.  The specific action carried out is determined by the LUA script files.  They can be used to change maps, open doors, initiate battles, open treasure chests, etc.
-    - There can be several zones with the same value, but all instances of each zone (such as "Zone 3") will call the same LUA function.
-    - Examples of zones are where random battles may occur, with some zones (like "Zone 4") calling "weak" monsters and others (like "Zone 5") calling "very strong" ones.
+    - Zones are activated either when the Player's characters steps on it (if it is not blocked by an Obstacle) or, if blocked by an Obstacle, when the Player presses the Action key when facing the tile.
+    - The specific action carried out is determined by the LUA script files.  They can be used to change maps, open doors, initiate battles, open treasure chests, etc.
+    - There can only be one Zone per tile, but there may be many tiles with the same Zone.  If this occurs, all instances of each Zone (such as "Zone 3") will call the same LUA function.
+    - Examples of Zones are where random battles may occur, with some zones (like "Zone 4") calling "weak" monsters and others (like "Zone 5") calling "very strong" ones.
   - Markers are "named coordinates", and are not shown.
     - Markers replace static (hard-coded) coordinates in LUA scripts, because they can be easily moved and updated on the MAP file without changing the LUA script.  This is useful incase a map ever changes size.
     - The LUA scripts can use markers for things such as movement targets (such as in "tower") or copying tiles (such as in "cave4").
     - Markers must have unique names, and tiles can have at most one marker at a time.
     - Markers are not triggered hotspots, like zones, so the player will not be affected if they step on a tile which contains a marker.
     - Examples of marker names: two markers could not be named "entrance" on the same map, but one could be named "entrance_1" while another is "entrance_2".
+  - Bounding Boxes are visually-enclosed areas of maps that allow all areas outside of their boundaries to be hidden.
+    - Bounding Boxes allow for a "fill" effect anywhere outside of its boundaries.  The "fill" tile simply displays a specified tile from the tilemap surrounding the current area.  Some examples are:
+      - Using "trees" when in a forest (example: grotto.map)
+      - Using "water" when on an island (example: main.map, around the island with the Manor and Ekla)
+    - If a map file has several "rooms" close together, and the Player should not see the interior of any room except the one he or she is immediately in, it may be surrounded by a Bounding Box (see dville.map).
 
 
 ===============================
@@ -73,7 +80,7 @@ The tile selection area on the right contains all the tiles which are available 
 
 You will see a 4x10 grid with the tiles, outlined in a thick red border.  All tilesets should have the first tile blank; it will ALWAYS be used as the default, or "none".  You may click on any of these tiles to select it, and use the +/- keys to advance through the available tiles.  This is a dynamic tileset, which means that if the PCX image being used is ever changed/modified, it will appear here and you will have more (or fewer) tiles to choose from.  Currently, KQ maps only support 16x16 tiles, so you will have to work within those boundaries.
 
-Below the 4x10 grid, you are shown which editing mode you are currently in.  If it is "Layer 1", "Layer 2", "Layer 3", "Entities", "Obstacles, "Shadows", "Zones" or "Markers", you are in a mode which will allow you to draw onto the map.  Anything else is simply a viewing mode, and nothing will be modified on the map if you click on a tile in the view-window.
+Below the 4x10 grid, you are shown which editing mode you are currently in.  If it is "Layer 1", "Layer 2", "Layer 3", "Entities", "Obstacles", "Shadows", "Zones", "Markers" or "Bound", you are in a mode which will allow you to draw onto the map.  Anything else is simply a viewing mode, and nothing will be modified on the map if you click on a tile in the view-window.
 
 Immediately below the editing mode, you will see the "page" of tiles you are on and the selected tile in (parentheses).
 
@@ -84,7 +91,7 @@ MAP STATS:
 
 Here is a sample of what you will see:
 
-Map:
+Map:                    Revision:
 Icon:                   Start X:    Mult:
 Song:                   Start Y:    Div:
 ZeroZone:               Width:
@@ -101,6 +108,7 @@ Save:       WarpY:      Last Zone:
 "Save" specifies whether the player can save their game in this map.
 "Warp" means that the player can (or can't) use the Warp spell to exit this map.
 "WarpX" and "WarpY" are where, when the Warp spell is used, the player ends up at.  This only works when Warp is true.
+"Revision" is the version of the map.  Revision 0 did not support Markers, Revision 1 did not support Bounding Boxes.  Current revision is "2".
 "Start X" and "Start Y" are the default coordinates on the map where the player will start.
 "Width" and "Height" are just that, respectively.
 "SunStone" is true when the map can be defined as a "sunny place" where a SunStone will work.
@@ -138,6 +146,8 @@ O   - Toggle Obstacles Attribute
 S   - Toggle Shadows Attribute
 Z   - Toggle Zone Attribute
 E   - Toggle Entities Attribute
+M   - Toggle Marker Attribute
+B   - Toggle Bounding Box Attribute
 F12 - Modify Entity Mode
 D   - Displace (or move) all the Entities in the map
 
