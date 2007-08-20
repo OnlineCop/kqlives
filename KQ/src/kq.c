@@ -45,16 +45,6 @@
 #endif
 #include <string.h>
 
-#if 0
-#if defined(HAVE_GETPWUID)
-#include <unistd.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <pwd.h>
-#elif defined(HAVE_LOADLIBRARY)
-#include <direct.h>
-#endif
-#endif
 
 #include "kq.h"
 #include "credits.h"
@@ -579,22 +569,11 @@ void calc_viewport (int center)
       zy = vy;
    }
 
-#if 0
-   if (center) {
-#endif
+   bl = 152;
+   br = 152;
+   bu = 112;
+   bd = 112;
 
-      bl = 152;
-      br = 152;
-      bu = 112;
-      bd = 112;
-#if 0
-   } else {
-      bl = 64;
-      br = 240;
-      bu = 64;
-      bd = 164;
-   }
-#endif
    sx = zx - vx;
    sy = zy - vy;
    if (sx < bl) {
@@ -975,17 +954,6 @@ void init_players (void)
 void klog (char *msg)
 {
    TRACE ("%s\n", msg);
-#if 0
-   FILE *ff;
-
-   ff = fopen ("game.log", "a");
-
-   if (!ff)
-      program_death ("Could not open log!");
-
-   fprintf (ff, "%s\n", msg);
-   fclose (ff);
-#endif
 }
 
 
@@ -1609,15 +1577,6 @@ static void startup (void)
    if (num_joysticks == 0)
       use_joy = 0;
    else {
-#if 0
-      sprintf (strbuf, "%d joysticks detected.", num_joysticks);
-      klog (strbuf);
-      for (i = 0; i < num_joysticks; i++) {
-         sprintf (strbuf, "joystick %d: %d sticks, %d buttons", i,
-                  joy[i].num_sticks, joy[i].num_buttons);
-         klog (strbuf);
-      }
-#endif
       use_joy = 0;
 
       if (poll_joystick () == 0) {

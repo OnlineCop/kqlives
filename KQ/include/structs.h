@@ -1,4 +1,4 @@
-/*
+/*!
    KQ is Copyright (C) 2002 - Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
@@ -19,7 +19,7 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-/*! \file 
+/*! \file
  * \brief Structures common to mapedit and the game (s_map and s_entity)
  * \author PH
  * \date 20030805
@@ -29,6 +29,8 @@
 #define __STRUCTS_H
 
 #include "bounds.h"
+
+#define MAX_ANIM 5
 
 /*! \brief Position marker
  *
@@ -47,7 +49,7 @@ typedef struct
 } s_marker;
 
 
-/*! \brief Map definition 
+/*! \brief Map definition
  *
  * This is the structure of each map on disk
  * \note 20050126 PH add extensions for markers (rev1 map)
@@ -121,7 +123,7 @@ typedef struct
 s_entity;
 
 
-/*! \brief Animation specifier 
+/*! \brief Animation specifier
  *
  * Marks a block of tiles that are interchanged to give
  * an animation effect. Used in check_animation()
@@ -134,14 +136,7 @@ typedef struct
 }
 s_anim;
 
-
-/* PH eek! hack alert! */
-#ifndef MAX_ANIM
-#define MAX_ANIM 5
-#endif
-
-
-/*! \brief Tileset definition 
+/*! \brief Tileset definition
  *
  * This encapulates a tile set: graphics and animation.
  * \author PH
