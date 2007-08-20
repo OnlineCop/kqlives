@@ -102,7 +102,7 @@
 	  <child>
 	    <widget class="GtkMenuItem" id="editmenu">
 	      <property name="visible">True</property>
-	      <property name="label" translatable="yes">_Bearbeiten</property>
+	      <property name="label" translatable="yes">_Edit</property>
 	      <property name="use_underline">True</property>
 
 	      <child>
@@ -151,7 +151,7 @@
 	  <child>
 	    <widget class="GtkMenuItem" id="menuitem3">
 	      <property name="visible">True</property>
-	      <property name="label" translatable="yes">_Ansicht</property>
+	      <property name="label" translatable="yes">MenuItem3</property>
 	      <property name="use_underline">True</property>
 	    </widget>
 	  </child>
