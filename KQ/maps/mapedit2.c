@@ -38,36 +38,34 @@ static cairo_surface_t *gdk_shadows[MAX_SHADOWS];
 static cairo_surface_t *gdk_eframes[MAX_EPICS][12];
 static cairo_surface_t *gdk_marker_image;
 static cairo_surface_t *gdk_marker_image_active;
-static cairo_user_data_key_t cairo_user_data_key;
 
 
 static cairo_surface_t *convert_icon (BITMAP * icon, gboolean transparency)
 {
-   int i, j;
+   int row, col;
    unsigned char *gdk_icon_data;
    gdk_icon_data = malloc (icon->h * icon->w * 4);
-   for (i = 0; i < icon->h; ++i) {
-      for (j = 0; j < icon->w; ++j) {
-         if (0x00000000 == *((unsigned int *) &icon->line[i][j * 4])) {
-            *((unsigned int *) &gdk_icon_data[(i * 16 + j) * 4]) = 0;
+   for (row = 0; row < icon->h; ++row) {
+      for (col = 0; col < icon->w; ++col) {
+         if (0x00000000 == *((unsigned int *) &icon->line[row][col * 4])) {
+            *((unsigned int *) &gdk_icon_data[(row * 16 + col) * 4]) = 0;
          } else if (transparency) {
-            gdk_icon_data[(i * 16 + j) * 4 + 0] = icon->line[i][j * 4 + 2] * 0x80 / 0xff;       // blue
-            gdk_icon_data[(i * 16 + j) * 4 + 1] = icon->line[i][j * 4 + 1] * 0x80 / 0xff;       // green
-            gdk_icon_data[(i * 16 + j) * 4 + 2] = icon->line[i][j * 4 + 0] * 0x80 / 0xff;       // red
-            gdk_icon_data[(i * 16 + j) * 4 + 3] = 0x80;
+            gdk_icon_data[(row * 16 + col) * 4 + 0] = icon->line[row][col * 4 + 2] * 0x80 / 0xff;       // blue
+            gdk_icon_data[(row * 16 + col) * 4 + 1] = icon->line[row][col * 4 + 1] * 0x80 / 0xff;       // green
+            gdk_icon_data[(row * 16 + col) * 4 + 2] = icon->line[row][col * 4 + 0] * 0x80 / 0xff;       // red
+            gdk_icon_data[(row * 16 + col) * 4 + 3] = 0x80;
          } else {
-            unsigned char alpha = 0xff - icon->line[i][j * 4 + 3];
-            gdk_icon_data[(i * 16 + j) * 4 + 0] = icon->line[i][j * 4 + 2] * alpha / 0xff;      // blue
-            gdk_icon_data[(i * 16 + j) * 4 + 1] = icon->line[i][j * 4 + 1] * alpha / 0xff;      // green
-            gdk_icon_data[(i * 16 + j) * 4 + 2] = icon->line[i][j * 4 + 0] * alpha / 0xff;      // red
-            gdk_icon_data[(i * 16 + j) * 4 + 3] = alpha;
+            unsigned char alpha = 0xff - icon->line[row][col * 4 + 3];
+            gdk_icon_data[(row * 16 + col) * 4 + 0] = icon->line[row][col * 4 + 2] * alpha / 0xff;      // blue
+            gdk_icon_data[(row * 16 + col) * 4 + 1] = icon->line[row][col * 4 + 1] * alpha / 0xff;      // green
+            gdk_icon_data[(row * 16 + col) * 4 + 2] = icon->line[row][col * 4 + 0] * alpha / 0xff;      // red
+            gdk_icon_data[(row * 16 + col) * 4 + 3] = alpha;
          }
       }
    }
    cairo_surface_t *s =
       cairo_image_surface_create_for_data (gdk_icon_data, CAIRO_FORMAT_ARGB32,
-                                           icon->w, icon->h, icon->w * 4);
-   cairo_surface_set_user_data (s, &cairo_user_data_key, gdk_icon_data, free);
+                                           icon->w, icon->h, 0);
    return s;
 }
 
