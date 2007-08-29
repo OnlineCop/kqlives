@@ -720,6 +720,39 @@ void draw_map (void)
    maxx = htiles > gmap.xsize ? gmap.xsize : htiles;
    maxy = vtiles > gmap.ysize ? gmap.ysize : vtiles;
 
+   // TT: Why was this inside the for..loop below?  Taken outside the loop.
+   if (draw_mode & MAP_LAYER1)
+      showing.layer[0] = 1;
+   if (draw_mode & MAP_LAYER2)
+      showing.layer[1] = 1;
+   if (draw_mode & MAP_LAYER3)
+      showing.layer[2] = 1;
+
+   switch (draw_mode) {
+   case BLOCK_COPY:
+   case BLOCK_PASTE:
+   case MAP_ENTITIES:
+   case MAP_SHADOWS:
+   case MAP_OBSTACLES:
+   case MAP_MARKERS:
+   case MAP_BOUNDS:
+   case MAP_ZONES:
+      if (showing.last_layer & MAP_LAYER1)
+         showing.layer[0] = 1;
+      if (showing.last_layer & MAP_LAYER2)
+         showing.layer[1] = 1;
+      if (showing.last_layer & MAP_LAYER3)
+         showing.layer[2] = 1;
+      if (showing.last_layer == MAP_PREVIEW) {
+         showing.layer[0] = 1;
+         showing.layer[1] = 1;
+         showing.layer[2] = 1;
+      }
+      break;
+   default:
+      break;
+   }                      // switch (draw_mode)
+
    /* This loop will draw everything within the view-window */
    for (dy = 0; dy < maxy; dy++) {
       for (dx = 0; dx < maxx; dx++) {
@@ -728,38 +761,6 @@ void draw_map (void)
           * and the current tile's coordinates inside the view-window.
           */
          w = ((window_y + dy) * gmap.xsize) + window_x + dx;
-
-         if (draw_mode & MAP_LAYER1)
-            showing.layer[0] = 1;
-         if (draw_mode & MAP_LAYER2)
-            showing.layer[1] = 1;
-         if (draw_mode & MAP_LAYER3)
-            showing.layer[2] = 1;
-
-         switch (draw_mode) {
-         case BLOCK_COPY:
-         case BLOCK_PASTE:
-         case MAP_ENTITIES:
-         case MAP_SHADOWS:
-         case MAP_OBSTACLES:
-         case MAP_MARKERS:
-         case MAP_BOUNDS:
-         case MAP_ZONES:
-            if (showing.last_layer & MAP_LAYER1)
-               showing.layer[0] = 1;
-            if (showing.last_layer & MAP_LAYER2)
-               showing.layer[1] = 1;
-            if (showing.last_layer & MAP_LAYER3)
-               showing.layer[2] = 1;
-            if (showing.last_layer == MAP_PREVIEW) {
-               showing.layer[0] = 1;
-               showing.layer[1] = 1;
-               showing.layer[2] = 1;
-            }
-            break;
-         default:
-            break;
-         }                      // switch (draw_mode)
 
          /* Clear the background before drawing */
          if ((draw_mode >= MAP_LAYER1 && draw_mode <= MAP_LAYER3))
@@ -2190,6 +2191,7 @@ int main (int argc, char *argv[])
          }
       }
 
+      // "Q" will exit the program
       if (key[KEY_Q])
          main_stop = confirm_exit ();
       kq_yield ();
@@ -2556,6 +2558,21 @@ int process_keyboard (const int k)
       /* Get the tile under the mouse curser, including all 5 of the
        * Attributes. This will not let you enter grab_tile mode if you are not
        * in a mode which can be drawn onto.
+       *
+       * If the map is in Layer1, Layer2, or Layer3 mode, grab the tile
+       * under the mouse cursor.
+       *
+       * If the map is in Entities or Marker mode, select the Entity or
+       * Marker under the mouse cursor.
+       *
+       * If the map is in Shadows or Zones mode, set the current Shadow or
+       * Zone index to the one under the cursor.
+       *
+       * If the map is in BoundingBox mode, select the bounding box under
+       * the cursor.
+       *
+       * You cannot enter Grab mode unless you are in one of the above
+       * modes (so Layer12 or Preview will do nothing).
        */
       if ((draw_mode >= MAP_LAYER1 && draw_mode <= MAP_LAYER3)
           || (draw_mode >= MAP_ENTITIES && draw_mode <= MAP_ZONES)
