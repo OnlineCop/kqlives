@@ -869,12 +869,12 @@ void draw_map (void)
    /* Draw the Markers */
    if (showing.markers == 1 && num_markers > 0) {
       for (i = 0; i < num_markers; ++i) {
-         if ((markers[i].x >= window_x) && (markers[i].x < window_x + htiles)
-             && (markers[i].y >= window_y)
-             && (markers[i].y < window_y + vtiles)) {
+         if ((gmap.markers[i].x >= window_x) && (gmap.markers[i].x < window_x + htiles)
+             && (gmap.markers[i].y >= window_y)
+             && (gmap.markers[i].y < window_y + vtiles)) {
             draw_sprite (double_buffer, marker_image,
-                         (markers[i].x - window_x) * 16 + 8,
-                         (markers[i].y - window_y) * 16 - 8);
+                         (gmap.markers[i].x - window_x) * 16 + 8,
+                         (gmap.markers[i].y - window_y) * 16 - 8);
          }                      /* If marker is visible */
       }                         /* For each marker */
 
@@ -882,8 +882,8 @@ void draw_map (void)
       if (draw_mode == MAP_MARKERS) {
          /* Put a rectangle around the selected one for clarity */
          draw_sprite (double_buffer, mesh_h,
-                      (markers[curmarker].x - window_x) * 16,
-                      (markers[curmarker].y - window_y) * 16);
+                      (gmap.markers[curmarker].x - window_x) * 16,
+                      (gmap.markers[curmarker].y - window_y) * 16);
       }
    }
 
@@ -1242,16 +1242,16 @@ void draw_menubars (void)
     */
    if (draw_mode == MAP_MARKERS && num_markers > 0) {
       sprintf (strbuf, "Marker #%d: %s (%d, %d)", curmarker,
-               markers[curmarker].name, markers[curmarker].x,
-               markers[curmarker].y);
+               gmap.markers[curmarker].name, gmap.markers[curmarker].x,
+               gmap.markers[curmarker].y);
       print_sfont (column[4], row[0], strbuf, double_buffer);
       xp = mouse_x / 16;
       yp = mouse_y / 16;
       for (p = 0; p < num_markers; p++) {
-         if (markers[p].x == xp + window_x && markers[p].y == yp + window_y) {
+         if (gmap.markers[p].x == xp + window_x && gmap.markers[p].y == yp + window_y) {
             sprintf (strbuf, "Current Marker:");
             print_sfont (column[4], row[1], strbuf, double_buffer);
-            sprintf (strbuf, "Marker #%d: \"%s\"", p, markers[p].name);
+            sprintf (strbuf, "Marker #%d: \"%s\"", p, gmap.markers[p].name);
             print_sfont (column[4] + 24, row[2], strbuf, double_buffer);
          }
       }
@@ -1854,7 +1854,7 @@ void get_tile (void)
       break;
    case MAP_MARKERS:
       for (i = 0; i < num_markers; i++) {
-         if (is_contained_marker (markers[i], window_x + x, window_y + y)) {
+         if (is_contained_marker (gmap.markers[i], window_x + x, window_y + y)) {
             curmarker = i;
          }
       }
@@ -2264,7 +2264,7 @@ void paste_region (const int tx, const int ty)
    moved_x = tx - copyx1;       // copyx1 - tx < 0 ? tx - copyx1 : copyx1 - tx;
    moved_y = ty - copyy1;       // copyy1 - ty < 0 ? ty - copyy1 : copyy1 - ty;
 
-   for (m = markers; m < markers + num_markers; ++m) {
+   for (m = gmap.markers; m < gmap.markers + num_markers; ++m) {
       if (!(m->x < copyx1 || m->x > copyx2 || m->y < copyy1 || m->y > copyy2)) {
          /* Move the markers found within the Copy From block */
          m->x = m->x + moved_x;
@@ -2780,15 +2780,6 @@ int process_keyboard (const int k)
    case (KEY_F3):
       /* Save the map you are working on */
 
-      if (gmap.map_no < 0) {
-         cmessage ("Don't forget to assign a number to this map!");
-         yninput ();
-      }
-
-      /* Copy the markers back in */
-      gmap.markers = (s_marker *) realloc
-         (gmap.markers, num_markers * sizeof (s_marker));
-      memcpy (gmap.markers, markers, num_markers * sizeof (s_marker));
       gmap.num_markers = num_markers;
 
       /* Copy the bounding boxes back in */
@@ -3919,7 +3910,7 @@ void resize_map (const int selection)
 
    // Check if there are "stray" markers; prompt user what to do with them.
    done = 0;
-   for (m = markers; m < markers + num_markers; ++m) {
+   for (m = gmap.markers; m < gmap.markers + num_markers; ++m) {
       if (m->x >= new_width || m->y >= new_height) {
          done++;
       }
@@ -3937,7 +3928,7 @@ void resize_map (const int selection)
          return;
       } else {
          // They chose to remove the markers
-         for (m = markers + num_markers; m >= markers; --m) {
+         for (m = gmap.markers + num_markers; m >= gmap.markers; --m) {
             if (m->x >= new_width || m->y >= new_height) {
                // This removes the marker
                add_change_marker (m->x, m->y, 2, &curmarker);

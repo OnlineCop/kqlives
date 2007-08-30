@@ -311,7 +311,7 @@ int new_map (void)
    blit2screen ();
 
    // Remove the markers from the map
-   for (m = markers + num_markers; m >= markers; --m) {
+   for (m = gmap.markers + num_markers; m >= gmap.markers; --m) {
       int curmarker = num_markers;
       // This removes the marker
       add_change_marker (m->x, m->y, 2, &curmarker);

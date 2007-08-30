@@ -129,7 +129,7 @@ unsigned short *map, *b_map, *f_map, *c_map, *cf_map, *cb_map;
 unsigned char *z_map, *sh_map, *o_map, *cz_map, *csh_map, *co_map;
 unsigned char *search_map;
 
-s_marker markers[MAX_MARKERS];
+/* s_marker markers[MAX_MARKERS]; Just duplicates g_map.markers*/
 s_bound bound_box[MAX_BOUNDS]; // WK - not redundant. Used on line 266
 
 /*! \brief Blit to screen
@@ -261,8 +261,8 @@ void load_map (const char *path)
    mapdraw2 uses gmap.num_markers exclusively. */
 
    num_markers = gmap.num_markers;
-   memcpy (markers, gmap.markers, gmap.num_markers * sizeof (s_marker));
-	gmap.markers = markers; // these pointers point to same place in memory.
+/*   memcpy (markers, gmap.markers, gmap.num_markers * sizeof (s_marker));
+	gmap.markers = markers; // these pointers point to same place in memory. */
 
    num_bound_boxes = gmap.num_bound_boxes;
    memcpy (bound_box, gmap.bound_box, gmap.num_bound_boxes * sizeof (s_bound));
@@ -505,10 +505,9 @@ void visual_map (s_show showing, const char *save_fname)
    /* Show marker flags */
    if (showing.markers == 1 && gmap.num_markers > 0) {
       num_markers = gmap.num_markers;
-      memcpy (markers, gmap.markers, gmap.num_markers * sizeof (s_marker));
       for (i = 0; i < num_markers; ++i) {
-         draw_sprite (bmp, marker_image, markers[i].x * 16 + 8,
-                      markers[i].y * 16 - 8);
+         draw_sprite (bmp, marker_image, gmap.markers[i].x * 16 + 8,
+                      gmap.markers[i].y * 16 - 8);
       }
    }
 

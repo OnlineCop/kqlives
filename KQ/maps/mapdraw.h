@@ -201,7 +201,7 @@ extern PALETTE pal;
 extern char map_fname[40], map_path[MAX_PATH], *strbuf;
 extern short icon_set, num_markers;
 
-extern s_marker markers[MAX_MARKERS];
+/* extern s_marker markers[MAX_MARKERS]; */
 
 extern char *icon_files[NUM_TILESETS];
 
