@@ -210,24 +210,6 @@ function zone_handler(zn)
   elseif (zn == 15) then
     touch_fire(party[0])
 
-  elseif (zn == 16) then
-    -- The player tried to "get around" zone #3, so we have to take steps to
-    -- correct that
-    move_entity(HERO1, get_ent_tilex(HERO1), get_ent_tiley(HERO1) - 1, 0)
-    wait_for_entity(HERO1, HERO1)
-
-  elseif (zn == 17) then
-    -- The player tried to "get around" zone #4, so we have to take steps to
-    -- correct that
-    move_entity(HERO1, get_ent_tilex(HERO1), get_ent_tiley(HERO1) - 1, 0)
-    wait_for_entity(HERO1, HERO1)
-
-  elseif (zn == 18) then
-    -- The player tried to "get around" zone #5, so we have to take steps to
-    -- correct that
-    move_entity(HERO1, get_ent_tilex(HERO1), get_ent_tiley(HERO1) + 1, 0)
-    wait_for_entity(HERO1, HERO1)
-
   end
 end
 
