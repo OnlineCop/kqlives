@@ -365,7 +365,7 @@ void set_zone_at (unsigned int zone, unsigned int x, unsigned int y)
 unsigned int which_marker (unsigned int x, unsigned int y)
 {
    int i;
-   for (i = 0; i < MAX_MARKERS; i++)
+   for (i = 0; i < gmap.num_markers; i++)
       if (gmap.markers[i].x == x && gmap.markers[i].y == y)
          return i;
 
@@ -376,6 +376,7 @@ void new_marker (char * value, unsigned int x, unsigned int y)
 {
    if (gmap.num_markers >= MAX_MARKERS)
       return;
+   gmap.markers = (s_marker *) realloc (gmap.markers, (gmap.num_markers + 1) * sizeof (s_marker));
    strcpy(gmap.markers[gmap.num_markers].name, value);
    gmap.markers[gmap.num_markers].x = x;
    gmap.markers[gmap.num_markers].y = y;

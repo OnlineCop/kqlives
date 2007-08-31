@@ -50,8 +50,7 @@ int main (int argc, char *argv[])
    allegro_exit ();
    return 0;
 }
-
-END_OF_MAIN ();
+END_OF_MAIN ()
 
 
 // FIXME: The following stuff shouldn't be here

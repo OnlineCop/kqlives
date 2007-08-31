@@ -3928,7 +3928,7 @@ void resize_map (const int selection)
          return;
       } else {
          // They chose to remove the markers
-         for (m = gmap.markers + num_markers; m >= gmap.markers; --m) {
+         for (m = gmap.markers + num_markers; m > gmap.markers; --m) {
             if (m->x >= new_width || m->y >= new_height) {
                // This removes the marker
                add_change_marker (m->x, m->y, 2, &curmarker);

@@ -129,7 +129,6 @@ unsigned short *map, *b_map, *f_map, *c_map, *cf_map, *cb_map;
 unsigned char *z_map, *sh_map, *o_map, *cz_map, *csh_map, *co_map;
 unsigned char *search_map;
 
-/* s_marker markers[MAX_MARKERS]; Just duplicates g_map.markers*/
 s_bound bound_box[MAX_BOUNDS]; // WK - not redundant. Used on line 266
 
 /*! \brief Blit to screen
@@ -259,10 +258,7 @@ void load_map (const char *path)
    /* Note: try to use gmap.num_markers, rather than num_markers. It is bad
    programming practice to store the same variable in multiple places.
    mapdraw2 uses gmap.num_markers exclusively. */
-
    num_markers = gmap.num_markers;
-/*   memcpy (markers, gmap.markers, gmap.num_markers * sizeof (s_marker));
-	gmap.markers = markers; // these pointers point to same place in memory. */
 
    num_bound_boxes = gmap.num_bound_boxes;
    memcpy (bound_box, gmap.bound_box, gmap.num_bound_boxes * sizeof (s_bound));
@@ -323,6 +319,15 @@ void shared_startup (void)
    int i, x, y;
 
    set_palette (pal);
+
+	/* Give several variables sane defaults */
+
+	map = b_map = f_map = c_map = cf_map = cb_map = 0;
+	z_map = sh_map = o_map = cz_map = csh_map = co_map = 0;
+	search_map = 0;
+	gmap.markers = NULL;
+	gmap.num_markers = num_markers = 0;
+
 
    /* Used for icons */
    for (i = 0; i < MAX_TILES; i++) {
