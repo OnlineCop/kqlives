@@ -71,8 +71,6 @@ const char *kqres (int dir, const char *file)
       if (home != NULL && strlen (home) < PATH_MAX) {
          sprintf (user_dir, "%s/.kq", home);
          /* Always try to make the directory, just to be sure. */
-         /* FIXME: Should not change directory settings if
-         * directory already exists */
          mkdir (user_dir, 0755);
       } else {
          strcpy (user_dir, ".");
