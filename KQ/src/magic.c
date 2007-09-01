@@ -1194,11 +1194,12 @@ static void special_spells (int caster, int spell_number)
          do_transition (TRANS_FADE_IN, 2);
          combatend = 2;
       } else {
-         if (g_map.map_no == MAP_MAIN) {
+         if (!strcmp(curmap, "main")) {
             /* TT: I would like to have a check here: if the player casts Warp,
              * the player can select WHERE to warp to, instead of just to the
              * house, etc.
              */
+
             change_mapm ("town4", "warp", 0, 0);
          } else {
             change_map ("main", g_map.warpx, g_map.warpy, g_map.warpx,
@@ -1207,7 +1208,7 @@ static void special_spells (int caster, int spell_number)
       }
       break;
    case M_REPULSE:
-      progress[P_REPULSE] = 150;
+      save_spells[P_REPULSE] = 150;
       break;
    }
 }

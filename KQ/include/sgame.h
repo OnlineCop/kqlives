@@ -35,14 +35,4 @@ int system_menu (void);         /*  kq.c  */
 
 
 
-#if 0
-void show_sgstats (int);        /*  staticed  */
-int save_game (void);           /*  staticed  */
-int load_game (void);           /*  staticed  */
-int saveload (int);             /*  staticed  */
-int confirm_save (void);        /*  staticed  */
-#endif /*  0  */
-
-
-
 #endif /*  __SGAME_H  */

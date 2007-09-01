@@ -1190,6 +1190,27 @@ s_erow erows[NUM_ETROWS] = {
 };
 
 
+/*! WK - There is no reason that the map name needs to be stored in an
+ * encounter struct. Zone is also unnecessary. */
+#define MAP_BRIDGE 0
+#define MAP_CAMP 0
+#define MAP_CAVE1 0
+#define MAP_CAVE3A 0
+#define MAP_CAVE3B 0
+#define MAP_CAVE4 0
+#define MAP_COLISEUM 0
+#define MAP_CULT 0
+#define MAP_ESTATE 0
+#define MAP_GROTTO2 0
+#define MAP_GUILD 0
+#define MAP_PASS 0
+#define MAP_TEMPLE1 0
+#define MAP_TEMPLE2 0
+#define MAP_TOWER 0
+#define MAP_CAVE5 0
+#define MAP_MAIN 0
+
+
 
 /* Format: {Map, Zone, Enc, Etnum, Eidx, "BMusic", "BackImg"}
  *   Map:       Where this battle occurs

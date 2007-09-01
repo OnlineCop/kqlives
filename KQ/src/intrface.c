@@ -155,6 +155,7 @@ static int KQ_get_party_stats (lua_State *);
 static int KQ_get_party_xp (lua_State *);
 static int KQ_get_pidx (lua_State *);
 static int KQ_get_progress (lua_State *);
+static int KQ_get_skip_intro (lua_State *);
 static int KQ_get_treasure (lua_State *);
 static int KQ_get_vx (lua_State *);
 static int KQ_get_vy (lua_State *);
@@ -191,6 +192,7 @@ static int KQ_set_alldead (lua_State *);
 static int KQ_set_autoparty (lua_State *);
 static int KQ_set_background (lua_State *);
 static int KQ_set_btile (lua_State *);
+static int KQ_set_can_use_item (lua_State *);
 static int KQ_set_desc (lua_State *);
 static int KQ_set_ent_active (lua_State *);
 static int KQ_set_ent_atype (lua_State *);
@@ -242,6 +244,8 @@ static int KQ_set_warp (lua_State *);
 static int KQ_set_zone (lua_State *);
 static int KQ_sfx (lua_State *);
 static int KQ_shop (lua_State *);
+static int KQ_shop_add_item (lua_State *);
+static int KQ_shop_create (lua_State *);
 static int KQ_stop_song (lua_State *);
 static int KQ_thought_ex (lua_State *);
 static int KQ_traceback (lua_State *);
@@ -327,6 +331,7 @@ static const struct luaL_reg lrs[] = {
    {"get_party_xp",     KQ_get_party_xp},
    {"get_pidx",         KQ_get_pidx},
    {"get_progress",     KQ_get_progress},
+	{"get_skip_intro",   KQ_get_skip_intro},
    {"get_treasure",     KQ_get_treasure},
    {"get_vx",           KQ_get_vx},
    {"get_vy",           KQ_get_vy},
@@ -362,6 +367,7 @@ static const struct luaL_reg lrs[] = {
    {"set_autoparty",    KQ_set_autoparty},
    {"set_background",   KQ_set_background},
    {"set_btile",        KQ_set_btile},
+   {"set_can_use_item", KQ_set_can_use_item},
    {"set_desc",         KQ_set_desc},
    {"set_ent_active",   KQ_set_ent_active},
    {"set_ent_atype",    KQ_set_ent_atype},
@@ -411,6 +417,8 @@ static const struct luaL_reg lrs[] = {
    {"set_vy",           KQ_set_vy},
    {"set_warp",         KQ_set_warp},
    {"set_zone",         KQ_set_zone},
+   {"shop_add_item",    KQ_shop_add_item},
+   {"shop_create",      KQ_shop_create},
    {"sfx",              KQ_sfx},
    {"shop",             KQ_shop},
    {"stop_song",        KQ_stop_song},
@@ -595,7 +603,7 @@ void do_luacheat (void)
 #ifdef DEBUGMODE
    lua_pushcfunction (theL, KQ_traceback);
 #endif
-   lua_dofile (theL, kqres (SCRIPT_DIR, "cheat.lob"));
+   lua_dofile (theL, kqres (SCRIPT_DIR, "cheat"));
    lua_getglobal (theL, "cheat");
 #ifdef DEBUGMODE
    lua_pcall (theL, 0, 0, oldtop + 1);
@@ -617,7 +625,7 @@ void do_luacheat (void)
  *
  * \param   fname Base name of script; xxxxx loads script scripts/xxxxx.lob
  */
-void do_luainit (char *fname)
+void do_luainit (const char *fname)
 {
    int oldtop;
    char sname[32];
@@ -637,14 +645,13 @@ void do_luainit (char *fname)
    init_obj (theL);
    init_markers (theL);
    oldtop = lua_gettop (theL);
-   if (lua_dofile (theL, kqres (SCRIPT_DIR, "global.lob")) != 0) {
-      sprintf (strbuf, "Could not open script: global.lob");
+   if (lua_dofile (theL, kqres (SCRIPT_DIR, "global")) != 0) {
+      /* lua_dofile already displayed error message */
       program_death (strbuf);
    }
 
-   sprintf (sname, "%s.lob", fname);
-   if (lua_dofile (theL, kqres (SCRIPT_DIR, sname)) != 0) {
-      sprintf (strbuf, "Could not open script:%s", fname);
+   if (lua_dofile (theL, kqres (SCRIPT_DIR, fname)) != 0) {
+      /* lua_dofile already displayed error message */
       program_death (strbuf);
    }
    lua_settop (theL, oldtop);
@@ -761,6 +768,34 @@ void do_zone (int zn_num)
 #endif
    lua_settop (theL, oldtop);
    KQ_check_map_change ();
+}
+
+/*! \brief Initialize shops
+ *
+ * This function is called on a new game, or when loading a game.
+ * It calls init_shops in init.lua. Generally, this will set the names,
+ * items, etc of all shops in the game. It does not have any arguments, or
+ * return any values.
+ */
+void init_shops(void)
+{
+   int a, b;
+   /* Zero out shops struct */
+   for (a = 0; a < NUMSHOPS; a++)
+   {
+      shops[a].name[0] = 0;
+      for (b = 0; b < SHOPITEMS; b++)
+      {
+         shops[a].items[b] = 0;
+         shops[a].items_max[b] = 0;
+         shops[a].items_replenish_time[b] = 0;
+      }
+   }
+
+   do_luakill();
+   do_luainit("init");
+   lua_getglobal (theL, "init_shops");
+   lua_call (theL, 0, 0);
 }
 
 
@@ -2207,6 +2242,14 @@ static int KQ_get_treasure (lua_State * L)
 
 
 
+static int KQ_get_skip_intro (lua_State * L)
+{
+	lua_pushnumber (L, skip_intro);
+	return 1;
+}
+
+
+
 static int KQ_get_vx (lua_State * L)
 {
    lua_pushnumber (L, vx);
@@ -2401,6 +2444,7 @@ static int KQ_move_camera (lua_State * L)
       check_animation ();
       drawmap ();
       blit2screen (xofs, yofs);
+      poll_music();
    }
 
    timer_count = 0;
@@ -3588,6 +3632,12 @@ static int KQ_set_warp (lua_State * L)
    return 0;
 }
 
+static int KQ_set_can_use_item (lua_State * L)
+{
+   can_use_item = (int) lua_tonumber (L, 1);
+   return 0;
+}
+
 
 
 /*! Set zone number at location
@@ -3633,6 +3683,39 @@ static int KQ_shop (lua_State * L)
    return 0;
 }
 
+
+static int KQ_shop_create (lua_State * L)
+{
+   int index;
+   const char * name = lua_tostring (L, 1);
+   index = (int) lua_tonumber (L, 2);
+
+   strncpy(shops[index].name, name, 40);
+   return 0;
+}
+
+
+static int KQ_shop_add_item (lua_State * L)
+{
+   int index, i;
+
+   index = (int) lua_tonumber (L, 1);
+
+   for (i = 0; i < SHOPITEMS; i++)
+      if (shops[index].items[i] == 0)
+         break;
+
+   if (i == SHOPITEMS)
+   {
+      printf("Tried to add to many different items to a shop. Maximum is %d\n", SHOPITEMS);
+      return 0;
+   }
+
+   shops[index].items[i] = (int) lua_tonumber (L, 2);
+   shops[index].items_max[i] = (int) lua_tonumber (L, 3);
+   shops[index].items_replenish_time[i] = (int) lua_tonumber (L, 4);
+   return 0;
+}
 
 
 static int KQ_stop_song (lua_State * L)
@@ -3789,54 +3872,52 @@ static int KQ_warp (lua_State * L)
 
 
 
-#if 0
-#ifndef HAVE_LUA_OPEN
-/* We have to make our own! */
-static void *l_alloc (void *ud, void *ptr, size_t osize, size_t nsize)
-{
-   (void) ud;     /* not used */
-   (void) osize;  /* not used */
-   if (nsize == 0) {
-      free (ptr);  /* ANSI requires that free(NULL) has no effect */
-      return NULL;
-   } else
-      /* ANSI requires that realloc(NULL, size) == malloc(size) */
-      return realloc (ptr, nsize);
-}
-
-
-
-static lua_State *lua_open ()
-{
-   return lua_newstate (l_alloc, NULL);
-}
-#endif
-#endif
-
-
-
 /*! \brief Read in a complete file
  *
- * Read in a file and execute it. Executing means
+ * Read in a lob file and execute it. Executing means
  * defining all the functions etc listed within
  * it.
- * \todo More error checking
+ *
+ * If the lob file cannot be found, lua_dofile() tries to
+ * read and execute the equivalent lua file in the same
+ * directory. Note that lua files still have to be "prepared"
+ * if they use any ITEM constants.
  *
  * \param L the Lua state
- * \param filename the full path of the file to read
+ * \param fname the full path of the file to read sans extension
+ * \return 0 on success, 1 on error
  */
-static int lua_dofile (lua_State * L, const char *filename)
+static int lua_dofile (lua_State * L, const char * fname)
 {
-   int retval;
    PACKFILE *f;
-   f = pack_fopen (filename, F_READ);
-   if (f == NULL) {
-      sprintf (strbuf, "Could not open script %s!", filename);
-      program_death (strbuf);
+   char filename[PATH_MAX];
+
+   sprintf(filename, "%s.lob", fname);
+
+   if ((f = pack_fopen (filename, F_READ)) == NULL) {
+   	sprintf(filename, "%s.lua", fname);
+   	if ((f = pack_fopen (filename, F_READ)) == NULL) {
+	      sprintf (strbuf, "Could not open script %s.lob!", fname);
+			allegro_message (strbuf);
+   	   return 1;
+   	}
    }
-   retval = lua_load (L, (lua_Chunkreader) filereader, f, filename);
-   pack_fclose (f);
-   return retval ? retval : lua_pcall (L, 0, LUA_MULTRET, 0);
+
+   if ((lua_load (L, (lua_Chunkreader) filereader, f, filename)) != 0) {
+      sprintf (strbuf, "Could not parse script %s!", filename);
+      allegro_message (strbuf);
+   	pack_fclose (f);
+      return 1;
+   }
+
+	if (lua_pcall (L, 0, LUA_MULTRET, 0) != 0) {
+		sprintf(strbuf, "lua_pcall failed while calling script %s!", filename);
+		allegro_message (strbuf);
+	   pack_fclose (f);
+		return 1;
+	}
+
+	return 0;
 }
 
 

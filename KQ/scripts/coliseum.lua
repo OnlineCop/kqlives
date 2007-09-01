@@ -290,9 +290,9 @@ function zone_handler(zn)
       return
     end
     set_run(0)
-    set_progress(P_USEITEMINCOMBAT, 1)
+    set_can_use_item(0)
     combat(11 + get_progress(P_ROUNDNUM))
-    set_progress(P_USEITEMINCOMBAT, 0)
+    set_can_use_item(1)
     set_run(1)
     local x, y = marker("battle")
     warp(x, y - 3, 16)

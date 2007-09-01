@@ -1,5 +1,165 @@
 -- Global functions available to all scripts
 
+--! \name Progress indicators
+-- PLEASE ADD TO THIS LIST IN ORDER!!!
+
+P_START           = 0
+P_ODDWALL         = 1
+P_DARKIMPBOSS     = 2
+P_DYINGDUDE       = 3
+P_BUYCURE         = 4
+P_GETPARTNER      = 5
+P_PARTNER1        = 6
+P_PARTNER2        = 7
+P_SHOWBRIDGE      = 8
+P_TALKDERIG       = 9
+P_FIGHTONBRIDGE   = 10
+P_FELLINPIT       = 11
+P_EKLAWELCOME     = 12
+P_LOSERONBRIDGE   = 13
+P_ASLEEPONBRIDGE  = 14
+P_ALTARSWITCH     = 15
+P_KILLBLORD       = 16
+P_GOBLINITEM      = 17
+P_ORACLE          = 18
+P_FTOTAL          = 19
+P_FLOOR1          = 20
+P_FLOOR2          = 21
+P_FLOOR3          = 22
+P_FLOOR4          = 23
+P_WSTONES         = 24
+P_BSTONES         = 25
+P_WALL1           = 26
+P_WALL2           = 27
+P_WALL3           = 28
+P_WALL4           = 29
+P_DOOROPEN        = 30
+P_DOOROPEN2       = 31
+P_TOWEROPEN       = 32
+P_DRAGONDOWN      = 33
+P_TREASUREROOM    = 34
+P_UNDEADJEWEL     = 35
+P_UCOIN           = 36
+P_CANCELROD       = 37
+P_PORTALGONE      = 38
+P_WARPEDTOT4      = 39
+P_OLDPARTNER      = 40
+P_BOUGHTHOUSE     = 41
+P_TALKGELIK       = 42
+P_OPALHELMET      = 43
+P_FOUNDMAYOR      = 44
+P_TALK_TEMMIN     = 45
+P_EMBERSKEY       = 46
+P_FOUGHTGUILD     = 47
+P_GUILDSECRET     = 48
+P_SEECOLISEUM     = 49
+P_OPALSHIELD      = 50
+P_STONE1          = 51
+P_STONE2          = 52
+P_STONE3          = 53
+P_STONE4          = 54
+P_DENORIAN        = 55
+P_C4DOORSOPEN     = 56
+P_DEMNASDEAD      = 57
+P_FIRSTTIME       = 58
+P_ROUNDNUM        = 59
+P_BATTLESTATUS    = 60
+P_USEITEMINCOMBAT = 61
+P_FINALPARTNER    = 62
+P_TALKGRAMPA      = 63
+P_SAVEBREANNE     = 64
+P_PASSGUARDS      = 65
+P_IRONKEY         = 66
+P_AVATARDEAD      = 67
+P_GIANTDEAD       = 68
+P_OPALBAND        = 69
+P_BRONZEKEY       = 70
+P_CAVEKEY         = 71
+P_TOWN6INN        = 72
+P_WARPSTONE       = 73
+P_DOINTRO         = 74
+P_GOTOFORT        = 75
+P_GOTOESTATE      = 76
+P_TALKBUTLER      = 77
+P_PASSDOOR1       = 78
+P_PASSDOOR2       = 79
+P_PASSDOOR3       = 80
+
+
+-- /* New indicators */
+P_BOMB1           = 81
+P_BOMB2           = 82
+P_BOMB3           = 83
+P_BOMB4           = 84
+P_BOMB5           = 85
+P_DYNAMITE        = 86
+P_TALKRUFUS       = 87
+P_EARLYPROGRESS   = 88
+P_OPALDRAGONOUT   = 89
+P_OPALARMOUR      = 90
+
+
+-- /* These are to store who's waiting in the manor */
+P_MANORPARTY      = 91
+P_MANORPARTY1     = 92
+P_MANORPARTY2     = 93
+P_MANORPARTY3     = 94
+P_MANORPARTY4     = 95
+P_MANORPARTY5     = 96
+P_MANORPARTY6     = 97
+P_MANORPARTY7     = 98
+P_MANOR           = 99
+P_PLAYERS         = 100
+P_TALK_AJATHAR    = 101
+P_BLADE           = 102
+P_AYLA_QUEST      = 103
+
+P_BANGTHUMB       = 104
+P_WALKING         = 105
+P_MAYORGUARD1     = 106
+P_MAYORGUARD2     = 107
+
+P_TALK_TSORIN     = 108
+P_TALK_CORIN      = 109
+P_TALKOLDMAN      = 110
+P_ORACLEMONSTERS  = 111
+P_TRAVELPOINT     = 112
+
+-- /* side quests */
+P_SIDEQUEST1      = 113
+P_SIDEQUEST2      = 114
+P_SIDEQUEST3      = 115
+P_SIDEQUEST4      = 116
+P_SIDEQUEST5      = 117
+P_SIDEQUEST6      = 118
+P_SIDEQUEST7      = 119
+
+-- Facing directionss, HERO1 and HERO2, and the Hero identifiers are all found
+-- in code. These are duplicates. Avoid changing them.
+
+-- Facing directions
+FACE_DOWN    = 0
+FACE_UP      = 1
+FACE_LEFT    = 2
+FACE_RIGHT   = 3
+
+-- Special identifiers for bubble()
+HERO1             = 200
+HERO2             = 201
+
+
+-- Hero identifiers
+SENSAR            = 0
+SARINA            = 1
+CORIN             = 2
+AJATHAR           = 3
+CASANDRA          = 4
+TEMMIN            = 5
+AYLA              = 6
+NOSLOM            = 7
+
+
+
 -- Add this hero to the manor if not already there
 -- hero can be a single value or a table
 -- returns the number of heroes that were actually added
@@ -37,40 +197,6 @@ function add_to_manor(hero)
 end
 
 
-function Ajathar:read_book()
-  bubble(HERO1, pick("Hmmm... I don't approve of that.",
-         "I'm too busy to read now.",
-         "How many books can you write that start with 'The Joy of...'?"))
-end
-
-
-function Ajathar:touch_fire()
-  bubble(HERO1, pick("Hmm... I want marshmallows.",
-         "You call this a fire?!",
-         "Ah, relaxing."))
-end
-
-
-function Ayla:read_book()
-  bubble(HERO1, pick("I don't have time for this.",
-         "What language is this written in?",
-         "The pages are stuck together!?"))
-end
-
-
-function Ayla:touch_fire()
-  bubble(HERO1, pick("I wonder how hot this is?",
-         "Someone should clean all this soot out of here.",
-         "Well, my face is warm now, but my butt is still freezing!"))
-end
-
-
---  Response for reading a book.
-function book_talk(ent)
-  party[0]:read_book()
-end
-
-
 -- Display bubble text; just concatenate all the args and call the _ex function
 -- Args ent  Entity number
 --      ...  Variable number of arguments - text to show
@@ -86,31 +212,17 @@ function bubble(ent, ...)
 end
 
 
-function Casandra:read_book()
-  bubble(HERO1, pick("Boring.",
-         "Somebody should burn these.",
-         "Terrible... just terrible."))
-end
-
-
-function Casandra:touch_fire()
-  bubble(HERO1, pick("Something's burning. I hope it's one of those stupid books!",
-         "The fire is getting low.",
-         "Yessir, this is a fire."))
-end
-
-
-function Corin:read_book()
-  bubble(HERO1, pick("Doesn't anybody leave spellbooks lying around?",
-         "Why would I read this?",
-         "Can't talk... reading."))
-end
-
-
-function Corin:touch_fire()
-  bubble(HERO1, pick("I sure like fire.",
-         "Watching this is relaxing.",
-         "This is making me sleepy."))
+-- See function bubble()
+function thought(ent, ...)
+  s = ""
+  for i = 1, arg.n do
+    if (i ~= 1) then
+      s = s.."\n"..arg[i]
+    else
+      s = s..arg[i]
+    end
+  end
+  thought_ex(ent, s)
 end
 
 
@@ -146,20 +258,6 @@ function LOC_manor_or_party(who)
     end
   end
   return nil
-end
-
-
-function Noslom:read_book()
-  bubble(HERO1, pick("Fascinating.",
-         "I have this one.",
-         "Romance novels... gack!"))
-end
-
-
-function Noslom:touch_fire()
-  bubble(HERO1, pick("I prefer torches.",
-         "I love the crackle of a good fire.",
-         "I wonder if a spell would make this burn brighter?"))
 end
 
 
@@ -199,20 +297,6 @@ function pick(...)
 end
 
 
-function Sarina:read_book()
-  bubble(HERO1, pick("Ugh... this would take me forever to read.",
-         "I never liked reading.",
-         "Who wrote this trash?"))
-end
-
-
-function Sarina:touch_fire()
-  bubble(HERO1, pick("Mmm, wood smoke.",
-         "Smells like burnt hair. Hey wait... that's MY hair!",
-         "Ooh, cozy."))
-end
-
-
 -- Select from heroes in the manor
 -- The available list is stored in eight consecutive P_ constants
 -- as 0 for nobody and 1..8 for characters 0..7
@@ -236,6 +320,18 @@ function select_manor()
     end
     set_progress(i + P_MANORPARTY - 1, v)
   end
+end
+
+
+--  Response for reading a book.
+function book_talk(ent)
+  party[0]:read_book()
+end
+
+
+-- This function can be called whenever the hero touches a fire
+function touch_fire(ent)
+  party[0]:touch_fire()
 end
 
 
@@ -267,21 +363,85 @@ function Temmin:touch_fire()
 end
 
 
--- See function bubble()
-function thought(ent, ...)
-  s = ""
-  for i = 1, arg.n do
-    if (i ~= 1) then
-      s = s.."\n"..arg[i]
-    else
-      s = s..arg[i]
-    end
-  end
-  thought_ex(ent, s)
+function Sarina:read_book()
+  bubble(HERO1, pick("Ugh... this would take me forever to read.",
+         "I never liked reading.",
+         "Who wrote this trash?"))
 end
 
 
--- This function can be called whenever the hero touches a fire
-function touch_fire(ent)
-  party[0]:touch_fire()
+function Sarina:touch_fire()
+  bubble(HERO1, pick("Mmm, wood smoke.",
+         "Smells like burnt hair. Hey wait... that's MY hair!",
+         "Ooh, cozy."))
+end
+
+
+function Noslom:read_book()
+  bubble(HERO1, pick("Fascinating.",
+         "I have this one.",
+         "Romance novels... gack!"))
+end
+
+
+function Noslom:touch_fire()
+  bubble(HERO1, pick("I prefer torches.",
+         "I love the crackle of a good fire.",
+         "I wonder if a spell would make this burn brighter?"))
+end
+
+
+function Ajathar:read_book()
+  bubble(HERO1, pick("Hmmm... I don't approve of that.",
+         "I'm too busy to read now.",
+         "How many books can you write that start with 'The Joy of...'?"))
+end
+
+
+function Ajathar:touch_fire()
+  bubble(HERO1, pick("Hmm... I want marshmallows.",
+         "You call this a fire?!",
+         "Ah, relaxing."))
+end
+
+
+function Ayla:read_book()
+  bubble(HERO1, pick("I don't have time for this.",
+         "What language is this written in?",
+         "The pages are stuck together!?"))
+end
+
+
+function Ayla:touch_fire()
+  bubble(HERO1, pick("I wonder how hot this is?",
+         "Someone should clean all this soot out of here.",
+         "Well, my face is warm now, but my butt is still freezing!"))
+end
+
+
+function Casandra:read_book()
+  bubble(HERO1, pick("Boring.",
+         "Somebody should burn these.",
+         "Terrible... just terrible."))
+end
+
+
+function Casandra:touch_fire()
+  bubble(HERO1, pick("Something's burning. I hope it's one of those stupid books!",
+         "The fire is getting low.",
+         "Yessir, this is a fire."))
+end
+
+
+function Corin:read_book()
+  bubble(HERO1, pick("Doesn't anybody leave spellbooks lying around?",
+         "Why would I read this?",
+         "Can't talk... reading."))
+end
+
+
+function Corin:touch_fire()
+  bubble(HERO1, pick("I sure like fire.",
+         "Watching this is relaxing.",
+         "This is making me sleepy."))
 end

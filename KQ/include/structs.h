@@ -57,14 +57,14 @@ typedef struct
  */
 typedef struct
 {
-   signed char map_no;          /*!< Map identifier */
+   signed char map_no;          /*!< Not used in code. */
    unsigned char zero_zone;     /*!< Non-zero if zone 0 triggers an event */
    unsigned char map_mode;      /*!< Map's parallax mode (see draw_map()) */
    unsigned char can_save;      /*!< Non-zero if Save is allowed in this map */
    unsigned char tileset;       /*!< Which tile-set to use */
    unsigned char use_sstone;    /*!< Non-zero if sunstone works on this map */
    unsigned char can_warp;      /*!< Non-zero if Warp is allowed in this map */
-   unsigned char extra_byte;    /*!< Currently unused */
+   unsigned char extra_byte;   /*!< Currently unused */
    int xsize;                   /*!< Map width */
    int ysize;                   /*!< Map height */
    int pmult;                   /*!< Parallax multiplier */

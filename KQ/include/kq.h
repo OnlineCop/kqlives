@@ -44,6 +44,7 @@
 #include "entity.h"
 #include "structs.h"
 #include "bounds.h"
+#include "shopmenu.h"
 
 #define MAX_TILES        1024
 #define MAXE               41
@@ -68,6 +69,11 @@
 #define MAX_SHADOWS        12
 #define MAX_INV            64
 #define STEPS_NEEDED       15
+#define SIZE_PROGRESS    1750
+#define SIZE_SAVE_RESERVE1 150
+#define SIZE_SAVE_SPELL    50
+#define SIZE_TREASURE    1000
+
 
 /* Get the directory for application data (music, gfx, etc.)
    or user data (screenshots, prefs, saved games)
@@ -227,46 +233,8 @@ const char *kqres (int dir_id, const char *file);
 /*\}*/
 
 /*! \name Map identifiers */
-/*\{*/
-#define MAP_MAIN           0
-#define MAP_MANOR          1
-#define MAP_TOWN1          2
-#define MAP_CAVE1          3
-#define MAP_TOWN2          4
-#define MAP_BRIDGE         5
-#define MAP_TOWN3          6
-#define MAP_GROTTO         7
-#define MAP_CAVE2          8
-#define MAP_FORT           9
-#define MAP_CAVE3A         10
-#define MAP_CAVE3B         11
-#define MAP_TEMPLE1        12
-#define MAP_TEMPLE2        13
-#define MAP_STARTING       14
-#define MAP_TOWER          15
-#define MAP_GROTTO2        16
-#define MAP_TOWN4          17
-#define MAP_CAMP           18
-#define MAP_ESTATE         19
-#define MAP_TOWN5          20
-#define MAP_GUILD          21
-#define MAP_DVILLE         22
-#define MAP_COLISEUM       23
-#define MAP_CAVE4          24
-#define MAP_TOWN6          25
-#define MAP_PASS           26
-#define MAP_TOWN7          27
-#define MAP_CULT           28
-#define MAP_SHRINE         29
-#define MAP_CAVE5          30
-#define MAP_ESTERIA        31
-#define MAP_TUNNEL         32
-#define MAP_TOWN8          33
-#define MAP_GOBLIN         34
-#define MAP_CASTLE         35
-#define MAP_SUNARIN        36
-/*\}*/
-
+/* I removed these. The less extra information that has to be maintained,
+ * the better. --Winter Knight */
 
 /*! \brief Player */
 typedef struct
@@ -390,7 +358,7 @@ void reset_timer_events (void); /*  intrface.c  */
 
 
 
-extern char curmap[16];         /*  sgame.c  */
+extern char curmap[16];         /*  sgame.c, draw.c, magic.c */
 
 extern int right;               /*  intrface.c, (eqp|item|mas|shop)menu.c,  */
                         /*  entity.c, menu.c, selector.c, setup.c,  */
@@ -449,7 +417,11 @@ extern BITMAP *menuptr, *mptr, *sptr, *stspics, *sicons, *bptr, *missbmp,
 extern BITMAP *shadow[MAX_SHADOWS];     /*  draw.c  */
 extern unsigned short *map_seg;
 extern unsigned short *b_seg, *f_seg;
-extern unsigned char *progress, *z_seg, *s_seg, *o_seg, *treasure;
+extern unsigned char *z_seg, *s_seg, *o_seg;
+extern unsigned char progress[SIZE_PROGRESS];
+extern unsigned char treasure[SIZE_TREASURE];
+extern unsigned char shop_time[NUMSHOPS];
+extern unsigned char save_spells[SIZE_SAVE_SPELL];
 extern BITMAP *kfonts, *portrait[MAXCHRS];
 extern s_map g_map;
 extern s_entity g_ent[MAX_ENT + PSIZE];
@@ -458,7 +430,8 @@ extern s_anim adata[MAX_ANIM];
 extern int noe, pidx[MAXCHRS], numchrs, gp, xofs, yofs, gsvol, gmvol;
 extern unsigned char autoparty, alldead, is_sound, deadeffect, vfollow,
    use_sstone, sound_avail;
-extern unsigned char kq_version, hold_fade, cansave, skip_intro, wait_retrace,
+extern const unsigned char kq_version;
+extern unsigned char hold_fade, cansave, skip_intro, wait_retrace,
    windowed, stretch_view, cpu_usage;
 extern unsigned short tilex[MAX_TILES], adelay[MAX_ANIM];
 extern char *strbuf, *savedir;
@@ -490,18 +463,6 @@ void kq_yield (void);
 #ifdef DEBUGMODE
 extern BITMAP *obj_mesh;
 #endif
-
-#if 0
-void my_counter (void);         /*  staticed  */
-void data_dump (void);          /*  staticed  */
-void startup (void);            /*  staticed  */
-void load_data (void);          /*  staticed  */
-void allocate_stuff (void);     /*  staticed  */
-void deallocate_stuff (void);   /*  staticed  */
-BITMAP *alloc_bmp (int, int, char *);   /*  staticed  */
-void load_portraits (void);     /*  did not exist  */
-#endif /*  0  */
-
 
 
 #endif /*  __KQ_H  */

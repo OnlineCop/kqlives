@@ -10,7 +10,7 @@ LOBS:=$(notdir $(LUAS:.lua=.lob))
 CPP=cpp -P -undef
 SUFFIXES=.lua .lob
 
-INCLUDES:=$(top_srcdir)/include/progress.h $(top_srcdir)/include/itemdefs.h
+INCLUDES:=$(top_srcdir)/include/itemdefs.h
 
 all-am: Makefile confirm-dir $(LOBS)
 

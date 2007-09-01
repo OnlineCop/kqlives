@@ -51,6 +51,10 @@
 #include "skills.h"
 #include "timing.h"
 
+/* External variables */
+int can_use_item = 1;
+
+/* Internal variables */
 /* Text names of hero skills */
 char sk_names[MAXCHRS][7] = {
    "Rage", "Sweep", "Infuse", "Prayer", "Boost", "Cover", "Steal", "Sense"
@@ -624,12 +628,6 @@ void hero_choose_action (int who)
       strcpy (ca[my], "Attack");
       chi[my] = C_ATTACK;
       my++;
-#if 0
-
-      strcpy (ca[my], "Combo");
-      chi[my] = C_COMBO;
-      my++;
-#endif
       if (hero_skillcheck (who)) {
          strcpy (ca[my], sk_names[pidx[who]]);
          chi[my] = C_SKILL;
@@ -640,7 +638,7 @@ void hero_choose_action (int who)
          chi[my] = C_SPELL;
          my++;
       }
-      if (progress[P_USEITEMINCOMBAT] == 0) {
+      if (can_use_item) {
          strcpy (ca[my], "Item");
          chi[my] = C_ITEM;
          my++;

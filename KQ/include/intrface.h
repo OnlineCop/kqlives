@@ -22,21 +22,20 @@
 #ifndef __INTRFACE_H
 #define __INTRFACE_H
 
-/* Facing directions */
-#define FACE_DOWN    0
-#define FACE_UP      1
-#define FACE_LEFT    2
-#define FACE_RIGHT   3
+/* Special identifiers for bubble() */
+#define HERO1             200
+#define HERO2             201
 
 
 void do_autoexec (void);        /*  kq.c  */
 void do_entity (int);           /*  kq.c  */
 void do_luacheat (void);        /*  entity.c  */
-void do_luainit (char *);       /*  kq.c  */
+void do_luainit (const char *); /*  kq.c  */
 void do_luakill (void);         /*  kq.c  */
 void do_postexec (void);        /*  kq.c  */
 void do_timefunc (const char *);
 void do_zone (int);             /*  kq.c  */
+void init_shops (void);         /* sgame.c */
 
 
 #endif /*  __INTRFACE_H  */

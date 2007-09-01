@@ -61,7 +61,6 @@ unsigned char vspell;
 unsigned char ms;
 DATAFILE *backart;
 
-
 /* Internal variables */
 static int curw;
 static int nspeed[NUM_FIGHTERS];
@@ -211,7 +210,7 @@ static int attack_result (int ar, int dr)
     */
 
 #ifdef KQ_CHEATS
-   if (every_hit_999) {
+   if (cheat && every_hit_999) {
       ta[dr] = -999;
       return 1;
    }
@@ -466,7 +465,7 @@ int combat (int bno)
    int lc;
 
 #ifdef KQ_CHEATS
-   if (no_monsters)
+   if (cheat && no_monsters)
       return 0;
 #endif
 
@@ -486,7 +485,7 @@ int combat (int bno)
    if (battles[bno].enc > 1) {
 #ifdef KQ_CHEATS
       /* skip battle if no_random_encouters cheat is set */
-      if (no_random_encounters)
+      if (cheat && no_random_encounters)
          return 0;
 #endif
       /* skip battle if haven't moved enough steps since last battle,
@@ -495,7 +494,7 @@ int combat (int bno)
          return 0;
       }
       /* Likely (not always) skip random battle if repluse is active */
-      if (progress[P_REPULSE] > 0) {
+      if (save_spells[P_REPULSE] > 0) {
          lc = (hero_level - erows[encounter].lvl) * 20;
          if (lc < 5)
             lc = 5;
@@ -529,7 +528,7 @@ int combat (int bno)
 }
 
 
-
+#if 0
 /*! \brief Does current location call for combat?
  *
  * This function checks the zone at the specified co-ordinates
@@ -537,6 +536,9 @@ int combat (int bno)
  *
  * PH: it seems that this is rarely used (?) - only called by
  * entityat().
+ * WK: I have altered entityat() slightly to bypass this function.
+ * This function is no longer used. I have not noticed any
+ * negative side effects.
  *
  * \param   comx x-coord of player
  * \param   comy y-coord of player
@@ -556,13 +558,12 @@ int combat_check (int comx, int comy)
     * PH: done this 20020222
     */
    for (i = 0; i < NUM_BATTLES; i++) {
-      if (battles[i].mapnum == g_map.map_no && battles[i].zonenum == zn) {
+      /* if (battles[i].mapnum == g_map.map_no && battles[i].zonenum == zn) */
          return combat (i);
-      }
    }
    return 0;
 }
-
+#endif
 
 
 /*! \brief Choose an action

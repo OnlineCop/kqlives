@@ -168,14 +168,14 @@ int entityat (int ox, int oy, int who)
       if (g_ent[i].active && ox == g_ent[i].tilex && oy == g_ent[i].tiley) {
          if (who >= PSIZE) {
             if (g_ent[who].eid == ID_ENEMY && i < PSIZE) {
-               if (combat_check (ox, oy) == 1)
+               if (combat(0) == 1)
                   g_ent[who].active = 0;
                return 0;
             }
             return i + 1;
          } else {
             if (g_ent[i].eid == ID_ENEMY) {
-               if (combat_check (ox, oy) == 1)
+               if (combat(0) == 1)
                   g_ent[i].active = 0;
                return 0;
             }

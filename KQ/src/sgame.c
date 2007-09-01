@@ -53,8 +53,9 @@
 #include "shopmenu.h"
 #include "timing.h"
 
-/*! \name Globals */
+/*! \brief No game-wide globals in this file. */
 
+/*! \name Internal variables */
 int snc[NUMSG], sgp[NUMSG], shr[NUMSG], smin[NUMSG], sid[NUMSG][PSIZE],
    slv[NUMSG][PSIZE];
 unsigned char shp[NUMSG][PSIZE], smp[NUMSG][PSIZE];
@@ -220,18 +221,29 @@ static int load_game (void)
       load_s_player (&party[a], sdat);
    }
    pack_fread (curmap, 16, sdat);
-   for (a = 0; a < 2000; ++a) {
+   for (a = 0; a < SIZE_PROGRESS; a++) {   /* 1750 */
       progress[a] = pack_getc (sdat);
    }
-   for (a = 0; a < 1000; ++a) {
+   for (a = 0; a < NUMSHOPS; a++) {        /* 50 */
+      shop_time[a] = pack_getc (sdat);
+   }
+   for (a = 0; a < SIZE_SAVE_RESERVE1; a++) { /* 150 */
+      pack_getc (sdat);
+   }
+   for (a = 0; a < SIZE_SAVE_SPELL; a++) {    /* 50 */
+      save_spells[a] = pack_getc (sdat);
+   }
+
+   for (a = 0; a < sizeof(treasure); a++) {
       treasure[a] = pack_getc (sdat);
    }
-   for (a = 0; a < NUMSHOPS; ++a) {
-      for (b = 0; b < SHOPITEMS; ++b) {
-         shopq[a][b] = pack_igetw (sdat);
+     init_shops();
+   for (a = 0; a < NUMSHOPS; a++) {
+      for (b = 0; b < SHOPITEMS; b++) {
+         shops[a].items_current[b] = pack_igetw (sdat);
       }
    }
-   for (a = 0; a < MAX_INV; ++a) {
+   for (a = 0; a < MAX_INV; a++) {
       g_inv[a][0] = pack_igetw (sdat);
       g_inv[a][1] = pack_igetw (sdat);
    }
@@ -404,23 +416,33 @@ static int save_game (void)
       save_s_player (&party[a], sdat);
    }
    pack_fwrite (curmap, 16, sdat);
-   for (a = 0; a < 2000; ++a) {
+   for (a = 0; a < sizeof(progress); a++) { /* sizeof(progress) is 1750 */
       pack_putc (progress[a], sdat);
    }
-   for (a = 0; a < 1000; ++a) {
+   for (a = 0; a < NUMSHOPS; a++) {           /* NUMSHOPS is 50 */
+      pack_putc (shop_time[a], sdat);
+   }
+   for (a = 0; a < SIZE_SAVE_RESERVE1; a++) { /* SAVE_RESERVE_SIZE1 is 150 */
+      pack_putc (0, sdat);
+   }
+   for (a = 0; a < sizeof(save_spells); a++) { /* sizeof(save_spells) is 50 */
+       pack_putc (save_spells[a], sdat);
+   }
+   for (a = 0; a < sizeof(treasure); a++) { /* sizeof(treasure) is 1000 */
       pack_putc (treasure[a], sdat);
    }
-   for (a = 0; a < NUMSHOPS; ++a) {
-      for (b = 0; b < SHOPITEMS; ++b) {
-         pack_iputw (shopq[a][b], sdat);
+   for (a = 0; a < NUMSHOPS; a++) {
+      for (b = 0; b < SHOPITEMS; b++) {
+         pack_iputw (shops[a].items_current[b], sdat);
       }
    }
-   for (a = 0; a < MAX_INV; ++a) {
+   for (a = 0; a < MAX_INV; a++) {
       pack_iputw (g_inv[a][0], sdat);
       pack_iputw (g_inv[a][1], sdat);
    }
    /* PH FIXME: do we _really_ want things like controls and screen */
-   /* mode to be saved/loaded ? */
+   /* mode to be saved/loaded ?
+   /* WK: No. */
    pack_iputl (gsvol, sdat);
    pack_iputl (gmvol, sdat);
    pack_putc (windowed, sdat);
@@ -438,6 +460,7 @@ static int save_game (void)
    pack_iputl (jbctrl, sdat);
    pack_iputl (jbenter, sdat);
    pack_iputl (jbesc, sdat);
+   /* End worthless */
    pack_iputw (g_ent[0].tilex, sdat);
    pack_iputw (g_ent[0].tiley, sdat);
    pack_fclose (sdat);
@@ -643,25 +666,24 @@ static void show_sgstats (int saving)
 /*! \brief Main menu screen
  *
  * This is the main menu... just display the opening and then the menu and
- * then wait for input.  Also handles loading a saved game.
+ * then wait for input.  Also handles loading a saved game, and the config menu.
  *
- * \todo PH make the config menu accessible from here, otherwise you have to
- *          sit through the intro before you can change any settings.
- *
- * \param   c Non-zero if the splash (the bit with the staff and the eight heroes)
+ * \param   c zero if the splash (the bit with the staff and the eight heroes)
  *            should be displayed.
- * \returns 0 if new game, 1 if continuing, 2 if exit
+ * \returns 1 if new game, 0 if continuing, 2 if exit
  */
-int start_menu (int c)
+int start_menu (int skip_splash)
 {
    int stop = 0, ptr = 0, redraw = 1, a, b;
    DATAFILE *bg;
    BITMAP *staff, *dudes, *tdudes;
+
 #ifdef DEBUGMODE
    if (debugging == 0) {
 #endif
       play_music ("oxford.s3m", 0);
-      if (c == 0) {
+      /* Play splash (with the staff and the heroes in circle */
+      if (skip_splash == 0) {
          bg = load_datafile_object (PCX_DATAFILE, "KQT_PCX");
          staff = create_bitmap_ex (8, 72, 226);
          dudes = create_bitmap_ex (8, 112, 112);
@@ -708,14 +730,10 @@ int start_menu (int c)
          clear_to_color (double_buffer, 15 - a);
          masked_blit ((BITMAP *) bg->dat, double_buffer, 0, 0, 0, 60 - (a * 4),
                       320, 124);
-#if 0
-         masked_blit ((BITMAP *) bg->dat, double_buffer, 0, 148, 0, 172, 320,
-                      52);
-#endif
          blit2screen (0, 0);
          kq_wait (a == 0 ? 500 : 100);
       }
-      if (c == 0)
+      if (skip_splash == 0)
          kq_wait (500);
 #ifdef DEBUGMODE
    } else {
@@ -724,6 +742,7 @@ int start_menu (int c)
    }
 #endif
 
+   /* Draw menu and handle menu selection */
    while (!stop) {
       if (redraw) {
          clear_bitmap (double_buffer);
@@ -762,22 +781,22 @@ int start_menu (int c)
       }
       if (balt) {
          unpress ();
-         if (ptr == 0) {
+         if (ptr == 0) {         /* User selected "Continue" */
             if (snc[0] == 0 && snc[1] == 0 && snc[2] == 0 && snc[3] == 0
                 && snc[4] == 0)
                stop = 2;
             else if (saveload (0) == 1)
-               stop = 1;
+                  stop = 1;
             redraw = 1;
-         } else if (ptr == 1) {
+         } else if (ptr == 1) {   /* User selected "New Game" */
             stop = 2;
-         } else if (ptr == 2) {
+         } else if (ptr == 2) {   /* Config */
             clear (double_buffer);
             config_menu ();
             redraw = 1;
 
             /* TODO: Save Global Settings Here */
-         } else if (ptr == 3) {
+         } else if (ptr == 3) {   /* Exit */
             unload_datafile_object (bg);
             klog ("Then exit you shall!");
             return 2;
@@ -785,23 +804,22 @@ int start_menu (int c)
       }
    }
    unload_datafile_object (bg);
+
    if (stop == 2) {
       /* New game init */
       for (a = 0; a < MAXCHRS; a++)
          memcpy (&party[a], &players[a].plr, sizeof (s_player));
       init_players ();
-      memset (progress, 0, 2000);
-      memset (treasure, 0, 1000);
+        init_shops();
+      memset (progress, 0, SIZE_PROGRESS);
+      memset (treasure, 0, SIZE_TREASURE);
       numchrs = 0;
       for (a = 0; a < NUMSHOPS; a++)
          for (b = 0; b < SHOPITEMS; b++)
-            shopq[a][b] = shops[a][b][1];
+            shops[a].items_current[b] = shops[a].items_max[b];
       for (b = 0; b < 2; b++) {
          for (a = 0; a < MAX_INV; a++)
             g_inv[a][b] = 0;
-      }
-      if (skip_intro == 1) {
-         progress[P_SKIPINTRO] = 1;
       }
    }
    return stop - 1;
@@ -848,23 +866,6 @@ int system_menu (void)
       blit2screen (xofs, yofs);
       readcontrols ();
 
-#if 0
-      // Commented out by TT
-      if (up) {
-         unpress ();
-         ptr--;
-         if (ptr < 0)
-            ptr = 3;
-         play_effect (SND_CLICK, 128);
-      }
-      if (down) {
-         unpress ();
-         ptr++;
-         if (ptr > 3)
-            ptr = 0;
-         play_effect (SND_CLICK, 128);
-      }
-#endif
 
       // TT:
       // When pressed, 'up' or 'down' == 1.  Otherwise, they equal 0.  So:
@@ -877,11 +878,11 @@ int system_menu (void)
          else if (ptr > 3)
             ptr = 0;
          play_effect (SND_CLICK, 128);
-			unpress ();
+         unpress ();
       }
 
       if (balt) {
-			unpress ();
+         unpress ();
 
          if (ptr == 0) {
             // Pointer is over the SAVE option
@@ -890,7 +891,6 @@ int system_menu (void)
 #else
             if (cansave == 1)
 #endif /* KQ_CHEATS */
-               /* TT: This open bracket here so match-brace doesn't choke */
             {
                saveload (1);
                stop = 1;

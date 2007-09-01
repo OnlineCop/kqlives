@@ -33,6 +33,7 @@
 #include "combat.h"
 #include "draw.h"
 #include "enemyc.h"
+#include "heroc.h"
 #include "magic.h"
 #include "progress.h"
 #include "res.h"
@@ -41,7 +42,6 @@
 
 /*! Index related to enemies in an encounter */
 int cf[NUM_FIGHTERS];
-
 
 
 /*  internal prototypes  */
@@ -57,15 +57,14 @@ static int skill_setup (int, int);
 static int spell_setup (int, int);
 
 
-
 /* The format of allstat.mon is a space-separated sequence of rows.
  * Within a row, the column order is:
- * 
+ *
  * -# Name
  * -# ignored (index number)
  * -# x-coord of image (in the datafile)
  * -# y-coord of image
- * -# width of image 
+ * -# width of image
  * -# height of image
  * -# xp
  * -# gold
@@ -99,13 +98,11 @@ static int spell_setup (int, int);
  */
 
 
-
 /*! \brief Array of enemy 'fighters'  */
 static s_fighter **enemies = NULL;
 static int enemies_n = 0;
 static int enemies_cap = 0;
 static DATAFILE *enemy_pcx = NULL;
-
 
 
 /*! \brief Melee attack
@@ -347,23 +344,6 @@ void enemy_init (void)
       }
    }
 }
-
-
-
-#if 0
-/* RB: unused until now */
-/*! \brief Escape battle
- *
- * Hmmm... this could use a little work :)
- *
- * \param   whom Which enemy is going to run
- * \warning RB Unused until now
- */
-void enemy_run (int whom)
-{
-   whom = whom;
-}
-#endif
 
 
 
@@ -676,21 +656,10 @@ static void load_enemies (void)
       // Imbued stat type (Spd, Spi, Att, Hit, Def, Evd, Mag)
       fscanf (edat, "%d", &tmp);
       f->imb_a = tmp;
-#if 0
-      sprintf (strbuf, "Img for %d: (%d,%d)x(%d,%d)", enemies_n - 1, lx, ly,
-               f->cw, f->cl);
-      klog (strbuf);
-#endif
       f->img =
          create_sub_bitmap ((BITMAP *) enemy_pcx->dat, lx, ly, f->cw, f->cl);
       for (p = 0; p < 2; p++) {
          fscanf (edat, "%d", &tmp);
-#if 0
-         if (tmp > 0) {
-            sprintf (strbuf, "%s has imbued %d", f->name, tmp);
-            klog (strbuf);
-         }
-#endif
          f->imb[p] = tmp;
       }
    }
@@ -727,38 +696,6 @@ static void load_enemies (void)
 
 
 
-#if 0
-/*! \brief Copy frames from main bitmap
- *
- * Extract the appropriate frames from the enemy pcx file.
- * \note PH no longer used; enemy_init does this.
- *
- * \param   who Enemy id
- * \param   locx x-coord of frame
- * \param   locy y-coord of frame
- */
-static void load_enemyframes (int who, int locx, int locy)
-{
-   int p;
-   DATAFILE *pcx;
-
-   pcx = load_datafile_object (PCX_DATAFILE, "ENEMY_PCX");
-   for (p = 0; p < MAXCFRAMES; p++) {
-      destroy_bitmap (cframes[who][p]);
-      destroy_bitmap (tcframes[who][p]);
-      cframes[who][p] = create_bitmap (fighter[who].cw, fighter[who].cl);
-      tcframes[who][p] = create_bitmap (fighter[who].cw, fighter[who].cl);
-      blit ((BITMAP *) pcx->dat, cframes[who][p], locx, locy, 0, 0,
-            fighter[who].cw, fighter[who].cl);
-      blit ((BITMAP *) pcx->dat, tcframes[who][p], locx, locy, 0, 0,
-            fighter[who].cw, fighter[who].cl);
-   }
-   unload_datafile_object (pcx);
-}
-#endif
-
-
-
 /*! \brief Prepare an enemy for battle
  *
  * Fills out a supplied s_fighter structure with the default,
@@ -774,46 +711,12 @@ static s_fighter *make_enemy (int who, s_fighter * en)
 {
    if (enemies && who >= 0 && who < enemies_n) {
       memcpy (en, enemies[who], sizeof (s_fighter));
-#if 0
-      sprintf (strbuf, "\tMaking enemy %d (%s)", who, en->name);
-      klog (strbuf);
-#endif
       return en;
    } else {
       /* PH probably should call program_death() here? */
       return NULL;
    }
 }
-
-
-
-#if 0
-/*! \brief Prepare an enemy for battle
- *
- * Fills out a supplied s_fighter structure with the default,
- * starting values for an enemy. Currently not used, but it will be, 
- * so don't delete it ;).
- * \author PH
- * \date 2003????
- * \param   who The name  of the enemy to make
- * \param   en Pointer to an s_fighter structure to initialise
- * \returns the value of en, for convenience, or NULL if an error occurred.
- * \sa make_enemy()
- */
-static s_fighter *make_enemy_by_name (const char *who, s_fighter * en)
-{
-   int i;
-   if (enemies != NULL) {
-      for (i = 0; i < enemies_n; ++i) {
-         if (strcmp (enemies[i]->name, who) == 0) {
-            memcpy (en, enemies[i], sizeof (s_fighter));
-            return en;
-         }
-      }
-   }
-   return NULL;
-}
-#endif
 
 
 
@@ -992,7 +895,7 @@ static int spell_setup (int whom, int z)
 
 
 /*! \brief Unload the data loaded by load_enemies()
- * 
+ *
  * JB would have said 'duh' here! Not much explanation required.
  * \author PH
  * \date 2003????

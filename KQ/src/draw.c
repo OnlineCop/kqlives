@@ -36,6 +36,7 @@
 #include "combat.h"
 #include "draw.h"
 #include "entity.h"
+#include "magic.h"
 #include "music.h"
 #include "progress.h"
 #include "res.h"
@@ -939,9 +940,9 @@ void drawmap (void)
  */
    xofs = 16;
    yofs = 16;
-   if (progress[P_REPULSE] > 0) {
+   if (save_spells[P_REPULSE] > 0) {
       rectfill (b_repulse, 0, 16, 15, 165, 0);
-      rectfill (b_repulse, 5, 16, 10, 16 + progress[P_REPULSE], 15);
+      rectfill (b_repulse, 5, 16, 10, 16 + save_spells[P_REPULSE], 15);
       draw_trans_sprite (double_buffer, b_repulse, 2 + xofs, 2 + yofs);
    }
    if (display_desc == 1) {
@@ -1013,7 +1014,7 @@ static void generic_text (int who, int box_style)
 int is_forestsquare (int fx, int fy)
 {
    int f;
-   if (g_map.map_no != MAP_MAIN)
+   if (strcmp(curmap, "main"))
       return 0;
    f = map_seg[(fy * g_map.xsize) + fx];
 // TT: EDIT

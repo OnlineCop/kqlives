@@ -17,7 +17,7 @@ kq_SOURCES = src/enemyc.c src/intrface.c src/sgame.c src/bounds.c \
 	include/enemyc.h include/itemmenu.h include/progress.h include/structs.h \
 	include/entity.h include/kq.h include/res.h include/timing.h \
 	include/eqpmenu.h include/kqsnd.h include/scrnshot.h \
-	include/eskill.h include/magic.h include/selector.h 
+	include/eskill.h include/magic.h include/selector.h
 EXTRA_kq_SOURCES = src/unix.c src/osx.m src/beos.c src/win.c src/dos.c src/winres.rc
 kq_LDADD = $(kq_extra_files) $(ALLEGRO_LIBS)
 kq_DEPENDENCIES = $(kq_extra_files)
@@ -44,7 +44,7 @@ mapdump_LDADD = $(ALLEGRO_LIBS)
 
 APPR=KQ.app/Contents/Resources
 KQ.app: kq
-	install -d $(APPR)/data $(APPR)/music $(APPR)/scripts $(APPR)/maps 
+	install -d $(APPR)/data $(APPR)/music $(APPR)/scripts $(APPR)/maps
 	install -d KQ.app/Contents/MacOS
 	install -C Mac/Info.plist KQ.app/Contents
 	install -C kq KQ.app/Contents/MacOS
@@ -66,7 +66,7 @@ dist_map_DATA = maps/starting.map maps/bridge2.map \
 	maps/cave4.map maps/main.map maps/town5.map maps/manor.map maps/town6.map \
 	maps/cave5.map maps/town7.map maps/cave6a.map maps/town8.map \
 	maps/cave6b.map  maps/coliseum.map maps/pass.map \
-	maps/cult.map maps/dville.map 
+	maps/cult.map maps/dville.map
 
 mapdir = $(pkgdatadir)/maps
 
@@ -83,7 +83,7 @@ cscripts_DATA = scripts/bridge2.lob scripts/dville.lob \
 	scripts/town6.lob scripts/cave6b.lob scripts/manor.lob \
 	scripts/town7.lob scripts/town8.lob scripts/coliseum.lob \
 	scripts/pass.lob scripts/tunnel.lob scripts/cult.lob \
-	scripts/shrine.lob scripts/sunarin.lob
+	scripts/shrine.lob scripts/sunarin.lob scripts/init.lob
 MOSTLYCLEANFILES = $(cscripts_DATA)
 cscriptsdir = $(pkglibdir)/scripts
 
@@ -100,7 +100,7 @@ EXTRA_DIST = scripts/bridge2.lua scripts/dville.lua \
 	scripts/town6.lua scripts/cave6b.lua scripts/manor.lua \
 	scripts/town7.lua scripts/town8.lua scripts/coliseum.lua \
 	scripts/pass.lua scripts/tunnel.lua scripts/cult.lua \
-	scripts/shrine.lua Mac/Info.plist Mac/KQ-icon.icns \
+	scripts/shrine.lua scripts/init.lua Mac/Info.plist Mac/KQ-icon.icns \
         maps/mapdraw2.glade other/kq.ico
 
 dist_gfx_DATA = data/kqsnd.dat data/mpcx.dat data/ssprites.dat \

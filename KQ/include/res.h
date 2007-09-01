@@ -125,8 +125,8 @@ s_erow;
 /*! \brief An actual battle */
 typedef struct
 {
-   unsigned char mapnum;        /*!< Map where this battle occurs */
-   unsigned char zonenum;       /*!< Zone that triggers this battle */
+   unsigned char extra_byte;    /*!< Map where this battle occurs */
+   unsigned char extra_byte2;   /*!< Zone that triggers this battle */
    unsigned char enc;           /*!< For random encounters, a 1 in enc chance there will not be combat */
    unsigned char etnum;         /*!< Select rows in the encounter table */
    unsigned char eidx;          /*!< Select a specific row, or 99 to pick a random one */

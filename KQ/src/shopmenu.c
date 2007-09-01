@@ -34,398 +34,22 @@
 #include "fade.h"
 #include "itemdefs.h"
 #include "itemmenu.h"
+#include "magic.h"
 #include "music.h"
-#include "progress.h"
 #include "res.h"
 #include "setup.h"
 #include "shopmenu.h"
 #include "timing.h"
 
 
+/* Winter Knight: I'm making it so shops are declared in scripts, rather than
+in the code. It is part of my "separate the engine and the data" campaign. */
 
-/* TT add: */
-/*! \brief Items in shop
- *
- * vars: 
- * - [NUMSHOPS] = index of shop
- * - [SHOPITEMS] = number of items a shop can sell
- * - [3] = info about items sold:
- *  -   [0] = index of item
- *  -   [1] = quantity of items
- *  -   [2] = quantity of items (special.)
- *            After long gameplay, shops will sell
- *            quantity of #[2] of items instead of #[1]
- *            (see shop() for details)
- *
- * PH: I don't think this is correct. I think
- * the code says 
- * that the shop will replenish its stock
- * to [1], after a time-out of [2] minutes.
- */
-unsigned short shops[NUMSHOPS][SHOPITEMS][3] = {
-   {{I_SHIELD1, 6, 10},
-    {I_CAP1, 4, 10},
-    {I_ROBE1, 3, 10},
-    {I_ARMOR1, 3, 10},
-    {I_GLOVES1, 4, 10},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0}},
-
-   {{I_SWORD1, 5, 10},
-    {I_MACE1, 4, 10},
-    {I_KNIFE1, 9, 10},
-    {I_STAFF1, 2, 20},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0}},
-
-   {{I_MHERB, 50, 5},
-    {I_NLEAF, 20, 10},
-    {I_SALVE, 5, 15},
-    {I_B_SHIELD, 2, 25},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0}},
-
-   {{I_B_CURE1, 1, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0}},
-
-   {{I_MHERB, 60, 10},
-    {I_NLEAF, 20, 10},
-    {I_SALVE, 20, 10},
-    {I_PCURING, 5, 30},
-    {I_B_SLEEP, 1, 30},
-    {I_B_SILENCE, 1, 30},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0}},
-
-   {{I_SPEAR1, 3, 20},
-    {I_MACE2, 3, 20},
-    {I_ROD1, 2, 30},
-    {I_HELM1, 4, 15},
-    {I_ROBE2, 2, 30},
-    {I_ARMOR2, 2, 20},
-    {I_SUIT2, 2, 20},
-    {I_BAND1, 4, 10},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0}},
-
-   {{I_AXE1, 2, 20},
-    {I_SWORD2, 2, 30},
-    {I_ROD2, 1, 30},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0}},
-
-   {{I_SHIELD2, 5, 15},
-    {I_HELM2, 3, 20},
-    {I_ARMOR3, 3, 20},
-    {I_GAUNTLET1, 4, 10},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0}},
-
-   {{I_B_CURE1, 5, 20},
-    {I_B_CURE2, 2, 30},
-    {I_B_RESTORE, 3, 30},
-    {I_B_SCORCH, 4, 20},
-    {I_B_DRAIN, 3, 30},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0}},
-
-   {{I_MHERB, 40, 10},
-    {I_OSEED, 10, 20},
-    {I_NLEAF, 30, 10},
-    {I_NPOULTICE, 20, 10},
-    {I_SALVE, 15, 10},
-    {I_RRUNE, 4, 30},
-    {I_ERUNE, 3, 30},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0}},
-
-   {{I_SALVE, 30, 10},
-    {I_LTONIC, 5, 20},
-    {I_EDAENRA, 20, 15},
-    {I_SSTONE, 5, 20},
-    {I_B_HOLD, 4, 20},
-    {I_B_SHELL, 1, 30},
-    {I_B_HASTEN, 2, 30},
-    {I_B_FLOOD, 1, 30},
-    {I_B_SLOW, 2, 20},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0}},
-
-   {{I_HAMMER1, 2, 30},
-    {I_SWORD3, 2, 20},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0}},
-
-   {{I_CAP2, 3, 30},
-    {I_CAP3, 3, 30},
-    {I_ROBE3, 2, 30},
-    {I_ARMOR4, 5, 20},
-    {I_SUIT3, 3, 30},
-    {I_BAND2, 12, 10},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0}},
-
-   {{I_AXE2, 2, 30},
-    {I_SHIELD3, 2, 30},
-    {I_ARMOR5, 2, 30},
-    {I_SUIT3, 2, 30},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0}},
-
-   {{I_PCURING, 20, 20},
-    {I_EDROPS, 10, 20},
-    {I_SSTONE, 30, 10},
-    {I_POWERBRACE, 1, 0},
-    {I_B_REPULSE, 1, 30},
-    {I_B_VISION, 2, 20},
-    {I_B_VIRUS, 2, 20},
-    {I_B_HOLYMIGHT, 3, 20},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0}},
-
-   {{I_B_LIGHTNING, 2, 30},
-    {I_B_DIFFUSE, 1, 10},
-    {I_B_FROST, 3, 10},
-    {I_B_CONFUSE, 2, 20},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0}},
-
-   {{I_B_CURE3, 2, 30},
-    {I_B_THROUGH, 1, 30},
-    {I_B_SHIELDALL, 1, 20},
-    {I_B_BLESS, 4, 10},
-    {I_B_FADE, 2, 20},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0}},
-
-   {{I_RRUNE, 9, 20},
-    {I_ERUNE, 6, 30},
-    {I_FRUNE, 6, 30},
-    {I_WRUNE, 6, 30},
-    {I_IRUNE, 6, 30},
-    {I_PCURING, 30, 10},
-    {I_LTONIC, 20, 10},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0}},
-
-   {{I_HELM3, 4, 20},
-    {I_ROBE3, 4, 20},
-    {I_ARMOR5, 4, 20},
-    {I_SUIT3, 4, 20},
-    {I_BAND2, 10, 10},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0}},
-
-   {{I_HAMMER2, 2, 20},
-    {I_ROD4, 1, 30},
-    {I_SPEAR2, 2, 10},
-    {I_STAFF3, 1, 30},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0}},
-
-   {{I_WATERRING, 1, 0},
-    {I_SSTONE, 20, 10},
-    {I_RUNECLOAK, 1, 0},
-    {I_SPIRITCAPE, 1, 0},
-    {I_TP100S, 90, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0}},
-
-   {{I_SHIELD4, 1, 20},
-    {I_HELM3, 4, 30},
-    {I_ARMOR5, 5, 10},
-    {I_GAUNTLET3, 1, 30},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0}},
-
-   {{I_EDROPS, 20, 20},
-    {I_PCURING, 30, 10},
-    {I_EDAENRA, 30, 10},
-    {I_B_WALL, 1, 30},
-    {I_B_FIREBLAST, 2, 30},
-    {I_B_STONE, 1, 30},
-    {I_B_RECOVERY, 3, 10},
-    {I_B_REGENERATE, 2, 20},
-    {I_B_NAUSEA, 1, 20},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0}},
-
-   /* Rufus's shop */
-   {{I_DYNAMITE, 20, 20},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0}},
-
-   {{I_HAMMER3, 5, 12},
-    {I_ROD5, 5, 7},
-    {I_SPEAR3, 5, 13},
-    {I_STAFF4, 5, 4},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0}}
-};
-
-/*! \brief Quantities in each shop */
-unsigned short shopq[NUMSHOPS][SHOPITEMS];
-
+s_shop shops[NUMSHOPS];   /* Initialized by shop.lua:init_shop() */
 
 /*  internal variables  */
 /*! \brief Current shop index */
 static unsigned char shop_no;
-/*! \brief Names of shops */
-static char shopn[NUMSHOPS][40] = {
-   "Alner's Armour",
-   "Shielt's Weaponry",
-   "Blaknard's Miscellany",
-   "Little Magic Shop",
-   "Ignar's Item Shop",
-   "Nelgar's Armory",
-   "Shend's Weaponry",
-   "Brand's Fine Armours",
-   "The Library of Andra",
-   "Dreskan Item Shop",
-   "Golerak's Item Shop",
-   "Resdin's Weapons",
-   "Nester's Fine Armour",
-   "Vezdin's Arms and Armours",
-   "Vezdin's Wonderous Items",
-   "Black Magic",
-   "White Magic",
-   "Ajantara Items",
-   "Ajantara Armor",
-   "Alderic's Weapons",
-   "Ezbaran's Items",
-   "Agrasian's Armor",
-   "The Colosseum Shop",
-   "Rufus's Cabin",
-   "Bentley's Armour"
-};
-
-
 
 /*  internal functions  */
 static void draw_sideshot (int);
@@ -434,7 +58,6 @@ static void buy_item (int, int);
 static void sell_menu (void);
 static void sell_howmany (int, int);
 static void sell_item (int, int);
-
 
 
 /*! \brief Actually purchase the item
@@ -450,7 +73,7 @@ static void buy_item (int how_many, int item_no)
 {
    int z = 0, l, stop = 0, cost;
 
-   l = shin[item_no];
+   l = shops[shop_no].items[item_no];
    cost = items[l].price * how_many;
    if (cost > gp || how_many == 0) {
       play_effect (SND_BAD, 128);
@@ -462,7 +85,7 @@ static void buy_item (int how_many, int item_no)
       menubox (double_buffer, 32 + xofs, 168 + yofs, 30, 1, DARKBLUE);
       print_font (double_buffer, 104 + xofs, 176 + yofs, "Confirm/Cancel",
                   FNORMAL);
-      draw_sideshot (shin[item_no]);
+      draw_sideshot (shops[shop_no].items[item_no]);
       blit2screen (xofs, yofs);
 
       readcontrols ();
@@ -478,7 +101,7 @@ static void buy_item (int how_many, int item_no)
    z = check_inventory (l, how_many);
    if (z > 0) {
       gp = gp - cost;
-      shopq[shop_no][item_no] -= how_many;
+      shops[shop_no].items_current[item_no] -= how_many;
       play_effect (SND_MONEY, 128);
       return;
    }
@@ -500,8 +123,9 @@ static void buy_menu (void)
    int xptr = 1, yptr = 0, k, i, j, a, max, max_x = 0;
 
    for (a = 0; a < noi; a++)
-      if (shopq[shop_no][a] > max_x)
-         max_x = shopq[shop_no][a];
+      if (shops[shop_no].items_current[a] > max_x)
+         max_x = shops[shop_no].items_current[a];
+
    if (max_x > 9)
       max_x = 9;
    while (!stop) {
@@ -517,8 +141,8 @@ static void buy_menu (void)
       menubox (double_buffer, 32 + xofs, 168 + yofs, 30, 1, BLUE);
       draw_shopgold ();
       for (i = 0; i < noi; i++) {
-         j = shin[i];
-         max = shopq[shop_no][i];
+         j = shops[shop_no].items[i];
+         max = shops[shop_no].items_current[i];
          if (xptr <= max)
             max = xptr;
          draw_icon (double_buffer, items[j].icon, 48 + xofs,
@@ -543,10 +167,12 @@ static void buy_menu (void)
             print_font (double_buffer, 200 + xofs, i * 8 + 32 + yofs,
                         "Sold Out!", k);
       }
+
+      unsigned short item_no = shops[shop_no].items[yptr];
       print_font (double_buffer,
-                  160 - (strlen (items[shin[yptr]].desc) * 4) + xofs,
-                  176 + yofs, items[shin[yptr]].desc, FNORMAL);
-      draw_sideshot (shin[yptr]);
+                  160 - (strlen (items[item_no].desc) * 4) + xofs,
+                  176 + yofs, items[item_no].desc, FNORMAL);
+      draw_sideshot (item_no);
       draw_sprite (double_buffer, menuptr, 32 + xofs, yptr * 8 + 32 + yofs);
       blit2screen (xofs, yofs);
 
@@ -578,7 +204,7 @@ static void buy_menu (void)
       if (balt) {
          unpress ();
          blit (double_buffer, back, xofs, 192 + yofs, 0, 0, 320, 48);
-         max = shopq[shop_no][yptr];
+         max = shops[shop_no].items_current[yptr];
          if (xptr <= max)
             max = xptr;
          buy_item (max, yptr);
@@ -615,12 +241,10 @@ void do_inn_effects (int do_delay)
       do_transition (TRANS_FADE_OUT, 2);
       drawmap ();
       blit2screen (xofs, yofs);
-   }
-   progress[P_REPULSE] = 0;
-   if (do_delay) {
       kq_wait (1500);
       do_transition (TRANS_FADE_IN, 2);
    }
+   save_spells[P_REPULSE] = 0;
    resume_music ();
 }
 
@@ -760,7 +384,7 @@ void inn (char *iname, int gpc, int pay)
       /* TT add: (pay) is also used now to indicate whether we should wait
        *         (fade in/out) or just heal the heroes and be done
        */
-      do_inn_effects (pay);
+      do_inn_effects (0);
       return;
    }
    unpress ();
@@ -953,10 +577,10 @@ static void sell_item (int itno, int ni)
          unpress ();
          gp += sp;
          for (a = 0; a < SHOPITEMS; a++) {
-            if (l > 0 && shops[shop_no][a][0] == l) {
-               shopq[shop_no][a] += ni;
-               if (shopq[shop_no][a] > shops[shop_no][a][1])
-                  shopq[shop_no][a] = shops[shop_no][a][1];
+            if (l > 0 && shops[shop_no].items[a] == l) {
+               shops[shop_no].items_current[a] += ni;
+               if (shops[shop_no].items_current[a] > shops[shop_no].items_max[a])
+                  shops[shop_no].items_current[a] = shops[shop_no].items_max[a];
             }
          }
          play_effect (SND_MONEY, 128);
@@ -1091,21 +715,24 @@ int shop (int shop_num)
    int ptr = 0, stop = 0, a;
 
    shop_no = shop_num;
-   strcpy (sname, shopn[shop_no]);
+   strcpy (sname, shops[shop_no].name);
+
+   /* If enough time has passed, fully replenish this shop's stock of an item */
    for (a = 0; a < SHOPITEMS; a++) {
-      if (shops[shop_no][a][2] > 0)
-         /* Shops replenish after a certain time? */
-         if ((khr * 60) + kmin - progress[P_SHOPSTART + shop_no] >
-             shops[shop_no][a][2])
-            shopq[shop_no][a] = shops[shop_no][a][1];
-      shin[a] = shops[shop_no][a][0];
+      if (shops[shop_no].items_replenish_time[a] > 0)
+         if ((khr * 60) + kmin - shop_time[shop_no] >
+             shops[shop_no].items_replenish_time[a])
+            shops[shop_no].items_current[a] = shops[shop_no].items_max[a];
    }
+
+   /* Return 1 if shop has no items to sell */
    noi = SHOPITEMS - 1;
    for (a = SHOPITEMS - 1; a >= 0; a--)
-      if (shin[a] == 0)
+      if (shops[shop_no].items[a] == 0)
          noi = a;
    if (noi == 0)
       return 1;
+
    unpress ();
    play_effect (SND_MENU, 128);
    while (!stop) {
@@ -1151,6 +778,6 @@ int shop (int shop_num)
          stop = 1;
       }
    }
-   progress[P_SHOPSTART + shop_no] = khr * 60 + kmin;
+   shop_time[shop_no] = khr * 60 + kmin;
    return 0;
 }

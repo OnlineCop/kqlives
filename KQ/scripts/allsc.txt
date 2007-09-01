@@ -20,6 +20,7 @@ goblin
 grotto
 grotto2
 guild
+init
 main
 manor
 pass

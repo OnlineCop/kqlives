@@ -55,6 +55,7 @@
 #include "intrface.h"
 #include "itemdefs.h"
 #include "itemmenu.h"
+#include "magic.h"
 #include "masmenu.h"
 #include "menu.h"
 #include "mpcx.h"
@@ -103,7 +104,12 @@ unsigned short *map_seg = NULL, *b_seg = NULL, *f_seg = NULL;
 /*! Zone, shadow and obstacle layers */
 unsigned char *z_seg = NULL, *s_seg = NULL, *o_seg = NULL;
 /*! keeps track of tasks completed and treasure chests opened */
-unsigned char *progress = NULL, *treasure = NULL;
+unsigned char progress[SIZE_PROGRESS];
+unsigned char treasure[SIZE_TREASURE];
+/*! keeps track of when shops were last visited */
+unsigned char shop_time[NUMSHOPS];
+/*! keeps track of non-combat spell statuses (currently only repulse) */
+unsigned char save_spells[SIZE_SAVE_SPELL];
 /*! Current map */
 s_map g_map;
 /*! Current entities (players+NPCs) */
@@ -140,8 +146,7 @@ unsigned char vfollow = 1;
 /*! Whether the sun stone can be used in this map*/
 unsigned char use_sstone = 0;
 /*! Version number (used for version control in sgame.c) */
-// TT: Shouldn't this be a const?
-unsigned char kq_version = 91;
+const unsigned char kq_version = 91;
 /*! If non-zero, don't do fade effects. The only place this is
  * set is in scripts. */
 unsigned char hold_fade = 0;
@@ -158,7 +163,6 @@ unsigned short tilex[MAX_TILES];
 unsigned short adelay[MAX_ANIM];
 /*! Temporary buffer for string operations (used everywhere!) */
 char *strbuf = NULL;
-/* char *savedir = NULL; */
 
 
 /*! Characters in play. The pidx[] array references this for the heroes actually
@@ -201,7 +205,7 @@ char sname[39];
 /*! Number of items in a shop */
 int noi;
 /*! Items in a shop */
-int shin[SHOPITEMS];
+/* int shin[SHOPITEMS]; One global variable down; 999,999 to go --WK */
 /*! Should we display a box with ctext in it (used in combat) */
 int dct = 0;
 /*! Name of current spell or special ability */
@@ -283,7 +287,7 @@ static int next_event_time;     /*!< The time the next event will trigger */
 // hit F11 if DEBUGMODE is defined), so you can know the current progress of
 // your characters in any given save game.  This is not compiled into the non-
 // debug version of the KQ binary.
-s_progress progresses[120 + 1] = {      // 120 progress, 1 shop
+s_progress progresses[120] = {      // 120 progress
    {0, "P_START"},         {1, "P_ODDWALL"},          {2, "P_DARKIMPBOSS"},
    {3, "P_DYINGDUDE"},     {4, "P_BUYCURE"},          {5, "P_GETPARTNER"},
    {6, "P_PARTNER1"},      {7, "P_PARTNER2"},         {8, "P_SHOWBRIDGE"},
@@ -324,7 +328,6 @@ s_progress progresses[120 + 1] = {      // 120 progress, 1 shop
    {111, "P_ORACLEMONSTERS"}, {112, "P_TRAVELPOINT"}, {113, "P_SIDEQUEST1"},
    {114, "P_SIDEQUEST2"},  {115, "P_SIDEQUEST3"},     {116, "P_SIDEQUEST4"},
    {117, "P_SIDEQUEST5"},  {118, "P_SIDEQUEST6"},     {119, "P_SIDEQUEST7"},
-   {1750, "P_SHOPSTART"},
 };
 #endif
 
@@ -392,14 +395,13 @@ void activate (void)
 
       drawmap ();
       blit2screen (xofs, yofs);
-      mb = g_map.map_no;
 
       zx = abs (g_ent[p - 1].x - g_ent[0].x);
       zy = abs (g_ent[p - 1].y - g_ent[0].y);
 
       if ((zx <= 16 && zy <= 3) || (zx <= 3 && zy <= 16))
          do_entity (p - 1);
-      if (g_ent[p - 1].movemode == MM_STAND && g_map.map_no == mb)
+      if (g_ent[p - 1].movemode == MM_STAND)
          g_ent[p - 1].facing = tf;
    }
 }
@@ -728,8 +730,8 @@ void data_dump (void)
                   progress[a]);
       }
       fprintf (ff, "\n");
-      for (a = P_SHOPSTART; a < P_SHOPSTART + NUMSHOPS; a++)
-         fprintf (ff, "%d = %d\n", a, progress[a]);
+      for (a = 0; a < NUMSHOPS; a++)
+         fprintf (ff, "shop-%d = %d\n", a, shop_time[a]);
       fclose (ff);
    }
 }
@@ -817,10 +819,6 @@ static void deallocate_stuff (void)
       free (s_seg);
    if (o_seg)
       free (o_seg);
-   if (progress)
-      free (progress);
-   if (treasure)
-      free (treasure);
    if (strbuf)
       free (strbuf);
 /*    if (savedir) */
@@ -1134,19 +1132,17 @@ static void load_map (const char *map_name)
  */
 int main (int argc, const char *argv[])
 {
-   int stop, game_on, skip_splash = 0;
+   int stop, game_on, skip_splash;
    int i;
 
-   if (argc > 1) {
-      for (i = 1; i < argc; i++) {
-         if (!strcmp (argv[i], "-nosplash")) {
-            skip_splash = 1;
-         } else {
-            skip_splash = 0;
-         }
+   skip_splash = 0;
+   for (i = 1; i < argc; i++) {
+      if (!strcmp (argv[i], "-nosplash") || !strcmp (argv[i], "--nosplash"))
+         skip_splash = 1;
+      if (!strcmp (argv[i], "--help")) {
+         printf("Sorry, no help screen at this time.\n");
+         return EXIT_SUCCESS;
       }
-   } else {
-      skip_splash = 0;
    }
 
    startup ();
@@ -1556,8 +1552,6 @@ static void startup (void)
    map_seg = b_seg = f_seg = NULL;
    s_seg = z_seg = o_seg = NULL;
    memset (&g_map, 0, sizeof (s_map));
-   progress = (unsigned char *) malloc (2000);
-   treasure = (unsigned char *) malloc (1000);
 
    allocate_stuff ();
    install_keyboard ();
@@ -1890,17 +1884,17 @@ void zone_check (void)
    zx = g_ent[0].x / 16;
    zy = g_ent[0].y / 16;
 
-   if (progress[P_REPULSE] > 0) {
-      if (g_map.map_no == MAP_MAIN)
-         progress[P_REPULSE]--;
+   if (save_spells[P_REPULSE] > 0) {
+      if (!strcmp(curmap, "main"))
+         save_spells[P_REPULSE]--;
       else {
-         if (progress[P_REPULSE] > 1)
-            progress[P_REPULSE] -= 2;
+         if (save_spells[P_REPULSE] > 1)
+            save_spells[P_REPULSE] -= 2;
          else
-            progress[P_REPULSE] = 0;
+            save_spells[P_REPULSE] = 0;
       }
 
-      if (progress[P_REPULSE] < 1)
+      if (save_spells[P_REPULSE] < 1)
          message ("Repulse has worn off!", 255, 0, xofs, yofs);
    }
 

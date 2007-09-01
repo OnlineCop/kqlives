@@ -20,174 +20,54 @@
 */
 
 /*! \file
- * \brief Constants that are included in the C and Lua scripts 
+ * \brief Constants that are included in the C and Lua scripts
  */
 #ifndef __PROGRESS_H
 #define __PROGRESS_H
 
-/*! \name Progress indicators
- * PLEASE ADD TO THIS LIST IN ORDER!!!
- */
-#define P_START           0
-#define P_ODDWALL         1
-#define P_DARKIMPBOSS     2
-#define P_DYINGDUDE       3
-#define P_BUYCURE         4
-#define P_GETPARTNER      5
-#define P_PARTNER1        6
-#define P_PARTNER2        7
-#define P_SHOWBRIDGE      8
-#define P_TALKDERIG       9
-#define P_FIGHTONBRIDGE   10
-#define P_FELLINPIT       11
-#define P_EKLAWELCOME     12
-#define P_LOSERONBRIDGE   13
-#define P_ASLEEPONBRIDGE  14
-#define P_ALTARSWITCH     15
-#define P_KILLBLORD       16
-#define P_GOBLINITEM      17
-#define P_ORACLE          18
-#define P_FTOTAL          19
-#define P_FLOOR1          20
-#define P_FLOOR2          21
-#define P_FLOOR3          22
-#define P_FLOOR4          23
-#define P_WSTONES         24
-#define P_BSTONES         25
-#define P_WALL1           26
-#define P_WALL2           27
-#define P_WALL3           28
-#define P_WALL4           29
-#define P_DOOROPEN        30
-#define P_DOOROPEN2       31
-#define P_TOWEROPEN       32
-#define P_DRAGONDOWN      33
-#define P_TREASUREROOM    34
-#define P_UNDEADJEWEL     35
-#define P_UCOIN           36
-#define P_CANCELROD       37
-#define P_PORTALGONE      38
-#define P_WARPEDTOT4      39
-#define P_OLDPARTNER      40
-#define P_BOUGHTHOUSE     41
-#define P_TALKGELIK       42
-#define P_OPALHELMET      43
-#define P_FOUNDMAYOR      44
-#define P_TALK_TEMMIN     45
-#define P_EMBERSKEY       46
-#define P_FOUGHTGUILD     47
-#define P_GUILDSECRET     48
-#define P_SEECOLISEUM     49
-#define P_OPALSHIELD      50
-#define P_STONE1          51
-#define P_STONE2          52
-#define P_STONE3          53
-#define P_STONE4          54
-#define P_DENORIAN        55
-#define P_C4DOORSOPEN     56
-#define P_DEMNASDEAD      57
-#define P_FIRSTTIME       58
-#define P_ROUNDNUM        59
-#define P_BATTLESTATUS    60
-#define P_USEITEMINCOMBAT 61
-#define P_FINALPARTNER    62
-#define P_TALKGRAMPA      63
-#define P_SAVEBREANNE     64
-#define P_PASSGUARDS      65
-#define P_IRONKEY         66
-#define P_AVATARDEAD      67
-#define P_GIANTDEAD       68
-#define P_OPALBAND        69
-#define P_BRONZEKEY       70
-#define P_CAVEKEY         71
-#define P_TOWN6INN        72
-#define P_WARPSTONE       73
-#define P_DOINTRO         74
-#define P_GOTOFORT        75
-#define P_GOTOESTATE      76
-#define P_TALKBUTLER      77
-#define P_PASSDOOR1       78
-#define P_PASSDOOR2       79
-#define P_PASSDOOR3       80
+/* I'm deleting this file. It is still available in CVS archives. I'm trying
+ * to come up with a solution that would enable quests to be created and
+ * added through scripts to:
+   1) alleviate the need to recompile when adding a quest.
+   2) alleviate the need to prepare (prep.pl) when modifying any script
+   3) separate content (quests) from the engine (c code) which will:
+      a) be easier for us to manage
+      b) make the KQ engine more viable for other projects to use
+
+   I am also trying to make any given data only available once. That makes it
+   easier to change the data, and the behavior that affects it.
+
+   Note that the progress variables that were here are now in global.lua.
+   The rest were deleted or moved. If they were moved, they were moved to
+   a more appropriate place. If they were deleted, they were either unused
+   or duplicates of values in other header files.
+
+   -- Winter Knight
+*/
+
+/* The spec_items function in menu.c needs these constants. I intend to move
+ * the spec_items function to global.lua. */
+
+#define P_UCOIN 36
+#define P_CANCELROD 37
+#define P_GOBLINITEM 17
+#define P_UNDEADJEWEL 35
+#define P_WSTONES 24
+#define P_BSTONES 25
+#define P_EMBERSKEY 46
+#define P_BRONZEKEY 70
+#define P_DENORIAN 55
+#define P_OPALHELMET 43
+#define P_OPALSHIELD 50
+#define P_IRONKEY 66
+#define P_OPALBAND 69
+#define P_OPALARMOUR 90
+#define P_CAVEKEY 71
+#define P_TALK_TSORIN 108
+#define P_TALKOLDMAN 110
 
 
-/* New indicators */
-#define P_BOMB1           81
-#define P_BOMB2           82
-#define P_BOMB3           83
-#define P_BOMB4           84
-#define P_BOMB5           85
-#define P_DYNAMITE        86
-#define P_TALKRUFUS       87
-#define P_EARLYPROGRESS   88
-#define P_OPALDRAGONOUT   89
-#define P_OPALARMOUR      90
 
 
-/* These are to store who's waiting in the manor */
-#define P_MANORPARTY      91
-#define P_MANORPARTY1     92
-#define P_MANORPARTY2     93
-#define P_MANORPARTY3     94
-#define P_MANORPARTY4     95
-#define P_MANORPARTY5     96
-#define P_MANORPARTY6     97
-#define P_MANORPARTY7     98
-#define P_MANOR           99
-#define P_PLAYERS         100
-#define P_TALK_AJATHAR    101
-#define P_BLADE           102
-#define P_AYLA_QUEST      103
-
-#define P_BANGTHUMB       104
-#define P_WALKING         105
-#define P_MAYORGUARD1     106
-#define P_MAYORGUARD2     107
-
-#define P_TALK_TSORIN     108
-#define P_TALK_CORIN      109
-#define P_TALKOLDMAN      110
-#define P_ORACLEMONSTERS  111
-#define P_TRAVELPOINT     112
-
-/* side quests */
-#define P_SIDEQUEST1      113
-#define P_SIDEQUEST2      114
-#define P_SIDEQUEST3      115
-#define P_SIDEQUEST4      116
-#define P_SIDEQUEST5      117
-#define P_SIDEQUEST6      118
-#define P_SIDEQUEST7      119
-
-/* 'specials' */
-#define P_SHOPSTART       1750
-#define P_SKIPINTRO       1997
-#define P_REPULSE         1998
-#define P_TEMP            1999
-
-
-/*! \name Special identifiers for bubble() */
-#define HERO1             200
-#define HERO2             201
-
-
-/*! \name Facing directions */
-/*\{*/
-#define FACE_DOWN    0
-#define FACE_UP      1
-#define FACE_LEFT    2
-#define FACE_RIGHT   3
-/*\}*/
-
-
-/*! \name Hero identifiers */
-#define SENSAR            0
-#define SARINA            1
-#define CORIN             2
-#define AJATHAR           3
-#define CASANDRA          4
-#define TEMMIN            5
-#define AYLA              6
-#define NOSLOM            7
 
 #endif /*  __PROGRESS_H  */

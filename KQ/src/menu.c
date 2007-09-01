@@ -25,6 +25,7 @@
 #include "kq.h"
 #include "draw.h"
 #include "eqpmenu.h"
+#include "heroc.h"
 #include "itemdefs.h"
 #include "itemmenu.h"
 #include "masmenu.h"
@@ -598,6 +599,9 @@ void revert_equipstats (void)
 /*! \brief Show special items
  *
  * List any special items that the party has.
+ *
+ * WK: This function would be more appropriate in a script, such as global.lua.
+ * This function is preventing me from completely removing progress.h
  */
 void spec_items (void)
 {

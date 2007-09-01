@@ -33,7 +33,17 @@ void inn (char *, int, int);    /*  only in intrface.c  */
 int shop (int);                 /*  only in intrface.c  */
 
 
-extern unsigned short shops[NUMSHOPS][SHOPITEMS][3];    /*  sgame.c  */
-extern unsigned short shopq[NUMSHOPS][SHOPITEMS];       /*  sgame.c  */
+typedef struct
+{
+   char name[40];                            /* Name of this shop */
+   unsigned short items[SHOPITEMS];          /* A list of items in this shop */
+   unsigned short items_current[SHOPITEMS];  /* Quantity of this type of item */
+   unsigned short items_max[SHOPITEMS];      /* Maximum quantity of this type of item */
+
+   /* Amount of time, in minutes, it takes for this shop to replenish this item */
+   unsigned short items_replenish_time[SHOPITEMS];
+} s_shop;
+
+extern s_shop shops[NUMSHOPS];      /* sgame.c */
 
 #endif /*  __SHOPMENU_H  */

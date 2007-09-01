@@ -20,7 +20,7 @@ end
 
 
 function postexec()
-  if (get_progress(P_SKIPINTRO) == 1) then
+  if (get_skip_intro() == 1) then
     LOC_choose_hero()
     return
   end
@@ -51,6 +51,10 @@ end
 
 
 function LOC_choose_hero()
+-- It is unfair to ask the player to choose a character when they no nothing
+-- about the game, or what the stats mean. So we automatically choose NOSLOM.
+-- The player can set their party however they want later in the game. --WK
+
   local ptr = 0
   ptr = NOSLOM
   add_chr(ptr)
@@ -58,7 +62,7 @@ function LOC_choose_hero()
   change_map("manor", "entrance")
 
 -- We are no longer using this
--- /*
+--[[
   local stop = 0
   local rd = 1
   local a, p
@@ -114,7 +118,7 @@ function LOC_choose_hero()
       stop = 1
     end
   end
--- */
+]]--
 end
 
 

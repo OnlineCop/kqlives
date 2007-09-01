@@ -190,7 +190,10 @@ int load_s_map (s_map * sm, PACKFILE * f)
 int save_s_map (s_map * sm, PACKFILE * f)
 {
    int i;
-   pack_putc (sm->map_no, f);
+
+   /* pack_putc (sm->map_no, f); */
+   pack_putc (0, f); /* To maintain compatibility. */
+
    pack_putc (sm->zero_zone, f);
    pack_putc (sm->map_mode, f);
    pack_putc (sm->can_save, f);

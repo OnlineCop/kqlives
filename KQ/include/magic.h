@@ -22,7 +22,7 @@
 #ifndef __MAGIC_H
 #define __MAGIC_H
 
-/*! \file 
+/*! \file
  * \brief Stuff to work with magic.
  *
  * This includes the M_* defines
@@ -91,6 +91,9 @@
 #define M_EARTHQUAKE     58
 #define M_PLAGUE         59
 #define M_XSURGE         60
+
+/*! non-combat spell states */
+#define P_REPULSE         48
 
 int combat_spell (int, int);    /*  enemyc.c, heroc.c  */
 int cast_spell (int, int);      /*  masmenu.c  */

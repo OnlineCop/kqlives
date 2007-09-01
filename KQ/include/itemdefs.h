@@ -30,6 +30,7 @@
 
 /* The description for these items are in src\res.c */
 
+#define I_NOITEM            0    /* Emtpy */
 #define I_MACE1             1    /* Mace */
 #define I_MACE2             2    /* Morningstar */
 #define I_MACE3             3    /* Frozen Star */
@@ -156,7 +157,7 @@
 #define I_ERUNE             124  /* Rune of Earth */
 #define I_FRUNE             125  /* Rune of Fire */
 #define I_IRUNE             126  /* Rune of Water */
-#define I_TP100S            127  /* TP100S */
+#define I_TP100S            127  /* Thin sliver of wood */
 #define I_B_CURE1           128  /* Spell Scroll: Cure1 */
 #define I_B_HOLD            129  /* Spell Scroll: Hold */
 #define I_B_SHIELD          130  /* Spell Scroll: Shield */
