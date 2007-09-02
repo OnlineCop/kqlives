@@ -105,7 +105,7 @@ function zone_handler(zn)
   elseif (zn == 4) then
     blowup(4)
   elseif (zn == 5) then
-    blowup(6)
+    blowup(5)
   elseif (zn == 6) then
     blowup(6)
   elseif (zn == 7) then
