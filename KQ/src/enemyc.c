@@ -56,8 +56,9 @@ static s_fighter *make_enemy (int, s_fighter *);
 static int skill_setup (int, int);
 static int spell_setup (int, int);
 
-
-/* The format of allstat.mon is a space-separated sequence of rows.
+/*! \page monster The Format of allstat.mon
+ *
+ * The format of allstat.mon is a space-separated sequence of rows.
  * Within a row, the column order is:
  *
  * -# Name
