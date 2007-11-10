@@ -481,6 +481,10 @@ int combat (int bno)
       return 0;
    }
 
+   steps = 0;
+   hero_level = party[pidx[0]].lvl;
+   encounter = select_encounter (battles[bno].etnum, battles[bno].eidx);
+
    /*  RB: check if we had had a random encounter  */
    if (battles[bno].enc > 1) {
 #ifdef KQ_CHEATS
@@ -505,11 +509,6 @@ int combat (int bno)
          }
       }
    }
-
-   /*  RB: had one! choose what we had just found  */
-   steps = 0;
-   hero_level = party[pidx[0]].lvl;
-   encounter = select_encounter (battles[bno].etnum, battles[bno].eidx);
 
    if (hero_level >= erows[encounter].lvl + 5 && battles[bno].eidx == 99) {
       lc = (hero_level - erows[encounter].lvl) * 5;
