@@ -481,7 +481,6 @@ int combat (int bno)
       return 0;
    }
 
-   steps = 0;
    hero_level = party[pidx[0]].lvl;
    encounter = select_encounter (battles[bno].etnum, battles[bno].eidx);
 
@@ -521,6 +520,9 @@ int combat (int bno)
       }
    }
 
+   /* Player is about to do battle. */
+
+   steps = 0;
    init_fighters ();
    return do_combat (battles[bno].backimg, battles[bno].bmusic,
                      battles[bno].eidx == 99);
