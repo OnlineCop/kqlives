@@ -159,6 +159,7 @@ function zone_handler(zn)
   elseif (zn == 22) then
     if (get_progress(P_OPALARMOUR) == 0) then
       set_progress(P_OPALARMOUR, 1)
+      add_special_item(SI_OPALARMOUR)
       sfx(5)
       msg("Opal Armour procured!", 255, 0)
       refresh()

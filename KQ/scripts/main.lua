@@ -114,6 +114,7 @@ function zone_handler(zn)
       if (get_progress(P_GOBLINITEM) == 1) then
         set_progress(P_TOWEROPEN, 1)
         set_progress(P_GOBLINITEM, 2)
+        remove_special_item(SI_JADEPENDANT)
         bubble(HERO1, "Hey! The pendant is glowing!")
         bubble(255, "The doors fly open and the pendant disappears in a puff of smoke.")
       elseif (get_progress(P_DENORIAN) == 2) then

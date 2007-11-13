@@ -112,21 +112,4 @@ int do_shield_check (int, int); /*  only in combat.c  */
 s_fighter status_adjust (int);  /*  combat.c, [he]skill.c  */
 
 
-
-#if 0
-void spell_damage (int, int, int, int); /*  staticed  */
-void set_timed_sts_effect (int, int);   /*  staticed  */
-void special_spells (int, int); /*  staticed  */
-void cure_oneall_allies (int, int, int);        /*  staticed  */
-void heal_one_ally (int, int, int);     /*  staticed  */
-void damage_oneall_enemies (int, int, int);     /*  staticed  */
-void damage_all_enemies (int, int);     /*  staticed  */
-void beffect_one_enemy (int, int, int); /*  staticed  */
-void beffect_all_enemies (int, int);    /*  staticed  */
-void geffect_one_ally (int, int, int);  /*  staticed  */
-void geffect_all_allies (int, int);     /*  staticed  */
-#endif /*  0  */
-
-
-
 #endif /*  __MAGIC_H  */

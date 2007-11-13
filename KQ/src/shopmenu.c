@@ -45,7 +45,11 @@
 /* Winter Knight: I'm making it so shops are declared in scripts, rather than
 in the code. It is part of my "separate the engine and the data" campaign. */
 
-s_shop shops[NUMSHOPS];   /* Initialized by shop.lua:init_shop() */
+/* highest valid shops[] index + 1. Equals number of shops declared if indexes
+   are declared in order. */
+unsigned short num_shops = 0;
+
+s_shop shops[NUMSHOPS];   /* Initialized by init.lua:init_shop() */
 
 /*  internal variables  */
 /*! \brief Current shop index */

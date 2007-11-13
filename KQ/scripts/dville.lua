@@ -306,6 +306,7 @@ function LOC_council(en)
     bubble(en, "That's good to hear. At the very least I can say that you will always be welcome in our village.")
     bubble(HERO1, "Thank you.")
     set_progress(P_DENORIAN, 5)
+    remove_special_item(SI_DENORIANSTATUE)
   elseif (get_progress(P_DENORIAN) == 5) then
     bubble(en, "Good luck in your journey. If you come across the other half of our statue...")
   else

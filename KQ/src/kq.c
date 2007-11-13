@@ -60,7 +60,6 @@
 #include "menu.h"
 #include "mpcx.h"
 #include "music.h"
-#include "progress.h"
 #include "res.h"
 #include "scrnshot.h"
 #include "setup.h"
@@ -107,7 +106,7 @@ unsigned char *z_seg = NULL, *s_seg = NULL, *o_seg = NULL;
 unsigned char progress[SIZE_PROGRESS];
 unsigned char treasure[SIZE_TREASURE];
 /*! keeps track of when shops were last visited */
-unsigned char shop_time[NUMSHOPS];
+unsigned short shop_time[NUMSHOPS];
 /*! keeps track of non-combat spell statuses (currently only repulse) */
 unsigned char save_spells[SIZE_SAVE_SPELL];
 /*! Current map */
@@ -146,7 +145,7 @@ unsigned char vfollow = 1;
 /*! Whether the sun stone can be used in this map*/
 unsigned char use_sstone = 0;
 /*! Version number (used for version control in sgame.c) */
-const unsigned char kq_version = 91;
+const unsigned char kq_version = 92;
 /*! If non-zero, don't do fade effects. The only place this is
  * set is in scripts. */
 unsigned char hold_fade = 0;
@@ -248,6 +247,12 @@ unsigned char draw_background = 1, draw_middle = 1,
    draw_foreground = 1, draw_shadow = 1;
 /*! Items in inventory. g_inv[][0] is the item id, g_inv[][1] is the quantity */
 unsigned short g_inv[MAX_INV][2];
+/*! An array to hold all of the special items and descriptions in the game */
+s_special_item special_items[MAX_SPECIAL_ITEMS];
+/*! An array to hold which special items the character has, and how many */
+short player_special_items[MAX_SPECIAL_ITEMS];
+/*! The number of special items that the character possesses */
+short num_special_items = 0;
 /*! View coordinates; the view is a way of selecting a subset of the map to show. */
 int view_x1, view_y1, view_x2, view_y2, view_on = 0;
 /*! Are we in combat mode? */
@@ -1147,16 +1152,15 @@ int main (int argc, const char *argv[])
 
    startup ();
    game_on = 1;
-   /* Also this can be overridden by settings in config */
+   /* While KQ is running (playing or at startup menu) */
    while (game_on) {
       switch (start_menu (skip_splash)) {
-      case 0:
+      case 0: /* Continue */
          break;
-      case 1:
+      case 1: /* New game */
          change_map ("starting", 0, 0, 0, 0);
          break;
-      default:
-         /* Someone pressed 'EXIT'  */
+      default: /* Exit */
          game_on = 0;
          break;
       }
@@ -1166,6 +1170,8 @@ int main (int argc, const char *argv[])
          stop = 0;
          timer_count = 0;
          alldead = 0;
+
+         /* While the actual game is playing */
          while (!stop) {
             while (timer_count > 0) {
                timer_count--;
@@ -1393,7 +1399,7 @@ static void prepare_map (int msx, int msy, int mvx, int mvy)
       display_desc = 0;
 
    do_luakill ();
-   do_luainit (curmap);
+   do_luainit (curmap, 1);
    do_autoexec ();
 
    if (hold_fade == 0 && numchrs > 0) {
@@ -1530,6 +1536,43 @@ void reset_timer_events (void)
 }
 
 
+/*! \brief Resets the world. Called every new game and load game
+ *  This function may be called multiple times in some cases. That should be ok.
+ */
+void reset_world()
+{
+   int i, j;
+
+   /* Reset timer */
+   timer = 0;
+   khr = 0;
+   kmin = 0;
+   ksec = 0;
+
+   /* Initialize special_items array */
+   for (i = 0; i < MAX_SPECIAL_ITEMS; i++) {
+      special_items[i].name[0] = 0;
+      special_items[i].description[0] = 0;
+      special_items[i].icon = 0;
+      player_special_items[i] = 0;
+   }
+
+
+   /* Initialize shops */
+   for (i = 0; i < NUMSHOPS; i++) {
+      shops[i].name[0] = 0;
+      for (j = 0; j < SHOPITEMS; j++) {
+         shops[i].items[j] = 0;
+         shops[i].items_current[j] = 0;
+         shops[i].items_max[j] = 0;
+         shops[i].items_replenish_time[j] = 0;
+      }
+   }
+   
+   lua_user_init();
+}
+
+
 
 /*! \brief Application start-up code
  *
@@ -1556,6 +1599,7 @@ static void startup (void)
    allocate_stuff ();
    install_keyboard ();
    install_timer ();
+
    /* KQ uses digi sound but it doesn't use MIDI */
    //   reserve_voices (8, 0);
    sound_avail = install_sound (DIGI_AUTODETECT, MIDI_NONE, NULL) < 0 ? 0 : 1;
@@ -1704,8 +1748,8 @@ static void startup (void)
          putpixel (obj_mesh, p, q + 1, 255);
    }
 #endif
-}
 
+}
 
 
 /*! \brief Keep track of the time the game has been in play

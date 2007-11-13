@@ -38,7 +38,6 @@
 #include "hskill.h"
 #include "itemmenu.h"
 #include "magic.h"
-#include "progress.h"
 #include "res.h"
 #include "selector.h"
 #include "setup.h"

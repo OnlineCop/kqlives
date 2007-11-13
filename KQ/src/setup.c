@@ -650,6 +650,7 @@ static void parse_allegro_setup (void)
    windowed = get_config_int (NULL, "windowed", 1);
    stretch_view = get_config_int (NULL, "stretch_view", 1);
 #endif
+   wait_retrace = get_config_int (NULL, "wait_retrace", 1);
    show_frate = get_config_int (NULL, "show_frate", 0);
    is_sound = get_config_int (NULL, "is_sound", 1);
    use_joy = get_config_int (NULL, "use_joy", 0);

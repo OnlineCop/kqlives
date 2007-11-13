@@ -19,8 +19,8 @@
 -- P_FTOTAL: Total number of floor switches activated
 -- P_FLOOR1..P_FLOOR4: Status of this floor switch
 --
--- P_BSTONES: # of Black stones in your inventory
--- P_WSTONES: # of White stones in your inventory
+-- SI_BSTONES: # of Black stones in your inventory
+-- SI_WSTONES: # of White stones in your inventory
 -- P_STONE1..P_STONE4: Whether this stone is in your inventory
 -- P_WALL1..P_WALL4: Which stone (if any) is in this wall slot
 --
@@ -518,7 +518,7 @@ function zone_handler(zn)
   elseif (zn == 20) then
     if (get_progress(P_STONE1) == 0) then
       set_progress(P_STONE1, 1)
-      set_progress(P_BSTONES, get_progress(P_BSTONES) + 1)
+      add_special_item(SI_BLACKSTONE)
       sfx(5)
       msg("Black Stone procured!", 15, 0)
       LOC_get_stone("stone1", P_STONE1, 20, 222)
@@ -528,7 +528,7 @@ function zone_handler(zn)
   elseif (zn == 21) then
     if (get_progress(P_STONE2) == 0) then
       set_progress(P_STONE2, 1)
-      set_progress(P_WSTONES, get_progress(P_WSTONES) + 1)
+      add_special_item(SI_WHITESTONE)
       sfx(5)
       msg("White Stone procured!", 15, 0)
       LOC_get_stone("stone2", P_STONE2, 21, 221)
@@ -538,7 +538,7 @@ function zone_handler(zn)
   elseif (zn == 22) then
     if (get_progress(P_STONE3) == 0) then
       set_progress(P_STONE3, 1)
-      set_progress(P_WSTONES, get_progress(P_WSTONES) + 1)
+      add_special_item(SI_WHITESTONE)
       sfx(5)
       msg("White Stone procured!", 15, 0)
       LOC_get_stone("stone3", P_STONE3, 22, 221)
@@ -548,7 +548,7 @@ function zone_handler(zn)
   elseif (zn == 23) then
     if (get_progress(P_STONE4) == 0) then
       set_progress(P_STONE4, 1)
-      set_progress(P_BSTONES, get_progress(P_BSTONES) + 1)
+      add_special_item(SI_BLACKSTONE)
       sfx(5)
       msg("Black Stone procured!", 15, 0)
       refresh()
@@ -755,8 +755,8 @@ function LOC_reset_progress()
   set_progress(P_STONE2, 0)
   set_progress(P_STONE3, 0)
   set_progress(P_STONE4, 0)
-  set_progress(P_BSTONES, 0)
-  set_progress(P_WSTONES, 0)
+  remove_special_item(SI_BLACKSTONE)
+  remove_special_item(SI_WHITESTONE)
 
   -- Reset the stones located in the walls
   set_progress(P_WALL1, 0)
@@ -833,23 +833,23 @@ function LOC_stoner(wall, p_wall)
   if (get_progress(p_wall) == 0) then
 
     -- No stones picked up
-    if (get_progress(P_BSTONES) == 0 and get_progress(P_WSTONES) == 0) then
+    if (not has_special_item(SI_BLACKSTONE) and not has_special_item(SI_WHITESTONE)) then
       return
     end
 
     -- Black stones picked up but no White stones
-    if (get_progress(P_BSTONES) > 0 and get_progress(P_WSTONES) == 0) then
+    if (has_special_item(SI_BLACKSTONE) and not has_special_item(SI_WHITESTONE)) then
       set_progress(p_wall, 1)
-      set_progress(P_BSTONES, get_progress(P_BSTONES) - 1)
+      add_special_item(SI_BLACKSTONE, -1)
       sfx(5)
       LOC_set_wall(wall, p_wall)
       return
     end
 
     -- White stones picked up but no Black stones
-    if (get_progress(P_BSTONES) == 0 and get_progress(P_WSTONES) > 0) then
+    if (not has_special_item(SI_BLACKSTONE) and has_special_item(SI_WHITESTONE)) then
       set_progress(p_wall, 2)
-      set_progress(P_WSTONES, get_progress(P_WSTONES) - 1)
+      add_special_item(SI_WHITESTONE, -1) -- remove 1 white stone
       sfx(5)
       LOC_set_wall(wall, p_wall)
       return
@@ -860,13 +860,13 @@ function LOC_stoner(wall, p_wall)
                           "  black",
                           "  white") == 0) then
       set_progress(p_wall, 1)
-      set_progress(P_BSTONES, get_progress(P_BSTONES) - 1)
+      add_special_item(SI_BLACKSTONE, -1)
       sfx(5)
       LOC_set_wall(wall, p_wall)
       return
     else
       set_progress(p_wall, 2)
-      set_progress(P_WSTONES, get_progress(P_WSTONES) - 1)
+      add_special_item(SI_WHITESTONE, -1)
       sfx(5)
       LOC_set_wall(wall, p_wall)
       return
@@ -878,13 +878,13 @@ function LOC_stoner(wall, p_wall)
       if (get_progress(p_wall) == 1) then
         -- Remove a White stone
         set_progress(p_wall, 0)
-        set_progress(P_BSTONES, get_progress(P_BSTONES) + 1)
+        add_special_item(SI_BLACKSTONE)
         sfx(4)
         LOC_set_wall(wall, p_wall)
       elseif (get_progress(p_wall) == 2) then
       -- Remove a Black stone
         set_progress(p_wall, 0)
-        set_progress(P_WSTONES, get_progress(P_WSTONES) + 1)
+        add_special_item(SI_WHITESTONE)
         LOC_set_wall(wall, p_wall)
         return
       end

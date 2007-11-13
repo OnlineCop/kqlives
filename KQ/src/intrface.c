@@ -57,7 +57,6 @@
 #include "menu.h"
 #include "movement.h"
 #include "music.h"
-#include "progress.h"
 #include "res.h"
 #include "selector.h"
 #include "setup.h"
@@ -84,12 +83,14 @@ static void init_markers (lua_State *);
 static void init_obj (lua_State *);
 static int lua_dofile (lua_State *, const char *);
 static int real_entity_num (lua_State *, int);
+// void remove_special_item (int index);
 
 static int KQ_char_getter (lua_State *);
 static int KQ_char_setter (lua_State *);
 static int KQ_party_setter (lua_State *);
 static int KQ_add_chr (lua_State *);
 static int KQ_add_quest_item (lua_State *);
+static int KQ_add_special_item (lua_State *);
 static int KQ_add_timer (lua_State *);
 static int KQ_battle (lua_State *);
 static int KQ_blit (lua_State *);
@@ -105,6 +106,7 @@ static int KQ_copy_ent (lua_State *);
 static int KQ_copy_tile_all (lua_State *);
 static int KQ_create_bmp (lua_State *);
 static int KQ_create_df (lua_State *);
+static int KQ_create_special_item (lua_State *);
 static int KQ_dark_mbox (lua_State *);
 static int KQ_destroy_bmp (lua_State *);
 static int KQ_destroy_df (lua_State *);
@@ -161,6 +163,7 @@ static int KQ_get_vx (lua_State *);
 static int KQ_get_vy (lua_State *);
 static int KQ_give_item (lua_State *);
 static int KQ_give_xp (lua_State *);
+static int KQ_has_special_item (lua_State *);
 static int KQ_in_forest (lua_State *);
 static int KQ_inn (lua_State *);
 static int KQ_istable (lua_State *);
@@ -184,6 +187,7 @@ static int KQ_prompt (lua_State *);
 static int KQ_ptext (lua_State *);
 static int KQ_read_controls (lua_State *);
 static int KQ_remove_chr (lua_State *);
+static int KQ_remove_special_item (lua_State *);
 static int KQ_rest (lua_State *);
 static int KQ_screen_dump (lua_State *);
 static int KQ_select_team (lua_State *);
@@ -267,6 +271,7 @@ static int KQ_get_tile_all (lua_State *);
 static const struct luaL_reg lrs[] = {
    {"add_chr",          KQ_add_chr},
    {"add_quest_item",   KQ_add_quest_item},
+   {"add_special_item", KQ_add_special_item},
    {"add_timer",        KQ_add_timer},
    {"battle",           KQ_battle},
    {"blit",             KQ_blit},
@@ -281,6 +286,7 @@ static const struct luaL_reg lrs[] = {
    {"copy_tile_all",    KQ_copy_tile_all},
    {"create_bmp",       KQ_create_bmp},
    {"create_df",        KQ_create_df},
+   {"create_special_item", KQ_create_special_item},
    {"dark_mbox",        KQ_dark_mbox},
    {"destroy_bmp",      KQ_destroy_bmp},
    {"destroy_df",       KQ_destroy_df},
@@ -331,12 +337,13 @@ static const struct luaL_reg lrs[] = {
    {"get_party_xp",     KQ_get_party_xp},
    {"get_pidx",         KQ_get_pidx},
    {"get_progress",     KQ_get_progress},
-	{"get_skip_intro",   KQ_get_skip_intro},
+   {"get_skip_intro",   KQ_get_skip_intro},
    {"get_treasure",     KQ_get_treasure},
    {"get_vx",           KQ_get_vx},
    {"get_vy",           KQ_get_vy},
    {"give_item",        KQ_give_item},
    {"give_xp",          KQ_give_xp},
+   {"has_special_item", KQ_has_special_item},
    {"in_forest",        KQ_in_forest},
    {"inn",              KQ_inn},
    {"istable",          KQ_istable},
@@ -359,6 +366,7 @@ static const struct luaL_reg lrs[] = {
    {"ptext",            KQ_ptext},
    {"read_controls",    KQ_read_controls},
    {"remove_chr",       KQ_remove_chr},
+   {"remove_special_item", KQ_remove_special_item},
    {"rest",             KQ_rest},
    {"screen_dump",      KQ_screen_dump},
    {"select_team",      KQ_select_team},
@@ -624,8 +632,9 @@ void do_luacheat (void)
  * created each time.
  *
  * \param   fname Base name of script; xxxxx loads script scripts/xxxxx.lob
+ * \param   global non-zero to load global.lob. 0 to not load global.lob
  */
-void do_luainit (const char *fname)
+void do_luainit (const char *fname, int global)
 {
    int oldtop;
    char sname[32];
@@ -645,9 +654,11 @@ void do_luainit (const char *fname)
    init_obj (theL);
    init_markers (theL);
    oldtop = lua_gettop (theL);
-   if (lua_dofile (theL, kqres (SCRIPT_DIR, "global")) != 0) {
-      /* lua_dofile already displayed error message */
-      program_death (strbuf);
+   if (global) {
+      if (lua_dofile (theL, kqres (SCRIPT_DIR, "global")) != 0) {
+         /* lua_dofile already displayed error message */
+         program_death (strbuf);
+      }
    }
 
    if (lua_dofile (theL, kqres (SCRIPT_DIR, fname)) != 0) {
@@ -770,31 +781,21 @@ void do_zone (int zn_num)
    KQ_check_map_change ();
 }
 
-/*! \brief Initialize shops
+/*! \brief Initialize world specific variables
  *
  * This function is called on a new game, or when loading a game.
- * It calls init_shops in init.lua. Generally, this will set the names,
- * items, etc of all shops in the game. It does not have any arguments, or
+ * It calls lua_user_init in init.lua. Generally, this will set the names,
+ * items, etc of all shops in the game, and the special items, and other
+ * world-specific stuff. It does not have any arguments, or
  * return any values.
  */
-void init_shops(void)
+void lua_user_init(void)
 {
    int a, b;
-   /* Zero out shops struct */
-   for (a = 0; a < NUMSHOPS; a++)
-   {
-      shops[a].name[0] = 0;
-      for (b = 0; b < SHOPITEMS; b++)
-      {
-         shops[a].items[b] = 0;
-         shops[a].items_max[b] = 0;
-         shops[a].items_replenish_time[b] = 0;
-      }
-   }
 
    do_luakill();
-   do_luainit("init");
-   lua_getglobal (theL, "init_shops");
+   do_luainit("init", 1);
+   lua_getglobal (theL, "lua_user_init");
    lua_call (theL, 0, 0);
 }
 
@@ -1033,6 +1034,145 @@ static int KQ_add_quest_item (lua_State * L)
 }
 
 
+static int KQ_create_special_item (lua_State * L)
+{
+   const char * name = lua_tostring(L, 1);
+   const char * description = lua_tostring(L, 2);
+   int icon = lua_tonumber(L, 3);
+   int index = lua_tonumber(L, 4);
+
+   strncpy(special_items[index].name, name, 40);
+   strncpy(special_items[index].description, description, 40);
+   special_items[index].icon = icon;
+   return 0;
+}
+
+
+static int KQ_add_special_item (lua_State * L)
+{
+   int index, quantity, i;
+
+   index = lua_tonumber(L, 1);
+
+   if (lua_gettop(L) > 1)
+      quantity = lua_tonumber (L, 2);
+   else
+      quantity = 1;
+   
+   player_special_items[index] += quantity;
+   return 0;
+
+#if 0
+
+
+   player_special_items[num_special_items] = index;
+   
+
+   table_name = lua_tostring (L, 1);
+
+   if (lua_gettop(L) > 1)
+      quantity = lua_tonumber (L, 2);
+   else
+      quantity = 1;
+
+   lua_getglobal(L, table_name); // puts the lua special item table on top of the stack
+   lua_pushstring(L, "index"); // now the string "index" is just above the table on the stack
+   lua_gettable(L, -2); // finds the table foo in stack position -2, pops "bar" off the stack, pushes on foo["bar"]
+   index = lua_tonumber(L, -1);
+   
+   lua_getglobal(L, table_name);
+   lua_pushstring(L, "name");
+   lua_gettable(L, -2);
+   name = lua_tostring (L, -1);
+   
+   lua_getglobal(L, table_name);
+   lua_pushstring(L, "description");
+   lua_gettable(L, -2);
+   description = lua_tostring (L, -1);
+   
+   lua_getglobal(L, table_name);
+   lua_pushstring(L, "icon");
+   lua_gettable(L, -2);
+   icon = lua_tonumber (L, -1);
+
+   /* Loop through special_items array to see if player already has this item */
+   for (i = 0; i < MAX_SPECIAL_ITEMS; i++) {
+      if (!special_items[i].index)
+         break;
+
+      if (special_items[i].index == index) {
+         /* Already has this item. */
+         special_items[i].quantity += quantity;
+         if (special_items[i].quantity <= 0)
+            remove_special_item(index);
+         return 0;
+      }
+   }
+
+   /* Doesn't already have this item. */
+   special_items[i].index = index;
+   strncpy(special_items[i].name, name, 38);
+   strncpy(special_items[i].description, description, 40);
+   special_items[i].icon = icon;
+   special_items[i].quantity = quantity;
+   return 0;
+#endif // if 0
+}
+
+static int KQ_has_special_item (lua_State * L)
+{
+   int index;
+
+   index = lua_tonumber(L, 1);
+
+   if (player_special_items[index])
+      lua_pushnumber(L, player_special_items[index]);
+   else
+      lua_pushnil(L);
+   return 1;
+}
+
+
+static int KQ_remove_special_item (lua_State * L)
+{
+   int index = lua_tonumber(L, 1);
+   player_special_items[index] = 0;
+   return 0;
+}
+
+#if 0
+void add_special_item (int index, int quantity)
+{
+   
+   
+   
+}
+
+
+void remove_special_item (int index)
+{
+   int i, found = 0;
+
+   for (i = 0; i < MAX_SPECIAL_ITEMS; i++) {
+
+      if (found == 1) {
+         special_items[i - 1].index = special_items[i].index;
+         strncpy(special_items[i - 1].name, special_items[i].name, 38);
+         strncpy(special_items[i - 1].description, special_items[i].description, 40);
+         special_items[i - 1].icon = special_items[i].icon;
+         special_items[i - 1].quantity = special_items[i].quantity;
+      }
+
+      if (!special_items[i].index)
+         break;
+
+      if (special_items[i].index == index) {
+         found = 1;
+         special_items[i].index = 0;   // In case i = MAX_SPECIAL_ITEMS - 1
+      }
+   }
+}
+#endif
 
 static int KQ_add_timer (lua_State * L)
 {
@@ -2244,8 +2384,8 @@ static int KQ_get_treasure (lua_State * L)
 
 static int KQ_get_skip_intro (lua_State * L)
 {
-	lua_pushnumber (L, skip_intro);
-	return 1;
+   lua_pushnumber (L, skip_intro);
+   return 1;
 }
 
 
@@ -3691,6 +3831,7 @@ static int KQ_shop_create (lua_State * L)
    index = (int) lua_tonumber (L, 2);
 
    strncpy(shops[index].name, name, 40);
+   num_shops = (index + 1) > num_shops ? index + 1 : num_shops;
    return 0;
 }
 
@@ -3707,7 +3848,7 @@ static int KQ_shop_add_item (lua_State * L)
 
    if (i == SHOPITEMS)
    {
-      printf("Tried to add to many different items to a shop. Maximum is %d\n", SHOPITEMS);
+      printf("Tried to add too many different items to a shop. Maximum is %d\n", SHOPITEMS);
       return 0;
    }
 
@@ -3895,29 +4036,29 @@ static int lua_dofile (lua_State * L, const char * fname)
    sprintf(filename, "%s.lob", fname);
 
    if ((f = pack_fopen (filename, F_READ)) == NULL) {
-   	sprintf(filename, "%s.lua", fname);
-   	if ((f = pack_fopen (filename, F_READ)) == NULL) {
-	      sprintf (strbuf, "Could not open script %s.lob!", fname);
-			allegro_message (strbuf);
-   	   return 1;
-   	}
+      sprintf(filename, "%s.lua", fname);
+      if ((f = pack_fopen (filename, F_READ)) == NULL) {
+         sprintf (strbuf, "Could not open script %s.lob!", fname);
+         allegro_message (strbuf);
+         return 1;
+      }
    }
 
    if ((lua_load (L, (lua_Chunkreader) filereader, f, filename)) != 0) {
       sprintf (strbuf, "Could not parse script %s!", filename);
       allegro_message (strbuf);
-   	pack_fclose (f);
+      pack_fclose (f);
       return 1;
    }
 
-	if (lua_pcall (L, 0, LUA_MULTRET, 0) != 0) {
-		sprintf(strbuf, "lua_pcall failed while calling script %s!", filename);
-		allegro_message (strbuf);
-	   pack_fclose (f);
-		return 1;
-	}
+   if (lua_pcall (L, 0, LUA_MULTRET, 0) != 0) {
+      sprintf(strbuf, "lua_pcall failed while calling script %s!", filename);
+      allegro_message (strbuf);
+      pack_fclose (f);
+      return 1;
+   }
 
-	return 0;
+   return 0;
 }
 
 

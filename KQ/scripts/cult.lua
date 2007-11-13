@@ -42,6 +42,7 @@ function entity_handler(en)
       screen_dump()
       set_ent_active(0, 0)
       set_progress(P_IRONKEY, 1)
+      add_special_item(SI_IRONKEY)
       sfx(5)
       msg("Iron key procured", 255, 0)
     end
@@ -139,6 +140,7 @@ function zone_handler(zn)
       if (get_progress(P_IRONKEY) == 1) then
         bubble(HERO1, "Unlocked.")
         set_progress(P_IRONKEY, 2)
+        remove_special_item(SI_IRONKEY)
       end
       LOC_open_door("door7")
     end
@@ -391,6 +393,7 @@ function LOC_freed(guard1, guard2, guard3, breanne)
     sfx(5)
     msg("Opal Band procured", 255, 0)
     set_progress(P_OPALBAND, 1)
+    add_special_item(SI_OPALBAND)
     drawmap()
     screen_dump()
     bubble(HERO1, "Thank you very much!")

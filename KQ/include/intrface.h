@@ -30,7 +30,7 @@
 void do_autoexec (void);        /*  kq.c  */
 void do_entity (int);           /*  kq.c  */
 void do_luacheat (void);        /*  entity.c  */
-void do_luainit (const char *); /*  kq.c  */
+void do_luainit (const char *, int); /*  kq.c  */
 void do_luakill (void);         /*  kq.c  */
 void do_postexec (void);        /*  kq.c  */
 void do_timefunc (const char *);

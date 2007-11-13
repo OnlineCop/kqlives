@@ -68,6 +68,9 @@
 #define CURE_CHECK       9993
 #define MAX_SHADOWS        12
 #define MAX_INV            64
+/* Maximum number of special items allowed in the world */
+#define MAX_SPECIAL_ITEMS  50
+#define MAX_PLAYER_SPECIAL_ITEMS 20
 #define STEPS_NEEDED       15
 #define SIZE_PROGRESS    1750
 #define SIZE_SAVE_RESERVE1 150
@@ -335,6 +338,17 @@ typedef struct
 s_fighter;
 
 
+/*! \brief Special Items
+ *
+ * Contains a list of the special items in the player's party (Opal Armor et al)
+ */
+typedef struct
+{
+	unsigned char name[38];
+	unsigned char description[40];
+	short icon;
+} s_special_item;
+
 
 void change_map (char *, int, int, int, int);   /*  intrface.c, magic.c  */
 void change_mapm (char *, const char *, int, int);      /*  intrface.c */
@@ -420,7 +434,7 @@ extern unsigned short *b_seg, *f_seg;
 extern unsigned char *z_seg, *s_seg, *o_seg;
 extern unsigned char progress[SIZE_PROGRESS];
 extern unsigned char treasure[SIZE_TREASURE];
-extern unsigned char shop_time[NUMSHOPS];
+extern unsigned short shop_time[NUMSHOPS];
 extern unsigned char save_spells[SIZE_SAVE_SPELL];
 extern BITMAP *kfonts, *portrait[MAXCHRS];
 extern s_map g_map;
@@ -448,6 +462,8 @@ extern unsigned char can_run, display_desc;
 extern unsigned char draw_background, draw_middle, draw_foreground,
    draw_shadow;
 extern unsigned short g_inv[MAX_INV][2];
+extern s_special_item special_items[MAX_SPECIAL_ITEMS];
+extern short player_special_items[MAX_SPECIAL_ITEMS];
 extern int view_x1, view_y1, view_x2, view_y2, view_on, in_combat;
 extern int show_frate, use_joy;
 

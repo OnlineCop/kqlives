@@ -121,6 +121,8 @@ function entity_handler(en)
       bubble(en, "I agree that you must get through there. Here, deliver this note to Tsorin so he'll let you proceed.")
       msg("Derig hands you a sealed envelope.", 18, 0)
       set_progress(P_TALK_TSORIN, 2)
+      remove_special_item(SI_NOTE_TSORIN)
+      add_special_item(SI_NOTE_DERIG)
       set_progress(P_TALKDERIG, 3)
     elseif (get_progress(P_TALK_TSORIN) == 2) then
       bubble(en, "You must deliver that note to Tsorin so he'll let you through the fort.")

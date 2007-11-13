@@ -387,7 +387,9 @@ function LOC_talk_derig(en)
           elseif (get_progress(P_PORTALGONE) == 1) then
             bubble(en, "You've done it! The portal is gone, and you have returned the Unadium coin and Rod of Cancellation.")
             set_progress(P_UCOIN, 3)
+            remove_special_item(SI_UCOIN)
             set_progress(P_CANCELROD, 2)
+            remove_special_item(SI_CANCELROD)
             set_progress(P_TALKDERIG, 6)
             msg("Derig takes the Rod of Cancellation and Unadium Coin.", 255, 0)
             bubble(en, "I'll take these back to the grotto for safe keeping. Thank you.")
@@ -409,6 +411,8 @@ function LOC_talk_derig(en)
     thought(HERO1, "Boy, this is just too weird all of a sudden.")
     msg("Derig hands you a sealed envelope.", 18, 0)
     set_progress(P_TALK_TSORIN, 2)
+    remove_special_item(SI_NOTE_TSORIN)
+    add_special_item(SI_NOTE_DERIG)
   elseif (get_progress(P_TALK_TSORIN) == 2) then
     bubble(en, "Please hurry. Take this note to Tsorin immediately!")
   else
@@ -472,6 +476,7 @@ function LOC_talk_jen (en)
         -- Met Derig
         bubble(en, "Good. Now that you found Derig, here is the Unadium Coin.")
         set_progress(P_UCOIN, 2)
+        add_special_item(SI_UCOIN)
         msg("Unadium coin procured", 255, 0)
       end -- P_TALKDERIG
     elseif (get_progress(P_UCOIN) == 2) then

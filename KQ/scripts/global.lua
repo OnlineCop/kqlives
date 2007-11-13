@@ -27,8 +27,8 @@ P_FLOOR1          = 20
 P_FLOOR2          = 21
 P_FLOOR3          = 22
 P_FLOOR4          = 23
-P_WSTONES         = 24
-P_BSTONES         = 25
+--P_WSTONES         = 24
+--P_BSTONES         = 25
 P_WALL1           = 26
 P_WALL2           = 27
 P_WALL3           = 28
@@ -84,9 +84,6 @@ P_TALKBUTLER      = 77
 P_PASSDOOR1       = 78
 P_PASSDOOR2       = 79
 P_PASSDOOR3       = 80
-
-
--- /* New indicators */
 P_BOMB1           = 81
 P_BOMB2           = 82
 P_BOMB3           = 83
@@ -134,7 +131,31 @@ P_SIDEQUEST5      = 117
 P_SIDEQUEST6      = 118
 P_SIDEQUEST7      = 119
 
--- Facing directionss, HERO1 and HERO2, and the Hero identifiers are all found
+-- Item identifiers (empty for now. Defined in itemdefs.h)
+
+-- Special Item definitions
+
+SI_UCOIN = 0
+SI_CANCELROD = 1
+SI_JADEPENDANT = 2
+SI_UNDEADJEWEL = 3
+SI_WHITESTONE = 4
+SI_BLACKSTONE = 5
+SI_EMBERSKEY = 6
+SI_BRONZEKEY = 7
+SI_DENORIANSTATUE = 8
+SI_OPALHELMET = 9
+SI_OPALSHIELD = 10
+SI_IRONKEY = 11
+SI_OPALBAND = 12
+SI_OPALARMOUR = 13
+SI_CAVEKEY = 14
+SI_NOTE_TSORIN = 15
+SI_NOTE_DERIG = 16
+SI_RUSTYKEY = 17
+
+
+-- Facing directions, HERO1 and HERO2, and the Hero identifiers are all found
 -- in code. These are duplicates. Avoid changing them.
 
 -- Facing directions
@@ -325,123 +346,98 @@ end
 
 --  Response for reading a book.
 function book_talk(ent)
-  party[0]:read_book()
+  if (party[0] == Sensar) then
+    bubble(HERO1, pick("Reading makes me sleepy...",
+           "So many books...",
+           "Reading is for wimps."))
+  
+  elseif (party[0] == Temmin) then
+  bubble(HERO1, pick("If only I had more time...",
+         "So many books...",
+         "Some of these are pretty old."))
+  
+  elseif (party[0] == Sarina) then
+  bubble(HERO1, pick("Ugh... this would take me forever to read.",
+         "I never liked reading.",
+         "Who wrote this trash?"))
+  
+  elseif (party[0] == Noslom) then
+    bubble(HERO1, pick("Fascinating.",
+           "I have this one.",
+           "Romance novels... gack!"))
+
+  elseif (party[0] == Ajathar) then
+    bubble(HERO1, pick("Hmmm... I don't approve of that.",
+           "I'm too busy to read now.",
+           "How many books can you write that start with 'The Joy of...'?"))
+
+  elseif (party[0] == Ayla) then
+    bubble(HERO1, pick("I don't have time for this.",
+          "What language is this written in?",
+          "The pages are stuck together!?"))
+	
+  elseif (party[0] == Cassandra) then
+    bubble(HERO1, pick("Boring.",
+           "Somebody should burn these.",
+           "Terrible... just terrible."))
+	
+  elseif (party[0] == Corin) then
+	 bubble(HERO1, pick("Doesn't anybody leave spellbooks lying around?",
+           "Why would I read this?",
+           "Can't talk... reading."))
+  else
+    message("Script Error. global.lua:book_talk()", 255, 0)
+  end
+
 end
 
 
 -- This function can be called whenever the hero touches a fire
 function touch_fire(ent)
-  party[0]:touch_fire()
-end
+  local x
+  
+  if (party[0] == Sensar) then
+    bubble(HERO1, pick("What th..? Ouch! That's hot!",
+           "There's no way I'm sticking my hand in that fire!",
+           "This feels pretty nice."))
+           
+  elseif (party[0] == Temmin) then
+    bubble(HERO1, pick("Ah, the age-old fire.",
+           "This needs more coal.",
+           "This would be great to read a book next to."))
 
+  elseif (party[0] == Sarina) then
+    bubble(HERO1, pick("Mmm, wood smoke.",
+           "Smells like burnt hair. Hey wait... that's MY hair!",
+           "Ooh, cozy."))
 
-function Sensar:read_book()
-  bubble(HERO1, pick("Reading makes me sleepy...",
-         "So many books...",
-         "Reading is for wimps."))
-end
+  elseif (party[0] == Noslom) then
+    bubble(HERO1, pick("I prefer torches.",
+           "I love the crackle of a good fire.",
+           "I wonder if a spell would make this burn brighter?"))
 
+  elseif (party[0] == Ajathar) then
+    bubble(HERO1, pick("Hmm... I want marshmallows.",
+           "You call this a fire?!",
+           "Ah, relaxing."))
 
-function Sensar:touch_fire()
-  bubble(HERO1, pick("What th..? Ouch! That's hot!",
-         "There's no way I'm sticking my hand in that fire!",
-         "This feels pretty nice."))
-end
+  elseif (party[0] == Ayla) then
+    bubble(HERO1, pick("I wonder how hot this is?",
+           "Someone should clean all this soot out of here.",
+           "Well, my face is warm now, but my butt is still freezing!"))
+  
+  elseif (party[0] == Cassandra) then
+    bubble(HERO1, pick("Something's burning. I hope it's one of those stupid books!",
+           "The fire is getting low.",
+           "Yessir, this is a fire."))
 
-
-function Temmin:read_book()
-  bubble(HERO1, pick("If only I had more time...",
-         "So many books...",
-         "Some of these are pretty old."))
-end
-
-
-function Temmin:touch_fire()
-  bubble(HERO1, pick("Ah, the age-old fire.",
-         "This needs more coal.",
-         "This would be great to read a book next to."))
-end
-
-
-function Sarina:read_book()
-  bubble(HERO1, pick("Ugh... this would take me forever to read.",
-         "I never liked reading.",
-         "Who wrote this trash?"))
-end
-
-
-function Sarina:touch_fire()
-  bubble(HERO1, pick("Mmm, wood smoke.",
-         "Smells like burnt hair. Hey wait... that's MY hair!",
-         "Ooh, cozy."))
-end
-
-
-function Noslom:read_book()
-  bubble(HERO1, pick("Fascinating.",
-         "I have this one.",
-         "Romance novels... gack!"))
-end
-
-
-function Noslom:touch_fire()
-  bubble(HERO1, pick("I prefer torches.",
-         "I love the crackle of a good fire.",
-         "I wonder if a spell would make this burn brighter?"))
-end
-
-
-function Ajathar:read_book()
-  bubble(HERO1, pick("Hmmm... I don't approve of that.",
-         "I'm too busy to read now.",
-         "How many books can you write that start with 'The Joy of...'?"))
-end
-
-
-function Ajathar:touch_fire()
-  bubble(HERO1, pick("Hmm... I want marshmallows.",
-         "You call this a fire?!",
-         "Ah, relaxing."))
-end
-
-
-function Ayla:read_book()
-  bubble(HERO1, pick("I don't have time for this.",
-         "What language is this written in?",
-         "The pages are stuck together!?"))
-end
-
-
-function Ayla:touch_fire()
-  bubble(HERO1, pick("I wonder how hot this is?",
-         "Someone should clean all this soot out of here.",
-         "Well, my face is warm now, but my butt is still freezing!"))
-end
-
-
-function Casandra:read_book()
-  bubble(HERO1, pick("Boring.",
-         "Somebody should burn these.",
-         "Terrible... just terrible."))
-end
-
-
-function Casandra:touch_fire()
-  bubble(HERO1, pick("Something's burning. I hope it's one of those stupid books!",
-         "The fire is getting low.",
-         "Yessir, this is a fire."))
-end
-
-
-function Corin:read_book()
-  bubble(HERO1, pick("Doesn't anybody leave spellbooks lying around?",
-         "Why would I read this?",
-         "Can't talk... reading."))
-end
-
-
-function Corin:touch_fire()
-  bubble(HERO1, pick("I sure like fire.",
-         "Watching this is relaxing.",
-         "This is making me sleepy."))
+  elseif (party[0] == Corin) then
+    bubble(HERO1, pick("I sure like fire.",
+           "Watching this is relaxing.",
+           "This is making me sleepy."))
+           
+  else
+    message("Script Error. global.lua:touch_fire()", 255, 0)
+  end
+  
 end

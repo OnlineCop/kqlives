@@ -33,7 +33,6 @@
 #include "magic.h"
 #include "masmenu.h"
 #include "menu.h"
-#include "progress.h"
 #include "res.h"
 #include "setup.h"
 

@@ -1,11 +1,39 @@
--- Initialization routines. These fuctions (or some of them) get called on
--- a new, or continued game. Right now, there is only one of these functions,
--- init_shops(). If you wish to add a function that gets called every map
+-- Initialization routines. The lua_user_init() fuction gets called on
+-- a new, or continued game. If you wish to add a function that gets called every map
 -- load, use global.lua
 
+function lua_user_init()
+  init_shops()
+  init_special_items()
+end
+
+function init_special_items()
+	--create_special_item(name, description, icon, index)
+
+	create_special_item("Unadium Coin", "Use to reach ruins", 50, SI_UCOIN)
+	create_special_item("Cancellation Rod", "Nullify magic", 51, SI_CANCELROD)
+	create_special_item("Jade Pendant", "Magical goblin gem", 52, SI_JADEPENDANT)
+	create_special_item("Goblin Jewel", "Precious artifact", 53, SI_UNDEADJEWEL)
+	create_special_item("White Stone", "Smooth white rock", 54, SI_WHITESTONE)
+	create_special_item("Black Stone", "Smooth black rock", 55, SI_BLACKSTONE)
+	create_special_item("Ember's Key", "Unlock stuff", 56, SI_EMBERSKEY)
+	create_special_item("Bronze Key", "Unlock stuff", 57, SI_BRONZEKEY)
+	create_special_item("Denorian Statue", "Broken in half", 58, SI_DENORIANSTATUE)
+	create_special_item("Opal Helmet", "Piece of opal set", 59, SI_OPALHELMET)
+	create_special_item("Opal Shield", "Piece of opal set", 60, SI_OPALSHIELD)
+	create_special_item("Iron Key", "Unlock stuff", 61, SI_IRONKEY)
+	create_special_item("Opal Band", "Piece of opal set", 62, SI_OPALBAND)
+	create_special_item("Opal Armour", "Piece of opal set", 14, SI_OPALARMOUR)
+	create_special_item("Cave Key", "Unlock stuff", 63, SI_CAVEKEY)
+	create_special_item("Tsorin's Note", "Sealed envelope", 18, SI_NOTE_TSORIN)
+	create_special_item("Derig's Note", "Encrypted message", 18, SI_NOTE_DERIG)
+	create_special_item("Rusty Key", "Unlock grotto ruins", 64, SI_RUSTYKEY)
+end
+
+
 function init_shops()
--- create_shop(name, shop_index)
--- add_item(shop_index, item, quantity, replenish_time)
+-- shop_create(name, shop_index)
+-- shop_add_item(shop_index, item, quantity, replenish_time)
 
    shop_create("Alner's Armour", 0)
    shop_add_item(0, I_SHIELD1, 6, 10)

@@ -96,6 +96,7 @@ function entity_handler(en)
           sfx(5)
           msg("Opal Shield procured", 255, 0, xofs, yofs)
           set_progress(P_OPALSHIELD, 1)
+          add_special_item(SI_OPALSHIELD)
           if (get_ent_tilex(HERO1) == get_ent_tilex(en)) then
             set_ent_script(HERO1, "L1")
             wait_for_entity(HERO1, HERO1)

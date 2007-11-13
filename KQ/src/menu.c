@@ -30,7 +30,6 @@
 #include "itemmenu.h"
 #include "masmenu.h"
 #include "menu.h"
-#include "progress.h"
 #include "res.h"
 #include "selector.h"
 #include "setup.h"
@@ -605,137 +604,20 @@ void revert_equipstats (void)
  */
 void spec_items (void)
 {
-   int a, ii = 0, stop = 0, ptr = 0;
-   char silist[20][20], spicon[20];
-   char sidesc[20][20], siq[20];
+   int a, num_items = 0, stop = 0, ptr = 0;
+   short list_item_which[MAX_PLAYER_SPECIAL_ITEMS];
+   short list_item_quantity[MAX_PLAYER_SPECIAL_ITEMS];
 
-   if (progress[P_UCOIN] == 2) {
-      strcpy (silist[ii], "Unadium coin");
-      strcpy (sidesc[ii], "Use to reach ruins");
-      siq[ii] = 1;
-      spicon[ii] = 50;
-      ii++;
+   /* Set number of items here */
+   for (a = 0; a < MAX_SPECIAL_ITEMS; a++) {
+      if (player_special_items[a]) {
+         list_item_which[num_items] = a;
+         list_item_quantity[num_items] = player_special_items[a];
+         num_items++;
+      }
    }
-   if (progress[P_CANCELROD] == 1) {
-      strcpy (silist[ii], "Cancellation Rod");
-      strcpy (sidesc[ii], "Nullify magic");
-      siq[ii] = 1;
-      spicon[ii] = 51;
-      ii++;
-   }
-   if (progress[P_GOBLINITEM] == 1) {
-      strcpy (silist[ii], "Jade Pendant");
-      strcpy (sidesc[ii], "Magical goblin gem");
-      siq[ii] = 1;
-      spicon[ii] = 52;
-      ii++;
-   }
-   if (progress[P_UNDEADJEWEL] == 1) {
-      strcpy (silist[ii], "Goblin Jewel");
-      strcpy (sidesc[ii], "Precious artifact");
-      siq[ii] = 1;
-      spicon[ii] = 53;
-      ii++;
-   }
-   if (progress[P_WSTONES] > 0) {
-      strcpy (silist[ii], "White Stone");
-      strcpy (sidesc[ii], "Smooth white rock");
-      siq[ii] = progress[P_WSTONES];
-      spicon[ii] = 54;
-      ii++;
-   }
-   if (progress[P_BSTONES] > 0) {
-      strcpy (silist[ii], "Black Stone");
-      strcpy (sidesc[ii], "Smooth black rock");
-      siq[ii] = progress[P_BSTONES];
-      spicon[ii] = 55;
-      ii++;
-   }
-   if (progress[P_EMBERSKEY] == 2) {
-      strcpy (silist[ii], "Ember's Key");
-      strcpy (sidesc[ii], "Unlock stuff");
-      siq[ii] = 1;
-      spicon[ii] = 56;
-      ii++;
-   }
-   if (progress[P_BRONZEKEY] == 1) {
-      strcpy (silist[ii], "Bronze Key");
-      strcpy (sidesc[ii], "Unlock stuff");
-      siq[ii] = 1;
-      spicon[ii] = 57;
-      ii++;
-   }
-   if (progress[P_DENORIAN] == 3 || progress[P_DENORIAN] == 4) {
-      strcpy (silist[ii], "Denorian Statue");
-      strcpy (sidesc[ii], "Broken in half");
-      siq[ii] = 1;
-      spicon[ii] = 58;
-      ii++;
-   }
-   if (progress[P_OPALHELMET] == 1) {
-      strcpy (silist[ii], "Opal Helmet");
-      strcpy (sidesc[ii], "Piece of opal set");
-      siq[ii] = 1;
-      spicon[ii] = 59;
-      ii++;
-   }
-   if (progress[P_OPALSHIELD] == 1) {
-      strcpy (silist[ii], "Opal Shield");
-      strcpy (sidesc[ii], "Piece of opal set");
-      siq[ii] = 1;
-      spicon[ii] = 60;
-      ii++;
-   }
-   if (progress[P_IRONKEY] == 1) {
-      strcpy (silist[ii], "Iron Key");
-      strcpy (sidesc[ii], "Unlock stuff");
-      siq[ii] = 1;
-      spicon[ii] = 61;
-      ii++;
-   }
-   if (progress[P_OPALBAND] == 1) {
-      strcpy (silist[ii], "Opal Band");
-      strcpy (sidesc[ii], "Piece of opal set");
-      siq[ii] = 1;
-      spicon[ii] = 62;
-      ii++;
-   }
-   if (progress[P_OPALARMOUR] == 1) {
-      strcpy (silist[ii], "Opal Armour");
-      strcpy (sidesc[ii], "Piece of opal set");
-      siq[ii] = 1;
-      spicon[ii] = 14;
-      ii++;
-   }
-   if (progress[P_CAVEKEY] == 1) {
-      strcpy (silist[ii], "Cave Key");
-      strcpy (sidesc[ii], "Unlock stuff");
-      siq[ii] = 1;
-      spicon[ii] = 63;
-      ii++;
-   }
-   if (progress[P_TALK_TSORIN] == 1) {
-      strcpy (silist[ii], "Tsorin's Note");
-      strcpy (sidesc[ii], "Sealed envelope");
-      siq[ii] = 1;
-      spicon[ii] = 18;
-      ii++;
-   }
-   if (progress[P_TALK_TSORIN] == 2) {
-      strcpy (silist[ii], "Derig's Note");
-      strcpy (sidesc[ii], "Encrypted message");
-      siq[ii] = 1;
-      spicon[ii] = 18;
-      ii++;
-   }
-   if (progress[P_TALKOLDMAN] > 3) {
-      strcpy (silist[ii], "Rusty Key");
-      strcpy (sidesc[ii], "Unlock grotto ruins");
-      siq[ii] = 1;
-      spicon[ii] = 64;
-      ii++;
-   }
-   if (ii == 0) {
+
+   if (num_items == 0) {
       play_effect (SND_BAD, 128);
       return;
    }
@@ -747,36 +629,32 @@ void spec_items (void)
       print_font (double_buffer, 108 + xofs, 20 + yofs, "Special Items",
                   FGOLD);
       menubox (double_buffer, 72 + xofs, 36 + yofs, 20, 19, BLUE);
-      for (a = 0; a < ii; a++) {
-         draw_icon (double_buffer, spicon[a], 88 + xofs, a * 8 + 44 + yofs);
-         print_font (double_buffer, 96 + xofs, a * 8 + 44 + yofs, silist[a],
-                     FNORMAL);
-         if (siq[a] > 1) {
-            sprintf (strbuf, "^%d", siq[a]);
+      for (a = 0; a < num_items; a++) {
+         draw_icon (double_buffer, special_items[list_item_which[a]].icon, 88 + xofs, a * 8 + 44 + yofs);
+         print_font (double_buffer, 96 + xofs, a * 8 + 44 + yofs,
+                     special_items[list_item_which[a]].name, FNORMAL);
+         if (list_item_quantity[a] > 1) {
+            sprintf (strbuf, "^%d", list_item_quantity[a]);
             print_font (double_buffer, 224 + xofs, a * 8 + 44 + yofs,
                         strbuf, FNORMAL);
          }
       }
       menubox (double_buffer, 72 + xofs, 204 + yofs, 20, 1, BLUE);
-      a = strlen (sidesc[ptr]) * 4;
-      print_font (double_buffer, 160 - a + xofs, 212 + yofs, sidesc[ptr],
-                  FNORMAL);
+      a = strlen (special_items[list_item_which[ptr]].description) * 4;
+      print_font (double_buffer, 160 - a + xofs, 212 + yofs,
+                  special_items[list_item_which[ptr]].description, FNORMAL);
       draw_sprite (double_buffer, menuptr, 72 + xofs, ptr * 8 + 44 + yofs);
       blit2screen (xofs, yofs);
       readcontrols ();
 
       if (down) {
          unpress ();
-         ptr++;
-         if (ptr > ii - 1)
-            ptr = 0;
+         ptr = (ptr + 1) % num_items;
          play_effect (SND_CLICK, 128);
       }
       if (up) {
          unpress ();
-         ptr--;
-         if (ptr < 0)
-            ptr = ii - 1;
+         ptr = (ptr - 1 + num_items) % num_items;
          play_effect (SND_CLICK, 128);
       }
       if (bctrl) {

@@ -195,6 +195,7 @@ function LOC_blord(en)
   msg("Goblin jewel procured", 19, 0);
 
   set_progress(P_KILLBLORD, 1)
+  add_special_item(SI_UNDEADJEWEL)
   set_progress(P_TALK_TEMMIN, 3)
 
 end
@@ -246,8 +247,10 @@ function LOC_goblin_king(en)
     bubble(HERO1, "Hello?")
     bubble(HERO1, "Urgh! I hate when they do that!")
     set_progress(P_GOBLINITEM, 1)
+    add_special_item(SI_JADEPENDANT)
     set_progress(P_SIDEQUEST3, 1)
     set_progress(P_UNDEADJEWEL, 1)
+    remove_special_item(SI_UNDEADJEWEL)
     return
   else
     bubble(HERO1, "It looks like there should be something here.")

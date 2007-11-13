@@ -38,7 +38,6 @@
 #include "entity.h"
 #include "magic.h"
 #include "music.h"
-#include "progress.h"
 #include "res.h"
 #include "setup.h"
 #include "timing.h"

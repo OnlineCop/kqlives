@@ -156,6 +156,7 @@ function zone_handler(zn)
     elseif (get_progress(P_BRONZEKEY) == 1) then
       bubble(HERO1, "What luck! The key from that crazy Demnas guy unlocks this door!")
       set_progress(P_BRONZEKEY, 2)
+      remove_special_item(SI_BRONZEKEY)
       refresh()
     end
 
@@ -333,9 +334,11 @@ function LOC_talk_demnas(en)
   sfx(5)
   msg("Bronze key procured", 255, 0)
   set_progress(P_BRONZEKEY, 1)
+  add_special_item(SI_BRONZEKEY)
 
   sfx(5)
   msg("Broken Denorian Statue procured", 255, 0)
   set_progress(P_DENORIAN, 3)
+  add_special_item(SI_DENORIANSTATUE)
   refresh()
 end

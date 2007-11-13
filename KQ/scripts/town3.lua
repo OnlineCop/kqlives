@@ -241,6 +241,7 @@ function LOC_talk_tsorin(en)
     msg("Tsorin hands you an envelope with his seal on it.", 18, 0)
     bubble(en, "He lives back in Ekla, and if he says you can pass, I shall let you pass.")
     set_progress(P_TALK_TSORIN, 1)
+    add_special_item(SI_NOTE_TSORIN)
   elseif (get_progress(P_TALK_TSORIN) == 1) then
     bubble(en, "If you have trouble finding Derig, ask around town. Someone's bound to know where he's wandered off to.")
   elseif (get_progress(P_TALK_TSORIN) == 2) then
@@ -262,6 +263,7 @@ function LOC_talk_tsorin(en)
     msg("Tsorin's Seal procured!", 25, 0)
     bubble(en, "I'm fear I cannot send anyone to protect you - you must take the utmost care.")
     set_progress(P_TALK_TSORIN, 3)
+    remove_special_item(SI_NOTE_DERIG)
   elseif (get_progress(P_TALK_TSORIN) == 3) then
     bubble(en, "You can find the Oracle to the south. She will help you find this missing statue.")
   elseif (get_progress(P_TALK_TSORIN) == 4) then

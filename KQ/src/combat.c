@@ -42,7 +42,6 @@
 #include "masmenu.h"
 #include "menu.h"
 #include "music.h"
-#include "progress.h"
 #include "res.h"
 #include "setup.h"
 #include "timing.h"

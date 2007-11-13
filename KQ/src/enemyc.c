@@ -35,7 +35,6 @@
 #include "enemyc.h"
 #include "heroc.h"
 #include "magic.h"
-#include "progress.h"
 #include "res.h"
 #include "selector.h"
 #include "skills.h"

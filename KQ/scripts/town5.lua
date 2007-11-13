@@ -137,6 +137,7 @@ function postexec()
   if (get_progress(P_FOUGHTGUILD) == 2 and get_progress(P_AYLA_QUEST) > 0) then
     set_progress(P_FOUGHTGUILD, 3)
     set_progress(P_EMBERSKEY, 0)
+    remove_special_item(SI_EMBERSKEY)
     bubble(HERO1, "Oh no!")
     bubble(HERO1, "I must have dropped that key inside!")
     bubble(HERO1, "Oh well, I got what I came for.")

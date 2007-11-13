@@ -53,6 +53,7 @@ function zone_handler(zn)
   elseif (zn == 3) then
     if (get_progress(P_CANCELROD) == 0) then
       set_progress(P_CANCELROD, 1)
+      add_special_item(SI_CANCELROD)
       sfx(5)
       msg("Rod of Cancellation procured", 255, 0)
       refresh()

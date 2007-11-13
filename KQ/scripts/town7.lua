@@ -245,6 +245,7 @@ function LOC_talk_oldman(en)
     bubble(en, "It's an underwater tunnel that leads from the grotto to the island Malkaron is staying.")
     bubble(HERO1, "Oh. Thanks!")
     set_progress(P_TALKOLDMAN, 3)
+    add_special_item(SI_RUSTYKEY)
   elseif (get_progress(P_TALKOLDMAN) == 3) then
     bubble(en, "I hope the key still fits in the temple down in the Grotto by Ekla. It's a bit rusty.")
   elseif (get_progress(P_TALKOLDMAN) == 4) then

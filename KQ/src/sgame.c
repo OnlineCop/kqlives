@@ -42,11 +42,11 @@
 #include "disk.h"
 #include "draw.h"
 #include "fade.h"
+#include "intrface.h"
 #include "magic.h"
 #include "masmenu.h"
 #include "menu.h"
 #include "music.h"
-#include "progress.h"
 #include "res.h"
 #include "setup.h"
 #include "sgame.h"
@@ -56,11 +56,22 @@
 /*! \brief No game-wide globals in this file. */
 
 /*! \name Internal variables */
+/* NUMSG is the number of save slots. */
+/* PSIZE is the maximum party size (2) */
+
+/* These describe the save slots. Number of characters, gp, etc */
+/* They are used to make the save menu prettier. */
 int snc[NUMSG], sgp[NUMSG], shr[NUMSG], smin[NUMSG], sid[NUMSG][PSIZE],
    slv[NUMSG][PSIZE];
 unsigned char shp[NUMSG][PSIZE], smp[NUMSG][PSIZE];
+
+/* Which save_slot the player is pointing to */
 int save_ptr = 0;
+
+/* Which save_slot is shown at the top of the screen (for scrolling) */
 int top_pointer = 0;
+
+/* Maximum number of slots to show on screen. */
 int max_onscreen = 5;
 
 
@@ -177,7 +188,6 @@ static void delete_game (void)
 }
 
 
-
 /*! \brief Load game
  *
  * Uh-huh.
@@ -189,26 +199,48 @@ static int load_game (void)
 {
    PACKFILE *sdat;
    int a, b, thr, tmin;
-   unsigned char tv, ww, ss;
+   unsigned char tv;
 
-   ww = windowed;
-   ss = stretch_view;
    sprintf (strbuf, "sg%d.sav", save_ptr);
    sdat = pack_fopen (kqres (SAVE_DIR, strbuf), F_READ_PACKED);
    if (!sdat) {
       message ("Could not load saved game.", 255, 0, 0, 0);
       return 0;
    }
+
    tv = pack_getc (sdat);
-   if (tv != kq_version) {
-      pack_fclose (sdat);
+   if (tv == 92)
+      a = load_game_92(sdat);
+   else if (tv == 91)
+      a = load_game_91(sdat);
+   else {
+      a = 0;
       message ("Saved game format is not current.", 255, 0, 0, 0);
-      return 0;
    }
+
+   pack_fclose (sdat);
+   if (!a)
+      return 0;
+
+   timer_count = 0;
+   ksec = 0;
+   hold_fade = 0;
+   change_map (curmap, g_ent[0].tilex, g_ent[0].tiley, g_ent[0].tilex,
+               g_ent[0].tiley);
+   /* Set music and sound volume */
+   set_volume (gsvol, -1);
+   set_music_volume (((float) gmvol) / 255.0);
+   return 1;
+}
+
+int load_game_91 (PACKFILE * sdat)
+{
+   int a, b;
+
    numchrs = pack_igetl (sdat);
    gp = pack_igetl (sdat);
-   thr = pack_igetl (sdat);
-   tmin = pack_igetl (sdat);
+   khr = pack_igetl (sdat);
+   kmin = pack_igetl (sdat);
    for (a = 0; a < PSIZE; a++) {
       pidx[a] = pack_igetl (sdat);
       g_ent[a].active = 0;
@@ -237,7 +269,6 @@ static int load_game (void)
    for (a = 0; a < sizeof(treasure); a++) {
       treasure[a] = pack_getc (sdat);
    }
-     init_shops();
    for (a = 0; a < NUMSHOPS; a++) {
       for (b = 0; b < SHOPITEMS; b++) {
          shops[a].items_current[b] = pack_igetw (sdat);
@@ -247,27 +278,7 @@ static int load_game (void)
       g_inv[a][0] = pack_igetw (sdat);
       g_inv[a][1] = pack_igetw (sdat);
    }
-   /* PH: I've decided that I'm going to ignore
-    * these things in the save file. and use
-    * the global values instead.
-    gsvol = pack_igetl (sdat);
-    gmvol = pack_igetl (sdat);
-    windowed = pack_getc (sdat);
-    stretch_view = pack_getc (sdat);
-    wait_retrace = pack_getc (sdat);
-    kup = pack_igetl (sdat);
-    kdown = pack_igetl (sdat);
-    kleft = pack_igetl (sdat);
-    kright = pack_igetl (sdat);
-    kalt = pack_igetl (sdat);
-    kctrl = pack_igetl (sdat);
-    kenter = pack_igetl (sdat);
-    kesc = pack_igetl (sdat);
-    jbalt = pack_igetl (sdat);
-    jbctrl = pack_igetl (sdat);
-    jbenter = pack_igetl (sdat);
-    jbesc = pack_igetl (sdat);
-    */
+   /* Bunch of 0s for alignment */
    pack_igetl (sdat);
    pack_igetl (sdat);
    pack_getc (sdat);
@@ -285,27 +296,385 @@ static int load_game (void)
    pack_igetl (sdat);
    pack_igetl (sdat);
    pack_igetl (sdat);
+   /* End worthless */
 
    g_ent[0].tilex = pack_igetw (sdat);
    g_ent[0].tiley = pack_igetw (sdat);
-   pack_fclose (sdat);
-   load_sgstats ();
-   timer_count = 0;
-   kmin = tmin;
-   khr = thr;
-   ksec = 0;
-   strcpy (strbuf, curmap);
-   for (a = 0; a < (signed int) strlen (strbuf); a++)
-      curmap[a] = tolower (strbuf[a]);
-   curmap[strlen (strbuf) + 1] = 0;
-   hold_fade = 0;
-   if (ww != windowed || ss != stretch_view)
-      set_graphics_mode ();
-   change_map (curmap, g_ent[0].tilex, g_ent[0].tiley, g_ent[0].tilex,
-               g_ent[0].tiley);
-   /* Set music and sound volume */
-   set_volume (gsvol, -1);
-   set_music_volume (((float) gmvol) / 255.0);
+
+   /* Fill special_items array with info from saved game */
+#define P_UCOIN 36
+#define P_CANCELROD 37
+#define P_GOBLINITEM 17
+#define P_UNDEADJEWEL 35
+#define P_WSTONES 24
+#define P_BSTONES 25
+#define P_EMBERSKEY 46
+#define P_BRONZEKEY 70
+#define P_DENORIAN 55
+#define P_OPALHELMET 43
+#define P_OPALSHIELD 50
+#define P_IRONKEY 66
+#define P_OPALBAND 69
+#define P_OPALARMOUR 90
+#define P_CAVEKEY 71
+#define P_TALK_TSORIN 108
+#define P_TALKOLDMAN 110
+
+#define SI_UCOIN 0
+#define SI_CANCELROD 1
+#define SI_JADEPENDANT 2
+#define SI_UNDEADJEWEL 3
+#define SI_WHITESTONE 4
+#define SI_BLACKSTONE 5
+#define SI_EMBERSKEY 6
+#define SI_BRONZEKEY 7
+#define SI_DENORIANSTATUE 8
+#define SI_OPALHELMET 9
+#define SI_OPALSHIELD 10
+#define SI_IRONKEY 11
+#define SI_OPALBAND 12
+#define SI_OPALARMOUR 13
+#define SI_CAVEKEY 14
+#define SI_NOTE_TSORIN 15
+#define SI_NOTE_DERIG 16
+#define SI_RUSTYKEY 17
+
+   if (progress[P_UCOIN] == 2)
+      player_special_items[SI_UCOIN] = 1;
+   if (progress[P_CANCELROD] == 1)
+      player_special_items[SI_CANCELROD] = 1;
+   if (progress[P_GOBLINITEM] == 1)
+      player_special_items[SI_JADEPENDANT] = 1;
+   if (progress[P_UNDEADJEWEL] == 1)
+      player_special_items[SI_UNDEADJEWEL] = 1;
+   if (progress[P_WSTONES] > 0)
+      player_special_items[SI_WHITESTONE] = progress[P_WSTONES];
+   if (progress[P_BSTONES] > 0)
+      player_special_items[SI_BLACKSTONE] = progress[P_BSTONES];
+   if (progress[P_EMBERSKEY] == 2)
+      player_special_items[SI_EMBERSKEY] = 1;
+   if (progress[P_BRONZEKEY] == 1) 
+      player_special_items[SI_BRONZEKEY] = 1;
+   if (progress[P_DENORIAN] == 3 || progress[P_DENORIAN] == 4)
+      player_special_items[SI_DENORIANSTATUE] = 1;
+   if (progress[P_OPALHELMET] == 1)
+      player_special_items[SI_OPALHELMET] = 1;
+   if (progress[P_OPALSHIELD] == 1)
+      player_special_items[SI_OPALSHIELD] = 1;
+   if (progress[P_OPALBAND] == 1)
+      player_special_items[SI_OPALBAND] = 1;
+   if (progress[P_OPALARMOUR] == 1)
+      player_special_items[SI_OPALARMOUR] = 1;
+   if (progress[P_CAVEKEY] == 1)
+      player_special_items[SI_CAVEKEY] = 1;
+   if (progress[P_IRONKEY] == 1)
+      player_special_items[SI_IRONKEY] = 1;
+   if (progress[P_TALK_TSORIN] == 1)
+      player_special_items[SI_NOTE_TSORIN] = 1;
+   if (progress[P_TALK_TSORIN] == 2)
+      player_special_items[SI_NOTE_DERIG] = 1;
+   if (progress[P_TALKOLDMAN] > 2)
+      player_special_items[SI_RUSTYKEY] = 1;
+
+
+
+#if 0
+   a = 0;
+   if (progress[P_UCOIN] == 2) {
+      strcpy (special_items[a].name, "Unadium coin");
+      strcpy (special_items[a].description, "Use to reach ruins");
+      special_items[a].quantity = 1;
+      special_items[a].icon = 50;
+      a++;
+   }
+   if (progress[P_CANCELROD] == 1) {
+      strcpy (special_items[a].name, "Cancellation Rod");
+      strcpy (special_items[a].description, "Nullify magic");
+      special_items[a].quantity = 1;
+      special_items[a].icon = 51;
+      a++;
+   }
+   if (progress[P_GOBLINITEM] == 1) {
+      strcpy (special_items[a].name, "Jade Pendant");
+      strcpy (special_items[a].description, "Magical goblin gem");
+      special_items[a].quantity = 1;
+      special_items[a].icon = 52;
+      a++;
+   }
+   if (progress[P_UNDEADJEWEL] == 1) {
+      strcpy (special_items[a].name, "Goblin Jewel");
+      strcpy (special_items[a].description, "Precious artifact");
+      special_items[a].quantity = 1;
+      special_items[a].icon = 53;
+      a++;
+   }
+   if (progress[P_WSTONES] > 0) {
+      strcpy (special_items[a].name, "White Stone");
+      strcpy (special_items[a].description, "Smooth white rock");
+      special_items[a].quantity = progress[P_WSTONES];
+      special_items[a].icon = 54;
+      a++;
+   }
+   if (progress[P_BSTONES] > 0) {
+      strcpy (special_items[a].name, "Black Stone");
+      strcpy (special_items[a].description, "Smooth black rock");
+      special_items[a].quantity = progress[P_BSTONES];
+      special_items[a].icon = 55;
+      a++;
+   }
+   if (progress[P_EMBERSKEY] == 2) {
+      strcpy (special_items[a].name, "Ember's Key");
+      strcpy (special_items[a].description, "Unlock stuff");
+      special_items[a].quantity = 1;
+      special_items[a].icon = 56;
+      a++;
+   }
+   if (progress[P_BRONZEKEY] == 1) {
+      strcpy (special_items[a].name, "Bronze Key");
+      strcpy (special_items[a].description, "Unlock stuff");
+      special_items[a].quantity = 1;
+      special_items[a].icon = 57;
+      a++;
+   }
+   if (progress[P_DENORIAN] == 3 || progress[P_DENORIAN] == 4) {
+      strcpy (special_items[a].name, "Denorian Statue");
+      strcpy (special_items[a].description, "Broken in half");
+      special_items[a].quantity = 1;
+      special_items[a].icon = 58;
+      a++;
+   }
+   if (progress[P_OPALHELMET] == 1) {
+      strcpy (special_items[a].name, "Opal Helmet");
+      strcpy (special_items[a].description, "Piece of opal set");
+      special_items[a].quantity = 1;
+      special_items[a].icon = 59;
+      a++;
+   }
+   if (progress[P_OPALSHIELD] == 1) {
+      strcpy (special_items[a].name, "Opal Shield");
+      strcpy (special_items[a].description, "Piece of opal set");
+      special_items[a].quantity = 1;
+      special_items[a].icon = 60;
+      a++;
+   }
+   if (progress[P_IRONKEY] == 1) {
+      strcpy (special_items[a].name, "Iron Key");
+      strcpy (special_items[a].description, "Unlock stuff");
+      special_items[a].quantity = 1;
+      special_items[a].icon = 61;
+      a++;
+   }
+   if (progress[P_OPALBAND] == 1) {
+      strcpy (special_items[a].name, "Opal Band");
+      strcpy (special_items[a].description, "Piece of opal set");
+      special_items[a].quantity = 1;
+      special_items[a].icon = 62;
+      a++;
+   }
+   if (progress[P_OPALARMOUR] == 1) {
+      strcpy (special_items[a].name, "Opal Armour");
+      strcpy (special_items[a].description, "Piece of opal set");
+      special_items[a].quantity = 1;
+      special_items[a].icon = 14;
+      a++;
+   }
+   if (progress[P_CAVEKEY] == 1) {
+      strcpy (special_items[a].name, "Cave Key");
+      strcpy (special_items[a].description, "Unlock stuff");
+      special_items[a].quantity = 1;
+      special_items[a].icon = 63;
+      a++;
+   }
+   if (progress[P_TALK_TSORIN] == 1) {
+      strcpy (special_items[a].name, "Tsorin's Note");
+      strcpy (special_items[a].description, "Sealed envelope");
+      special_items[a].quantity = 1;
+      special_items[a].icon = 18;
+      a++;
+   }
+   if (progress[P_TALK_TSORIN] == 2) {
+      strcpy (special_items[a].name, "Derig's Note");
+      strcpy (special_items[a].description, "Encrypted message");
+      special_items[a].quantity = 1;
+      special_items[a].icon = 18;
+      a++;
+   }
+   if (progress[P_TALKOLDMAN] > 2) {
+      strcpy (special_items[a].name, "Rusty Key");
+      strcpy (special_items[a].description, "Unlock grotto ruins");
+      special_items[a].quantity = 1;
+      special_items[a].icon = 64;
+      a++;
+   }
+#endif
+
+#undef P_UCOIN
+#undef P_CANCELROD
+#undef P_GOBLINITEM
+#undef P_UNDEADJEWEL
+#undef P_WSTONES
+#undef P_BSTONES
+#undef P_EMBERSKEY
+#undef P_BRONZEKEY
+#undef P_DENORIAN
+#undef P_OPALHELMET
+#undef P_OPALSHIELD
+#undef P_IRONKEY
+#undef P_OPALBAND
+#undef P_OPALARMOUR
+#undef P_CAVEKEY
+#undef P_TALK_TSORIN
+#undef P_TALKOLDMAN
+
+   return 1;
+}
+
+/*! \brief Load game
+ *
+ * Loads game using KQ save game format 92 (Beta)
+ * Author: Winter Knight
+ * \returns 1 if load succeeded, 0 otherwise
+ */
+int load_game_92 (PACKFILE * sdat)
+{
+   int a, b, c, d;
+
+   /* Already got kq_version */
+   gp = pack_igetl (sdat);
+   khr = pack_igetw (sdat);
+   kmin = pack_igetw (sdat);
+
+   /* Load number of, and which characters in party */
+   numchrs = pack_igetw (sdat);
+   if (numchrs > PSIZE) {
+      message ("Error. numchrs in saved game > PSIZE", 255, 0, 0, 0);
+      return 0;
+   }
+   for (a = 0; a < numchrs; a++) {
+      pidx[a] = pack_igetw (sdat);
+      g_ent[a].eid = pidx[a];
+      g_ent[a].active = 1;
+   }
+
+   /* Zero set empty party character(s), if any */
+   for (; a < PSIZE; a++)
+   {
+      pidx[a] = 0;
+      g_ent[a].active = 0;
+   }
+
+   /* Load number of, and data on all characters in game */
+   pack_igetw (sdat); /* max number of characters is fixed in KQ */
+   for (a = 0; a < MAXCHRS; a++) {
+      load_s_player (&party[a], sdat);
+   }
+
+   /* Load map name and location */
+   a = pack_igetw (sdat);
+   if (a > sizeof(curmap)) {
+      message("Error. number of chars in saved game > sizeof(curmap)", 255, 0, 0, 0);
+      return 0;
+   }
+   pack_fread (curmap, a, sdat);
+
+   g_ent[0].tilex = pack_igetw (sdat);
+   g_ent[0].tiley = pack_igetw (sdat);
+
+   /* Load Quest Info */
+   b = pack_igetw (sdat);
+   if (b > sizeof(progress)) {
+      message("Error. number of progress indicators > sizeof(progress)", 255, 0, 0, 0);
+      return 0;
+   }
+   for (a = 0; a < b; a++)
+      progress[a] = pack_getc (sdat);
+
+   /* zero-set blank Quest Info */
+   for (; a < sizeof(progress); a++)
+      progress[a] = 0;
+
+   /* Load treasure info */
+   b = pack_igetw (sdat);
+   if (b > sizeof(treasure)) {
+      message("Error. number of treasure indicators > sizeof(treasure)", 255, 0, 0, 0);
+      return 0;
+   }
+   for (a = 0; a < b; a++)
+      treasure[a] = pack_getc (sdat);
+
+   /* zero-set blank treasure info */
+   for (; a < sizeof(treasure); a++)
+      treasure[a] = 0;
+
+   /* Load spell info */
+   b = pack_igetw (sdat);
+   if (b > sizeof(save_spells)) {
+      message("Error. number of non-combat spell indicators > sizeof(save_spells)", 255, 0, 0, 0);
+      return 0;
+   }
+   for (a = 0; a < b; a++)
+      save_spells[a] = pack_getc (sdat);
+
+   /* zero-set empty spell slots */
+   for (; a < sizeof(save_spells); a++)
+      save_spells[a] = 0;
+
+
+   /* Load player inventory */
+   b = pack_igetw (sdat);
+   if (b > MAX_INV) {
+      message("Error. number of inventory items > MAX_INV", 255, 0, 0, 0);
+      return 0;
+   }
+   for (a = 0; a < b; a++)
+   {
+      g_inv[a][0] = pack_igetw (sdat);
+      g_inv[a][1] = pack_igetw (sdat);
+   }
+
+   /* zero-set empty inventory slots */
+   for (; a < MAX_INV; a++)
+   {
+      g_inv[a][0] = 0;
+      g_inv[a][1] = 0;
+   }
+
+   /* Load special items info */
+   b = pack_igetw (sdat);
+   if (b > MAX_SPECIAL_ITEMS) {
+      message("Error. number of special items > MAX_SPECIAL_ITEMS", 255, 0, 0, 0);
+      return 0;
+   }
+   
+   for (a = 0; a < b; a++)
+      player_special_items[a] = pack_getc (sdat);   /* index */
+
+   /* zero-set empty special item slots */
+   for (; a < MAX_SPECIAL_ITEMS; a++)
+      player_special_items[a] = 0;
+
+   /* Load shop info (last visit time and number of items) */
+   b = pack_igetw (sdat);
+   if (b > NUMSHOPS) {
+      message ("Error. number of shops saved > NUMSHOPS", 255, 0, 0, 0);
+      return 0;
+   }
+
+   /* b = number of shop
+    * a = current shop index
+    * c = number of items in current shop
+    * d = current item index */
+   for (a = 0; a < b; a++)
+   {
+      shop_time[a] = pack_igetw (sdat);
+      c = pack_igetw (sdat);
+
+      for (d = 0; d < c; d++)
+         shops[a].items_current[d] = pack_igetw (sdat);
+
+      for (; d < NUMSHOPS; d++)
+         shops[a].items_current[d] = shops[a].items_max[d];
+   }
    return 1;
 }
 
@@ -339,9 +708,31 @@ void load_sgstats (void)
          }
       } else {
          vc = pack_getc (ldat);
-         if (vc != kq_version)
-            snc[a] = -1;
-         else {
+         if (vc == 92) {
+            sgp[a] = pack_igetl (ldat);
+            shr[a] = pack_igetw (ldat);
+            smin[a] = pack_igetw (ldat);
+            snc[a] = pack_igetw (ldat);
+            for (b = 0; b < snc[a]; b++) {
+               sid[a][b] = pack_igetw (ldat);
+               // sid[a][b] = 0; // Temp: Debugging / Testing
+            }
+            pack_igetw (ldat); // Number of characters in game. Assume MAXCHRS
+            for (b = 0; b < MAXCHRS; b++) {
+               load_s_player (&tpm, ldat);
+               for (c = 0; c < snc[a]; c++) {
+                  if (b == sid[a][c]) {
+                     slv[a][c] = tpm.lvl;
+                     shp[a][c] = tpm.hp * 100 / tpm.mhp;
+                     if (tpm.mmp > 0)
+                        smp[a][c] = tpm.mp * 100 / tpm.mmp;
+                     else
+                        smp[a][c] = 0;
+                  }
+               }
+            }
+         }
+         else if (vc == 91) {
             snc[a] = pack_igetl (ldat);
             sgp[a] = pack_igetl (ldat);
             shr[a] = pack_igetl (ldat);
@@ -363,6 +754,8 @@ void load_sgstats (void)
                }
             }
          }
+         else
+            snc[a] = -1;
          pack_fclose (ldat);
       }
    }
@@ -380,6 +773,10 @@ static int save_game (void)
 {
    PACKFILE *sdat;
    int a, b;
+
+   return save_game_92();
+
+   /* Rest of this function is no longer used */
 
    for (b = 0; b < PSIZE; b++) {
       sid[save_ptr][b] = 0;
@@ -463,6 +860,141 @@ static int save_game (void)
    /* End worthless */
    pack_iputw (g_ent[0].tilex, sdat);
    pack_iputw (g_ent[0].tiley, sdat);
+   pack_fclose (sdat);
+   return 1;
+}
+
+
+/*! \brief Save game 92
+ *
+ * Save the game, using KQ Save Game Format 92 (Beta)
+ * Author: Winter Knight
+ *
+ * \returns 0 if save failed, 1 if success
+ */
+int save_game_92 (PACKFILE * sdat)
+{
+   int a, b, c, d;
+
+   for (b = 0; b < PSIZE; b++) {
+      sid[save_ptr][b] = 0;
+      shp[save_ptr][b] = 0;
+      smp[save_ptr][b] = 0;
+      slv[save_ptr][b] = 0;
+   }
+   for (b = 0; b < numchrs; b++) {
+      sid[save_ptr][b] = pidx[b];
+      shp[save_ptr][b] = party[pidx[b]].hp * 100 / party[pidx[b]].mhp;
+      if (party[pidx[b]].mmp > 0)
+         smp[save_ptr][b] = party[pidx[b]].mp * 100 / party[pidx[b]].mmp;
+      slv[save_ptr][b] = party[pidx[b]].lvl;
+   }
+   snc[save_ptr] = numchrs;
+   sgp[save_ptr] = gp;
+   smin[save_ptr] = kmin;
+   shr[save_ptr] = khr;
+   sprintf (strbuf, "sg%d.sav", save_ptr);
+   sdat = pack_fopen (kqres (SAVE_DIR, strbuf), F_WRITE_PACKED);
+   if (!sdat) {
+      message ("Could not save game data.", 255, 0, 0, 0);
+      return 0;
+   }
+
+
+   pack_putc (kq_version, sdat);
+   pack_iputl (gp, sdat);
+   pack_iputw (shr[save_ptr], sdat);
+   pack_iputw (smin[save_ptr], sdat);
+
+   /* Save number of, and which characters are in the party */
+   pack_iputw (numchrs, sdat);
+   for (a = 0; a < numchrs; a++) {
+      pack_iputw (pidx[a], sdat);
+   }
+
+   /* Save number of, and data on all characters in game */
+   pack_iputw (MAXCHRS, sdat);
+   for (a = 0; a < MAXCHRS; a++) {
+      save_s_player (&party[a], sdat);
+   }
+
+   /* Save map name and location */
+   pack_iputw (strlen(curmap), sdat);
+   pack_fwrite (curmap, strlen(curmap), sdat);
+
+   pack_iputw (g_ent[0].tilex, sdat);
+   pack_iputw (g_ent[0].tiley, sdat);
+
+
+   /* Save quest info */
+   for (a = sizeof(progress) - 1; a >= 0; a--)
+      if (progress[a] > 0)
+         break;
+   /* We increment "a" because after the prev loop, it equals the number
+    * of the last quest with a value, not the number of quests with a value */
+   a++;
+
+   pack_iputw(a, sdat);
+   for (b = 0; b < a; b++)
+      pack_putc (progress[b], sdat);
+
+   /* Save treasure info */
+   for (a = sizeof (treasure) - 1; a >= 0; a--)
+      if (treasure[a] > 0)
+         break;
+   a++;
+
+   pack_iputw (a, sdat);
+   for (b = 0; b < a; b++)
+      pack_putc (treasure[b], sdat);
+
+   /* Save spell info (P_REPULSE is 48) */
+   pack_iputw (sizeof (save_spells), sdat);
+   for (a = 0; a < sizeof (save_spells); a++) { /* sizeof(save_spells) is 50 */
+       pack_putc (save_spells[a], sdat);
+   }
+
+   /* Save player inventory */
+   pack_iputw (MAX_INV, sdat);
+   for (a = 0; a < MAX_INV; a++) {
+      pack_iputw (g_inv[a][0], sdat);
+      pack_iputw (g_inv[a][1], sdat);
+   }
+
+   /* Save special items */
+   for (a = MAX_SPECIAL_ITEMS; a >= 0; a--)
+      if (player_special_items[a])
+         break;
+   a++;
+
+   pack_iputw (a, sdat);
+   for (b = 0; b < a; b++) {
+      pack_putc (player_special_items[b], sdat);
+   }
+
+   /* Save shop info (last visit time and number of items) */
+   /* Find last index of shop that the player has visited. */
+   for (a = num_shops - 1; a >= 0; a--)
+      if (shop_time[a] > 0)
+         break;
+   a++;
+
+   pack_iputw (a, sdat);
+   for (b = 0; b < a; b++) {
+      pack_iputw (shop_time[b], sdat);
+
+      /* Find last valid (non-zero) shop item for this shop */
+      for (c = SHOPITEMS - 1; c >= 0; c--)
+         if (shops[b].items > 0)
+            break;
+      c++;
+
+      pack_iputw (c, sdat);
+      for (d = 0; d < c; d++)
+         pack_iputw (shops[b].items_current[d], sdat);
+   }
+   
+
    pack_fclose (sdat);
    return 1;
 }
@@ -742,6 +1274,8 @@ int start_menu (int skip_splash)
    }
 #endif
 
+   reset_world();
+
    /* Draw menu and handle menu selection */
    while (!stop) {
       if (redraw) {
@@ -804,13 +1338,11 @@ int start_menu (int skip_splash)
       }
    }
    unload_datafile_object (bg);
-
    if (stop == 2) {
       /* New game init */
       for (a = 0; a < MAXCHRS; a++)
          memcpy (&party[a], &players[a].plr, sizeof (s_player));
       init_players ();
-        init_shops();
       memset (progress, 0, SIZE_PROGRESS);
       memset (treasure, 0, SIZE_TREASURE);
       numchrs = 0;
@@ -899,14 +1431,8 @@ int system_menu (void)
          }
 
          if (ptr == 1) {
-            // Pointer is over the LOAD option
-            for (temp = 0; temp < NUMSG; temp++) {
-               if ((snc[temp] != 0) && (saveload (0) == 1))
-               {
-                  stop = 1;
-                  break;
-               }
-            }
+            if (saveload(0) != 0)
+               stop = 1;
          }
 
          if (ptr == 2)

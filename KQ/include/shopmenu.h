@@ -44,6 +44,7 @@ typedef struct
    unsigned short items_replenish_time[SHOPITEMS];
 } s_shop;
 
-extern s_shop shops[NUMSHOPS];      /* sgame.c */
+extern s_shop shops[NUMSHOPS];      /* sgame.c intrface.c */
+extern unsigned short num_shops;    /* sgame.c intrface.c */
 
 #endif /*  __SHOPMENU_H  */

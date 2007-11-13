@@ -44,7 +44,6 @@
 #include "itemmenu.h"
 #include "magic.h"
 #include "menu.h"
-#include "progress.h"
 #include "res.h"
 #include "selector.h"
 #include "setup.h"
