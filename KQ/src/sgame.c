@@ -102,7 +102,7 @@ static int confirm_action (void)
       return 1;
    blit (double_buffer, back, 0, 0, 0, 0, 352, 280);
    menubox (double_buffer, 128, pointer_offset + 12, 14, 1, DARKBLUE);
-   print_font (double_buffer, 136, pointer_offset + 20, "Confirm/Cancel",
+   print_font (double_buffer, 136, pointer_offset + 20, _("Confirm/Cancel"),
                FNORMAL);
    blit2screen (0, 0);
    blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
@@ -135,7 +135,7 @@ static int confirm_quit (void)
 {
    static char *opts[] = { "Yes", "No" };
    int ans;
-   ans = prompt_ex (0, "Are you sure you want to quit this game?", opts, 2);
+   ans = prompt_ex (0, _("Are you sure you want to quit this game?"), opts, 2);
    return ans == 0 ? 1 : 0;
 }
 

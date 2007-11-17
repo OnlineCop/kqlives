@@ -463,7 +463,7 @@ BITMAP *alloc_bmp (int bx, int by, char *bname)
    tmp = create_bitmap (bx, by);
 
    if (!tmp) {
-      sprintf (strbuf, "Could not allocate %s!.", bname);
+      sprintf (strbuf, _("Could not allocate %s!."), bname);
       program_death (strbuf);
    }
 
@@ -729,7 +729,7 @@ void data_dump (void)
 
       ff = fopen ("progress.log", "w");
       if (!ff)
-         program_death ("Could not open progress.log!");
+         program_death (_("Could not open progress.log!"));
       for (a = 0; a < 120; a++) {
          fprintf (ff, "%d: %s = %d\n",
                   progresses[a].num_progress,
@@ -1033,7 +1033,7 @@ void kwait (int dtime)
             sprintf (strbuf, "kwait(); cnt = %d, dtime = %d, timer_count = %d",
                      cnt, dtime, timer_count);
          } else {
-            sprintf (strbuf, "Program terminated: user pressed Alt+X");
+            sprintf (strbuf, _("Program terminated: user pressed Alt+X"));
          }
          program_death (strbuf);
       }
@@ -1108,7 +1108,7 @@ static void load_map (const char *map_name)
          do_transition (TRANS_FADE_IN, 16);
 
       g_map.xsize = -1;
-      sprintf (strbuf, "Could not load map %s!", map_name);
+      sprintf (strbuf, _("Could not load map %s!"), map_name);
       program_death (strbuf);
    }
 
@@ -1140,11 +1140,8 @@ static void load_map (const char *map_name)
 int main (int argc, const char *argv[])
 {
    setlocale (LC_ALL, "");
-   printf("calling bindtextdomain (\"%s\", \"%s\");\n", PACKAGE, KQ_LOCALE);
    bindtextdomain (PACKAGE, KQ_LOCALE);
-   printf("calling textdomain (\"%s\");\n", PACKAGE);
    textdomain (PACKAGE);
-   printf(_("Hello World.\n"));
    int stop, game_on, skip_splash;
    int i;
 
@@ -1152,8 +1149,16 @@ int main (int argc, const char *argv[])
    for (i = 1; i < argc; i++) {
       if (!strcmp (argv[i], "-nosplash") || !strcmp (argv[i], "--nosplash"))
          skip_splash = 1;
+
+      /* Prints some language information */
+      if (!strcmp (argv[i], "-lang") || !strcmp (argv[i], "--lang")){
+       printf(_("calling bindtextdomain (\"%s\", \"%s\");\n"), PACKAGE, KQ_LOCALE);
+       printf(_("calling textdomain (\"%s\");\n"), PACKAGE);
+       printf(_("Hello World.\n"));
+      }
+
       if (!strcmp (argv[i], "--help")) {
-         printf("Sorry, no help screen at this time.\n");
+         printf(_("Sorry, no help screen at this time.\n"));
          return EXIT_SUCCESS;
       }
    }

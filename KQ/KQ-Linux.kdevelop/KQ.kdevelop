@@ -11,7 +11,7 @@
     <projectdirectory>..</projectdirectory>
     <absoluteprojectpath>false</absoluteprojectpath>
     <description>Don't forget to update the &quot;Run Options&quot; to reflect your settings</description>
-    <defaultencoding/>
+    <defaultencoding></defaultencoding>
     <versioncontrol/>
   </general>
   <kdevautoproject>
@@ -20,16 +20,18 @@
       <activetarget>kq</activetarget>
     </general>
     <run>
-      <mainprogram>/home/edgar/Programas/kq-src/KQ-Linux.kdevelop/../kq</mainprogram>
-      <programargs>--nosplash --es</programargs>
-      <globaldebugarguments/>
-      <globalcwd>/home/edgar/Programas/kq-src/KQ-Linux.kdevelop/../</globalcwd>
+      <mainprogram>/home/edgar/Programas/kqcvs/KQ/kq</mainprogram>
+      <programargs>--nosplash --lang</programargs>
+      <globaldebugarguments></globaldebugarguments>
+      <globalcwd>/home/edgar/Programas/kqcvs/KQ/</globalcwd>
       <useglobalprogram>true</useglobalprogram>
       <terminal>false</terminal>
       <autocompile>false</autocompile>
       <autoinstall>false</autoinstall>
       <autokdesu>false</autokdesu>
-      <envvars/>
+      <envvars>
+        <envvar value="es_CO:es" name="LANGUAGE" />
+      </envvars>
       <runarguments>
         <kq/>
       </runarguments>
@@ -75,17 +77,17 @@
       <runmultiplejobs>false</runmultiplejobs>
       <numberofjobs>1</numberofjobs>
       <dontact>false</dontact>
-      <makebin/>
+      <makebin></makebin>
       <prio>0</prio>
     </make>
   </kdevautoproject>
   <kdevdebugger>
     <general>
       <dbgshell>libtool</dbgshell>
-      <gdbpath/>
-      <configGdbScript/>
-      <runShellScript/>
-      <runGdbScript/>
+      <gdbpath></gdbpath>
+      <configGdbScript></configGdbScript>
+      <runShellScript></runShellScript>
+      <runGdbScript></runGdbScript>
       <breakonloadinglibs>true</breakonloadinglibs>
       <separatetty>false</separatetty>
       <floatingtoolbar>false</floatingtoolbar>
@@ -187,7 +189,7 @@
       <includePaths>.;</includePaths>
     </codecompletion>
     <creategettersetter>
-      <prefixGet/>
+      <prefixGet></prefixGet>
       <prefixSet>set</prefixSet>
       <prefixVariable>m_,_</prefixVariable>
       <parameterName>theValue</parameterName>

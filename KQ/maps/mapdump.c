@@ -11,6 +11,7 @@
 
 #include "mapdraw.h"
 #include "../include/disk.h"
+#include <locale.h>
 
 /* Something for allegro version compatibility */
 /* ..can we use the textout_ex() and friends? */

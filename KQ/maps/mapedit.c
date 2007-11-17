@@ -17,6 +17,7 @@
 #endif
 
 #include "mapdraw.h"
+#include <locale.h>
 
 /* globals */
 
