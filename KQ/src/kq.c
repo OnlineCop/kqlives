@@ -66,6 +66,8 @@
 #include "sgame.h"
 #include "shopmenu.h"
 
+#include <locale.h>
+
 /*! Name of the current map */
 char curmap[16];
 
@@ -1137,6 +1139,12 @@ static void load_map (const char *map_name)
  */
 int main (int argc, const char *argv[])
 {
+   setlocale (LC_ALL, "");
+   printf("calling bindtextdomain (\"%s\", \"%s\");\n", PACKAGE, KQ_LOCALE);
+   bindtextdomain (PACKAGE, KQ_LOCALE);
+   printf("calling textdomain (\"%s\");\n", PACKAGE);
+   textdomain (PACKAGE);
+   printf(_("Hello World.\n"));
    int stop, game_on, skip_splash;
    int i;
 

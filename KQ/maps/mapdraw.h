@@ -17,6 +17,21 @@
 #endif
 
 #include <allegro.h>
+
+#ifdef HAVE_CONFIG_H
+/* Have to undef some stuff because Allegro defines it - thanks guys
+*/
+#undef PACKAGE_TARNAME
+#undef PACKAGE_VERSION
+#undef PACKAGE_NAME
+#undef PACKAGE_STRING
+#undef PACKAGE_BUGREPORT
+#include "config.h"
+#endif
+
+#include "gettext.h"
+#define _(s) gettext(s)
+
 #include <stdio.h>
 #include <string.h>
 

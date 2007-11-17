@@ -1,4 +1,4 @@
-SUBDIRS = scripts
+SUBDIRS = po scripts
 bin_PROGRAMS = kq mapdraw mapdiff mapdump $(MAPDRAW2)
 EXTRA_PROGRAMS = mapdraw2
 
@@ -17,30 +17,32 @@ kq_SOURCES = src/enemyc.c src/intrface.c src/sgame.c src/bounds.c \
 	include/enemyc.h include/itemmenu.h include/progress.h include/structs.h \
 	include/entity.h include/kq.h include/res.h include/timing.h \
 	include/eqpmenu.h include/kqsnd.h include/scrnshot.h \
-	include/eskill.h include/magic.h include/selector.h
+	include/eskill.h include/magic.h include/selector.h \
+	include/bounds.h include/gettext.h 
+
 EXTRA_kq_SOURCES = src/unix.c src/osx.m src/beos.c src/win.c src/dos.c src/winres.rc
-kq_LDADD = $(kq_extra_files) $(ALLEGRO_LIBS)
+kq_LDADD = $(kq_extra_files) $(ALLEGRO_LIBS) $(LIBINTL)
 kq_DEPENDENCIES = $(kq_extra_files)
 
 mapdraw_SOURCES = maps/mapdata.c maps/mapdraw.h maps/mapedit.c \
 	maps/mapfile.c maps/mapent.c maps/mapshared.c src/disk.c \
 	maps/mapstructs.c src/bounds.c include/disk.h include/structs.h
-mapdraw_LDADD = $(ALLEGRO_LIBS)
+mapdraw_LDADD = $(ALLEGRO_LIBS) $(LIBINTL)
 
 mapdraw2_SOURCES = maps/mapdraw2.c maps/mapdraw2.h \
 	maps/mainwindow.c maps/mapedit2.c maps/mapedit2.h \
 	maps/mapshared.c maps/mapdraw.h src/disk.c \
         src/bounds.c include/disk.h include/structs.h
-mapdraw2_LDADD = $(GTK_LIBS) $(ALLEGRO_LIBS)
-mapdraw2_CPPFLAGS = $(GTK_CFLAGS) $(WARNING_CFLAGS)
+mapdraw2_LDADD = $(GTK_LIBS) $(ALLEGRO_LIBS) $(LIBINTL)
+mapdraw2_CPPFLAGS = $(AM_CPPFLAGS) $(GTK_CFLAGS)
 
 mapdiff_SOURCES = maps/mapdraw.h maps/mapdiff.c src/disk.c \
 	include/disk.h include/structs.h
-mapdiff_LDADD = $(ALLEGRO_LIBS)
+mapdiff_LDADD = $(ALLEGRO_LIBS) $(LIBINTL)
 
 mapdump_SOURCES = maps/mapdump.c maps/mapshared.c maps/mapdata.c \
 	src/disk.c src/bounds.c include/disk.h include/structs.h
-mapdump_LDADD = $(ALLEGRO_LIBS)
+mapdump_LDADD = $(ALLEGRO_LIBS) $(LIBINTL)
 
 APPR=KQ.app/Contents/Resources
 KQ.app: kq
@@ -87,7 +89,7 @@ cscripts_DATA = scripts/bridge2.lob scripts/dville.lob \
 MOSTLYCLEANFILES = $(cscripts_DATA)
 cscriptsdir = $(pkglibdir)/scripts
 
-EXTRA_DIST = scripts/bridge2.lua scripts/dville.lua \
+EXTRA_DIST = config.rpath scripts/bridge2.lua scripts/dville.lua \
 	scripts/starting.lua scripts/bridge.lua scripts/estate.lua \
 	scripts/temple1.lua scripts/camp.lua scripts/esteria.lua \
 	scripts/temple2.lua scripts/cave1.lua scripts/fort.lua \
@@ -118,9 +120,11 @@ musicdir = $(pkgdatadir)/music
 
 dist_man_MANS = debian/kq.6
 
-AM_CFLAGS = -I$(top_srcdir)/include -DKQ_BIN=\"$(bindir)/kq$(EXEEXT)\" -DKQ_DATA=\"$(pkgdatadir)\" -DKQ_LIB=\"$(pkglibdir)\"
+AM_CPPFLAGS = $(WARNING_CFLAGS) -I$(top_srcdir)/include \
+	-DKQ_BIN=\"$(bindir)/kq$(EXEEXT)\" -DKQ_DATA=\"$(pkgdatadir)\" -DKQ_LIB=\"$(pkglibdir)\" -DKQ_LOCALE=\"$(localedir)\"
 
 if BUNDLE
 all-local: KQ.app
 endif BUNDLE
 
+ACLOCAL_AMFLAGS = -I m4

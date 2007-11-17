@@ -135,6 +135,10 @@ void usage (const char *argv)
 
 int main (int argc, char *argv[])
 {
+   setlocale (LC_ALL, "");
+   bindtextdomain (PACKAGE, KQ_LOCALE);
+   textdomain (PACKAGE);
+   
    char fn[PATH_MAX], *filenames[PATH_MAX];
    int i, number_of_files = 0, verbose = 0;
    int force_overwrite = 0;

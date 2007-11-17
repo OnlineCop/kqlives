@@ -2142,6 +2142,10 @@ void kq_yield (void)
 /* Welcome to Mapdraw, folks! */
 int main (int argc, char *argv[])
 {
+   setlocale (LC_ALL, "");
+   bindtextdomain (PACKAGE, KQ_LOCALE);
+   textdomain (PACKAGE);
+   
    int main_stop = 0, oldmouse_x = 0, oldmouse_y = 0;
    int i;
 

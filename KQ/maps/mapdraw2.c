@@ -23,15 +23,7 @@
 
 #include <string.h>
 #include <stdio.h>
-#include <allegro.h>
-#ifdef HAVE_CONFIG_H
-#undef PACKAGE_TARNAME
-#undef PACKAGE_VERSION
-#undef PACKAGE_NAME
-#undef PACKAGE_STRING
-#undef PACKAGE_BUGREPORT
-#include "config.h"
-#endif
+#include <locale.h>
 
 #include "mapdraw.h"
 #include "mapdraw2.h"
@@ -39,6 +31,10 @@
 
 int main (int argc, char *argv[])
 {
+   setlocale (LC_ALL, "");
+   bindtextdomain (PACKAGE, KQ_LOCALE);
+   textdomain (PACKAGE);
+   
    chdir ("maps");
    install_allegro (SYSTEM_NONE, &errno, atexit);
    if (!startup ()) {

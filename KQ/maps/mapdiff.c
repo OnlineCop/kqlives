@@ -12,6 +12,8 @@
 #include "mapdraw.h"
 #include "../include/disk.h"
 
+#include <locale.h>
+
 /* Something for allegro version compatibility */
 /* ..can we use the textout_ex() and friends? */
 #if (ALLEGRO_VERSION>=4 && ALLEGRO_SUB_VERSION>=1)
@@ -814,6 +816,10 @@ void usage (const char *argv)
 
 int main (int argc, char *argv[])
 {
+   setlocale (LC_ALL, "");
+   bindtextdomain (PACKAGE, KQ_LOCALE);
+   textdomain (PACKAGE);
+   
    int i, number_of_files = 0;
    char *filenames[PATH_MAX];
 

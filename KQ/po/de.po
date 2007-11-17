@@ -1,0 +1,22 @@
+# German translations for KQ package.
+# Copyright (C) 2007 various people
+# This file is distributed under the same license as the KQ package.
+# Guenther Brammer <GBrammer@gmx.de>, 2007.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: KQ 0.99\n"
+"Report-Msgid-Bugs-To: peterhull90@users.sourceforge.net\n"
+"POT-Creation-Date: 2007-03-07 23:33+0100\n"
+"PO-Revision-Date: 2007-03-07 22:55+0100\n"
+"Last-Translator: Guenther Brammer <GBrammer@gmx.de>\n"
+"Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ASCII\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: src/kq.c:1167
+#, c-format
+msgid "Hello World.\n"
+msgstr "Hallo Welt.\n"

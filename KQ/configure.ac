@@ -7,7 +7,9 @@ AC_CONFIG_SRCDIR([src/kq.c])
 AC_CONFIG_HEADER([config.h])
 AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
-AM_INIT_AUTOMAKE()
+AM_INIT_AUTOMAKE
+AM_GNU_GETTEXT([external])
+AM_GNU_GETTEXT_VERSION(0.16.1)
 
 # Checks for programs.
 AC_PROG_CC
@@ -110,6 +112,6 @@ case ${host} in
      ;;
 esac
 AM_CONDITIONAL(BUNDLE, test x$bundle = xyes)
-AC_CONFIG_FILES([Makefile scripts/Makefile])
+AC_CONFIG_FILES([Makefile scripts/Makefile po/Makefile.in])
 AC_OUTPUT
 

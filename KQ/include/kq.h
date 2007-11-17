@@ -41,6 +41,9 @@
 #include "config.h"
 #endif
 
+#include "gettext.h"
+#define _(s) gettext(s)
+
 #include "entity.h"
 #include "structs.h"
 #include "bounds.h"
