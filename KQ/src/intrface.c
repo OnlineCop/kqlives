@@ -161,6 +161,7 @@ static int KQ_get_skip_intro (lua_State *);
 static int KQ_get_treasure (lua_State *);
 static int KQ_get_vx (lua_State *);
 static int KQ_get_vy (lua_State *);
+static int KQ_gettext (lua_State *);
 static int KQ_give_item (lua_State *);
 static int KQ_give_xp (lua_State *);
 static int KQ_has_special_item (lua_State *);
@@ -341,6 +342,7 @@ static const struct luaL_reg lrs[] = {
    {"get_treasure",     KQ_get_treasure},
    {"get_vx",           KQ_get_vx},
    {"get_vy",           KQ_get_vy},
+   {"gettext",          KQ_gettext},
    {"give_item",        KQ_give_item},
    {"give_xp",          KQ_give_xp},
    {"has_special_item", KQ_has_special_item},
@@ -2401,6 +2403,23 @@ static int KQ_get_vx (lua_State * L)
 static int KQ_get_vy (lua_State * L)
 {
    lua_pushnumber (L, vy);
+   return 1;
+}
+
+
+
+/*! \brief Get translation for a message
+ *
+ * Usually called by the alias _.
+ *
+ * \param   L::1 The original english message
+ * \returns the translation for the current language
+ */
+static int KQ_gettext (lua_State * L)
+{
+   const char * t = lua_tostring (L, 1);
+
+   lua_pushstring (L, gettext(t));
    return 1;
 }
 
