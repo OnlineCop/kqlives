@@ -32,19 +32,19 @@ end
 
 function entity_handler(en)
   if (en == 0) then
-    bubble(en, "This is the town of Andra.")
+    bubble(en, _"This is the town of Andra.")
 
   elseif (en == 1) then
     LOC_talk_tsorin(en)
 
   elseif (en == 2) then
-    bubble(en, "I wish the weapon shop sold slingshots.")
+    bubble(en, _"I wish the weapon shop sold slingshots.")
 
   elseif (en == 3 or en == 4) then
-    bubble(en, "We're guarding against goblins.")
+    bubble(en, _"We're guarding against goblins.")
 
   elseif (en == 8) then
-    bubble(en, "Caffeine, caffeine, caffeine, caffeine...")
+    bubble(en, _"Caffeine, caffeine, caffeine, caffeine...")
 
   elseif (en == 9) then
     LOC_talk_oldguy(en)
@@ -141,7 +141,7 @@ function zone_handler(zn)
     door_out("shop_3o")
 
   elseif (zn == 14) then
-    bubble(HERO1, "Locked.")
+    bubble(HERO1, _"Locked.")
 
   elseif (zn == 15) then
     inn("Riverside Inn", 35, 1)
@@ -178,29 +178,29 @@ function zone_handler(zn)
     chest(13, I_CAP2, 1)
 
   elseif (zn == 26) then
-    bubble(HERO1, "Various books about magic.")
+    bubble(HERO1, _"Various books about magic.")
 
   elseif (zn == 27) then
-    bubble(HERO1, "The art of battle-magic.")
+    bubble(HERO1, _"The art of battle-magic.")
 
   elseif (zn == 28) then
-    bubble(HERO1, "How magic can make you rich!")
+    bubble(HERO1, _"How magic can make you rich!")
 
   elseif (zn == 29) then
-    bubble(HERO1, "Ten reasons why you should never call a wizard 'pencil-neck'.")
+    bubble(HERO1, _"Ten reasons why you should never call a wizard 'pencil-neck'.")
 
   elseif (zn == 30) then
     touch_fire(party[0])
 
   elseif (zn == 31) then
-    bubble(HERO1, "Inns always have boring books.")
+    bubble(HERO1, _"Inns always have boring books.")
 
   elseif (zn == 32) then
     chest(99, I_B_SLEEPALL, 1)
     refresh()
 
   elseif (zn == 33) then
-    bubble(HERO1, "The barrel is empty.")
+    bubble(HERO1, _"The barrel is empty.")
 
   elseif (zn == 34) then
     chest(100, 0, 200)
@@ -212,61 +212,61 @@ end
 
 function LOC_talk_oldguy(en)
   if (get_progress(P_GOBLINITEM) == 0) then
-    bubble(en, "To the north of here is a temple. It is nearly impenetrable from the outside, even to Malkaron's armies.")
-    bubble(en, "However, monsters have somehow appeared INSIDE the temple. They need help in any way possible.")
-    bubble(HERO1, "I can probably help. What can I do?")
-    bubble(en, "I hear that the monsters are coming through a portal in the caves under the temple. Seal it up to stop the monsters.")
-    bubble(HERO1, "How do I seal the portal?")
-    bubble(en, "I don't know. You should ask someone in the temple.")
+    bubble(en, _"To the north of here is a temple. It is nearly impenetrable from the outside, even to Malkaron's armies.")
+    bubble(en, _"However, monsters have somehow appeared INSIDE the temple. They need help in any way possible.")
+    bubble(HERO1, _"I can probably help. What can I do?")
+    bubble(en, _"I hear that the monsters are coming through a portal in the caves under the temple. Seal it up to stop the monsters.")
+    bubble(HERO1, _"How do I seal the portal?")
+    bubble(en, _"I don't know. You should ask someone in the temple.")
   elseif (get_progress(P_GOBLINITEM) == 1) then
-    bubble(en, "Use that Goblin Item to seal the portal in the temple.")
+    bubble(en, _"Use that Goblin Item to seal the portal in the temple.")
   else
-    bubble(en, "Good work in the temple! We thank you most graciously!")
+    bubble(en, _"Good work in the temple! We thank you most graciously!")
   end
 end -- LOC_talk_oldguy
 
 
 function LOC_talk_tsorin(en)
   if (get_progress(P_TALK_TSORIN) == 0) then
-    bubble(en, "Tsorin:", "Thank you for visiting our town. What do you need?")
-    bubble(HERO1, "I'm not sure. To get through the pass to the south, I guess.")
-    bubble(en, "I'm afraid I cannot allow that. There is a civil upheaval in the Goblin Lands and so cannot allow anyone to pass.")
+    bubble(en, _"Tsorin:", "Thank you for visiting our town. What do you need?")
+    bubble(HERO1, _"I'm not sure. To get through the pass to the south, I guess.")
+    bubble(en, _"I'm afraid I cannot allow that. There is a civil upheaval in the Goblin Lands and so cannot allow anyone to pass.")
     if (get_numchrs() == 1) then
-      bubble(HERO1, "I'm pretty sure I need to get through there.")
+      bubble(HERO1, _"I'm pretty sure I need to get through there.")
     else
-      bubble(HERO1, "We're pretty sure we need to get through there.")
+      bubble(HERO1, _"We're pretty sure we need to get through there.")
     end
-    msg("Tsorin eyes you warily.", 255, 0)
-    bubble(en, "Well, I have to know if I can trust you first. Here, take this note to Derig.")
-    msg("Tsorin hands you an envelope with his seal on it.", 18, 0)
-    bubble(en, "He lives back in Ekla, and if he says you can pass, I shall let you pass.")
+    msg(_"Tsorin eyes you warily.", 255, 0)
+    bubble(en, _"Well, I have to know if I can trust you first. Here, take this note to Derig.")
+    msg(_"Tsorin hands you an envelope with his seal on it.", 18, 0)
+    bubble(en, _"He lives back in Ekla, and if he says you can pass, I shall let you pass.")
     set_progress(P_TALK_TSORIN, 1)
     add_special_item(SI_NOTE_TSORIN)
   elseif (get_progress(P_TALK_TSORIN) == 1) then
-    bubble(en, "If you have trouble finding Derig, ask around town. Someone's bound to know where he's wandered off to.")
+    bubble(en, _"If you have trouble finding Derig, ask around town. Someone's bound to know where he's wandered off to.")
   elseif (get_progress(P_TALK_TSORIN) == 2) then
-    msg("You hand the note to Tsorin.", 18, 0)
-    bubble(en, "Hmm, I see. Since Derig says you are trustworthy, I can let you pass through the fort.")
+    msg(_"You hand the note to Tsorin.", 18, 0)
+    bubble(en, _"Hmm, I see. Since Derig says you are trustworthy, I can let you pass through the fort.")
     if (get_numchrs() == 1) then
-      bubble(HERO1, "Can you tell me why I need this security clearance?")
+      bubble(HERO1, _"Can you tell me why I need this security clearance?")
     else
-      bubble(HERO1, "Can you tell us why we need this security clearance?")
+      bubble(HERO1, _"Can you tell us why we need this security clearance?")
     end
-    bubble(en, "The Oracle's Statue was stolen from a village shrine south of here. It caused such problems that civil war has ensued. As a safety to our citizens, we have closed the border to try to capture the thief or thieves.")
+    bubble(en, _"The Oracle's Statue was stolen from a village shrine south of here. It caused such problems that civil war has ensued. As a safety to our citizens, we have closed the border to try to capture the thief or thieves.")
     if (get_numchrs() == 1) then
-      bubble(HERO1, "If you want, I can help find this missing statue.")
+      bubble(HERO1, _"If you want, I can help find this missing statue.")
     else
-      bubble(HERO1, "If you want, we can help you find this missing statue.")
+      bubble(HERO1, _"If you want, we can help you find this missing statue.")
     end
-    bubble(en, "That would be wonderful! Find the Oracle to the south and ask her what she would like you to do.")
-    bubble(en, "Present this Seal to the guards, and tell them that you're acting with my authority.")
-    msg("Tsorin's Seal procured!", 25, 0)
-    bubble(en, "I'm fear I cannot send anyone to protect you - you must take the utmost care.")
+    bubble(en, _"That would be wonderful! Find the Oracle to the south and ask her what she would like you to do.")
+    bubble(en, _"Present this Seal to the guards, and tell them that you're acting with my authority.")
+    msg(_"Tsorin's Seal procured!", 25, 0)
+    bubble(en, _"I'm fear I cannot send anyone to protect you - you must take the utmost care.")
     set_progress(P_TALK_TSORIN, 3)
     remove_special_item(SI_NOTE_DERIG)
   elseif (get_progress(P_TALK_TSORIN) == 3) then
-    bubble(en, "You can find the Oracle to the south. She will help you find this missing statue.")
+    bubble(en, _"You can find the Oracle to the south. She will help you find this missing statue.")
   elseif (get_progress(P_TALK_TSORIN) == 4) then
-    bubble(en, "Thank you for all you've done.")
+    bubble(en, _"Thank you for all you've done.")
   end
 end -- LOC_talk_tsorin

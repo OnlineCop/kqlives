@@ -180,6 +180,9 @@ AYLA              = 6
 NOSLOM            = 7
 
 
+-- gettext alias
+_ = gettext
+
 
 -- Add this hero to the manor if not already there
 -- hero can be a single value or a table
@@ -347,44 +350,44 @@ end
 --  Response for reading a book.
 function book_talk(ent)
   if (party[0] == Sensar) then
-    bubble(HERO1, pick("Reading makes me sleepy...",
-           "So many books...",
-           "Reading is for wimps."))
+    bubble(HERO1, pick(_"Reading makes me sleepy...",
+           _"So many books...",
+           _"Reading is for wimps."))
   
   elseif (party[0] == Temmin) then
-  bubble(HERO1, pick("If only I had more time...",
-         "So many books...",
-         "Some of these are pretty old."))
+  bubble(HERO1, pick(_"If only I had more time...",
+         _"So many books...",
+         _"Some of these are pretty old."))
   
   elseif (party[0] == Sarina) then
-  bubble(HERO1, pick("Ugh... this would take me forever to read.",
-         "I never liked reading.",
-         "Who wrote this trash?"))
+  bubble(HERO1, pick(_"Ugh... this would take me forever to read.",
+         _"I never liked reading.",
+         _"Who wrote this trash?"))
   
   elseif (party[0] == Noslom) then
-    bubble(HERO1, pick("Fascinating.",
-           "I have this one.",
-           "Romance novels... gack!"))
+    bubble(HERO1, pick(_"Fascinating.",
+           _"I have this one.",
+           _"Romance novels... gack!"))
 
   elseif (party[0] == Ajathar) then
-    bubble(HERO1, pick("Hmmm... I don't approve of that.",
-           "I'm too busy to read now.",
-           "How many books can you write that start with 'The Joy of...'?"))
+    bubble(HERO1, pick(_"Hmmm... I don't approve of that.",
+           _"I'm too busy to read now.",
+           _"How many books can you write that start with 'The Joy of...'?"))
 
   elseif (party[0] == Ayla) then
-    bubble(HERO1, pick("I don't have time for this.",
-          "What language is this written in?",
-          "The pages are stuck together!?"))
+    bubble(HERO1, pick(_"I don't have time for this.",
+          _"What language is this written in?",
+          _"The pages are stuck together!?"))
 	
   elseif (party[0] == Cassandra) then
-    bubble(HERO1, pick("Boring.",
-           "Somebody should burn these.",
-           "Terrible... just terrible."))
+    bubble(HERO1, pick(_"Boring.",
+           _"Somebody should burn these.",
+           _"Terrible... just terrible."))
 	
   elseif (party[0] == Corin) then
-	 bubble(HERO1, pick("Doesn't anybody leave spellbooks lying around?",
-           "Why would I read this?",
-           "Can't talk... reading."))
+	 bubble(HERO1, pick(_"Doesn't anybody leave spellbooks lying around?",
+           _"Why would I read this?",
+           _"Can't talk... reading."))
   else
     message("Script Error. global.lua:book_talk()", 255, 0)
   end
@@ -397,47 +400,49 @@ function touch_fire(ent)
   local x
   
   if (party[0] == Sensar) then
-    bubble(HERO1, pick("What th..? Ouch! That's hot!",
-           "There's no way I'm sticking my hand in that fire!",
-           "This feels pretty nice."))
+    bubble(HERO1, pick(_"What th..? Ouch! That's hot!",
+           _"There's no way I'm sticking my hand in that fire!",
+           _"This feels pretty nice."))
            
   elseif (party[0] == Temmin) then
-    bubble(HERO1, pick("Ah, the age-old fire.",
-           "This needs more coal.",
-           "This would be great to read a book next to."))
+    bubble(HERO1, pick(_"Ah, the age-old fire.",
+           _"This needs more coal.",
+           _"This would be great to read a book next to."))
 
   elseif (party[0] == Sarina) then
-    bubble(HERO1, pick("Mmm, wood smoke.",
-           "Smells like burnt hair. Hey wait... that's MY hair!",
-           "Ooh, cozy."))
+    bubble(HERO1, pick(_"Mmm, wood smoke.",
+           _"Smells like burnt hair. Hey wait... that's MY hair!",
+           _"Ooh, cozy."))
 
   elseif (party[0] == Noslom) then
-    bubble(HERO1, pick("I prefer torches.",
-           "I love the crackle of a good fire.",
-           "I wonder if a spell would make this burn brighter?"))
+    bubble(HERO1, pick(_"I prefer torches.",
+           _"I love the crackle of a good fire.",
+           _"I wonder if a spell would make this burn brighter?"))
 
   elseif (party[0] == Ajathar) then
-    bubble(HERO1, pick("Hmm... I want marshmallows.",
-           "You call this a fire?!",
-           "Ah, relaxing."))
+    bubble(HERO1, pick(_"Hmm... I want marshmallows.",
+           _"You call this a fire?!",
+           _"Ah, relaxing."))
 
   elseif (party[0] == Ayla) then
-    bubble(HERO1, pick("I wonder how hot this is?",
-           "Someone should clean all this soot out of here.",
-           "Well, my face is warm now, but my butt is still freezing!"))
+    bubble(HERO1, pick(_"I wonder how hot this is?",
+           _"Someone should clean all this soot out of here.",
+           _"Well, my face is warm now, but my butt is still freezing!"))
   
   elseif (party[0] == Cassandra) then
-    bubble(HERO1, pick("Something's burning. I hope it's one of those stupid books!",
-           "The fire is getting low.",
-           "Yessir, this is a fire."))
+    bubble(HERO1, pick(_"Something's burning. I hope it's one of those stupid books!",
+           _"The fire is getting low.",
+           _"Yessir, this is a fire."))
 
   elseif (party[0] == Corin) then
-    bubble(HERO1, pick("I sure like fire.",
-           "Watching this is relaxing.",
-           "This is making me sleepy."))
+    bubble(HERO1, pick(_"I sure like fire.",
+           _"Watching this is relaxing.",
+           _"This is making me sleepy."))
            
   else
     message("Script Error. global.lua:touch_fire()", 255, 0)
   end
   
 end
+
+

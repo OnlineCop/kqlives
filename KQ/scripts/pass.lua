@@ -16,9 +16,9 @@ end
 function entity_handler(en)
   if (en == 0 or en == 1) then
     if (get_progress(P_SAVEBREANNE) == 0) then
-      bubble(en, "This pass is reserved for use by caravans only.")
+      bubble(en, _"This pass is reserved for use by caravans only.")
     else
-      bubble(en, "You are free to use the pass. Just be careful.")
+      bubble(en, _"You are free to use the pass. Just be careful.")
     end
   elseif (en == 2) then
     -- Cabin bloke
@@ -137,31 +137,31 @@ end
 
 function LOC_miner(en)
   if (get_progress(P_TALKRUFUS) == 0) then
-    bubble(en, "Howdy!")
-    bubble(HERO1, "Hello. Is this your cabin?")
-    bubble(en, "It sure is! Th' name's Rufus. I work in the abandoned mines in these parts.")
-    bubble(en, "But I'll warn ya now. There's something nasty hiding in them thar mines.")
-    bubble(HERO1, "Like what?")
-    bubble(en, "I guess I've said enough...")
+    bubble(en, _"Howdy!")
+    bubble(HERO1, _"Hello. Is this your cabin?")
+    bubble(en, _"It sure is! Th' name's Rufus. I work in the abandoned mines in these parts.")
+    bubble(en, _"But I'll warn ya now. There's something nasty hiding in them thar mines.")
+    bubble(HERO1, _"Like what?")
+    bubble(en, _"I guess I've said enough...")
     set_progress(P_TALKRUFUS, 1)
     if (get_progress(P_CAVEKEY) == 0) then
-      bubble(HERO1, "Don't worry. I was just passing through, anyway.")
+      bubble(HERO1, _"Don't worry. I was just passing through, anyway.")
     end
   elseif (get_progress(P_TALKRUFUS) == 1) then
-    bubble(HERO1, "Hello again.")
-    bubble(en, "Don't forget what I told ya about them mines.")
+    bubble(HERO1, _"Hello again.")
+    bubble(en, _"Don't forget what I told ya about them mines.")
     if (get_progress(P_CAVEKEY) == 0) then
-      bubble(HERO1, "I won't.")
+      bubble(HERO1, _"I won't.")
     end
   end
 
   if (get_progress(P_TALKRUFUS)<2) then
-    bubble(HERO1, "But, I really need to get in there.")
+    bubble(HERO1, _"But, I really need to get in there.")
     set_progress(P_TALKRUFUS, 2)
-    bubble(en, "We-e-ell...")
-    bubble(en, "I reckon that you and me might be able to do a little business here.")
+    bubble(en, _"We-e-ell...")
+    bubble(en, _"I reckon that you and me might be able to do a little business here.")
   else
-    bubble(en, "So, back for some more of the dynamite, are you?")
+    bubble(en, _"So, back for some more of the dynamite, are you?")
   end
 
   shop(23)

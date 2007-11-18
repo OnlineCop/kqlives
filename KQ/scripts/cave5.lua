@@ -25,10 +25,10 @@ end
 function entity_handler(en)
   local returning
   if (en == 0) then -- Sensar
-    bubble(HERO1, "What happened? Are you OK?")
-    bubble(en, "I was attacked, but I couldn't use my RAGE against those ghosts.")
-    bubble(en, "Then I felt everthing fade away...")
-    bubble(HERO1, "If you're feeling better you can join up, or go back to the Manor to rest.")
+    bubble(HERO1, _"What happened? Are you OK?")
+    bubble(en, _"I was attacked, but I couldn't use my RAGE against those ghosts.")
+    bubble(en, _"Then I felt everthing fade away...")
+    bubble(HERO1, _"If you're feeling better you can join up, or go back to the Manor to rest.")
     returning = select_team({SENSAR})
     add_to_manor(returning)
     set_progress(P_SIDEQUEST7, 2)
@@ -161,7 +161,7 @@ function zone_handler(zn)
       set_progress(P_OPALARMOUR, 1)
       add_special_item(SI_OPALARMOUR)
       sfx(5)
-      msg("Opal Armour procured!", 255, 0)
+      msg(_"Opal Armour procured!", 255, 0)
       refresh()
     end
   elseif (zn == 23) then
@@ -177,7 +177,7 @@ function zone_handler(zn)
       -- Place Sensar in position
       set_progress(P_SIDEQUEST7, 1)
       refresh()
-      bubble(0, "Uhhh...", "Where am I?")
+      bubble(0, _"Uhhh...", "Where am I?")
     end
   end
 end
@@ -212,7 +212,7 @@ function blowup(loc)
     hero_escape("R3D3R3D5R8")
     sfx(42)
     if (get_numchrs() > 1) then
-      bubble(HERO2, "I think you might have overdone it!")
+      bubble(HERO2, _"I think you might have overdone it!")
       oneliner(HERO1, {"Good, wasn't it?",
                        "It scared me too.",
                        "I'm afraid I have.",
@@ -222,7 +222,7 @@ function blowup(loc)
                        "I'd prefer a different way.",
                        "Let's see."})
     else
-      bubble(HERO1, "Argh. I think I used too much!")
+      bubble(HERO1, _"Argh. I think I used too much!")
     end
     set_progress(P_BOMB2, 1)
   elseif (loc == 3) then
@@ -255,7 +255,7 @@ function blowup(loc)
       set_progress(P_BOMB4, p + 1)
     elseif (p == 1) then
       -- Already destroyed this side
-      bubble(HERO1, "I weakened it, but it might need another hit to destroy it")
+      bubble(HERO1, _"I weakened it, but it might need another hit to destroy it")
     end
   elseif (loc == 5) then
     -- Double pillar (right)
@@ -274,7 +274,7 @@ function blowup(loc)
       set_progress(P_BOMB4, p + 2)
     elseif (p == 2) then
       -- Already destroyed this side
-      bubble(HERO1, "I weakened it, but it might need another hit to destroy it.")
+      bubble(HERO1, _"I weakened it, but it might need another hit to destroy it.")
     end
   elseif (loc == 6) then
     -- Last wall before fight with Opal Dragon
@@ -321,7 +321,7 @@ function destroy2()
     hero_escape("R3D3R3D5R8")
     sfx(42)
     if (get_numchrs() > 1) then
-      bubble(HERO2, "I think you might have overdone it!")
+      bubble(HERO2, _"I think you might have overdone it!")
       oneliner(HERO1, {"Good, wasn't it?",
                        "It scared me too.",
                        "I'm afraid I have.",
@@ -331,7 +331,7 @@ function destroy2()
                        "I'd prefer a different way.",
                        "Let's see."})
     else
-      bubble(HERO1, "Argh. I think I used too much!")
+      bubble(HERO1, _"Argh. I think I used too much!")
     end
     set_progress(P_BOMB2, 1)
     refresh()
@@ -375,7 +375,7 @@ function destroy4a()
     set_progress(P_BOMB4, p + 1)
   elseif (p == 1) then
     -- Already destroyed this side
-    bubble(HERO1, "I weakened it, but it might need another hit to destroy it")
+    bubble(HERO1, _"I weakened it, but it might need another hit to destroy it")
   end
   refresh()
 end
@@ -398,7 +398,7 @@ function destroy4b()
     set_progress(P_BOMB4, p + 2)
   elseif (p == 2) then
     -- Already destroyed this side
-    bubble(HERO1, "I weakened it, but it might need another hit to destroy it.")
+    bubble(HERO1, _"I weakened it, but it might need another hit to destroy it.")
   end
   refresh()
 end
@@ -426,7 +426,7 @@ end
 function has_dynamite()
   local d = use_up(190)
   if (d == 0) then
-    bubble(HERO1, "I need some dynamite here.")
+    bubble(HERO1, _"I need some dynamite here.")
     return nil
   end
   return d
@@ -484,8 +484,8 @@ function opaldragon()
       set_ent_facing(HERO2, FACE_UP)
       set_autoparty(0)
     end
-    bubble(HERO1, "Ohhh!")
-    bubble(HERO1, "The legend was true!")
+    bubble(HERO1, _"Ohhh!")
+    bubble(HERO1, _"The legend was true!")
     spd = get_ent_speed(HERO1)
     set_autoparty(1)
     if (get_numchrs() > 1) then

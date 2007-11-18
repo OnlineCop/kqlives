@@ -99,7 +99,7 @@ function zone_handler(zn)
 
   elseif (zn == 6) then
     if (get_progress(P_ODDWALL) < 2) then
-      bubble(HERO1, "These stairs are blocked!")
+      bubble(HERO1, _"These stairs are blocked!")
     else
       change_map("guild", "cave1")
     end
@@ -109,7 +109,7 @@ function zone_handler(zn)
 
   elseif (zn == 8) then
     if (get_progress(P_ODDWALL) == 0) then
-      bubble(HERO1, "Hmm... this wall looks odd.")
+      bubble(HERO1, _"Hmm... this wall looks odd.")
       set_progress(P_ODDWALL, 1)
     end
 
@@ -121,10 +121,10 @@ function zone_handler(zn)
 
   elseif (zn == 11) then
     if (get_progress(P_DYINGDUDE) == 0) then
-      bubble(255, "... don't go any further. A strange creature has... blocked the path. It just appeared there out of nowhere.")
+      bubble(255, _"... don't go any further. A strange creature has... blocked the path. It just appeared there out of nowhere.")
       set_progress(P_DYINGDUDE, 1)
     else
-      bubble(HERO1, "He's dead.")
+      bubble(HERO1, _"He's dead.")
     end
 
   elseif (zn == 12) then
@@ -139,7 +139,7 @@ function zone_handler(zn)
   elseif (zn == 13) then
     if (get_progress(P_PORTALGONE) == 0) then
       if (get_progress(P_CANCELROD) == 1) then
-        bubble(HERO1, "Hmmm... I guess if I just touch it with the rod...")
+        bubble(HERO1, _"Hmmm... I guess if I just touch it with the rod...")
         do_fadeout(4)
         set_progress(P_PORTALGONE, 1)
         set_progress(P_SIDEQUEST1, 1)
@@ -147,13 +147,14 @@ function zone_handler(zn)
         drawmap()
         screen_dump()
         do_fadein(4)
-        bubble(HERO1, "Whoa! The rod melted the portal shut!")
+        bubble(HERO1, _"Whoa! The rod melted the portal shut!")
       else
-        bubble(HERO1, "Hmmm... this is very old and has several deep cracks in it.")
+        bubble(HERO1, _"Hmmm... this is very old and has several deep cracks in it.")
       end
     else
-      bubble(HERO1, "I wonder where this came from?")
+      bubble(HERO1, _"I wonder where this came from?")
     end
 
   end
 end
+

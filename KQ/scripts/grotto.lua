@@ -95,39 +95,39 @@ function entity_handler(en)
       if (get_progress(P_TALKDERIG) == 3) then
         if (get_progress(P_TALK_TSORIN) > 2) then
           -- You have spoken to Derig because of Tsorin
-          bubble(en, "Thank you for your assistance, $0. I have another request for you.")
+          bubble(en, _"Thank you for your assistance, $0. I have another request for you.")
         else
           -- You have never spoken to him before
-          bubble(en, "Hello, I'm Derig. I presume that my granddaughter sent you here?")
+          bubble(en, _"Hello, I'm Derig. I presume that my granddaughter sent you here?")
         end
-        bubble(en, "Let's go back to town.")
+        bubble(en, _"Let's go back to town.")
         set_progress(P_FELLINPIT, 2)
         set_progress(P_TALKDERIG, 4)
         change_map("town1", "by_derig")
       elseif (get_progress(P_TALKDERIG) == 6) then
         -- // Derig would only be here after you've finished with the Rod of Cancellation
-        bubble(en, "Good job with the portal. I have returned the Rod of Cancellation.")
+        bubble(en, _"Good job with the portal. I have returned the Rod of Cancellation.")
       end
     elseif (get_progress(P_TALK_TSORIN) == 1) then
-      bubble(en, "That note you're carrying... I recognize the seal on there; let me see it!")
-      msg("You show Derig the note.", 255, 0)
-      bubble(en, "$0, Tsorin says that a special treasure of the goblins, the Oracle Statue, has been stolen.")
-      bubble(en, "Apparently, the goblins are so upset that he's sealed off any entrance to the goblin lands until this is resolved.")
+      bubble(en, _"That note you're carrying... I recognize the seal on there; let me see it!")
+      msg(_"You show Derig the note.", 255, 0)
+      bubble(en, _"$0, Tsorin says that a special treasure of the goblins, the Oracle Statue, has been stolen.")
+      bubble(en, _"Apparently, the goblins are so upset that he's sealed off any entrance to the goblin lands until this is resolved.")
       if (get_numchrs() == 1) then
-        bubble(HERO1, "So what am I supposed to do?")
+        bubble(HERO1, _"So what am I supposed to do?")
       else
-        bubble(HERO1, "So what are we supposed to do?")
+        bubble(HERO1, _"So what are we supposed to do?")
       end
-      bubble(en, "I agree that you must get through there. Here, deliver this note to Tsorin so he'll let you proceed.")
-      msg("Derig hands you a sealed envelope.", 18, 0)
+      bubble(en, _"I agree that you must get through there. Here, deliver this note to Tsorin so he'll let you proceed.")
+      msg(_"Derig hands you a sealed envelope.", 18, 0)
       set_progress(P_TALK_TSORIN, 2)
       remove_special_item(SI_NOTE_TSORIN)
       add_special_item(SI_NOTE_DERIG)
       set_progress(P_TALKDERIG, 3)
     elseif (get_progress(P_TALK_TSORIN) == 2) then
-      bubble(en, "You must deliver that note to Tsorin so he'll let you through the fort.")
+      bubble(en, _"You must deliver that note to Tsorin so he'll let you through the fort.")
     else
-      bubble(en, "Good luck.")
+      bubble(en, _"Good luck.")
     end
   end
 end
@@ -162,7 +162,7 @@ function zone_handler(zn)
   -- Campfire
   elseif (zn == 2) then
     if (get_progress(P_TALKDERIG) == 2) then
-      bubble(HERO1, "That's strange. I wonder who lit this fire?")
+      bubble(HERO1, _"That's strange. I wonder who lit this fire?")
     else
       touch_fire(party[0])
     end
@@ -171,10 +171,10 @@ function zone_handler(zn)
   elseif (zn == 3) then
     if (get_progress(P_FELLINPIT) == 0) then
       set_btile(16, 14, 153)
-      bubble(HERO1, "Uh oh!")
+      bubble(HERO1, _"Uh oh!")
     elseif (get_progress(P_FELLINPIT) == 2) then
     -- if (get_progress(P_TALKDERIG) == 4) or (get_progress(P_TALKDERIG) == 5) then
-      bubble(HERO1, "I'd rather not go down there right now.")
+      bubble(HERO1, _"I'd rather not go down there right now.")
       return
     end
     change_map("cave2", "entrance")
@@ -187,13 +187,13 @@ function zone_handler(zn)
   -- Rune
   elseif (zn == 5) then
     if (get_progress(P_UCOIN) == 0) then
-      bubble(HERO1, "Hmm... this seems like it should do something. But what?")
+      bubble(HERO1, _"Hmm... this seems like it should do something. But what?")
     elseif (get_progress(P_UCOIN) == 1) then
-      bubble(HERO1, "Wow. The rune hummed for a second but now it's quiet.")
+      bubble(HERO1, _"Wow. The rune hummed for a second but now it's quiet.")
     elseif (get_progress(P_UCOIN) == 2) then
         change_map("grotto2", "entrance")
     else
-      bubble(HERO1, "I can't go through here anymore since I no longer have the Unadium Coin.")
+      bubble(HERO1, _"I can't go through here anymore since I no longer have the Unadium Coin.")
     end
 
   -- Treasure on NE corner, in trees

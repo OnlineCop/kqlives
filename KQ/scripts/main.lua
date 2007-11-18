@@ -115,18 +115,18 @@ function zone_handler(zn)
         set_progress(P_TOWEROPEN, 1)
         set_progress(P_GOBLINITEM, 2)
         remove_special_item(SI_JADEPENDANT)
-        bubble(HERO1, "Hey! The pendant is glowing!")
-        bubble(255, "The doors fly open and the pendant disappears in a puff of smoke.")
+        bubble(HERO1, _"Hey! The pendant is glowing!")
+        bubble(255, _"The doors fly open and the pendant disappears in a puff of smoke.")
       elseif (get_progress(P_DENORIAN) == 2) then
         set_progress(P_TOWEROPEN, 1)
-        bubble(HERO1, "The doors open with a shower of rust.")
+        bubble(HERO1, _"The doors open with a shower of rust.")
       else
-        bubble(HERO1, "The tower appears to be sealed. Maybe we need something to get in here?")
+        bubble(HERO1, _"The tower appears to be sealed. Maybe we need something to get in here?")
       end
     end
 
     if (get_progress(P_TOWEROPEN) == 2) then
-      bubble(HERO1, "I can't get in here anymore!")
+      bubble(HERO1, _"I can't get in here anymore!")
     elseif (get_progress(P_TOWEROPEN) > 0) then
       change_map("tower", "entrance")
     end
@@ -209,7 +209,7 @@ function zone_handler(zn)
 
   elseif (zn == 28) then
     if (get_progress(P_SEECOLISEUM) < 2) then
-      bubble(HERO1, "The Coliseum is closed.")
+      bubble(HERO1, _"The Coliseum is closed.")
       if (get_progress(P_SEECOLISEUM) == 0) then
         set_progress(P_SEECOLISEUM, 1)
       end
@@ -219,8 +219,8 @@ function zone_handler(zn)
 
   elseif (zn == 29) then
     if (get_progress(P_DENORIAN) == 1) then
-      bubble(255, "You are not allowed in the village.")
-      msg("You sneak in anyway.", 255, 0)
+      bubble(255, _"You are not allowed in the village.")
+      msg(_"You sneak in anyway.", 255, 0)
     end
     change_map("dville", "entrance")
 
@@ -262,7 +262,7 @@ function zone_handler(zn)
 
   elseif (zn == 42) then
     -- Will be fortress for Malkaron
-    msg("This will be fortress for Malkaron", 255, 0)
+    msg(_"This will be fortress for Malkaron", 255, 0)
 
   elseif (zn == 43) then
     change_map("town8", "entrance")
@@ -362,41 +362,41 @@ function zone_handler(zn)
     change_map("cave6b", "exit")
 
   elseif (zn == 75) then
-    bubble(HERO1, "The underwater tunnel should go here.")
+    bubble(HERO1, _"The underwater tunnel should go here.")
     warp("underwater_w", 16)
 
   elseif (zn == 76) then
-    bubble(HERO1, "The second part of the underwater tunnel should go here.")
+    bubble(HERO1, _"The second part of the underwater tunnel should go here.")
     warp("underwater_e", 16)
 
   elseif (zn == 77) then
-    bubble(HERO1, "This is where the castle town of Xenar goes.")
-    bubble(HERO1, "It's not finished yet.")
+    bubble(HERO1, _"This is where the castle town of Xenar goes.")
+    bubble(HERO1, _"It's not finished yet.")
 
   elseif (zn == 78) then
-    bubble(HERO1, "This is the cave behind the Xenar Castle. Sorry, you can't go in there yet.")
+    bubble(HERO1, _"This is the cave behind the Xenar Castle. Sorry, you can't go in there yet.")
 
   elseif (zn == 79) then
-    bubble(HERO1, "This is as far as the dock goes.")
+    bubble(HERO1, _"This is as far as the dock goes.")
     warp("dock_n", 16)
 
   elseif (zn == 80) then
-    bubble(HERO1, "This is as far as the dock goes.")
+    bubble(HERO1, _"This is as far as the dock goes.")
     warp("dock_s", 16)
 
   elseif (zn == 81) then
-    msg("This is where a short pass or cave goes.", 255, 0)
+    msg(_"This is where a short pass or cave goes.", 255, 0)
     warp("malk_pass_w", 8)
 
   elseif (zn == 82) then
-    msg("This is where a short pass or cave goes.", 255, 0)
+    msg(_"This is where a short pass or cave goes.", 255, 0)
     warp("malk_pass_e", 8)
 
   elseif (zn == 83) then
-    msg("This is where a new cave goes.", 255, 0)
+    msg(_"This is where a new cave goes.", 255, 0)
 
   elseif (zn == 84) then
-    msg("This is Binderak's cave.", 255, 0)
+    msg(_"This is Binderak's cave.", 255, 0)
 
   elseif (zn == 85) then
     change_map("sunarin", "entrance")
@@ -408,16 +408,16 @@ end
 function LOC_cave4()
   local x, y = marker("cave4")
   if (get_progress(P_DENORIAN) == 0) then
-    bubble(HERO1, "Hmm... there's a huge iron door blocking the entrance to this cave.")
+    bubble(HERO1, _"Hmm... there's a huge iron door blocking the entrance to this cave.")
   elseif (get_progress(P_DENORIAN) == 1) then
-    bubble(HERO1, "This seems strange. I wonder if this has something to do with the Denorian's request.")
+    bubble(HERO1, _"This seems strange. I wonder if this has something to do with the Denorian's request.")
   else
-    bubble(HERO1, "Stones 1, 4 then 3...")
+    bubble(HERO1, _"Stones 1, 4 then 3...")
     set_btile(x, y - 1, 54)
     set_zone(x, y - 1, 30)
     set_obs(x, y - 1, 0)
     sfx(26)
-    bubble(HERO1, "Bingo.")
+    bubble(HERO1, _"Bingo.")
   end
 end
 
@@ -432,9 +432,9 @@ function LOC_cave6()
     set_zone(x, y - 1, 73)
     set_obs(x, y - 1, 0)
     sfx(26)
-    bubble(HERO1, "Ah, there we go.")
+    bubble(HERO1, _"Ah, there we go.")
   else
-    bubble(HERO1, "I think this entrance will open once I have all the opal stuff.")
+    bubble(HERO1, _"I think this entrance will open once I have all the opal stuff.")
   end
 end
 
@@ -451,3 +451,4 @@ function LOC_giant()
     warp("giant_w", 16)
   end
 end
+

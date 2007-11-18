@@ -89,9 +89,9 @@ function entity_handler(en)
 
   elseif (en == 1) then
     if (get_progress(P_DARKIMPBOSS) == 0) then
-      bubble(en, "There is a monster blocking the pass to Randen.")
+      bubble(en, _"There is a monster blocking the pass to Randen.")
     else
-      bubble(en, "Now the monster is gone.")
+      bubble(en, _"Now the monster is gone.")
     end -- P_DARKIMPBOSS
 
   elseif (en == 2) then
@@ -99,13 +99,13 @@ function entity_handler(en)
 
   elseif (en == 3) then
     if (get_progress(P_DARKIMPBOSS) == 0) then
-      bubble(en, "Stock up on weapons, magic, and experience.")
-      bubble(en, "You'll need them against the monster blocking the entrance to Randen.")
+      bubble(en, _"Stock up on weapons, magic, and experience.")
+      bubble(en, _"You'll need them against the monster blocking the entrance to Randen.")
     elseif (get_progress(P_DARKIMPBOSS) == 1) then
       if (get_progress(P_PORTALGONE) == 0) then
-        bubble(en, "The monster blocking Randen is gone, but there are still monsters underground.")
+        bubble(en, _"The monster blocking Randen is gone, but there are still monsters underground.")
       elseif (get_progress(P_PORTALGONE) == 1) then
-        bubble(en, "All the monsters are gone from the tunnel!")
+        bubble(en, _"All the monsters are gone from the tunnel!")
       end -- P_PORTALGONE
     end -- P_DARKIMPBOSS
 
@@ -113,13 +113,13 @@ function entity_handler(en)
     LOC_talk_derig(en)
 
   elseif (en == 5) then
-    bubble(en, "I hid these works of art from Malkaron's forces. When they had come through here, they tried to destroy everything...")
+    bubble(en, _"I hid these works of art from Malkaron's forces. When they had come through here, they tried to destroy everything...")
 
   elseif (en == 6) then
-    bubble(en, "Ever since monsters started appearing, my mother doesn't want me to go outdoors alone. It's so boring in here, though! I want to go out and play!")
+    bubble(en, _"Ever since monsters started appearing, my mother doesn't want me to go outdoors alone. It's so boring in here, though! I want to go out and play!")
 
   elseif (en == 7) then
-    bubble(en, "My, my. This is beautiful work. How rare! How exquisite! How affordable!")
+    bubble(en, _"My, my. This is beautiful work. How rare! How exquisite! How affordable!")
 
   end
 end
@@ -128,17 +128,17 @@ end
 function postexec()
   -- Monsters will not attack on the world map until P_START == 1
   if (get_progress(P_START) == 0) then
-    msg("The strong-scented oils wore off.", 255, 0)
+    msg(_"The strong-scented oils wore off.", 255, 0)
     set_progress(P_START, 1)
   end
 
   if (get_progress(P_TALKDERIG) == 4) then
     local en = 4
-    bubble(en, "I'm Derig. If I'm here, then you found me in the Grotto.")
-    bubble(en, "To stop the monsters in our underground tunnel, you must seal the portal.")
-    bubble(en, "In order to do that, you can use a Rod of Cancellation to melt it shut.")
-    bubble(en, "I brought you to town to get the Unadium Coin from my granddaughter, which will open the rune back at the Grotto.")
-    bubble(en, "That will transport you to the place where the Rod of Cancellation is.")
+    bubble(en, _"I'm Derig. If I'm here, then you found me in the Grotto.")
+    bubble(en, _"To stop the monsters in our underground tunnel, you must seal the portal.")
+    bubble(en, _"In order to do that, you can use a Rod of Cancellation to melt it shut.")
+    bubble(en, _"I brought you to town to get the Unadium Coin from my granddaughter, which will open the rune back at the Grotto.")
+    bubble(en, _"That will transport you to the place where the Rod of Cancellation is.")
     set_progress(P_TALKDERIG, 5)
   end
 end
@@ -181,7 +181,7 @@ function zone_handler(zn)
     shop(2)
 
   elseif (zn == 6) then
-    bubble(HERO1, "Locked.")
+    bubble(HERO1, _"Locked.")
 
   elseif (zn == 7) then
     change_map("cave1", "entrance")
@@ -191,7 +191,7 @@ function zone_handler(zn)
     refresh()
 
   elseif (zn == 9) then
-    bubble(255, "I don't have much.")
+    bubble(255, _"I don't have much.")
     shop(3)
 
   elseif (zn == 10) then
@@ -245,46 +245,46 @@ function zone_handler(zn)
     refresh()
 
   elseif (zn == 26) then
-    thought(HERO1, "`Erupting Volcano'")
+    thought(HERO1, _"`Erupting Volcano'")
 
   elseif (zn == 27) then
-    thought(HERO1, "`Mountain Nightscape'")
+    thought(HERO1, _"`Mountain Nightscape'")
 
   elseif (zn == 28) then
-    thought(HERO1, "`My Barn Chimney'")
+    thought(HERO1, _"`My Barn Chimney'")
 
   elseif (zn == 29) then
-    thought(HERO1, "`The Beach Front'")
+    thought(HERO1, _"`The Beach Front'")
 
   elseif (zn == 30) then
-    thought(HERO1, "`The Eye of Sardine'", "Hmm, sounds strangely familiar.")
+    thought(HERO1, _"`The Eye of Sardine'", "Hmm, sounds strangely familiar.")
 
   elseif (zn == 31) then
-    thought(HERO1, "`The Battle Is Over'")
+    thought(HERO1, _"`The Battle Is Over'")
 
   elseif (zn == 32) then
-    thought(HERO1, "`Forgotten Barn'")
+    thought(HERO1, _"`Forgotten Barn'")
 
   elseif (zn == 33) then
-    thought(HERO1, "`Fire Sunset'")
+    thought(HERO1, _"`Fire Sunset'")
 
   elseif (zn == 34) then
-    bubble(5, "This is my art collection. Any piece of work starting at only 300000 GP!")
+    bubble(5, _"This is my art collection. Any piece of work starting at only 300000 GP!")
 
   elseif (zn == 35) then
-    bubble(HERO1, "This armour has been highly polished. I can see myself in it!")
+    bubble(HERO1, _"This armour has been highly polished. I can see myself in it!")
 
   elseif (zn == 36) then
-    bubble(HERO1, "Nothing in here but antique junk.")
+    bubble(HERO1, _"Nothing in here but antique junk.")
 
   elseif (zn == 37) then
-    bubble(HERO1, "The drawers are locked.")
+    bubble(HERO1, _"The drawers are locked.")
 
   elseif (zn == 38) then
-    bubble(HERO1, "This is the price list for all of these items.")
+    bubble(HERO1, _"This is the price list for all of these items.")
 
   elseif (zn == 39) then
-    bubble(HERO1, "None of these potions or herbs are useful.")
+    bubble(HERO1, _"None of these potions or herbs are useful.")
 
   elseif (zn == 40) then
     door_in("shop_5i")
@@ -299,20 +299,20 @@ end
 function LOC_ekla_welcome(en)
   if (get_progress(P_WARPSTONE) == 0) then
     if (get_progress(P_EKLAWELCOME) == 0) then
-      bubble(en, "Welcome to the town of Ekla.")
-      bubble(en, "Yes! That makes eight. If I welcome enough newcomers to this town, I will get promoted.")
-      bubble(en, "I might get a job sitting in a house all day saying the same thing over and over to anyone who talks to me.")
-      bubble(en, "I should start practicing.")
+      bubble(en, _"Welcome to the town of Ekla.")
+      bubble(en, _"Yes! That makes eight. If I welcome enough newcomers to this town, I will get promoted.")
+      bubble(en, _"I might get a job sitting in a house all day saying the same thing over and over to anyone who talks to me.")
+      bubble(en, _"I should start practicing.")
       set_progress(P_EKLAWELCOME, 1)
     else
-      bubble(en, "I like cheese.")
+      bubble(en, _"I like cheese.")
     end
   else -- P_WARPSTONE
     if (get_progress(P_EKLAWELCOME) == 0) then
-      bubble(en, "I welcome people to Ekla.")
-      bubble(en, "Welcome back.")
+      bubble(en, _"I welcome people to Ekla.")
+      bubble(en, _"Welcome back.")
     else
-      bubble(en, "I welcomed you already. You're in Ekla.")
+      bubble(en, _"I welcomed you already. You're in Ekla.")
     end
   end -- P_WARPSTONE
 end
@@ -377,44 +377,44 @@ function LOC_talk_derig(en)
       get_progress(P_TALK_TSORIN) > 2) then
     if (get_progress(P_TALKDERIG) == 5) then
       if (get_progress(P_UCOIN) == 1) then
-        bubble(en, "Talk to Jen to get the Unadium coin.")
+        bubble(en, _"Talk to Jen to get the Unadium coin.")
       elseif (get_progress(P_UCOIN) == 2) then
         if (get_progress(P_CANCELROD) == 0) then
-          bubble(en, "Go get the Rod of Cancellation out of the grotto. Use the rune.")
+          bubble(en, _"Go get the Rod of Cancellation out of the grotto. Use the rune.")
         elseif (get_progress(P_CANCELROD) == 1) then
           if (get_progress(P_PORTALGONE) == 0) then
-            bubble(en, "Now that you have the rod, go down and seal the portal.")
+            bubble(en, _"Now that you have the rod, go down and seal the portal.")
           elseif (get_progress(P_PORTALGONE) == 1) then
-            bubble(en, "You've done it! The portal is gone, and you have returned the Unadium coin and Rod of Cancellation.")
+            bubble(en, _"You've done it! The portal is gone, and you have returned the Unadium coin and Rod of Cancellation.")
             set_progress(P_UCOIN, 3)
             remove_special_item(SI_UCOIN)
             set_progress(P_CANCELROD, 2)
             remove_special_item(SI_CANCELROD)
             set_progress(P_TALKDERIG, 6)
-            msg("Derig takes the Rod of Cancellation and Unadium Coin.", 255, 0)
-            bubble(en, "I'll take these back to the grotto for safe keeping. Thank you.")
+            msg(_"Derig takes the Rod of Cancellation and Unadium Coin.", 255, 0)
+            bubble(en, _"I'll take these back to the grotto for safe keeping. Thank you.")
           end -- P_PORTALGONE
         end -- P_CANCELROD
       end -- P_UCOIN
     elseif (get_progress(P_TALKDERIG) == 6) then
       -- Although TALKDERIG==6, Derig will still be on the screen until you leave Ekla and return
-      bubble(en, "I will take these back to the grotto. Thanks again.")
+      bubble(en, _"I will take these back to the grotto. Thanks again.")
     end -- P_TALKDERIG
   elseif (get_progress(P_TALK_TSORIN) == 1) then
-    bubble(en, "Ah yes, $0, I... wait a minute! What is that note you are carrying?")
-    msg("You show Derig the note.", 18, 0)
-    bubble(en, "Oh, this is very important. Yes, of utmost importance.")
-    bubble(en, "Forgive me, $0, but Tsorin writes that the Oracle's Statue has been stolen. This causes great reason for concern.")
-    bubble(HERO1, "What's the big emergency?")
-    bubble(en, "No time for that now. Please, take this note to Tsorin. I authorize you to pass into the goblin lands.")
-    msg("Derig continues to mumble worredly.", 255, 0)
-    thought(HERO1, "Boy, this is just too weird all of a sudden.")
-    msg("Derig hands you a sealed envelope.", 18, 0)
+    bubble(en, _"Ah yes, $0, I... wait a minute! What is that note you are carrying?")
+    msg(_"You show Derig the note.", 18, 0)
+    bubble(en, _"Oh, this is very important. Yes, of utmost importance.")
+    bubble(en, _"Forgive me, $0, but Tsorin writes that the Oracle's Statue has been stolen. This causes great reason for concern.")
+    bubble(HERO1, _"What's the big emergency?")
+    bubble(en, _"No time for that now. Please, take this note to Tsorin. I authorize you to pass into the goblin lands.")
+    msg(_"Derig continues to mumble worredly.", 255, 0)
+    thought(HERO1, _"Boy, this is just too weird all of a sudden.")
+    msg(_"Derig hands you a sealed envelope.", 18, 0)
     set_progress(P_TALK_TSORIN, 2)
     remove_special_item(SI_NOTE_TSORIN)
     add_special_item(SI_NOTE_DERIG)
   elseif (get_progress(P_TALK_TSORIN) == 2) then
-    bubble(en, "Please hurry. Take this note to Tsorin immediately!")
+    bubble(en, _"Please hurry. Take this note to Tsorin immediately!")
   else
     -- // Nothing here, since Derig will only focus on Tsorin's quest if P_TALK_TSORIN < 3
   end -- P_TALK_TSORIN
@@ -434,84 +434,84 @@ function LOC_talk_jen (en)
     if (get_progress(P_UCOIN) == 0) then
       if (get_progress(P_TALKDERIG) == 0) then
         -- You have never gone to the grotto.
-        bubble(en, "Jen:", "I'm Derig's granddaughter. Go find Derig in the grotto north of here.")
+        bubble(en, _"Jen:", "I'm Derig's granddaughter. Go find Derig in the grotto north of here.")
       elseif (get_progress(P_TALKDERIG) == 1) then
         -- You entered the grotto, but did not fall in the pit.
-        bubble(en, "Jen:", "I'm Derig's granddaughter. Go find Derig in the grotto north of here. You've been there once before.")
+        bubble(en, _"Jen:", "I'm Derig's granddaughter. Go find Derig in the grotto north of here. You've been there once before.")
       elseif (get_progress(P_TALKDERIG) == 2) then
         -- You entered the grotto and fell in pit (you had NOT spoken to Jen first, though).  Someone helped you get out.
-        bubble(en, "You've already been to the grotto.")
+        bubble(en, _"You've already been to the grotto.")
         if (get_numchrs() > 1) then
-          bubble(HERO1, "Yes, we fell down a hole and someone pulled us out.")
+          bubble(HERO1, _"Yes, we fell down a hole and someone pulled us out.")
         else
-          bubble(HERO1, "Yes, I fell down a hole and someone pulled me out.")
+          bubble(HERO1, _"Yes, I fell down a hole and someone pulled me out.")
         end
-        bubble(en, "That is Derig, my grandfather. Go back and look for him.")
+        bubble(en, _"That is Derig, my grandfather. Go back and look for him.")
       else
         -- This should never occur
-        bubble(en, "Scripting Error:", "P_UCOIN == 0, but P_TALKDERIG != 0..2")
+        bubble(en, _"Scripting Error:", "P_UCOIN == 0, but P_TALKDERIG != 0..2")
       end
       -- Now you have spoken to Jen
       set_progress(P_UCOIN, 1)
     -- You have spoken to Jen at least once
     elseif (get_progress(P_UCOIN) == 1) then
       if (get_progress(P_TALKDERIG) == 0) then
-        bubble(en, "I said to go talk to Derig.")
+        bubble(en, _"I said to go talk to Derig.")
       elseif (get_progress(P_TALKDERIG) == 1) then
         -- You entered the grotto, but did not fall in the pit.
-        bubble(en, "You must find Derig in the grotto. He's there somewhere.")
+        bubble(en, _"You must find Derig in the grotto. He's there somewhere.")
       elseif (get_progress(P_TALKDERIG) == 2) then
-        bubble(en, "Well? Go find Derig in the grotto!")
+        bubble(en, _"Well? Go find Derig in the grotto!")
       elseif (get_progress(P_TALKDERIG) == 3) then
-        bubble(en, "Okay, that was stupid. You saw him by the fire and you didn't talk to him.")
+        bubble(en, _"Okay, that was stupid. You saw him by the fire and you didn't talk to him.")
         if (get_numchrs() == 1) then
-          bubble(en, "GO BACK AND TALK TO HIM! He's sitting by the fire you moron!")
+          bubble(en, _"GO BACK AND TALK TO HIM! He's sitting by the fire you moron!")
         else
-          bubble(en, "GO BACK AND TALK TO HIM! He's sitting by the fire you morons!")
+          bubble(en, _"GO BACK AND TALK TO HIM! He's sitting by the fire you morons!")
         end
       elseif (get_progress(P_TALKDERIG) == 4) then
         -- This should never occur
-        bubble(en, "Scripting Error:", "P_UCOIN == 1, but P_TALKDERIG == 4")
+        bubble(en, _"Scripting Error:", "P_UCOIN == 1, but P_TALKDERIG == 4")
       elseif (get_progress(P_TALKDERIG) == 5) then
         -- Met Derig
-        bubble(en, "Good. Now that you found Derig, here is the Unadium Coin.")
+        bubble(en, _"Good. Now that you found Derig, here is the Unadium Coin.")
         set_progress(P_UCOIN, 2)
         add_special_item(SI_UCOIN)
-        msg("Unadium coin procured", 255, 0)
+        msg(_"Unadium coin procured", 255, 0)
       end -- P_TALKDERIG
     elseif (get_progress(P_UCOIN) == 2) then
       -- You now have the Unadium coin
       if (get_progress(P_TALKDERIG) == 5) then
         if (get_progress(P_CANCELROD) == 0) then
           -- You do not have the rod
-          bubble(en, "Go get the Rod of Cancellation.")
+          bubble(en, _"Go get the Rod of Cancellation.")
         elseif (get_progress(P_CANCELROD) == 1) then
           -- You have the rod
           if (get_progress(P_PORTALGONE) == 0) then
             -- The portal is still there
-            bubble(en, "Get rid of the portal now.")
+            bubble(en, _"Get rid of the portal now.")
           elseif (get_progress(P_PORTALGONE) == 1) then
             -- The portal is gone
-            bubble(en, "You got rid of the portal! Give my father the coin and rod back and I'll give you a SunStone.")
+            bubble(en, _"You got rid of the portal! Give my father the coin and rod back and I'll give you a SunStone.")
           end -- P_PORTALGONE
         end -- P_CANCELROD
       else
         -- This should never occur
-        bubble(en, "Scripting Error:", "P_UCOIN == 2, but P_TALKDERIG != 5")
+        bubble(en, _"Scripting Error:", "P_UCOIN == 2, but P_TALKDERIG != 5")
       end -- P_TALKDERIG == 5
     elseif (get_progress(P_UCOIN) == 3) then
       -- Returned Rod of Cancellation to Derig
       if (get_treasure(45) == 0) then
-        bubble(en, "Thanks for returning the Rod to my grandfather. Here is a SunStone for you.")
+        bubble(en, _"Thanks for returning the Rod to my grandfather. Here is a SunStone for you.")
         chest(45, I_SSTONE, 1)
       else
-        bubble(en, "Thanks again.")
+        bubble(en, _"Thanks again.")
       end
     end -- P_UCOIN
   elseif (get_progress(P_TALK_TSORIN) == 1) then
-    bubble(en, "Jen:", "You must be looking for Derig, my grandfather. Find him in the grotto north of here.")
+    bubble(en, _"Jen:", "You must be looking for Derig, my grandfather. Find him in the grotto north of here.")
   elseif (get_progress(P_TALK_TSORIN) == 2) then
-    bubble(en, "You should finish Derig's assignment before I give you another.")
+    bubble(en, _"You should finish Derig's assignment before I give you another.")
   end -- P_TALK_TSORIN
 
 -- /*

@@ -158,13 +158,13 @@ function LOC_meet_nostik()
   warp("butler", 4)
   set_desc(1)
 
-  bubble(en, "I would like to thank you all for coming.")
-  bubble(en, "I appreciate all those willing to help. My master has summoned eight of you. Are you all accounted for?")
+  bubble(en, _"I would like to thank you all for coming.")
+  bubble(en, _"I appreciate all those willing to help. My master has summoned eight of you. Are you all accounted for?")
 
   set_ent_script(en, "W25F2W25F0W25F3W25F0W30")
   wait_for_entity(en, en)
 
-  bubble(en, "Excellent. If everyone is ready, I will take you to meet master Nostik...")
+  bubble(en, _"Excellent. If everyone is ready, I will take you to meet master Nostik...")
   wait(50)
 
   set_autoparty(1)
@@ -201,39 +201,39 @@ function LOC_storyline(en)
     set_ent_script(HERO1, "W40D1")
     wait_for_entity(HERO1, HERO1)
 
-    bubble(HERO1, "What the..? What was that?")
+    bubble(HERO1, _"What the..? What was that?")
 
     wait(25)
     set_ftile("fire", 311)
     set_ent_script(HERO1, "W25F3W25")
     wait_for_entity(HERO1, HERO1)
 
-    bubble(HERO1, "Hey, a note!")
+    bubble(HERO1, _"Hey, a note!")
     set_ftile("fire", 0)
 
-    bubble(HERO1, "The note is addressed to me!")
+    bubble(HERO1, _"The note is addressed to me!")
 
     a = get_vx()
     b = get_vy()
 
     move_camera(a + 64, b + 48, 1)
 
-    thought(HERO1, "`$0, I am an old friend.",
-                   "This note is intended for your   ",
-                   "eyes only. Haste and discretion  ",
-                   "are of the utmost importance.    ")
-    thought(HERO1, "I implore you to travel to Reisha",
-                   "Mountain with all possible speed.",
-                   "There, a man shall be waiting for",
-                   "your arrival. I beg that you come")
-    thought(HERO1, "at once. Tell no one, as both my ",
-                   "life and yours will be in danger.",
-                   "Please trust me.'                ",
-                   "  -Anonymous                     ")
+    thought(HERO1, _"`$0, I am an old friend.",
+                   _"This note is intended for your   ",
+                   _"eyes only. Haste and discretion  ",
+                   _"are of the utmost importance.    ")
+    thought(HERO1, _"I implore you to travel to Reisha",
+                   _"Mountain with all possible speed.",
+                   _"There, a man shall be waiting for",
+                   _"your arrival. I beg that you come")
+    thought(HERO1, _"at once. Tell no one, as both my ",
+                   _"life and yours will be in danger.",
+                   _"Please trust me.'                ",
+                   _"  -Anonymous                     ")
 
     move_camera(a, b, 1)
 
-    bubble(HERO1, "`An old friend?' `Tell no one?' This looks really fishy. And strangely important. I'd better check this out.")
+    bubble(HERO1, _"`An old friend?' `Tell no one?' This looks really fishy. And strangely important. I'd better check this out.")
 
     set_ent_speed(HERO1, 5)
     set_ent_script(HERO1, "D6R4D4")
@@ -264,24 +264,24 @@ function LOC_storyline(en)
     wait(20)
 
     set_ftile("wall", 0)
-    bubble(HERO1, "..huh?")
+    bubble(HERO1, _"..huh?")
 
     set_ent_script(HERO1, "R2F1W30")
     wait_for_entity(HERO1, HERO1)
 
     bubble(HERO1, "$0:",
-                  "What was that?")
+                  _"What was that?")
     set_ftile("wall", 310)
     wait(30)
     bubble(HERO1, "$0:",
-                  "That wasn't there a second ago!")
+                  _"That wasn't there a second ago!")
 
     set_ent_script(HERO1, "U1")
     wait_for_entity(HERO1, HERO1)
 
-    bubble(HERO1, "Wow, what a strange request.")
-    bubble(HERO1, "On the other hand, maybe there's something here that I can use to help Mom and Dad.")
-    bubble(HERO1, "I'll have to let them know right away!")
+    bubble(HERO1, _"Wow, what a strange request.")
+    bubble(HERO1, _"On the other hand, maybe there's something here that I can use to help Mom and Dad.")
+    bubble(HERO1, _"I'll have to let them know right away!")
 
     set_ent_speed(HERO1, 5)
 
@@ -297,19 +297,19 @@ function LOC_storyline(en)
     wait_for_entity(HERO1, HERO1)
 
     bubble(HERO1, "$0:",
-                  "Oh, no. I hope this isn't another eviction notice.")
+                  _"Oh, no. I hope this isn't another eviction notice.")
 
     wait(25)
     set_mtile("door", 0)
     wait(50)
-    bubble(HERO1, "Hey now, what's this?")
+    bubble(HERO1, _"Hey now, what's this?")
     wait(50)
 
     set_ent_facing(HERO1, FACE_DOWN)
     wait(50)
 
-    bubble(HERO1, "Hmm... I don't like the sound of this one bit. I wonder if I even know who this anonymous fellow is?")
-    bubble(HERO1, "Well, I'd better get packed. It's a long way to Reisha Mountain.")
+    bubble(HERO1, _"Hmm... I don't like the sound of this one bit. I wonder if I even know who this anonymous fellow is?")
+    bubble(HERO1, _"Well, I'd better get packed. It's a long way to Reisha Mountain.")
 
     set_ent_speed(HERO1, 5)
     set_ent_script(HERO1, "D7")
@@ -324,11 +324,11 @@ function LOC_storyline(en)
     wait_for_entity(HERO1, HERO1)
 
     bubble(HERO1, "$0:",
-                  "You wanted to see me sir?")
-    bubble(1, "Yes $0. It is time for you to leave the temple and discover the world. I have found the perfect way for you to do that.")
-    bubble(HERO1, "Excellent sir. What am I to do?")
-    bubble(1, "A note addressed to you has mysteriously appeared on the door of your private chambers. It was brought to me.")
-    bubble(1, "Read over this and tell me what you may know about the sender.")
+                  _"You wanted to see me sir?")
+    bubble(1, _"Yes $0. It is time for you to leave the temple and discover the world. I have found the perfect way for you to do that.")
+    bubble(HERO1, _"Excellent sir. What am I to do?")
+    bubble(1, _"A note addressed to you has mysteriously appeared on the door of your private chambers. It was brought to me.")
+    bubble(1, _"Read over this and tell me what you may know about the sender.")
 
     set_ftile("alter", 311)
     set_ent_script(HERO1, "U1W50")
@@ -340,14 +340,14 @@ function LOC_storyline(en)
     set_ent_facing(HERO1, FACE_UP)
     wait(50)
 
-    bubble(HERO1, "I cannot say, sir. I know no one who lives at Reisha Mountain.")
-    bubble(HERO1, "My knowledge of geography dictates that it is in a secluded mountain range, but that is all.")
-    bubble(1, "Very well, $0. I am giving you an opportunity to investigate this quest.")
-    bubble(1, "Among other things, this will test your training as well as get you out on a little adventure.")
-    bubble(HERO1, "I would be honored sir. Where do I go first?")
-    bubble(1, "Proceed directly to Reisha Mountain. Let's not keep our mystery host waiting.")
-    bubble(HERO1, "I'm on my way.")
-    bubble(1, "Fare thee well then, $0.")
+    bubble(HERO1, _"I cannot say, sir. I know no one who lives at Reisha Mountain.")
+    bubble(HERO1, _"My knowledge of geography dictates that it is in a secluded mountain range, but that is all.")
+    bubble(1, _"Very well, $0. I am giving you an opportunity to investigate this quest.")
+    bubble(1, _"Among other things, this will test your training as well as get you out on a little adventure.")
+    bubble(HERO1, _"I would be honored sir. Where do I go first?")
+    bubble(1, _"Proceed directly to Reisha Mountain. Let's not keep our mystery host waiting.")
+    bubble(HERO1, _"I'm on my way.")
+    bubble(1, _"Fare thee well then, $0.")
 
     set_ent_script(HERO1, "D5")
     wait_for_entity(HERO1, HERO1)
@@ -367,12 +367,12 @@ function LOC_storyline(en)
     wait_for_entity(HERO1, HERO1)
 
     bubble(HERO1, "$0:",
-                  "Come out, come out, wherever you are, Nella!")
+                  _"Come out, come out, wherever you are, Nella!")
 
     set_ent_script(HERO1, "R1U1W30F2W30F1W30F3W30")
     wait_for_entity(HERO1, HERO1)
 
-    bubble(HERO1, "Nella, YOU ARE SO DEAD MEAT WHEN I FIND YOU!")
+    bubble(HERO1, _"Nella, YOU ARE SO DEAD MEAT WHEN I FIND YOU!")
 
     set_ftile("room", 537)
     wait(10)
@@ -391,12 +391,12 @@ function LOC_storyline(en)
     set_ftile("room", 310)
     wait(50)
 
-    bubble(HERO1, "Wait a minute...")
+    bubble(HERO1, _"Wait a minute...")
     set_ent_script(HERO1, "U5W75")
     wait_for_entity(HERO1, HERO1)
-    bubble(HERO1, "Who put this letter here? Wait a second... I've heard of this `Reisha Mountain' before...")
+    bubble(HERO1, _"Who put this letter here? Wait a second... I've heard of this `Reisha Mountain' before...")
     set_ftile("room", 0)
-    bubble(HERO1, "I've got to take a look into this right away!")
+    bubble(HERO1, _"I've got to take a look into this right away!")
 
     set_ent_speed(HERO1, 5)
 
@@ -411,7 +411,7 @@ function LOC_storyline(en)
     set_ent_tiley(1, 54)
     set_ent_script(1, "R2F0W50")
     wait_for_entity(1, 1)
-    bubble(1, "$0? Hello?")
+    bubble(1, _"$0? Hello?")
 
   elseif (en == TEMMIN) then
     warp("start_temmin", 4)
@@ -422,18 +422,18 @@ function LOC_storyline(en)
     wait_for_entity(HERO1, HERO1)
 
     bubble(HERO1, "$0:",
-                  "I was told you had a new mission for me, sir.")
-    bubble(2, "Yes $0. A message from Military Intelligence came for you today. You are to go to Reisha Mountain.")
-    bubble(HERO1, "Yes, sir. What are my orders?")
-    bubble(2, "This is the letter which we received.")
+                  _"I was told you had a new mission for me, sir.")
+    bubble(2, _"Yes $0. A message from Military Intelligence came for you today. You are to go to Reisha Mountain.")
+    bubble(HERO1, _"Yes, sir. What are my orders?")
+    bubble(2, _"This is the letter which we received.")
 
     set_ent_script(HERO1, "D1L2F1W60R2U1F2W30")
     wait_for_entity(HERO1, HERO1)
 
-    bubble(HERO1, "Understood, sir.")
-    bubble(2, "Once you find out what this is all about, report back to us if there is a threat of another invasion.")
-    bubble(2, "We will be safe instead of sorry, is that understood?")
-    bubble(HERO1, "Yes sir. I'll leave immediately, sir.")
+    bubble(HERO1, _"Understood, sir.")
+    bubble(2, _"Once you find out what this is all about, report back to us if there is a threat of another invasion.")
+    bubble(2, _"We will be safe instead of sorry, is that understood?")
+    bubble(HERO1, _"Yes sir. I'll leave immediately, sir.")
 
     set_ent_script(HERO1, "R9")
     wait_for_entity(HERO1, HERO1)
@@ -450,16 +450,16 @@ function LOC_storyline(en)
     wait(50)
 
     bubble(HERO1, "$0:",
-                   "This is so perfect.")
-    bubble(HERO1, "Just as my luck starts running out, along comes an opportunity to get out of town, and possibly make some serious coin on the way.")
-    bubble(HERO1, "Anyone this desperate must have a lot of dough to back it up, and I'm just the one to steal it from him!")
+                   _"This is so perfect.")
+    bubble(HERO1, _"Just as my luck starts running out, along comes an opportunity to get out of town, and possibly make some serious coin on the way.")
+    bubble(HERO1, _"Anyone this desperate must have a lot of dough to back it up, and I'm just the one to steal it from him!")
 
-    bubble(HERO1, "I can just imagine...")
+    bubble(HERO1, _"I can just imagine...")
     set_ent_facing(HERO1, FACE_DOWN)
     wait(50)
 
-    bubble(HERO1, "I'd be the richest thief on the block.")
-    bubble(HERO1, "No! I'd be the richest thief in my OWN CITY! Ha ha ha!")
+    bubble(HERO1, _"I'd be the richest thief on the block.")
+    bubble(HERO1, _"No! I'd be the richest thief in my OWN CITY! Ha ha ha!")
     wait(50)
 
   elseif (en == NOSLOM) then
@@ -469,14 +469,14 @@ function LOC_storyline(en)
     set_ent_speed(HERO1, 5)
 
     bubble(HERO1, "$0:",
-                  "This does not look good. I'm almost positive the handwriting on this note is the same as...")
+                  _"This does not look good. I'm almost positive the handwriting on this note is the same as...")
     wait(50)
     set_ent_facing(HERO1, FACE_DOWN)
     wait(50)
 
-    bubble(HERO1, "Hmm...")
+    bubble(HERO1, _"Hmm...")
     wait(50)
-    bubble(HERO1, "I have no choice but to check it out. I'd must be getting on my way immediately!")
+    bubble(HERO1, _"I have no choice but to check it out. I'd must be getting on my way immediately!")
     set_ent_script(HERO1, "D12")
     wait_for_entity(HERO1, HERO1)
   end
@@ -485,3 +485,4 @@ function LOC_storyline(en)
   remove_chr(en)
   return
 end
+

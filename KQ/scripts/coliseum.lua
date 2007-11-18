@@ -19,82 +19,82 @@ end
 
 function entity_handler(en)
   if (en == 0) then
-    bubble(en, "I actually made it to the second round!")
+    bubble(en, _"I actually made it to the second round!")
 
   elseif (en == 1) then
-    bubble(en, "I'm out of practice.")
+    bubble(en, _"I'm out of practice.")
 
   elseif (en == 2) then
-    bubble(en, "I can't stand waiting like this!")
+    bubble(en, _"I can't stand waiting like this!")
 
   elseif (en == 3) then
-    bubble(en, "There's not enough women in these competitions.")
+    bubble(en, _"There's not enough women in these competitions.")
 
   elseif (en == 4) then
-    bubble(en, "I came all this way and then found out that I didn't have enough money for the registration fee!")
+    bubble(en, _"I came all this way and then found out that I didn't have enough money for the registration fee!")
 
   elseif (en == 5) then
-    bubble(en, "I'm waiting for my next match.")
+    bubble(en, _"I'm waiting for my next match.")
 
   elseif (en == 6) then
     local a, b
 
     if (get_progress(P_OPALSHIELD) == 1) then
-      bubble(en, "This is where you register.")
-      bubble(en, "Hey, wait a minute... you're the one who defeated Trayor. We can't let you register again... you're too good for these guys.")
+      bubble(en, _"This is where you register.")
+      bubble(en, _"Hey, wait a minute... you're the one who defeated Trayor. We can't let you register again... you're too good for these guys.")
       return
     end
     if (get_progress(P_ROUNDNUM) == 0) then
-      bubble(en, "This is where you register.")
+      bubble(en, _"This is where you register.")
       if (get_progress(P_FIRSTTIME) == 0) then
-        bubble(en, "Before I explain the rules, I should tell you that the registration fee is 2000 gp!")
-        bubble(en, "If you lose even once, you are done... and will have to register again.")
-        bubble(en, "As well, after you register you can't leave the coliseum grounds. If you leave, you will be forced to register again.")
-        bubble(en, "Now, let's talk about the actual fights!")
-        bubble(en, "The first three battles are more or less just preliminary fights to make sure you have what it takes.")
-        bubble(en, "If you win the first three rounds, you qualify for more advanced matches.")
-        bubble(en, "The more advanced matches are against more skilled opponents and will determine whether or not your skills are balanced enough.")
-        bubble(en, "If you manage to defeat the advanced warriors, you will be given a chance to fight Trayor for the grand prize.")
-        a = prompt(en, 2, 0, "So, are you willing to pay the",
-                             "2000 gp entrance fee?",
-                             "  no  ",
-                             "  yes ")
+        bubble(en, _"Before I explain the rules, I should tell you that the registration fee is 2000 gp!")
+        bubble(en, _"If you lose even once, you are done... and will have to register again.")
+        bubble(en, _"As well, after you register you can't leave the coliseum grounds. If you leave, you will be forced to register again.")
+        bubble(en, _"Now, let's talk about the actual fights!")
+        bubble(en, _"The first three battles are more or less just preliminary fights to make sure you have what it takes.")
+        bubble(en, _"If you win the first three rounds, you qualify for more advanced matches.")
+        bubble(en, _"The more advanced matches are against more skilled opponents and will determine whether or not your skills are balanced enough.")
+        bubble(en, _"If you manage to defeat the advanced warriors, you will be given a chance to fight Trayor for the grand prize.")
+        a = prompt(en, 2, 0, _"So, are you willing to pay the",
+                             _"2000 gp entrance fee?",
+                             _"  no  ",
+                             _"  yes ")
         set_progress(P_FIRSTTIME, 1)
       else
-        a = prompt(en, 2, 0, "The registration fee is 2000 gp.",
-                             "Are you in?",
-                             "  no  ",
-                             "  yes ")
+        a = prompt(en, 2, 0, _"The registration fee is 2000 gp.",
+                             _"Are you in?",
+                             _"  no  ",
+                             _"  yes ")
       end
       if (a == 0) then
-        bubble(en, "Oh well. Come back when you're ready.")
+        bubble(en, _"Oh well. Come back when you're ready.")
       else
         if (get_gp() >= 2000) then
 
           set_gp(get_gp() - 2000)
-          bubble(en, "Consider yourself registered. After each battle, come back and talk to me.")
+          bubble(en, _"Consider yourself registered. After each battle, come back and talk to me.")
           set_ent_script(en, "U2R1F2")
           wait_for_entity(en, en)
           set_progress(P_ROUNDNUM, 1)
           set_progress(P_BATTLESTATUS, 0)
         else
-          bubble(en, "Umm... you don't seem to have enough. I would suggest selling some junk. In any case, you can't register at this point.")
+          bubble(en, _"Umm... you don't seem to have enough. I would suggest selling some junk. In any case, you can't register at this point.")
         end
       end
     else
       a = get_progress(P_BATTLESTATUS)
       if (a == 0) then
         if (get_progress(P_ROUNDNUM) == 7) then
-          bubble(en, "Wow! This is it... your next battle is with Trayor. Good luck... you'll need it!")
+          bubble(en, _"Wow! This is it... your next battle is with Trayor. Good luck... you'll need it!")
         else
-          bubble(en, "Battle number "..get_progress(P_ROUNDNUM)..". Just head on through that door when you are ready.")
+          bubble(en, _"Battle number "..get_progress(P_ROUNDNUM).._". Just head on through that door when you are ready.")
         end
       elseif (a == 1) then
         if (get_progress(P_ROUNDNUM) == 7) then
-          bubble(en, "Astounding! Whoever you are, you're going to go far!")
-          bubble(en, "Well, I guess this is yours.")
+          bubble(en, _"Astounding! Whoever you are, you're going to go far!")
+          bubble(en, _"Well, I guess this is yours.")
           sfx(5)
-          msg("Opal Shield procured", 255, 0, xofs, yofs)
+          msg(_"Opal Shield procured", 255, 0, xofs, yofs)
           set_progress(P_OPALSHIELD, 1)
           add_special_item(SI_OPALSHIELD)
           if (get_ent_tilex(HERO1) == get_ent_tilex(en)) then
@@ -116,7 +116,7 @@ function entity_handler(en)
           end
           set_ent_script(en, "L1D2")
           wait_for_entity(en, en)
-          bubble(en, "Good luck in your endeavours.")
+          bubble(en, _"Good luck in your endeavours.")
 	  if (get_numchrs() > 1) then -- Skip this partnering up bit.
 	     return
 	  end
@@ -144,12 +144,12 @@ function entity_handler(en)
           set_ent_id(en, get_progress(P_FINALPARTNER) - 1)
           set_ent_active(en, 1)
         else
-          bubble(en, "Congratulations! You should have a rest or heal up. Come back and talk to me again after you've prepared.")
+          bubble(en, _"Congratulations! You should have a rest or heal up. Come back and talk to me again after you've prepared.")
           set_progress(P_BATTLESTATUS, 0)
           set_progress(P_ROUNDNUM, get_progress(P_ROUNDNUM) + 1)
         end
       elseif (a == 2) then
-        bubble(en, "Ooh... tough luck!")
+        bubble(en, _"Ooh... tough luck!")
         set_progress(P_BATTLESTATUS, 0)
         set_progress(P_ROUNDNUM, 0)
         set_ent_script(HERO1, "D3F1")
@@ -161,42 +161,42 @@ function entity_handler(en)
     end
 
   elseif (en == 7) then
-    bubble(en, "Losing isn't so bad.")
-    bubble(en, "No wait, let me rephrase that!")
-    bubble(en, "Losing sucks!")
+    bubble(en, _"Losing isn't so bad.")
+    bubble(en, _"No wait, let me rephrase that!")
+    bubble(en, _"Losing sucks!")
 
   elseif (en == 8) then
-    bubble(en, "What a waste of money.")
-    bubble(HERO1, "How many matches did you fight?")
-    bubble(en, "Matches? I haven't left the bar yet!")
+    bubble(en, _"What a waste of money.")
+    bubble(HERO1, _"How many matches did you fight?")
+    bubble(en, _"Matches? I haven't left the bar yet!")
 
   elseif (en == 9) then
-    bubble(en, "These fights are quite interesting.")
+    bubble(en, _"These fights are quite interesting.")
 
   elseif (en == 10) then
-    bubble(en, "Wine puts losing in a whole new perspective.")
+    bubble(en, _"Wine puts losing in a whole new perspective.")
 
   elseif (en == 11) then
-    bubble(en, "The Coliseum hasn't been the same since they discontinued betting on the fights.")
+    bubble(en, _"The Coliseum hasn't been the same since they discontinued betting on the fights.")
 
   elseif (en == 12) then
     if (get_progress(P_OLDPARTNER) == 0) then
-      bubble(en, "Wow! I saw you fighting. You cleaned up!")
-      bubble(en, "Oh yeah! I'm here because I ran into some guy named Derig. Well, he actually came looking for me.")
-      bubble(en, "Anyways, he wanted me to come and find you.")
-      bubble(HERO1, "Derig! What does he want now?")
-      bubble(en, "He said that he found out where all of the Opal armor is and he sent me to tell you.")
-      bubble(en, "He also figured that if you didn't have a partner by now, that I should make my services available to you.")
-      bubble(en, "And let me just say that after travelling all this way to find you... I won't take no for an answer!")
-      bubble(HERO1, "Well, in that case, welcome to the team.")
-      bubble(HERO1, "Now, I already found the Opal Helmet and the Opal Shield.")
-      bubble(en, "So what about the other stuff? Do you already know where the Band and Armor are?")
-      bubble(HERO1, "No... no, I don't know where the other pieces are.")
-      bubble(en, "Alrighty then, down to business. The Band belongs to a merchant in Ajantara south of here.")
-      bubble(en, "The Armor, however, is hidden deep in a cavern east of here.")
-      bubble(HERO1, "Well, where should we go first?")
-      bubble(en, "Derig said to get the Armor last and since all that leaves is the Band, then we should go for that.")
-      bubble(HERO1, "Fair enough... let's roll.")
+      bubble(en, _"Wow! I saw you fighting. You cleaned up!")
+      bubble(en, _"Oh yeah! I'm here because I ran into some guy named Derig. Well, he actually came looking for me.")
+      bubble(en, _"Anyways, he wanted me to come and find you.")
+      bubble(HERO1, _"Derig! What does he want now?")
+      bubble(en, _"He said that he found out where all of the Opal armor is and he sent me to tell you.")
+      bubble(en, _"He also figured that if you didn't have a partner by now, that I should make my services available to you.")
+      bubble(en, _"And let me just say that after travelling all this way to find you... I won't take no for an answer!")
+      bubble(HERO1, _"Well, in that case, welcome to the team.")
+      bubble(HERO1, _"Now, I already found the Opal Helmet and the Opal Shield.")
+      bubble(en, _"So what about the other stuff? Do you already know where the Band and Armor are?")
+      bubble(HERO1, _"No... no, I don't know where the other pieces are.")
+      bubble(en, _"Alrighty then, down to business. The Band belongs to a merchant in Ajantara south of here.")
+      bubble(en, _"The Armor, however, is hidden deep in a cavern east of here.")
+      bubble(HERO1, _"Well, where should we go first?")
+      bubble(en, _"Derig said to get the Armor last and since all that leaves is the Band, then we should go for that.")
+      bubble(HERO1, _"Fair enough... let's roll.")
       add_chr(get_progress(P_FINALPARTNER) - 1)
       LOC_partner_up()
       set_progress(P_FINALPARTNER, 0)
@@ -205,20 +205,20 @@ function entity_handler(en)
       orient_heroes()
       drawmap()
       screen_dump()
-      msg("$1 joined!", 255, 0)
+      msg(_"$1 joined!", 255, 0)
     else
-      bubble(en, "Hey... long time no see. I saw you fighting. You were amazing!")
-      bubble(en, "Oh yeah! I'm here because I ran into some guy named Derig. Well, he actually came looking for me.")
-      bubble(en, "He knew that we were separated and he gave me some information to bring back.")
-      bubble(HERO1, "Speaking of that... where did you go?")
-      bubble(en, "Heh... when we hit the teleporter, it sent me back to Ekla.")
-      bubble(en, "I was on the way back to the teleporter when I ran into Derig... and now I'm here.")
-      bubble(HERO1, "So, what did Derig tell you?")
-      bubble(en, "He told me where all the Opal stuff is... the Shield, the Band, the Armor, and the Helmet.")
-      bubble(HERO1, "I already snagged the Helmet and the Shield... where are the other parts?")
-      bubble(en, "You already found the Helmet and Shield! Wow! Well, the Band is in a town called Ajantara to the south.")
-      bubble(en, "The Armor is deep in a cavern to the east. And Derig said to get the Armor last, so we should go to Ajantara first. Okay?")
-      bubble(HERO1, "No problem... let's go.")
+      bubble(en, _"Hey... long time no see. I saw you fighting. You were amazing!")
+      bubble(en, _"Oh yeah! I'm here because I ran into some guy named Derig. Well, he actually came looking for me.")
+      bubble(en, _"He knew that we were separated and he gave me some information to bring back.")
+      bubble(HERO1, _"Speaking of that... where did you go?")
+      bubble(en, _"Heh... when we hit the teleporter, it sent me back to Ekla.")
+      bubble(en, _"I was on the way back to the teleporter when I ran into Derig... and now I'm here.")
+      bubble(HERO1, _"So, what did Derig tell you?")
+      bubble(en, _"He told me where all the Opal stuff is... the Shield, the Band, the Armor, and the Helmet.")
+      bubble(HERO1, _"I already snagged the Helmet and the Shield... where are the other parts?")
+      bubble(en, _"You already found the Helmet and Shield! Wow! Well, the Band is in a town called Ajantara to the south.")
+      bubble(en, _"The Armor is deep in a cavern to the east. And Derig said to get the Armor last, so we should go to Ajantara first. Okay?")
+      bubble(HERO1, _"No problem... let's go.")
       add_chr(get_progress(P_FINALPARTNER) - 1)
       LOC_partner_up()
       set_progress(P_FINALPARTNER, 0)
@@ -227,7 +227,7 @@ function entity_handler(en)
       orient_heroes()
       drawmap()
       screen_dump()
-      msg("$1 joined!", 255, 0)
+      msg(_"$1 joined!", 255, 0)
     end
 
   end
@@ -264,7 +264,7 @@ function zone_handler(zn)
     door_out("shop_o")
 
   elseif (zn == 8) then
-    inn("The Coliseum Inn", 250, 1)
+    inn(_"The Coliseum Inn", 250, 1)
 
   elseif (zn == 9) then
     shop(22)
@@ -276,7 +276,7 @@ function zone_handler(zn)
     set_save(0)
 
   elseif (zn == 12) then
-    bubble(HERO1, "Hmm. The sun feels very warm right here.")
+    bubble(HERO1, _"Hmm. The sun feels very warm right here.")
     set_save(1)
 
   elseif (zn == 13) then
@@ -287,7 +287,7 @@ function zone_handler(zn)
     
   elseif (zn == 15) then
     if (get_progress(P_BATTLESTATUS) > 0) then
-      bubble(HERO1, "I'm not ready yet.")
+      bubble(HERO1, _"I'm not ready yet.")
       return
     end
     set_run(0)

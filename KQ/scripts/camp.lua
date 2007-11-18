@@ -49,7 +49,7 @@ end
 
 function entity_handler(en)
   if (en == 0 or en == 1 or en == 3 or en == 4) then
-    bubble(en, "It sure it clammy in here...")
+    bubble(en, _"It sure it clammy in here...")
 
   elseif (en == 2) then
     -- This should never happen, but just incase...
@@ -57,18 +57,18 @@ function entity_handler(en)
 
   elseif (en == 5) then
     if (get_progress(P_MAYORGUARD1) == 0) then
-      bubble(en, "Wow, thanks for helping me! When we get back to my place, feel free to stop by sometime!")
+      bubble(en, _"Wow, thanks for helping me! When we get back to my place, feel free to stop by sometime!")
       set_progress(P_MAYORGUARD1, 1)
     else
-      bubble(en, "My place is right next to the mayor's.")
+      bubble(en, _"My place is right next to the mayor's.")
     end
 
   elseif (en == 6) then
     if (get_progress(P_MAYORGUARD2) == 0) then
-      bubble(en, "Thanks for your help! I should be able to find my way out.")
+      bubble(en, _"Thanks for your help! I should be able to find my way out.")
       set_progress(P_MAYORGUARD2, 1)
     else
-      bubble(en, "Don't worry about me. I'm still looking for the exit...")
+      bubble(en, _"Don't worry about me. I'm still looking for the exit...")
     end
 
   elseif (en == 7 or en == 8) then
@@ -270,13 +270,13 @@ function LOC_orc_battle(fight_num, en)
     wait_for_entity(7, 8)
     set_ent_facing(7, FACE_UP)
     set_ent_facing(8, FACE_UP)
-    bubble(en, "You're not welcome here!")
+    bubble(en, _"You're not welcome here!")
     which_combat = 2
   elseif (fight_num == 2) then
     if (get_numchrs() > 1) then
-      bubble(en, "Intruders!")
+      bubble(en, _"Intruders!")
     else
-      bubble(en, "Intruder!")
+      bubble(en, _"Intruder!")
     end
     x, y = marker("fight_2")
     move_entity(10, x + 1, y + 1, 0)
@@ -338,13 +338,13 @@ function LOC_orc_battle(fight_num, en)
     set_ent_facing(18, FACE_LEFT)
     which_combat = 3
   elseif (fight_num == 7) then
-    bubble(en, "You have to get through us to get to them.")
+    bubble(en, _"You have to get through us to get to them.")
     which_combat = 5
   elseif (fight_num == 8) then
     if (get_numchrs() > 1) then
-      bubble(en, "Intruders!")
+      bubble(en, _"Intruders!")
     else
-      bubble(en, "Intruder!")
+      bubble(en, _"Intruder!")
     end
     which_combat = 1
   end
@@ -373,30 +373,30 @@ function LOC_rescue_mayor(en)
   local a, x, y
 
   x, y = marker("cage")
-  bubble(en, "Hey, $0! Am I ever glad to see you! We're in a bit of a jam here.")
+  bubble(en, _"Hey, $0! Am I ever glad to see you! We're in a bit of a jam here.")
   if (en ~= 2) then
-    bubble(en, "I took a small job to help guard the mayor on his trip to Andra.")
+    bubble(en, _"I took a small job to help guard the mayor on his trip to Andra.")
   end
-  bubble(en, "We were on the Brayden bridge when we were ambushed by these orcs. During the fight, one of them used a fire spell.")
-  bubble(en, "The bridge was engulfed in flames and we were trapped.")
-  bubble(HERO1, "But how did you end up here?")
-  bubble(en, "Well, we had no choice but to go back the way we came, and we ran into the whole tribe.")
-  bubble(en, "We were horribly out-numbered and forced to surrender. They brought us here and then most of them left for somewhere else.")
-  bubble(HERO1, "Hmm... this almost sounds as though the whole thing was planned.")
-  bubble(en, "Hmm...")
+  bubble(en, _"We were on the Brayden bridge when we were ambushed by these orcs. During the fight, one of them used a fire spell.")
+  bubble(en, _"The bridge was engulfed in flames and we were trapped.")
+  bubble(HERO1, _"But how did you end up here?")
+  bubble(en, _"Well, we had no choice but to go back the way we came, and we ran into the whole tribe.")
+  bubble(en, _"We were horribly out-numbered and forced to surrender. They brought us here and then most of them left for somewhere else.")
+  bubble(HERO1, _"Hmm... this almost sounds as though the whole thing was planned.")
+  bubble(en, _"Hmm...")
   if (en ~= 2) then
-    bubble(HERO1, "Excuse me, Mr. Mayor.")
-    bubble(2, "Yes?")
+    bubble(HERO1, _"Excuse me, Mr. Mayor.")
+    bubble(2, _"Yes?")
   end
-  bubble(HERO1, "Do you think that this could have possibly been a planned attack with the purpose of trying to kidnap you?")
-  bubble(2, "I don't see why they would want to kidnap me, but uh... could we possibly get out of here now?")
+  bubble(HERO1, _"Do you think that this could have possibly been a planned attack with the purpose of trying to kidnap you?")
+  bubble(2, _"I don't see why they would want to kidnap me, but uh... could we possibly get out of here now?")
   if (en ~= 2) then
     set_ent_facing(en, FACE_UP)
-    bubble(en, "Yes sir!")
+    bubble(en, _"Yes sir!")
     set_ent_facing(en, FACE_DOWN)
-    bubble(en, "I'll go back to Randen with the mayor. Why don't you meet me there after?")
+    bubble(en, _"I'll go back to Randen with the mayor. Why don't you meet me there after?")
   end
-  bubble(HERO1, "Sure.")
+  bubble(HERO1, _"Sure.")
 
   set_progress(P_FOUNDMAYOR, 1)
   set_progress(P_SIDEQUEST2, 1)

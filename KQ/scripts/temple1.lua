@@ -51,104 +51,104 @@ end
 
 function entity_handler(en)
   if (en >= 0 and en <= 3) then
-    bubble(en, "We are the Special Forces team.")
+    bubble(en, _"We are the Special Forces team.")
 
   elseif (en >= 4 and en <= 7) then
-    bubble(en, "We were relieved of duty while the monks guard the alter room.")
+    bubble(en, _"We were relieved of duty while the monks guard the alter room.")
 
   elseif (en >= 8 and en <= 11) then
     if (get_progress(P_GOBLINITEM) == 0) then
-      bubble(en, "We are guards from Andra, helping defend the temple.")
+      bubble(en, _"We are guards from Andra, helping defend the temple.")
     else
-      bubble(en, "I'll guess we'll be going back to Andra soon.")
+      bubble(en, _"I'll guess we'll be going back to Andra soon.")
     end
 
   elseif (en >= 12 and en <= 15) then
     if (get_progress(P_GOBLINITEM) == 0) then
-      bubble(en, "I'm famished. We just finished beating back a bunch of monsters.")
+      bubble(en, _"I'm famished. We just finished beating back a bunch of monsters.")
     else
-      bubble(en, "Things are finally get back to normal around here.")
+      bubble(en, _"Things are finally get back to normal around here.")
     end
 
   elseif (en == 16) then
-    bubble(en, "I have much to do. Please excuse me.")
+    bubble(en, _"I have much to do. Please excuse me.")
 
   elseif (en == 17) then
-    bubble(en, "These soldiers are quite hungry. I am getting them food.")
+    bubble(en, _"These soldiers are quite hungry. I am getting them food.")
 
   elseif (en == 18) then
-    bubble(en, "I must rush. I haven't enough time to talk with you now.")
+    bubble(en, _"I must rush. I haven't enough time to talk with you now.")
 
   elseif (en == 19) then
-    bubble(en, "We have to listen to his lessons. I can't talk to you now.")
+    bubble(en, _"We have to listen to his lessons. I can't talk to you now.")
 
   elseif (en == 20) then
     if (get_progress(P_GOBLINITEM) == 0) then
-      bubble(en, "I wish I could go beat the bad guys! This school is boring.")
+      bubble(en, _"I wish I could go beat the bad guys! This school is boring.")
     else
-      bubble(en, "This guy just goes on and on.")
+      bubble(en, _"This guy just goes on and on.")
     end
 
   elseif (en == 21) then
-    bubble(en, "Those monks lock themselves away until there's a problem. I haven't heard them say a word all week!")
+    bubble(en, _"Those monks lock themselves away until there's a problem. I haven't heard them say a word all week!")
 
   elseif (en == 22) then
     if (get_progress(P_GOBLINITEM) == 0) then
-      bubble(en, "I was asked to teach these children, so as to distract them from the monster threat. Pardon me.")
+      bubble(en, _"I was asked to teach these children, so as to distract them from the monster threat. Pardon me.")
     else
-      bubble(en, "These children simply won't pay attention.")
+      bubble(en, _"These children simply won't pay attention.")
     end
 
   elseif ((en >= 23 and en <= 29) or en == 39 or en == 40) then
-    bubble(en, "...")
-    thought(HERO1, "They appear to be in deep meditation.")
+    bubble(en, _"...")
+    thought(HERO1, _"They appear to be in deep meditation.")
 
   elseif (en == 30) then
-    bubble(en, "Zzz...")
+    bubble(en, _"Zzz...")
 
   elseif (en == 31) then
-    bubble(en, "...snore...")
+    bubble(en, _"...snore...")
 
   elseif (en == 32) then
-    bubble(en, "Yawn... I'm quite tired. Go away.")
+    bubble(en, _"Yawn... I'm quite tired. Go away.")
 
   elseif (en == 33) then
-    bubble(en, "Grrxx... zzz...")
+    bubble(en, _"Grrxx... zzz...")
 
   elseif (en == 34) then
-    bubble(en, "Not now. I'm resting.")
+    bubble(en, _"Not now. I'm resting.")
 
   elseif (en == 35) then
-    bubble(en, "...zzz...")
+    bubble(en, _"...zzz...")
 
   elseif (en == 36) then
     if (get_progress(P_GOBLINITEM) == 0) then
-      bubble(en, "...Guarding the... ...zzz... Gotta defend the... zzz...")
+      bubble(en, _"...Guarding the... ...zzz... Gotta defend the... zzz...")
     else
-      bubble(en, "...zzz... must sleep...")
+      bubble(en, _"...zzz... must sleep...")
     end
 
   elseif (en == 37) then
-    bubble(en, "This door is drafty. I can't get to sleep.")
+    bubble(en, _"This door is drafty. I can't get to sleep.")
 
   elseif (en == 38) then
     if (get_progress(P_TALK_TEMMIN) == 0) then
-      bubble(en, "You should not enter this section of the Temple. It is dangerous.")
+      bubble(en, _"You should not enter this section of the Temple. It is dangerous.")
       if (get_numchrs() > 1) then
-        bubble(HERO1, "We're here to help.")
+        bubble(HERO1, _"We're here to help.")
       else
-        bubble(HERO1, "I'm here to help.")
+        bubble(HERO1, _"I'm here to help.")
       end
-      bubble(en, "A young man has already gone in with the Goblin Jewel. He believes it has something to do with the problem.")
-      bubble(HERO1, "Who was this young man and what exactly is the problem?")
-      bubble(en, "The young man's name was Temmin and the problem is that hordes of undead spirits have risen from beneath the Temple.")
+      bubble(en, _"A young man has already gone in with the Goblin Jewel. He believes it has something to do with the problem.")
+      bubble(HERO1, _"Who was this young man and what exactly is the problem?")
+      bubble(en, _"The young man's name was Temmin and the problem is that hordes of undead spirits have risen from beneath the Temple.")
       if (get_numchrs() > 1) then
-        bubble(HERO1, "We know this Temmin fellow, and we can help him.")
+        bubble(HERO1, _"We know this Temmin fellow, and we can help him.")
       else
-        bubble(HERO1, "I know this Temmin fellow, and I can help him.")
+        bubble(HERO1, _"I know this Temmin fellow, and I can help him.")
       end
-      bubble(en, "Well, I see no real point in arguing. Go ahead.")
-      bubble(HERO1, "Thank you.")
+      bubble(en, _"Well, I see no real point in arguing. Go ahead.")
+      bubble(HERO1, _"Thank you.")
       set_progress(P_ALTARSWITCH, 1)
       refresh()
       -- /*
@@ -163,9 +163,9 @@ function entity_handler(en)
       wait_for_entity(38, 38)
       set_progress(P_TALK_TEMMIN, 1)
     elseif (get_progress(P_TALK_TEMMIN) < 3) then
-      bubble(en, "The spirits are restless.")
+      bubble(en, _"The spirits are restless.")
     else
-      bubble(en, "The spirits are at peace.")
+      bubble(en, _"The spirits are at peace.")
     end
 
   elseif (en == 41) then
@@ -229,7 +229,7 @@ function zone_handler(zn)
     change_map("temple2", "entrance")
 
   elseif (zn == 11) then
-    bubble(HERO1, "Locked.")
+    bubble(HERO1, _"Locked.")
 
   elseif (zn == 12) then
     warp("alter", 8)
@@ -253,7 +253,7 @@ end
 
 function LOC_alter()
   if (get_progress(P_ALTARSWITCH) == 0) then
-    bubble(HERO1, "A switch!")
+    bubble(HERO1, _"A switch!")
     sfx(26)
     set_progress(P_ALTARSWITCH, 1)
     refresh()
@@ -274,11 +274,11 @@ end
 function LOC_join_temmin(en)
   local id, a
 
-  bubble(en, "Welcome back, you have done a great thing. Your bravery outshines even my cowardice.")
-  bubble(HERO1, "Don't sell yourself short. After all, you're the one who figured out that the Goblin Jewel was the source of the spirits' unrest.")
-  bubble(en, "That was the easy part. When courage was truly needed, I ran.")
-  bubble(HERO1, "Well, I guess that's for you to come to grips with then.")
-  bubble(en, "Indeed. For now, I am at your service.")
+  bubble(en, _"Welcome back, you have done a great thing. Your bravery outshines even my cowardice.")
+  bubble(HERO1, _"Don't sell yourself short. After all, you're the one who figured out that the Goblin Jewel was the source of the spirits' unrest.")
+  bubble(en, _"That was the easy part. When courage was truly needed, I ran.")
+  bubble(HERO1, _"Well, I guess that's for you to come to grips with then.")
+  bubble(en, _"Indeed. For now, I am at your service.")
 
   -- // Give Temmin his default equipment
   set_all_equip(TEMMIN, I_SWORD2, I_SHIELD2, I_HELM2, I_ARMOR3, I_GAUNTLET1, 0)
@@ -305,13 +305,13 @@ function LOC_join_temmin(en)
       set_ent_active(42, 1)
       set_ent_tilex(42, get_ent_tilex(en))
       set_ent_tiley(42, get_ent_tiley(en) + 1)
-      bubble(en, "If you need us, we'll be back at the manor.")
+      bubble(en, _"If you need us, we'll be back at the manor.")
       set_ent_script(en, "D9K")
       set_ent_script(42, "D9K")
       wait_for_entity(en, 42)
     else
       -- // One hero was de-selected
-      bubble(en, "If you need me, I'll be back at the manor.")
+      bubble(en, _"If you need me, I'll be back at the manor.")
       set_ent_script(en, "D9K")
       wait_for_entity(en, en)
     end

@@ -18,28 +18,28 @@ end
 
 function entity_handler(en)
   if (en == 0) then
-    bubble(en, "This is a warm fire.")
+    bubble(en, _"This is a warm fire.")
 
   elseif (en == 1) then
-    bubble(en, "I am an NPC. Do you know what that means? It means I have no will of my own, and must obey my programmer.")
+    bubble(en, _"I am an NPC. Do you know what that means? It means I have no will of my own, and must obey my programmer.")
 
   elseif (en == 2) then
-    bubble(en, "I get teased a lot because I'm the only one with blonde hair. Neither of my parents have blonde hair...")
+    bubble(en, _"I get teased a lot because I'm the only one with blonde hair. Neither of my parents have blonde hair...")
 
   elseif (en == 3) then
-    bubble(en, "For a long time, we lived in peace. Now that monsters have attacked, we can't even leave the safety of our village.")
+    bubble(en, _"For a long time, we lived in peace. Now that monsters have attacked, we can't even leave the safety of our village.")
 
   elseif (en == 4) then
-    bubble(en, "I wish I could find some opal armour. I hear there's some sort of magic that can make it very strong.")
+    bubble(en, _"I wish I could find some opal armour. I hear there's some sort of magic that can make it very strong.")
 
   elseif (en == 5) then
-    bubble(en, "I am a silhouette of the Oracle. I can't figure out how you're talking to me, as I'm floating above the water like this. Hmm... must be a bug in this game.")
+    bubble(en, _"I am a silhouette of the Oracle. I can't figure out how you're talking to me, as I'm floating above the water like this. Hmm... must be a bug in this game.")
 
   elseif (en == 6) then
     shop(24)
 
   elseif (en == 7) then
-    inn("Long Journey Inn", 65, 1)
+    inn(_"Long Journey Inn", 65, 1)
 
   end
 end
@@ -98,7 +98,7 @@ function zone_handler(zn)
     refresh()
 
   elseif (zn == 7) then
-    bubble(HERO1, "This appears to be a hologram of the Oracle!")
+    bubble(HERO1, _"This appears to be a hologram of the Oracle!")
 
   elseif (zn == 8) then
     warp("dstairs1", 16)
@@ -111,13 +111,13 @@ function zone_handler(zn)
     refresh()
 
   elseif (zn == 11) then
-    bubble(HERO1, "This barrel is filled with rainwater.")
+    bubble(HERO1, _"This barrel is filled with rainwater.")
 
   elseif (zn == 12) then
     touch_fire(party[0])
 
   elseif (zn == 13) then
-    bubble(HERO1, "Locked.")
+    bubble(HERO1, _"Locked.")
 
   elseif (zn == 14) then
     chest(95, I_MACE3, 1)
@@ -178,7 +178,7 @@ function zone_handler(zn)
     warp("room_6u", 8)
 
   elseif (zn == 33) then
-    thought(HERO1, "This spa is relaxing.")
+    thought(HERO1, _"This spa is relaxing.")
 
   elseif (zn == 34) then
     touch_fire(party[0])

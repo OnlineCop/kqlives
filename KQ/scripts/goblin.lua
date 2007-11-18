@@ -7,13 +7,13 @@ end
 
 function entity_handler(en)
   if (en == 0) then
-    bubble(en, "I'm a goblin. Fear me.")
+    bubble(en, _"I'm a goblin. Fear me.")
 
   elseif (en == 1) then
-    bubble(en, "This village is often overlooked by Malkaron's armies, so we are relatively safe.")
+    bubble(en, _"This village is often overlooked by Malkaron's armies, so we are relatively safe.")
 
   else
-    bubble(en, "Booga-booga! I'm a goblin! Rowr!")
+    bubble(en, _"Booga-booga! I'm a goblin! Rowr!")
   end
 end
 

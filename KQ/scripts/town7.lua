@@ -22,22 +22,22 @@ end
 
 function entity_handler(en)
   if (en == 0) then
-    bubble(en, "You'll find great things here.")
+    bubble(en, _"You'll find great things here.")
 
   elseif (en == 1) then
-    bubble(en, "Things here are rather pricey.")
+    bubble(en, _"Things here are rather pricey.")
 
   elseif (en == 2) then
-    bubble(en, "It's quite peaceful here.", "I like it.")
+    bubble(en, _"It's quite peaceful here.", "I like it.")
 
   elseif (en == 3) then
-    bubble(en, "I love the sea.")
+    bubble(en, _"I love the sea.")
 
   elseif (en == 4) then
-    bubble(en, "Nothing exciting ever happens here.")
+    bubble(en, _"Nothing exciting ever happens here.")
 
   elseif (en == 5) then
-    bubble(en, "This town does not get a lot of visitors.")
+    bubble(en, _"This town does not get a lot of visitors.")
 
   elseif (en == 6) then
     LOC_talk_oldman(en)
@@ -111,7 +111,7 @@ function zone_handler(zn)
     if (get_progress(P_TALKOLDMAN) > 0) then
       door_in("counter_i")
     else
-      bubble(HERO1, "Locked.")
+      bubble(HERO1, _"Locked.")
     end
 
   elseif (zn == 13) then
@@ -124,7 +124,7 @@ function zone_handler(zn)
     shop(21)
 
   elseif (zn == 16) then
-    inn("Pulcannen Inn", 200, 1)
+    inn(_"Pulcannen Inn", 200, 1)
 
   elseif (zn == 17) then
     warp("dstairs1", 8)
@@ -158,19 +158,19 @@ function zone_handler(zn)
     entity_handler(6)
 
   elseif (zn == 27) then
-    bubble(HERO1, "This door appears locked.")
+    bubble(HERO1, _"This door appears locked.")
 
   elseif (zn == 28) then
-    bubble(HERO1, "This door appears locked.")
+    bubble(HERO1, _"This door appears locked.")
 
   elseif (zn == 29) then
-    bubble(HERO1, "Locked.")
+    bubble(HERO1, _"Locked.")
 
   elseif (zn == 30) then
-    bubble(HERO1, "This barrel is filled with rainwater.")
+    bubble(HERO1, _"This barrel is filled with rainwater.")
 
   elseif (zn == 31 or zn == 32) then
-    bubble(HERO1, "The chest is locked.")
+    bubble(HERO1, _"The chest is locked.")
 
   elseif (zn == 33) then
     set_progress(P_TRAVELPOINT, 1)
@@ -203,7 +203,7 @@ function LOC_talk_oldman(en)
   local x, y = marker("counter")
 
   if (get_progress(P_TALKOLDMAN) == 0) then
-    bubble(en, "Hey, how did you get in here? Get out!")
+    bubble(en, _"Hey, how did you get in here? Get out!")
   elseif (get_progress(P_TALKOLDMAN) == 1) then
     set_ent_speed(en, 5)
     set_ent_movemode(en, 2)
@@ -219,7 +219,7 @@ function LOC_talk_oldman(en)
       wait_for_entity(en, en)
       set_ent_facing(en, FACE_DOWN)
     end
-    bubble(en, "Wow! You have all the Opal items! Quick, come up here to my study and let me see them!")
+    bubble(en, _"Wow! You have all the Opal items! Quick, come up here to my study and let me see them!")
     -- Unlock doors that lead behind his counters
     set_obs("hdoor1", 0)
     set_obs("hdoor2", 0)
@@ -233,25 +233,25 @@ function LOC_talk_oldman(en)
     set_progress(P_TALKOLDMAN, 2)
     refresh()
   elseif (get_progress(P_TALKOLDMAN) == 2) then
-    bubble(en, "I see you have everything! Here, take this key.")
+    bubble(en, _"I see you have everything! Here, take this key.")
     sfx(5)
-    msg("Rusty key procured", 63, 0)
-    bubble(en, "This key will open the temple found in the Grotto around Ekla.")
+    msg(_"Rusty key procured", 63, 0)
+    bubble(en, _"This key will open the temple found in the Grotto around Ekla.")
     if (get_numchrs() == 1) then
-      bubble(HERO1, "The Grotto by Ekla? What will I find there?")
+      bubble(HERO1, _"The Grotto by Ekla? What will I find there?")
     else
-      bubble(HERO1, "The Grotto by Ekla? What will we find there?")
+      bubble(HERO1, _"The Grotto by Ekla? What will we find there?")
     end
-    bubble(en, "It's an underwater tunnel that leads from the grotto to the island Malkaron is staying.")
-    bubble(HERO1, "Oh. Thanks!")
+    bubble(en, _"It's an underwater tunnel that leads from the grotto to the island Malkaron is staying.")
+    bubble(HERO1, _"Oh. Thanks!")
     set_progress(P_TALKOLDMAN, 3)
     add_special_item(SI_RUSTYKEY)
   elseif (get_progress(P_TALKOLDMAN) == 3) then
-    bubble(en, "I hope the key still fits in the temple down in the Grotto by Ekla. It's a bit rusty.")
+    bubble(en, _"I hope the key still fits in the temple down in the Grotto by Ekla. It's a bit rusty.")
   elseif (get_progress(P_TALKOLDMAN) == 4) then
-    bubble(en, "I see the key worked. Excellent.")
+    bubble(en, _"I see the key worked. Excellent.")
     set_progress(P_TALKOLDMAN, 5)
   else
-    bubble(en, "Good luck on your journey.")
+    bubble(en, _"Good luck on your journey.")
   end
 end

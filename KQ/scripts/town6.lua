@@ -24,61 +24,61 @@ function entity_handler(en)
     LOC_lady_ajantara(en)
 
   elseif (en == 2) then
-    bubble(en, "This is a lovely little town. Don't you think so?")
+    bubble(en, _"This is a lovely little town. Don't you think so?")
 
   elseif (en == 3) then
     if (get_progress(P_OPALSHIELD) == 0) then
-      bubble(en, "Wanna play tag with me?")
+      bubble(en, _"Wanna play tag with me?")
       return
     end
     if (get_progress(P_SAVEBREANNE) < 3) then
-      bubble(en, "I miss Breanne.")
+      bubble(en, _"I miss Breanne.")
     else
-      bubble(en, "This town rocks!")
+      bubble(en, _"This town rocks!")
     end
 
   elseif (en == 4) then
-    bubble(en, "Sorry, I'm far too busy and you have terrible breath.")
+    bubble(en, _"Sorry, I'm far too busy and you have terrible breath.")
 
   elseif (en == 5) then
     if (get_progress(P_SAVEBREANNE) < 3) then
-      bubble(en, "There has been a lot of Cult activity around these parts lately.")
+      bubble(en, _"There has been a lot of Cult activity around these parts lately.")
     else
-      bubble(en, "Has the Cult really been rousted?")
+      bubble(en, _"Has the Cult really been rousted?")
     end
 
   elseif (en == 6) then
-    bubble(en, "Lord and Lady Ajantara have hired us to watch the town.")
+    bubble(en, _"Lord and Lady Ajantara have hired us to watch the town.")
 
   elseif (en == 7) then
     if (get_progress(P_OPALSHIELD) == 0) then
-      bubble(en, "Lord Ajantara's grandfather founded this town.")
+      bubble(en, _"Lord Ajantara's grandfather founded this town.")
       return
     end
     if (get_progress(P_SAVEBREANNE) == 0) then
       if (get_progress(P_TALKGRAMPA) == 0) then
-        bubble(en, "Lord and Lady Ajantara's daughter, Breanne, was kidnapped last night. They are looking for someone to help find her!")
+        bubble(en, _"Lord and Lady Ajantara's daughter, Breanne, was kidnapped last night. They are looking for someone to help find her!")
         set_progress(P_TALKGRAMPA, 1)
       else
-        bubble(en, "You should go and speak with the Ajantaras.")
+        bubble(en, _"You should go and speak with the Ajantaras.")
       end
     else
       if (get_progress(P_SAVEBREANNE) < 3) then
-        bubble(en, "You truly are kind.")
+        bubble(en, _"You truly are kind.")
       else
-        bubble(en, "It's a lovely day isn't it?")
+        bubble(en, _"It's a lovely day isn't it?")
       end
     end
 
   elseif (en == 8) then
-    bubble(en, "Everything in this town is owned by Lord and Lady Ajantara.")
+    bubble(en, _"Everything in this town is owned by Lord and Lady Ajantara.")
 
   elseif (en == 9) then
     if (get_progress(P_OPALSHIELD) == 0) then
-      bubble(en, "Hiya!")
+      bubble(en, _"Hiya!")
       return
     end
-    bubble(en, "Thank you very much. Please feel free to come and visit any time.")
+    bubble(en, _"Thank you very much. Please feel free to come and visit any time.")
 
   end
 end
@@ -164,7 +164,7 @@ function zone_handler(zn)
     door_out("family_o")
 
   elseif (zn == 18) then
-    bubble(HERO1, "Locked.")
+    bubble(HERO1, _"Locked.")
 
   elseif (zn == 19) then
     shop(15)
@@ -174,9 +174,9 @@ function zone_handler(zn)
 
   elseif (zn == 21) then
     if (get_progress(P_TOWN6INN) > 0) then
-      inn("Ajantara Inn", 1, 1)
+      inn(_"Ajantara Inn", 1, 1)
     else
-      inn("Ajantara Inn", 150, 1)
+      inn(_"Ajantara Inn", 150, 1)
     end
 
   elseif (zn == 22) then
@@ -215,7 +215,7 @@ function zone_handler(zn)
 
   -- Door in the item shop
   elseif (zn == 32) then
-    bubble(HERO1, "Locked.")
+    bubble(HERO1, _"Locked.")
 
   end
 end
@@ -224,28 +224,28 @@ end
 function LOC_complain()
   if (get_progress(P_SAVEBREANNE) == 1) then
     if (get_numchrs() == 1) then
-      bubble(HERO1, "Ugh... I getting real sick of this running around crap! Why is nothing I need where it's supposed to be?")
-      bubble(HERO1, "I'll bet that even if I had waited a month and come here for the Band, the Ajantara's daughter would have just been kidnapped.")
-      bubble(HERO1, "When will this end?")
+      bubble(HERO1, _"Ugh... I getting real sick of this running around crap! Why is nothing I need where it's supposed to be?")
+      bubble(HERO1, _"I'll bet that even if I had waited a month and come here for the Band, the Ajantara's daughter would have just been kidnapped.")
+      bubble(HERO1, _"When will this end?")
     else
       face_each_other(HERO1, HERO2)
       wait(50)
-      bubble(HERO1, "You know what? I'm getting real sick of this running around crap!")
-      bubble(HERO2, "What are you talking about?")
-      bubble(HERO1, "The same thing happened with the Helmet. The minute I show up to get the stupid thing... it's gone.")
-      bubble(HERO1, "It's as if someone is purposely trying to make me go crazy.")
-      bubble(HERO2, "Don't you think that you're exaggerating just a little?")
-      bubble(HERO2, "Sure it may seem that things are out of our control, but what we're doing is of the utmost importance.")
-      bubble(HERO2, "This is our chance to do something good. I mean, originally this quest was nothing more than a fetch mission.")
-      bubble(HERO2, "However, as we've pursued our quest we've managed to do some good along the way. That's what really counts.")
-      bubble(HERO1, "Hmm... I guess you're right. I just don't like being out of control. We still don't really know what's going on!")
-      bubble(HERO2, "I'm sure we'll come to understand what this is all about in time. If nothing else, all this running around is making us stronger.")
-      bubble(HERO2, "We'll be better prepared for Malkaron and anybody else who gets in our way.")
-      bubble(HERO1, "That's true... I have learned a lot since we've started, and I sure feel much better about myself.")
-      bubble(HERO2, "So does that mean that you're ready to go?")
-      bubble(HERO1, "Yes! This isn't about me... this is about rescuing an innocent little girl and saving the world.")
-      bubble(HERO2, "Saving the world?")
-      bubble(HERO1, "Stuff it, I'm on a roll here.")
+      bubble(HERO1, _"You know what? I'm getting real sick of this running around crap!")
+      bubble(HERO2, _"What are you talking about?")
+      bubble(HERO1, _"The same thing happened with the Helmet. The minute I show up to get the stupid thing... it's gone.")
+      bubble(HERO1, _"It's as if someone is purposely trying to make me go crazy.")
+      bubble(HERO2, _"Don't you think that you're exaggerating just a little?")
+      bubble(HERO2, _"Sure it may seem that things are out of our control, but what we're doing is of the utmost importance.")
+      bubble(HERO2, _"This is our chance to do something good. I mean, originally this quest was nothing more than a fetch mission.")
+      bubble(HERO2, _"However, as we've pursued our quest we've managed to do some good along the way. That's what really counts.")
+      bubble(HERO1, _"Hmm... I guess you're right. I just don't like being out of control. We still don't really know what's going on!")
+      bubble(HERO2, _"I'm sure we'll come to understand what this is all about in time. If nothing else, all this running around is making us stronger.")
+      bubble(HERO2, _"We'll be better prepared for Malkaron and anybody else who gets in our way.")
+      bubble(HERO1, _"That's true... I have learned a lot since we've started, and I sure feel much better about myself.")
+      bubble(HERO2, _"So does that mean that you're ready to go?")
+      bubble(HERO1, _"Yes! This isn't about me... this is about rescuing an innocent little girl and saving the world.")
+      bubble(HERO2, _"Saving the world?")
+      bubble(HERO1, _"Stuff it, I'm on a roll here.")
     end
     set_progress(P_SAVEBREANNE, 2)
   end
@@ -254,16 +254,16 @@ end
 
 function LOC_lady_ajantara(en)
   if (get_progress(P_OPALSHIELD) == 0) then
-    bubble(en, "Welcome... enjoy your stay.")
+    bubble(en, _"Welcome... enjoy your stay.")
     return
   end
   if (get_progress(P_SAVEBREANNE) == 0) then
-    bubble(en, "Oh poor Breanne!")
+    bubble(en, _"Oh poor Breanne!")
   else
     if (get_progress(P_SAVEBREANNE) < 3) then
-      bubble(en, "Good luck to you!")
+      bubble(en, _"Good luck to you!")
     else
-      bubble(en, "Breanne is a dear.")
+      bubble(en, _"Breanne is a dear.")
     end
   end
 end
@@ -271,67 +271,67 @@ end
 
 function LOC_lord_ajantara(en)
   if (get_progress(P_OPALSHIELD) == 0) then
-    bubble(en, "How do you like our little town?")
+    bubble(en, _"How do you like our little town?")
     return
   end
   if (get_progress(P_SAVEBREANNE) == 0) then
-    bubble(en, "You must help save our daughter! We'll give you anything, just please bring her back to us.")
+    bubble(en, _"You must help save our daughter! We'll give you anything, just please bring her back to us.")
     if (get_progress(P_TALKGRAMPA) == 1) then
-      bubble(HERO1, "We were told she was kidnapped, but by who? Where did they take her?")
-      bubble(en, "The ones who took her are members of a cult... the Cult of the Shadow Walker. They took her to their tower on Sharia island.")
+      bubble(HERO1, _"We were told she was kidnapped, but by who? Where did they take her?")
+      bubble(en, _"The ones who took her are members of a cult... the Cult of the Shadow Walker. They took her to their tower on Sharia island.")
     else
-      bubble(HERO1, "What happened to her? Where did she go?")
-      bubble(en, "She was kidnapped by cult members from the Cult of the Shadow Walker. They took her to their tower on Sharia island.")
+      bubble(HERO1, _"What happened to her? Where did she go?")
+      bubble(en, _"She was kidnapped by cult members from the Cult of the Shadow Walker. They took her to their tower on Sharia island.")
     end
-    bubble(en, "They have the travel stone to the island guarded by a giant!")
-    bubble(HERO1, "Why did they take her?")
-    bubble(en, "They took her because she is descended from the legendary half-dragon king Elgar.")
-    bubble(en, "They are trying to summon an avatar of the Shadow Walker, and they plan on using Breanne to do it!")
-    bubble(HERO1, "Doesn't that mean that one of you is also descended from Elgar?")
-    bubble(en, "No. We adopted Breanne eight years ago. She doesn't even know that we are not her real parents!")
-    bubble(HERO1, "Fear not, we will get your daughter back safely, and we'll put a stop to this summoning as well!")
-    bubble(HERO1, "Just one thing.")
-    bubble(en, "Yes?")
-    bubble(HERO1, "Where is the travel stone to Sharia island?")
-    bubble(en, "Oh, it's on the other side of Kragar's Pass.")
-    bubble(en, "I'll send word to the guards to let you through because normally only caravans are allowed into the Pass.")
-    bubble(HERO1, "Oh. Okay. Thanks!")
-    bubble(HERO1, "By the way, do you know anything about an Opal Band? I was told that it was in this town. I need to borrow it.")
-    bubble(en, "If you save my daughter, you can have it!")
-    bubble(HERO1, "Really? Great! Where is it?")
-    bubble(en, "It belongs to my daughter. She is probably wearing it.")
-    bubble(HERO1, "Of course. Well, time to go!")
+    bubble(en, _"They have the travel stone to the island guarded by a giant!")
+    bubble(HERO1, _"Why did they take her?")
+    bubble(en, _"They took her because she is descended from the legendary half-dragon king Elgar.")
+    bubble(en, _"They are trying to summon an avatar of the Shadow Walker, and they plan on using Breanne to do it!")
+    bubble(HERO1, _"Doesn't that mean that one of you is also descended from Elgar?")
+    bubble(en, _"No. We adopted Breanne eight years ago. She doesn't even know that we are not her real parents!")
+    bubble(HERO1, _"Fear not, we will get your daughter back safely, and we'll put a stop to this summoning as well!")
+    bubble(HERO1, _"Just one thing.")
+    bubble(en, _"Yes?")
+    bubble(HERO1, _"Where is the travel stone to Sharia island?")
+    bubble(en, _"Oh, it's on the other side of Kragar's Pass.")
+    bubble(en, _"I'll send word to the guards to let you through because normally only caravans are allowed into the Pass.")
+    bubble(HERO1, _"Oh. Okay. Thanks!")
+    bubble(HERO1, _"By the way, do you know anything about an Opal Band? I was told that it was in this town. I need to borrow it.")
+    bubble(en, _"If you save my daughter, you can have it!")
+    bubble(HERO1, _"Really? Great! Where is it?")
+    bubble(en, _"It belongs to my daughter. She is probably wearing it.")
+    bubble(HERO1, _"Of course. Well, time to go!")
     set_progress(P_SAVEBREANNE, 1)
     return
   end
   if (get_progress(P_SAVEBREANNE) == 4) then
-    bubble(en, "Things are finally back to normal.")
+    bubble(en, _"Things are finally back to normal.")
     return
   end
   if (get_progress(P_SAVEBREANNE) < 3) then
-    bubble(en, "Please be careful.")
+    bubble(en, _"Please be careful.")
   else
-    bubble(en, "Breanne told us she gave you the Band. We're glad everything has worked out so great. Thank you very much!")
-    bubble(en, "I know it's not much, but to show our appreciation, we want you to feel welcome in our town.")
-    bubble(en, "Therefore, any time you need to stay at our inn, you'll only be charged 1 GP!")
+    bubble(en, _"Breanne told us she gave you the Band. We're glad everything has worked out so great. Thank you very much!")
+    bubble(en, _"I know it's not much, but to show our appreciation, we want you to feel welcome in our town.")
+    bubble(en, _"Therefore, any time you need to stay at our inn, you'll only be charged 1 GP!")
     set_progress(P_TOWN6INN, 1)
-    bubble(HERO1, "That's very kind of you. Thank you!")
-    bubble(en, "Oh, and by the way. You should take this.")
+    bubble(HERO1, _"That's very kind of you. Thank you!")
+    bubble(en, _"Oh, and by the way. You should take this.")
     sfx(5)
-    msg("Cave Key procured", 255, 0)
+    msg(_"Cave Key procured", 255, 0)
     set_progress(P_CAVEKEY, 1)
     add_special_item(SI_CAVEKEY)
     drawmap()
     screen_dump()
-    bubble(HERO1, "What's this for?")
-    bubble(en, "That will unlock the doors in the mountain pass.")
-    bubble(en, "After thinking about this Opal stuff for a while, I remembered a story about the Opal Armor.")
-    bubble(en, "Apparently, there is a magical suit of Opal Armor locked away deep in the mountain.")
-    bubble(en, "That key will unlock the sealed entrances to the dungeons below.")
-    bubble(HERO1, "That's perfect! The next item we were on our way to find was the Opal Armor.")
-    bubble(en, "Well, I'm glad we could help. However, I must warn you to be extra cautious on this quest.")
-    bubble(en, "A dark race of Larinon live in the dungeons down there and they are most unpleasant.")
-    bubble(HERO1, "Thanks for the warning, and thank you again for the key.")
+    bubble(HERO1, _"What's this for?")
+    bubble(en, _"That will unlock the doors in the mountain pass.")
+    bubble(en, _"After thinking about this Opal stuff for a while, I remembered a story about the Opal Armor.")
+    bubble(en, _"Apparently, there is a magical suit of Opal Armor locked away deep in the mountain.")
+    bubble(en, _"That key will unlock the sealed entrances to the dungeons below.")
+    bubble(HERO1, _"That's perfect! The next item we were on our way to find was the Opal Armor.")
+    bubble(en, _"Well, I'm glad we could help. However, I must warn you to be extra cautious on this quest.")
+    bubble(en, _"A dark race of Larinon live in the dungeons down there and they are most unpleasant.")
+    bubble(HERO1, _"Thanks for the warning, and thank you again for the key.")
     set_progress(P_SAVEBREANNE, 4)
   end
 end

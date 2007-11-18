@@ -38,41 +38,41 @@ function entity_handler(en)
     if (get_progress(P_TALK_CORIN) == 0) then
       if (get_progress(P_DENORIAN) < 4) then
         -- You have not yet faced the troll down the stairs
-        bubble(en, "Oh, $0, it's great to see you!")
-        bubble(en, "I traced the missing statue here to Demnas, but before I could confront him, a horde of Malkaron's followers attacked him.")
-        bubble(HERO1, "Malkaron's minions have been here?")
-        bubble(en, "Yes, and during the battle, the statue was broken in half and Malkaron's men took off with it.")
-        bubble(en, "Demnas was so enraged that when he found me, he locked me in this room with this troll.")
-        bubble(HERO1, "A troll? So there really IS a troll? How did you defeat it?")
-        bubble(en, "I haven't. I hit it with a sleep spell as soon as I was locked in here.")
+        bubble(en, _"Oh, $0, it's great to see you!")
+        bubble(en, _"I traced the missing statue here to Demnas, but before I could confront him, a horde of Malkaron's followers attacked him.")
+        bubble(HERO1, _"Malkaron's minions have been here?")
+        bubble(en, _"Yes, and during the battle, the statue was broken in half and Malkaron's men took off with it.")
+        bubble(en, _"Demnas was so enraged that when he found me, he locked me in this room with this troll.")
+        bubble(HERO1, _"A troll? So there really IS a troll? How did you defeat it?")
+        bubble(en, _"I haven't. I hit it with a sleep spell as soon as I was locked in here.")
         set_ent_facing(en, FACE_RIGHT)
-        bubble(en, "It's down the stairs right there. Why don't you go take care of it now?")
+        bubble(en, _"It's down the stairs right there. Why don't you go take care of it now?")
         set_progress(P_TALK_CORIN, 1)
       else
         -- You have defeated the troll
-        bubble(en, "$0! I saw you run down the stairs there before I could tell you about the troll!")
-        bubble(HERO1, "Yea, the troll was asleep, but it wasn't much of a problem to beat.")
-        bubble(en, "My, my. So modest.")
+        bubble(en, _"$0! I saw you run down the stairs there before I could tell you about the troll!")
+        bubble(HERO1, _"Yea, the troll was asleep, but it wasn't much of a problem to beat.")
+        bubble(en, _"My, my. So modest.")
         if (get_numchrs() == 1) then
-          bubble(HERO1, "Well, what can I say? I'm just that good!")
+          bubble(HERO1, _"Well, what can I say? I'm just that good!")
         else
-          bubble(HERO2, "Well, what can we say? We're just that good!")
+          bubble(HERO2, _"Well, what can we say? We're just that good!")
         end
-        bubble(en, "If that's so, then let me join your party!")
+        bubble(en, _"If that's so, then let me join your party!")
         LOC_join_corin(en)
       end
     -- Corin told you about the troll
     elseif (get_progress(P_TALK_CORIN) == 1) then
       -- You have not fought the troll yet
       if (get_progress(P_DENORIAN) < 4) then
-        bubble(en, "I'll wait up here. I'm not ready to take on a troll just yet.")
+        bubble(en, _"I'll wait up here. I'm not ready to take on a troll just yet.")
       -- You fought the troll
       else
-        bubble(en, "Good work! Let me join your team!")
+        bubble(en, _"Good work! Let me join your team!")
         LOC_join_corin(en)
       end
     else
-      bubble(en, "Hi, $0. Let me join your team!")
+      bubble(en, _"Hi, $0. Let me join your team!")
       LOC_join_corin(en)
     end
     refresh()
@@ -80,7 +80,7 @@ function entity_handler(en)
   elseif (en == 2) then
     -- Statue will not talk, but Demnas attacks if you try to grab it
     en = 0
-    bubble(en, "Not so fast!")
+    bubble(en, _"Not so fast!")
     set_ent_facing(HERO1, FACE_DOWN)
     LOC_talk_demnas(en)
 
@@ -152,16 +152,16 @@ function zone_handler(zn)
 
   elseif (zn == 4) then
     if (get_progress(P_BRONZEKEY) == 0) then
-      bubble(HERO1, "Locked.")
+      bubble(HERO1, _"Locked.")
     elseif (get_progress(P_BRONZEKEY) == 1) then
-      bubble(HERO1, "What luck! The key from that crazy Demnas guy unlocks this door!")
+      bubble(HERO1, _"What luck! The key from that crazy Demnas guy unlocks this door!")
       set_progress(P_BRONZEKEY, 2)
       remove_special_item(SI_BRONZEKEY)
       refresh()
     end
 
   elseif (zn == 5) then
-    bubble(HERO1, "Aw... it's full of normal junk.")
+    bubble(HERO1, _"Aw... it's full of normal junk.")
 
   elseif (zn == 6) then
     chest(62, I_SHADECLOAK, 1)
@@ -201,19 +201,19 @@ function zone_handler(zn)
 
   elseif (zn == 13) then
     if (get_progress(P_DENORIAN) < 4) then
-      bubble(HERO1, "The Denorians were right. There really WAS a troll. Looks like it's already dead, though.")
-      msg("The troll suddenly lunges at you... it was only asleep!", 0, 0)
+      bubble(HERO1, _"The Denorians were right. There really WAS a troll. Looks like it's already dead, though.")
+      msg(_"The troll suddenly lunges at you... it was only asleep!", 0, 0)
       set_run(0)
       msg("TODO: There needs to be a combat here...", 0, 0)
       set_run(1)
 
-      bubble(HERO1, "If this troll really DID steal the statue from the Denorians, it was probably being directed by that scumbag Demnas.")
-      bubble(HERO1, "He used this poor bugger and then left him here to rot.")
+      bubble(HERO1, _"If this troll really DID steal the statue from the Denorians, it was probably being directed by that scumbag Demnas.")
+      bubble(HERO1, _"He used this poor bugger and then left him here to rot.")
       wait(100)
-      bubble(HERO1, "Well, I should go back to the village now and report all this.")
+      bubble(HERO1, _"Well, I should go back to the village now and report all this.")
       set_progress(P_DENORIAN, 4)
     else
-      bubble(HERO1, "This cell is now his tomb.")
+      bubble(HERO1, _"This cell is now his tomb.")
     end
 
   elseif (zn == 14) then
@@ -221,9 +221,9 @@ function zone_handler(zn)
 
   elseif (zn == 15) then
     if (get_progress(P_DENORIAN) > 2) then
-      msg("The statue is no longer here.", 58, 0)
+      msg(_"The statue is no longer here.", 58, 0)
     else
-      bubble(HERO1, "This statue of the Oracle appears to be broken in half!")
+      bubble(HERO1, _"This statue of the Oracle appears to be broken in half!")
     end
   end
 end
@@ -285,7 +285,7 @@ function LOC_join_corin(en)
         set_ent_tiley(0, get_ent_tiley(en) + 1)
       end
 
-      bubble(en, "If you need us, we'll be back at the manor.")
+      bubble(en, _"If you need us, we'll be back at the manor.")
 
       set_ent_movemode(0, 2)
       set_ent_movemode(en, 2)
@@ -294,7 +294,7 @@ function LOC_join_corin(en)
       wait_for_entity(0, en)
     else
       -- One hero was de-selected
-      bubble(en, "If you need me, I'll be back at the manor.")
+      bubble(en, _"If you need me, I'll be back at the manor.")
       set_ent_movemode(en, 2)
       move_entity(en, 37, 73, 1)
       wait_for_entity(en, en)
@@ -306,18 +306,18 @@ end
 
 
 function LOC_talk_demnas(en)
-  bubble(en, "So you're back trying to steal the other half of the statue from me, are you?")
-  bubble(HERO1, "Huh? Have we met before?")
-  bubble(en, "Filthy swine! You cannot have this statue!")
-  bubble(HERO1, "Does this mean you're the one responsible for the disappearance of the statue from a village near here?")
-  bubble(en, "Uh... Are... Are you accusing me of stealing this statue?!")
-  bubble(HERO1, "Well, the thief was traced back to this cave.")
-  bubble(en, "Oh, so now I'm a thief?!!")
-  bubble(HERO1, "That depends... did you take the statue or not?")
-  bubble(en, "What if I did?")
-  bubble(HERO1, "Well, then you will give it back... or it will be taken by force!")
-  bubble(en, "That has been tried before already. You prove to be as stupid as you look.")
-  bubble(en, "Now I, Demnas, will destroy you!")
+  bubble(en, _"So you're back trying to steal the other half of the statue from me, are you?")
+  bubble(HERO1, _"Huh? Have we met before?")
+  bubble(en, _"Filthy swine! You cannot have this statue!")
+  bubble(HERO1, _"Does this mean you're the one responsible for the disappearance of the statue from a village near here?")
+  bubble(en, _"Uh... Are... Are you accusing me of stealing this statue?!")
+  bubble(HERO1, _"Well, the thief was traced back to this cave.")
+  bubble(en, _"Oh, so now I'm a thief?!!")
+  bubble(HERO1, _"That depends... did you take the statue or not?")
+  bubble(en, _"What if I did?")
+  bubble(HERO1, _"Well, then you will give it back... or it will be taken by force!")
+  bubble(en, _"That has been tried before already. You prove to be as stupid as you look.")
+  bubble(en, _"Now I, Demnas, will destroy you!")
   drawmap()
   screen_dump()
   set_run(0)
@@ -332,12 +332,12 @@ function LOC_talk_demnas(en)
   screen_dump()
 
   sfx(5)
-  msg("Bronze key procured", 255, 0)
+  msg(_"Bronze key procured", 255, 0)
   set_progress(P_BRONZEKEY, 1)
   add_special_item(SI_BRONZEKEY)
 
   sfx(5)
-  msg("Broken Denorian Statue procured", 255, 0)
+  msg(_"Broken Denorian Statue procured", 255, 0)
   set_progress(P_DENORIAN, 3)
   add_special_item(SI_DENORIANSTATUE)
   refresh()

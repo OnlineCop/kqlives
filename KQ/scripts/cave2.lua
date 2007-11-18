@@ -37,8 +37,8 @@ end
 
 function postexec()
   if (get_progress(P_FELLINPIT) == 0) then
-    bubble(HERO1, "Ouch!")
-    bubble(HERO1, "This is no ordinary gopher hole!")
+    bubble(HERO1, _"Ouch!")
+    bubble(HERO1, _"This is no ordinary gopher hole!")
   end
 end
 
@@ -56,13 +56,13 @@ function zone_handler(zn)
   if (zn == 1) then
     -- // This is the first time you try the door
     if (get_progress(P_FELLINPIT) == 0) then
-      bubble(HERO1, "There's some kind of barrier here. I can't get past it.")
+      bubble(HERO1, _"There's some kind of barrier here. I can't get past it.")
       set_progress(P_FELLINPIT, 1)
       refresh()
-      bubble(HERO1, "Hey... What's that thing down there?")
+      bubble(HERO1, _"Hey... What's that thing down there?")
     -- // You have already tried the door
     else
-      bubble(HERO1, "This barrier is still here. I can't get out.")
+      bubble(HERO1, _"This barrier is still here. I can't get out.")
     end
 
   elseif (zn == 2) then
@@ -73,29 +73,30 @@ function zone_handler(zn)
     if (get_progress(P_UCOIN) == 0) then
       if (get_progress(P_TALKDERIG) == 1) then
         -- // I have never seen Derig; he has never helped me.
-        bubble(HERO1, "This doesn't do anything; I can't get out of here. I'll give up and just go to sleep.")
+        bubble(HERO1, _"This doesn't do anything; I can't get out of here. I'll give up and just go to sleep.")
         set_progress(P_TALKDERIG, 2)
-        inn("You decide to sleep.", 0, 0)
+        inn(_"You decide to sleep.", 0, 0)
       elseif (get_progress(P_TALKDERIG) == 2) then
         -- // Derig helped you out, when you were sleeping.  You re-entered the pit before speaking to Jen.
-        bubble(HERO1, "Oops, I'm stuck down here again. I'll try sleeping again to get back out.")
-        inn("You decide to sleep.", 0, 0)
+        bubble(HERO1, _"Oops, I'm stuck down here again. I'll try sleeping again to get back out.")
+        inn(_"You decide to sleep.", 0, 0)
       end
       set_ent_facing(HERO1, FACE_RIGHT)
       change_map("grotto", "by_fire")
     elseif (get_progress(P_UCOIN) == 1) then
-      bubble(HERO1, "Hmm... this doesn't look like it does anything.")
-      msg("Hello? Who's there? Is that somebody down there?", 255, 0)
-      bubble(HERO1, "Yeah... I fell down here and the door's blocked.")
-      msg("Hang on, let me get you out of there.", 255, 0)
+      bubble(HERO1, _"Hmm... this doesn't look like it does anything.")
+      msg(_"Hello? Who's there? Is that somebody down there?", 255, 0)
+      bubble(HERO1, _"Yeah... I fell down here and the door's blocked.")
+      msg(_"Hang on, let me get you out of there.", 255, 0)
       set_progress(P_TALKDERIG, 3)
       change_map("grotto", "by_pit")
     else
       -- // Derig has helped you out of here before
-      bubble(HERO1, "Derig, can you help me out of here?")
-      msg("Sure thing. Here you go.", 255, 0)
+      bubble(HERO1, _"Derig, can you help me out of here?")
+      msg(_"Sure thing. Here you go.", 255, 0)
       set_ent_facing(HERO1, FACE_RIGHT)
       change_map("grotto", "by_fire")
     end
   end
 end
+

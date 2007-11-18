@@ -27,63 +27,63 @@ end
 
 function entity_handler(en)
   if (en == 0) then
-    bubble(en, "There have been no further threats. Thank you.")
+    bubble(en, _"There have been no further threats. Thank you.")
 
   elseif (en == 1) then
     if (get_progress(P_LOSERONBRIDGE) == 0) then
-      bubble(en, "It's a good thing you helped us out with that monster!")
-      bubble(HERO1, "Oh, it was nothing...")
-      bubble(en, "No, really! I don't have a sword!")
+      bubble(en, _"It's a good thing you helped us out with that monster!")
+      bubble(HERO1, _"Oh, it was nothing...")
+      bubble(en, _"No, really! I don't have a sword!")
       wait(50)
-      bubble(en, "I probably shouldn't have told you that.")
+      bubble(en, _"I probably shouldn't have told you that.")
       set_progress(P_LOSERONBRIDGE, 1)
     elseif (get_progress(P_LOSERONBRIDGE) == 1) then
-      bubble(HERO1, "So what happened to your sword?")
-      bubble(en, "...")
+      bubble(HERO1, _"So what happened to your sword?")
+      bubble(en, _"...")
       wait(50)
-      bubble(en, "My dog ate it.")
+      bubble(en, _"My dog ate it.")
       set_progress(P_LOSERONBRIDGE, 2)
     elseif (get_progress(P_LOSERONBRIDGE) == 2) then
-      bubble(en, "Hey, look! I found a board with a nail in it!")
-      thought(HERO1, "Oh, good grief!")
-      bubble(en, "Fear my wrath! Hi-yah!")
+      bubble(en, _"Hey, look! I found a board with a nail in it!")
+      thought(HERO1, _"Oh, good grief!")
+      bubble(en, _"Fear my wrath! Hi-yah!")
     end
 
   elseif (en == 2) then
-    bubble(en, "Just a few more planks and this will be finished!")
+    bubble(en, _"Just a few more planks and this will be finished!")
 
   elseif (en == 3) then
-    bubble(en, "I... zzz... can't stay awak... zzz...")
+    bubble(en, _"I... zzz... can't stay awak... zzz...")
 
   elseif (en == 4) then
-    bubble(en, "*YAWN!* That other guy's yawning is contagious!")
+    bubble(en, _"*YAWN!* That other guy's yawning is contagious!")
 
   elseif (en == 5) then
-    bubble(en, "My breaks are too short. I could really use another one.")
+    bubble(en, _"My breaks are too short. I could really use another one.")
 
   elseif (en == 6) then
-    bubble(en, "I've planted flowers underneath the bridge.")
+    bubble(en, _"I've planted flowers underneath the bridge.")
 
   elseif (en == 7) then
-    bubble(en, "I'm an architect. I'm building these pillars to reinforce the bridge.")
+    bubble(en, _"I'm an architect. I'm building these pillars to reinforce the bridge.")
 
   elseif (en == 8) then
     if (get_progress(P_BANGTHUMB) == 0) then
-      bubble(en, "Yes, wha...")
-      msg("WHAM!", 255, 0)
-      bubble(en, "Yow!! My thumb! I banged my thumb!")
+      bubble(en, _"Yes, wha...")
+      msg(_"WHAM!", 255, 0)
+      bubble(en, _"Yow!! My thumb! I banged my thumb!")
       if (get_ent_tilex(HERO1) > get_ent_tilex(en)) then
         set_ent_facing(en, FACE_RIGHT)
       elseif (get_ent_tiley(HERO1) > get_ent_tiley(en)) then
         set_ent_facing(en, FACE_DOWN)
       end
-      bubble(en, "I hope that you're satisfied!")
+      bubble(en, _"I hope that you're satisfied!")
     else
-      bubble(en, "Owww, my poor thumb...")
+      bubble(en, _"Owww, my poor thumb...")
     end
 
   elseif (en == 9) then
-    bubble(en, "Some moron rode a wagon over here with STONE RIMS! I'd like to find the no-good, lousy...")
+    bubble(en, _"Some moron rode a wagon over here with STONE RIMS! I'd like to find the no-good, lousy...")
 
   end
 end
@@ -134,3 +134,4 @@ function zone_handler(zn)
 
   end
 end
+

@@ -179,20 +179,20 @@ function LOC_blord(en)
 
   -- Show the enemy guarding the stairs
   set_ent_active(en, 1)
-  bubble(en, "Halt!")
-  bubble(en, "Foolish humans... be gone!")
+  bubble(en, _"Halt!")
+  bubble(en, _"Foolish humans... be gone!")
   drawmap()
   set_run(en)
   combat(53)
   set_run(1)
 
-  bubble(en, "Argh!")
+  bubble(en, _"Argh!")
   drawmap()
 
   set_ent_active(en, 0)
   set_ent_active(1, 0)
 
-  msg("Goblin jewel procured", 19, 0);
+  msg(_"Goblin jewel procured", 19, 0);
 
   set_progress(P_KILLBLORD, 1)
   add_special_item(SI_UNDEADJEWEL)
@@ -203,49 +203,49 @@ end
 
 function LOC_goblin_king(en)
   if (get_progress(P_GOBLINITEM) == 1) then
-    bubble(HERO1, "Ooohh... shiny.")
+    bubble(HERO1, _"Ooohh... shiny.")
     return
   end
 
   if (get_progress(P_SIDEQUEST3) == 0) then
     local en = 255
 
-    bubble(HERO1, "Hey, that gem would fit here.")
+    bubble(HERO1, _"Hey, that gem would fit here.")
     sfx(5)
     set_btile("jewel", 237)
     rest(500)
-    bubble(en, "Thank you.")
+    bubble(en, _"Thank you.")
     set_ent_facing(0, FACE_DOWN)
     if (get_numchrs() == 2) then
       set_ent_facing(1, FACE_DOWN)
     end
     drawmap()
     screen_dump()
-    bubble(HERO1, "Who are you?")
-    bubble(en, "My name is Kaleg... I am the Goblin king. This tomb is my home.")
-    bubble(HERO1, "I guess that would make you dead then?")
-    bubble(en, "That is correct.")
-    bubble(HERO1, "No problem. I'll just be going now.")
-    bubble(en, "Wait! I wanted to thank you for you help.")
+    bubble(HERO1, _"Who are you?")
+    bubble(en, _"My name is Kaleg... I am the Goblin king. This tomb is my home.")
+    bubble(HERO1, _"I guess that would make you dead then?")
+    bubble(en, _"That is correct.")
+    bubble(HERO1, _"No problem. I'll just be going now.")
+    bubble(en, _"Wait! I wanted to thank you for you help.")
     if (get_numchrs() > 1) then
-      bubble(HERO1, "Well, we're not the ones who figured this all out.")
+      bubble(HERO1, _"Well, we're not the ones who figured this all out.")
     else
-      bubble(HERO1, "Well, I'm not the one who figured this all out.")
+      bubble(HERO1, _"Well, I'm not the one who figured this all out.")
     end
-    bubble(en, "Regardless, my brethren and I can rest again. Take this.")
+    bubble(en, _"Regardless, my brethren and I can rest again. Take this.")
     sfx(5)
-    msg("Jade pendant procured", 255, 0)
+    msg(_"Jade pendant procured", 255, 0)
     refresh()
-    bubble(en, "This may help you in your quest.")
-    bubble(en, "I must go now. Fare thee well.")
+    bubble(en, _"This may help you in your quest.")
+    bubble(en, _"I must go now. Fare thee well.")
     if (get_numchrs() > 1) then
-      bubble(HERO1, "Hey! What do you know about our quest?")
+      bubble(HERO1, _"Hey! What do you know about our quest?")
     else
-      bubble(HERO1, "Hey! What do you know about my quest?")
+      bubble(HERO1, _"Hey! What do you know about my quest?")
     end
     wait(50)
-    bubble(HERO1, "Hello?")
-    bubble(HERO1, "Urgh! I hate when they do that!")
+    bubble(HERO1, _"Hello?")
+    bubble(HERO1, _"Urgh! I hate when they do that!")
     set_progress(P_GOBLINITEM, 1)
     add_special_item(SI_JADEPENDANT)
     set_progress(P_SIDEQUEST3, 1)
@@ -253,7 +253,7 @@ function LOC_goblin_king(en)
     remove_special_item(SI_UNDEADJEWEL)
     return
   else
-    bubble(HERO1, "It looks like there should be something here.")
+    bubble(HERO1, _"It looks like there should be something here.")
   end
 end
 
@@ -261,24 +261,24 @@ end
 function LOC_talk_temmin(en)
   if (get_progress(P_TALK_TEMMIN) == 1) then
     if (get_numchrs() > 1) then
-      bubble(en, "$0! $1! I am pleased to see you.")
+      bubble(en, _"$0! $1! I am pleased to see you.")
     else
-      bubble(en, "$0! I am pleased to see you.")
+      bubble(en, _"$0! I am pleased to see you.")
     end
-    bubble(HERO1, "Greetings Temmin. The priest upstairs said you came down here with the Goblin Jewel to try and stop these undead.")
-    bubble(en, "That is true, but I have failed. I was attacked by a sentient skeleton of considerable strength. It took the Jewel.")
-    bubble(HERO1, "Where is it?")
-    bubble(en, "I don't rightly recall. I ran for my life and didn't pay attention to where I was going.")
-    bubble(HERO1, "Well, let's go get it back.")
-    bubble(en, "You go ahead. I'm resting here and going back to the temple.")
+    bubble(HERO1, _"Greetings Temmin. The priest upstairs said you came down here with the Goblin Jewel to try and stop these undead.")
+    bubble(en, _"That is true, but I have failed. I was attacked by a sentient skeleton of considerable strength. It took the Jewel.")
+    bubble(HERO1, _"Where is it?")
+    bubble(en, _"I don't rightly recall. I ran for my life and didn't pay attention to where I was going.")
+    bubble(HERO1, _"Well, let's go get it back.")
+    bubble(en, _"You go ahead. I'm resting here and going back to the temple.")
     set_ent_script(en, "F1W50")
     wait_for_entity(en, en)
-    bubble(en, "I am a failure and a coward.")
-    bubble(HERO1, "But...")
-    bubble(en, "Save it. You won't change my mind.")
+    bubble(en, _"I am a failure and a coward.")
+    bubble(HERO1, _"But...")
+    bubble(en, _"Save it. You won't change my mind.")
     set_progress(P_TALK_TEMMIN, 2)
     refresh()
   else
-    bubble(en, "...")
+    bubble(en, _"...")
   end
 end

@@ -25,11 +25,11 @@ end
 function entity_handler(en)
   if (en == 0) then
     if (get_progress(P_IRONKEY) == 0) then
-      bubble(0, "What th...")
-      bubble(HERO1, "Where's the girl?")
-      bubble(0, "Do you really think that I'm going to tell you?")
-      bubble(HERO1, "That depends... do you want to live?")
-      bubble(0, "Bah! Don't be deceived by the robes. I'm all muscle under here.")
+      bubble(0, _"What th...")
+      bubble(HERO1, _"Where's the girl?")
+      bubble(0, _"Do you really think that I'm going to tell you?")
+      bubble(HERO1, _"That depends... do you want to live?")
+      bubble(0, _"Bah! Don't be deceived by the robes. I'm all muscle under here.")
       drawmap()
       screen_dump()
       set_run(0)
@@ -44,7 +44,7 @@ function entity_handler(en)
       set_progress(P_IRONKEY, 1)
       add_special_item(SI_IRONKEY)
       sfx(5)
-      msg("Iron key procured", 255, 0)
+      msg(_"Iron key procured", 255, 0)
     end
 
   end
@@ -135,10 +135,10 @@ function zone_handler(zn)
 
   elseif (zn == 18) then
     if (get_progress(P_IRONKEY) == 0) then
-      bubble(HERO1, "Locked tight.")
+      bubble(HERO1, _"Locked tight.")
     else
       if (get_progress(P_IRONKEY) == 1) then
-        bubble(HERO1, "Unlocked.")
+        bubble(HERO1, _"Unlocked.")
         set_progress(P_IRONKEY, 2)
         remove_special_item(SI_IRONKEY)
       end
@@ -169,44 +169,44 @@ function zone_handler(zn)
     refresh()
 
   elseif (zn == 25) then
-    bubble(HERO1, "Egad, these books are horrible!")
+    bubble(HERO1, _"Egad, these books are horrible!")
 
   elseif (zn == 26) then
-    bubble(HERO1, "These are just sick!")
+    bubble(HERO1, _"These are just sick!")
 
   elseif (zn == 27) then
-    bubble(HERO1, "These books are just plain bad.")
+    bubble(HERO1, _"These books are just plain bad.")
 
   elseif (zn == 28) then
-    bubble(HERO1, "There is nothing here but common supplies.")
+    bubble(HERO1, _"There is nothing here but common supplies.")
 
   elseif (zn == 29) then
     if (get_progress(P_AVATARDEAD) == 0) then
 
-      bubble(HERO1, "Breanne... are you in here?")
+      bubble(HERO1, _"Breanne... are you in here?")
       wait(50)
-      bubble(23, "Huh?")
-      bubble(HERO1, "Breanne... are you in here?")
+      bubble(23, _"Huh?")
+      bubble(HERO1, _"Breanne... are you in here?")
       wait(50)
       set_ent_script(23, "R2D4W50")
       wait_for_entity(23, 23)
-      bubble(23, "Who are you?")
-      bubble(HERO1, "Your parents sent us to rescue you.")
-      bubble(23, "You'll have to get me out later. Those creeps took some of my blood and they are going to do something evil with it.")
-      bubble(23, "You've got to stop them!")
-      bubble(HERO1, "Well... I guess we should hurry then. We'll be back shortly to get you out.")
-      bubble(23, "Thanks! Now hurry!")
+      bubble(23, _"Who are you?")
+      bubble(HERO1, _"Your parents sent us to rescue you.")
+      bubble(23, _"You'll have to get me out later. Those creeps took some of my blood and they are going to do something evil with it.")
+      bubble(23, _"You've got to stop them!")
+      bubble(HERO1, _"Well... I guess we should hurry then. We'll be back shortly to get you out.")
+      bubble(23, _"Thanks! Now hurry!")
       set_progress(P_AVATARDEAD, 1)
       return
     elseif (get_progress(P_AVATARDEAD) == 1) then
-      bubble(23, "What are you waiting for?")
+      bubble(23, _"What are you waiting for?")
     end
 
   elseif (zn == 30) then
     LOC_fight(17, 18, 19)
 
   elseif (zn == 32) then
-    bubble(HERO1, "Hey! The door is sealed!")
+    bubble(HERO1, _"Hey! The door is sealed!")
 
   elseif (zn == 33) then
     touch_fire(party[0])
@@ -269,8 +269,8 @@ end
 
 
 function LOC_fight(guard1, guard2, guard3)
-  bubble(5, "Hey! Who is that?")
-  bubble(5, "You three take care of them!")
+  bubble(5, _"Hey! Who is that?")
+  bubble(5, _"You three take care of them!")
   wait(50)
   set_ent_script(guard1, "L1D1")
   set_ent_script(guard2, "D1L1")
@@ -303,14 +303,14 @@ function LOC_fight(guard1, guard2, guard3)
   end
   set_autoparty(0)
   wait(50)
-  bubble(HERO1, "Uh oh!")
+  bubble(HERO1, _"Uh oh!")
 
   LOC_avatar_abounds()
 
   drawmap()
   screen_dump()
   wait(50)
-  bubble(HERO1, "The time to attack is now!")
+  bubble(HERO1, _"The time to attack is now!")
   drawmap()
   screen_dump()
   set_autoparty(1)
@@ -378,27 +378,27 @@ function LOC_freed(guard1, guard2, guard3, breanne)
     end
     set_autoparty(0)
     orient_heroes()
-    bubble(HERO1, "Hey, you're free!")
-    bubble(breanne, "Yes, some of my father's men were waiting outside. Once the doors became unsealed they figured things were safe.")
-    bubble(breanne, "It seems that you've taken care of the Cult of the Shadow.")
-    bubble(HERO1, "Yeah, that avatar wasn't very strong. It was probably weak due to just having been summoned.")
-    bubble(breanne, "Don't be modest, you did a great job.")
-    bubble(breanne, "By the way, these men here mentioned that you came here because you wanted my Opal Band.")
-    bubble(HERO1, "Well, that was partly the reason we came, but once we found about this Cult and the Avatar, we had to act.")
-    bubble(breanne, "That's okay... I believe you. I want you to have the Band... you've earned it.")
-    bubble(HERO1, "Are you sure?")
-    bubble(breanne, "Yes.")
+    bubble(HERO1, _"Hey, you're free!")
+    bubble(breanne, _"Yes, some of my father's men were waiting outside. Once the doors became unsealed they figured things were safe.")
+    bubble(breanne, _"It seems that you've taken care of the Cult of the Shadow.")
+    bubble(HERO1, _"Yeah, that avatar wasn't very strong. It was probably weak due to just having been summoned.")
+    bubble(breanne, _"Don't be modest, you did a great job.")
+    bubble(breanne, _"By the way, these men here mentioned that you came here because you wanted my Opal Band.")
+    bubble(HERO1, _"Well, that was partly the reason we came, but once we found about this Cult and the Avatar, we had to act.")
+    bubble(breanne, _"That's okay... I believe you. I want you to have the Band... you've earned it.")
+    bubble(HERO1, _"Are you sure?")
+    bubble(breanne, _"Yes.")
     drawmap()
     screen_dump()
     sfx(5)
-    msg("Opal Band procured", 255, 0)
+    msg(_"Opal Band procured", 255, 0)
     set_progress(P_OPALBAND, 1)
     add_special_item(SI_OPALBAND)
     drawmap()
     screen_dump()
-    bubble(HERO1, "Thank you very much!")
-    bubble(breanne, "No problem, and good luck!")
-    bubble(HERO1, "See ya!")
+    bubble(HERO1, _"Thank you very much!")
+    bubble(breanne, _"No problem, and good luck!")
+    bubble(HERO1, _"See ya!")
     set_ent_script(guard1, "L1U1")
     wait_for_entity(guard1, guard1)
     set_ent_script(guard1, "L3")

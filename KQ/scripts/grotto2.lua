@@ -42,12 +42,12 @@ function zone_handler(zn)
 
   elseif (zn == 2) then
     if (get_progress(P_TALKOLDMAN) == 3) then
-      msg("$0 fits the rusty key into the lock.", 255, 0)
+      msg(_"$0 fits the rusty key into the lock.", 255, 0)
       set_progress(P_TALKOLDMAN, 4)
     elseif (get_progress(P_TALKOLDMAN) == 4) then
-      bubble(HERO1, "Something's supposed to happen here... it hasn't been programmed yet.")
+      bubble(HERO1, _"Something's supposed to happen here... it hasn't been programmed yet.")
     else
-      bubble(HERO1, "This door is stuck tight.")
+      bubble(HERO1, _"This door is stuck tight.")
     end
 
   elseif (zn == 3) then
@@ -55,7 +55,7 @@ function zone_handler(zn)
       set_progress(P_CANCELROD, 1)
       add_special_item(SI_CANCELROD)
       sfx(5)
-      msg("Rod of Cancellation procured", 255, 0)
+      msg(_"Rod of Cancellation procured", 255, 0)
       refresh()
     end
 

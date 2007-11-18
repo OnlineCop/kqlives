@@ -33,15 +33,15 @@ end
 
 function entity_handler(en)
   if (en == 0) then
-    bubble(en, "You cannot stop us! Begone!")
+    bubble(en, _"You cannot stop us! Begone!")
   elseif (en == 1) then
-    bubble(en, "This statue is ours! You cannot have it!")
+    bubble(en, _"This statue is ours! You cannot have it!")
   elseif (en == 2) then
-    bubble(HERO1, "This is the other broken half of the stolen Oracle Statue!")
+    bubble(HERO1, _"This is the other broken half of the stolen Oracle Statue!")
   elseif (en == 3) then
-    bubble(en, "We will die before we give you the statue!")
+    bubble(en, _"We will die before we give you the statue!")
   elseif (en == 4) then
-    bubble(en, "A curse be upon you... a curse upon you all!")
+    bubble(en, _"A curse be upon you... a curse upon you all!")
   end
 end
 
@@ -112,7 +112,7 @@ function zone_handler(zn)
 
   elseif (zn == 10) then
     if (get_progress(P_WARPEDTOT4) == 0) then
-      msg("The door creaks open noisily.", 255, 0)
+      msg(_"The door creaks open noisily.", 255, 0)
       set_progress(P_WARPEDTOT4, 1)
       refresh()
     else
@@ -174,7 +174,7 @@ function zone_handler(zn)
     if (cancombat == 0) then
       bubble(HERO1, "Looks like it's empty.")
     else
-      msg("Something from inside grabs you!", 255, 0)
+      msg(_"Something from inside grabs you!", 255, 0)
       combat(60)
     end
 
@@ -195,7 +195,7 @@ function zone_handler(zn)
   elseif (zn == 25) then
     local x, y = marker("dsportal1")
     bubble(HERO1, "This wall looks funny...")
-    msg("You push at the wall. Something shifts.", 255, 0)
+    msg(_"You push at the wall. Something shifts.", 255, 0)
     set_zone(x + 16, y + 2, 0)
     set_zone(x + 17, y + 2, 0)
     set_obs(x + 16, y + 2, 0)

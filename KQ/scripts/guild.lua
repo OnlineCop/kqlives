@@ -119,8 +119,8 @@ function zone_handler(zn)
 
   elseif (zn == 3) then
     if (get_progress(P_GUILDSECRET) == 0) then
-      bubble(HERO1, "Well I'll be...")
-      bubble(HERO1, "The book really IS called 'How to Enter the Ember's Secret Hideout'. Heh... brilliant in its simplicity, I suppose.")
+      bubble(HERO1, _"Well I'll be...")
+      bubble(HERO1, _"The book really IS called 'How to Enter the Ember's Secret Hideout'. Heh... brilliant in its simplicity, I suppose.")
       set_progress(P_GUILDSECRET, 1)
       sfx(26)
       refresh()
@@ -128,9 +128,9 @@ function zone_handler(zn)
 
   elseif (zn == 4) then
     if (party[0] == AYLA) then
-      bubble(HERO1, "I'm a thief... but even I wouldn't read this garbage!")
+      bubble(HERO1, _"I'm a thief... but even I wouldn't read this garbage!")
     else
-      bubble(HERO1, "Thieves read?!")
+      bubble(HERO1, _"Thieves read?!")
     end
 
   elseif (zn == 5) then
@@ -148,7 +148,7 @@ function zone_handler(zn)
     refresh()
 
   elseif (zn == 9) then
-    bubble(HERO1, "These look interesting.")
+    bubble(HERO1, _"These look interesting.")
 
   elseif (zn == 10) then
     LOC_hidden_door()
@@ -191,9 +191,9 @@ function zone_handler(zn)
       else
         hereo = HERO2
       end
-      bubble(hero, "I can't seem to pick this lock.")
+      bubble(hero, _"I can't seem to pick this lock.")
     else
-      bubble(en, "The lock on this door looks very strange.")
+      bubble(en, _"The lock on this door looks very strange.")
     end
 
   elseif (zn == 23) then
@@ -204,7 +204,7 @@ function zone_handler(zn)
     warp("dstairs4", 8)
 
   elseif (zn == 25) then
-    bubble(HERO1, "This note says that there is a portal behind the fireplace.")
+    bubble(HERO1, _"This note says that there is a portal behind the fireplace.")
 
   elseif (zn == 26) then
     warp("fireplace2", 8)
@@ -222,23 +222,23 @@ end
 function LOC_ayla_join(en)
   if (get_progress(P_AYLA_QUEST) == 0) then
     -- This code creates an unsolvable catch-22. Probably to prevent trapping the player in an unfinished quest.
-    bubble(en, "Wha...? Oh, it's you!")
-    bubble(HERO1, "Hello... I recognise you from Nostik's manor, don't I?")
-    bubble(en, "Yes, I broke into the house, but I couldn't find the secret passage.")
-    bubble(HERO1, "You must be pretty good at... uh...")
-    bubble(en, "Thievery? Yea, I am.")
-    bubble(HERO1, "Well, nice meeting you.")
-    bubble(en, "I would join you, but my quest isn't written yet.")
-    bubble(HERO1, "Oh. Ok. Perhaps when this game is finished?")
-    bubble(en, "Yeah, probably then.")
-    bubble(HERO1, "OK.")
+    bubble(en, _"Wha...? Oh, it's you!")
+    bubble(HERO1, _"Hello... I recognise you from Nostik's manor, don't I?")
+    bubble(en, _"Yes, I broke into the house, but I couldn't find the secret passage.")
+    bubble(HERO1, _"You must be pretty good at... uh...")
+    bubble(en, _"Thievery? Yea, I am.")
+    bubble(HERO1, _"Well, nice meeting you.")
+    bubble(en, _"I would join you, but my quest isn't written yet.")
+    bubble(HERO1, _"Oh. Ok. Perhaps when this game is finished?")
+    bubble(en, _"Yeah, probably then.")
+    bubble(HERO1, _"OK.")
   else
-    bubble(en, "Hey, $0. Rumor has it that the guild has a bunch of treasure hoarded somewhere.")
-    bubble(HERO1, "That's possible. Why?")
-    bubble(en, "Let's just suppose that you help me find it. I wouldn't mind joining your little party and helping you out.")
-    bubble(HERO1, "Well, I can always use a little extra help. What do we have to do?")
-    bubble(en, "Let's have a talk around town. I'm sure someone's bound to spill something about the guild's whereabouts.")
-    bubble(HERO1, "Well, alright then.")
+    bubble(en, _"Hey, $0. Rumor has it that the guild has a bunch of treasure hoarded somewhere.")
+    bubble(HERO1, _"That's possible. Why?")
+    bubble(en, _"Let's just suppose that you help me find it. I wouldn't mind joining your little party and helping you out.")
+    bubble(HERO1, _"Well, I can always use a little extra help. What do we have to do?")
+    bubble(en, _"Let's have a talk around town. I'm sure someone's bound to spill something about the guild's whereabouts.")
+    bubble(HERO1, _"Well, alright then.")
     set_ent_active(en, 0)
     set_all_equip(AYLA, I_SWORD4, I_SHIELD3, I_CAP3, I_SUIT3, I_BAND2, 0)
     id = select_team{AYLA}
@@ -263,19 +263,19 @@ function LOC_fight()
   a = get_vx()
   b = get_vy()
   move_camera(816, 288, 2)
-  bubble(HERO1, "Ooh... a chest! But who are these clowns?")
+  bubble(HERO1, _"Ooh... a chest! But who are these clowns?")
   wait(50)
-  bubble(0, "I'll follow the others to the Coliseum and you wait here for the Guildmaster to return from his visit.")
-  bubble(1, "Yes sir! I'll...")
-  bubble(0, "Who is that?")
+  bubble(0, _"I'll follow the others to the Coliseum and you wait here for the Guildmaster to return from his visit.")
+  bubble(1, _"Yes sir! I'll...")
+  bubble(0, _"Who is that?")
   set_ent_facing(1, FACE_RIGHT)
   drawmap()
   screen_dump()
   move_camera(a, b, 1)
   drawmap()
   screen_dump()
-  bubble(0, "Guards!")
-  bubble(HERO1, "Oh oh!")
+  bubble(0, _"Guards!")
+  bubble(HERO1, _"Oh oh!")
   wait(50)
 
   set_ftile(x, y - 1, 369)
@@ -283,7 +283,7 @@ function LOC_fight()
   set_ftile(x + 1, y, 371)
   set_ftile(x, y + 1, 370)
   wait(50)
-  bubble(HERO1, "What the...")
+  bubble(HERO1, _"What the...")
   drawmap()
   screen_dump()
   set_run(0)
@@ -301,23 +301,23 @@ function LOC_fight()
   drawmap()
   screen_dump()
   wait(50)
-  bubble(HERO1, "Those guys are gone!")
-  bubble(HERO1, "But they left the chest behind.")
+  bubble(HERO1, _"Those guys are gone!")
+  bubble(HERO1, _"But they left the chest behind.")
 end
 
 
 function LOC_get_helm()
   if (get_progress(P_OPALHELMET) == 0) then
     sfx(5)
-    msg("Opal Helmet procured", 255, 0)
+    msg(_"Opal Helmet procured", 255, 0)
     set_progress(P_OPALHELMET, 1)
     add_special_item(SI_OPALHELMET)
     refresh()
     drawmap()
     screen_dump()
     wait(50)
-    bubble(HERO1, "I don't like this.",
-                 "It was just too easy.")
+    bubble(HERO1, _"I don't like this.",
+                 _"It was just too easy.")
   end
 end
 
@@ -334,7 +334,7 @@ function LOC_hidden_door()
       b = HERO1
     end
 
-    bubble(a, "The door is just a decoy.")
+    bubble(a, _"The door is just a decoy.")
     move_entity(a, x, y, 0)
     move_entity(b, x, y + 1, 0)
     set_ent_obsmode(a, 0)
@@ -345,12 +345,12 @@ function LOC_hidden_door()
 
     sfx(26)
     set_ent_facing(a, FACE_RIGHT)
-    bubble(a, "There we go...")
+    bubble(a, _"There we go...")
 
     set_obs(x + 1, y, 0)
     set_obs(x + 2, y - 2, 0)
     set_zone(x, y - 1, 0)
   else
-    bubble(HERO1, "I can't get in this. I may need someone skilled at picking locks to get inside.")
+    bubble(HERO1, _"I can't get in this. I may need someone skilled at picking locks to get inside.")
   end
 end
