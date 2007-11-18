@@ -1150,13 +1150,6 @@ int main (int argc, const char *argv[])
       if (!strcmp (argv[i], "-nosplash") || !strcmp (argv[i], "--nosplash"))
          skip_splash = 1;
 
-      /* Prints some language information */
-      if (!strcmp (argv[i], "-lang") || !strcmp (argv[i], "--lang")){
-       printf(_("calling bindtextdomain (\"%s\", \"%s\");\n"), PACKAGE, KQ_LOCALE);
-       printf(_("calling textdomain (\"%s\");\n"), PACKAGE);
-       printf(_("Hello World.\n"));
-      }
-
       if (!strcmp (argv[i], "--help")) {
          printf(_("Sorry, no help screen at this time.\n"));
          return EXIT_SUCCESS;
