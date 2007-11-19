@@ -41,6 +41,7 @@
 #include "res.h"
 #include "setup.h"
 #include "timing.h"
+#include "console.h"
 
 /* Globals */
 #define MSG_ROWS 4
@@ -98,7 +99,7 @@ void blit2screen (int xw, int yw)
                 makecol (0, 0, 0));
       print_font (double_buffer, xofs, yofs, fbuf, FNORMAL);
    }
-
+	display_console(xw, yw);
    if (stretch_view == 1)
       stretch_blit (double_buffer, screen, xw, yw, 320, 240, 0, 0, 640, 480);
    else
@@ -1155,7 +1156,89 @@ const char *parse_string (const char *the_string)
    return name == NULL ? the_string : strbuf;
 }
 
+/*! \brief Decode String
+ *
+ * Extract the next unicode char from a UTF-8 string
+ *
+ * \param string Text to decode
+ * \param cp The next character
+ * \return Pointer to after the next character
+ * \author PH
+ * \date 20071116
+ */
+static const char* decode_utf8(const char* string, unsigned int* cp) 
+{
+  char c1 = string[0], c2;
+  if ((c1 & 0x80) == 0x0)
+    {
+      /* single byte */
+      *cp = (int) c1;
+      return string + 1;
+    }
 
+  if ((c1 & 0xe0) == 0x80) 
+    {
+      /* double byte */
+      c2 = string[1];
+      if ((c2 & 0xc0) == 0xc0) 
+	{
+	  *cp = ((c1 & 0x1f) << 6) | (c2 & 0x3f);
+	  return string + 2;
+	}
+      else 
+	{
+	  /* error!*/
+	  program_death("UTF-8 decode error");
+	  return NULL;
+	}
+    }
+  program_death("UTF-8 3 and 4 bytes chars not implemented");
+  return NULL;
+}
+
+/*! \brief glyph look up table
+ * 
+ * maps unicode char to glyph index for characters > 128. 
+ * { inicode, glyph }
+ * n.b. must be sorted in order of unicode char
+ * and terminated by {0, 0}
+ */
+static unsigned int glyph_lookup[][2] = 
+  {
+    {0x00c9, 'E' - 32}, /* E-acute */
+    {0x00e9, 'e' - 32}, /* e-acute */
+    {0x00f1, 'n' - 32}, /* n-tilde */
+    {0, 0},
+  };
+/*! \brief Get glyph index
+ *
+ * Convert a unicode char to a glyph index
+ * \param cp unicode character
+ * \return glyph index 
+ * \author PH
+ * \date 20071116
+ * \note uses inefficient linear search for now. 
+ */
+static int get_glyph_index(unsigned int cp) 
+{
+  int i;
+  if (cp < 128) 
+    {
+      return cp - 32;
+    }
+  /* otherwise look up */
+  i = 0;
+  while (glyph_lookup[i][0] != 0)
+    {
+      if (glyph_lookup[i][0] == cp)
+	{
+	  return glyph_lookup[i][1];
+	}
+    }
+  /* didn't find it */
+  program_death("invalid glyph index");
+  return 0;
+}
 
 /*! \brief Display string
  *
@@ -1170,7 +1253,8 @@ const char *parse_string (const char *the_string)
  */
 void print_font (BITMAP *where, int sx, int sy, const char *msg, int cl)
 {
-   int z, cc, hgt = 8;
+   int z = 0, hgt = 8;
+   unsigned int cc;
 
    if (cl < 0 || cl > 6) {
       sprintf (strbuf, _("print_font: Bad font index, %d"), cl);
@@ -1179,14 +1263,12 @@ void print_font (BITMAP *where, int sx, int sy, const char *msg, int cl)
    }
    if (cl == FBIG)
       hgt = 12;
-   for (z = 0; z < (signed int) strlen (msg); z++) {
-      cc = msg[z];
-      cc -= 32;
-      if (cc > 92)
-         cc = 92;
-      if (cc < 0)
-         cc = 0;
-      masked_blit (kfonts, where, cc * 8, cl * 8, z * 8 + sx, sy, 8, hgt);
+   while (1) {
+     msg = decode_utf8(msg, &cc);
+     if (cc == 0) break;
+     cc = get_glyph_index(cc);
+     masked_blit (kfonts, where, cc * 8, cl * 8, z + sx, sy, 8, hgt);
+     z += 8;
    }
 }
 
