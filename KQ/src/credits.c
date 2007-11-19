@@ -36,6 +36,11 @@ static int ease (int);
 
 
 /*! Array of strings */
+/*! edgarmolina: i think that the credits aren't in any language
+ *  so they could be leaved untouched.
+ *  why wasn't günter here?, i added him, but while there's not utf-8
+ *  support, i'll write gunter
+ */
 static char *credits[] = {
    "(C) 2001 DoubleEdge Software",
    "(C) 2002-6 KQ Lives Team",
@@ -49,10 +54,12 @@ static char *credits[] = {
    "Rey Brujo",
    "Matthew Leverton",
    "Sam Hocevar",
+   "Gunther Brammer",
+   "Edgar Alberto Molina",
    NULL
 };
 
-static char pressf1[] = "Press F1 for help";
+
 
 static char **cc = NULL;
 static short int etab[32];
@@ -97,6 +104,8 @@ void deallocate_credits (void)
 
 void display_credits (void)
 {
+   static char *pressf1;
+   pressf1 = _("Press F1 for help");
    int i, x0, e;
    static int last_e = 999;
    if (wk == NULL) {
@@ -123,11 +132,11 @@ void display_credits (void)
        * PH releasing versions with cheat mode compiled in ;)
        */
       print_font (double_buffer, 80, 40,
-                  cheat ? "*CHEAT MODE ON*" : "*CHEAT MODE OFF*", FGOLD);
+                  cheat ? _("*CHEAT MODE ON*" : "*CHEAT MODE OFF*"), FGOLD);
 #endif
 #ifdef DEBUGMODE
       /* TT: Similarly, if we are in debug mode, we should be warned. */
-      print_font (double_buffer, 80, 48, "*DEBUG MODE ON*", FGOLD);
+      print_font (double_buffer, 80, 48, _("*DEBUG MODE ON*"), FGOLD);
 #endif
       last_e = e;
    }
