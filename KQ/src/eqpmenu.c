@@ -228,27 +228,27 @@ static void draw_equipmenu (int c, int sel)
    if (sel == 1) {
       menubox (double_buffer, eqp_act * 72 + 12 + xofs, 4 + yofs, 8, 1,
                DARKBLUE);
-      print_font (double_buffer, 32 + xofs, 12 + yofs, "Equip", FGOLD);
-      print_font (double_buffer, 92 + xofs, 12 + yofs, "Optimize", FGOLD);
-      print_font (double_buffer, 172 + xofs, 12 + yofs, "Remove", FGOLD);
-      print_font (double_buffer, 248 + xofs, 12 + yofs, "Empty", FGOLD);
+      print_font (double_buffer, 32 + xofs, 12 + yofs, _("Equip"), FGOLD);
+      print_font (double_buffer, 92 + xofs, 12 + yofs, _("Optimize"), FGOLD);
+      print_font (double_buffer, 172 + xofs, 12 + yofs, _("Remove"), FGOLD);
+      print_font (double_buffer, 248 + xofs, 12 + yofs, _("Empty"), FGOLD);
    } else {
       if (eqp_act == 0)
-         print_font (double_buffer, 140 + xofs, 12 + yofs, "Equip", FGOLD);
+         print_font (double_buffer, 140 + xofs, 12 + yofs, _("Equip"), FGOLD);
       if (eqp_act == 2)
-         print_font (double_buffer, 136 + xofs, 12 + yofs, "Remove", FGOLD);
+         print_font (double_buffer, 136 + xofs, 12 + yofs, _("Remove"), FGOLD);
    }
    menubox (double_buffer, 12 + xofs, 28 + yofs, 25, 6, BLUE);
    menubox (double_buffer, 228 + xofs, 28 + yofs, 8, 6, BLUE);
    draw_sprite (double_buffer, players[l].portrait, 248 + xofs, 36 + yofs);
    print_font (double_buffer, 268 - (strlen (party[l].name) * 4) + xofs,
                76 + yofs, party[l].name, FNORMAL);
-   print_font (double_buffer, 28 + xofs, 36 + yofs, "Hand1:", FGOLD);
-   print_font (double_buffer, 28 + xofs, 44 + yofs, "Hand2:", FGOLD);
-   print_font (double_buffer, 28 + xofs, 52 + yofs, "Head:", FGOLD);
-   print_font (double_buffer, 28 + xofs, 60 + yofs, "Body:", FGOLD);
-   print_font (double_buffer, 28 + xofs, 68 + yofs, "Arms:", FGOLD);
-   print_font (double_buffer, 28 + xofs, 76 + yofs, "Other:", FGOLD);
+   print_font (double_buffer, 28 + xofs, 36 + yofs, _("Hand1:"), FGOLD);
+   print_font (double_buffer, 28 + xofs, 44 + yofs, _("Hand2:"), FGOLD);
+   print_font (double_buffer, 28 + xofs, 52 + yofs, _("Head:"), FGOLD);
+   print_font (double_buffer, 28 + xofs, 60 + yofs, _("Body:"), FGOLD);
+   print_font (double_buffer, 28 + xofs, 68 + yofs, _("Arms:"), FGOLD);
+   print_font (double_buffer, 28 + xofs, 76 + yofs, _("Other:"), FGOLD);
    for (k = 0; k < 6; k++) {
       j = party[l].eqp[k];
       draw_icon (double_buffer, items[j].icon, 84 + xofs, k * 8 + 36 + yofs);
@@ -324,19 +324,19 @@ static void draw_equippreview (int ch, int ptr, int pp)
    else
       update_equipstats ();
    menubox (double_buffer, 188 + xofs, 92 + yofs, 13, 13, BLUE);
-   print_font (double_buffer, 196 + xofs, 100 + yofs, "Str:", FNORMAL);
-   print_font (double_buffer, 196 + xofs, 108 + yofs, "Agi:", FNORMAL);
-   print_font (double_buffer, 196 + xofs, 116 + yofs, "Vit:", FNORMAL);
-   print_font (double_buffer, 196 + xofs, 124 + yofs, "Int:", FNORMAL);
-   print_font (double_buffer, 196 + xofs, 132 + yofs, "Sag:", FNORMAL);
-   print_font (double_buffer, 196 + xofs, 140 + yofs, "Spd:", FNORMAL);
-   print_font (double_buffer, 196 + xofs, 148 + yofs, "Aur:", FNORMAL);
-   print_font (double_buffer, 196 + xofs, 156 + yofs, "Spi:", FNORMAL);
-   print_font (double_buffer, 196 + xofs, 164 + yofs, "Att:", FNORMAL);
-   print_font (double_buffer, 196 + xofs, 172 + yofs, "Hit:", FNORMAL);
-   print_font (double_buffer, 196 + xofs, 180 + yofs, "Def:", FNORMAL);
-   print_font (double_buffer, 196 + xofs, 188 + yofs, "Evd:", FNORMAL);
-   print_font (double_buffer, 196 + xofs, 196 + yofs, "Mdf:", FNORMAL);
+   print_font (double_buffer, 196 + xofs, 100 + yofs, _("Str:"), FNORMAL);
+   print_font (double_buffer, 196 + xofs, 108 + yofs, _("Agi:"), FNORMAL);
+   print_font (double_buffer, 196 + xofs, 116 + yofs, _("Vit:"), FNORMAL);
+   print_font (double_buffer, 196 + xofs, 124 + yofs, _("Int:"), FNORMAL);
+   print_font (double_buffer, 196 + xofs, 132 + yofs, _("Sag:"), FNORMAL);
+   print_font (double_buffer, 196 + xofs, 140 + yofs, _("Spd:"), FNORMAL);
+   print_font (double_buffer, 196 + xofs, 148 + yofs, _("Aur:"), FNORMAL);
+   print_font (double_buffer, 196 + xofs, 156 + yofs, _("Spi:"), FNORMAL);
+   print_font (double_buffer, 196 + xofs, 164 + yofs, _("Att:"), FNORMAL);
+   print_font (double_buffer, 196 + xofs, 172 + yofs, _("Hit:"), FNORMAL);
+   print_font (double_buffer, 196 + xofs, 180 + yofs, _("Def:"), FNORMAL);
+   print_font (double_buffer, 196 + xofs, 188 + yofs, _("Evd:"), FNORMAL);
+   print_font (double_buffer, 196 + xofs, 196 + yofs, _("Mdf:"), FNORMAL);
    for (z = 0; z < 13; z++) {
       c1 = fighter[ch].stats[z];
       c2 = tstats[z];
@@ -366,10 +366,10 @@ static void draw_equippreview (int ch, int ptr, int pp)
          c2 += tres[z];
       }
       if (c1 < c2)
-         print_font (double_buffer, 212 + xofs, 220 + yofs, "Resist up",
+         print_font (double_buffer, 212 + xofs, 220 + yofs, _("Resist up"),
                      FNORMAL);
       if (c1 > c2)
-         print_font (double_buffer, 204 + xofs, 220 + yofs, "Resist down",
+         print_font (double_buffer, 204 + xofs, 220 + yofs, _("Resist down"),
                      FNORMAL);
    }
 }
