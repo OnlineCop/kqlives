@@ -291,25 +291,25 @@ void battle_render (int plyr, int hl, int sall)
       if (debugging > 1) {
          /*  RB TODO: Check this out.  */
 
-         sprintf (strbuf, "HP:%d (%d)", fighter[plyr - 1].hp,
+         sprintf (strbuf, _("HP:%d (%d)"), fighter[plyr - 1].hp,
                   fighter[plyr - 1].mhp);
          print_font (double_buffer, 0, 8, strbuf, FNORMAL);
-         sprintf (strbuf, "MP:%d (%d)", fighter[plyr - 1].mp,
+         sprintf (strbuf, _("MP:%d (%d)"), fighter[plyr - 1].mp,
                   fighter[plyr - 1].mmp);
          print_font (double_buffer, 0, 16, strbuf, FNORMAL);
-         print_font (double_buffer, 0, 24, "Str", FNORMAL);
-         print_font (double_buffer, 0, 32, "Agi", FNORMAL);
-         print_font (double_buffer, 0, 40, "Vit", FNORMAL);
-         print_font (double_buffer, 0, 48, "Int", FNORMAL);
-         print_font (double_buffer, 0, 56, "Sag", FNORMAL);
-         print_font (double_buffer, 0, 64, "Spd", FNORMAL);
-         print_font (double_buffer, 0, 72, "Aura", FNORMAL);
-         print_font (double_buffer, 0, 80, "Spir", FNORMAL);
-         print_font (double_buffer, 0, 88, "Att", FNORMAL);
-         print_font (double_buffer, 0, 96, "Hit%", FNORMAL);
-         print_font (double_buffer, 0, 104, "Def", FNORMAL);
-         print_font (double_buffer, 0, 112, "Evd%", FNORMAL);
-         print_font (double_buffer, 0, 120, "Mdef", FNORMAL);
+         print_font (double_buffer, 0, 24, _("Str"), FNORMAL);
+         print_font (double_buffer, 0, 32, _("Agi"), FNORMAL);
+         print_font (double_buffer, 0, 40, _("Vit"), FNORMAL);
+         print_font (double_buffer, 0, 48, _("Int"), FNORMAL);
+         print_font (double_buffer, 0, 56, _("Sag"), FNORMAL);
+         print_font (double_buffer, 0, 64, _("Spd"), FNORMAL);
+         print_font (double_buffer, 0, 72, _("Aura"), FNORMAL);
+         print_font (double_buffer, 0, 80, _("Spir"), FNORMAL);
+         print_font (double_buffer, 0, 88, _("Att"), FNORMAL);
+         print_font (double_buffer, 0, 96, _("Hit%"), FNORMAL);
+         print_font (double_buffer, 0, 104, _("Def"), FNORMAL);
+         print_font (double_buffer, 0, 112, _("Evd%"), FNORMAL);
+         print_font (double_buffer, 0, 120, _("Mdef"), FNORMAL);
          sprintf (strbuf, "%d, %d, %d, %d", fighter[plyr - 1].cwt,
                   fighter[plyr - 1].welem, fighter[plyr - 1].unl,
                   fighter[plyr - 1].crit);
@@ -358,7 +358,7 @@ void battle_render (int plyr, int hl, int sall)
       print_font (double_buffer, b + 8, 192, fighter[z].name,
                   (hl == z + 1) ? FGOLD : FNORMAL);
 
-      sprintf (strbuf, "HP: %3d/%3d", fighter[z].hp, fighter[z].mhp);
+      sprintf (strbuf, _("HP: %3d/%3d"), fighter[z].hp, fighter[z].mhp);
       /*  RB IDEA: If the character has less than 1/5 of his/her max    */
       /*           health points, it shows the amount with red (the     */
       /*           character is in danger). I suggest setting that '5'  */
@@ -377,7 +377,7 @@ void battle_render (int plyr, int hl, int sall)
       sz = (fighter[z].hp > 0) ? fighter[z].hp * 88 / fighter[z].mhp : 88;
 
       hline (double_buffer, b + 8, 216, b + 8 + sz, 12);
-      sprintf (strbuf, "MP: %3d/%3d", fighter[z].mp, fighter[z].mmp);
+      sprintf (strbuf, _("MP: %3d/%3d"), fighter[z].mp, fighter[z].mmp);
 
       /*  RB IDEA: Same suggestion as with health, just above.  */
       print_font (double_buffer, b + 8, 218, strbuf,
@@ -470,7 +470,7 @@ int combat (int bno)
 
    /* PH: some checking! */
    if (bno < 0 || bno >= NUM_BATTLES) {
-      sprintf (strbuf, "Combat: battle %d does not exist.", bno);
+      sprintf (strbuf, _("Combat: battle %d does not exist."), bno);
       return 1;
       //program_death (strbuf);
    }
@@ -931,7 +931,7 @@ static void enemies_win (void)
    /*  RB FIXME: rest()?  */
    blit2screen (0, 0);
    kq_wait (1000);
-   sprintf (strbuf, "%s was defeated!", party[pidx[0]].name);
+   sprintf (strbuf, _("%s was defeated!"), party[pidx[0]].name);
    menubox (double_buffer, 152 - (strlen (strbuf) * 4), 48, strlen (strbuf), 1,
             BLUE);
    print_font (double_buffer, 160 - (strlen (strbuf) * 4), 56, strbuf,
@@ -1135,9 +1135,9 @@ static void heroes_win (void)
 
    gp += tgp;
    if (tgp > 0)
-      sprintf (strbuf, "Gained %d xp and found %d gp.", txp, tgp);
+      sprintf (strbuf, _("Gained %d xp and found %d gp."), txp, tgp);
    else
-      sprintf (strbuf, "Gained %d xp.", txp);
+      sprintf (strbuf, _("Gained %d xp."), txp);
 
    menubox (double_buffer, 152 - (strlen (strbuf) * 4), 8, strlen (strbuf), 1,
             BLUE);
@@ -1160,7 +1160,7 @@ static void heroes_win (void)
 
          if (found_item > 0) {
             if (check_inventory (found_item, 1) != 0) {
-               sprintf (strbuf, "%s found!", items[found_item].name);
+               sprintf (strbuf, _("%s found!"), items[found_item].name);
                menubox (double_buffer, 148 - (strlen (strbuf) * 4),
                         nr * 24 + 48, strlen (strbuf) + 1, 1, BLUE);
                draw_icon (double_buffer, items[found_item].icon,
@@ -1188,14 +1188,14 @@ static void heroes_win (void)
          if (give_xp (pidx[c], txp, 0) == 1) {
             menubox (double_buffer, b, 40, 18, 9, BLUE);
             player2fighter (pidx[c], &t2);
-            print_font (double_buffer, b + 8, 48, "Level up!", FGOLD);
-            print_font (double_buffer, b + 8, 56, "Max HP", FNORMAL);
-            print_font (double_buffer, b + 8, 64, "Max MP", FNORMAL);
-            print_font (double_buffer, b + 8, 72, "Strength", FNORMAL);
-            print_font (double_buffer, b + 8, 80, "Agility", FNORMAL);
-            print_font (double_buffer, b + 8, 88, "Vitality", FNORMAL);
-            print_font (double_buffer, b + 8, 96, "Intellect", FNORMAL);
-            print_font (double_buffer, b + 8, 104, "Sagacity", FNORMAL);
+            print_font (double_buffer, b + 8, 48, _("Level up!"), FGOLD);
+            print_font (double_buffer, b + 8, 56, _("Max HP"), FNORMAL);
+            print_font (double_buffer, b + 8, 64, _("Max MP"), FNORMAL);
+            print_font (double_buffer, b + 8, 72, _("Strength"), FNORMAL);
+            print_font (double_buffer, b + 8, 80, _("Agility"), FNORMAL);
+            print_font (double_buffer, b + 8, 88, _("Vitality"), FNORMAL);
+            print_font (double_buffer, b + 8, 96, _("Intellect"), FNORMAL);
+            print_font (double_buffer, b + 8, 104, _("Sagacity"), FNORMAL);
             sprintf (strbuf, "%3d>", t1.mhp);
             print_font (double_buffer, b + 96, 56, strbuf, FNORMAL);
             sprintf (strbuf, "%3d", t2.mhp);
@@ -1221,7 +1221,7 @@ static void heroes_win (void)
          } else
             menubox (double_buffer, b, 104, 18, 1, BLUE);
 
-         sprintf (strbuf, "Next level %7d",
+         sprintf (strbuf, _("Next level %7d"),
                   party[pidx[c]].next - party[pidx[c]].xp);
          print_font (double_buffer, b + 8, 112, strbuf, FGOLD);
       }
@@ -1434,10 +1434,10 @@ static void roll_initiative (void)
    battle_render (-1, -1, 0);
    blit2screen (0, 0);
    if ((hs == 1) && (ms > 1))
-      message ("You have been ambushed!", 255, 1500, 0, 0);
+      message (_("You have been ambushed!"), 255, 1500, 0, 0);
 
    if ((hs > 1) && (ms == 1))
-      message ("You've surprised the enemy!", 255, 1500, 0, 0);
+      message (_("You've surprised the enemy!"), 255, 1500, 0, 0);
 }
 
 
