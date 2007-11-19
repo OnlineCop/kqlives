@@ -133,7 +133,10 @@ static int confirm_action (void)
  */
 static int confirm_quit (void)
 {
-   static char *opts[] = { "Yes", "No" };
+   static char *opts[2];
+   opts[0]=_("Yes");
+   opts[1]=_("No");
+   /*strcpy(opts[1], "No");*/
    int ans;
    ans = prompt_ex (0, _("Are you sure you want to quit this game?"), opts, 2);
    return ans == 0 ? 1 : 0;
@@ -154,7 +157,7 @@ static void delete_game (void)
    a = remove (kqres (SAVE_DIR, strbuf));
    if (a == 0) {
       menubox (double_buffer, 128, pointer_offset + 12, 12, 1, DARKBLUE);
-      print_font (double_buffer, 136, pointer_offset + 20, "File Deleted",
+      print_font (double_buffer, 136, pointer_offset + 20, _("File Deleted"),
                   FNORMAL);
 
       snc[save_ptr] = 0;
@@ -170,7 +173,7 @@ static void delete_game (void)
 
    } else {
       menubox (double_buffer, 128, pointer_offset + 12, 16, 1, DARKBLUE);
-      print_font (double_buffer, 136, pointer_offset + 20, "File Not Deleted",
+      print_font (double_buffer, 136, pointer_offset + 20, _("File Not Deleted"),
                   FNORMAL);
    }
    blit2screen (0, 0);
@@ -204,7 +207,7 @@ static int load_game (void)
    sprintf (strbuf, "sg%d.sav", save_ptr);
    sdat = pack_fopen (kqres (SAVE_DIR, strbuf), F_READ_PACKED);
    if (!sdat) {
-      message ("Could not load saved game.", 255, 0, 0, 0);
+      message (_("Could not load saved game."), 255, 0, 0, 0);
       return 0;
    }
 
@@ -215,7 +218,7 @@ static int load_game (void)
       a = load_game_91(sdat);
    else {
       a = 0;
-      message ("Saved game format is not current.", 255, 0, 0, 0);
+      message (_("Saved game format is not current."), 255, 0, 0, 0);
    }
 
    pack_fclose (sdat);
@@ -381,127 +384,127 @@ int load_game_91 (PACKFILE * sdat)
 #if 0
    a = 0;
    if (progress[P_UCOIN] == 2) {
-      strcpy (special_items[a].name, "Unadium coin");
-      strcpy (special_items[a].description, "Use to reach ruins");
+      strcpy (special_items[a].name, _("Unadium coin"));
+      strcpy (special_items[a].description, _("Use to reach ruins"));
       special_items[a].quantity = 1;
       special_items[a].icon = 50;
       a++;
    }
    if (progress[P_CANCELROD] == 1) {
-      strcpy (special_items[a].name, "Cancellation Rod");
-      strcpy (special_items[a].description, "Nullify magic");
+      strcpy (special_items[a].name, _("Cancellation Rod"));
+      strcpy (special_items[a].description, _("Nullify magic"));
       special_items[a].quantity = 1;
       special_items[a].icon = 51;
       a++;
    }
    if (progress[P_GOBLINITEM] == 1) {
-      strcpy (special_items[a].name, "Jade Pendant");
-      strcpy (special_items[a].description, "Magical goblin gem");
+      strcpy (special_items[a].name, _("Jade Pendant"));
+      strcpy (special_items[a].description, _("Magical goblin gem"));
       special_items[a].quantity = 1;
       special_items[a].icon = 52;
       a++;
    }
    if (progress[P_UNDEADJEWEL] == 1) {
-      strcpy (special_items[a].name, "Goblin Jewel");
-      strcpy (special_items[a].description, "Precious artifact");
+      strcpy (special_items[a].name, _("Goblin Jewel"));
+      strcpy (special_items[a].description, _("Precious artifact"));
       special_items[a].quantity = 1;
       special_items[a].icon = 53;
       a++;
    }
    if (progress[P_WSTONES] > 0) {
-      strcpy (special_items[a].name, "White Stone");
-      strcpy (special_items[a].description, "Smooth white rock");
+      strcpy (special_items[a].name, _("White Stone"));
+      strcpy (special_items[a].description, _("Smooth white rock"));
       special_items[a].quantity = progress[P_WSTONES];
       special_items[a].icon = 54;
       a++;
    }
    if (progress[P_BSTONES] > 0) {
-      strcpy (special_items[a].name, "Black Stone");
-      strcpy (special_items[a].description, "Smooth black rock");
+      strcpy (special_items[a].name, _("Black Stone"));
+      strcpy (special_items[a].description, _("Smooth black rock"));
       special_items[a].quantity = progress[P_BSTONES];
       special_items[a].icon = 55;
       a++;
    }
    if (progress[P_EMBERSKEY] == 2) {
-      strcpy (special_items[a].name, "Ember's Key");
-      strcpy (special_items[a].description, "Unlock stuff");
+      strcpy (special_items[a].name, _("Ember's Key"));
+      strcpy (special_items[a].description, _("Unlock stuff"));
       special_items[a].quantity = 1;
       special_items[a].icon = 56;
       a++;
    }
    if (progress[P_BRONZEKEY] == 1) {
-      strcpy (special_items[a].name, "Bronze Key");
-      strcpy (special_items[a].description, "Unlock stuff");
+      strcpy (special_items[a].name, _("Bronze Key"));
+      strcpy (special_items[a].description, _("Unlock stuff"));
       special_items[a].quantity = 1;
       special_items[a].icon = 57;
       a++;
    }
    if (progress[P_DENORIAN] == 3 || progress[P_DENORIAN] == 4) {
-      strcpy (special_items[a].name, "Denorian Statue");
-      strcpy (special_items[a].description, "Broken in half");
+      strcpy (special_items[a].name, _("Denorian Statue"));
+      strcpy (special_items[a].description, _("Broken in half"));
       special_items[a].quantity = 1;
       special_items[a].icon = 58;
       a++;
    }
    if (progress[P_OPALHELMET] == 1) {
-      strcpy (special_items[a].name, "Opal Helmet");
-      strcpy (special_items[a].description, "Piece of opal set");
+      strcpy (special_items[a].name, _("Opal Helmet"));
+      strcpy (special_items[a].description, _("Piece of opal set"));
       special_items[a].quantity = 1;
       special_items[a].icon = 59;
       a++;
    }
    if (progress[P_OPALSHIELD] == 1) {
-      strcpy (special_items[a].name, "Opal Shield");
-      strcpy (special_items[a].description, "Piece of opal set");
+      strcpy (special_items[a].name, _("Opal Shield"));
+      strcpy (special_items[a].description, _("Piece of opal set"));
       special_items[a].quantity = 1;
       special_items[a].icon = 60;
       a++;
    }
    if (progress[P_IRONKEY] == 1) {
-      strcpy (special_items[a].name, "Iron Key");
-      strcpy (special_items[a].description, "Unlock stuff");
+      strcpy (special_items[a].name, _("Iron Key"));
+      strcpy (special_items[a].description, _("Unlock stuff"));
       special_items[a].quantity = 1;
       special_items[a].icon = 61;
       a++;
    }
    if (progress[P_OPALBAND] == 1) {
-      strcpy (special_items[a].name, "Opal Band");
-      strcpy (special_items[a].description, "Piece of opal set");
+      strcpy (special_items[a].name, _("Opal Band"));
+      strcpy (special_items[a].description, _("Piece of opal set"));
       special_items[a].quantity = 1;
       special_items[a].icon = 62;
       a++;
    }
    if (progress[P_OPALARMOUR] == 1) {
-      strcpy (special_items[a].name, "Opal Armour");
-      strcpy (special_items[a].description, "Piece of opal set");
+      strcpy (special_items[a].name, _("Opal Armour"));
+      strcpy (special_items[a].description, _("Piece of opal set"));
       special_items[a].quantity = 1;
       special_items[a].icon = 14;
       a++;
    }
    if (progress[P_CAVEKEY] == 1) {
-      strcpy (special_items[a].name, "Cave Key");
-      strcpy (special_items[a].description, "Unlock stuff");
+      strcpy (special_items[a].name, _("Cave Key"));
+      strcpy (special_items[a].description, _("Unlock stuff"));
       special_items[a].quantity = 1;
       special_items[a].icon = 63;
       a++;
    }
    if (progress[P_TALK_TSORIN] == 1) {
-      strcpy (special_items[a].name, "Tsorin's Note");
-      strcpy (special_items[a].description, "Sealed envelope");
+      strcpy (special_items[a].name, _("Tsorin's Note"));
+      strcpy (special_items[a].description, _("Sealed envelope"));
       special_items[a].quantity = 1;
       special_items[a].icon = 18;
       a++;
    }
    if (progress[P_TALK_TSORIN] == 2) {
-      strcpy (special_items[a].name, "Derig's Note");
-      strcpy (special_items[a].description, "Encrypted message");
+      strcpy (special_items[a].name, _("Derig's Note"));
+      strcpy (special_items[a].description, _("Encrypted message"));
       special_items[a].quantity = 1;
       special_items[a].icon = 18;
       a++;
    }
    if (progress[P_TALKOLDMAN] > 2) {
-      strcpy (special_items[a].name, "Rusty Key");
-      strcpy (special_items[a].description, "Unlock grotto ruins");
+      strcpy (special_items[a].name, _("Rusty Key"));
+      strcpy (special_items[a].description, _("Unlock grotto ruins"));
       special_items[a].quantity = 1;
       special_items[a].icon = 64;
       a++;
@@ -547,7 +550,7 @@ int load_game_92 (PACKFILE * sdat)
    /* Load number of, and which characters in party */
    numchrs = pack_igetw (sdat);
    if (numchrs > PSIZE) {
-      message ("Error. numchrs in saved game > PSIZE", 255, 0, 0, 0);
+      message (_("Error. numchrs in saved game > PSIZE"), 255, 0, 0, 0);
       return 0;
    }
    for (a = 0; a < numchrs; a++) {
@@ -572,7 +575,7 @@ int load_game_92 (PACKFILE * sdat)
    /* Load map name and location */
    a = pack_igetw (sdat);
    if (a > sizeof(curmap)) {
-      message("Error. number of chars in saved game > sizeof(curmap)", 255, 0, 0, 0);
+      message(_("Error. number of chars in saved game > sizeof(curmap)"), 255, 0, 0, 0);
       return 0;
    }
    pack_fread (curmap, a, sdat);
@@ -583,7 +586,7 @@ int load_game_92 (PACKFILE * sdat)
    /* Load Quest Info */
    b = pack_igetw (sdat);
    if (b > sizeof(progress)) {
-      message("Error. number of progress indicators > sizeof(progress)", 255, 0, 0, 0);
+      message(_("Error. number of progress indicators > sizeof(progress)"), 255, 0, 0, 0);
       return 0;
    }
    for (a = 0; a < b; a++)
@@ -596,7 +599,7 @@ int load_game_92 (PACKFILE * sdat)
    /* Load treasure info */
    b = pack_igetw (sdat);
    if (b > sizeof(treasure)) {
-      message("Error. number of treasure indicators > sizeof(treasure)", 255, 0, 0, 0);
+      message(_("Error. number of treasure indicators > sizeof(treasure)"), 255, 0, 0, 0);
       return 0;
    }
    for (a = 0; a < b; a++)
@@ -609,7 +612,7 @@ int load_game_92 (PACKFILE * sdat)
    /* Load spell info */
    b = pack_igetw (sdat);
    if (b > sizeof(save_spells)) {
-      message("Error. number of non-combat spell indicators > sizeof(save_spells)", 255, 0, 0, 0);
+      message(_("Error. number of non-combat spell indicators > sizeof(save_spells)"), 255, 0, 0, 0);
       return 0;
    }
    for (a = 0; a < b; a++)
@@ -623,7 +626,7 @@ int load_game_92 (PACKFILE * sdat)
    /* Load player inventory */
    b = pack_igetw (sdat);
    if (b > MAX_INV) {
-      message("Error. number of inventory items > MAX_INV", 255, 0, 0, 0);
+      message(_("Error. number of inventory items > MAX_INV"), 255, 0, 0, 0);
       return 0;
    }
    for (a = 0; a < b; a++)
@@ -642,7 +645,7 @@ int load_game_92 (PACKFILE * sdat)
    /* Load special items info */
    b = pack_igetw (sdat);
    if (b > MAX_SPECIAL_ITEMS) {
-      message("Error. number of special items > MAX_SPECIAL_ITEMS", 255, 0, 0, 0);
+      message(_("Error. number of special items > MAX_SPECIAL_ITEMS"), 255, 0, 0, 0);
       return 0;
    }
    
@@ -656,7 +659,7 @@ int load_game_92 (PACKFILE * sdat)
    /* Load shop info (last visit time and number of items) */
    b = pack_igetw (sdat);
    if (b > NUMSHOPS) {
-      message ("Error. number of shops saved > NUMSHOPS", 255, 0, 0, 0);
+      message (_("Error. number of shops saved > NUMSHOPS"), 255, 0, 0, 0);
       return 0;
    }
 
@@ -798,7 +801,7 @@ static int save_game (void)
    sprintf (strbuf, "sg%d.sav", save_ptr);
    sdat = pack_fopen (kqres (SAVE_DIR, strbuf), F_WRITE_PACKED);
    if (!sdat) {
-      message ("Could not save game data.", 255, 0, 0, 0);
+      message (_("Could not save game data."), 255, 0, 0, 0);
       return 0;
    }
    pack_putc (kq_version, sdat);
@@ -896,7 +899,7 @@ int save_game_92 (PACKFILE * sdat)
    sprintf (strbuf, "sg%d.sav", save_ptr);
    sdat = pack_fopen (kqres (SAVE_DIR, strbuf), F_WRITE_PACKED);
    if (!sdat) {
-      message ("Could not save game data.", 255, 0, 0, 0);
+      message (_("Could not save game data."), 255, 0, 0, 0);
       return 0;
    }
 
@@ -1136,13 +1139,13 @@ static void show_sgstats (int saving)
    pointer_offset = (save_ptr - top_pointer) * 48;
    if (saving == 0) {
       menubox (double_buffer, 0, pointer_offset + 12, 7, 1, BLUE);
-      print_font (double_buffer, 8, pointer_offset + 20, "Loading", FGOLD);
+      print_font (double_buffer, 8, pointer_offset + 20, _("Loading"), FGOLD);
    } else if (saving == 1) {
       menubox (double_buffer, 8, pointer_offset + 12, 6, 1, BLUE);
-      print_font (double_buffer, 16, pointer_offset + 20, "Saving", FGOLD);
+      print_font (double_buffer, 16, pointer_offset + 20, _("Saving"), FGOLD);
    } else if (saving == 2 || saving == 3) {
       menubox (double_buffer, 8, pointer_offset + 12, 6, 1, BLUE);
-      print_font (double_buffer, 16, pointer_offset + 20, "Delete", FRED);
+      print_font (double_buffer, 16, pointer_offset + 20, _("Delete"), FRED);
    }
 
    if (top_pointer > 0)
@@ -1158,21 +1161,21 @@ static void show_sgstats (int saving)
          menubox (double_buffer, 72, pointer_offset, 29, 4, BLUE);
 
       if (snc[sg] == -1)
-         print_font (double_buffer, 136, pointer_offset + 20, "Wrong version",
+         print_font (double_buffer, 136, pointer_offset + 20, _("Wrong version"),
                      FNORMAL);
       else {
          if (snc[sg] == 0)
-            print_font (double_buffer, 168, pointer_offset + 20, "Empty",
+            print_font (double_buffer, 168, pointer_offset + 20, _("Empty"),
                         FNORMAL);
          else {
             for (a = 0; a < snc[sg]; a++) {
                hx = a * 72 + 84;
                hy = pointer_offset + 12;
                draw_sprite (double_buffer, frames[sid[sg][a]][1], hx, hy + 4);
-               sprintf (strbuf, "L: %02d", slv[sg][a]);
+               sprintf (strbuf, _("L: %02d"), slv[sg][a]);
                print_font (double_buffer, hx + 16, hy, strbuf, FNORMAL);
-               print_font (double_buffer, hx + 16, hy + 8, "H:", FNORMAL);
-               print_font (double_buffer, hx + 16, hy + 16, "M:", FNORMAL);
+               print_font (double_buffer, hx + 16, hy + 8, _("H:"), FNORMAL);
+               print_font (double_buffer, hx + 16, hy + 16, _("M:"), FNORMAL);
                rectfill (double_buffer, hx + 33, hy + 9, hx + 65, hy + 15, 2);
                rectfill (double_buffer, hx + 32, hy + 8, hx + 64, hy + 14, 35);
                rectfill (double_buffer, hx + 33, hy + 17, hx + 65, hy + 23, 2);
@@ -1182,10 +1185,10 @@ static void show_sgstats (int saving)
                b = smp[sg][a] * 32 / 100;
                rectfill (double_buffer, hx + 32, hy + 17, hx + 32 + b, hy + 21, 25);
             }
-            sprintf (strbuf, "T %d:%02d", shr[sg], smin[sg]);
+            sprintf (strbuf, _("T %d:%02d"), shr[sg], smin[sg]);
             print_font (double_buffer, 236, pointer_offset + 12, strbuf,
                         FNORMAL);
-            sprintf (strbuf, "G %d", sgp[sg]);
+            sprintf (strbuf, _("G %d"), sgp[sg]);
             print_font (double_buffer, 236, pointer_offset + 28, strbuf,
                         FNORMAL);
          }
@@ -1282,10 +1285,10 @@ int start_menu (int skip_splash)
          clear_bitmap (double_buffer);
          masked_blit ((BITMAP *) bg->dat, double_buffer, 0, 0, 0, 0, 320, 124);
          menubox (double_buffer, 112, 116, 10, 4, BLUE);
-         print_font (double_buffer, 128, 124, "Continue", FNORMAL);
-         print_font (double_buffer, 128, 132, "New Game", FNORMAL);
-         print_font (double_buffer, 136, 140, "Config", FNORMAL);
-         print_font (double_buffer, 144, 148, "Exit", FNORMAL);
+         print_font (double_buffer, 128, 124, _("Continue"), FNORMAL);
+         print_font (double_buffer, 128, 132, _("New Game"), FNORMAL);
+         print_font (double_buffer, 136, 140, _("Config"), FNORMAL);
+         print_font (double_buffer, 144, 148, _("Exit"), FNORMAL);
          draw_sprite (double_buffer, menuptr, 112, ptr * 8 + 124);
          redraw = 0;
       }
@@ -1332,7 +1335,7 @@ int start_menu (int skip_splash)
             /* TODO: Save Global Settings Here */
          } else if (ptr == 3) {   /* Exit */
             unload_datafile_object (bg);
-            klog ("Then exit you shall!");
+            klog (_("Then exit you shall!"));
             return 2;
          }
       }
@@ -1371,14 +1374,15 @@ int start_menu (int skip_splash)
 int system_menu (void)
 {
    int stop = 0, ptr = 0, temp = 0;
-   char save_str[] = "Save  ";
+   char save_str[10];
+   strcpy(save_str, _("Save  "));
    int text_color = FNORMAL;
 
    if (cansave == 0) {
       text_color = FDARK;
 #ifdef KQ_CHEATS
       if (cheat) {
-         strcpy(save_str, "[Save]");
+         strcpy(save_str, _("[Save]");
          text_color = FNORMAL;
       }
 #endif /* KQ_CHEATS */
@@ -1390,9 +1394,9 @@ int system_menu (void)
       menubox (double_buffer, xofs, yofs, 8, 4, BLUE);
 
       print_font (double_buffer, 16 + xofs, 8 + yofs, save_str,  text_color);
-      print_font (double_buffer, 16 + xofs, 16 + yofs, "Load",   FNORMAL);
-      print_font (double_buffer, 16 + xofs, 24 + yofs, "Config", FNORMAL);
-      print_font (double_buffer, 16 + xofs, 32 + yofs, "Exit",   FNORMAL);
+      print_font (double_buffer, 16 + xofs, 16 + yofs, _("Load"),   FNORMAL);
+      print_font (double_buffer, 16 + xofs, 24 + yofs, _("Config"), FNORMAL);
+      print_font (double_buffer, 16 + xofs, 32 + yofs, _("Exit"),   FNORMAL);
 
       draw_sprite (double_buffer, menuptr, 0 + xofs, ptr * 8 + 8 + yofs);
       blit2screen (xofs, yofs);
