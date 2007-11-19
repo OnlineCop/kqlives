@@ -1173,7 +1173,7 @@ void print_font (BITMAP *where, int sx, int sy, const char *msg, int cl)
    int z, cc, hgt = 8;
 
    if (cl < 0 || cl > 6) {
-      sprintf (strbuf, "print_font: Bad font index, %d", cl);
+      sprintf (strbuf, _("print_font: Bad font index, %d"), cl);
       klog (strbuf);
       return;
    }
@@ -1210,7 +1210,7 @@ void print_num (BITMAP * where, int sx, int sy, char *msg, int cl)
    int z, cc;
 
    if (cl < 0 || cl > 4) {
-      sprintf (strbuf, "print_num: Bad font index, %d", cl);
+      sprintf (strbuf, _("print_num: Bad font index, %d"), cl);
       klog (strbuf);
       return;
    }
