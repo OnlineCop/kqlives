@@ -556,11 +556,11 @@ static void load_enemies (void)
    }
    enemy_pcx = load_datafile_object (PCX_DATAFILE, "ENEMY_PCX");
    if (enemy_pcx == NULL) {
-      program_death ("Could not load enemy sprites from datafile!");
+      program_death (_("Could not load enemy sprites from datafile!"));
    }
    edat = fopen (kqres (DATA_DIR, "allstat.mon"), "r");
    if (!edat)
-      program_death ("Could not load 1st enemy datafile!");
+      program_death (_("Could not load 1st enemy datafile!"));
    enemies_n = 0;
    enemies_cap = 128;
    enemies = (s_fighter **) malloc (sizeof (s_fighter *) * enemies_cap);
@@ -666,7 +666,7 @@ static void load_enemies (void)
    fclose (edat);
    edat = fopen (kqres (DATA_DIR, "resabil.mon"), "r");
    if (!edat)
-      program_death ("Could not load 2nd enemy datafile!");
+      program_death (_("Could not load 2nd enemy datafile!"));
    for (i = 0; i < enemies_n; i++) {
       f = enemies[i];
       fscanf (edat, "%s", strbuf);
@@ -746,7 +746,7 @@ int select_encounter (int en, int etid)
       else
          where++;
       if (where >= NUM_ETROWS) {
-         sprintf (strbuf, "There are no rows for encounter table #%d!", en);
+         sprintf (strbuf, _("There are no rows for encounter table #%d!"), en);
          program_death (strbuf);
       }
    }
@@ -758,7 +758,7 @@ int select_encounter (int en, int etid)
          } else
             where++;
          if (erows[where].tnum > en || where >= NUM_ETROWS)
-            program_death ("Couldn't select random encounter table row!");
+            program_death (_("Couldn't select random encounter table row!"));
       }
    } else
       entry = where + etid;
@@ -775,7 +775,7 @@ int select_encounter (int en, int etid)
        && etid == 99)
       numens = 2;
    if (numens == 0)
-      program_death ("Empty encounter table row!");
+      program_death (_("Empty encounter table row!"));
    return entry;
 }
 

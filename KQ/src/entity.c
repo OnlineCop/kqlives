@@ -360,7 +360,7 @@ static void getcommand (int target_entity)
 #ifdef DEBUGMODE
       if (debugging > 0) {
          sprintf (strbuf,
-                  "Invalid entity command (%c) at position %d for ent %d", s,
+                  _("Invalid entity command (%c) at position %d for ent %d"), s,
                   g_ent[target_entity].sidx, target_entity);
          program_death (strbuf);
       }
