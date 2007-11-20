@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: peterhull90@users.sourceforge.net\n"
-"POT-Creation-Date: 2007-11-18 04:42+0100\n"
+"POT-Creation-Date: 2007-11-19 23:05+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2543,7 +2543,7 @@ msgid ""
 "inside."
 msgstr ""
 
-#: scripts/init.lua:13
+#: scripts/init.lua:13 src/sgame.c:388
 msgid "Use to reach ruins"
 msgstr ""
 
@@ -2551,116 +2551,118 @@ msgstr ""
 msgid "Unadium Coin"
 msgstr ""
 
-#: scripts/init.lua:14
+#: scripts/init.lua:14 src/sgame.c:395
 msgid "Nullify magic"
 msgstr ""
 
-#: scripts/init.lua:14
+#: scripts/init.lua:14 src/sgame.c:394
 msgid "Cancellation Rod"
 msgstr ""
 
-#: scripts/init.lua:15
+#: scripts/init.lua:15 src/sgame.c:402
 msgid "Magical goblin gem"
 msgstr ""
 
-#: scripts/init.lua:15
+#: scripts/init.lua:15 src/sgame.c:401
 msgid "Jade Pendant"
 msgstr ""
 
-#: scripts/init.lua:16
+#: scripts/init.lua:16 src/sgame.c:408
 msgid "Goblin Jewel"
 msgstr ""
 
-#: scripts/init.lua:16
+#: scripts/init.lua:16 src/sgame.c:409
 msgid "Precious artifact"
 msgstr ""
 
-#: scripts/init.lua:17
+#: scripts/init.lua:17 src/sgame.c:415
 msgid "White Stone"
 msgstr ""
 
-#: scripts/init.lua:17
+#: scripts/init.lua:17 src/sgame.c:416
 msgid "Smooth white rock"
 msgstr ""
 
-#: scripts/init.lua:18
+#: scripts/init.lua:18 src/sgame.c:422
 msgid "Black Stone"
 msgstr ""
 
-#: scripts/init.lua:18
+#: scripts/init.lua:18 src/sgame.c:423
 msgid "Smooth black rock"
 msgstr ""
 
-#: scripts/init.lua:19 scripts/init.lua:20 scripts/init.lua:24
+#: scripts/init.lua:19 scripts/init.lua:20 scripts/init.lua:24 src/sgame.c:430
+#: src/sgame.c:437 src/sgame.c:465 src/sgame.c:486
 msgid "Unlock stuff"
 msgstr ""
 
-#: scripts/init.lua:19
+#: scripts/init.lua:19 src/sgame.c:429
 msgid "Ember's Key"
 msgstr ""
 
-#: scripts/init.lua:20
+#: scripts/init.lua:20 src/sgame.c:436
 msgid "Bronze Key"
 msgstr ""
 
-#: scripts/init.lua:21
+#: scripts/init.lua:21 src/sgame.c:444
 msgid "Broken in half"
 msgstr ""
 
-#: scripts/init.lua:21
+#: scripts/init.lua:21 src/sgame.c:443
 msgid "Denorian Statue"
 msgstr ""
 
-#: scripts/init.lua:22
+#: scripts/init.lua:22 src/sgame.c:450
 msgid "Opal Helmet"
 msgstr ""
 
 #: scripts/init.lua:22 scripts/init.lua:23 scripts/init.lua:25
-#: scripts/init.lua:26
+#: scripts/init.lua:26 src/sgame.c:451 src/sgame.c:458 src/sgame.c:472
+#: src/sgame.c:479
 msgid "Piece of opal set"
 msgstr ""
 
-#: scripts/init.lua:23
+#: scripts/init.lua:23 src/sgame.c:457
 msgid "Opal Shield"
 msgstr ""
 
-#: scripts/init.lua:24
+#: scripts/init.lua:24 src/sgame.c:464
 msgid "Iron Key"
 msgstr ""
 
-#: scripts/init.lua:25
+#: scripts/init.lua:25 src/sgame.c:471
 msgid "Opal Band"
 msgstr ""
 
-#: scripts/init.lua:26
+#: scripts/init.lua:26 src/sgame.c:478
 msgid "Opal Armour"
 msgstr ""
 
-#: scripts/init.lua:27
+#: scripts/init.lua:27 src/sgame.c:485
 msgid "Cave Key"
 msgstr ""
 
-#: scripts/init.lua:28
+#: scripts/init.lua:28 src/sgame.c:493
 msgid "Sealed envelope"
 msgstr ""
 
-#: scripts/init.lua:28
+#: scripts/init.lua:28 src/sgame.c:492
 msgid "Tsorin's Note"
 msgstr ""
 
-#: scripts/init.lua:29
+#: scripts/init.lua:29 src/sgame.c:499
 msgid "Derig's Note"
 msgstr ""
 
-#: scripts/init.lua:29
+#: scripts/init.lua:29 src/sgame.c:500
 msgid "Encrypted message"
 msgstr ""
 
-#: scripts/init.lua:30
+#: scripts/init.lua:30 src/sgame.c:507
 msgid "Unlock grotto ruins"
 msgstr ""
 
-#: scripts/init.lua:30
+#: scripts/init.lua:30 src/sgame.c:506
 msgid "Rusty Key"
 msgstr ""
 
@@ -6554,6 +6556,300 @@ msgstr ""
 msgid "This spa is relaxing."
 msgstr ""
 
+#: src/combat.c:294
+#, c-format
+msgid "HP:%d (%d)"
+msgstr ""
+
+#: src/combat.c:297
+#, c-format
+msgid "MP:%d (%d)"
+msgstr ""
+
+#: src/combat.c:300
+msgid "Str"
+msgstr ""
+
+#: src/combat.c:301
+msgid "Agi"
+msgstr ""
+
+#: src/combat.c:302
+msgid "Vit"
+msgstr ""
+
+#: src/combat.c:303
+msgid "Int"
+msgstr ""
+
+#: src/combat.c:304
+msgid "Sag"
+msgstr ""
+
+#: src/combat.c:305
+msgid "Spd"
+msgstr ""
+
+#: src/combat.c:306
+msgid "Aura"
+msgstr ""
+
+#: src/combat.c:307
+msgid "Spir"
+msgstr ""
+
+#: src/combat.c:308
+msgid "Att"
+msgstr ""
+
+#: src/combat.c:309
+msgid "Hit%"
+msgstr ""
+
+#: src/combat.c:310
+msgid "Def"
+msgstr ""
+
+#: src/combat.c:311
+msgid "Evd%"
+msgstr ""
+
+#: src/combat.c:312
+msgid "Mdef"
+msgstr ""
+
+#: src/combat.c:361
+#, c-format
+msgid "HP: %3d/%3d"
+msgstr ""
+
+#: src/combat.c:380
+#, c-format
+msgid "MP: %3d/%3d"
+msgstr ""
+
+#: src/combat.c:473
+#, c-format
+msgid "Combat: battle %d does not exist."
+msgstr ""
+
+#: src/combat.c:934
+#, c-format
+msgid "%s was defeated!"
+msgstr ""
+
+#: src/combat.c:1138
+#, c-format
+msgid "Gained %d xp and found %d gp."
+msgstr ""
+
+#: src/combat.c:1140
+#, c-format
+msgid "Gained %d xp."
+msgstr ""
+
+#: src/combat.c:1163
+#, c-format
+msgid "%s found!"
+msgstr ""
+
+#: src/combat.c:1191
+msgid "Level up!"
+msgstr ""
+
+#: src/combat.c:1192
+msgid "Max HP"
+msgstr ""
+
+#: src/combat.c:1193
+msgid "Max MP"
+msgstr ""
+
+#: src/combat.c:1194
+msgid "Strength"
+msgstr ""
+
+#: src/combat.c:1195
+msgid "Agility"
+msgstr ""
+
+#: src/combat.c:1196
+msgid "Vitality"
+msgstr ""
+
+#: src/combat.c:1197
+msgid "Intellect"
+msgstr ""
+
+#: src/combat.c:1198
+msgid "Sagacity"
+msgstr ""
+
+#: src/combat.c:1224
+#, c-format
+msgid "Next level %7d"
+msgstr ""
+
+#: src/combat.c:1437
+msgid "You have been ambushed!"
+msgstr ""
+
+#: src/combat.c:1440
+msgid "You've surprised the enemy!"
+msgstr ""
+
+#: src/credits.c:108
+msgid "Press F1 for help"
+msgstr ""
+
+#: src/credits.c:135
+msgid "*CHEAT MODE ON*"
+msgstr ""
+
+#: src/credits.c:139
+msgid "*DEBUG MODE ON*"
+msgstr ""
+
+#: src/draw.c:1176
+#, c-format
+msgid "print_font: Bad font index, %d"
+msgstr ""
+
+#: src/draw.c:1213
+#, c-format
+msgid "print_num: Bad font index, %d"
+msgstr ""
+
+#: src/enemyc.c:559
+msgid "Could not load enemy sprites from datafile!"
+msgstr ""
+
+#: src/enemyc.c:563
+msgid "Could not load 1st enemy datafile!"
+msgstr ""
+
+#: src/enemyc.c:669
+msgid "Could not load 2nd enemy datafile!"
+msgstr ""
+
+#: src/enemyc.c:749
+#, c-format
+msgid "There are no rows for encounter table #%d!"
+msgstr ""
+
+#: src/enemyc.c:761
+msgid "Couldn't select random encounter table row!"
+msgstr ""
+
+#: src/enemyc.c:778
+msgid "Empty encounter table row!"
+msgstr ""
+
+#: src/entity.c:363
+#, c-format
+msgid "Invalid entity command (%c) at position %d for ent %d"
+msgstr ""
+
+#: src/eqpmenu.c:231 src/eqpmenu.c:237
+msgid "Equip"
+msgstr ""
+
+#: src/eqpmenu.c:232
+msgid "Optimize"
+msgstr ""
+
+#: src/eqpmenu.c:233 src/eqpmenu.c:239
+msgid "Remove"
+msgstr ""
+
+#: src/eqpmenu.c:234 src/sgame.c:1168
+msgid "Empty"
+msgstr ""
+
+#: src/eqpmenu.c:246
+msgid "Hand1:"
+msgstr ""
+
+#: src/eqpmenu.c:247
+msgid "Hand2:"
+msgstr ""
+
+#: src/eqpmenu.c:248
+msgid "Head:"
+msgstr ""
+
+#: src/eqpmenu.c:249
+msgid "Body:"
+msgstr ""
+
+#: src/eqpmenu.c:250
+msgid "Arms:"
+msgstr ""
+
+#: src/eqpmenu.c:251
+msgid "Other:"
+msgstr ""
+
+#: src/eqpmenu.c:327
+msgid "Str:"
+msgstr ""
+
+#: src/eqpmenu.c:328
+msgid "Agi:"
+msgstr ""
+
+#: src/eqpmenu.c:329
+msgid "Vit:"
+msgstr ""
+
+#: src/eqpmenu.c:330
+msgid "Int:"
+msgstr ""
+
+#: src/eqpmenu.c:331
+msgid "Sag:"
+msgstr ""
+
+#: src/eqpmenu.c:332
+msgid "Spd:"
+msgstr ""
+
+#: src/eqpmenu.c:333
+msgid "Aur:"
+msgstr ""
+
+#: src/eqpmenu.c:334
+msgid "Spi:"
+msgstr ""
+
+#: src/eqpmenu.c:335
+msgid "Att:"
+msgstr ""
+
+#: src/eqpmenu.c:336
+msgid "Hit:"
+msgstr ""
+
+#: src/eqpmenu.c:337
+msgid "Def:"
+msgstr ""
+
+#: src/eqpmenu.c:338
+msgid "Evd:"
+msgstr ""
+
+#: src/eqpmenu.c:339
+msgid "Mdf:"
+msgstr ""
+
+#: src/eqpmenu.c:369
+msgid "Resist up"
+msgstr ""
+
+#: src/eqpmenu.c:372
+msgid "Resist down"
+msgstr ""
+
 #: src/kq.c:466
 #, c-format
 msgid "Could not allocate %s!."
@@ -6582,6 +6878,141 @@ msgstr ""
 msgid "Confirm/Cancel"
 msgstr ""
 
+#: src/sgame.c:137
+msgid "Yes"
+msgstr ""
+
 #: src/sgame.c:138
+msgid "No"
+msgstr ""
+
+#: src/sgame.c:141
 msgid "Are you sure you want to quit this game?"
+msgstr ""
+
+#: src/sgame.c:160
+msgid "File Deleted"
+msgstr ""
+
+#: src/sgame.c:176
+msgid "File Not Deleted"
+msgstr ""
+
+#: src/sgame.c:210
+msgid "Could not load saved game."
+msgstr ""
+
+#: src/sgame.c:221
+msgid "Saved game format is not current."
+msgstr ""
+
+#: src/sgame.c:387
+msgid "Unadium coin"
+msgstr ""
+
+#: src/sgame.c:553
+msgid "Error. numchrs in saved game > PSIZE"
+msgstr ""
+
+#: src/sgame.c:578
+msgid "Error. number of chars in saved game > sizeof(curmap)"
+msgstr ""
+
+#: src/sgame.c:589
+msgid "Error. number of progress indicators > sizeof(progress)"
+msgstr ""
+
+#: src/sgame.c:602
+msgid "Error. number of treasure indicators > sizeof(treasure)"
+msgstr ""
+
+#: src/sgame.c:615
+msgid "Error. number of non-combat spell indicators > sizeof(save_spells)"
+msgstr ""
+
+#: src/sgame.c:629
+msgid "Error. number of inventory items > MAX_INV"
+msgstr ""
+
+#: src/sgame.c:648
+msgid "Error. number of special items > MAX_SPECIAL_ITEMS"
+msgstr ""
+
+#: src/sgame.c:662
+msgid "Error. number of shops saved > NUMSHOPS"
+msgstr ""
+
+#: src/sgame.c:804 src/sgame.c:902
+msgid "Could not save game data."
+msgstr ""
+
+#: src/sgame.c:1142
+msgid "Loading"
+msgstr ""
+
+#: src/sgame.c:1145
+msgid "Saving"
+msgstr ""
+
+#: src/sgame.c:1148
+msgid "Delete"
+msgstr ""
+
+#: src/sgame.c:1164
+msgid "Wrong version"
+msgstr ""
+
+#: src/sgame.c:1175
+#, c-format
+msgid "L: %02d"
+msgstr ""
+
+#: src/sgame.c:1177
+msgid "H:"
+msgstr ""
+
+#: src/sgame.c:1178
+msgid "M:"
+msgstr ""
+
+#: src/sgame.c:1188
+#, c-format
+msgid "T %d:%02d"
+msgstr ""
+
+#: src/sgame.c:1191
+#, c-format
+msgid "G %d"
+msgstr ""
+
+#: src/sgame.c:1288
+msgid "Continue"
+msgstr ""
+
+#: src/sgame.c:1289
+msgid "New Game"
+msgstr ""
+
+#: src/sgame.c:1290 src/sgame.c:1398
+msgid "Config"
+msgstr ""
+
+#: src/sgame.c:1291 src/sgame.c:1399
+msgid "Exit"
+msgstr ""
+
+#: src/sgame.c:1338
+msgid "Then exit you shall!"
+msgstr ""
+
+#: src/sgame.c:1378
+msgid "Save  "
+msgstr ""
+
+#: src/sgame.c:1385
+msgid "[Save]"
+msgstr ""
+
+#: src/sgame.c:1397
+msgid "Load"
 msgstr ""

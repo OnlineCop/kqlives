@@ -14,7 +14,7 @@ kq_SOURCES = src/enemyc.c src/intrface.c src/sgame.c src/bounds.c \
 	include/disk.h include/hskill.h include/movement.h include/shopmenu.h \
 	include/draw.h include/intrface.h include/mpcx.h include/skills.h \
 	include/effects.h include/itemdefs.h include/music.h include/ssprites.h \
-	include/enemyc.h include/itemmenu.h include/progress.h include/structs.h \
+	include/enemyc.h include/itemmenu.h include/structs.h \
 	include/entity.h include/kq.h include/res.h include/timing.h \
 	include/eqpmenu.h include/kqsnd.h include/scrnshot.h \
 	include/eskill.h include/magic.h include/selector.h \
@@ -72,38 +72,8 @@ dist_map_DATA = maps/starting.map maps/bridge2.map \
 
 mapdir = $(pkgdatadir)/maps
 
-cscripts_DATA = scripts/bridge2.lob scripts/dville.lob \
-	scripts/starting.lob scripts/bridge.lob scripts/estate.lob \
-	scripts/temple1.lob scripts/camp.lob scripts/esteria.lob \
-	scripts/temple2.lob scripts/cave1.lob scripts/fort.lob \
-	scripts/tower.lob scripts/cave2.lob scripts/global.lob \
-	scripts/town1.lob scripts/cave3a.lob scripts/goblin.lob \
-	scripts/town2.lob scripts/cave3b.lob scripts/grotto2.lob \
-	scripts/town3.lob scripts/cave4.lob scripts/grotto.lob \
-	scripts/town4.lob scripts/cave5.lob scripts/guild.lob \
-	scripts/town5.lob scripts/cave6a.lob scripts/main.lob \
-	scripts/town6.lob scripts/cave6b.lob scripts/manor.lob \
-	scripts/town7.lob scripts/town8.lob scripts/coliseum.lob \
-	scripts/pass.lob scripts/tunnel.lob scripts/cult.lob \
-	scripts/shrine.lob scripts/sunarin.lob scripts/init.lob
-MOSTLYCLEANFILES = $(cscripts_DATA)
-cscriptsdir = $(pkglibdir)/scripts
-
-EXTRA_DIST = config.rpath scripts/bridge2.lua scripts/dville.lua \
-	scripts/starting.lua scripts/bridge.lua scripts/estate.lua \
-	scripts/temple1.lua scripts/camp.lua scripts/esteria.lua \
-	scripts/temple2.lua scripts/cave1.lua scripts/fort.lua \
-	scripts/tower.lua scripts/cave2.lua scripts/global.lua \
-	scripts/town1.lua scripts/cave3a.lua scripts/goblin.lua \
-	scripts/town2.lua scripts/cave3b.lua scripts/grotto2.lua \
-	scripts/town3.lua scripts/cave4.lua scripts/grotto.lua \
-	scripts/town4.lua scripts/cave5.lua scripts/guild.lua \
-	scripts/town5.lua scripts/cave6a.lua scripts/main.lua \
-	scripts/town6.lua scripts/cave6b.lua scripts/manor.lua \
-	scripts/town7.lua scripts/town8.lua scripts/coliseum.lua \
-	scripts/pass.lua scripts/tunnel.lua scripts/cult.lua \
-	scripts/shrine.lua scripts/init.lua Mac/Info.plist Mac/KQ-icon.icns \
-        maps/mapdraw2.glade other/kq.ico
+EXTRA_DIST = config.rpath Mac/Info.plist Mac/KQ-icon.icns \
+        maps/mapdraw2.glade other/kq.ico other/luaxgettext
 
 dist_gfx_DATA = data/kqsnd.dat data/mpcx.dat data/ssprites.dat \
 	data/hero.kq data/tileset.kq data/allstat.mon data/resabil.mon
