@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: peterhull90@users.sourceforge.net\n"
-"POT-Creation-Date: 2007-11-19 23:05+0100\n"
+"POT-Creation-Date: 2007-11-21 17:37-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -5355,11 +5355,11 @@ msgstr ""
 msgid "Take a nap?"
 msgstr ""
 
-#: scripts/town4.lua:246 scripts/town4.lua:288
+#: scripts/town4.lua:246 scripts/town4.lua:288 src/setup.c:244 src/setup.c:266
 msgid "  yes"
 msgstr ""
 
-#: scripts/town4.lua:247 scripts/town4.lua:287
+#: scripts/town4.lua:247 scripts/town4.lua:287 src/setup.c:244 src/setup.c:266
 msgid "  no"
 msgstr ""
 
@@ -6590,7 +6590,7 @@ msgstr ""
 msgid "Spd"
 msgstr ""
 
-#: src/combat.c:306
+#: src/combat.c:306 src/menu.c:711
 msgid "Aura"
 msgstr ""
 
@@ -6665,23 +6665,23 @@ msgstr ""
 msgid "Max MP"
 msgstr ""
 
-#: src/combat.c:1194
+#: src/combat.c:1194 src/menu.c:705
 msgid "Strength"
 msgstr ""
 
-#: src/combat.c:1195
+#: src/combat.c:1195 src/menu.c:706
 msgid "Agility"
 msgstr ""
 
-#: src/combat.c:1196
+#: src/combat.c:1196 src/menu.c:707
 msgid "Vitality"
 msgstr ""
 
-#: src/combat.c:1197
+#: src/combat.c:1197 src/menu.c:708
 msgid "Intellect"
 msgstr ""
 
-#: src/combat.c:1198
+#: src/combat.c:1198 src/menu.c:709
 msgid "Sagacity"
 msgstr ""
 
@@ -6710,12 +6710,20 @@ msgstr ""
 msgid "*DEBUG MODE ON*"
 msgstr ""
 
-#: src/draw.c:1176
+#: src/draw.c:1191
+msgid "UTF-8 decode error"
+msgstr ""
+
+#: src/draw.c:1195
+msgid "UTF-8 3 and 4 bytes chars not implemented"
+msgstr ""
+
+#: src/draw.c:1260
 #, c-format
 msgid "print_font: Bad font index, %d"
 msgstr ""
 
-#: src/draw.c:1213
+#: src/draw.c:1295
 #, c-format
 msgid "print_num: Bad font index, %d"
 msgstr ""
@@ -6750,7 +6758,7 @@ msgstr ""
 msgid "Invalid entity command (%c) at position %d for ent %d"
 msgstr ""
 
-#: src/eqpmenu.c:231 src/eqpmenu.c:237
+#: src/eqpmenu.c:231 src/eqpmenu.c:237 src/menu.c:116
 msgid "Equip"
 msgstr ""
 
@@ -6850,18 +6858,388 @@ msgstr ""
 msgid "Resist down"
 msgstr ""
 
+#: src/eskill.c:61
+msgid "Venomous Bite"
+msgstr ""
+
+#: src/eskill.c:69
+msgid "Double Slash"
+msgstr ""
+
+#: src/eskill.c:77
+msgid "Chill Touch"
+msgstr ""
+
+#: src/eskill.c:85
+msgid "Flash Flood"
+msgstr ""
+
+#: src/eskill.c:100 src/heroc.c:615 src/hskill.c:450
+msgid "Sweep"
+msgstr ""
+
+#: src/eskill.c:108
+msgid "ParaClaw"
+msgstr ""
+
+#: src/eskill.c:116
+msgid "Dragon Bite"
+msgstr ""
+
+#: src/eskill.c:127
+msgid "Stone Gas"
+msgstr ""
+
+#: src/eskill.c:146
+msgid "Zemmel Rod"
+msgstr ""
+
+#: src/eskill.c:184
+msgid "Poison Gas"
+msgstr ""
+
+#: src/eskill.c:192
+msgid "Tangle Root"
+msgstr ""
+
+#: src/eskill.c:209
+msgid "Petrifying Bite"
+msgstr ""
+
+#: src/eskill.c:219
+msgid "Maul of the Titans"
+msgstr ""
+
+#: src/eskill.c:226
+msgid "Stunning Strike"
+msgstr ""
+
+#: src/eskill.c:236
+msgid "Howl"
+msgstr ""
+
+#: src/eskill.c:259
+msgid "Rasp"
+msgstr ""
+
+#: src/eskill.c:278
+msgid "Shadow Blast"
+msgstr ""
+
+#: src/heroc.c:614 src/hskill.c:415
+msgid "Rage"
+msgstr ""
+
+#: src/heroc.c:616
+msgid "Infuse"
+msgstr ""
+
+#: src/heroc.c:617
+msgid "Prayer"
+msgstr ""
+
+#: src/heroc.c:618
+msgid "Boost"
+msgstr ""
+
+#: src/heroc.c:619
+msgid "Cover"
+msgstr ""
+
+#: src/heroc.c:620 src/hskill.c:614
+msgid "Steal"
+msgstr ""
+
+#: src/heroc.c:621
+msgid "Sense"
+msgstr ""
+
+#: src/heroc.c:634 src/menu.c:714
+msgid "Attack"
+msgstr ""
+
+#: src/heroc.c:643
+msgid "Spell"
+msgstr ""
+
+#: src/heroc.c:648
+msgid "Item"
+msgstr ""
+
+#: src/heroc.c:657
+msgid "Invoke"
+msgstr ""
+
+#: src/heroc.c:672
+msgid "Defend"
+msgstr ""
+
+#: src/heroc.c:676
+msgid "Run"
+msgstr ""
+
+#: src/heroc.c:929
+msgid "Neutralize Poison"
+msgstr ""
+
+#: src/heroc.c:937
+msgid "Magic Missiles"
+msgstr ""
+
+#: src/heroc.c:975
+msgid "Fatal error: How can a dead party run?"
+msgstr ""
+
+#: src/heroc.c:986
+msgid "Fatal error: Why are the heroes running from dead enemies?"
+msgstr ""
+
+#: src/heroc.c:1002
+msgid "Could not escape!"
+msgstr ""
+
+#: src/heroc.c:1008
+#, c-format
+msgid "Escaped! Dropped %d gold!"
+msgstr ""
+
+#: src/heroc.c:1010
+#, c-format
+msgid "Escaped!"
+msgstr ""
+
+#: src/hskill.c:350
+#, c-format
+msgid "Name: %s"
+msgstr ""
+
+#: src/hskill.c:352
+#, c-format
+msgid "Level: %d"
+msgstr ""
+
+#: src/hskill.c:354
+#, c-format
+msgid "HP: %d/%d"
+msgstr ""
+
+#: src/hskill.c:356
+#, c-format
+msgid "MP: %d/%d"
+msgstr ""
+
+#: src/hskill.c:358 src/menu.c:732
+msgid "Earth"
+msgstr ""
+
+#: src/hskill.c:359 src/menu.c:733
+msgid "Black"
+msgstr ""
+
+#: src/hskill.c:360 src/menu.c:734
+msgid "Fire"
+msgstr ""
+
+#: src/hskill.c:361 src/menu.c:735
+msgid "Thunder"
+msgstr ""
+
+#: src/hskill.c:362 src/menu.c:736
+msgid "Air"
+msgstr ""
+
+#: src/hskill.c:363 src/menu.c:737
+msgid "White"
+msgstr ""
+
+#: src/hskill.c:364 src/menu.c:738
+msgid "Water"
+msgstr ""
+
+#: src/hskill.c:365 src/menu.c:739
+msgid "Ice"
+msgstr ""
+
+#: src/hskill.c:463
+msgid "Elemental Infusion"
+msgstr ""
+
+#: src/hskill.c:512
+msgid "Dispel Undead"
+msgstr ""
+
+#: src/hskill.c:562
+msgid "Divine Cure"
+msgstr ""
+
+#: src/hskill.c:637 src/hskill.c:661
+#, c-format
+msgid "%s taken!"
+msgstr ""
+
+#: src/hskill.c:643 src/hskill.c:667
+msgid "Nothing to steal!"
+msgstr ""
+
+#: src/hskill.c:645 src/hskill.c:669 src/hskill.c:672
+msgid "Couldn't steal!"
+msgstr ""
+
+#: src/intrface.c:625
+msgid "Cheating complete."
+msgstr ""
+
+#: src/intrface.c:650
+msgid "Could not initialise scripting engine"
+msgstr ""
+
+#: src/intrface.c:875
+#, c-format
+msgid "Marker %s not found."
+msgstr ""
+
+#: src/intrface.c:1493
+#, c-format
+msgid "Found %d gp!"
+msgstr ""
+
+#: src/intrface.c:1525
+#, c-format
+msgid "%s procured!"
+msgstr ""
+
+#: src/intrface.c:1527
+#, c-format
+msgid "%s ^%d procured!"
+msgstr ""
+
+#: src/intrface.c:1535
+#, c-format
+msgid "%s not taken!"
+msgstr ""
+
+#: src/intrface.c:1537
+#, c-format
+msgid "%s ^%d not taken!"
+msgstr ""
+
+#: src/intrface.c:2827
+msgid "Choose one"
+msgstr ""
+
+#: src/intrface.c:3870
+#, c-format
+msgid "Tried to add too many different items to a shop. Maximum is %d\n"
+msgstr ""
+
+#: src/intrface.c:3921
+#, c-format
+msgid ""
+"%s\n"
+"Stack trace:\n"
+msgstr ""
+
+#: src/intrface.c:3924
+#, c-format
+msgid "#%d Line %d in (%s %s) %s\n"
+msgstr ""
+
+#: src/intrface.c:3928
+msgid "Script error. See allegro.log"
+msgstr ""
+
+#: src/intrface.c:4060
+#, c-format
+msgid "Could not open script %s.lob!"
+msgstr ""
+
+#: src/intrface.c:4067
+#, c-format
+msgid "Could not parse script %s!"
+msgstr ""
+
+#: src/intrface.c:4074
+#, c-format
+msgid "lua_pcall failed while calling script %s!"
+msgstr ""
+
+#: src/itemmenu.c:146 src/sgame.c:105 src/shopmenu.c:90 src/shopmenu.c:575
+msgid "Confirm/Cancel"
+msgstr ""
+
+#: src/itemmenu.c:283 src/menu.c:114
+msgid "Items"
+msgstr ""
+
+#: src/itemmenu.c:288 src/itemmenu.c:292
+msgid "Use"
+msgstr ""
+
+#: src/itemmenu.c:289
+msgid "Sort   Drop"
+msgstr ""
+
+#: src/itemmenu.c:294
+msgid "Drop"
+msgstr ""
+
+#: src/itemmenu.c:495
+msgid "Strength up!"
+msgstr ""
+
+#: src/itemmenu.c:498
+msgid "Agility up!"
+msgstr ""
+
+#: src/itemmenu.c:501
+msgid "Vitality up!"
+msgstr ""
+
+#: src/itemmenu.c:504
+msgid "Intellect up!"
+msgstr ""
+
+#: src/itemmenu.c:507
+msgid "Wisdom up!"
+msgstr ""
+
+#: src/itemmenu.c:533 src/masmenu.c:305
+#, c-format
+msgid "%s learned!"
+msgstr ""
+
 #: src/kq.c:466
 #, c-format
 msgid "Could not allocate %s!."
+msgstr ""
+
+#: src/kq.c:725
+msgid "Could not open treasure.log!"
 msgstr ""
 
 #: src/kq.c:732
 msgid "Could not open progress.log!"
 msgstr ""
 
+#: src/kq.c:938
+msgid "Could not load character graphics!"
+msgstr ""
+
+#: src/kq.c:1023
+msgid "Alt+W Pressed:"
+msgstr ""
+
 #: src/kq.c:1036
 #, c-format
 msgid "Program terminated: user pressed Alt+X"
+msgstr ""
+
+#: src/kq.c:1062
+msgid "Cannot open hero data file"
+msgstr ""
+
+#: src/kq.c:1073
+msgid "Could not load kqfaces.pcx!"
 msgstr ""
 
 #: src/kq.c:1111
@@ -6874,8 +7252,456 @@ msgstr ""
 msgid "Sorry, no help screen at this time.\n"
 msgstr ""
 
-#: src/sgame.c:105
-msgid "Confirm/Cancel"
+#: src/kq.c:1488
+msgid "X-ALT pressed... exiting."
+msgstr ""
+
+#: src/kq.c:1613
+#, c-format
+msgid "Error with sound: %s\n"
+msgstr ""
+
+#: src/kq.c:1633
+msgid "Only joysticks/gamepads with at least 4 buttons can be used."
+msgstr ""
+
+#: src/kq.c:1642
+msgid "Could not load misc.pcx!"
+msgstr ""
+
+#: src/kq.c:1716
+msgid "Could not load tileset.kq"
+msgstr ""
+
+#: src/kq.c:1723
+msgid "Too many tilesets defined in tileset.kq"
+msgstr ""
+
+#: src/kq.c:1859
+msgid "X-Alt pressed - exiting"
+msgstr ""
+
+#: src/kq.c:1948
+msgid "Repulse has worn off!"
+msgstr ""
+
+#: src/magic.c:612
+msgid "... the hell, how can there be nobody to cure?"
+msgstr ""
+
+#: src/magic.c:1175
+#, c-format
+msgid "Enemy %d tried to cast %s?!"
+msgstr ""
+
+#: src/masmenu.c:92 src/menu.c:115
+msgid "Magic"
+msgstr ""
+
+#: src/menu.c:117
+msgid "Spec."
+msgstr ""
+
+#: src/menu.c:118
+msgid "Stats"
+msgstr ""
+
+#: src/menu.c:119
+msgid "Quest"
+msgstr ""
+
+#: src/menu.c:120
+msgid "Time:"
+msgstr ""
+
+#: src/menu.c:121 src/shopmenu.c:264 src/shopmenu.c:423
+msgid "Gold:"
+msgstr ""
+
+#: src/menu.c:153
+msgid "LV"
+msgstr ""
+
+#: src/menu.c:157
+msgid "HP"
+msgstr ""
+
+#: src/menu.c:165
+msgid "MP"
+msgstr ""
+
+#: src/menu.c:629
+msgid "Special Items"
+msgstr ""
+
+#: src/menu.c:693
+msgid "Exp:"
+msgstr ""
+
+#: src/menu.c:697
+msgid "Next:"
+msgstr ""
+
+#: src/menu.c:710
+msgid "Speed"
+msgstr ""
+
+#: src/menu.c:712
+msgid "Spirit"
+msgstr ""
+
+#: src/menu.c:715
+msgid "Hit"
+msgstr ""
+
+#: src/menu.c:716
+msgid "Defense"
+msgstr ""
+
+#: src/menu.c:717
+msgid "Evade"
+msgstr ""
+
+#: src/menu.c:718
+msgid "Mag.Def"
+msgstr ""
+
+#: src/menu.c:740
+msgid "Poison"
+msgstr ""
+
+#: src/menu.c:741
+msgid "Blind"
+msgstr ""
+
+#: src/menu.c:742
+msgid "Charm"
+msgstr ""
+
+#: src/menu.c:743
+msgid "Paralyze"
+msgstr ""
+
+#: src/menu.c:744
+msgid "Petrify"
+msgstr ""
+
+#: src/menu.c:745
+msgid "Silence"
+msgstr ""
+
+#: src/menu.c:746
+msgid "Sleep"
+msgstr ""
+
+#: src/menu.c:747
+msgid "Time"
+msgstr ""
+
+#: src/music.c:144
+#, c-format
+msgid "Could not load %s!\n"
+msgstr ""
+
+#: src/music.c:182
+msgid "reached maximum levels of music pauses!\n"
+msgstr ""
+
+#: src/music.c:284
+#, c-format
+msgid "Could not load %s!"
+msgstr ""
+
+#: src/scrnshot.c:121
+#, c-format
+msgid "the bitmap [0x%p] is invalid (or unable to create sub bitmap)\n"
+msgstr ""
+
+#: src/scrnshot.c:126 src/scrnshot.c:127
+msgid "no more room for screenshot\n"
+msgstr ""
+
+#: src/scrnshot.c:131
+#, c-format
+msgid "the prefix '%s' is too long\n"
+msgstr ""
+
+#: src/scrnshot.c:135
+#, c-format
+msgid "save path '%s' does not exist.\n"
+msgstr ""
+
+#: src/selector.c:189 src/selector.c:208
+msgid "Join"
+msgstr ""
+
+#: src/selector.c:193 src/selector.c:210
+msgid "Leave"
+msgstr ""
+
+#: src/selector.c:197 src/selector.c:212
+msgid "Lead"
+msgstr ""
+
+#: src/selector.c:201
+msgid "No options"
+msgstr ""
+
+#: src/selector.c:650
+msgid "Available:"
+msgstr ""
+
+#: src/selector.c:651
+msgid "In party:"
+msgstr ""
+
+#: src/selector.c:676 src/sgame.c:1291 src/sgame.c:1399 src/shopmenu.c:754
+msgid "Exit"
+msgstr ""
+
+#: src/setup.c:123
+msgid "Display KQ in a window."
+msgstr ""
+
+#: src/setup.c:124
+msgid "Stretch to fit 640x480 resolution."
+msgstr ""
+
+#: src/setup.c:125
+msgid "Display the frame rate during play."
+msgstr ""
+
+#: src/setup.c:126
+msgid "Wait for vertical retrace."
+msgstr ""
+
+#: src/setup.c:127
+msgid "Key used to move up."
+msgstr ""
+
+#: src/setup.c:128
+msgid "Key used to move down."
+msgstr ""
+
+#: src/setup.c:129
+msgid "Key used to move left."
+msgstr ""
+
+#: src/setup.c:130
+msgid "Key used to move right."
+msgstr ""
+
+#: src/setup.c:131
+msgid "Key used to confirm action."
+msgstr ""
+
+#: src/setup.c:132
+msgid "Key used to cancel action."
+msgstr ""
+
+#: src/setup.c:133
+msgid "Key used to call character menu."
+msgstr ""
+
+#: src/setup.c:134
+msgid "Key used to call system menu."
+msgstr ""
+
+#: src/setup.c:135
+msgid "Toggle sound and music on/off."
+msgstr ""
+
+#: src/setup.c:136
+msgid "Overall sound volume (affects music)."
+msgstr ""
+
+#: src/setup.c:137
+msgid "Music volume."
+msgstr ""
+
+#: src/setup.c:138
+msgid "Animation speed-ups for slow machines."
+msgstr ""
+
+#: src/setup.c:139
+msgid "Toggle how to allocate CPU usage."
+msgstr ""
+
+#: src/setup.c:141
+msgid "Things you can do only in DebugMode."
+msgstr ""
+
+#: src/setup.c:151
+msgid "KQ Configuration"
+msgstr ""
+
+#: src/setup.c:155
+msgid "Windowed mode:"
+msgstr ""
+
+#: src/setup.c:155 src/setup.c:156 src/setup.c:157 src/setup.c:158
+#: src/setup.c:180
+msgid "YES"
+msgstr ""
+
+#: src/setup.c:155 src/setup.c:156 src/setup.c:157 src/setup.c:158
+#: src/setup.c:180
+msgid "NO"
+msgstr ""
+
+#: src/setup.c:156
+msgid "Stretch Display:"
+msgstr ""
+
+#: src/setup.c:157
+msgid "Show Frame Rate:"
+msgstr ""
+
+#: src/setup.c:158
+msgid "Wait for Retrace:"
+msgstr ""
+
+#: src/setup.c:159 src/setup.c:931
+msgid "Up Key:"
+msgstr ""
+
+#: src/setup.c:160 src/setup.c:932
+msgid "Down Key:"
+msgstr ""
+
+#: src/setup.c:161 src/setup.c:933
+msgid "Left Key:"
+msgstr ""
+
+#: src/setup.c:162 src/setup.c:934
+msgid "Right Key:"
+msgstr ""
+
+#: src/setup.c:163 src/setup.c:935
+msgid "Confirm Key:"
+msgstr ""
+
+#: src/setup.c:164 src/setup.c:936
+msgid "Cancel Key:"
+msgstr ""
+
+#: src/setup.c:165 src/setup.c:937
+msgid "Menu Key:"
+msgstr ""
+
+#: src/setup.c:166 src/setup.c:938
+msgid "System Menu Key:"
+msgstr ""
+
+#: src/setup.c:167
+msgid "Sound System:"
+msgstr ""
+
+#: src/setup.c:167
+msgid "ON"
+msgstr ""
+
+#: src/setup.c:167 src/setup.c:191
+msgid "OFF"
+msgstr ""
+
+#: src/setup.c:175
+msgid "Sound Volume:"
+msgstr ""
+
+#: src/setup.c:178
+msgid "Music Volume:"
+msgstr ""
+
+#: src/setup.c:180
+msgid "Slow Computer:"
+msgstr ""
+
+#: src/setup.c:183
+#, c-format
+msgid "rest(%d)"
+msgstr ""
+
+#: src/setup.c:186
+msgid "CPU Usage:"
+msgstr ""
+
+#: src/setup.c:191
+msgid "DebugMode Stuff:"
+msgstr ""
+
+#: src/setup.c:236
+msgid ""
+"This version of KQ was compiled for DOS and does not support windowed mode"
+msgstr ""
+
+#: src/setup.c:239
+msgid ""
+"Changing the display mode to or from windowed view could have serious "
+"ramifications. It is advised that you save first."
+msgstr ""
+
+#: src/setup.c:241
+#, c-format
+msgid "Switch to windowed mode?"
+msgstr ""
+
+#: src/setup.c:243
+#, c-format
+msgid "Switch to full screen?"
+msgstr ""
+
+#: src/setup.c:258
+msgid "This version of KQ was compiled for DOS and does not support stretching"
+msgstr ""
+
+#: src/setup.c:261
+msgid ""
+"Changing the stretched view option could have serious ramifications. It is "
+"advised that you save your game before trying this."
+msgstr ""
+
+#: src/setup.c:263
+#, c-format
+msgid "Try to stretch the display?"
+msgstr ""
+
+#: src/setup.c:265
+#, c-format
+msgid "Switch to unstretched display?"
+msgstr ""
+
+#: src/setup.c:354
+msgid "...please wait..."
+msgstr ""
+
+#: src/setup.c:364
+msgid "Sound Volume"
+msgstr ""
+
+#: src/setup.c:377
+msgid "Music Volume"
+msgstr ""
+
+#: src/setup.c:451
+msgid "Press a key"
+msgstr ""
+
+#: src/setup.c:587
+#, c-format
+msgid "Error loading .WAV file: %s.\n"
+msgstr ""
+
+#: src/setup.c:709
+msgid "Could not open saves/setup.cfg - Using defaults."
+msgstr ""
+
+#: src/setup.c:926
+msgid "KQ Help"
+msgstr ""
+
+#: src/setup.c:930
+msgid "Press CONFIRM to exit this screen"
 msgstr ""
 
 #: src/sgame.c:137
@@ -6997,10 +7823,6 @@ msgstr ""
 msgid "Config"
 msgstr ""
 
-#: src/sgame.c:1291 src/sgame.c:1399
-msgid "Exit"
-msgstr ""
-
 #: src/sgame.c:1338
 msgid "Then exit you shall!"
 msgstr ""
@@ -7015,4 +7837,79 @@ msgstr ""
 
 #: src/sgame.c:1397
 msgid "Load"
+msgstr ""
+
+#: src/shopmenu.c:113
+msgid "No room!"
+msgstr ""
+
+#: src/shopmenu.c:143 src/shopmenu.c:752
+msgid "Buy"
+msgstr ""
+
+#: src/shopmenu.c:172
+msgid "Sold Out!"
+msgstr ""
+
+#: src/shopmenu.c:363
+#, c-format
+msgid "Own: %d"
+msgstr ""
+
+#: src/shopmenu.c:366
+#, c-format
+msgid "Eqp: %d"
+msgstr ""
+
+#: src/shopmenu.c:417
+#, c-format
+msgid "The cost is %d gp for the night."
+msgstr ""
+
+#: src/shopmenu.c:430
+msgid "Do you wish to stay?"
+msgstr ""
+
+#: src/shopmenu.c:434
+msgid "You can't afford to stay here."
+msgstr ""
+
+#: src/shopmenu.c:441
+msgid "yes"
+msgstr ""
+
+#: src/shopmenu.c:442
+msgid "no"
+msgstr ""
+
+#: src/shopmenu.c:501 src/shopmenu.c:545
+#, c-format
+msgid "Sell for %d gp?"
+msgstr ""
+
+#: src/shopmenu.c:511
+msgid "How many?"
+msgstr ""
+
+#: src/shopmenu.c:518
+#, c-format
+msgid "%d of %d"
+msgstr ""
+
+#: src/shopmenu.c:620 src/shopmenu.c:753
+msgid "Sell"
+msgstr ""
+
+#: src/shopmenu.c:646
+#, c-format
+msgid "%d gp for each one."
+msgstr ""
+
+#: src/shopmenu.c:651
+#, c-format
+msgid "That's worth %d gp."
+msgstr ""
+
+#: src/shopmenu.c:658
+msgid "That can not be sold!"
 msgstr ""

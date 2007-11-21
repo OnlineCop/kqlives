@@ -1,16 +1,16 @@
-# German translations for KQ package.
+# Spanish translations for KQ package.
 # Copyright (C) 2007 various people
 # This file is distributed under the same license as the KQ package.
-# Guenther Brammer <GBrammer@gmx.de>, 2007.
+# Edgar Alberto Molina Rojas <edgar@heuristicsi.com>, 2007.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: KQ 0.99\n"
 "Report-Msgid-Bugs-To: peterhull90@users.sourceforge.net\n"
 "POT-Creation-Date: 2007-11-21 17:37-0500\n"
-"PO-Revision-Date: 2007-03-07 22:55+0100\n"
-"Last-Translator: Guenther Brammer <GBrammer@gmx.de>\n"
-"Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
+"PO-Revision-Date: 2007-11-21 17:38-0500\n"
+"Last-Translator: Edgar Alberto Molina Rojas <edgar@heuristicsi.com>\n"
+"Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -3260,15 +3260,15 @@ msgstr ""
 
 #: scripts/starting.lua:204
 msgid "What the..? What was that?"
-msgstr "Was zum..? Was war das?"
+msgstr ""
 
 #: scripts/starting.lua:211
 msgid "Hey, a note!"
-msgstr "Hey, eine Nachricht!"
+msgstr ""
 
 #: scripts/starting.lua:214
 msgid "The note is addressed to me!"
-msgstr "Die Nachricht ist für mich!"
+msgstr ""
 
 #: scripts/starting.lua:221
 msgid "`$0, I am an old friend."
@@ -3326,31 +3326,29 @@ msgstr ""
 
 #: scripts/starting.lua:267
 msgid "..huh?"
-msgstr "..huch?"
+msgstr ""
 
 #: scripts/starting.lua:273
 msgid "What was that?"
-msgstr "Was war das?"
+msgstr ""
 
 #: scripts/starting.lua:277
 msgid "That wasn't there a second ago!"
-msgstr "Das war vor einer Sekunde noch nicht da!"
+msgstr ""
 
 #: scripts/starting.lua:282
 msgid "Wow, what a strange request."
-msgstr "Huch, welch seltsame Bitte."
+msgstr ""
 
 #: scripts/starting.lua:283
 msgid ""
 "On the other hand, maybe there's something here that I can use to help Mom "
 "and Dad."
 msgstr ""
-"Andererseits, vielleicht gibt es da etwas, womit ich Mutter und Vater helfen "
-"kann."
 
 #: scripts/starting.lua:284
 msgid "I'll have to let them know right away!"
-msgstr "Ich muss ihnen gleich davon erzählen!"
+msgstr ""
 
 #: scripts/starting.lua:300
 msgid "Oh, no. I hope this isn't another eviction notice."
@@ -7167,7 +7165,7 @@ msgstr ""
 
 #: src/itemmenu.c:146 src/sgame.c:105 src/shopmenu.c:90 src/shopmenu.c:575
 msgid "Confirm/Cancel"
-msgstr "Bestätigen/Abbrechen"
+msgstr ""
 
 #: src/itemmenu.c:283 src/menu.c:114
 msgid "Items"
@@ -7580,9 +7578,8 @@ msgid "Right Key:"
 msgstr ""
 
 #: src/setup.c:163 src/setup.c:935
-#, fuzzy
 msgid "Confirm Key:"
-msgstr "Bestätigen/Abbrechen"
+msgstr ""
 
 #: src/setup.c:164 src/setup.c:936
 msgid "Cancel Key:"
@@ -7717,7 +7714,7 @@ msgstr ""
 
 #: src/sgame.c:141
 msgid "Are you sure you want to quit this game?"
-msgstr "Willst du dieses Spiel wirklich beenden?"
+msgstr ""
 
 #: src/sgame.c:160
 msgid "File Deleted"
