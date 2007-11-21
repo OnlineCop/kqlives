@@ -111,14 +111,14 @@ void draw_mainmenu (int swho)
                swho == p ? DARKBLUE : BLUE);
    menubox (double_buffer, 204 + xofs, 64 + yofs, 7, 6, BLUE);
    menubox (double_buffer, 204 + xofs, 128 + yofs, 7, 6, BLUE);
-   print_font (double_buffer, 220 + xofs, 72 + yofs, "Items", FGOLD);
-   print_font (double_buffer, 220 + xofs, 80 + yofs, "Magic", FGOLD);
-   print_font (double_buffer, 220 + xofs, 88 + yofs, "Equip", FGOLD);
-   print_font (double_buffer, 220 + xofs, 96 + yofs, "Spec.", FGOLD);
-   print_font (double_buffer, 220 + xofs, 104 + yofs, "Stats", FGOLD);
-   print_font (double_buffer, 220 + xofs, 112 + yofs, "Quest", FGOLD);
-   print_font (double_buffer, 212 + xofs, 136 + yofs, "Time:", FGOLD);
-   print_font (double_buffer, 212 + xofs, 164 + yofs, "Gold:", FGOLD);
+   print_font (double_buffer, 220 + xofs, 72 + yofs, _("Items"), FGOLD);
+   print_font (double_buffer, 220 + xofs, 80 + yofs, _("Magic"), FGOLD);
+   print_font (double_buffer, 220 + xofs, 88 + yofs, _("Equip"), FGOLD);
+   print_font (double_buffer, 220 + xofs, 96 + yofs, _("Spec."), FGOLD);
+   print_font (double_buffer, 220 + xofs, 104 + yofs, _("Stats"), FGOLD);
+   print_font (double_buffer, 220 + xofs, 112 + yofs, _("Quest"), FGOLD);
+   print_font (double_buffer, 212 + xofs, 136 + yofs, _("Time:"), FGOLD);
+   print_font (double_buffer, 212 + xofs, 164 + yofs, _("Gold:"), FGOLD);
    /* PH: print time as h:mm */
    sprintf (strbuf, "%d:%02d", khr, kmin);
    print_font (double_buffer, 268 - (strlen (strbuf) * 8) + xofs, 144 + yofs,
@@ -150,11 +150,11 @@ void draw_playerstat (BITMAP * where, int i, int dx, int dy)
    draw_sprite (where, players[i].portrait, dx, dy);
    print_font (where, dx + 48, dy, party[i].name, FNORMAL);
    draw_stsicon (where, 0, i, 8, dx + 48, dy + 8);
-   print_font (where, dx + 48, dy + 16, "LV", FGOLD);
+   print_font (where, dx + 48, dy + 16, _("LV"), FGOLD);
    sprintf (strbuf, "%d", party[i].lvl);
    print_font (where, dx + 104 - (strlen (strbuf) * 8), dy + 16, strbuf,
                FNORMAL);
-   print_font (where, dx + 48, dy + 24, "HP", FGOLD);
+   print_font (where, dx + 48, dy + 24, _("HP"), FGOLD);
    print_font (where, dx + 104, dy + 24, "/", FNORMAL);
    sprintf (strbuf, "%d", party[i].hp);
    j = strlen (strbuf) * 8;
@@ -162,7 +162,7 @@ void draw_playerstat (BITMAP * where, int i, int dx, int dy)
    sprintf (strbuf, "%d", party[i].mhp);
    j = strlen (strbuf) * 8;
    print_font (where, dx + 144 - j, dy + 24, strbuf, FNORMAL);
-   print_font (where, dx + 48, dy + 32, "MP", FGOLD);
+   print_font (where, dx + 48, dy + 32, _("MP"), FGOLD);
    print_font (where, dx + 104, dy + 32, "/", FNORMAL);
    sprintf (strbuf, "%d", party[i].mp);
    j = strlen (strbuf) * 8;
@@ -626,7 +626,7 @@ void spec_items (void)
       check_animation ();
       drawmap ();
       menubox (double_buffer, 72 + xofs, 12 + yofs, 20, 1, BLUE);
-      print_font (double_buffer, 108 + xofs, 20 + yofs, "Special Items",
+      print_font (double_buffer, 108 + xofs, 20 + yofs, _("Special Items"),
                   FGOLD);
       menubox (double_buffer, 72 + xofs, 36 + yofs, 20, 19, BLUE);
       for (a = 0; a < num_items; a++) {
@@ -690,11 +690,11 @@ static void status_screen (int ch)
 
       // Box around bottom-left square
       menubox (double_buffer, xofs, 72 + yofs, 18, 17, BLUE);
-      print_font (double_buffer, 8 + xofs, 80 + yofs, "Exp:", FGOLD);
+      print_font (double_buffer, 8 + xofs, 80 + yofs, _("Exp:"), FGOLD);
       sprintf (strbuf, "%d", party[c].xp);
       print_font (double_buffer, 152 - (strlen (strbuf) * 8) + xofs,
                   80 + yofs, strbuf, FNORMAL);
-      print_font (double_buffer, 8 + xofs, 88 + yofs, "Next:", FGOLD);
+      print_font (double_buffer, 8 + xofs, 88 + yofs, _("Next:"), FGOLD);
       // TT: Does this mean we can only level up to 50?
       if (party[c].lvl < 50)
          sprintf (strbuf, "%d", party[c].next - party[c].xp);
@@ -702,20 +702,20 @@ static void status_screen (int ch)
          sprintf (strbuf, "%d", 0);
       print_font (double_buffer, 152 - (strlen (strbuf) * 8) + xofs,
                   88 + yofs, strbuf, FNORMAL);
-      print_font (double_buffer, 8 + xofs, 104 + yofs, "Strength", FGOLD);
-      print_font (double_buffer, 8 + xofs, 112 + yofs, "Agility", FGOLD);
-      print_font (double_buffer, 8 + xofs, 120 + yofs, "Vitality", FGOLD);
-      print_font (double_buffer, 8 + xofs, 128 + yofs, "Intellect", FGOLD);
-      print_font (double_buffer, 8 + xofs, 136 + yofs, "Sagacity", FGOLD);
-      print_font (double_buffer, 8 + xofs, 144 + yofs, "Speed", FGOLD);
-      print_font (double_buffer, 8 + xofs, 152 + yofs, "Aura", FGOLD);
-      print_font (double_buffer, 8 + xofs, 160 + yofs, "Spirit", FGOLD);
+      print_font (double_buffer, 8 + xofs, 104 + yofs, _("Strength"), FGOLD);
+      print_font (double_buffer, 8 + xofs, 112 + yofs, _("Agility"), FGOLD);
+      print_font (double_buffer, 8 + xofs, 120 + yofs, _("Vitality"), FGOLD);
+      print_font (double_buffer, 8 + xofs, 128 + yofs, _("Intellect"), FGOLD);
+      print_font (double_buffer, 8 + xofs, 136 + yofs, _("Sagacity"), FGOLD);
+      print_font (double_buffer, 8 + xofs, 144 + yofs, _("Speed"), FGOLD);
+      print_font (double_buffer, 8 + xofs, 152 + yofs, _("Aura"), FGOLD);
+      print_font (double_buffer, 8 + xofs, 160 + yofs, _("Spirit"), FGOLD);
       // Blank space on display of 16 pixels
-      print_font (double_buffer, 8 + xofs, 176 + yofs, "Attack", FGOLD);
-      print_font (double_buffer, 8 + xofs, 184 + yofs, "Hit", FGOLD);
-      print_font (double_buffer, 8 + xofs, 192 + yofs, "Defense", FGOLD);
-      print_font (double_buffer, 8 + xofs, 200 + yofs, "Evade", FGOLD);
-      print_font (double_buffer, 8 + xofs, 208 + yofs, "Mag.Def", FGOLD);
+      print_font (double_buffer, 8 + xofs, 176 + yofs, _("Attack"), FGOLD);
+      print_font (double_buffer, 8 + xofs, 184 + yofs, _("Hit"), FGOLD);
+      print_font (double_buffer, 8 + xofs, 192 + yofs, _("Defense"), FGOLD);
+      print_font (double_buffer, 8 + xofs, 200 + yofs, _("Evade"), FGOLD);
+      print_font (double_buffer, 8 + xofs, 208 + yofs, _("Mag.Def"), FGOLD);
       for (p = 0; p < NUM_STATS; p++) {
          // Coordinates of stats on display
          i = p * 8 + 104;
@@ -729,22 +729,22 @@ static void status_screen (int ch)
       }
 
       menubox (double_buffer, 160 + xofs, 16 + yofs, 18, 16, BLUE);
-      print_font (double_buffer, 168 + xofs, 24 + yofs, "Earth", FNORMAL);
-      print_font (double_buffer, 168 + xofs, 32 + yofs, "Black", FNORMAL);
-      print_font (double_buffer, 168 + xofs, 40 + yofs, "Fire", FNORMAL);
-      print_font (double_buffer, 168 + xofs, 48 + yofs, "Thunder", FNORMAL);
-      print_font (double_buffer, 168 + xofs, 56 + yofs, "Air", FNORMAL);
-      print_font (double_buffer, 168 + xofs, 64 + yofs, "White", FNORMAL);
-      print_font (double_buffer, 168 + xofs, 72 + yofs, "Water", FNORMAL);
-      print_font (double_buffer, 168 + xofs, 80 + yofs, "Ice", FNORMAL);
-      print_font (double_buffer, 168 + xofs, 88 + yofs, "Poison", FNORMAL);
-      print_font (double_buffer, 168 + xofs, 96 + yofs, "Blind", FNORMAL);
-      print_font (double_buffer, 168 + xofs, 104 + yofs, "Charm", FNORMAL);
-      print_font (double_buffer, 168 + xofs, 112 + yofs, "Paralyze", FNORMAL);
-      print_font (double_buffer, 168 + xofs, 120 + yofs, "Petrify", FNORMAL);
-      print_font (double_buffer, 168 + xofs, 128 + yofs, "Silence", FNORMAL);
-      print_font (double_buffer, 168 + xofs, 136 + yofs, "Sleep", FNORMAL);
-      print_font (double_buffer, 168 + xofs, 144 + yofs, "Time", FNORMAL);
+      print_font (double_buffer, 168 + xofs, 24 + yofs, _("Earth"), FNORMAL);
+      print_font (double_buffer, 168 + xofs, 32 + yofs, _("Black"), FNORMAL);
+      print_font (double_buffer, 168 + xofs, 40 + yofs, _("Fire"), FNORMAL);
+      print_font (double_buffer, 168 + xofs, 48 + yofs, _("Thunder"), FNORMAL);
+      print_font (double_buffer, 168 + xofs, 56 + yofs, _("Air"), FNORMAL);
+      print_font (double_buffer, 168 + xofs, 64 + yofs, _("White"), FNORMAL);
+      print_font (double_buffer, 168 + xofs, 72 + yofs, _("Water"), FNORMAL);
+      print_font (double_buffer, 168 + xofs, 80 + yofs, _("Ice"), FNORMAL);
+      print_font (double_buffer, 168 + xofs, 88 + yofs, _("Poison"), FNORMAL);
+      print_font (double_buffer, 168 + xofs, 96 + yofs, _("Blind"), FNORMAL);
+      print_font (double_buffer, 168 + xofs, 104 + yofs, _("Charm"), FNORMAL);
+      print_font (double_buffer, 168 + xofs, 112 + yofs, _("Paralyze"), FNORMAL);
+      print_font (double_buffer, 168 + xofs, 120 + yofs, _("Petrify"), FNORMAL);
+      print_font (double_buffer, 168 + xofs, 128 + yofs, _("Silence"), FNORMAL);
+      print_font (double_buffer, 168 + xofs, 136 + yofs, _("Sleep"), FNORMAL);
+      print_font (double_buffer, 168 + xofs, 144 + yofs, _("Time"), FNORMAL);
 
       for (i = 0; i < 16; i++) {
          rectfill (double_buffer, 240 + xofs, i * 8 + 25 + yofs, 310 + xofs,

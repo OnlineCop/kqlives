@@ -622,7 +622,7 @@ void do_luacheat (void)
 #endif
    lua_settop (theL, oldtop);
    KQ_check_map_change ();
-   message ("Cheating complete.", 255, 50, xofs, yofs);
+   message (_("Cheating complete."), 255, 50, xofs, yofs);
 }
 #endif
 
@@ -647,7 +647,7 @@ void do_luainit (const char *fname, int global)
    /* In Lua 5.1, this is a compatibility #define to luaL_newstate */
    theL = lua_open ();
    if (theL == NULL)
-      program_death ("Could not initialise scripting engine");
+      program_death (_("Could not initialise scripting engine"));
    fieldsort ();
    while (rg->name) {
       lua_register (theL, rg->name, rg->func);
@@ -872,7 +872,7 @@ static s_marker *find_marker (const char *name, int required)
    }
    if (required) {
       /* Error, marker name not found */
-      sprintf (strbuf, "Marker %s not found.", name);
+      sprintf (strbuf, _("Marker %s not found."), name);
       lua_pushstring (theL, strbuf);
       lua_error (theL);
       /* never returns here... */
@@ -1490,7 +1490,7 @@ static int KQ_chest (lua_State * L)
          return 0;
    if (ino == 0) {
       gp += amt;
-      sprintf (strbuf, "Found %d gp!", amt);
+      sprintf (strbuf, _("Found %d gp!"), amt);
       play_effect (SND_MONEY, 128);
       message (strbuf, 255, 0, xofs, yofs);
       if (tno > -1)
@@ -1522,9 +1522,9 @@ static int KQ_chest (lua_State * L)
    }
    if (gd == 1) {
       if (amt == 1)
-         sprintf (strbuf, "%s procured!", items[ino].name);
+         sprintf (strbuf, _("%s procured!"), items[ino].name);
       else
-         sprintf (strbuf, "%s ^%d procured!", items[ino].name, amt);
+         sprintf (strbuf, _("%s ^%d procured!"), items[ino].name, amt);
       play_effect (SND_UNEQUIP, 128);
       message (strbuf, items[ino].icon, 0, xofs, yofs);
       if (tno > -1)
@@ -1532,9 +1532,9 @@ static int KQ_chest (lua_State * L)
       return 0;
    }
    if (amt == 1)
-      sprintf (strbuf, "%s not taken!", items[ino].name);
+      sprintf (strbuf, _("%s not taken!"), items[ino].name);
    else
-      sprintf (strbuf, "%s ^%d not taken!", items[ino].name, amt);
+      sprintf (strbuf, _("%s ^%d not taken!"), items[ino].name, amt);
    message (strbuf, items[ino].icon, 0, xofs, yofs);
    return 0;
 }
@@ -2824,7 +2824,7 @@ static int KQ_prompt (lua_State * L)
       lua_pushnumber (L, prompt_ex (b, pbuf, &txt[nonblank - nopts], nopts));
    } else {
       /* User asked for all the lines to be options */
-      lua_pushnumber (L, prompt_ex (b, "Choose one", txt, nopts));
+      lua_pushnumber (L, prompt_ex (b, _("Choose one"), txt, nopts));
    }
 
    return 1;
@@ -3867,7 +3867,7 @@ static int KQ_shop_add_item (lua_State * L)
 
    if (i == SHOPITEMS)
    {
-      printf("Tried to add too many different items to a shop. Maximum is %d\n", SHOPITEMS);
+      printf(_("Tried to add too many different items to a shop. Maximum is %d\n"), SHOPITEMS);
       return 0;
    }
 
@@ -3918,14 +3918,14 @@ static int KQ_traceback (lua_State * theL)
 
    /* Function at index 0 is always KQ_traceback; don't show it */
    int level = 1;
-   TRACE ("%s\nStack trace:\n", lua_tostring (theL, -1));
+   TRACE (_("%s\nStack trace:\n"), lua_tostring (theL, -1));
    while (lua_getstack (theL, level, &ar) != 0) {
       lua_getinfo (theL, "Sln", &ar);
-      TRACE ("#%d Line %d in (%s %s) %s\n", level, ar.currentline, ar.what,
+      TRACE (_("#%d Line %d in (%s %s) %s\n"), level, ar.currentline, ar.what,
              ar.namewhat, ar.name);
       ++level;
    }
-   message ("Script error. See allegro.log", 255, 0, xofs, yofs);
+   message (_("Script error. See allegro.log"), 255, 0, xofs, yofs);
    return 1;
 }
 
@@ -4057,21 +4057,21 @@ static int lua_dofile (lua_State * L, const char * fname)
    if ((f = pack_fopen (filename, F_READ)) == NULL) {
       sprintf(filename, "%s.lua", fname);
       if ((f = pack_fopen (filename, F_READ)) == NULL) {
-         sprintf (strbuf, "Could not open script %s.lob!", fname);
+         sprintf (strbuf, _("Could not open script %s.lob!"), fname);
          allegro_message (strbuf);
          return 1;
       }
    }
 
    if ((lua_load (L, (lua_Chunkreader) filereader, f, filename)) != 0) {
-      sprintf (strbuf, "Could not parse script %s!", filename);
+      sprintf (strbuf, _("Could not parse script %s!"), filename);
       allegro_message (strbuf);
       pack_fclose (f);
       return 1;
    }
 
    if (lua_pcall (L, 0, LUA_MULTRET, 0) != 0) {
-      sprintf(strbuf, "lua_pcall failed while calling script %s!", filename);
+      sprintf(strbuf, _("lua_pcall failed while calling script %s!"), filename);
       allegro_message (strbuf);
       pack_fclose (f);
       return 1;

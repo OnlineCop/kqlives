@@ -141,7 +141,7 @@ void play_music (const char *music_name, long position)
             al_start_duh (mod_song[current_music_player], 2, position, 1.0,
                           4096 * 4, 44100);
       } else {
-         TRACE ("Could not load %s!\n", filename);
+         TRACE (_("Could not load %s!\n"), filename);
       }
    }
 }
@@ -179,7 +179,7 @@ void pause_music (void)
          al_pause_duh (mod_player[current_music_player]);
          current_music_player++;
       } else {
-         TRACE ("reached maximum levels of music pauses!\n");
+         TRACE (_("reached maximum levels of music pauses!\n"));
       }
    }
 }
@@ -281,7 +281,7 @@ void play_music (const char *sngnme, long start_track)
    if (gsong)
       destroy_mod (gsong);
    if (!(gsong = load_mod (kqres (MUSIC_DIR, sngname)))) {
-      sprintf (strbuf, "Could not load %s!", sngnme);
+      sprintf (strbuf, _("Could not load %s!"), sngnme);
       klog (strbuf);
    } else {
       if (start_track > 0)

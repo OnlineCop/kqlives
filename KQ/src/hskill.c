@@ -347,22 +347,22 @@ void reveal (int tgt)
    int c, d = 0, g = 0, b;
    do_transition (TRANS_FADE_OUT, 4);
    menubox (double_buffer, 84, 56, 17, 13, BLUE);
-   sprintf (strbuf, "Name: %s", fighter[tgt].name);
+   sprintf (strbuf, _("Name: %s"), fighter[tgt].name);
    print_font (double_buffer, 92, 64, strbuf, FNORMAL);
-   sprintf (strbuf, "Level: %d", fighter[tgt].lvl);
+   sprintf (strbuf, _("Level: %d"), fighter[tgt].lvl);
    print_font (double_buffer, 92, 72, strbuf, FNORMAL);
-   sprintf (strbuf, "HP: %d/%d", fighter[tgt].hp, fighter[tgt].mhp);
+   sprintf (strbuf, _("HP: %d/%d"), fighter[tgt].hp, fighter[tgt].mhp);
    print_font (double_buffer, 92, 80, strbuf, FNORMAL);
-   sprintf (strbuf, "MP: %d/%d", fighter[tgt].mp, fighter[tgt].mmp);
+   sprintf (strbuf, _("MP: %d/%d"), fighter[tgt].mp, fighter[tgt].mmp);
    print_font (double_buffer, 92, 88, strbuf, FNORMAL);
-   print_font (double_buffer, 92, 96, "Earth", FNORMAL);
-   print_font (double_buffer, 92, 104, "Black", FNORMAL);
-   print_font (double_buffer, 92, 112, "Fire", FNORMAL);
-   print_font (double_buffer, 92, 120, "Thunder", FNORMAL);
-   print_font (double_buffer, 92, 128, "Air", FNORMAL);
-   print_font (double_buffer, 92, 136, "White", FNORMAL);
-   print_font (double_buffer, 92, 144, "Water", FNORMAL);
-   print_font (double_buffer, 92, 152, "Ice", FNORMAL);
+   print_font (double_buffer, 92, 96, _("Earth"), FNORMAL);
+   print_font (double_buffer, 92, 104, _("Black"), FNORMAL);
+   print_font (double_buffer, 92, 112, _("Fire"), FNORMAL);
+   print_font (double_buffer, 92, 120, _("Thunder"), FNORMAL);
+   print_font (double_buffer, 92, 128, _("Air"), FNORMAL);
+   print_font (double_buffer, 92, 136, _("White"), FNORMAL);
+   print_font (double_buffer, 92, 144, _("Water"), FNORMAL);
+   print_font (double_buffer, 92, 152, _("Ice"), FNORMAL);
    for (c = 0; c < 8; c++) {
       rectfill (double_buffer, 156, c * 8 + 97, 226, c * 8 + 103, 3);
       if (fighter[tgt].res[c] < 0) {
@@ -412,7 +412,7 @@ int skill_use (int who)
       blit ((BITMAP *) backart->dat, temp, 0, 0, 0, 0, 320, 240);
       color_scale (temp, (BITMAP *) backart->dat, 16, 31);
       b = fighter[who].mhp / 20;
-      strcpy (ctext, "Rage");
+      strcpy (ctext, _("Rage"));
       dct = 1;
       tempa.stats[A_ATT] = fighter[who].stats[A_ATT];
       tempa.stats[A_HIT] = fighter[who].stats[A_HIT];
@@ -447,7 +447,7 @@ int skill_use (int who)
       break;
    case SARINA:
       fighter[who].ctmem = 1000;
-      strcpy (ctext, "Sweep");
+      strcpy (ctext, _("Sweep"));
       dct = 1;
       tempa.stats[A_ATT] = tempa.stats[A_ATT] * 75 / 100;
       fighter[who].aframe = 6;
@@ -460,7 +460,7 @@ int skill_use (int who)
       dct = 0;
       break;
    case CORIN:
-      strcpy (ctext, "Elemental Infusion");
+      strcpy (ctext, _("Elemental Infusion"));
       dct = 1;
       fighter[who].aux = 2;
       if (combat_spell_menu (who) == 1) {
@@ -509,7 +509,7 @@ int skill_use (int who)
       break;
    case AJATHAR:
       if (fighter[who].unl > 0) {
-         strcpy (ctext, "Dispel Undead");
+         strcpy (ctext, _("Dispel Undead"));
          dct = 1;
          blit (double_buffer, back, 0, 0, 0, 0, 352, 280);
          for (a = 0; a < 14; a++) {
@@ -559,7 +559,7 @@ int skill_use (int who)
             else
                b = rand () % (25 * c) + (50 * c);
          }
-         strcpy (ctext, "Divine Cure");
+         strcpy (ctext, _("Divine Cure"));
          dct = 1;
          draw_spellsprite (0, 1, 15, 1);
          dct = 0;
@@ -611,7 +611,7 @@ int skill_use (int who)
       fighter[who].cx = fighter[tgt].cx - 16;
       fighter[who].cy = fighter[tgt].cy + fighter[tgt].cl - 40;
       fighter[who].facing = 1;
-      strcpy (ctext, "Steal");
+      strcpy (ctext, _("Steal"));
       dct = 1;
       battle_render (0, who + 1, 0);
       blit2screen (0, 0);
@@ -634,15 +634,15 @@ int skill_use (int who)
          }
          if (found_item > 0) {
             if (check_inventory (found_item, 1) != 0) {
-               sprintf (strbuf, "%s taken!", items[found_item].name);
+               sprintf (strbuf, _("%s taken!"), items[found_item].name);
                message (strbuf, items[found_item].icon, 0, 0, 0);
             }
          } else {
             if (fighter[tgt].steal_item_common == 0
                 && fighter[tgt].steal_item_rare == 0)
-               message ("Nothing to steal!", 255, 0, 0, 0);
+               message (_("Nothing to steal!"), 255, 0, 0, 0);
             else
-               message ("Couldn't steal!", 255, 0, 0, 0);
+               message (_("Couldn't steal!"), 255, 0, 0, 0);
          }
       }
 #else
@@ -658,18 +658,18 @@ int skill_use (int who)
          }
          if (found_item > 0) {
             if (check_inventory (found_item, 1) != 0) {
-               sprintf (strbuf, "%s taken!", items[found_item].name);
+               sprintf (strbuf, _("%s taken!"), items[found_item].name);
                message (strbuf, items[found_item].icon, 0, 0, 0);
             }
          } else {
             if (fighter[tgt].steal_item_common == 0
                 && fighter[tgt].steal_item_rare == 0)
-               message ("Nothing to steal!", 255, 0, 0, 0);
+               message (_("Nothing to steal!"), 255, 0, 0, 0);
             else
-               message ("Couldn't steal!", 255, 0, 0, 0);
+               message (_("Couldn't steal!"), 255, 0, 0, 0);
          }
       } else
-         message ("Couldn't steal!", 255, 0, 0, 0);
+         message (_("Couldn't steal!"), 255, 0, 0, 0);
 #endif
       fighter[who].cx = tx;
       fighter[who].cy = ty;

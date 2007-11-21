@@ -186,30 +186,30 @@ static int mini_menu (int omask)
 
    /* If no actions were allowed, or just one, skip the menu */
    if (omask == MM_JOIN) {
-      message ("Join", 255, 1000, xofs, yofs);
+      message (_("Join"), 255, 1000, xofs, yofs);
       return MM_JOIN;
    }
    if (omask == MM_LEAVE) {
-      message ("Leave", 255, 1000, xofs, yofs);
+      message (_("Leave"), 255, 1000, xofs, yofs);
       return MM_LEAVE;
    }
    if (omask == MM_LEAD) {
-      message ("Lead", 255, 1000, xofs, yofs);
+      message (_("Lead"), 255, 1000, xofs, yofs);
       return MM_LEAD;
    }
    if (omask == MM_NONE) {
-      message ("No options", 255, 1000, xofs, yofs);
+      message (_("No options"), 255, 1000, xofs, yofs);
       return MM_NONE;
    }
 
    while (1) {
       check_animation ();
       menubox (double_buffer, MM_X - 13, MM_Y - 8, 6, 3, DARKBLUE);
-      print_font (double_buffer, MM_X, MM_Y, "Join",
+      print_font (double_buffer, MM_X, MM_Y, _("Join"),
                   (omask & MM_JOIN) ? FNORMAL : FDARK);
-      print_font (double_buffer, MM_X, MM_Y + 8, "Leave",
+      print_font (double_buffer, MM_X, MM_Y + 8, _("Leave"),
                   (omask & MM_LEAVE) ? FNORMAL : FDARK);
-      print_font (double_buffer, MM_X, MM_Y + 16, "Lead",
+      print_font (double_buffer, MM_X, MM_Y + 16, _("Lead"),
                   (omask & MM_LEAD) ? FNORMAL : FDARK);
       draw_sprite (double_buffer, menuptr, MM_X - 13, MM_Y + 8 * cp);
       blit2screen (xofs, yofs);
@@ -647,8 +647,8 @@ int select_party (int *avail, int n_avail, int numchrs_max)
    }
 
    menubox (double_buffer, 16 + xofs, 24 + yofs, 34, 12, BLUE);
-   print_font (double_buffer, 24 + xofs, 32 + yofs, "Available:", FGOLD);
-   print_font (double_buffer, 24 + xofs, 80 + yofs, "In party:", FGOLD);
+   print_font (double_buffer, 24 + xofs, 32 + yofs, _("Available:"), FGOLD);
+   print_font (double_buffer, 24 + xofs, 80 + yofs, _("In party:"), FGOLD);
    while (running) {
       check_animation ();
       /* Draw everything */
@@ -673,7 +673,7 @@ int select_party (int *avail, int n_avail, int numchrs_max)
       /* Draw the 'Exit' button */
       menubox (double_buffer, x, y, 4, 1,
                cur == (PSIZE + MAXCHRS) ? DARKRED : DARKBLUE);
-      print_font (double_buffer, x + 8, y + 8, "Exit", FNORMAL);
+      print_font (double_buffer, x + 8, y + 8, _("Exit"), FNORMAL);
       /* See which hero is selected and draw his/her stats */
       if (cur < n_avail) {
          hero = avail[cur];

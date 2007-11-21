@@ -722,7 +722,7 @@ void data_dump (void)
    if (debugging > 0) {
       ff = fopen ("treasure.log", "w");
       if (!ff)
-         program_death ("Could not open treasure.log!");
+         program_death (_("Could not open treasure.log!"));
       for (a = 0; a < 200; a++)
          fprintf (ff, "%d = %d\n", a, treasure[a]);
       fclose (ff);
@@ -935,7 +935,7 @@ void init_players (void)
    pb = load_datafile_object (PCX_DATAFILE, "USCHRS_PCX");
 
    if (!pb)
-      program_death ("Could not load character graphics!");
+      program_death (_("Could not load character graphics!"));
 
    set_palette (pal);
 
@@ -1020,7 +1020,7 @@ void kwait (int dtime)
 #ifdef DEBUGMODE
       if (debugging > 0) {
          if (key[KEY_W] && key[KEY_ALT]) {
-            klog ("Alt+W Pressed:");
+            klog (_("Alt+W Pressed:"));
             sprintf (strbuf, "\tkwait(); cnt=%d, dtime=%d, timer_count=%d",
                      cnt, dtime, timer_count);
             klog (strbuf);
@@ -1059,7 +1059,7 @@ void load_heroes (void)
    int i;
    /* Hero stats */
    if ((f = pack_fopen (kqres (DATA_DIR, "hero.kq"), F_READ_PACKED)) == NULL) {
-      program_death ("Cannot open hero data file");
+      program_death (_("Cannot open hero data file"));
    }
    for (i = 0; i < MAXCHRS; ++i) {
       /*        pack_fread (&players[i].plr, sizeof (s_player), f); */
@@ -1070,7 +1070,7 @@ void load_heroes (void)
    pcxb = load_datafile_object (PCX_DATAFILE, "KQFACES_PCX");
 
    if (!pcxb)
-      program_death ("Could not load kqfaces.pcx!");
+      program_death (_("Could not load kqfaces.pcx!"));
 
    for (i = 0; i < 4; ++i) {
       blit ((BITMAP *) pcxb->dat, players[i].portrait, 0, i * 40, 0, 0, 40,
@@ -1485,7 +1485,7 @@ void readcontrols (void)
             clear_bitmap (screen);
             while (key[KEY_ALT] && key[KEY_X]) {
             }
-            program_death ("X-ALT pressed... exiting.");
+            program_death (_("X-ALT pressed... exiting."));
          }
       }
    }
@@ -1610,7 +1610,7 @@ static void startup (void)
    //   reserve_voices (8, 0);
    sound_avail = install_sound (DIGI_AUTODETECT, MIDI_NONE, NULL) < 0 ? 0 : 1;
    if (!sound_avail)
-      TRACE ("Error with sound: %s\n", allegro_error);
+      TRACE (_("Error with sound: %s\n"), allegro_error);
    parse_setup ();
    sound_init ();
    set_graphics_mode ();
@@ -1630,7 +1630,7 @@ static void startup (void)
       }
 
       if (use_joy == 0) {
-         klog ("Only joysticks/gamepads with at least 4 buttons can be used.");
+         klog (_("Only joysticks/gamepads with at least 4 buttons can be used."));
          remove_joystick ();
       }
    }
@@ -1639,7 +1639,7 @@ static void startup (void)
    pcxb = load_datafile_object (PCX_DATAFILE, "MISC_PCX");
 
    if (!pcxb)
-      program_death ("Could not load misc.pcx!");
+      program_death (_("Could not load misc.pcx!"));
 
    blit ((BITMAP *) pcxb->dat, menuptr, 24, 0, 0, 0, 16, 8);
    blit ((BITMAP *) pcxb->dat, sptr, 0, 0, 0, 0, 8, 8);
@@ -1713,14 +1713,14 @@ static void startup (void)
    /* Initialize tilesets */
    pf = pack_fopen (kqres (DATA_DIR, "tileset.kq"), F_READ_PACKED);
    if (!pf) {
-      program_death ("Could not load tileset.kq");
+      program_death (_("Could not load tileset.kq"));
    }
    while (!pack_feof (pf)) {
       load_s_tileset (&tilesets[num_tilesets], pf);
       TRACE ("%d. %s\n", num_tilesets, tilesets[num_tilesets].icon_set);
       num_tilesets++;
       if (num_tilesets > MAX_TILESETS)
-         program_death ("Too many tilesets defined in tileset.kq");
+         program_death (_("Too many tilesets defined in tileset.kq"));
    }
    pack_fclose (pf);
 
@@ -1856,7 +1856,7 @@ void wait_for_entity (int est, int efi)
          break;
 
       if (key[KEY_X] && key[KEY_ALT])
-         program_death ("X-Alt pressed - exiting");
+         program_death (_("X-Alt pressed - exiting"));
 
       n = 0;
       for (e = est; e <= efi; ++e) {
@@ -1945,7 +1945,7 @@ void zone_check (void)
       }
 
       if (save_spells[P_REPULSE] < 1)
-         message ("Repulse has worn off!", 255, 0, xofs, yofs);
+         message (_("Repulse has worn off!"), 255, 0, xofs, yofs);
    }
 
    stc = z_seg[zy * g_map.xsize + zx];

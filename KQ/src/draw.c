@@ -41,7 +41,7 @@
 #include "res.h"
 #include "setup.h"
 #include "timing.h"
-#include "console.h"
+//#include "console.h"
 
 /* Globals */
 #define MSG_ROWS 4
@@ -99,7 +99,7 @@ void blit2screen (int xw, int yw)
                 makecol (0, 0, 0));
       print_font (double_buffer, xofs, yofs, fbuf, FNORMAL);
    }
-	display_console(xw, yw);
+	//display_console(xw, yw);
    if (stretch_view == 1)
       stretch_blit (double_buffer, screen, xw, yw, 320, 240, 0, 0, 640, 480);
    else
@@ -1188,11 +1188,11 @@ static const char* decode_utf8(const char* string, unsigned int* cp)
       else 
 	{
 	  /* error!*/
-	  program_death("UTF-8 decode error");
+	  program_death(_("UTF-8 decode error"));
 	  return NULL;
 	}
     }
-  program_death("UTF-8 3 and 4 bytes chars not implemented");
+  program_death(_("UTF-8 3 and 4 bytes chars not implemented"));
   return NULL;
 }
 

@@ -118,21 +118,21 @@ int save_screenshot (BITMAP * src_bmp, const char *prefix)
                   destroy_bitmap (temp);
             } else {
                TRACE
-                  ("the bitmap [0x%p] is invalid (or unable to create sub bitmap)\n",
+                  (_("the bitmap [0x%p] is invalid (or unable to create sub bitmap)\n"),
                    src_bmp);
                return SS_BAD_BITMAP;
             }
          } else {
-            allegro_message ("no more room for screenshot\n");
-            TRACE ("no more room for screenshot\n");
+            allegro_message (_("no more room for screenshot\n"));
+            TRACE (_("no more room for screenshot\n"));
             return SS_OUT_OF_NUMBERS;
          }
       } else {
-         TRACE ("the prefix '%s' is too long\n", prefix);
+         TRACE (_("the prefix '%s' is too long\n"), prefix);
          return SS_BAD_PREFIX;
       }
    } else {
-      TRACE ("save path '%s' does not exist.\n", filename);
+      TRACE (_("save path '%s' does not exist.\n"), filename);
       return SS_BAD_FOLDER;
    }
 

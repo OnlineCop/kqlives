@@ -89,7 +89,7 @@ static void camp_draw_spell_menu (int c, int pg, int ptr)
    l = pidx[c];
    b = party[l].spells[pg * 12 + ptr];
    menubox (double_buffer, 80 + xofs, 12 + yofs, 18, 1, BLUE);
-   print_font (double_buffer, 140 + xofs, 20 + yofs, "Magic", FGOLD);
+   print_font (double_buffer, 140 + xofs, 20 + yofs, _("Magic"), FGOLD);
    menubox (double_buffer, 80 + xofs, 36 + yofs, 18, 5, BLUE);
    draw_playerstat (double_buffer, l, 88 + xofs, 44 + yofs);
    menubox (double_buffer, 80 + xofs, 92 + yofs, 18, 12, BLUE);
@@ -302,7 +302,7 @@ int learn_new_spells (int who)
                p = i;
          if (p < 60) {
             if (in_combat == 1) {
-               sprintf (strbuf, "%s learned!", magic[a].name);
+               sprintf (strbuf, _("%s learned!"), magic[a].name);
                blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
                menubox (double_buffer, 148 - (strlen (strbuf) * 4), 152,
                         strlen (strbuf) + 1, 1, BLUE);

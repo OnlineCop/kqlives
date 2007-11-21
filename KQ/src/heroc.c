@@ -55,9 +55,7 @@ int can_use_item = 1;
 
 /* Internal variables */
 /* Text names of hero skills */
-char sk_names[MAXCHRS][7] = {
-   "Rage", "Sweep", "Infuse", "Prayer", "Boost", "Cover", "Steal", "Sense"
-};
+char sk_names[MAXCHRS][7];
 
 
 /* Internal functions */
@@ -613,6 +611,15 @@ void hero_choose_action (int who)
    int my = 0, chi[9], tt;
    char ca[9][8];
 
+   strcpy(sk_names[0],_("Rage"));
+   strcpy(sk_names[1],_("Sweep"));
+   strcpy(sk_names[2],_("Infuse"));
+   strcpy(sk_names[3],_("Prayer"));
+   strcpy(sk_names[4],_("Boost"));
+   strcpy(sk_names[5],_("Cover"));
+   strcpy(sk_names[6],_("Steal"));
+   strcpy(sk_names[7],_("Sense"));
+
    if (cact[who] == 0)
       return;
    unpress ();
@@ -624,7 +631,7 @@ void hero_choose_action (int who)
       check_animation ();
       battle_render (who + 1, who + 1, 0);
       my = 0;
-      strcpy (ca[my], "Attack");
+      strcpy (ca[my], _("Attack"));
       chi[my] = C_ATTACK;
       my++;
       if (hero_skillcheck (who)) {
@@ -633,12 +640,12 @@ void hero_choose_action (int who)
          my++;
       }
       if (fighter[who].sts[S_MUTE] == 0 && available_spells (who) > 0) {
-         strcpy (ca[my], "Spell");
+         strcpy (ca[my], _("Spell"));
          chi[my] = C_SPELL;
          my++;
       }
       if (can_use_item) {
-         strcpy (ca[my], "Item");
+         strcpy (ca[my], _("Item"));
          chi[my] = C_ITEM;
          my++;
       }
@@ -647,7 +654,7 @@ void hero_choose_action (int who)
          if (can_invoke_item (party[pidx[who]].eqp[a]))
             tt++;
       if (tt > 0) {
-         strcpy (ca[my], "Invoke");
+         strcpy (ca[my], _("Invoke"));
          chi[my] = C_INVOKE;
          my++;
       }
@@ -662,11 +669,11 @@ void hero_choose_action (int who)
          draw_sprite (double_buffer, menuptr, 120, ptr * 8 + amy + 8);
       if (sptr == 0) {
          menubox (double_buffer, 64, amy, 6, 1, BLUE);
-         print_font (double_buffer, 72, amy + 8, "Defend", FNORMAL);
+         print_font (double_buffer, 72, amy + 8, _("Defend"), FNORMAL);
       }
       if (sptr == 2) {
          menubox (double_buffer, 192, amy, 3, 1, BLUE);
-         print_font (double_buffer, 200, amy + 8, "Run", FNORMAL);
+         print_font (double_buffer, 200, amy + 8, _("Run"), FNORMAL);
       }
       blit2screen (0, 0);
 
@@ -919,7 +926,7 @@ static int hero_invokeitem (int whom, int eno)
       where we are invoking items.
     */
    if (eno == I_STAFF1) {
-      strcpy (ctext, "Neutralize Poison");
+      strcpy (ctext, _("Neutralize Poison"));
       draw_spellsprite (0, 1, 27, 0);
       for (a = 0; a < numchrs; a++)
          if (fighter[a].sts[S_DEAD] == 0)
@@ -927,7 +934,7 @@ static int hero_invokeitem (int whom, int eno)
    }
    if (eno == I_ROD1) {
       b = rand () % 3 + 1;
-      strcpy (ctext, "Magic Missiles");
+      strcpy (ctext, _("Magic Missiles"));
       dct = 1;
       ta[tg] = 0;
       for (a = 0; a < b; a++) {
@@ -965,7 +972,7 @@ static void hero_run (void)
       }
    }
    if (b == 0)
-      program_death ("Fatal error: How can a dead party run?");
+      program_death (_("Fatal error: How can a dead party run?"));
    else
       bt = bt / b;
    for (p = PSIZE; p < PSIZE + numens; p++) {
@@ -976,7 +983,7 @@ static void hero_run (void)
    }
    if (c == 0)
       program_death
-         ("Fatal error: Why are the heroes running from dead enemies?");
+         (_("Fatal error: Why are the heroes running from dead enemies?"));
    else
       ct = ct / c;
    if (bt > ct)
@@ -992,15 +999,15 @@ static void hero_run (void)
       }
    } else {
       menubox (double_buffer, 84, 32, 17, 1, BLUE);
-      print_font (double_buffer, 92, 40, "Could not escape!", FNORMAL);
+      print_font (double_buffer, 92, 40, _("Could not escape!"), FNORMAL);
       blit2screen (0, 0);
       wait_enter ();
       return;
    }
    if (g > 0)
-      sprintf (strbuf, "Escaped! Dropped %d gold!", g);
+      sprintf (strbuf, _("Escaped! Dropped %d gold!"), g);
    else
-      sprintf (strbuf, "Escaped!");
+      sprintf (strbuf, _("Escaped!"));
    g = strlen (strbuf) * 4;
 
    /* TT: slow_computer addition for speed-ups */

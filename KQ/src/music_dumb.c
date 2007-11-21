@@ -76,7 +76,7 @@ void pause_music (void)
          al_pause_duh (mod_player[current_music_player]);
          current_music_player++;
       } else {
-         TRACE ("reached maximum levels of music pauses!\n");
+         TRACE (_("reached maximum levels of music pauses!\n"));
       }
    }
 }
@@ -115,7 +115,7 @@ void play_music (const char *music_name, long position)
             al_start_duh (mod_song[current_music_player], 2, position, 1.0,
                           4096 * 4, 44100);
       } else {
-         TRACE ("Could not load %s!\n", filename);
+         TRACE (_("Could not load %s!\n"), filename);
       }
    }
 }

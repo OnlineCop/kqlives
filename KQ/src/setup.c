@@ -119,28 +119,27 @@ void config_menu (void)
       row[p] = (p + 7) * 8;     // (p * 8) + 56
 
    /* Helper strings */
-   static char *dc[MENU_SIZE] = {
-      "Display KQ in a window.",
-      "Stretch to fit 640x480 resolution.",
-      "Display the frame rate during play.",
-      "Wait for vertical retrace.",
-      "Key used to move up.",
-      "Key used to move down.",
-      "Key used to move left.",
-      "Key used to move right.",
-      "Key used to confirm action.",
-      "Key used to cancel action.",
-      "Key used to call character menu.",
-      "Key used to call system menu.",
-      "Toggle sound and music on/off.",
-      "Overall sound volume (affects music).",
-      "Music volume.",
-      "Animation speed-ups for slow machines.",
-      "Toggle how to allocate CPU usage.",
+   static char *dc[MENU_SIZE];
+   dc[0]=_("Display KQ in a window.");
+   dc[1]=_("Stretch to fit 640x480 resolution.");
+   dc[2]=_("Display the frame rate during play.");
+   dc[3]=_("Wait for vertical retrace.");
+   dc[4]=_("Key used to move up.");
+   dc[5]=_("Key used to move down.");
+   dc[6]=_("Key used to move left.");
+   dc[7]=_("Key used to move right.");
+   dc[8]=_("Key used to confirm action.");
+   dc[9]=_("Key used to cancel action.");
+   dc[10]=_("Key used to call character menu.");
+   dc[11]=_("Key used to call system menu.");
+   dc[12]=_("Toggle sound and music on/off.");
+   dc[13]=_("Overall sound volume (affects music).");
+   dc[14]=_("Music volume.");
+   dc[15]=_("Animation speed-ups for slow machines.");
+   dc[16]=_("Toggle how to allocate CPU usage.");
 #ifdef DEBUGMODE
-      "Things you can do only in DebugMode.",
+      dc[17]=_("Things you can do only in DebugMode.");
 #endif
-   };
 
    unpress ();
    push_config_state ();
@@ -149,23 +148,23 @@ void config_menu (void)
       check_animation ();
       drawmap ();
       menubox (double_buffer, 88 + xofs, yofs, 16, 1, BLUE);
-      print_font (double_buffer, 96 + xofs, 8 + yofs, "KQ Configuration",
+      print_font (double_buffer, 96 + xofs, 8 + yofs, _("KQ Configuration"),
                   FGOLD);
       menubox (double_buffer, 32 + xofs, 24 + yofs, 30, MENU_SIZE + 3, BLUE);
 
-      citem (row[0], "Windowed mode:", windowed == 1 ? "YES" : "NO", FNORMAL);
-      citem (row[1], "Stretch Display:", stretch_view == 1 ? "YES" : "NO", FNORMAL);
-      citem (row[2], "Show Frame Rate:", show_frate == 1 ? "YES" : "NO", FNORMAL);
-      citem (row[3], "Wait for Retrace:", wait_retrace == 1 ? "YES" : "NO", FNORMAL);
-      citem (row[4], "Up Key:", kq_keyname (kup), FNORMAL);
-      citem (row[5], "Down Key:", kq_keyname (kdown), FNORMAL);
-      citem (row[6], "Left Key:", kq_keyname (kleft), FNORMAL);
-      citem (row[7], "Right Key:", kq_keyname (kright), FNORMAL);
-      citem (row[8], "Confirm Key:", kq_keyname (kalt), FNORMAL);
-      citem (row[9], "Cancel Key:", kq_keyname (kctrl), FNORMAL);
-      citem (row[10], "Menu Key:", kq_keyname (kenter), FNORMAL);
-      citem (row[11], "System Menu Key:", kq_keyname (kesc), FNORMAL);
-      citem (row[12], "Sound System:", is_sound ? "ON" : "OFF", FNORMAL);
+      citem (row[0], _("Windowed mode:"), windowed == 1 ? _("YES") : _("NO"), FNORMAL);
+      citem (row[1], _("Stretch Display:"), stretch_view == 1 ? _("YES") : _("NO"), FNORMAL);
+      citem (row[2], _("Show Frame Rate:"), show_frate == 1 ? _("YES") : _("NO"), FNORMAL);
+      citem (row[3], _("Wait for Retrace:"), wait_retrace == 1 ? _("YES") : _("NO"), FNORMAL);
+      citem (row[4], _("Up Key:"), kq_keyname (kup), FNORMAL);
+      citem (row[5], _("Down Key:"), kq_keyname (kdown), FNORMAL);
+      citem (row[6], _("Left Key:"), kq_keyname (kleft), FNORMAL);
+      citem (row[7], _("Right Key:"), kq_keyname (kright), FNORMAL);
+      citem (row[8], _("Confirm Key:"), kq_keyname (kalt), FNORMAL);
+      citem (row[9], _("Cancel Key:"), kq_keyname (kctrl), FNORMAL);
+      citem (row[10], _("Menu Key:"), kq_keyname (kenter), FNORMAL);
+      citem (row[11], _("System Menu Key:"), kq_keyname (kesc), FNORMAL);
+      citem (row[12], _("Sound System:"), is_sound ? _("ON") : _("OFF"), FNORMAL);
 
       p = FNORMAL;
       /* TT: This needs to check for ==0 because 1 means sound init */
@@ -173,23 +172,23 @@ void config_menu (void)
          p = FDARK;
 
       sprintf (strbuf, "%3d%%", gsvol * 100 / 250);
-      citem (row[13], "Sound Volume:", strbuf, p);
+      citem (row[13], _("Sound Volume:"), strbuf, p);
 
       sprintf (strbuf, "%3d%%", gmvol * 100 / 250);
-      citem (row[14], "Music Volume:", strbuf, p);
+      citem (row[14], _("Music Volume:"), strbuf, p);
 
-      citem (row[15], "Slow Computer:", slow_computer ? "YES" : "NO", FNORMAL);
+      citem (row[15], _("Slow Computer:"), slow_computer ? _("YES") : _("NO"), FNORMAL);
 
       if (cpu_usage)
-         sprintf (strbuf, "rest(%d)", cpu_usage - 1);
+         sprintf (strbuf, _("rest(%d)"), cpu_usage - 1);
       else
          sprintf (strbuf, "yield_timeslice()");
-      citem (row[16], "CPU Usage:", strbuf, FNORMAL);
+      citem (row[16], _("CPU Usage:"), strbuf, FNORMAL);
 
 #ifdef DEBUGMODE
       if (debugging)
          sprintf (strbuf, "%d", debugging);
-      citem (row[17], "DebugMode Stuff:", debugging ? strbuf : "OFF", FNORMAL);
+      citem (row[17], _("DebugMode Stuff:"), debugging ? strbuf : _("OFF"), FNORMAL);
 #endif
 
       /* This affects the VISUAL placement of the arrow */
@@ -234,15 +233,15 @@ void config_menu (void)
          case 0:
 #ifdef __DJGPP__
             text_ex (B_TEXT, 255,
-                     "This version of KQ was compiled for DOS and does not support windowed mode");
+                     _("This version of KQ was compiled for DOS and does not support windowed mode"));
 #else
             text_ex (B_TEXT, 255,
-                     "Changing the display mode to or from windowed view could have serious ramifications. It is advised that you save first.");
+                     _("Changing the display mode to or from windowed view could have serious ramifications. It is advised that you save first."));
             if (windowed == 0)
-               sprintf (strbuf, "Switch to windowed mode?");
+               sprintf (strbuf, _("Switch to windowed mode?"));
             else
-               sprintf (strbuf, "Switch to full screen?");
-            p = prompt (255, 2, B_TEXT, strbuf, "  no", "  yes", "");
+               sprintf (strbuf, _("Switch to full screen?"));
+            p = prompt (255, 2, B_TEXT, strbuf, _("  no"), _("  yes"), "");
             if (p == 1) {
                if (windowed == 0)
                   windowed = 1;
@@ -256,15 +255,15 @@ void config_menu (void)
          case 1:
 #ifdef __DJGPP__
             text_ex (B_TEXT, 255,
-                     "This version of KQ was compiled for DOS and does not support stretching");
+                     _("This version of KQ was compiled for DOS and does not support stretching"));
 #else
             text_ex (B_TEXT, 255,
-                     "Changing the stretched view option could have serious ramifications. It is advised that you save your game before trying this.");
+                     _("Changing the stretched view option could have serious ramifications. It is advised that you save your game before trying this."));
             if (stretch_view == 0)
-               sprintf (strbuf, "Try to stretch the display?");
+               sprintf (strbuf, _("Try to stretch the display?"));
             else
-               sprintf (strbuf, "Switch to unstretched display?");
-            p = prompt (255, 2, B_TEXT, strbuf, "  no", "  yes", "");
+               sprintf (strbuf, _("Switch to unstretched display?"));
+            p = prompt (255, 2, B_TEXT, strbuf, _("  no"), _("  yes"), "");
             if (p == 1) {
                if (stretch_view == 0)
                   stretch_view = 1;
@@ -352,7 +351,7 @@ void config_menu (void)
                if (is_sound == 0) {
                   is_sound = 1;
                   print_font (double_buffer, 92 + 2 + xofs, 204 + yofs,
-                              "...please wait...", FNORMAL);
+                              _("...please wait..."), FNORMAL);
                   blit2screen (xofs, yofs);
                   sound_init ();
                   play_music (g_map.song_file, 0);
@@ -362,7 +361,7 @@ void config_menu (void)
             break;
          case 13:
             if (is_sound == 2) {
-               p = getavalue ("Sound Volume", 0, 25, gsvol / 10, 1);
+               p = getavalue (_("Sound Volume"), 0, 25, gsvol / 10, 1);
                if (p != -1)
                   gsvol = p * 10;
 
@@ -375,7 +374,7 @@ void config_menu (void)
             break;
          case 14:
             if (is_sound == 2) {
-               p = getavalue ("Music Volume", 0, 25, gmvol / 10, 1);
+               p = getavalue (_("Music Volume"), 0, 25, gmvol / 10, 1);
                if (p != -1)
                   gmvol = p * 10;
 
@@ -449,7 +448,7 @@ static int getakey (void)
 
    clear_keybuf ();
    menubox (double_buffer, 108 + xofs, 108 + yofs, 11, 1, DARKBLUE);
-   print_font (double_buffer, 116 + xofs, 116 + yofs, "Press a key", FNORMAL);
+   print_font (double_buffer, 116 + xofs, 116 + yofs, _("Press a key"), FNORMAL);
    blit2screen (xofs, yofs);
 
    while (1) {
@@ -585,7 +584,7 @@ static int load_samples (void)
    for (index = 0; index < MAX_SAMPLES; index++) {
       sfx[index] = load_datafile_object (SOUND_DATAFILE, sndfiles[index]);
       if (sfx[index] == NULL) {
-         sprintf (strbuf, "Error loading .WAV file: %s.\n", sndfiles[index]);
+         sprintf (strbuf, _("Error loading .WAV file: %s.\n"), sndfiles[index]);
          klog (strbuf);
          return 1;
       }
@@ -707,7 +706,7 @@ static void parse_jb_setup (void)
    jbesc = 3;
    /* PH Why in the world doesn't he use Allegro cfg functions here? */
    if (!(s = fopen (kqres (SETTINGS_DIR, "setup.cfg"), "r"))) {
-      klog ("Could not open saves/setup.cfg - Using defaults.");
+      klog (_("Could not open saves/setup.cfg - Using defaults."));
       return;
    }
    fscanf (s, "%s", strbuf);
@@ -924,19 +923,19 @@ void set_graphics_mode (void)
 void show_help (void)
 {
    menubox (double_buffer, 116 + xofs, yofs, 9, 1, BLUE);
-   print_font (double_buffer, 132 + xofs, 8 + yofs, "KQ Help", FGOLD);
+   print_font (double_buffer, 132 + xofs, 8 + yofs, _("KQ Help"), FGOLD);
    menubox (double_buffer, 32 + xofs, 32 + yofs, 30, 20, BLUE);
    menubox (double_buffer, xofs, 216 + yofs, 38, 1, BLUE);
    print_font (double_buffer, 16 + xofs, 224 + yofs,
-               "Press CONFIRM to exit this screen", FNORMAL);
-   citem (72, "Up Key:", kq_keyname (kup), FNORMAL);
-   citem (80, "Down Key:", kq_keyname (kdown), FNORMAL);
-   citem (88, "Left Key:", kq_keyname (kleft), FNORMAL);
-   citem (96, "Right Key:", kq_keyname (kright), FNORMAL);
-   citem (104, "Confirm Key:", kq_keyname (kalt), FNORMAL);
-   citem (112, "Cancel Key:", kq_keyname (kctrl), FNORMAL);
-   citem (120, "Menu Key:", kq_keyname (kenter), FNORMAL);
-   citem (128, "System Menu Key:", kq_keyname (kesc), FNORMAL);
+               _("Press CONFIRM to exit this screen"), FNORMAL);
+   citem (72, _("Up Key:"), kq_keyname (kup), FNORMAL);
+   citem (80, _("Down Key:"), kq_keyname (kdown), FNORMAL);
+   citem (88, _("Left Key:"), kq_keyname (kleft), FNORMAL);
+   citem (96, _("Right Key:"), kq_keyname (kright), FNORMAL);
+   citem (104, _("Confirm Key:"), kq_keyname (kalt), FNORMAL);
+   citem (112, _("Cancel Key:"), kq_keyname (kctrl), FNORMAL);
+   citem (120, _("Menu Key:"), kq_keyname (kenter), FNORMAL);
+   citem (128, _("System Menu Key:"), kq_keyname (kesc), FNORMAL);
    do {
       blit2screen (xofs, yofs);
       readcontrols ();

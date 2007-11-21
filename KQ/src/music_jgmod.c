@@ -80,7 +80,7 @@ void play_music (const char *sngnme, long start_track)
    if (gsong)
       destroy_mod (gsong);
    if (!(gsong = load_mod (kqres (MUSIC_DIR, sngname)))) {
-      sprintf (strbuf, "Could not load %s!", sngnme);
+      sprintf (strbuf, _("Could not load %s!"), sngnme);
       klog (strbuf);
    } else {
       if (start_track > 0)

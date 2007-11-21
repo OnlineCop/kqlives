@@ -609,7 +609,7 @@ static void cure_oneall_allies (int caster, int tgt, int spell_number)
       if (fighter[a].sts[S_STONE] == 0 && fighter[a].sts[S_DEAD] == 0)
          z++;
    if (z == 0) {
-      klog ("... the hell, how can there be nobody to cure?");
+      klog (_("... the hell, how can there be nobody to cure?"));
       return;
    }
    if (tgt == SEL_ALL_ALLIES)
@@ -1172,7 +1172,7 @@ void special_damage_oneall_enemies (int caster_index, int spell_dmg,
 static void special_spells (int caster, int spell_number)
 {
    if (caster >= PSIZE) {
-      sprintf (strbuf, "Enemy %d tried to cast %s?!", caster,
+      sprintf (strbuf, _("Enemy %d tried to cast %s?!"), caster,
                magic[spell_number].name);
       klog (strbuf);
    }

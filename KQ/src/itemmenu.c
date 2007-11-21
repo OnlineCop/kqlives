@@ -143,7 +143,7 @@ void camp_item_menu (void)
                         menubox (double_buffer, 72 + xofs, 204 + yofs, 20, 1,
                                  DARKBLUE);
                         print_font (double_buffer, 104 + xofs, 212 + yofs,
-                                    "Confirm/Cancel", FNORMAL);
+                                    _("Confirm/Cancel"), FNORMAL);
                         blit2screen (xofs, yofs);
                         readcontrols ();
 
@@ -280,18 +280,18 @@ static void draw_itemmenu (int ptr, int pg, int sl)
    int z, j, k, a, ck;
 
    menubox (double_buffer, 72 + xofs, 12 + yofs, 20, 1, BLUE);
-   print_font (double_buffer, 140 + xofs, 20 + yofs, "Items", FGOLD);
+   print_font (double_buffer, 140 + xofs, 20 + yofs, _("Items"), FGOLD);
    menubox (double_buffer, 72 + xofs, 36 + yofs, 20, 1, BLUE);
    if (sl == 1) {
       menubox (double_buffer, item_act * 56 + 72 + xofs, 36 + yofs, 6, 1,
                DARKBLUE);
-      print_font (double_buffer, 92 + xofs, 44 + yofs, "Use", FGOLD);
-      print_font (double_buffer, 144 + xofs, 44 + yofs, "Sort   Drop", FGOLD);
+      print_font (double_buffer, 92 + xofs, 44 + yofs, _("Use"), FGOLD);
+      print_font (double_buffer, 144 + xofs, 44 + yofs, _("Sort   Drop"), FGOLD);
    } else {
       if (item_act == 0)
-         print_font (double_buffer, 148 + xofs, 44 + yofs, "Use", FGOLD);
+         print_font (double_buffer, 148 + xofs, 44 + yofs, _("Use"), FGOLD);
       else
-         print_font (double_buffer, 144 + xofs, 44 + yofs, "Drop", FGOLD);
+         print_font (double_buffer, 144 + xofs, 44 + yofs, _("Drop"), FGOLD);
    }
    menubox (double_buffer, 72 + xofs, 60 + yofs, 20, 16, BLUE);
    for (k = 0; k < 16; k++) {
@@ -492,19 +492,19 @@ int item_effects (int sa, int t, int ti)
       play_effect (SND_TWINKLE, 128);
       switch (z) {
       case 0:
-         message ("Strength up!", 255, 0, xofs, yofs);
+         message (_("Strength up!"), 255, 0, xofs, yofs);
          break;
       case 1:
-         message ("Agility up!", 255, 0, xofs, yofs);
+         message (_("Agility up!"), 255, 0, xofs, yofs);
          break;
       case 2:
-         message ("Vitality up!", 255, 0, xofs, yofs);
+         message (_("Vitality up!"), 255, 0, xofs, yofs);
          break;
       case 3:
-         message ("Intellect up!", 255, 0, xofs, yofs);
+         message (_("Intellect up!"), 255, 0, xofs, yofs);
          break;
       case 4:
-         message ("Wisdom up!", 255, 0, xofs, yofs);
+         message (_("Wisdom up!"), 255, 0, xofs, yofs);
          break;
       }
       return 2;
@@ -530,7 +530,7 @@ int item_effects (int sa, int t, int ti)
             i = 60;
          }
       }
-      sprintf (strbuf, "%s learned!", magic[tmp].name);
+      sprintf (strbuf, _("%s learned!"), magic[tmp].name);
       play_effect (SND_TWINKLE, 128);
       message (strbuf, magic[tmp].icon, 0, xofs, yofs);
       return 2;
