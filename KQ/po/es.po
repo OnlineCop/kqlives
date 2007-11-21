@@ -1,22 +1,25 @@
+# translation of es.po to Spanish
 # Spanish translations for KQ package.
 # Copyright (C) 2007 various people
 # This file is distributed under the same license as the KQ package.
-# Edgar Alberto Molina Rojas <edgar@heuristicsi.com>, 2007.
 #
+# Edgar Alberto Molina Rojas <edgar@heuristicsi.com>, 2007.
 msgid ""
 msgstr ""
-"Project-Id-Version: KQ 0.99\n"
+"Project-Id-Version: es\n"
 "Report-Msgid-Bugs-To: peterhull90@users.sourceforge.net\n"
 "POT-Creation-Date: 2007-11-21 17:37-0500\n"
-"PO-Revision-Date: 2007-11-21 17:38-0500\n"
+"PO-Revision-Date: 2007-11-21 18:17-0500\n"
 "Last-Translator: Edgar Alberto Molina Rojas <edgar@heuristicsi.com>\n"
-"Language-Team: Spanish\n"
+"Language-Team: Spanish <kqlives-main@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: KBabel 1.11.4\n"
 
 #: scripts/bridge.lua:45
+#, fuzzy
 msgid "There are some weird creatures in the water!"
 msgstr ""
 
@@ -105,8 +108,7 @@ msgid "Lousy, no-good... sleeping on the job..."
 msgstr ""
 
 #: scripts/bridge.lua:115
-msgid ""
-"I really could use a break. It's been almost 15 minutes since the last one!"
+msgid "I really could use a break. It's been almost 15 minutes since the last one!"
 msgstr ""
 
 #: scripts/bridge.lua:117
@@ -323,8 +325,7 @@ msgid "Yes sir!"
 msgstr ""
 
 #: scripts/camp.lua:397
-msgid ""
-"I'll go back to Randen with the mayor. Why don't you meet me there after?"
+msgid "I'll go back to Randen with the mayor. Why don't you meet me there after?"
 msgstr ""
 
 #: scripts/camp.lua:399
@@ -396,8 +397,7 @@ msgid "You decide to sleep."
 msgstr ""
 
 #: scripts/cave2.lua:81
-msgid ""
-"Oops, I'm stuck down here again. I'll try sleeping again to get back out."
+msgid "Oops, I'm stuck down here again. I'll try sleeping again to get back out."
 msgstr ""
 
 #: scripts/cave2.lua:87
@@ -602,8 +602,7 @@ msgid "If you need me, I'll be back at the manor."
 msgstr ""
 
 #: scripts/cave4.lua:309
-msgid ""
-"So you're back trying to steal the other half of the statue from me, are you?"
+msgid "So you're back trying to steal the other half of the statue from me, are you?"
 msgstr ""
 
 #: scripts/cave4.lua:310
@@ -645,8 +644,7 @@ msgid "Well, then you will give it back... or it will be taken by force!"
 msgstr ""
 
 #: scripts/cave4.lua:319
-msgid ""
-"That has been tried before already. You prove to be as stupid as you look."
+msgid "That has been tried before already. You prove to be as stupid as you look."
 msgstr ""
 
 #: scripts/cave4.lua:320
@@ -674,8 +672,7 @@ msgid "Then I felt everthing fade away..."
 msgstr ""
 
 #: scripts/cave5.lua:31
-msgid ""
-"If you're feeling better you can join up, or go back to the Manor to rest."
+msgid "If you're feeling better you can join up, or go back to the Manor to rest."
 msgstr ""
 
 #: scripts/cave5.lua:164
@@ -777,8 +774,7 @@ msgid ""
 msgstr ""
 
 #: scripts/coliseum.lua:55
-msgid ""
-"If you win the first three rounds, you qualify for more advanced matches."
+msgid "If you win the first three rounds, you qualify for more advanced matches."
 msgstr ""
 
 #: scripts/coliseum.lua:56
@@ -822,8 +818,7 @@ msgid "Oh well. Come back when you're ready."
 msgstr ""
 
 #: scripts/coliseum.lua:75
-msgid ""
-"Consider yourself registered. After each battle, come back and talk to me."
+msgid "Consider yourself registered. After each battle, come back and talk to me."
 msgstr ""
 
 #: scripts/coliseum.lua:81
@@ -997,8 +992,7 @@ msgid "Hey... long time no see. I saw you fighting. You were amazing!"
 msgstr ""
 
 #: scripts/coliseum.lua:212
-msgid ""
-"He knew that we were separated and he gave me some information to bring back."
+msgid "He knew that we were separated and he gave me some information to bring back."
 msgstr ""
 
 #: scripts/coliseum.lua:213
@@ -1026,8 +1020,7 @@ msgid ""
 msgstr ""
 
 #: scripts/coliseum.lua:218
-msgid ""
-"I already snagged the Helmet and the Shield... where are the other parts?"
+msgid "I already snagged the Helmet and the Shield... where are the other parts?"
 msgstr ""
 
 #: scripts/coliseum.lua:219
@@ -1133,8 +1126,7 @@ msgid "You've got to stop them!"
 msgstr ""
 
 #: scripts/cult.lua:197
-msgid ""
-"Well... I guess we should hurry then. We'll be back shortly to get you out."
+msgid "Well... I guess we should hurry then. We'll be back shortly to get you out."
 msgstr ""
 
 #: scripts/cult.lua:198
@@ -1548,8 +1540,7 @@ msgid "Thank you."
 msgstr ""
 
 #: scripts/dville.lua:311
-msgid ""
-"Good luck in your journey. If you come across the other half of our statue..."
+msgid "Good luck in your journey. If you come across the other half of our statue..."
 msgstr ""
 
 #: scripts/dville.lua:313
@@ -1811,13 +1802,11 @@ msgid ""
 msgstr ""
 
 #: scripts/estate.lua:157
-msgid ""
-"They set me up. They wanted to follow me so that they could kill Dungar!"
+msgid "They set me up. They wanted to follow me so that they could kill Dungar!"
 msgstr ""
 
 #: scripts/estate.lua:158
-msgid ""
-"That may be true, $0, but you were doing the right thing. You didn't know."
+msgid "That may be true, $0, but you were doing the right thing. You didn't know."
 msgstr ""
 
 #: scripts/estate.lua:159
@@ -1899,8 +1888,7 @@ msgid "Goodbye Dungar. I'm sorry."
 msgstr ""
 
 #: scripts/estate.lua:201
-msgid ""
-"Excellent work! The Helmet appears to be undamaged... this is wonderful."
+msgid "Excellent work! The Helmet appears to be undamaged... this is wonderful."
 msgstr ""
 
 #: scripts/estate.lua:202
@@ -2296,8 +2284,7 @@ msgid "Good job with the portal. I have returned the Rod of Cancellation."
 msgstr ""
 
 #: scripts/grotto.lua:112
-msgid ""
-"That note you're carrying... I recognize the seal on there; let me see it!"
+msgid "That note you're carrying... I recognize the seal on there; let me see it!"
 msgstr ""
 
 #: scripts/grotto.lua:113 scripts/town1.lua:405
@@ -2355,8 +2342,7 @@ msgid "Wow. The rune hummed for a second but now it's quiet."
 msgstr ""
 
 #: scripts/grotto.lua:196
-msgid ""
-"I can't go through here anymore since I no longer have the Unadium Coin."
+msgid "I can't go through here anymore since I no longer have the Unadium Coin."
 msgstr ""
 
 #: scripts/grotto2.lua:45
@@ -2819,8 +2805,7 @@ msgid "It's not finished yet."
 msgstr ""
 
 #: scripts/main.lua:377
-msgid ""
-"This is the cave behind the Xenar Castle. Sorry, you can't go in there yet."
+msgid "This is the cave behind the Xenar Castle. Sorry, you can't go in there yet."
 msgstr ""
 
 #: scripts/main.lua:380 scripts/main.lua:384
@@ -2896,13 +2881,11 @@ msgid ""
 msgstr ""
 
 #: scripts/manor.lua:91
-msgid ""
-"I'm a thief by trade. You might be surprised what you can steal from enemies!"
+msgid "I'm a thief by trade. You might be surprised what you can steal from enemies!"
 msgstr ""
 
 #: scripts/manor.lua:93
-msgid ""
-"I have a very keen eye. Not even enemies can hide their weaknesses from me!"
+msgid "I have a very keen eye. Not even enemies can hide their weaknesses from me!"
 msgstr ""
 
 #: scripts/manor.lua:102
@@ -3169,8 +3152,7 @@ msgid "Hunert shrugs"
 msgstr ""
 
 #: scripts/manor.lua:358
-msgid ""
-"Hopefully, it will give you a chance to buy some better weapons and armour."
+msgid "Hopefully, it will give you a chance to buy some better weapons and armour."
 msgstr ""
 
 #: scripts/manor.lua:359
@@ -3194,13 +3176,11 @@ msgid "Hello. Is this your cabin?"
 msgstr ""
 
 #: scripts/pass.lua:142
-msgid ""
-"It sure is! Th' name's Rufus. I work in the abandoned mines in these parts."
+msgid "It sure is! Th' name's Rufus. I work in the abandoned mines in these parts."
 msgstr ""
 
 #: scripts/pass.lua:143
-msgid ""
-"But I'll warn ya now. There's something nasty hiding in them thar mines."
+msgid "But I'll warn ya now. There's something nasty hiding in them thar mines."
 msgstr ""
 
 #: scripts/pass.lua:144
@@ -3254,8 +3234,7 @@ msgid ""
 msgstr ""
 
 #: scripts/starting.lua:167
-msgid ""
-"Excellent. If everyone is ready, I will take you to meet master Nostik..."
+msgid "Excellent. If everyone is ready, I will take you to meet master Nostik..."
 msgstr ""
 
 #: scripts/starting.lua:204
@@ -3403,8 +3382,7 @@ msgid ""
 msgstr ""
 
 #: scripts/starting.lua:345
-msgid ""
-"Very well, $0. I am giving you an opportunity to investigate this quest."
+msgid "Very well, $0. I am giving you an opportunity to investigate this quest."
 msgstr ""
 
 #: scripts/starting.lua:346
@@ -3418,8 +3396,7 @@ msgid "I would be honored sir. Where do I go first?"
 msgstr ""
 
 #: scripts/starting.lua:348
-msgid ""
-"Proceed directly to Reisha Mountain. Let's not keep our mystery host waiting."
+msgid "Proceed directly to Reisha Mountain. Let's not keep our mystery host waiting."
 msgstr ""
 
 #: scripts/starting.lua:349
@@ -3945,8 +3922,7 @@ msgid ""
 msgstr ""
 
 #: scripts/tower.lua:110 scripts/tower.lua:136
-msgid ""
-"I am a bit hurried in my quest to find... well, something of importance."
+msgid "I am a bit hurried in my quest to find... well, something of importance."
 msgstr ""
 
 #: scripts/tower.lua:112
@@ -3958,8 +3934,7 @@ msgid "To find, um... something of importance."
 msgstr ""
 
 #: scripts/tower.lua:115
-msgid ""
-"Yes, but would you consider helping my people find their missing Statue?"
+msgid "Yes, but would you consider helping my people find their missing Statue?"
 msgstr ""
 
 #: scripts/tower.lua:120
@@ -3999,8 +3974,7 @@ msgid "Not exactly..."
 msgstr ""
 
 #: scripts/tower.lua:139
-msgid ""
-"We are a bit hurried in our quest to find... well, something of importance."
+msgid "We are a bit hurried in our quest to find... well, something of importance."
 msgstr ""
 
 #: scripts/tower.lua:141
@@ -4060,8 +4034,7 @@ msgid "Thank you so very much."
 msgstr ""
 
 #: scripts/tower.lua:173
-msgid ""
-"Well, that's alright. You've done enough already. Thank you so very much."
+msgid "Well, that's alright. You've done enough already. Thank you so very much."
 msgstr ""
 
 #: scripts/tower.lua:178
@@ -4223,8 +4196,7 @@ msgid "Well, I wish you luck. Thank you for all you've done already."
 msgstr ""
 
 #: scripts/tower.lua:257
-msgid ""
-"This whole thing sure seems fishy. I hope I can figure out what's going on."
+msgid "This whole thing sure seems fishy. I hope I can figure out what's going on."
 msgstr ""
 
 #: scripts/tower.lua:258
@@ -4322,8 +4294,7 @@ msgid ""
 msgstr ""
 
 #: scripts/tower.lua:314
-msgid ""
-"Oracle! We saw Malkaron's monsters take your statue through the portal below!"
+msgid "Oracle! We saw Malkaron's monsters take your statue through the portal below!"
 msgstr ""
 
 #: scripts/tower.lua:317
@@ -4455,8 +4426,7 @@ msgid ""
 msgstr ""
 
 #: scripts/town1.lua:122
-msgid ""
-"My, my. This is beautiful work. How rare! How exquisite! How affordable!"
+msgid "My, my. This is beautiful work. How rare! How exquisite! How affordable!"
 msgstr ""
 
 #: scripts/town1.lua:131
@@ -4468,8 +4438,7 @@ msgid "I'm Derig. If I'm here, then you found me in the Grotto."
 msgstr ""
 
 #: scripts/town1.lua:138
-msgid ""
-"To stop the monsters in our underground tunnel, you must seal the portal."
+msgid "To stop the monsters in our underground tunnel, you must seal the portal."
 msgstr ""
 
 #: scripts/town1.lua:139
@@ -4523,8 +4492,7 @@ msgid "`Fire Sunset'"
 msgstr ""
 
 #: scripts/town1.lua:272
-msgid ""
-"This is my art collection. Any piece of work starting at only 300000 GP!"
+msgid "This is my art collection. Any piece of work starting at only 300000 GP!"
 msgstr ""
 
 #: scripts/town1.lua:275
@@ -4682,8 +4650,7 @@ msgid "Well? Go find Derig in the grotto!"
 msgstr ""
 
 #: scripts/town1.lua:466
-msgid ""
-"Okay, that was stupid. You saw him by the fire and you didn't talk to him."
+msgid "Okay, that was stupid. You saw him by the fire and you didn't talk to him."
 msgstr ""
 
 #: scripts/town1.lua:468
@@ -4717,8 +4684,7 @@ msgid ""
 msgstr ""
 
 #: scripts/town1.lua:505
-msgid ""
-"Thanks for returning the Rod to my grandfather. Here is a SunStone for you."
+msgid "Thanks for returning the Rod to my grandfather. Here is a SunStone for you."
 msgstr ""
 
 #: scripts/town1.lua:514
@@ -4760,8 +4726,7 @@ msgid "Oh... that bad man, making me worry like this, I'm gonna kill him!"
 msgstr ""
 
 #: scripts/town2.lua:105
-msgid ""
-"Thank you so much for restoring the trade route to the citizens of Randen!"
+msgid "Thank you so much for restoring the trade route to the citizens of Randen!"
 msgstr ""
 
 #: scripts/town2.lua:107
@@ -4854,8 +4819,7 @@ msgid ""
 msgstr ""
 
 #: scripts/town2.lua:163
-msgid ""
-"You should look around there to see if the workers left anything behind."
+msgid "You should look around there to see if the workers left anything behind."
 msgstr ""
 
 #: scripts/town2.lua:167
@@ -4867,8 +4831,7 @@ msgid "Oh, and I found this curious artifact there as well..."
 msgstr ""
 
 #: scripts/town2.lua:176
-msgid ""
-"If you haven't already noticed, the bridge across Brayden river is gone."
+msgid "If you haven't already noticed, the bridge across Brayden river is gone."
 msgstr ""
 
 #: scripts/town2.lua:177
@@ -5166,8 +5129,7 @@ msgid "Tsorin eyes you warily."
 msgstr ""
 
 #: scripts/town3.lua:240
-msgid ""
-"Well, I have to know if I can trust you first. Here, take this note to Derig."
+msgid "Well, I have to know if I can trust you first. Here, take this note to Derig."
 msgstr ""
 
 #: scripts/town3.lua:241
@@ -5175,8 +5137,7 @@ msgid "Tsorin hands you an envelope with his seal on it."
 msgstr ""
 
 #: scripts/town3.lua:242
-msgid ""
-"He lives back in Ekla, and if he says you can pass, I shall let you pass."
+msgid "He lives back in Ekla, and if he says you can pass, I shall let you pass."
 msgstr ""
 
 #: scripts/town3.lua:246
@@ -5235,8 +5196,7 @@ msgid "Tsorin's Seal procured!"
 msgstr ""
 
 #: scripts/town3.lua:264
-msgid ""
-"I'm fear I cannot send anyone to protect you - you must take the utmost care."
+msgid "I'm fear I cannot send anyone to protect you - you must take the utmost care."
 msgstr ""
 
 #: scripts/town3.lua:268
@@ -5482,8 +5442,7 @@ msgid "Oh well..."
 msgstr ""
 
 #: scripts/town4.lua:359
-msgid ""
-"Sigh. I guess I'll just have to keep going and hope I find a way to get back."
+msgid "Sigh. I guess I'll just have to keep going and hope I find a way to get back."
 msgstr ""
 
 #: scripts/town4.lua:370
@@ -5615,8 +5574,7 @@ msgid ""
 msgstr ""
 
 #: scripts/town4.lua:416
-msgid ""
-"I appreciate all your help in finding the Helmet and the Shield. Thanks!"
+msgid "I appreciate all your help in finding the Helmet and the Shield. Thanks!"
 msgstr ""
 
 #: scripts/town4.lua:417
@@ -5884,8 +5842,7 @@ msgid ""
 msgstr ""
 
 #: scripts/town5.lua:360
-msgid ""
-"Oh, I am honoured! Haven't you got better things to do over at the palace?"
+msgid "Oh, I am honoured! Haven't you got better things to do over at the palace?"
 msgstr ""
 
 #: scripts/town5.lua:370
@@ -5933,8 +5890,7 @@ msgid "I was wondering if you did tours around the castle?"
 msgstr ""
 
 #: scripts/town5.lua:405
-msgid ""
-"I will show you the inside of the dungeon if you bother me again. Clear off!"
+msgid "I will show you the inside of the dungeon if you bother me again. Clear off!"
 msgstr ""
 
 #: scripts/town5.lua:406
@@ -5966,8 +5922,7 @@ msgid "Only servants, they ... hey, why are you so interested?"
 msgstr ""
 
 #: scripts/town5.lua:422
-msgid ""
-"No reason. I'm just passing through this town and I was curious, that's all."
+msgid "No reason. I'm just passing through this town and I was curious, that's all."
 msgstr ""
 
 #: scripts/town5.lua:426
@@ -6179,8 +6134,7 @@ msgid ""
 msgstr ""
 
 #: scripts/town6.lua:243
-msgid ""
-"We'll be better prepared for Malkaron and anybody else who gets in our way."
+msgid "We'll be better prepared for Malkaron and anybody else who gets in our way."
 msgstr ""
 
 #: scripts/town6.lua:244
@@ -6354,8 +6308,7 @@ msgid ""
 msgstr ""
 
 #: scripts/town6.lua:316
-msgid ""
-"Therefore, any time you need to stay at our inn, you'll only be charged 1 GP!"
+msgid "Therefore, any time you need to stay at our inn, you'll only be charged 1 GP!"
 msgstr ""
 
 #: scripts/town6.lua:318
@@ -6395,8 +6348,7 @@ msgid "That key will unlock the sealed entrances to the dungeons below."
 msgstr ""
 
 #: scripts/town6.lua:331
-msgid ""
-"That's perfect! The next item we were on our way to find was the Opal Armor."
+msgid "That's perfect! The next item we were on our way to find was the Opal Armor."
 msgstr ""
 
 #: scripts/town6.lua:332
@@ -7461,178 +7413,177 @@ msgstr ""
 
 #: src/setup.c:123
 msgid "Display KQ in a window."
-msgstr ""
+msgstr "Muestra KQ en una ventana."
 
 #: src/setup.c:124
 msgid "Stretch to fit 640x480 resolution."
-msgstr ""
+msgstr "Expande hasta encajar en 640x480."
 
 #: src/setup.c:125
 msgid "Display the frame rate during play."
-msgstr ""
+msgstr "Muestra los FPS durante el juego."
 
 #: src/setup.c:126
 msgid "Wait for vertical retrace."
-msgstr ""
+msgstr "Esperar el retraso vertical."
 
 #: src/setup.c:127
 msgid "Key used to move up."
-msgstr ""
+msgstr "Tecla usada para mover arriba."
 
 #: src/setup.c:128
 msgid "Key used to move down."
-msgstr ""
+msgstr "Tecla usada para mover abajo."
 
 #: src/setup.c:129
 msgid "Key used to move left."
-msgstr ""
+msgstr "Tecla usada para mover izquierda."
 
 #: src/setup.c:130
 msgid "Key used to move right."
-msgstr ""
+msgstr "Tecla usada para mover derecha."
 
 #: src/setup.c:131
 msgid "Key used to confirm action."
-msgstr ""
+msgstr "Tecla usada para confirmar."
 
 #: src/setup.c:132
 msgid "Key used to cancel action."
-msgstr ""
+msgstr "Tecla usada para cancelar."
 
 #: src/setup.c:133
 msgid "Key used to call character menu."
-msgstr ""
+msgstr "Tecla para abrir el menu del caracter."
 
 #: src/setup.c:134
 msgid "Key used to call system menu."
-msgstr ""
+msgstr "Tecla abrir el menu del sistema."
 
 #: src/setup.c:135
 msgid "Toggle sound and music on/off."
-msgstr ""
+msgstr "Enciende/Apaga el sonido y la musica."
 
 #: src/setup.c:136
 msgid "Overall sound volume (affects music)."
-msgstr ""
+msgstr "Volumen principal (afecta la musica)."
 
 #: src/setup.c:137
 msgid "Music volume."
-msgstr ""
+msgstr "Volumen de la Musica."
 
 #: src/setup.c:138
 msgid "Animation speed-ups for slow machines."
-msgstr ""
+msgstr "Acelera las animaciones."
 
 #: src/setup.c:139
 msgid "Toggle how to allocate CPU usage."
-msgstr ""
+msgstr "Como asignar el uso de la CPU."
 
 #: src/setup.c:141
 msgid "Things you can do only in DebugMode."
-msgstr ""
+msgstr "Cosas solo para Depuracion."
 
 #: src/setup.c:151
 msgid "KQ Configuration"
-msgstr ""
+msgstr "Configuracion KQ"
 
 #: src/setup.c:155
 msgid "Windowed mode:"
-msgstr ""
+msgstr "Modo Ventana:"
 
 #: src/setup.c:155 src/setup.c:156 src/setup.c:157 src/setup.c:158
 #: src/setup.c:180
 msgid "YES"
-msgstr ""
+msgstr "SI"
 
 #: src/setup.c:155 src/setup.c:156 src/setup.c:157 src/setup.c:158
 #: src/setup.c:180
 msgid "NO"
-msgstr ""
+msgstr "NO"
 
 #: src/setup.c:156
 msgid "Stretch Display:"
-msgstr ""
+msgstr "Expandir Pantalla:"
 
 #: src/setup.c:157
 msgid "Show Frame Rate:"
-msgstr ""
+msgstr "Mostrar FPS:"
 
 #: src/setup.c:158
 msgid "Wait for Retrace:"
-msgstr ""
+msgstr "Esperar Retraso:"
 
 #: src/setup.c:159 src/setup.c:931
 msgid "Up Key:"
-msgstr ""
+msgstr "Arriba:"
 
 #: src/setup.c:160 src/setup.c:932
 msgid "Down Key:"
-msgstr ""
+msgstr "Abajo:"
 
 #: src/setup.c:161 src/setup.c:933
 msgid "Left Key:"
-msgstr ""
+msgstr "Izquierda:"
 
 #: src/setup.c:162 src/setup.c:934
 msgid "Right Key:"
-msgstr ""
+msgstr "Derecha:"
 
 #: src/setup.c:163 src/setup.c:935
 msgid "Confirm Key:"
-msgstr ""
+msgstr "Confirmar:"
 
 #: src/setup.c:164 src/setup.c:936
 msgid "Cancel Key:"
-msgstr ""
+msgstr "Cancelar:"
 
 #: src/setup.c:165 src/setup.c:937
 msgid "Menu Key:"
-msgstr ""
+msgstr "Menu:"
 
 #: src/setup.c:166 src/setup.c:938
 msgid "System Menu Key:"
-msgstr ""
+msgstr "Menu del Sistema:"
 
 #: src/setup.c:167
 msgid "Sound System:"
-msgstr ""
+msgstr "Sistema de Sonido:"
 
 #: src/setup.c:167
 msgid "ON"
-msgstr ""
+msgstr "Encendido"
 
 #: src/setup.c:167 src/setup.c:191
 msgid "OFF"
-msgstr ""
+msgstr "Apagado"
 
 #: src/setup.c:175
 msgid "Sound Volume:"
-msgstr ""
+msgstr "Volumen de Efectos:"
 
 #: src/setup.c:178
 msgid "Music Volume:"
-msgstr ""
+msgstr "Volumen de la Musica:"
 
 #: src/setup.c:180
 msgid "Slow Computer:"
-msgstr ""
+msgstr "Computador Lento:"
 
 #: src/setup.c:183
 #, c-format
 msgid "rest(%d)"
-msgstr ""
+msgstr "rest(%d)"
 
 #: src/setup.c:186
 msgid "CPU Usage:"
-msgstr ""
+msgstr "Uso CPU:"
 
 #: src/setup.c:191
 msgid "DebugMode Stuff:"
-msgstr ""
+msgstr "Modo Depuracion:"
 
 #: src/setup.c:236
-msgid ""
-"This version of KQ was compiled for DOS and does not support windowed mode"
+msgid "This version of KQ was compiled for DOS and does not support windowed mode"
 msgstr ""
 
 #: src/setup.c:239
@@ -7640,16 +7591,18 @@ msgid ""
 "Changing the display mode to or from windowed view could have serious "
 "ramifications. It is advised that you save first."
 msgstr ""
+"Cambiar el modo de pantalla de o hacia ventana puede tener serias "
+"ramificaciones. Es mejor que guardes antes."
 
 #: src/setup.c:241
 #, c-format
 msgid "Switch to windowed mode?"
-msgstr ""
+msgstr "Cambiar a modo ventana?"
 
 #: src/setup.c:243
 #, c-format
 msgid "Switch to full screen?"
-msgstr ""
+msgstr "Cambiar a pantalla completa?"
 
 #: src/setup.c:258
 msgid "This version of KQ was compiled for DOS and does not support stretching"
@@ -7673,7 +7626,7 @@ msgstr ""
 
 #: src/setup.c:354
 msgid "...please wait..."
-msgstr ""
+msgstr "...espere por favor..."
 
 #: src/setup.c:364
 msgid "Sound Volume"
@@ -7698,23 +7651,23 @@ msgstr ""
 
 #: src/setup.c:926
 msgid "KQ Help"
-msgstr ""
+msgstr "Ayuda KQ"
 
 #: src/setup.c:930
 msgid "Press CONFIRM to exit this screen"
-msgstr ""
+msgstr "Presiona Confirmar para cerrar"
 
 #: src/sgame.c:137
 msgid "Yes"
-msgstr ""
+msgstr "Si"
 
 #: src/sgame.c:138
 msgid "No"
-msgstr ""
+msgstr "No"
 
 #: src/sgame.c:141
 msgid "Are you sure you want to quit this game?"
-msgstr ""
+msgstr "Seguro que deseas salir de este juego?"
 
 #: src/sgame.c:160
 msgid "File Deleted"
@@ -7770,32 +7723,32 @@ msgstr ""
 
 #: src/sgame.c:804 src/sgame.c:902
 msgid "Could not save game data."
-msgstr ""
+msgstr "Imposible guardar los datos del juego."
 
 #: src/sgame.c:1142
 msgid "Loading"
-msgstr ""
+msgstr "Cargar."
 
 #: src/sgame.c:1145
 msgid "Saving"
-msgstr ""
+msgstr "Guardar"
 
 #: src/sgame.c:1148
 msgid "Delete"
-msgstr ""
+msgstr "Eliminar"
 
 #: src/sgame.c:1164
 msgid "Wrong version"
-msgstr ""
+msgstr "Version incorrecta"
 
 #: src/sgame.c:1175
 #, c-format
 msgid "L: %02d"
-msgstr ""
+msgstr "N: %02d"
 
 #: src/sgame.c:1177
 msgid "H:"
-msgstr ""
+msgstr "S:"
 
 #: src/sgame.c:1178
 msgid "M:"
@@ -7809,47 +7762,47 @@ msgstr ""
 #: src/sgame.c:1191
 #, c-format
 msgid "G %d"
-msgstr ""
+msgstr "O %d"
 
 #: src/sgame.c:1288
 msgid "Continue"
-msgstr ""
+msgstr "Continuar"
 
 #: src/sgame.c:1289
 msgid "New Game"
-msgstr ""
+msgstr "  Nuevo"
 
 #: src/sgame.c:1290 src/sgame.c:1398
 msgid "Config"
-msgstr ""
+msgstr "Config"
 
 #: src/sgame.c:1338
 msgid "Then exit you shall!"
-msgstr ""
+msgstr "Entonces saldras!"
 
 #: src/sgame.c:1378
 msgid "Save  "
-msgstr ""
+msgstr "Guardar"
 
 #: src/sgame.c:1385
 msgid "[Save]"
-msgstr ""
+msgstr "[Guardar]"
 
 #: src/sgame.c:1397
 msgid "Load"
-msgstr ""
+msgstr "Cargar"
 
 #: src/shopmenu.c:113
 msgid "No room!"
-msgstr ""
+msgstr "No hay espacio!"
 
 #: src/shopmenu.c:143 src/shopmenu.c:752
 msgid "Buy"
-msgstr ""
+msgstr "Comprar"
 
 #: src/shopmenu.c:172
 msgid "Sold Out!"
-msgstr ""
+msgstr "Vendido!"
 
 #: src/shopmenu.c:363
 #, c-format
@@ -7913,3 +7866,4 @@ msgstr ""
 #: src/shopmenu.c:658
 msgid "That can not be sold!"
 msgstr ""
+
