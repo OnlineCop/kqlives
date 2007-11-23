@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: es\n"
 "Report-Msgid-Bugs-To: peterhull90@users.sourceforge.net\n"
 "POT-Creation-Date: 2007-11-21 17:37-0500\n"
-"PO-Revision-Date: 2007-11-21 18:17-0500\n"
+"PO-Revision-Date: 2007-11-23 18:38-0500\n"
 "Last-Translator: Edgar Alberto Molina Rojas <edgar@heuristicsi.com>\n"
 "Language-Team: Spanish <kqlives-main@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -19,131 +19,134 @@ msgstr ""
 "X-Generator: KBabel 1.11.4\n"
 
 #: scripts/bridge.lua:45
-#, fuzzy
 msgid "There are some weird creatures in the water!"
-msgstr ""
+msgstr "Hay criaturas extrañas en el agua!"
 
 #: scripts/bridge.lua:48
 msgid "I think we'll take a break before getting back to work."
-msgstr ""
+msgstr "Creo que tomaremos un descanso antes de regresar a trabajar."
 
 #: scripts/bridge.lua:55
 msgid "We're on the lookout for bandits."
-msgstr ""
+msgstr "Estamos en busca de bandidos."
 
 #: scripts/bridge.lua:57
 msgid ""
 "Um... we don't really have any experience dealing with anything hostile... "
 "could you take a look for us?"
 msgstr ""
+"Mm... realmente no tenemos ninguna experiencia enfrentando nada hostíl... "
+"podria mirar por nosotros?"
 
 #: scripts/bridge.lua:59
 msgid "Very impressive... it's a good thing you came along. Thanks!"
-msgstr ""
+msgstr "Muy impresionante... es una buena cosa. Gracias!"
 
 #: scripts/bridge.lua:61
 msgid "We should be done soon... come back a little later."
-msgstr ""
+msgstr "Deberiamos terminar pronto... regresa un poco después."
 
 #: scripts/bridge.lua:67
 msgid "Those bandits better not show their faces around here again!"
-msgstr ""
+msgstr "Mejor que esos bandidos no se aparezcan por aquí de nuevo!"
 
 #: scripts/bridge.lua:68
 msgid "Or you'll thrash 'em right?"
-msgstr ""
+msgstr "O los acabarás verdad?"
 
 #: scripts/bridge.lua:69
 msgid "No... they'd better not show up because I forgot my sword!"
-msgstr ""
+msgstr "No... mejor que no se aparezcan porque Olvide mi espada!"
 
 #: scripts/bridge2.lua:38 scripts/bridge.lua:71
 msgid "I probably shouldn't have told you that."
-msgstr ""
+msgstr "Probablemente no debí decirte eso."
 
 #: scripts/bridge.lua:74
 msgid "Let me know if you see any bandits, will ya?"
-msgstr ""
+msgstr "Dime si ves algún bandido, si?"
 
 #: scripts/bridge.lua:77 scripts/bridge.lua:93
 msgid "....."
-msgstr ""
+msgstr "...."
 
 #: scripts/bridge.lua:79
 msgid "Wow!"
-msgstr ""
+msgstr "Ohhh!"
 
 #: scripts/bridge.lua:81
 msgid ""
 "The bridge looks like it might be done by tomorrow. Why don't you go have a "
 "rest at the inn?"
 msgstr ""
+"El puente parece que estará listo para mañana. Porque no tomas un descanso en la "
+"estancia?"
 
 #: scripts/bridge.lua:86
 msgid "This is very hard work!"
-msgstr ""
+msgstr "Este es un trabajo muy duro!"
 
 #: scripts/bridge.lua:88
 msgid "That monster popped up right under my nose. Thanks for everything!"
-msgstr ""
+msgstr "Ese mounstro saltó justo en mis narices. Gracias por todo!"
 
 #: scripts/bridge.lua:96 scripts/estate.lua:273
 msgid "Wha...?"
-msgstr ""
+msgstr "Qué...?"
 
 #: scripts/bridge.lua:98
 msgid "I wasn't sleeping!"
-msgstr ""
+msgstr "Estaba durmiendo!"
 
 #: scripts/bridge.lua:103 scripts/temple1.lua:107
 msgid "Zzz..."
-msgstr ""
+msgstr "Zzz..."
 
 #: scripts/bridge.lua:108
 msgid "I think that guy up there is asleep."
-msgstr ""
+msgstr "Creo que el chico de allá esta dormido."
 
 #: scripts/bridge.lua:110
 msgid "Lousy, no-good... sleeping on the job..."
-msgstr ""
+msgstr "Patetico, nada bueno... durmiendo en el trabajo..."
 
 #: scripts/bridge.lua:115
 msgid "I really could use a break. It's been almost 15 minutes since the last one!"
-msgstr ""
+msgstr "Seria muy util un descanso. Han pasado al menos 15 minutos desde el último!"
 
 #: scripts/bridge.lua:117
 msgid "Now that the bridge is almost done, I think I'm due for another break."
-msgstr ""
+msgstr "Ahora que el puente está casi listo, creo que tomaré otro descanso."
 
 #: scripts/bridge.lua:122
 msgid ""
 "I never should have listened to my mother when she told me to take up "
 "construction."
-msgstr ""
+msgstr "Nunca debí escuchar a mi madre cuando me dijo que tomara construcción."
 
 #: scripts/bridge.lua:123
 msgid "I should've been a florist like my dad."
-msgstr ""
+msgstr "Debí haber sido un florista como mi padre."
 
 #: scripts/bridge.lua:125
 msgid "Now you see why I should've been a florist..."
-msgstr ""
+msgstr "Ahora ves porque debí haber sido un florista..."
 
 #: scripts/bridge2.lua:30
 msgid "There have been no further threats. Thank you."
-msgstr ""
+msgstr "No han habido más amenazas. Gracias."
 
 #: scripts/bridge2.lua:34
 msgid "It's a good thing you helped us out with that monster!"
-msgstr ""
+msgstr "Que bueno que nos ayudaste con ese monstruo!"
 
 #: scripts/bridge2.lua:35
 msgid "Oh, it was nothing..."
-msgstr ""
+msgstr "Oh, no fué nada."
 
 #: scripts/bridge2.lua:36
 msgid "No, really! I don't have a sword!"
-msgstr ""
+msgstr "No, en serio! No tengo espada!"
 
 #: scripts/bridge2.lua:41
 msgid "So what happened to your sword?"
@@ -152,67 +155,67 @@ msgstr ""
 #: scripts/bridge2.lua:42 scripts/estate.lua:43 scripts/temple1.lua:103
 #: scripts/temple2.lua:282
 msgid "..."
-msgstr ""
+msgstr "..."
 
 #: scripts/bridge2.lua:44
 msgid "My dog ate it."
-msgstr ""
+msgstr "Mi perro se la comió."
 
 #: scripts/bridge2.lua:47
 msgid "Hey, look! I found a board with a nail in it!"
-msgstr ""
+msgstr "Hey, Mira! encontré una tabla con un clavo!"
 
 #: scripts/bridge2.lua:48
 msgid "Oh, good grief!"
-msgstr ""
+msgstr "Oh, buena fortuna!"
 
 #: scripts/bridge2.lua:49
 msgid "Fear my wrath! Hi-yah!"
-msgstr ""
+msgstr "Teman mi colera! Hi-ahh!"
 
 #: scripts/bridge2.lua:53
 msgid "Just a few more planks and this will be finished!"
-msgstr ""
+msgstr "Solo unos pocos tablones más y estará terminado!"
 
 #: scripts/bridge2.lua:56
 msgid "I... zzz... can't stay awak... zzz..."
-msgstr ""
+msgstr "Yo... zzz... no puedo estar despier... zzz..."
 
 #: scripts/bridge2.lua:59
 msgid "*YAWN!* That other guy's yawning is contagious!"
-msgstr ""
+msgstr "*BOSTEZO!* El bostezar de ese chico es contagioso!"
 
 #: scripts/bridge2.lua:62
 msgid "My breaks are too short. I could really use another one."
-msgstr ""
+msgstr "Mis roturas son muy cortas. Podría usar otra."
 
 #: scripts/bridge2.lua:65
 msgid "I've planted flowers underneath the bridge."
-msgstr ""
+msgstr "He plantado flores bajo el puente."
 
 #: scripts/bridge2.lua:68
 msgid "I'm an architect. I'm building these pillars to reinforce the bridge."
-msgstr ""
+msgstr "Soy un arquitécto. Estoy construyendo estos pilares para reforzar el puente."
 
 #: scripts/bridge2.lua:72
 msgid "Yes, wha..."
-msgstr ""
+msgstr "Sí, qué..."
 
 #: scripts/bridge2.lua:73
 msgid "WHAM!"
-msgstr ""
+msgstr "PLUM!"
 
 #: scripts/bridge2.lua:74
 msgid "Yow!! My thumb! I banged my thumb!"
-msgstr ""
+msgstr "Ooh!! My pulgar! Me golpeé el pulgar!"
 
 #: scripts/bridge2.lua:80
 msgid "I hope that you're satisfied!"
-msgstr ""
+msgstr "Espero que estés contento!"
 
 #: scripts/bridge2.lua:82
 msgid "Owww, my poor thumb..."
-msgstr ""
+msgstr "Ooooh, mi pobre pulgar..."
 
 #: scripts/bridge2.lua:86
 msgid ""
@@ -6982,39 +6985,39 @@ msgstr ""
 
 #: src/hskill.c:358 src/menu.c:732
 msgid "Earth"
-msgstr ""
+msgstr "Tierra"
 
 #: src/hskill.c:359 src/menu.c:733
 msgid "Black"
-msgstr ""
+msgstr "Negro"
 
 #: src/hskill.c:360 src/menu.c:734
 msgid "Fire"
-msgstr ""
+msgstr "Fuego"
 
 #: src/hskill.c:361 src/menu.c:735
 msgid "Thunder"
-msgstr ""
+msgstr "Relámpago"
 
 #: src/hskill.c:362 src/menu.c:736
 msgid "Air"
-msgstr ""
+msgstr "Aire"
 
 #: src/hskill.c:363 src/menu.c:737
 msgid "White"
-msgstr ""
+msgstr "Blanco"
 
 #: src/hskill.c:364 src/menu.c:738
 msgid "Water"
-msgstr ""
+msgstr "Agua"
 
 #: src/hskill.c:365 src/menu.c:739
 msgid "Ice"
-msgstr ""
+msgstr "Hielo"
 
 #: src/hskill.c:463
 msgid "Elemental Infusion"
-msgstr ""
+msgstr "Infusión Elemental"
 
 #: src/hskill.c:512
 msgid "Dispel Undead"
@@ -7022,12 +7025,12 @@ msgstr ""
 
 #: src/hskill.c:562
 msgid "Divine Cure"
-msgstr ""
+msgstr "Cura Divina"
 
 #: src/hskill.c:637 src/hskill.c:661
 #, c-format
 msgid "%s taken!"
-msgstr ""
+msgstr "%s recividos!"
 
 #: src/hskill.c:643 src/hskill.c:667
 msgid "Nothing to steal!"
@@ -7248,71 +7251,71 @@ msgstr ""
 
 #: src/masmenu.c:92 src/menu.c:115
 msgid "Magic"
-msgstr ""
+msgstr "Magia"
 
 #: src/menu.c:117
 msgid "Spec."
-msgstr ""
+msgstr "Espec."
 
 #: src/menu.c:118
 msgid "Stats"
-msgstr ""
+msgstr "Estad"
 
 #: src/menu.c:119
 msgid "Quest"
-msgstr ""
+msgstr "Viaje"
 
 #: src/menu.c:120
 msgid "Time:"
-msgstr ""
+msgstr "Tiempo:"
 
 #: src/menu.c:121 src/shopmenu.c:264 src/shopmenu.c:423
 msgid "Gold:"
-msgstr ""
+msgstr "Oro:"
 
 #: src/menu.c:153
 msgid "LV"
-msgstr ""
+msgstr "NV"
 
 #: src/menu.c:157
 msgid "HP"
-msgstr ""
+msgstr "SL"
 
 #: src/menu.c:165
 msgid "MP"
-msgstr ""
+msgstr "PM"
 
 #: src/menu.c:629
 msgid "Special Items"
-msgstr ""
+msgstr "Items Especiales"
 
 #: src/menu.c:693
 msgid "Exp:"
-msgstr ""
+msgstr "Experiencia:"
 
 #: src/menu.c:697
 msgid "Next:"
-msgstr ""
+msgstr "Siguiente:"
 
 #: src/menu.c:710
 msgid "Speed"
-msgstr ""
+msgstr "Velocidad"
 
 #: src/menu.c:712
 msgid "Spirit"
-msgstr ""
+msgstr "Espiritu"
 
 #: src/menu.c:715
 msgid "Hit"
-msgstr ""
+msgstr "Golpear"
 
 #: src/menu.c:716
 msgid "Defense"
-msgstr ""
+msgstr "Defenza"
 
 #: src/menu.c:717
 msgid "Evade"
-msgstr ""
+msgstr "Evadir"
 
 #: src/menu.c:718
 msgid "Mag.Def"
@@ -7320,96 +7323,96 @@ msgstr ""
 
 #: src/menu.c:740
 msgid "Poison"
-msgstr ""
+msgstr "Envenenar"
 
 #: src/menu.c:741
 msgid "Blind"
-msgstr ""
+msgstr "Cegar"
 
 #: src/menu.c:742
 msgid "Charm"
-msgstr ""
+msgstr "Encantar"
 
 #: src/menu.c:743
 msgid "Paralyze"
-msgstr ""
+msgstr "Paralizar"
 
 #: src/menu.c:744
 msgid "Petrify"
-msgstr ""
+msgstr "Petrificar"
 
 #: src/menu.c:745
 msgid "Silence"
-msgstr ""
+msgstr "Silenciar"
 
 #: src/menu.c:746
 msgid "Sleep"
-msgstr ""
+msgstr "Dormir"
 
 #: src/menu.c:747
 msgid "Time"
-msgstr ""
+msgstr "Tiempo"
 
 #: src/music.c:144
 #, c-format
 msgid "Could not load %s!\n"
-msgstr ""
+msgstr "Imposible cargar %s!\n"
 
 #: src/music.c:182
 msgid "reached maximum levels of music pauses!\n"
-msgstr ""
+msgstr "alcanzado el máximo nivel de pausas de musica!\n"
 
 #: src/music.c:284
 #, c-format
 msgid "Could not load %s!"
-msgstr ""
+msgstr "Imposible cargar %s!"
 
 #: src/scrnshot.c:121
 #, c-format
 msgid "the bitmap [0x%p] is invalid (or unable to create sub bitmap)\n"
-msgstr ""
+msgstr "el mapa de bits [0x%p] es invalido(o inhabilitado para crear el sub mapa de bits)\n"
 
 #: src/scrnshot.c:126 src/scrnshot.c:127
 msgid "no more room for screenshot\n"
-msgstr ""
+msgstr "no hay mas espacio para el pantallazo\n"
 
 #: src/scrnshot.c:131
 #, c-format
 msgid "the prefix '%s' is too long\n"
-msgstr ""
+msgstr "el prefijo '%s' es muy largo\n"
 
 #: src/scrnshot.c:135
 #, c-format
 msgid "save path '%s' does not exist.\n"
-msgstr ""
+msgstr "la ruta de guardar '%s' no existe.\n"
 
 #: src/selector.c:189 src/selector.c:208
 msgid "Join"
-msgstr ""
+msgstr "Unir"
 
 #: src/selector.c:193 src/selector.c:210
 msgid "Leave"
-msgstr ""
+msgstr "Dejar"
 
 #: src/selector.c:197 src/selector.c:212
 msgid "Lead"
-msgstr ""
+msgstr "Liderar"
 
 #: src/selector.c:201
 msgid "No options"
-msgstr ""
+msgstr "Sin opciones"
 
 #: src/selector.c:650
 msgid "Available:"
-msgstr ""
+msgstr "Disponible:"
 
 #: src/selector.c:651
 msgid "In party:"
-msgstr ""
+msgstr "Utilizado:"
 
 #: src/selector.c:676 src/sgame.c:1291 src/sgame.c:1399 src/shopmenu.c:754
 msgid "Exit"
-msgstr ""
+msgstr "Salir"
 
 #: src/setup.c:123
 msgid "Display KQ in a window."
@@ -7453,7 +7456,7 @@ msgstr "Tecla usada para cancelar."
 
 #: src/setup.c:133
 msgid "Key used to call character menu."
-msgstr "Tecla para abrir el menu del caracter."
+msgstr "Tecla para abrir el menu del caractér."
 
 #: src/setup.c:134
 msgid "Key used to call system menu."
@@ -7481,11 +7484,11 @@ msgstr "Como asignar el uso de la CPU."
 
 #: src/setup.c:141
 msgid "Things you can do only in DebugMode."
-msgstr "Cosas solo para Depuracion."
+msgstr "Cosas solo para Depuración."
 
 #: src/setup.c:151
 msgid "KQ Configuration"
-msgstr "Configuracion KQ"
+msgstr "Configuración KQ"
 
 #: src/setup.c:155
 msgid "Windowed mode:"
@@ -7580,11 +7583,11 @@ msgstr "Uso CPU:"
 
 #: src/setup.c:191
 msgid "DebugMode Stuff:"
-msgstr "Modo Depuracion:"
+msgstr "Modo Depuración:"
 
 #: src/setup.c:236
 msgid "This version of KQ was compiled for DOS and does not support windowed mode"
-msgstr ""
+msgstr "Esta versión de KQ fué compilada para DOS y no soporta el modo ventana"
 
 #: src/setup.c:239
 msgid ""
@@ -7606,23 +7609,25 @@ msgstr "Cambiar a pantalla completa?"
 
 #: src/setup.c:258
 msgid "This version of KQ was compiled for DOS and does not support stretching"
-msgstr ""
+msgstr "Esta versión de KQ fué compilada para DOS y no soporta Expandir"
 
 #: src/setup.c:261
 msgid ""
 "Changing the stretched view option could have serious ramifications. It is "
 "advised that you save your game before trying this."
 msgstr ""
+"Cambiar el modo de visualización expandido puede tener serias ramificaciones. "
+"Es mejor que guardes el juego antes de intentarlo."
 
 #: src/setup.c:263
 #, c-format
 msgid "Try to stretch the display?"
-msgstr ""
+msgstr "Intentar expandir la pantalla?"
 
 #: src/setup.c:265
 #, c-format
 msgid "Switch to unstretched display?"
-msgstr ""
+msgstr "Cambiar a pantalla no expandida?"
 
 #: src/setup.c:354
 msgid "...please wait..."
@@ -7630,24 +7635,24 @@ msgstr "...espere por favor..."
 
 #: src/setup.c:364
 msgid "Sound Volume"
-msgstr ""
+msgstr "Volumen de Efectos"
 
 #: src/setup.c:377
 msgid "Music Volume"
-msgstr ""
+msgstr "Volmen de la Musica"
 
 #: src/setup.c:451
 msgid "Press a key"
-msgstr ""
+msgstr "Presione una tecla"
 
 #: src/setup.c:587
 #, c-format
 msgid "Error loading .WAV file: %s.\n"
-msgstr ""
+msgstr "Error cargando el archivo WAV: %s.\n"
 
 #: src/setup.c:709
 msgid "Could not open saves/setup.cfg - Using defaults."
-msgstr ""
+msgstr "Imposible abrir saves/setup.cfg - Usando por defecto."
 
 #: src/setup.c:926
 msgid "KQ Help"
@@ -7671,55 +7676,55 @@ msgstr "Seguro que deseas salir de este juego?"
 
 #: src/sgame.c:160
 msgid "File Deleted"
-msgstr ""
+msgstr "Archivo Eliminado."
 
 #: src/sgame.c:176
 msgid "File Not Deleted"
-msgstr ""
+msgstr "Archivo No Eliminado."
 
 #: src/sgame.c:210
 msgid "Could not load saved game."
-msgstr ""
+msgstr "No se puede cargar el juego guardado."
 
 #: src/sgame.c:221
 msgid "Saved game format is not current."
-msgstr ""
+msgstr "El formato del Juego Guardado no es actual."
 
 #: src/sgame.c:387
 msgid "Unadium coin"
-msgstr ""
+msgstr "Moneda Unadium"
 
 #: src/sgame.c:553
 msgid "Error. numchrs in saved game > PSIZE"
-msgstr ""
+msgstr "Error. numchrs en el juego guardado > PSIZE"
 
 #: src/sgame.c:578
 msgid "Error. number of chars in saved game > sizeof(curmap)"
-msgstr ""
+msgstr "Error. número de caracteres en la juego guardado > sizeof(curmap)"
 
 #: src/sgame.c:589
 msgid "Error. number of progress indicators > sizeof(progress)"
-msgstr ""
+msgstr "Error. número de indicadores de progreso > sizeof(progress)"
 
 #: src/sgame.c:602
 msgid "Error. number of treasure indicators > sizeof(treasure)"
-msgstr ""
+msgstr "Error. número de indicadores de tesoro > sizeof(treasure)"
 
 #: src/sgame.c:615
 msgid "Error. number of non-combat spell indicators > sizeof(save_spells)"
-msgstr ""
+msgstr "Error. número de indicadores de hechizos de anti-combate > sizeof(save_spells)"
 
 #: src/sgame.c:629
 msgid "Error. number of inventory items > MAX_INV"
-msgstr ""
+msgstr "Error. número de items de inventario > MAX_INV"
 
 #: src/sgame.c:648
 msgid "Error. number of special items > MAX_SPECIAL_ITEMS"
-msgstr ""
+msgstr "Error. número de items especiales > MAX_SPECIAL_ITEMS"
 
 #: src/sgame.c:662
 msgid "Error. number of shops saved > NUMSHOPS"
-msgstr ""
+msgstr "Error. número de compras guardadas > NUMSHOPS"
 
 #: src/sgame.c:804 src/sgame.c:902
 msgid "Could not save game data."
@@ -7739,7 +7744,7 @@ msgstr "Eliminar"
 
 #: src/sgame.c:1164
 msgid "Wrong version"
-msgstr "Version incorrecta"
+msgstr "Versión incorrecta"
 
 #: src/sgame.c:1175
 #, c-format
@@ -7752,12 +7757,12 @@ msgstr "S:"
 
 #: src/sgame.c:1178
 msgid "M:"
-msgstr ""
+msgstr "M:"
 
 #: src/sgame.c:1188
 #, c-format
 msgid "T %d:%02d"
-msgstr ""
+msgstr "T %d:%02d"
 
 #: src/sgame.c:1191
 #, c-format
@@ -7778,7 +7783,7 @@ msgstr "Config"
 
 #: src/sgame.c:1338
 msgid "Then exit you shall!"
-msgstr "Entonces saldras!"
+msgstr "Entonces saldréis!"
 
 #: src/sgame.c:1378
 msgid "Save  "
@@ -7807,63 +7812,63 @@ msgstr "Vendido!"
 #: src/shopmenu.c:363
 #, c-format
 msgid "Own: %d"
-msgstr ""
+msgstr "Tiénes: %d"
 
 #: src/shopmenu.c:366
 #, c-format
 msgid "Eqp: %d"
-msgstr ""
+msgstr "Eqp: %d"
 
 #: src/shopmenu.c:417
 #, c-format
 msgid "The cost is %d gp for the night."
-msgstr ""
+msgstr "Cuesta %d po la noche."
 
 #: src/shopmenu.c:430
 msgid "Do you wish to stay?"
-msgstr ""
+msgstr "Quieres quedarte aquí?"
 
 #: src/shopmenu.c:434
 msgid "You can't afford to stay here."
-msgstr ""
+msgstr "No puedes costear quedarte aquí."
 
 #: src/shopmenu.c:441
 msgid "yes"
-msgstr ""
+msgstr "sí"
 
 #: src/shopmenu.c:442
 msgid "no"
-msgstr ""
+msgstr "no"
 
 #: src/shopmenu.c:501 src/shopmenu.c:545
 #, c-format
 msgid "Sell for %d gp?"
-msgstr ""
+msgstr "Vender por %d po?"
 
 #: src/shopmenu.c:511
 msgid "How many?"
-msgstr ""
+msgstr "Cuantos?"
 
 #: src/shopmenu.c:518
 #, c-format
 msgid "%d of %d"
-msgstr ""
+msgstr "%d de %d"
 
 #: src/shopmenu.c:620 src/shopmenu.c:753
 msgid "Sell"
-msgstr ""
+msgstr "Vender"
 
 #: src/shopmenu.c:646
 #, c-format
 msgid "%d gp for each one."
-msgstr ""
+msgstr "%d po por cada uno."
 
 #: src/shopmenu.c:651
 #, c-format
 msgid "That's worth %d gp."
-msgstr ""
+msgstr "Eso cuesta %d po."
 
 #: src/shopmenu.c:658
 msgid "That can not be sold!"
-msgstr ""
+msgstr "Eso no se puede vender!"
 
