@@ -150,8 +150,8 @@
 
 	  <child>
 	    <widget class="GtkMenuItem" id="menuitem3">
-	      <property name="visible">True</property>
-	      <property name="label" translatable="yes">MenuItem3</property>
+	      <property name="visible">False</property>
+	      <property name="label" translatable="yes">_View</property>
 	      <property name="use_underline">True</property>
 	    </widget>
 	  </child>

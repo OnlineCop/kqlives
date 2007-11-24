@@ -3,6 +3,7 @@ maps/mainwindow.c
 maps/mapdata.c
 maps/mapdiff.c
 maps/mapdraw2.c
+maps/mapdraw2.glade
 maps/mapdump.c
 maps/mapedit2.c
 maps/mapedit.c
