@@ -41,7 +41,7 @@
 #include "res.h"
 #include "setup.h"
 #include "timing.h"
-//#include "console.h"
+/*#include "console.h"*/
 
 /* Globals */
 #define MSG_ROWS 4
@@ -99,7 +99,7 @@ void blit2screen (int xw, int yw)
                 makecol (0, 0, 0));
       print_font (double_buffer, xofs, yofs, fbuf, FNORMAL);
    }
-	//display_console(xw, yw);
+   /*display_console(xw, yw);*/
    if (stretch_view == 1)
       stretch_blit (double_buffer, screen, xw, yw, 320, 240, 0, 0, 640, 480);
    else
@@ -1175,12 +1175,11 @@ static const char* decode_utf8(const char* string, unsigned int* cp)
       *cp = (int) c1;
       return string + 1;
     }
-
-  if ((c1 & 0xe0) == 0x80) 
+  else if ((c1 & 0xe0) == 0xc0) 
     {
       /* double byte */
       c2 = string[1];
-      if ((c2 & 0xc0) == 0xc0) 
+      if ((c2 & 0xc0) == 0x80) 
 	{
 	  *cp = ((c1 & 0x1f) << 6) | (c2 & 0x3f);
 	  return string + 2;
@@ -1199,15 +1198,21 @@ static const char* decode_utf8(const char* string, unsigned int* cp)
 /*! \brief glyph look up table
  * 
  * maps unicode char to glyph index for characters > 128. 
- * { inicode, glyph }
+ * { unicode, glyph }
  * n.b. must be sorted in order of unicode char
  * and terminated by {0, 0}
  */
 static unsigned int glyph_lookup[][2] = 
   {
     {0x00c9, 'E' - 32}, /* E-acute */
+    {0x00e1, 'a' - 32}, /* a-grave */
+    {0x00e4, 'a' - 32}, /* a-umlaut */
     {0x00e9, 'e' - 32}, /* e-acute */
+    {0x00ed, 'i' - 32}, /* i-acute */
     {0x00f1, 'n' - 32}, /* n-tilde */
+    {0x00f3, 'o' - 32}, /* o-acute */
+    {0x00fa, 'u' - 32}, /* u-acute */
+    {0x00fc, 'u' - 32}, /* u-umlaut */
     {0, 0},
   };
 /*! \brief Get glyph index
@@ -1234,6 +1239,7 @@ static int get_glyph_index(unsigned int cp)
 	{
 	  return glyph_lookup[i][1];
 	}
+      ++i;
     }
   /* didn't find it */
   program_death("invalid glyph index");
