@@ -37,6 +37,7 @@ s_bound bound_box[MAX_BOUNDS];
 /*! \brief See if this bounding area is found anywhere within these coords
  *
  * \param   which - Bounding area to check
+ * \param   num_bound_boxes Number of elements in the \sa bound_box array
  * \return  1 if 'which' coords found anywhere withing any other boxes
  */
 int bound_in_bound (s_bound *which, int num_bound_boxes)
