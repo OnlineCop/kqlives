@@ -15,6 +15,7 @@ Sam Hocevar for several fixes and for being the Debian package maintainer
 Edge for porting KQ to BeOS, and (with Caz Jones) fixing the joystick code 
 on that platform.
 
+
 Building Instructions
 =====================
 
@@ -25,27 +26,28 @@ Visual C, but we haven't any project files for it.
 
 On Windows:
 ----------
-Type
 fix.bat mingw
 make depend
 make
 
+On Windows in cygwin environment:
+----------
+./configure
+make
+
 On DOS:
 -------
-Type
 fix.bat djgpp
 make depend
 make
 
 On Mac OS X:
 ------------
-Type 
 ./configure
 make
 
 On Linux:
 ---------
-Type
 ./configure
 make
 
@@ -55,6 +57,19 @@ autoreconf -i
 Then ./configure, make as above.
 
 
+Cheating and Debugging:
+==========
+To build KQ with support for cheating and debugging, configure with
+this command:
+./configure --enable-debug --enable-cheats CFLAGS="-g -O0" OBJCFLAGS="-g -O0"
+
+Setting the CFLAGS and OBJCFLAGS are necessary if you want to debug KQ
+in gdb, or a similar debugger. Otherwise, the code will appear to jump
+around as you step through it. For more info on cheating, see:
+http://kqlives.sourceforge.net/index.php/HowToCheat
+
+
+==========
 Without further ado, over to JB: (some of his comments about directory
 structure are now out of date)
 ---------------
