@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: es\n"
 "Report-Msgid-Bugs-To: peterhull90@users.sourceforge.net\n"
 "POT-Creation-Date: 2007-11-21 17:37-0500\n"
-"PO-Revision-Date: 2007-11-23 18:38-0500\n"
+"PO-Revision-Date: 2007-11-26 11:38-0500\n"
 "Last-Translator: Edgar Alberto Molina Rojas <edgar@heuristicsi.com>\n"
 "Language-Team: Spanish <kqlives-main@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -548,7 +548,7 @@ msgstr ""
 #: scripts/town6.lua:167 scripts/town6.lua:218 scripts/town7.lua:114
 #: scripts/town7.lua:167 scripts/town8.lua:120
 msgid "Locked."
-msgstr ""
+msgstr "Cerrado."
 
 #: scripts/cave4.lua:157
 msgid "What luck! The key from that crazy Demnas guy unlocks this door!"
@@ -3228,277 +3228,303 @@ msgstr ""
 
 #: scripts/starting.lua:161
 msgid "I would like to thank you all for coming."
-msgstr ""
+msgstr "Quiero agradecerles a todos por venir. "
 
 #: scripts/starting.lua:162
 msgid ""
 "I appreciate all those willing to help. My master has summoned eight of you. "
 "Are you all accounted for?"
 msgstr ""
+"Aprecio a todos los que desean ayudar. Mi maestro ha convocado a ocho de ustedes. "
+"Están todos aquí?"
 
 #: scripts/starting.lua:167
 msgid "Excellent. If everyone is ready, I will take you to meet master Nostik..."
-msgstr ""
+msgstr "Excelente. Si todos están listos, los llevaré a conocer al maestro Nostik..."
 
 #: scripts/starting.lua:204
 msgid "What the..? What was that?"
-msgstr ""
+msgstr "Qué dem..? Qué fué eso?"
 
 #: scripts/starting.lua:211
 msgid "Hey, a note!"
-msgstr ""
+msgstr "Hey, una nota!"
 
 #: scripts/starting.lua:214
 msgid "The note is addressed to me!"
-msgstr ""
+msgstr "La nota es para mi!"
 
 #: scripts/starting.lua:221
 msgid "`$0, I am an old friend."
-msgstr ""
+msgstr "`$0, Soy un viejo amigo."
 
 #: scripts/starting.lua:222
 msgid "This note is intended for your   "
-msgstr ""
+msgstr "Esta nota es especialmente para"
 
 #: scripts/starting.lua:223
 msgid "eyes only. Haste and discretion  "
-msgstr ""
+msgstr "tus ojos solamente. Prisa y Discreción"
 
 #: scripts/starting.lua:224
 msgid "are of the utmost importance.    "
-msgstr ""
+msgstr "son de máxima importancia."
 
 #: scripts/starting.lua:225
 msgid "I implore you to travel to Reisha"
-msgstr ""
+msgstr "Te imploro que viajes a la Montaña"
 
 #: scripts/starting.lua:226
 msgid "Mountain with all possible speed."
-msgstr ""
+msgstr "Reisha lo más rápido posible."
 
 #: scripts/starting.lua:227
 msgid "There, a man shall be waiting for"
-msgstr ""
+msgstr "Allí, un hombre estará esperando"
 
 #: scripts/starting.lua:228
 msgid "your arrival. I beg that you come"
-msgstr ""
+msgstr "tu llegada. Ruego para que vengas"
 
 #: scripts/starting.lua:229
 msgid "at once. Tell no one, as both my "
-msgstr ""
+msgstr "yá. No le digas a nadie, pues tu "
 
 #: scripts/starting.lua:230
 msgid "life and yours will be in danger."
-msgstr ""
+msgstr "vida y la mia estarán en peligro."
 
 #: scripts/starting.lua:231
 msgid "Please trust me.'                "
-msgstr ""
+msgstr "Por favor, creeme.'"
 
 #: scripts/starting.lua:232
 msgid "  -Anonymous                     "
-msgstr ""
+msgstr "  -Anónimo"
 
 #: scripts/starting.lua:236
 msgid ""
 "`An old friend?' `Tell no one?' This looks really fishy. And strangely "
 "important. I'd better check this out."
 msgstr ""
+"`Un viejo amigo?' `no le digas a nadie?' Esto es sospechoso. Y extrañamente "
+"importante. Mejor investigo esto."
 
 #: scripts/starting.lua:267
 msgid "..huh?"
-msgstr ""
+msgstr "..mm?"
 
 #: scripts/starting.lua:273
 msgid "What was that?"
-msgstr ""
+msgstr "Qué fué eso?"
 
 #: scripts/starting.lua:277
 msgid "That wasn't there a second ago!"
-msgstr ""
+msgstr "Eso no estaba allí hace un segundo!"
 
 #: scripts/starting.lua:282
 msgid "Wow, what a strange request."
-msgstr ""
+msgstr "Ohh, que extraña petición."
 
 #: scripts/starting.lua:283
 msgid ""
 "On the other hand, maybe there's something here that I can use to help Mom "
 "and Dad."
 msgstr ""
+"Por otra parte, depronto hay algo aquí que puedo usar para ayudar a Mamá "
+"y Papá."
 
 #: scripts/starting.lua:284
 msgid "I'll have to let them know right away!"
-msgstr ""
+msgstr "Tengo que avisarles yá mismo!"
 
 #: scripts/starting.lua:300
 msgid "Oh, no. I hope this isn't another eviction notice."
-msgstr ""
+msgstr "Oh, no. Ojalá no sea otro aviso de desalojo."
 
 #: scripts/starting.lua:305
 msgid "Hey now, what's this?"
-msgstr ""
+msgstr "Hey ahora, qué es esto?"
 
 #: scripts/starting.lua:311
 msgid ""
 "Hmm... I don't like the sound of this one bit. I wonder if I even know who "
 "this anonymous fellow is?"
 msgstr ""
+"Mmm... No me gusta el sonido de esto ni poco. Me pregunto si sabré quien es "
+"este amigo anónimo?"
 
 #: scripts/starting.lua:312
 msgid "Well, I'd better get packed. It's a long way to Reisha Mountain."
-msgstr ""
+msgstr "Bien, Mejor empaco. Es un camino largo hasta la Montaña Reisha."
 
 #: scripts/starting.lua:327
 msgid "You wanted to see me sir?"
-msgstr ""
+msgstr "Quería verme señor?"
 
 #: scripts/starting.lua:328
 msgid ""
 "Yes $0. It is time for you to leave the temple and discover the world. I "
 "have found the perfect way for you to do that."
 msgstr ""
+"Sí $0. Es tiempo que dejes el templo y descubras el mundo. He "
+"encontrado la forma perfecta para que lo hagas."
 
 #: scripts/starting.lua:329
 msgid "Excellent sir. What am I to do?"
-msgstr ""
+msgstr "Excelente sr. Qué debo hacer?"
 
 #: scripts/starting.lua:330
 msgid ""
 "A note addressed to you has mysteriously appeared on the door of your "
 "private chambers. It was brought to me."
 msgstr ""
+"Una nota dirigida a ti ha misteriosamente aparecido en la puerta de tus "
+"aposentos privados. Me la trajeron."
 
 #: scripts/starting.lua:331
 msgid "Read over this and tell me what you may know about the sender."
-msgstr ""
+msgstr "Leela y dime que puedes saber acerca del remitente."
 
 #: scripts/starting.lua:343
 msgid "I cannot say, sir. I know no one who lives at Reisha Mountain."
-msgstr ""
+msgstr "No lo sé, sr. No conozco a nadie que viva en la Montaña Reisha. "
 
 #: scripts/starting.lua:344
 msgid ""
 "My knowledge of geography dictates that it is in a secluded mountain range, "
 "but that is all."
 msgstr ""
+"Mi conocimiento de geografía dice que esta está en una montaña aislada, "
+"pero eso es todo."
 
 #: scripts/starting.lua:345
 msgid "Very well, $0. I am giving you an opportunity to investigate this quest."
-msgstr ""
+msgstr "Muy bien, $0. Te doy la oportunidad de emprender esta cruzada."
 
 #: scripts/starting.lua:346
 msgid ""
 "Among other things, this will test your training as well as get you out on a "
 "little adventure."
 msgstr ""
+"Entre otras cosas, esto probará tu entrenamiento así como te enviará a una "
+"pequeña aventura."
 
 #: scripts/starting.lua:347
 msgid "I would be honored sir. Where do I go first?"
-msgstr ""
+msgstr "Estaré honrado sr. Dónde debo ir primero?"
 
 #: scripts/starting.lua:348
 msgid "Proceed directly to Reisha Mountain. Let's not keep our mystery host waiting."
-msgstr ""
+msgstr "Procede directamente a la Montaña Reisha. No tengamos a nuestro misterioso anfitrión esperando."
 
 #: scripts/starting.lua:349
 msgid "I'm on my way."
-msgstr ""
+msgstr "Voy en camino."
 
 #: scripts/starting.lua:350
 msgid "Fare thee well then, $0."
-msgstr ""
+msgstr "Partíd entonces, $0."
 
 #: scripts/starting.lua:370
 msgid "Come out, come out, wherever you are, Nella!"
-msgstr ""
+msgstr "Sál, Sál, dónde estás, Nella!"
 
 #: scripts/starting.lua:375
 msgid "Nella, YOU ARE SO DEAD MEAT WHEN I FIND YOU!"
-msgstr ""
+msgstr "Nella, ERES CARNE MUERTA CUANDO TE ENCUETRE!"
 
 #: scripts/starting.lua:394
 msgid "Wait a minute..."
-msgstr ""
+msgstr "Un momento..."
 
 #: scripts/starting.lua:397
 msgid ""
 "Who put this letter here? Wait a second... I've heard of this `Reisha "
 "Mountain' before..."
 msgstr ""
+"Quién puso esta carta aquí? Un segundo... Ya he oído de esta `Montaña "
+"Reisha' antes..."
 
 #: scripts/starting.lua:399
 msgid "I've got to take a look into this right away!"
-msgstr ""
+msgstr "Tengo que revisar esto yá mismo!"
 
 #: scripts/starting.lua:414
 msgid "$0? Hello?"
-msgstr ""
+msgstr "$0? Hola?"
 
 #: scripts/starting.lua:425
 msgid "I was told you had a new mission for me, sir."
-msgstr ""
+msgstr "Me dijeron que tenía una nueva misión para mi, sr."
 
 #: scripts/starting.lua:426
 msgid ""
 "Yes $0. A message from Military Intelligence came for you today. You are to "
 "go to Reisha Mountain."
 msgstr ""
+"Sí $0. Un mensaje de la Inteligencia Militar llegó hoy para tí. Debes ir a la "
+"Montaña Reisha."
 
 #: scripts/starting.lua:427
 msgid "Yes, sir. What are my orders?"
-msgstr ""
+msgstr "Sí, sr. cuáles son mis ordenes?"
 
 #: scripts/starting.lua:428
 msgid "This is the letter which we received."
-msgstr ""
+msgstr "Esta es la carta que recibimos."
 
 #: scripts/starting.lua:433
 msgid "Understood, sir."
-msgstr ""
+msgstr "Entendido, sr."
 
 #: scripts/starting.lua:434
 msgid ""
 "Once you find out what this is all about, report back to us if there is a "
 "threat of another invasion."
 msgstr ""
+"Una vez encuentres de qué se trata esto, reportanos inmediatamente si "
+"hay alguna amenaza de otra invasión."
 
 #: scripts/starting.lua:435
 msgid "We will be safe instead of sorry, is that understood?"
-msgstr ""
+msgstr "Estaremos seguros en vez de arrepentidos, está entendido?"
 
 #: scripts/starting.lua:436
 msgid "Yes sir. I'll leave immediately, sir."
-msgstr ""
+msgstr "Sí sr. Parto inmediatamente, sr."
 
 #: scripts/starting.lua:453
 msgid "This is so perfect."
-msgstr ""
+msgstr "Eso está muy bien."
 
 #: scripts/starting.lua:454
 msgid ""
 "Just as my luck starts running out, along comes an opportunity to get out of "
 "town, and possibly make some serious coin on the way."
 msgstr ""
+"Justo cuando mi suerte comienza a acabarse, llega una oportunidad de dejar el "
+"pueblo, y posiblemente ganar mucho dinero en el camino."
 
 #: scripts/starting.lua:455
 msgid ""
 "Anyone this desperate must have a lot of dough to back it up, and I'm just "
 "the one to steal it from him!"
 msgstr ""
+"Alguien así de desesperado debe tener mucho dinero para guardar, y yo soy "
+"justo quién va a robarselo!"
 
 #: scripts/starting.lua:457
 msgid "I can just imagine..."
-msgstr ""
+msgstr "Ya me lo imagino..."
 
 #: scripts/starting.lua:461
 msgid "I'd be the richest thief on the block."
-msgstr ""
+msgstr "Seré el ladrón más rico de la cuadra."
 
 #: scripts/starting.lua:462
 msgid "No! I'd be the richest thief in my OWN CITY! Ha ha ha!"
-msgstr ""
+msgstr "No! Seré el ladrón más rico en toda la CIUDAD! Ja ja ja!"
 
 #: scripts/starting.lua:472
 msgid ""
@@ -4434,251 +4460,261 @@ msgstr ""
 
 #: scripts/town1.lua:131
 msgid "The strong-scented oils wore off."
-msgstr ""
+msgstr "Los aceites fuertemente perfumados se han terminado."
 
 #: scripts/town1.lua:137
 msgid "I'm Derig. If I'm here, then you found me in the Grotto."
-msgstr ""
+msgstr "Soy Derig. Si estoy aquí, entonces me encontraste en la Gruta."
 
 #: scripts/town1.lua:138
 msgid "To stop the monsters in our underground tunnel, you must seal the portal."
-msgstr ""
+msgstr "Para detener los monstruos en el tunel subterraneo, debes robar el portal."
 
 #: scripts/town1.lua:139
 msgid "In order to do that, you can use a Rod of Cancellation to melt it shut."
-msgstr ""
+msgstr "Para hacer eso, debes usar una Vara de Cancelación para deretirlo."
 
 #: scripts/town1.lua:140
 msgid ""
 "I brought you to town to get the Unadium Coin from my granddaughter, which "
 "will open the rune back at the Grotto."
 msgstr ""
+"Te traje al pueblo para obtener la Moneda Unadium de mi nieta, la cual abrirá la runa "
+"de nuevo en la Gruta."
 
 #: scripts/town1.lua:141
 msgid "That will transport you to the place where the Rod of Cancellation is."
-msgstr ""
+msgstr "Eso te transportará al lugar donde la Vara de Cancelación está."
 
 #: scripts/town1.lua:194
 msgid "I don't have much."
-msgstr ""
+msgstr "No tengo mucho."
 
 #: scripts/town1.lua:248
 msgid "`Erupting Volcano'"
-msgstr ""
+msgstr "`Volcán en Erupción'"
 
 #: scripts/town1.lua:251
 msgid "`Mountain Nightscape'"
-msgstr ""
+msgstr "`Montaña Escape Nocturno'"
 
 #: scripts/town1.lua:254
 msgid "`My Barn Chimney'"
-msgstr ""
+msgstr "`Mi Chimenea del Granero'"
 
 #: scripts/town1.lua:257
 msgid "`The Beach Front'"
-msgstr ""
+msgstr "`El Frente de la Playa'"
 
 #: scripts/town1.lua:260
 msgid "`The Eye of Sardine'"
-msgstr ""
+msgstr "`El Ojo de Sardina'"
 
 #: scripts/town1.lua:263
 msgid "`The Battle Is Over'"
-msgstr ""
+msgstr "`La Batalla se Terminó'"
 
 #: scripts/town1.lua:266
 msgid "`Forgotten Barn'"
-msgstr ""
+msgstr "`Granero Olvidado'"
 
 #: scripts/town1.lua:269
 msgid "`Fire Sunset'"
-msgstr ""
+msgstr "`Anochecer de Fuego'"
 
 #: scripts/town1.lua:272
 msgid "This is my art collection. Any piece of work starting at only 300000 GP!"
-msgstr ""
+msgstr "Esta es mi colección de arte. Cada pieza de trabajo comienza solo a 300000 PO!"
 
 #: scripts/town1.lua:275
 msgid "This armour has been highly polished. I can see myself in it!"
-msgstr ""
+msgstr "Esta armadura ha sido muy brillada. Me puedo ver en ella!"
 
 #: scripts/town1.lua:278
 msgid "Nothing in here but antique junk."
-msgstr ""
+msgstr "Nada aquí excepto basura antigua."
 
 #: scripts/town1.lua:281
 msgid "The drawers are locked."
-msgstr ""
+msgstr "Los cajones están cerrados."
 
 #: scripts/town1.lua:284
 msgid "This is the price list for all of these items."
-msgstr ""
+msgstr "Está es la lista de precios de todas esas cosas."
 
 #: scripts/town1.lua:287
 msgid "None of these potions or herbs are useful."
-msgstr ""
+msgstr "Ninguna de estas posiones o hierbas son útiles."
 
 #: scripts/town1.lua:302
 msgid "Welcome to the town of Ekla."
-msgstr ""
+msgstr "Bienvenido al pueblo de Ekla."
 
 #: scripts/town1.lua:303
 msgid ""
 "Yes! That makes eight. If I welcome enough newcomers to this town, I will "
 "get promoted."
-msgstr ""
+msgstr "Sí! Con él son ocho. Si recibo suficientes visitantes al pueblo, seré promovido."
 
 #: scripts/town1.lua:304
 msgid ""
 "I might get a job sitting in a house all day saying the same thing over and "
 "over to anyone who talks to me."
 msgstr ""
+"Quizá obtenga un trabajo sentandome en la casa todo el dia diciendo la misma "
+"palabra una y otra vez a quién me hable."
 
 #: scripts/town1.lua:305
 msgid "I should start practicing."
-msgstr ""
+msgstr "Debo comenzar a practicar."
 
 #: scripts/town1.lua:308
 msgid "I like cheese."
-msgstr ""
+msgstr "Me gusta el queso."
 
 #: scripts/town1.lua:312
 msgid "I welcome people to Ekla."
-msgstr ""
+msgstr "Le doy la bienvenida a la gente a Ekla."
 
 #: scripts/town1.lua:315
 msgid "I welcomed you already. You're in Ekla."
-msgstr ""
+msgstr "Ya te di la bienvenida. Estás en Ekla."
 
 #: scripts/town1.lua:380
 msgid "Talk to Jen to get the Unadium coin."
-msgstr ""
+msgstr "Hablale a Jen para recibir al moneda Unadium."
 
 #: scripts/town1.lua:383
 msgid "Go get the Rod of Cancellation out of the grotto. Use the rune."
-msgstr ""
+msgstr "Ve a sacar la Vara de Cancelación de la Gruta. Usa la runa."
 
 #: scripts/town1.lua:386
 msgid "Now that you have the rod, go down and seal the portal."
-msgstr ""
+msgstr "Ahora que tienes la vara, ve abajo y roba el portal."
 
 #: scripts/town1.lua:388
 msgid ""
 "You've done it! The portal is gone, and you have returned the Unadium coin "
 "and Rod of Cancellation."
 msgstr ""
+"Lo lograste! El portal se ha ido, y has regresado la moneda de Unadium y la vara "
+"de Cancelación."
 
 #: scripts/town1.lua:394
 msgid "Derig takes the Rod of Cancellation and Unadium Coin."
-msgstr ""
+msgstr "Derig toma la Vara de Cancelación y la moneda Unadium."
 
 #: scripts/town1.lua:395
 msgid "I'll take these back to the grotto for safe keeping. Thank you."
-msgstr ""
+msgstr "Las llevaré de regreso a la gruta para mantenerlas a salvo. Gracias."
 
 #: scripts/town1.lua:401
 msgid "I will take these back to the grotto. Thanks again."
-msgstr ""
+msgstr "Las llevaré de regreso a la gruta. Gracias de nuevo."
 
 #: scripts/town1.lua:404
 msgid "Ah yes, $0, I... wait a minute! What is that note you are carrying?"
-msgstr ""
+msgstr "Ah sí, $0, Yo... espera un minuto! Qué es esa nota que llevas?"
 
 #: scripts/town1.lua:406
 msgid "Oh, this is very important. Yes, of utmost importance."
-msgstr ""
+msgstr "Oh, esto es muy importante. Sí, de máxima importancia."
 
 #: scripts/town1.lua:407
 msgid ""
 "Forgive me, $0, but Tsorin writes that the Oracle's Statue has been stolen. "
 "This causes great reason for concern."
 msgstr ""
+"Perdoname, $0, pero Tsorin escribe que la Estatua del Oráculo ha sido robada. "
+"Esta es una grán razón para preocuparse."
 
 #: scripts/town1.lua:408
 msgid "What's the big emergency?"
-msgstr ""
+msgstr "Cual es la grán emergencia?"
 
 #: scripts/town1.lua:409
 msgid ""
 "No time for that now. Please, take this note to Tsorin. I authorize you to "
 "pass into the goblin lands."
 msgstr ""
+"No hay tiempo para eso ahora. Por favor, lleva esta nota a Tsorin. Te autorizo "
+"a pasar a las tierras de los duendes."
 
 #: scripts/town1.lua:410
 msgid "Derig continues to mumble worredly."
-msgstr ""
+msgstr "Derig continúa murmurando muy preocupado."
 
 #: scripts/town1.lua:411
 msgid "Boy, this is just too weird all of a sudden."
-msgstr ""
+msgstr "Chico, esto es tan repentinamente extraño."
 
 #: scripts/town1.lua:417
 msgid "Please hurry. Take this note to Tsorin immediately!"
-msgstr ""
+msgstr "Por favor apurate. Lleva esta nota a Tsorin inmediatamente!"
 
 #: scripts/town1.lua:437 scripts/town1.lua:440 scripts/town1.lua:512
 msgid "Jen:"
-msgstr ""
+msgstr "Jen:"
 
 #: scripts/town1.lua:443
 msgid "You've already been to the grotto."
-msgstr ""
+msgstr "Ya has estado en la Gruta."
 
 #: scripts/town1.lua:445
 msgid "Yes, we fell down a hole and someone pulled us out."
-msgstr ""
+msgstr "Sí, nos caimos en un hoyo y alguien nos sacó."
 
 #: scripts/town1.lua:447
 msgid "Yes, I fell down a hole and someone pulled me out."
-msgstr ""
+msgstr "Sí, me caí en un hoyo y alguien me sacó."
 
 #: scripts/town1.lua:449
 msgid "That is Derig, my grandfather. Go back and look for him."
-msgstr ""
+msgstr "Ese es Derig, mi abuelo. Regresa y búscalo."
 
 #: scripts/town1.lua:452 scripts/town1.lua:474 scripts/town1.lua:500
 msgid "Scripting Error:"
-msgstr ""
+msgstr "Error de Script:"
 
 #: scripts/town1.lua:459
 msgid "I said to go talk to Derig."
-msgstr ""
+msgstr "Dije que fueras a hablar con Derig."
 
 #: scripts/town1.lua:462
 msgid "You must find Derig in the grotto. He's there somewhere."
-msgstr ""
+msgstr "Debes encontrar a Derig en la gruta. El está en algún lugar."
 
 #: scripts/town1.lua:464
 msgid "Well? Go find Derig in the grotto!"
-msgstr ""
+msgstr "Bien? Ve a buscar a Derig en la gruta!"
 
 #: scripts/town1.lua:466
 msgid "Okay, that was stupid. You saw him by the fire and you didn't talk to him."
-msgstr ""
+msgstr "Bien, eso fué estupido. Lo viste por el fuego y no le hablaste."
 
 #: scripts/town1.lua:468
 msgid "GO BACK AND TALK TO HIM! He's sitting by the fire you moron!"
-msgstr ""
+msgstr "REGRESA Y HABLALE! El esta sentado en el fuego imbecil!"
 
 #: scripts/town1.lua:470
 msgid "GO BACK AND TALK TO HIM! He's sitting by the fire you morons!"
-msgstr ""
+msgstr "REGRESEN Y HABLENLE! El esta sentado en el fuego imbeciles!"
 
 #: scripts/town1.lua:477
 msgid "Good. Now that you found Derig, here is the Unadium Coin."
-msgstr ""
+msgstr "Bien. Ahora que encontraste a Derig, aquí está la moneda Unadium."
 
 #: scripts/town1.lua:480
 msgid "Unadium coin procured"
-msgstr ""
+msgstr "obtienes la moneda Unadium"
 
 #: scripts/town1.lua:487
 msgid "Go get the Rod of Cancellation."
-msgstr ""
+msgstr "Ve por la Vara de Cancelación."
 
 #: scripts/town1.lua:492
 msgid "Get rid of the portal now."
-msgstr ""
+msgstr "Elimina el portal ahora."
 
 #: scripts/town1.lua:495
 msgid ""
@@ -6715,47 +6751,47 @@ msgstr ""
 
 #: src/eqpmenu.c:231 src/eqpmenu.c:237 src/menu.c:116
 msgid "Equip"
-msgstr ""
+msgstr "Equip"
 
 #: src/eqpmenu.c:232
 msgid "Optimize"
-msgstr ""
+msgstr "Optimizar"
 
 #: src/eqpmenu.c:233 src/eqpmenu.c:239
 msgid "Remove"
-msgstr ""
+msgstr "Remover"
 
 #: src/eqpmenu.c:234 src/sgame.c:1168
 msgid "Empty"
-msgstr ""
+msgstr "Vacío"
 
 #: src/eqpmenu.c:246
 msgid "Hand1:"
-msgstr ""
+msgstr "Mano1:"
 
 #: src/eqpmenu.c:247
 msgid "Hand2:"
-msgstr ""
+msgstr "Mano2:"
 
 #: src/eqpmenu.c:248
 msgid "Head:"
-msgstr ""
+msgstr "Cabeza:"
 
 #: src/eqpmenu.c:249
 msgid "Body:"
-msgstr ""
+msgstr "Cuerpo:"
 
 #: src/eqpmenu.c:250
 msgid "Arms:"
-msgstr ""
+msgstr "Brazos:"
 
 #: src/eqpmenu.c:251
 msgid "Other:"
-msgstr ""
+msgstr "Otro:"
 
 #: src/eqpmenu.c:327
 msgid "Str:"
-msgstr ""
+msgstr "Fue:"
 
 #: src/eqpmenu.c:328
 msgid "Agi:"
@@ -6775,7 +6811,7 @@ msgstr ""
 
 #: src/eqpmenu.c:332
 msgid "Spd:"
-msgstr ""
+msgstr "Vel:"
 
 #: src/eqpmenu.c:333
 msgid "Aur:"
@@ -6783,15 +6819,15 @@ msgstr ""
 
 #: src/eqpmenu.c:334
 msgid "Spi:"
-msgstr ""
+msgstr "Esp:"
 
 #: src/eqpmenu.c:335
 msgid "Att:"
-msgstr ""
+msgstr "Ata:"
 
 #: src/eqpmenu.c:336
 msgid "Hit:"
-msgstr ""
+msgstr "Gol:"
 
 #: src/eqpmenu.c:337
 msgid "Def:"
@@ -6799,7 +6835,7 @@ msgstr ""
 
 #: src/eqpmenu.c:338
 msgid "Evd:"
-msgstr ""
+msgstr "Eva:"
 
 #: src/eqpmenu.c:339
 msgid "Mdf:"
@@ -6807,181 +6843,181 @@ msgstr ""
 
 #: src/eqpmenu.c:369
 msgid "Resist up"
-msgstr ""
+msgstr "Resistencia Sube"
 
 #: src/eqpmenu.c:372
 msgid "Resist down"
-msgstr ""
+msgstr "Resistencia Baja"
 
 #: src/eskill.c:61
 msgid "Venomous Bite"
-msgstr ""
+msgstr "Mordida Venenosa"
 
 #: src/eskill.c:69
 msgid "Double Slash"
-msgstr ""
+msgstr "Doble Cuchillada"
 
 #: src/eskill.c:77
 msgid "Chill Touch"
-msgstr ""
+msgstr "Toque de Convulsión"
 
 #: src/eskill.c:85
 msgid "Flash Flood"
-msgstr ""
+msgstr "Inundación Rápida"
 
 #: src/eskill.c:100 src/heroc.c:615 src/hskill.c:450
 msgid "Sweep"
-msgstr ""
+msgstr "Barrida"
 
 #: src/eskill.c:108
 msgid "ParaClaw"
-msgstr ""
+msgstr "ParaGarra"
 
 #: src/eskill.c:116
 msgid "Dragon Bite"
-msgstr ""
+msgstr "Mordida de Dragón"
 
 #: src/eskill.c:127
 msgid "Stone Gas"
-msgstr ""
+msgstr "Gas Piedra"
 
 #: src/eskill.c:146
 msgid "Zemmel Rod"
-msgstr ""
+msgstr "Varilla Zemmel"
 
 #: src/eskill.c:184
 msgid "Poison Gas"
-msgstr ""
+msgstr "Gas Venenoso"
 
 #: src/eskill.c:192
 msgid "Tangle Root"
-msgstr ""
+msgstr "Enredo de Raices"
 
 #: src/eskill.c:209
 msgid "Petrifying Bite"
-msgstr ""
+msgstr "Mordida Petrificadora"
 
 #: src/eskill.c:219
 msgid "Maul of the Titans"
-msgstr ""
+msgstr "Destrucción de Titánes"
 
 #: src/eskill.c:226
 msgid "Stunning Strike"
-msgstr ""
+msgstr "Golpe Aturdidor"
 
 #: src/eskill.c:236
 msgid "Howl"
-msgstr ""
+msgstr "Aullido"
 
 #: src/eskill.c:259
 msgid "Rasp"
-msgstr ""
+msgstr "Chillido"
 
 #: src/eskill.c:278
 msgid "Shadow Blast"
-msgstr ""
+msgstr "Explosión de Sombra"
 
 #: src/heroc.c:614 src/hskill.c:415
 msgid "Rage"
-msgstr ""
+msgstr "Ira"
 
 #: src/heroc.c:616
 msgid "Infuse"
-msgstr ""
+msgstr "Implantar"
 
 #: src/heroc.c:617
 msgid "Prayer"
-msgstr ""
+msgstr "Plegaria"
 
 #: src/heroc.c:618
 msgid "Boost"
-msgstr ""
+msgstr "Incrementar"
 
 #: src/heroc.c:619
 msgid "Cover"
-msgstr ""
+msgstr "Cubrir"
 
 #: src/heroc.c:620 src/hskill.c:614
 msgid "Steal"
-msgstr ""
+msgstr "Robar"
 
 #: src/heroc.c:621
 msgid "Sense"
-msgstr ""
+msgstr "Sentir"
 
 #: src/heroc.c:634 src/menu.c:714
 msgid "Attack"
-msgstr ""
+msgstr "Atacar"
 
 #: src/heroc.c:643
 msgid "Spell"
-msgstr ""
+msgstr "Hechizo"
 
 #: src/heroc.c:648
 msgid "Item"
-msgstr ""
+msgstr "Item"
 
 #: src/heroc.c:657
 msgid "Invoke"
-msgstr ""
+msgstr "Invocar"
 
 #: src/heroc.c:672
 msgid "Defend"
-msgstr ""
+msgstr "Defender"
 
 #: src/heroc.c:676
 msgid "Run"
-msgstr ""
+msgstr "Correr"
 
 #: src/heroc.c:929
 msgid "Neutralize Poison"
-msgstr ""
+msgstr "Neutralizar Veneno"
 
 #: src/heroc.c:937
 msgid "Magic Missiles"
-msgstr ""
+msgstr "Misiles Mágicos"
 
 #: src/heroc.c:975
 msgid "Fatal error: How can a dead party run?"
-msgstr ""
+msgstr "Error Fatal: Cómo puede un grupo muerto correr?"
 
 #: src/heroc.c:986
 msgid "Fatal error: Why are the heroes running from dead enemies?"
-msgstr ""
+msgstr "Error Fatal: Por qué escapan los heroes de enemigos muertos?"
 
 #: src/heroc.c:1002
 msgid "Could not escape!"
-msgstr ""
+msgstr "No puedes escapar!"
 
 #: src/heroc.c:1008
 #, c-format
 msgid "Escaped! Dropped %d gold!"
-msgstr ""
+msgstr "Escapaste! Perdiste %d de oro!"
 
 #: src/heroc.c:1010
 #, c-format
 msgid "Escaped!"
-msgstr ""
+msgstr "Escapaste!"
 
 #: src/hskill.c:350
 #, c-format
 msgid "Name: %s"
-msgstr ""
+msgstr "Nombre: %s"
 
 #: src/hskill.c:352
 #, c-format
 msgid "Level: %d"
-msgstr ""
+msgstr "Nivel: %d"
 
 #: src/hskill.c:354
 #, c-format
 msgid "HP: %d/%d"
-msgstr ""
+msgstr "SL: %d/%d"
 
 #: src/hskill.c:356
 #, c-format
 msgid "MP: %d/%d"
-msgstr ""
+msgstr "PM: %d/%d"
 
 #: src/hskill.c:358 src/menu.c:732
 msgid "Earth"
@@ -7021,7 +7057,7 @@ msgstr "Infusión Elemental"
 
 #: src/hskill.c:512
 msgid "Dispel Undead"
-msgstr ""
+msgstr "Desvanecer Nomuerto"
 
 #: src/hskill.c:562
 msgid "Divine Cure"
@@ -7030,62 +7066,62 @@ msgstr "Cura Divina"
 #: src/hskill.c:637 src/hskill.c:661
 #, c-format
 msgid "%s taken!"
-msgstr "%s recividos!"
+msgstr "%s recibidos!"
 
 #: src/hskill.c:643 src/hskill.c:667
 msgid "Nothing to steal!"
-msgstr ""
+msgstr "Nada para robar!"
 
 #: src/hskill.c:645 src/hskill.c:669 src/hskill.c:672
 msgid "Couldn't steal!"
-msgstr ""
+msgstr "Imposible robar!"
 
 #: src/intrface.c:625
 msgid "Cheating complete."
-msgstr ""
+msgstr "Trampa completada."
 
 #: src/intrface.c:650
 msgid "Could not initialise scripting engine"
-msgstr ""
+msgstr "Imposible inicializar el motor de scripting"
 
 #: src/intrface.c:875
 #, c-format
 msgid "Marker %s not found."
-msgstr ""
+msgstr "Marcador %s no encontrado."
 
 #: src/intrface.c:1493
 #, c-format
 msgid "Found %d gp!"
-msgstr ""
+msgstr "Encontráste %d po!"
 
 #: src/intrface.c:1525
 #, c-format
 msgid "%s procured!"
-msgstr ""
+msgstr "Obtienes %s!"
 
 #: src/intrface.c:1527
 #, c-format
 msgid "%s ^%d procured!"
-msgstr ""
+msgstr "Obtienes %s ^%d!"
 
 #: src/intrface.c:1535
 #, c-format
 msgid "%s not taken!"
-msgstr ""
+msgstr "%s rechazados!"
 
 #: src/intrface.c:1537
 #, c-format
 msgid "%s ^%d not taken!"
-msgstr ""
+msgstr "%s ^%d rechazados!"
 
 #: src/intrface.c:2827
 msgid "Choose one"
-msgstr ""
+msgstr "Escoge Uno"
 
 #: src/intrface.c:3870
 #, c-format
 msgid "Tried to add too many different items to a shop. Maximum is %d\n"
-msgstr ""
+msgstr "Intento de adicionar muchos ítems diferentes a una tienda. El Máximo es %d\n"
 
 #: src/intrface.c:3921
 #, c-format
@@ -7093,161 +7129,163 @@ msgid ""
 "%s\n"
 "Stack trace:\n"
 msgstr ""
+"%s\n"
+"Traza de Pila:\n"
 
 #: src/intrface.c:3924
 #, c-format
 msgid "#%d Line %d in (%s %s) %s\n"
-msgstr ""
+msgstr "Línea #%d %d en (%s %s) %s\n"
 
 #: src/intrface.c:3928
 msgid "Script error. See allegro.log"
-msgstr ""
+msgstr "Error del script. Vea allegro.log"
 
 #: src/intrface.c:4060
 #, c-format
 msgid "Could not open script %s.lob!"
-msgstr ""
+msgstr "Imposible abrir el script %s.lob!"
 
 #: src/intrface.c:4067
 #, c-format
 msgid "Could not parse script %s!"
-msgstr ""
+msgstr "Imposible parsear el script %s!"
 
 #: src/intrface.c:4074
 #, c-format
 msgid "lua_pcall failed while calling script %s!"
-msgstr ""
+msgstr "lua_pcall falló al llamar el script %s!"
 
 #: src/itemmenu.c:146 src/sgame.c:105 src/shopmenu.c:90 src/shopmenu.c:575
 msgid "Confirm/Cancel"
-msgstr ""
+msgstr "Confirmar/Cancelar"
 
 #: src/itemmenu.c:283 src/menu.c:114
 msgid "Items"
-msgstr ""
+msgstr "Items"
 
 #: src/itemmenu.c:288 src/itemmenu.c:292
 msgid "Use"
-msgstr ""
+msgstr "Usar"
 
 #: src/itemmenu.c:289
 msgid "Sort   Drop"
-msgstr ""
+msgstr "Ordenar Tirar"
 
 #: src/itemmenu.c:294
 msgid "Drop"
-msgstr ""
+msgstr "Tirar"
 
 #: src/itemmenu.c:495
 msgid "Strength up!"
-msgstr ""
+msgstr "Fortaleza sube!"
 
 #: src/itemmenu.c:498
 msgid "Agility up!"
-msgstr ""
+msgstr "Agilidad sube!"
 
 #: src/itemmenu.c:501
 msgid "Vitality up!"
-msgstr ""
+msgstr "Vitalidad sube!"
 
 #: src/itemmenu.c:504
 msgid "Intellect up!"
-msgstr ""
+msgstr "Intelecto sube!"
 
 #: src/itemmenu.c:507
 msgid "Wisdom up!"
-msgstr ""
+msgstr "Sabiduría sube!"
 
 #: src/itemmenu.c:533 src/masmenu.c:305
 #, c-format
 msgid "%s learned!"
-msgstr ""
+msgstr "aprendiste %s!"
 
 #: src/kq.c:466
 #, c-format
 msgid "Could not allocate %s!."
-msgstr ""
+msgstr "Imposible asignar %s!."
 
 #: src/kq.c:725
 msgid "Could not open treasure.log!"
-msgstr ""
+msgstr "Imposible abrir treasure.log!"
 
 #: src/kq.c:732
 msgid "Could not open progress.log!"
-msgstr ""
+msgstr "Imposible abrir progress.log!"
 
 #: src/kq.c:938
 msgid "Could not load character graphics!"
-msgstr ""
+msgstr "Imposible cargar los gráficos de carácter!"
 
 #: src/kq.c:1023
 msgid "Alt+W Pressed:"
-msgstr ""
+msgstr "Alt+W Presionado:"
 
 #: src/kq.c:1036
 #, c-format
 msgid "Program terminated: user pressed Alt+X"
-msgstr ""
+msgstr "Programa terminado: el usuario presiono Alt+X"
 
 #: src/kq.c:1062
 msgid "Cannot open hero data file"
-msgstr ""
+msgstr "Imposible abrir el archivo de datos del heroe"
 
 #: src/kq.c:1073
 msgid "Could not load kqfaces.pcx!"
-msgstr ""
+msgstr "Imposible cargar kqfaces.pcx!"
 
 #: src/kq.c:1111
 #, c-format
 msgid "Could not load map %s!"
-msgstr ""
+msgstr "Imposible cargar el mapa %s!"
 
 #: src/kq.c:1154
 #, c-format
 msgid "Sorry, no help screen at this time.\n"
-msgstr ""
+msgstr "Perdón, por ahora no tenemos pantalla de ayuda.\n"
 
 #: src/kq.c:1488
 msgid "X-ALT pressed... exiting."
-msgstr ""
+msgstr "X-ALT presionado... saliendo."
 
 #: src/kq.c:1613
 #, c-format
 msgid "Error with sound: %s\n"
-msgstr ""
+msgstr "Error con el sounido: %s\n"
 
 #: src/kq.c:1633
 msgid "Only joysticks/gamepads with at least 4 buttons can be used."
-msgstr ""
+msgstr "Solo joysticks/gamepads con al menos 4 botones pueden ser utilizados."
 
 #: src/kq.c:1642
 msgid "Could not load misc.pcx!"
-msgstr ""
+msgstr "Imposible cargar misc.pcx!"
 
 #: src/kq.c:1716
 msgid "Could not load tileset.kq"
-msgstr ""
+msgstr "Imposible cargar tileset.kq"
 
 #: src/kq.c:1723
 msgid "Too many tilesets defined in tileset.kq"
-msgstr ""
+msgstr "Demasiados tilesets definidos en tileset.kq"
 
 #: src/kq.c:1859
 msgid "X-Alt pressed - exiting"
-msgstr ""
+msgstr "X-Alt presionado - saliendo"
 
 #: src/kq.c:1948
 msgid "Repulse has worn off!"
-msgstr ""
+msgstr "Se ha acabado la Repulsión!"
 
 #: src/magic.c:612
 msgid "... the hell, how can there be nobody to cure?"
-msgstr ""
+msgstr "... demonios, como puede haber nadie que cure?"
 
 #: src/magic.c:1175
 #, c-format
 msgid "Enemy %d tried to cast %s?!"
-msgstr ""
+msgstr "El Enemigo %d intentó lanzar %s?!"
 
 #: src/masmenu.c:92 src/menu.c:115
 msgid "Magic"
