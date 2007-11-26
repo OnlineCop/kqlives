@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: es\n"
 "Report-Msgid-Bugs-To: peterhull90@users.sourceforge.net\n"
 "POT-Creation-Date: 2007-11-21 17:37-0500\n"
-"PO-Revision-Date: 2007-11-26 11:38-0500\n"
+"PO-Revision-Date: 2007-11-26 12:47-0500\n"
 "Last-Translator: Edgar Alberto Molina Rojas <edgar@heuristicsi.com>\n"
 "Language-Team: Spanish <kqlives-main@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -1154,7 +1154,7 @@ msgstr ""
 
 #: scripts/cult.lua:306 scripts/grotto.lua:174
 msgid "Uh oh!"
-msgstr ""
+msgstr "Oh Oh!"
 
 #: scripts/cult.lua:313
 msgid "The time to attack is now!"
@@ -1317,7 +1317,7 @@ msgstr ""
 #: scripts/dville.lua:94 scripts/dville.lua:105 scripts/dville.lua:116
 #: scripts/dville.lua:250 scripts/grotto.lua:130 scripts/town4.lua:409
 msgid "Good luck."
-msgstr ""
+msgstr "Buena suerte."
 
 #: scripts/dville.lua:96
 msgid "We shall put the statue back as soon as it's whole again!"
@@ -2272,85 +2272,91 @@ msgstr ""
 
 #: scripts/grotto.lua:98
 msgid "Thank you for your assistance, $0. I have another request for you."
-msgstr ""
+msgstr "Gracias por tu ayuda, $0. Tengo otra solicitud para ti."
 
 #: scripts/grotto.lua:101
 msgid "Hello, I'm Derig. I presume that my granddaughter sent you here?"
-msgstr ""
+msgstr "Hola, Soy Derig. Presumo que mi nieta te envió aquí?"
 
 #: scripts/grotto.lua:103
 msgid "Let's go back to town."
-msgstr ""
+msgstr "Regresemos al pueblo."
 
 #: scripts/grotto.lua:109
 msgid "Good job with the portal. I have returned the Rod of Cancellation."
-msgstr ""
+msgstr "Buen trabajo con el portal. He regresado la Vara de Cancelación."
 
 #: scripts/grotto.lua:112
 msgid "That note you're carrying... I recognize the seal on there; let me see it!"
-msgstr ""
+msgstr "Esa nota que llevas... Reconozco el sello, dejame verla!"
 
 #: scripts/grotto.lua:113 scripts/town1.lua:405
 msgid "You show Derig the note."
-msgstr ""
+msgstr "Le muestras a Derig la nota."
 
 #: scripts/grotto.lua:114
 msgid ""
 "$0, Tsorin says that a special treasure of the goblins, the Oracle Statue, "
 "has been stolen."
 msgstr ""
+"$0, Tsorin dise que un tesoro especial de los duendes, la Estatua del Oráculo, "
+"ha sido robada."
 
 #: scripts/grotto.lua:115
 msgid ""
 "Apparently, the goblins are so upset that he's sealed off any entrance to "
 "the goblin lands until this is resolved."
 msgstr ""
+"Aparentemente, los duendes estan tan molestos que él ha sellado cualquier "
+"entrada hacia las tierras de los duendes hasta que esto se resuelva."
 
 #: scripts/grotto.lua:117
 msgid "So what am I supposed to do?"
-msgstr ""
+msgstr "Así que, Qué debo hacer?"
 
 #: scripts/grotto.lua:119
 msgid "So what are we supposed to do?"
-msgstr ""
+msgstr "Así que, Qué debemos hacer?"
 
 #: scripts/grotto.lua:121
 msgid ""
 "I agree that you must get through there. Here, deliver this note to Tsorin "
 "so he'll let you proceed."
 msgstr ""
+"Estoy de acuerdo, debes pasar por allí. Toma, lleva esta nota a Tsorin "
+"para que te deje pasar."
 
 #: scripts/grotto.lua:122 scripts/town1.lua:412
 msgid "Derig hands you a sealed envelope."
-msgstr ""
+msgstr "Derig te pasa un sobre sellado."
 
 #: scripts/grotto.lua:128
 msgid "You must deliver that note to Tsorin so he'll let you through the fort."
-msgstr ""
+msgstr "Debes llevarle esa nota a Tsorin para que el te deje atravesar el fuerte."
 
 #: scripts/grotto.lua:165
 msgid "That's strange. I wonder who lit this fire?"
-msgstr ""
+msgstr "Esto es extraño. Me pregunto quien enciende el fuego?"
 
 #: scripts/grotto.lua:177
 msgid "I'd rather not go down there right now."
-msgstr ""
+msgstr "Mejor ahora no bajo por halla."
 
 #: scripts/grotto.lua:190
 msgid "Hmm... this seems like it should do something. But what?"
-msgstr ""
+msgstr "Mmm... esto parece como si hiciera algo. Pero qué?"
 
 #: scripts/grotto.lua:192
 msgid "Wow. The rune hummed for a second but now it's quiet."
-msgstr ""
+msgstr "Ohh. La runa vibró por un segundo pero ahora está quieta."
 
 #: scripts/grotto.lua:196
 msgid "I can't go through here anymore since I no longer have the Unadium Coin."
-msgstr ""
+msgstr "Ya no puedo ir por aquí de nuevo desde que no tengo la moneda Unadium."
 
 #: scripts/grotto2.lua:45
 msgid "$0 fits the rusty key into the lock."
-msgstr ""
+msgstr "$0 inserta la llave oxidada en el bloqueo."
 
 #: scripts/grotto2.lua:48
 msgid "Something's supposed to happen here... it hasn't been programmed yet."
@@ -3520,23 +3526,23 @@ msgstr "Ya me lo imagino..."
 
 #: scripts/starting.lua:461
 msgid "I'd be the richest thief on the block."
-msgstr "Seré el ladrón más rico de la cuadra."
+msgstr "Seré la ladrona más rica de la cuadra."
 
 #: scripts/starting.lua:462
 msgid "No! I'd be the richest thief in my OWN CITY! Ha ha ha!"
-msgstr "No! Seré el ladrón más rico en toda la CIUDAD! Ja ja ja!"
+msgstr "No! Seré la ladrona más rica en toda la CIUDAD! Ja ja ja!"
 
 #: scripts/starting.lua:472
 msgid ""
 "This does not look good. I'm almost positive the handwriting on this note is "
 "the same as..."
-msgstr ""
+msgstr "Esto no se ve bien. Estoy casi seguro que la escritura en esta nota es la misma que..."
 
 #: scripts/starting.lua:479
 msgid ""
 "I have no choice but to check it out. I'd must be getting on my way "
 "immediately!"
-msgstr ""
+msgstr "No más tengo alternativa que investigar. Quizá debería partir inmediatamente!"
 
 #: scripts/sunarin.lua:14
 msgid "I am the king of thieves!"
@@ -4418,45 +4424,51 @@ msgstr ""
 
 #: scripts/town1.lua:92
 msgid "There is a monster blocking the pass to Randen."
-msgstr ""
+msgstr "Hay un monstruo bloqueando el paso a Randen."
 
 #: scripts/town1.lua:94
 msgid "Now the monster is gone."
-msgstr ""
+msgstr "Ahora el monstruo se ha ido."
 
 #: scripts/town1.lua:102
 msgid "Stock up on weapons, magic, and experience."
-msgstr ""
+msgstr "Llenate de armas, magia y experiencia"
 
 #: scripts/town1.lua:103
 msgid "You'll need them against the monster blocking the entrance to Randen."
-msgstr ""
+msgstr "Los necesitarás contra el monstruo que bloquea la entrada a Randen."
 
 #: scripts/town1.lua:106
 msgid ""
 "The monster blocking Randen is gone, but there are still monsters "
 "underground."
 msgstr ""
+"El monstruo que bloquea Randen se ha ido, pero aún hay monstruos "
+"bajo tierra."
 
 #: scripts/town1.lua:108
 msgid "All the monsters are gone from the tunnel!"
-msgstr ""
+msgstr "Todos los monstruos se han ido del tunel!"
 
 #: scripts/town1.lua:116
 msgid ""
 "I hid these works of art from Malkaron's forces. When they had come through "
 "here, they tried to destroy everything..."
 msgstr ""
+"Escondí estos trabajos de arte de las fuerzas de Malkaron. Cuando han llegado hasta "
+"aquí, han tratado de destruir todo..."
 
 #: scripts/town1.lua:119
 msgid ""
 "Ever since monsters started appearing, my mother doesn't want me to go "
 "outdoors alone. It's so boring in here, though! I want to go out and play!"
 msgstr ""
+"Desde que los monstruos empezaron a aparecer, mi madre no me deja salir "
+"solo. Es tan aburrido aqui, ah! Quiero salir y jugar!"
 
 #: scripts/town1.lua:122
 msgid "My, my. This is beautiful work. How rare! How exquisite! How affordable!"
-msgstr ""
+msgstr "No, no. Este es un trabajo hermoso. Cuan raro! Cuan exquisito! Cuan económico!"
 
 #: scripts/town1.lua:131
 msgid "The strong-scented oils wore off."
@@ -6691,15 +6703,15 @@ msgstr ""
 
 #: src/credits.c:108
 msgid "Press F1 for help"
-msgstr ""
+msgstr "Presione F1 para Ayuda"
 
 #: src/credits.c:135
 msgid "*CHEAT MODE ON*"
-msgstr ""
+msgstr "*MODO TRAMPAS ENCENDIDO*"
 
 #: src/credits.c:139
 msgid "*DEBUG MODE ON*"
-msgstr ""
+msgstr "*MODO DEPURACIÓN ENCENDIDO*"
 
 #: src/draw.c:1191
 msgid "UTF-8 decode error"
