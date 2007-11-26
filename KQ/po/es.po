@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: es\n"
 "Report-Msgid-Bugs-To: peterhull90@users.sourceforge.net\n"
 "POT-Creation-Date: 2007-11-21 17:37-0500\n"
-"PO-Revision-Date: 2007-11-26 12:47-0500\n"
+"PO-Revision-Date: 2007-11-26 18:39-0500\n"
 "Last-Translator: Edgar Alberto Molina Rojas <edgar@heuristicsi.com>\n"
 "Language-Team: Spanish <kqlives-main@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -337,95 +337,99 @@ msgstr ""
 
 #: scripts/cave1.lua:102
 msgid "These stairs are blocked!"
-msgstr ""
+msgstr "Las escaleras están bloqueadas!"
 
 #: scripts/cave1.lua:112
 msgid "Hmm... this wall looks odd."
-msgstr ""
+msgstr "Mmm... esta pared se ve rara."
 
 #: scripts/cave1.lua:124
 msgid ""
 "... don't go any further. A strange creature has... blocked the path. It "
 "just appeared there out of nowhere."
 msgstr ""
+"... No siga. Una extraña criatura ha... bloqueado el camino. Solo apareció "
+"de la nada."
 
 #: scripts/cave1.lua:127
 msgid "He's dead."
-msgstr ""
+msgstr "El esta muerto."
 
 #: scripts/cave1.lua:142
 msgid "Hmmm... I guess if I just touch it with the rod..."
-msgstr ""
+msgstr "Mmmm... Supongo que si solo la toco con la vara..."
 
 #: scripts/cave1.lua:150
 msgid "Whoa! The rod melted the portal shut!"
-msgstr ""
+msgstr "Ohhh! La vara deritió el portal!"
 
 #: scripts/cave1.lua:152
 msgid "Hmmm... this is very old and has several deep cracks in it."
-msgstr ""
+msgstr "Mmmm... esto es muy viejo y tiene muchas grietas profundas."
 
 #: scripts/cave1.lua:155
 msgid "I wonder where this came from?"
-msgstr ""
+msgstr "Me pregunto de dónde vino esto?"
 
 #: scripts/cave2.lua:40 scripts/town5.lua:104
 msgid "Ouch!"
-msgstr ""
+msgstr "Ouch!"
 
 #: scripts/cave2.lua:41
 msgid "This is no ordinary gopher hole!"
-msgstr ""
+msgstr "Esta no es una madriguera común!"
 
 #: scripts/cave2.lua:59
 msgid "There's some kind of barrier here. I can't get past it."
-msgstr ""
+msgstr "Hay una especie de barrera aquí. No puedo atravesarla."
 
 #: scripts/cave2.lua:62
 msgid "Hey... What's that thing down there?"
-msgstr ""
+msgstr "Hey Qué es esa cosa allá abajo?"
 
 #: scripts/cave2.lua:65
 msgid "This barrier is still here. I can't get out."
-msgstr ""
+msgstr "Esta barrera está aún ahí. No puedo salir."
 
 #: scripts/cave2.lua:76
 msgid ""
 "This doesn't do anything; I can't get out of here. I'll give up and just go "
 "to sleep."
 msgstr ""
+"Esto no hace nada, No puedo salir de aquí. Mejor me rindo y me acuesto "
+"a dormir."
 
 #: scripts/cave2.lua:78 scripts/cave2.lua:82
 msgid "You decide to sleep."
-msgstr ""
+msgstr "Decidiste dormir."
 
 #: scripts/cave2.lua:81
 msgid "Oops, I'm stuck down here again. I'll try sleeping again to get back out."
-msgstr ""
+msgstr "Oops, Estoy atrapado de nuevo aquí. Voy a intentar dormir de nuevo para salir."
 
 #: scripts/cave2.lua:87
 msgid "Hmm... this doesn't look like it does anything."
-msgstr ""
+msgstr "Mmm... esto no parece hacer nada."
 
 #: scripts/cave2.lua:88
 msgid "Hello? Who's there? Is that somebody down there?"
-msgstr ""
+msgstr "Hola? Quién esta allí? Hay alguien abajo?"
 
 #: scripts/cave2.lua:89
 msgid "Yeah... I fell down here and the door's blocked."
-msgstr ""
+msgstr "Sí... Me caí y la puerta está bloqueada."
 
 #: scripts/cave2.lua:90
 msgid "Hang on, let me get you out of there."
-msgstr ""
+msgstr "Espera, dejame sacarte de allí."
 
 #: scripts/cave2.lua:95
 msgid "Derig, can you help me out of here?"
-msgstr ""
+msgstr "Derig, puedes ayudarme a salir?"
 
 #: scripts/cave2.lua:96
 msgid "Sure thing. Here you go."
-msgstr ""
+msgstr "Seguro. Aquí vas."
 
 #: scripts/cave3a.lua:36
 msgid "You cannot stop us! Begone!"
@@ -1325,7 +1329,7 @@ msgstr ""
 
 #: scripts/dville.lua:98 scripts/dville.lua:109 scripts/town1.lua:508
 msgid "Thanks again."
-msgstr ""
+msgstr "Gracias de Nuevo."
 
 #: scripts/dville.lua:103
 msgid "You should hear what the head of the village council has to say."
@@ -2070,195 +2074,195 @@ msgstr ""
 
 #: scripts/global.lua:353
 msgid "Reading makes me sleepy..."
-msgstr ""
+msgstr "Leer me da sueño..."
 
 #: scripts/global.lua:354 scripts/global.lua:359
 msgid "So many books..."
-msgstr ""
+msgstr "Tantos libros..."
 
 #: scripts/global.lua:355
 msgid "Reading is for wimps."
-msgstr ""
+msgstr "Leer es para ñoños."
 
 #: scripts/global.lua:358
 msgid "If only I had more time..."
-msgstr ""
+msgstr "Si solo tuviera más tiempo..."
 
 #: scripts/global.lua:360
 msgid "Some of these are pretty old."
-msgstr ""
+msgstr "Algunos son muy viejos."
 
 #: scripts/global.lua:363
 msgid "Ugh... this would take me forever to read."
-msgstr ""
+msgstr "Arr... esto me tomará para siempre leerlo."
 
 #: scripts/global.lua:364
 msgid "I never liked reading."
-msgstr ""
+msgstr "Nunca me gustó leer."
 
 #: scripts/global.lua:365
 msgid "Who wrote this trash?"
-msgstr ""
+msgstr "Quién escribió esta basura?"
 
 #: scripts/global.lua:368
 msgid "Fascinating."
-msgstr ""
+msgstr "Fascinante."
 
 #: scripts/global.lua:369
 msgid "I have this one."
-msgstr ""
+msgstr "Tengo este."
 
 #: scripts/global.lua:370
 msgid "Romance novels... gack!"
-msgstr ""
+msgstr "Novelas de Romance... que asco!"
 
 #: scripts/global.lua:373
 msgid "Hmmm... I don't approve of that."
-msgstr ""
+msgstr "Mmmm... No estoy de acuerdo."
 
 #: scripts/global.lua:374
 msgid "I'm too busy to read now."
-msgstr ""
+msgstr "Estoy muy ocupado(a) para leer."
 
 #: scripts/global.lua:375
 msgid "How many books can you write that start with 'The Joy of...'?"
-msgstr ""
+msgstr "Cuántos libros puedes escribir que empiecen con 'La Dicha de...'?"
 
 #: scripts/global.lua:378
 msgid "I don't have time for this."
-msgstr ""
+msgstr "No tengo tiempo para esto."
 
 #: scripts/global.lua:379
 msgid "What language is this written in?"
-msgstr ""
+msgstr "En qué idioma esta escrito esto?"
 
 #: scripts/global.lua:380
 msgid "The pages are stuck together!?"
-msgstr ""
+msgstr "Las páginas están pegadas!?"
 
 #: scripts/global.lua:383
 msgid "Boring."
-msgstr ""
+msgstr "Aburrido."
 
 #: scripts/global.lua:384
 msgid "Somebody should burn these."
-msgstr ""
+msgstr "Alguien deberia quemarlos."
 
 #: scripts/global.lua:385
 msgid "Terrible... just terrible."
-msgstr ""
+msgstr "Terrible... solo terrible."
 
 #: scripts/global.lua:388
 msgid "Doesn't anybody leave spellbooks lying around?"
-msgstr ""
+msgstr "Nadie dejo por ahí libros de hechizos?"
 
 #: scripts/global.lua:389
 msgid "Why would I read this?"
-msgstr ""
+msgstr "Por qué leería yo esto?"
 
 #: scripts/global.lua:390
 msgid "Can't talk... reading."
-msgstr ""
+msgstr "No hablo... Leyendo."
 
 #: scripts/global.lua:403
 msgid "What th..? Ouch! That's hot!"
-msgstr ""
+msgstr "Qué dem...? Ouch! Está Caliente!"
 
 #: scripts/global.lua:404
 msgid "There's no way I'm sticking my hand in that fire!"
-msgstr ""
+msgstr "No hay forma de que meta mi mano en el fuego!"
 
 #: scripts/global.lua:405
 msgid "This feels pretty nice."
-msgstr ""
+msgstr "Eso se siente bien."
 
 #: scripts/global.lua:408
 msgid "Ah, the age-old fire."
-msgstr ""
+msgstr "Ah, el viejo fuego."
 
 #: scripts/global.lua:409
 msgid "This needs more coal."
-msgstr ""
+msgstr "Esto necesita más combustible."
 
 #: scripts/global.lua:410
 msgid "This would be great to read a book next to."
-msgstr ""
+msgstr "Sería grandioso leer un libro junto a esto."
 
 #: scripts/global.lua:413
 msgid "Mmm, wood smoke."
-msgstr ""
+msgstr "Mmm, humo de madera."
 
 #: scripts/global.lua:414
 msgid "Smells like burnt hair. Hey wait... that's MY hair!"
-msgstr ""
+msgstr "Huele a cabello quemado. Hey momento... es MI cabello!"
 
 #: scripts/global.lua:415
 msgid "Ooh, cozy."
-msgstr ""
+msgstr "Ooh, acogedor."
 
 #: scripts/global.lua:418
 msgid "I prefer torches."
-msgstr ""
+msgstr "Prefiero antorchas."
 
 #: scripts/global.lua:419
 msgid "I love the crackle of a good fire."
-msgstr ""
+msgstr "Amo el crugir de un buen fuego."
 
 #: scripts/global.lua:420
 msgid "I wonder if a spell would make this burn brighter?"
-msgstr ""
+msgstr "Me pregunto si un hechizo haría esto más candente?"
 
 #: scripts/global.lua:423
 msgid "Hmm... I want marshmallows."
-msgstr ""
+msgstr "Mmm... quiero masmelos."
 
 #: scripts/global.lua:424
 msgid "You call this a fire?!"
-msgstr ""
+msgstr "Llamas a esto fuego?!"
 
 #: scripts/global.lua:425
 msgid "Ah, relaxing."
-msgstr ""
+msgstr "Oh, relajante."
 
 #: scripts/global.lua:428
 msgid "I wonder how hot this is?"
-msgstr ""
+msgstr "Me pregunto qué tan caliente está?"
 
 #: scripts/global.lua:429
 msgid "Someone should clean all this soot out of here."
-msgstr ""
+msgstr "Alguien deberia limpiar todo este polvo."
 
 #: scripts/global.lua:430
 msgid "Well, my face is warm now, but my butt is still freezing!"
-msgstr ""
+msgstr "Bien, mi cara está caliente ahora, pero mi trasero aún se congela!"
 
 #: scripts/global.lua:433
 msgid "Something's burning. I hope it's one of those stupid books!"
-msgstr ""
+msgstr "Algo se quema. Espero que sean esos estupidos libros!"
 
 #: scripts/global.lua:434
 msgid "The fire is getting low."
-msgstr ""
+msgstr "El fuego se está apagando."
 
 #: scripts/global.lua:435
 msgid "Yessir, this is a fire."
-msgstr ""
+msgstr "Ohh si, este es un fuego."
 
 #: scripts/global.lua:438
 msgid "I sure like fire."
-msgstr ""
+msgstr "Seguro me gusta el fuego."
 
 #: scripts/global.lua:439
 msgid "Watching this is relaxing."
-msgstr ""
+msgstr "Mirar esto es relajante."
 
 #: scripts/global.lua:440
 msgid "This is making me sleepy."
-msgstr ""
+msgstr "Esto me está dando sueño."
 
 #: scripts/goblin.lua:10
 msgid "I'm a goblin. Fear me."
-msgstr ""
+msgstr "Soy un duende. Temanme."
 
 #: scripts/goblin.lua:13
 msgid ""
@@ -2336,7 +2340,7 @@ msgstr "Debes llevarle esa nota a Tsorin para que el te deje atravesar el fuerte
 
 #: scripts/grotto.lua:165
 msgid "That's strange. I wonder who lit this fire?"
-msgstr "Esto es extraño. Me pregunto quien enciende el fuego?"
+msgstr "Esto es extraño. Me pregunto quien enciendió el fuego?"
 
 #: scripts/grotto.lua:177
 msgid "I'd rather not go down there right now."
@@ -4733,10 +4737,12 @@ msgid ""
 "You got rid of the portal! Give my father the coin and rod back and I'll "
 "give you a SunStone."
 msgstr ""
+"Eliminaste el portal! Dale a mi abuelo la moneda y la vara de nuevo y yo "
+"te dare una PiedraSol"
 
 #: scripts/town1.lua:505
 msgid "Thanks for returning the Rod to my grandfather. Here is a SunStone for you."
-msgstr ""
+msgstr "Gracias por devolver la Vara a mi abuel. Aqui hay una PiedraSol para ti."
 
 #: scripts/town1.lua:514
 msgid "You should finish Derig's assignment before I give you another."
@@ -6562,16 +6568,16 @@ msgstr ""
 #: src/combat.c:294
 #, c-format
 msgid "HP:%d (%d)"
-msgstr ""
+msgstr "SL:%d (%d)"
 
 #: src/combat.c:297
 #, c-format
 msgid "MP:%d (%d)"
-msgstr ""
+msgstr "PM:%d (%d)"
 
 #: src/combat.c:300
 msgid "Str"
-msgstr ""
+msgstr "Fue"
 
 #: src/combat.c:301
 msgid "Agi"
@@ -6591,7 +6597,7 @@ msgstr ""
 
 #: src/combat.c:305
 msgid "Spd"
-msgstr ""
+msgstr "Vel"
 
 #: src/combat.c:306 src/menu.c:711
 msgid "Aura"
@@ -6599,15 +6605,15 @@ msgstr ""
 
 #: src/combat.c:307
 msgid "Spir"
-msgstr ""
+msgstr "Esp"
 
 #: src/combat.c:308
 msgid "Att"
-msgstr ""
+msgstr "Ata"
 
 #: src/combat.c:309
 msgid "Hit%"
-msgstr ""
+msgstr "Gol%"
 
 #: src/combat.c:310
 msgid "Def"
@@ -6624,82 +6630,82 @@ msgstr ""
 #: src/combat.c:361
 #, c-format
 msgid "HP: %3d/%3d"
-msgstr ""
+msgstr "SL: %3d/%3d"
 
 #: src/combat.c:380
 #, c-format
 msgid "MP: %3d/%3d"
-msgstr ""
+msgstr "PM: %3d/%3d"
 
 #: src/combat.c:473
 #, c-format
 msgid "Combat: battle %d does not exist."
-msgstr ""
+msgstr "Combate: la batalla %d no existe."
 
 #: src/combat.c:934
 #, c-format
 msgid "%s was defeated!"
-msgstr ""
+msgstr "%s fué derrotado(a)!"
 
 #: src/combat.c:1138
 #, c-format
 msgid "Gained %d xp and found %d gp."
-msgstr ""
+msgstr "Obtienes %d pe y encontraste %d po."
 
 #: src/combat.c:1140
 #, c-format
 msgid "Gained %d xp."
-msgstr ""
+msgstr "Obtienes %d pe."
 
 #: src/combat.c:1163
 #, c-format
 msgid "%s found!"
-msgstr ""
+msgstr "Encontraste %s!"
 
 #: src/combat.c:1191
 msgid "Level up!"
-msgstr ""
+msgstr "Subes de Nivel!"
 
 #: src/combat.c:1192
 msgid "Max HP"
-msgstr ""
+msgstr "Máx SL"
 
 #: src/combat.c:1193
 msgid "Max MP"
-msgstr ""
+msgstr "Máx PM"
 
 #: src/combat.c:1194 src/menu.c:705
 msgid "Strength"
-msgstr ""
+msgstr "Fuerza"
 
 #: src/combat.c:1195 src/menu.c:706
 msgid "Agility"
-msgstr ""
+msgstr "Agilidad"
 
 #: src/combat.c:1196 src/menu.c:707
 msgid "Vitality"
-msgstr ""
+msgstr "Vitalidad"
 
 #: src/combat.c:1197 src/menu.c:708
 msgid "Intellect"
-msgstr ""
+msgstr "Intelecto"
 
 #: src/combat.c:1198 src/menu.c:709
 msgid "Sagacity"
-msgstr ""
+msgstr "Sagacidad"
 
 #: src/combat.c:1224
 #, c-format
 msgid "Next level %7d"
-msgstr ""
+msgstr "Siguiente %7d"
 
 #: src/combat.c:1437
 msgid "You have been ambushed!"
-msgstr ""
+msgstr "Has sido emboscado(a)!"
 
 #: src/combat.c:1440
 msgid "You've surprised the enemy!"
-msgstr ""
+msgstr "Sorprendiste al enemigo!"
 
 #: src/credits.c:108
 msgid "Press F1 for help"
