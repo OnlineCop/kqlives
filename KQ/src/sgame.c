@@ -1382,7 +1382,7 @@ int system_menu (void)
       text_color = FDARK;
 #ifdef KQ_CHEATS
       if (cheat) {
-         strcpy(save_str, _("[Save]");
+         strcpy(save_str, _("[Save]"));
          text_color = FNORMAL;
       }
 #endif /* KQ_CHEATS */

@@ -132,7 +132,7 @@ void display_credits (void)
        * PH releasing versions with cheat mode compiled in ;)
        */
       print_font (double_buffer, 80, 40,
-                  cheat ? _("*CHEAT MODE ON*" : "*CHEAT MODE OFF*"), FGOLD);
+                  cheat ? _("*CHEAT MODE ON*") : _("*CHEAT MODE OFF*"), FGOLD);
 #endif
 #ifdef DEBUGMODE
       /* TT: Similarly, if we are in debug mode, we should be warned. */
