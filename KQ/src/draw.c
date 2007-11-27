@@ -1168,31 +1168,101 @@ const char *parse_string (const char *the_string)
  */
 static const char* decode_utf8(const char* string, unsigned int* cp) 
 {
-  char c1 = string[0], c2;
-  if ((c1 & 0x80) == 0x0)
+  char ch = *string;
+  if ((ch & 0x80) == 0x0)
     {
       /* single byte */
-      *cp = (int) c1;
-      return string + 1;
+      *cp = (int) ch;
+      ++string;
     }
-  else if ((c1 & 0xe0) == 0xc0) 
+  else if ((ch & 0xe0) == 0xc0) 
     {
       /* double byte */
-      c2 = string[1];
-      if ((c2 & 0xc0) == 0x80) 
+      *cp = ((ch & 0x1f) << 6);
+      ++string;
+      ch = *string;
+      if ((ch & 0xc0) == 0x80) 
 	{
-	  *cp = ((c1 & 0x1f) << 6) | (c2 & 0x3f);
-	  return string + 2;
+	  *cp |= (ch & 0x3f);
+	  ++string;
 	}
       else 
 	{
-	  /* error!*/
-	  program_death(_("UTF-8 decode error"));
-	  return NULL;
+	  string = NULL;
 	}
     }
-  program_death(_("UTF-8 3 and 4 bytes chars not implemented"));
-  return NULL;
+  else if ((ch & 0xf0) == 0xe0) 
+    {
+      /* triple */
+      *cp = (ch & 0x0f) << 12;
+      ++string;
+      ch = *string;
+      if ((ch & 0xc0) == 0x80) 
+	{
+	  *cp |= (ch & 0x3f) << 6;
+	  ++string;
+	  ch = *string;
+	  if ((ch & 0xc0) == 0x80)
+	    {
+	      *cp |= (ch & 0x3f);
+	      ++string;
+	    }
+	  else 
+	    {
+	      string = NULL;
+	    }
+	}
+      else 
+	{
+	  string = NULL;
+	}
+    }
+  else if ((ch & 0xf8) == 0xe0) 
+    {
+      /* Quadruple */
+      *cp = (ch & 0x0f) << 18;
+      ++string;
+      ch = *string;
+      if ((ch & 0xc0) == 0x80) 
+	{
+	  *cp |= (ch & 0x3f) << 12;
+	  ++string;
+	  ch = *string;
+	  if ((ch & 0xc0) == 0x80)
+	    {
+	      *cp |= (ch & 0x3f) << 6;
+	      ++string;
+	      ch = *string;
+	      if ((ch & 0xc0) == 0x80)
+		{
+		  *cp |= (ch & 0x3f);
+		  ++string;
+		}
+	      else
+		{
+		  string = NULL;
+		}
+	    }
+	  else 
+	    {
+	      string = NULL;
+	    }
+	}
+      else 
+	{
+	  string = NULL;
+	}
+
+    }
+  else
+    {
+      string = NULL;
+    }
+  if (string == NULL) 
+    {
+      program_death(_("UTF-8 decode error"));
+    }
+  return string;
 }
 
 /*! \brief glyph look up table
@@ -1205,19 +1275,22 @@ static const char* decode_utf8(const char* string, unsigned int* cp)
 static unsigned int glyph_lookup[][2] = 
   {
     {0x00c9, 'E' - 32}, /* E-acute */
+    {0x00d3, 'O' - 32}, /* O-acute */
+    {0x00df, 'B' - 32}, /* sharp s */
     {0x00e1, 'a' - 32}, /* a-grave */
     {0x00e4, 'a' - 32}, /* a-umlaut */
     {0x00e9, 'e' - 32}, /* e-acute */
     {0x00ed, 'i' - 32}, /* i-acute */
     {0x00f1, 'n' - 32}, /* n-tilde */
     {0x00f3, 'o' - 32}, /* o-acute */
+    {0x00f6, 'o' - 32}, /* o-umlaut */
     {0x00fa, 'u' - 32}, /* u-acute */
     {0x00fc, 'u' - 32}, /* u-umlaut */
     {0, 0},
   };
 /*! \brief Get glyph index
  *
- * Convert a unicode char to a glyph index
+ * Convert a unicode char to a glyph index.
  * \param cp unicode character
  * \return glyph index 
  * \author PH
@@ -1242,7 +1315,8 @@ static int get_glyph_index(unsigned int cp)
       ++i;
     }
   /* didn't find it */
-  program_death("invalid glyph index");
+  sprintf(strbuf, _("Invalid glyph index: %d"), cp);
+  klog(strbuf);
   return 0;
 }
 
