@@ -43,7 +43,7 @@ static int ease (int);
  */
 static char *credits[] = {
    "(C) 2001 DoubleEdge Software",
-   "(C) 2002-6 KQ Lives Team",
+   "(C) 2002-7 KQ Lives Team",
    "http://kqlives.sourceforge.net/",
    "Peter Hull",
    "TeamTerradactyl",
@@ -55,6 +55,7 @@ static char *credits[] = {
    "Matthew Leverton",
    "Sam Hocevar",
    "Gunther Brammer",
+   "WinterKnight",
    "Edgar Alberto Molina",
    NULL
 };
