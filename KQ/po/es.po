@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: es\n"
 "Report-Msgid-Bugs-To: peterhull90@users.sourceforge.net\n"
-"POT-Creation-Date: 2007-11-21 17:37-0500\n"
-"PO-Revision-Date: 2007-11-26 18:39-0500\n"
+"POT-Creation-Date: 2007-11-30 18:28-0500\n"
+"PO-Revision-Date: 2007-11-30 18:30-0500\n"
 "Last-Translator: Edgar Alberto Molina Rojas <edgar@heuristicsi.com>\n"
 "Language-Team: Spanish <kqlives-main@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -79,8 +79,8 @@ msgid ""
 "The bridge looks like it might be done by tomorrow. Why don't you go have a "
 "rest at the inn?"
 msgstr ""
-"El puente parece que estará listo para mañana. Porque no tomas un descanso en la "
-"estancia?"
+"El puente parece que estará listo para mañana. Porque no tomas un descanso "
+"en la estancia?"
 
 #: scripts/bridge.lua:86
 msgid "This is very hard work!"
@@ -396,8 +396,8 @@ msgid ""
 "This doesn't do anything; I can't get out of here. I'll give up and just go "
 "to sleep."
 msgstr ""
-"Esto no hace nada, No puedo salir de aquí. Mejor me rindo y me acuesto "
-"a dormir."
+"Esto no hace nada, No puedo salir de aquí. Mejor me rindo y me acuesto a "
+"dormir."
 
 #: scripts/cave2.lua:78 scripts/cave2.lua:82
 msgid "You decide to sleep."
@@ -405,7 +405,9 @@ msgstr "Decidiste dormir."
 
 #: scripts/cave2.lua:81
 msgid "Oops, I'm stuck down here again. I'll try sleeping again to get back out."
-msgstr "Oops, Estoy atrapado de nuevo aquí. Voy a intentar dormir de nuevo para salir."
+msgstr ""
+"Oops, Estoy atrapado de nuevo aquí. Voy a intentar dormir de nuevo para "
+"salir."
 
 #: scripts/cave2.lua:87
 msgid "Hmm... this doesn't look like it does anything."
@@ -1112,7 +1114,7 @@ msgstr ""
 
 #: scripts/cult.lua:188 scripts/manor.lua:183
 msgid "Huh?"
-msgstr ""
+msgstr "Ahh?"
 
 #: scripts/cult.lua:193 scripts/estate.lua:264 scripts/temple2.lua:224
 msgid "Who are you?"
@@ -2303,8 +2305,8 @@ msgid ""
 "$0, Tsorin says that a special treasure of the goblins, the Oracle Statue, "
 "has been stolen."
 msgstr ""
-"$0, Tsorin dise que un tesoro especial de los duendes, la Estatua del Oráculo, "
-"ha sido robada."
+"$0, Tsorin dise que un tesoro especial de los duendes, la Estatua del "
+"Oráculo, ha sido robada."
 
 #: scripts/grotto.lua:115
 msgid ""
@@ -2327,8 +2329,8 @@ msgid ""
 "I agree that you must get through there. Here, deliver this note to Tsorin "
 "so he'll let you proceed."
 msgstr ""
-"Estoy de acuerdo, debes pasar por allí. Toma, lleva esta nota a Tsorin "
-"para que te deje pasar."
+"Estoy de acuerdo, debes pasar por allí. Toma, lleva esta nota a Tsorin para "
+"que te deje pasar."
 
 #: scripts/grotto.lua:122 scripts/town1.lua:412
 msgid "Derig hands you a sealed envelope."
@@ -2865,97 +2867,127 @@ msgstr ""
 
 #: scripts/manor.lua:79
 msgid "I would be useful to you, since I can use Rage in battle."
-msgstr ""
+msgstr "Yo te sería útil porque puedo usar Ira en batalla."
 
 #: scripts/manor.lua:81
 msgid ""
 "In battle, I can attack multiple targets at once if I'm equipped with the "
 "right weapon."
 msgstr ""
+"En batalla, Puedo atacar objetivos multiples de una si tengo equipada el "
+"arma correcta."
 
 #: scripts/manor.lua:83
 msgid "I can infuse weapons with magic during battle."
-msgstr ""
+msgstr "Puedo infundir armas con magia durante una batalla."
 
 #: scripts/manor.lua:85
 msgid ""
 "I notice that chanting a prayer during battle can heal your party or "
 "dispells the undead monsters."
 msgstr ""
+"Me doy cuenta que cantar una plegaria durante una batalla puede sanar tu "
+"grupo o desencantar los monstruos no-muertos."
 
 #: scripts/manor.lua:87
 msgid "I can use my Boost ability to strengthen spells when I am attacking."
 msgstr ""
+"Puedo usar mi habilidad de Carga para reforzar hechizos cuando estoy "
+"atacando."
 
 #: scripts/manor.lua:89
 msgid ""
 "I am very protective of my team members and will take a beating in their "
 "place."
-msgstr ""
+msgstr "Protejo mucho a los miembros de mi equipo y recibiria golpes en su lugar."
 
 #: scripts/manor.lua:91
 msgid "I'm a thief by trade. You might be surprised what you can steal from enemies!"
 msgstr ""
+"Soy una ladrona a sueldo. Puedes sorprenderte de lo que puedes robarle a los "
+"enemigos!"
 
 #: scripts/manor.lua:93
 msgid "I have a very keen eye. Not even enemies can hide their weaknesses from me!"
 msgstr ""
+"Tengo una visión aguda. Ni los enemigos pueden esconder sus debilidades de "
+"mi!"
 
 #: scripts/manor.lua:102
 msgid "Ah yes, Master Nostik asked me to give you this."
-msgstr ""
+msgstr "Ah sí, El Maestro Nostik me pidió que te diera esto."
 
 #: scripts/manor.lua:105
 msgid ""
 "Books are an amazing source of knowledge. Nostik has spent many years "
 "writing his own."
 msgstr ""
+"Los libros son una fuente increible de conocimiento. Nostik ha invertido "
+"muchos años escribiendo los suyos."
 
 #: scripts/manor.lua:107
 msgid "Welcome back, $0. The others are here waiting for you."
-msgstr ""
+msgstr "Bienvenido(a) de vuelta, $0. Los otros están aquí esperandote."
 
 #: scripts/manor.lua:108
 msgid "You can exchange your party members here."
-msgstr ""
+msgstr "Puedes intercambiar los miembros de tu grupo aquí."
 
 #: scripts/manor.lua:125
 msgid ""
 "Alright everyone, I welcome you. Let me get right to the major points of why "
 "you're here."
 msgstr ""
+"Muy bien todos, Les extiendo una bienvenida. Permitanme ir directo a los "
+"puntos principales de por qué están aquí."
 
 #: scripts/manor.lua:128
 msgid ""
 "For fear of going out and being spotted, I will stay here if you need "
 "anything."
-msgstr ""
+msgstr "Por miedo de salir y que me descubran, Me quedaré aquí si necesitas algo."
 
 #: scripts/manor.lua:129
 msgid "Good luck all of you."
-msgstr ""
+msgstr "Buena Suerte a todos."
 
 #: scripts/manor.lua:146
 msgid ""
 "When you are ready to go, talk to Hunert and he will get you started on your "
 "journey."
-msgstr ""
+msgstr "Cuando desees partir, habla con Hunert y el te iniciará en tu jornada."
 
 #: scripts/manor.lua:170
 msgid "Wow! This guy reads weird stuff."
-msgstr ""
+msgstr "Ohh! Este chico lee cosas raras."
 
 #: scripts/manor.lua:178
 msgid "Hey! Hold on!"
-msgstr ""
+msgstr "Hey! Espera!"
 
 #: scripts/manor.lua:201
 msgid "It might be foolish to leave without hearing what I have to say."
-msgstr ""
+msgstr "Puede ser tonto que te salgas sin escuchar lo que tengo para decirte."
 
 #: scripts/manor.lua:202
 msgid "First, Nostik gives you this."
-msgstr ""
+msgstr "Primero, Nostik te regala esto."
+
+#: scripts/manor.lua:244
+msgid "Do you want the long version or the short version?"
+msgstr "Deseas la versión larga o la corta?"
+
+#: scripts/manor.lua:245
+msgid "  long"
+msgstr "larga"
+
+#: scripts/manor.lua:246
+msgid "  short"
+msgstr "corta"
+
+#: scripts/manor.lua:247
+msgid "  neither"
+msgstr "  ninguna"
 
 #: scripts/manor.lua:250
 msgid ""
@@ -2965,6 +2997,11 @@ msgid ""
 "Malkaron withdrew and all this frenzy stopped. He and his armies seemed to "
 "have just vanished."
 msgstr ""
+"El mundo se encuentra conmocionado en estos momentos. Malkaron es un general "
+"militar quién, muy de repente, se hizo incontenible. Sus fuerzas fueron "
+"prácticamente invencibles. El mundo estuvo plagado con su destrucción. Y de "
+"pronto solo hace algunos meses, Malkaron se retiró y todo su frenesí se "
+"detuvo. El y sus ejercitos parecen simplemente haberse desvanecido."
 
 #: scripts/manor.lua:251
 msgid ""
@@ -2972,12 +3009,17 @@ msgid ""
 "everywhere. They kill livestock, attack towns and ransack villages. They are "
 "looking for something."
 msgstr ""
+"La paz solo duró hasta ahora, cuando han comenzado a aparecer monstruros por "
+"doquier. Ellos matan el ganado, atacan pueblos y registran de arriba a abajo "
+"las villas. Están buscando algo."
 
 #: scripts/manor.lua:253
 msgid ""
 "The fact is, I had, until recently, been an advisor to him in his army. He "
 "is furious with me, however, and he's sent out scouts to find me."
 msgstr ""
+"El hecho es, He sido, hasta hace poco, consejero en su ejercito. El está "
+"furioso conmigo y ha enviado sus exploradores a encontrarme."
 
 #: scripts/manor.lua:254
 msgid ""
@@ -2986,6 +3028,10 @@ msgid ""
 "indestructible, merely by being in close proximity to the staff. That is why "
 "his army was unstoppable."
 msgstr ""
+"Malkaron tiene un báculo mágico que le brinda a él y a sus ejercitos total "
+"invencibilidad. Convierte las armas y armaduras de sus ejercitos en "
+"prácticamente indestructibles, únicamente con acercarse a los magos. Esta es "
+"la razón de que su ejercito sea incontenible."
 
 #: scripts/manor.lua:255
 msgid ""
@@ -2993,98 +3039,138 @@ msgid ""
 "staff with him everywhere his armies went, I began to piece the clues "
 "together. Malkaron became suspicious, and sent me to the dungeon."
 msgstr ""
+"Naturalmente, él guarda celosamente el secreto, pero desde que lleva este "
+"báculo con él a todas partes donde fué su ejercito, comencé a atar cabos. "
+"Malkaron sospechó de mi y me envió a el calabozo."
 
 #: scripts/manor.lua:259
 msgid ""
 "Malkaron is a general whose armies became invincible. They practically tore "
 "the world apart until just recently."
 msgstr ""
+"Malkaron es un general cuyos ejercitos se hicieron invencibles. "
+"Prácticamente desgarraron el mundo hasta hace poco."
 
 #: scripts/manor.lua:260
 msgid ""
 "Their forces unexpectedly withdrew a few months ago and it's been peaceful "
 "until now."
 msgstr ""
+"Sus fuerzas inesperadamente se retiraron hace algunos meses y ha reinado la "
+"paz hasta ahora."
 
 #: scripts/manor.lua:261
 msgid ""
 "It appears that there are monsters springing up everywhere, looking for "
 "something."
-msgstr ""
+msgstr "Parece que hay monstruos emanando por todos lados, buscando algo."
 
 #: scripts/manor.lua:262
 msgid ""
 "Malkaron had a magical staff that made his armies' weapons and armour "
 "practically indestructible by mere proximity to it."
 msgstr ""
+"Malkaron tiene un báculo mágico que hace sus ejercitos, armas y armaduras "
+"prácticamente indestructibles solo con aproximarsele."
 
 #: scripts/manor.lua:263
 msgid ""
 "He found out that I knew about this `little secret', and threw me into the "
 "dungeon."
-msgstr ""
+msgstr "El encontró que conózco su `pequeño secreto', y me envió al calabozo."
 
 #: scripts/manor.lua:266
 msgid "Fine, I'll tell you the minimal amount. Malkaron captured me."
-msgstr ""
+msgstr "Bien, te diré la menor cantidad. Malkaron me capturó."
 
 #: scripts/manor.lua:269
 msgid "I escaped by use of my magic, and now I am here."
-msgstr ""
+msgstr "Escapé con el uso de la magia y ahora estoy aquí."
 
 #: scripts/manor.lua:275
 msgid ""
 "This is where you come in. I believe that Malkaron has lost the staff and is "
 "now looking for it. Those monsters are his scouts."
 msgstr ""
+"Aquí es donde entran ustedes. Creo que Malkaron ha perdido su báculo y ahora "
+"lo está buscando. Esos monstruos son exploradores."
 
 #: scripts/manor.lua:276
 msgid "If this is true, I need your help to find it before he does."
 msgstr ""
+"Si esto es cierto, necesito su ayuda para encontrarlo antes de que el lo "
+"haga."
 
 #: scripts/manor.lua:277
 msgid ""
 "Each of you have a different skill that I believe will be very beneficial to "
 "your search."
 msgstr ""
+"Cada uno de ustedes tiene habilidades diferentes que creo que serán muy "
+"útiles para su búsqueda."
 
 #: scripts/manor.lua:278
 msgid ""
 "You will need to stop the monsters. They are Malkaron's eyes and ears, and "
 "if they find the staff before you do, we may be in trouble again."
 msgstr ""
+"Tendrán que detener los monstruos. Ellos son los ojos y oídos de Malkaron y "
+"si ellos encuentran el báculo antes de que ustedes lo hagan, estaremos en "
+"problemas de nuevo."
+
+#: scripts/manor.lua:285
+msgid "Do you need me to explain it again?"
+msgstr "Necesitas que te lo explique de nuevo?"
+
+#: scripts/manor.lua:286 scripts/town4.lua:246 scripts/town4.lua:288
+#: src/setup.c:244 src/setup.c:266
+msgid "  yes"
+msgstr "  sí"
+
+#: scripts/manor.lua:287 scripts/town4.lua:247 scripts/town4.lua:287
+#: src/setup.c:244 src/setup.c:266
+msgid "  no"
+msgstr "  no"
 
 #: scripts/manor.lua:289
 msgid "I hope this helps you have a better understanding of what's going on."
-msgstr ""
+msgstr "Espero que esto les ayude a comprender mejor lo que está sucediendo."
 
 #: scripts/manor.lua:291
 msgid "No, I think I get it. But why did you choose me?"
-msgstr ""
+msgstr "No, Creo que lo entiendo. Pero por qué me escogiste a mi?"
 
 #: scripts/manor.lua:292
 msgid ""
 "As you may have noticed, you're not the only one. We've been friends a long "
 "time, $0, and I know I can trust you with confidence."
 msgstr ""
+"Así como puedes notar, no eres el único. Hemos sido amigos por mucho tiempo, "
+"$0, y yo sé que puedo confiar en ti."
 
 #: scripts/manor.lua:293
 msgid ""
 "Oh. I thought you selected me because of my brains or because my magic "
 "skills were more finely honed than anyone else's..."
 msgstr ""
+"Oh. Pensé que me habias seleccionado porque mi cerebro o porque mis "
+"habilidades mágicas están mejor dotadas que las de cualquiera..."
 
 #: scripts/manor.lua:294
 msgid ""
 "Heh-heh. You DO have certain skills which I'm counting on will help you out "
 "on your mission, but so do the others, so don't get a big head."
 msgstr ""
+"Ja ja ja. De hecho POSEES algunas habilidades con las que cuento para "
+"ayudarte en tu misión, pero tambien los otros, así que no seas convencido."
 
 #: scripts/manor.lua:295
 msgid ""
 "Yea, yea. So why didn't you just get everybody into one big group and just "
 "let all of us go out and find this staff?"
 msgstr ""
+"Sí, sí. Entonces por qué no solo nos renunes en un gran grupo y solo nos "
+"dejas ir y encontrar el báculo?"
 
 #: scripts/manor.lua:296
 msgid ""
@@ -3093,84 +3179,97 @@ msgid ""
 "you'd want to avoid, if you ever want to stay ahead of Malkaron and his "
 "minions."
 msgstr ""
+"Los grupos atraen la antención. Si ves un grupo de tres o más personas "
+"andando por ahí, comienzas a sospechar algo. Esto es exáctamente lo que "
+"querrán evitar, si es que desean estar adelante de Malkaron y sus discipulos."
 
 #: scripts/manor.lua:297
 msgid "Oh yea, I hadn't thought of that."
-msgstr ""
+msgstr "Mm sí, No había pensado en eso."
 
 #: scripts/manor.lua:303
 msgid ""
 "You should be going. Talk to Hunert before you go. He can help start you on "
 "your way."
 msgstr ""
+"Deberías irte. Habla con Hunert antes de irte. El puede ayudarte a iniciar "
+"tu camino."
 
 #: scripts/manor.lua:305
 msgid "Good luck, $0."
-msgstr ""
+msgstr "Buena Suerte, $0"
 
 #: scripts/manor.lua:307
 msgid "Zzz... zzz... zzz..."
-msgstr ""
+msgstr "Zzz... zzz... zzz..."
 
 #: scripts/manor.lua:309
 msgid "Mine aren't the only books on the Staff of Xenarum and other treasures."
-msgstr ""
+msgstr "Los míos no son los unicos libros del Báculo de Xenarum y otros tesoros."
 
 #: scripts/manor.lua:345
 msgid "You've acquired 200 gp!"
-msgstr ""
+msgstr "Has recibido 200 po!"
 
 #: scripts/manor.lua:349
 msgid ""
 "Since there are so many monsters wandering around, you may be attacked at "
 "random."
-msgstr ""
+msgstr "Dado que hay tantos monstruos al rededor, puedes ser atacado aleatoriamente."
 
 #: scripts/manor.lua:350
 msgid ""
 "You mean monsters will go on a wild rampage and just start gouging me for no "
 "reason?"
 msgstr ""
+"Quieres decir que los monstruos iniciarán una masacre salvaje y solo "
+"comenzarán a atacarme sin razón?"
 
 #: scripts/manor.lua:351
 msgid "Well, yes. That's a good way of putting it."
-msgstr ""
+msgstr "Bien, sí. Esa es una buena forma de decirlo."
 
 #: scripts/manor.lua:352
 msgid "That will sure make it hard to sleep at night."
-msgstr ""
+msgstr "Eso seguro hará más dificil dormir en las noches."
 
 #: scripts/manor.lua:353
 msgid ""
 "Heh heh. Maybe so. Try sleeping in a town or village inn. Monsters avoid "
 "populated places for some reason."
 msgstr ""
+"Ja ja ja. Puede ser. Intenta dormir en una estancia de un pueblo o villa. "
+"Los monstruos evitan lugares poblados por alguna razón."
 
 #: scripts/manor.lua:354
 msgid ""
 "Here, I'll put a monster repellant on you that will last long enough for you "
 "to make it into town."
 msgstr ""
+"Toma, te pondré un repelente de monstruos que durará suficiente hasta que "
+"llegues a el pueblo."
 
 #: scripts/manor.lua:355
 msgid "Hunert sprinkles some strong-scented oils on you."
-msgstr ""
+msgstr "Hunert rocía algunos aceites fuertemente perfumados en ti."
 
 #: scripts/manor.lua:356
 msgid "Whew! That reeks! Why does it have to smell so bad?"
-msgstr ""
+msgstr "Agrrr! Esto hiede! Por qué tienen tan mal olor?"
 
 #: scripts/manor.lua:357
 msgid "Hunert shrugs"
-msgstr ""
+msgstr "Hunert encoge los hombros"
 
 #: scripts/manor.lua:358
 msgid "Hopefully, it will give you a chance to buy some better weapons and armour."
 msgstr ""
+"Seguramente, te darán la oportunidad de comprar algunas armas mejores y "
+"armadura."
 
 #: scripts/manor.lua:359
 msgid "Well, thank you for the information."
-msgstr ""
+msgstr "Bien, gracias por la información."
 
 #: scripts/pass.lua:19
 msgid "This pass is reserved for use by caravans only."
@@ -3245,8 +3344,8 @@ msgid ""
 "I appreciate all those willing to help. My master has summoned eight of you. "
 "Are you all accounted for?"
 msgstr ""
-"Aprecio a todos los que desean ayudar. Mi maestro ha convocado a ocho de ustedes. "
-"Están todos aquí?"
+"Aprecio a todos los que desean ayudar. Mi maestro ha convocado a ocho de "
+"ustedes. Están todos aquí?"
 
 #: scripts/starting.lua:167
 msgid "Excellent. If everyone is ready, I will take you to meet master Nostik..."
@@ -3341,8 +3440,8 @@ msgid ""
 "On the other hand, maybe there's something here that I can use to help Mom "
 "and Dad."
 msgstr ""
-"Por otra parte, depronto hay algo aquí que puedo usar para ayudar a Mamá "
-"y Papá."
+"Por otra parte, depronto hay algo aquí que puedo usar para ayudar a Mamá y "
+"Papá."
 
 #: scripts/starting.lua:284
 msgid "I'll have to let them know right away!"
@@ -3377,8 +3476,8 @@ msgid ""
 "Yes $0. It is time for you to leave the temple and discover the world. I "
 "have found the perfect way for you to do that."
 msgstr ""
-"Sí $0. Es tiempo que dejes el templo y descubras el mundo. He "
-"encontrado la forma perfecta para que lo hagas."
+"Sí $0. Es tiempo que dejes el templo y descubras el mundo. He encontrado la "
+"forma perfecta para que lo hagas."
 
 #: scripts/starting.lua:329
 msgid "Excellent sir. What am I to do?"
@@ -3405,8 +3504,8 @@ msgid ""
 "My knowledge of geography dictates that it is in a secluded mountain range, "
 "but that is all."
 msgstr ""
-"Mi conocimiento de geografía dice que esta está en una montaña aislada, "
-"pero eso es todo."
+"Mi conocimiento de geografía dice que esta está en una montaña aislada, pero "
+"eso es todo."
 
 #: scripts/starting.lua:345
 msgid "Very well, $0. I am giving you an opportunity to investigate this quest."
@@ -3426,7 +3525,9 @@ msgstr "Estaré honrado sr. Dónde debo ir primero?"
 
 #: scripts/starting.lua:348
 msgid "Proceed directly to Reisha Mountain. Let's not keep our mystery host waiting."
-msgstr "Procede directamente a la Montaña Reisha. No tengamos a nuestro misterioso anfitrión esperando."
+msgstr ""
+"Procede directamente a la Montaña Reisha. No tengamos a nuestro misterioso "
+"anfitrión esperando."
 
 #: scripts/starting.lua:349
 msgid "I'm on my way."
@@ -3473,8 +3574,8 @@ msgid ""
 "Yes $0. A message from Military Intelligence came for you today. You are to "
 "go to Reisha Mountain."
 msgstr ""
-"Sí $0. Un mensaje de la Inteligencia Militar llegó hoy para tí. Debes ir a la "
-"Montaña Reisha."
+"Sí $0. Un mensaje de la Inteligencia Militar llegó hoy para tí. Debes ir a "
+"la Montaña Reisha."
 
 #: scripts/starting.lua:427
 msgid "Yes, sir. What are my orders?"
@@ -3493,8 +3594,8 @@ msgid ""
 "Once you find out what this is all about, report back to us if there is a "
 "threat of another invasion."
 msgstr ""
-"Una vez encuentres de qué se trata esto, reportanos inmediatamente si "
-"hay alguna amenaza de otra invasión."
+"Una vez encuentres de qué se trata esto, reportanos inmediatamente si hay "
+"alguna amenaza de otra invasión."
 
 #: scripts/starting.lua:435
 msgid "We will be safe instead of sorry, is that understood?"
@@ -3513,8 +3614,8 @@ msgid ""
 "Just as my luck starts running out, along comes an opportunity to get out of "
 "town, and possibly make some serious coin on the way."
 msgstr ""
-"Justo cuando mi suerte comienza a acabarse, llega una oportunidad de dejar el "
-"pueblo, y posiblemente ganar mucho dinero en el camino."
+"Justo cuando mi suerte comienza a acabarse, llega una oportunidad de dejar "
+"el pueblo, y posiblemente ganar mucho dinero en el camino."
 
 #: scripts/starting.lua:455
 msgid ""
@@ -3540,7 +3641,9 @@ msgstr "No! Seré la ladrona más rica en toda la CIUDAD! Ja ja ja!"
 msgid ""
 "This does not look good. I'm almost positive the handwriting on this note is "
 "the same as..."
-msgstr "Esto no se ve bien. Estoy casi seguro que la escritura en esta nota es la misma que..."
+msgstr ""
+"Esto no se ve bien. Estoy casi seguro que la escritura en esta nota es la "
+"misma que..."
 
 #: scripts/starting.lua:479
 msgid ""
@@ -4446,9 +4549,7 @@ msgstr "Los necesitarás contra el monstruo que bloquea la entrada a Randen."
 msgid ""
 "The monster blocking Randen is gone, but there are still monsters "
 "underground."
-msgstr ""
-"El monstruo que bloquea Randen se ha ido, pero aún hay monstruos "
-"bajo tierra."
+msgstr "El monstruo que bloquea Randen se ha ido, pero aún hay monstruos bajo tierra."
 
 #: scripts/town1.lua:108
 msgid "All the monsters are gone from the tunnel!"
@@ -4459,8 +4560,8 @@ msgid ""
 "I hid these works of art from Malkaron's forces. When they had come through "
 "here, they tried to destroy everything..."
 msgstr ""
-"Escondí estos trabajos de arte de las fuerzas de Malkaron. Cuando han llegado hasta "
-"aquí, han tratado de destruir todo..."
+"Escondí estos trabajos de arte de las fuerzas de Malkaron. Cuando han "
+"llegado hasta aquí, han tratado de destruir todo..."
 
 #: scripts/town1.lua:119
 msgid ""
@@ -4472,7 +4573,9 @@ msgstr ""
 
 #: scripts/town1.lua:122
 msgid "My, my. This is beautiful work. How rare! How exquisite! How affordable!"
-msgstr "No, no. Este es un trabajo hermoso. Cuan raro! Cuan exquisito! Cuan económico!"
+msgstr ""
+"No, no. Este es un trabajo hermoso. Cuan raro! Cuan exquisito! Cuan "
+"económico!"
 
 #: scripts/town1.lua:131
 msgid "The strong-scented oils wore off."
@@ -4495,8 +4598,8 @@ msgid ""
 "I brought you to town to get the Unadium Coin from my granddaughter, which "
 "will open the rune back at the Grotto."
 msgstr ""
-"Te traje al pueblo para obtener la Moneda Unadium de mi nieta, la cual abrirá la runa "
-"de nuevo en la Gruta."
+"Te traje al pueblo para obtener la Moneda Unadium de mi nieta, la cual "
+"abrirá la runa de nuevo en la Gruta."
 
 #: scripts/town1.lua:141
 msgid "That will transport you to the place where the Rod of Cancellation is."
@@ -4540,7 +4643,9 @@ msgstr "`Anochecer de Fuego'"
 
 #: scripts/town1.lua:272
 msgid "This is my art collection. Any piece of work starting at only 300000 GP!"
-msgstr "Esta es mi colección de arte. Cada pieza de trabajo comienza solo a 300000 PO!"
+msgstr ""
+"Esta es mi colección de arte. Cada pieza de trabajo comienza solo a 300000 "
+"PO!"
 
 #: scripts/town1.lua:275
 msgid "This armour has been highly polished. I can see myself in it!"
@@ -4570,7 +4675,9 @@ msgstr "Bienvenido al pueblo de Ekla."
 msgid ""
 "Yes! That makes eight. If I welcome enough newcomers to this town, I will "
 "get promoted."
-msgstr "Sí! Con él son ocho. Si recibo suficientes visitantes al pueblo, seré promovido."
+msgstr ""
+"Sí! Con él son ocho. Si recibo suficientes visitantes al pueblo, seré "
+"promovido."
 
 #: scripts/town1.lua:304
 msgid ""
@@ -4613,8 +4720,8 @@ msgid ""
 "You've done it! The portal is gone, and you have returned the Unadium coin "
 "and Rod of Cancellation."
 msgstr ""
-"Lo lograste! El portal se ha ido, y has regresado la moneda de Unadium y la vara "
-"de Cancelación."
+"Lo lograste! El portal se ha ido, y has regresado la moneda de Unadium y la "
+"vara de Cancelación."
 
 #: scripts/town1.lua:394
 msgid "Derig takes the Rod of Cancellation and Unadium Coin."
@@ -4641,8 +4748,8 @@ msgid ""
 "Forgive me, $0, but Tsorin writes that the Oracle's Statue has been stolen. "
 "This causes great reason for concern."
 msgstr ""
-"Perdoname, $0, pero Tsorin escribe que la Estatua del Oráculo ha sido robada. "
-"Esta es una grán razón para preocuparse."
+"Perdoname, $0, pero Tsorin escribe que la Estatua del Oráculo ha sido "
+"robada. Esta es una grán razón para preocuparse."
 
 #: scripts/town1.lua:408
 msgid "What's the big emergency?"
@@ -4653,8 +4760,8 @@ msgid ""
 "No time for that now. Please, take this note to Tsorin. I authorize you to "
 "pass into the goblin lands."
 msgstr ""
-"No hay tiempo para eso ahora. Por favor, lleva esta nota a Tsorin. Te autorizo "
-"a pasar a las tierras de los duendes."
+"No hay tiempo para eso ahora. Por favor, lleva esta nota a Tsorin. Te "
+"autorizo a pasar a las tierras de los duendes."
 
 #: scripts/town1.lua:410
 msgid "Derig continues to mumble worredly."
@@ -4737,8 +4844,8 @@ msgid ""
 "You got rid of the portal! Give my father the coin and rod back and I'll "
 "give you a SunStone."
 msgstr ""
-"Eliminaste el portal! Dale a mi abuelo la moneda y la vara de nuevo y yo "
-"te dare una PiedraSol"
+"Eliminaste el portal! Dale a mi abuelo la moneda y la vara de nuevo y yo te "
+"dare una PiedraSol"
 
 #: scripts/town1.lua:505
 msgid "Thanks for returning the Rod to my grandfather. Here is a SunStone for you."
@@ -5370,14 +5477,6 @@ msgstr ""
 
 #: scripts/town4.lua:245
 msgid "Take a nap?"
-msgstr ""
-
-#: scripts/town4.lua:246 scripts/town4.lua:288 src/setup.c:244 src/setup.c:266
-msgid "  yes"
-msgstr ""
-
-#: scripts/town4.lua:247 scripts/town4.lua:287 src/setup.c:244 src/setup.c:266
-msgid "  no"
 msgstr ""
 
 #: scripts/town4.lua:281
@@ -6565,6 +6664,53 @@ msgstr ""
 msgid "This spa is relaxing."
 msgstr ""
 
+#: maps/mapdraw2.glade:8
+msgid "Mapdraw"
+msgstr ""
+
+#: maps/mapdraw2.glade:41
+msgid "_Map"
+msgstr ""
+
+#: maps/mapdraw2.glade:105
+#, fuzzy
+msgid "_Edit"
+msgstr "Salir"
+
+#: maps/mapdraw2.glade:154
+msgid "_View"
+msgstr ""
+
+#: maps/mapdraw2.glade:162
+#, fuzzy
+msgid "_Help"
+msgstr "Ayuda KQ"
+
+#: maps/mapdraw2.glade:241
+msgid "Current Value:   "
+msgstr ""
+
+#: maps/mapdraw2.glade:504
+msgid "Mapdraw2"
+msgstr ""
+
+#: maps/mapdraw2.glade:507
+msgid "Homepage"
+msgstr ""
+
+#: maps/mapdraw2.glade:508
+msgid "translator-credits"
+msgstr ""
+
+#: maps/mapdraw2.glade:512
+#, fuzzy
+msgid "Entity"
+msgstr "Salir"
+
+#: maps/mapdraw2.glade:625
+msgid "<b>Entity</b>"
+msgstr ""
+
 #: src/combat.c:294
 #, c-format
 msgid "HP:%d (%d)"
@@ -6707,32 +6853,38 @@ msgstr "Has sido emboscado(a)!"
 msgid "You've surprised the enemy!"
 msgstr "Sorprendiste al enemigo!"
 
-#: src/credits.c:108
+#: src/credits.c:109
 msgid "Press F1 for help"
 msgstr "Presione F1 para Ayuda"
 
-#: src/credits.c:135
+#: src/credits.c:136
 msgid "*CHEAT MODE ON*"
 msgstr "*MODO TRAMPAS ENCENDIDO*"
 
-#: src/credits.c:139
+#: src/credits.c:136
+#, fuzzy
+msgid "*CHEAT MODE OFF*"
+msgstr "*MODO TRAMPAS ENCENDIDO*"
+
+#: src/credits.c:140
 msgid "*DEBUG MODE ON*"
 msgstr "*MODO DEPURACIÓN ENCENDIDO*"
 
-#: src/draw.c:1191
+#: src/draw.c:1263
 msgid "UTF-8 decode error"
 msgstr ""
 
-#: src/draw.c:1195
-msgid "UTF-8 3 and 4 bytes chars not implemented"
+#: src/draw.c:1318
+#, c-format
+msgid "Invalid glyph index: %d"
 msgstr ""
 
-#: src/draw.c:1260
+#: src/draw.c:1340
 #, c-format
 msgid "print_font: Bad font index, %d"
 msgstr ""
 
-#: src/draw.c:1295
+#: src/draw.c:1375
 #, c-format
 msgid "print_num: Bad font index, %d"
 msgstr ""
@@ -7426,7 +7578,9 @@ msgstr "Imposible cargar %s!"
 #: src/scrnshot.c:121
 #, c-format
 msgid "the bitmap [0x%p] is invalid (or unable to create sub bitmap)\n"
-msgstr "el mapa de bits [0x%p] es invalido(o inhabilitado para crear el sub mapa de bits)\n"
+msgstr ""
+"el mapa de bits [0x%p] es invalido(o inhabilitado para crear el sub mapa de "
+"bits)\n"
 
 #: src/scrnshot.c:126 src/scrnshot.c:127
 msgid "no more room for screenshot\n"
@@ -7672,8 +7826,8 @@ msgid ""
 "Changing the stretched view option could have serious ramifications. It is "
 "advised that you save your game before trying this."
 msgstr ""
-"Cambiar el modo de visualización expandido puede tener serias ramificaciones. "
-"Es mejor que guardes el juego antes de intentarlo."
+"Cambiar el modo de visualización expandido puede tener serias "
+"ramificaciones. Es mejor que guardes el juego antes de intentarlo."
 
 #: src/setup.c:263
 #, c-format
@@ -7768,7 +7922,9 @@ msgstr "Error. número de indicadores de tesoro > sizeof(treasure)"
 
 #: src/sgame.c:615
 msgid "Error. number of non-combat spell indicators > sizeof(save_spells)"
-msgstr "Error. número de indicadores de hechizos de anti-combate > sizeof(save_spells)"
+msgstr ""
+"Error. número de indicadores de hechizos de anti-combate > sizeof"
+"(save_spells)"
 
 #: src/sgame.c:629
 msgid "Error. number of inventory items > MAX_INV"
