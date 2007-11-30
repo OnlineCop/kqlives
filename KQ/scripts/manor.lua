@@ -241,10 +241,10 @@ end
 
 function LOC_explain_mission(en)
     local a
-    a = prompt(en, 3, 1, "Do you want the long version or the short version?",
-                         "  long",
-                         "  short",
-                         "  neither")
+    a = prompt(en, 3, 1, _"Do you want the long version or the short version?",
+                         _"  long",
+                         _"  short",
+                         _"  neither")
     if (a == 0) then
       -- long
       bubble(en, _"The world is in an upheaval right now. Malkaron is a military general who, quite suddenly, became unstoppable. His forces were practically invincible. The world was plagued with his destruction. Then just a few months ago, Malkaron withdrew and all this frenzy stopped. He and his armies seemed to have just vanished.")
@@ -282,9 +282,9 @@ end
 
 function LOC_explain_mission3(en)
   if (get_progress(P_MANOR) == 0) then
-    if (prompt(en, 2, 1, "Do you need me to explain it again?",
-                         "  yes",
-                         "  no") == 0) then
+    if (prompt(en, 2, 1, _"Do you need me to explain it again?",
+                         _"  yes",
+                         _"  no") == 0) then
       LOC_explain_mission(en)
       bubble(en, _"I hope this helps you have a better understanding of what's going on.")
     else
