@@ -257,7 +257,7 @@ function zone_handler(zn)
     thought(HERO1, _"`The Beach Front'")
 
   elseif (zn == 30) then
-    thought(HERO1, _"`The Eye of Sardine'", "Hmm, sounds strangely familiar.")
+    thought(HERO1, _"`The Eye of Sardine'", _"Hmm, sounds strangely familiar.")
 
   elseif (zn == 31) then
     thought(HERO1, _"`The Battle Is Over'")
@@ -434,10 +434,10 @@ function LOC_talk_jen (en)
     if (get_progress(P_UCOIN) == 0) then
       if (get_progress(P_TALKDERIG) == 0) then
         -- You have never gone to the grotto.
-        bubble(en, _"Jen:", "I'm Derig's granddaughter. Go find Derig in the grotto north of here.")
+        bubble(en, _"Jen:", _"I'm Derig's granddaughter. Go find Derig in the grotto north of here.")
       elseif (get_progress(P_TALKDERIG) == 1) then
         -- You entered the grotto, but did not fall in the pit.
-        bubble(en, _"Jen:", "I'm Derig's granddaughter. Go find Derig in the grotto north of here. You've been there once before.")
+        bubble(en, _"Jen:", _"I'm Derig's granddaughter. Go find Derig in the grotto north of here. You've been there once before.")
       elseif (get_progress(P_TALKDERIG) == 2) then
         -- You entered the grotto and fell in pit (you had NOT spoken to Jen first, though).  Someone helped you get out.
         bubble(en, _"You've already been to the grotto.")

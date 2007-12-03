@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: es\n"
 "Report-Msgid-Bugs-To: peterhull90@users.sourceforge.net\n"
-"POT-Creation-Date: 2007-11-30 18:28-0500\n"
-"PO-Revision-Date: 2007-11-30 18:30-0500\n"
+"POT-Creation-Date: 2007-12-03 11:47-0500\n"
+"PO-Revision-Date: 2007-12-03 12:07-0500\n"
 "Last-Translator: Edgar Alberto Molina Rojas <edgar@heuristicsi.com>\n"
 "Language-Team: Spanish <kqlives-main@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -132,6 +132,14 @@ msgstr "Debí haber sido un florista como mi padre."
 msgid "Now you see why I should've been a florist..."
 msgstr "Ahora ves porque debí haber sido un florista..."
 
+#: scripts/bridge.lua:162
+msgid "Ahhhhh!!!"
+msgstr "Ahhhhh!!!"
+
+#: scripts/bridge.lua:163
+msgid "Help!"
+msgstr "Ayuda!"
+
 #: scripts/bridge2.lua:30
 msgid "There have been no further threats. Thank you."
 msgstr "No han habido más amenazas. Gracias."
@@ -150,7 +158,7 @@ msgstr "No, en serio! No tengo espada!"
 
 #: scripts/bridge2.lua:41
 msgid "So what happened to your sword?"
-msgstr ""
+msgstr "Y Qué le pasó a tu espada?"
 
 #: scripts/bridge2.lua:42 scripts/estate.lua:43 scripts/temple1.lua:103
 #: scripts/temple2.lua:282
@@ -247,93 +255,103 @@ msgstr ""
 
 #: scripts/camp.lua:273 scripts/dville.lua:25
 msgid "You're not welcome here!"
-msgstr ""
+msgstr "No eres bienvenido!"
 
 #: scripts/camp.lua:277 scripts/camp.lua:345
 msgid "Intruders!"
-msgstr ""
+msgstr "Intrusos!"
 
 #: scripts/camp.lua:279 scripts/camp.lua:347
 msgid "Intruder!"
-msgstr ""
+msgstr "Intruso!"
 
 #: scripts/camp.lua:341
 msgid "You have to get through us to get to them."
-msgstr ""
+msgstr "Tienes que pasar a través de nosotros para llegar a él."
 
 #: scripts/camp.lua:376
 msgid "Hey, $0! Am I ever glad to see you! We're in a bit of a jam here."
-msgstr ""
+msgstr "Hey, $0! Me alegraré de verte! Estamos en un pequeño lío aquí."
 
 #: scripts/camp.lua:378
 msgid "I took a small job to help guard the mayor on his trip to Andra."
-msgstr ""
+msgstr "Tomé el pequeño trabajo de ayudar a cuidar al Alcalde en su viaje a Andra."
 
 #: scripts/camp.lua:380
 msgid ""
 "We were on the Brayden bridge when we were ambushed by these orcs. During "
 "the fight, one of them used a fire spell."
 msgstr ""
+"Estabamos en el puente de Brayden cuando fuimos emboscados por estos orcos. "
+"Durante la pelea, uno de ellos usó un hechizo de fuego."
 
 #: scripts/camp.lua:381
 msgid "The bridge was engulfed in flames and we were trapped."
-msgstr ""
+msgstr "El puente fue envuelto por llamas y fuimos atrapados."
 
 #: scripts/camp.lua:382
 msgid "But how did you end up here?"
-msgstr ""
+msgstr "Pero como terminaste aquí?"
 
 #: scripts/camp.lua:383
 msgid ""
 "Well, we had no choice but to go back the way we came, and we ran into the "
 "whole tribe."
 msgstr ""
+"Bien, no tuvimos más opción que regresar por donde vinimos y llegamos a toda "
+"la tribu."
 
 #: scripts/camp.lua:384
 msgid ""
 "We were horribly out-numbered and forced to surrender. They brought us here "
 "and then most of them left for somewhere else."
 msgstr ""
+"Estabamos terriblemente superados en numero y nos obligaron a rendirnos. Nos "
+"trajeron aquí y entonces la mayoría de ellos se fueron a otro lugar."
 
 #: scripts/camp.lua:385
 msgid "Hmm... this almost sounds as though the whole thing was planned."
-msgstr ""
+msgstr "Mmm... parece que todo fué planeado."
 
 #: scripts/camp.lua:386 scripts/dville.lua:265 scripts/starting.lua:477
 msgid "Hmm..."
-msgstr ""
+msgstr "Mmm..."
 
 #: scripts/camp.lua:388
 msgid "Excuse me, Mr. Mayor."
-msgstr ""
+msgstr "Discupleme, Sr. Alcalde."
 
 #: scripts/camp.lua:389 scripts/town6.lua:294
 msgid "Yes?"
-msgstr ""
+msgstr "Si?"
 
 #: scripts/camp.lua:391
 msgid ""
 "Do you think that this could have possibly been a planned attack with the "
 "purpose of trying to kidnap you?"
 msgstr ""
+"Cree usted que este puede haber sido un ataque planeado con el proposito de "
+"tratar de secuestrarlo?"
 
 #: scripts/camp.lua:392
 msgid ""
 "I don't see why they would want to kidnap me, but uh... could we possibly "
 "get out of here now?"
 msgstr ""
+"No veo por qué ellos querrían secuestrarme, pero oh... será que podemos "
+"salir de aquí ahora?"
 
 #: scripts/camp.lua:395
 msgid "Yes sir!"
-msgstr ""
+msgstr "Si señor!"
 
 #: scripts/camp.lua:397
 msgid "I'll go back to Randen with the mayor. Why don't you meet me there after?"
-msgstr ""
+msgstr "Regresaré a Randen con el Alcalde. Por qué no me encuentras allí después?"
 
 #: scripts/camp.lua:399
 msgid "Sure."
-msgstr ""
+msgstr "Seguro."
 
 #: scripts/cave1.lua:102
 msgid "These stairs are blocked!"
@@ -2366,15 +2384,15 @@ msgstr "$0 inserta la llave oxidada en el bloqueo."
 
 #: scripts/grotto2.lua:48
 msgid "Something's supposed to happen here... it hasn't been programmed yet."
-msgstr ""
+msgstr "Se supone que algo pasa aquí... todavia no ha sido programado."
 
 #: scripts/grotto2.lua:50
 msgid "This door is stuck tight."
-msgstr ""
+msgstr "Esta puerta esta muy atascada."
 
 #: scripts/grotto2.lua:58
 msgid "Rod of Cancellation procured"
-msgstr ""
+msgstr "obtienes Vara de Cancelación"
 
 #: scripts/guild.lua:122
 msgid "Well I'll be..."
@@ -3649,7 +3667,7 @@ msgstr ""
 msgid ""
 "I have no choice but to check it out. I'd must be getting on my way "
 "immediately!"
-msgstr "No más tengo alternativa que investigar. Quizá debería partir inmediatamente!"
+msgstr "No tengo más alternativa que investigar. Quizá debería partir inmediatamente!"
 
 #: scripts/sunarin.lua:14
 msgid "I am the king of thieves!"
@@ -4629,6 +4647,10 @@ msgstr "`El Frente de la Playa'"
 msgid "`The Eye of Sardine'"
 msgstr "`El Ojo de Sardina'"
 
+#: scripts/town1.lua:260
+msgid "Hmm, sounds strangely familiar."
+msgstr "Mmm, esto me suena extrañamente familiar."
+
 #: scripts/town1.lua:263
 msgid "`The Battle Is Over'"
 msgstr "`La Batalla se Terminó'"
@@ -4775,9 +4797,21 @@ msgstr "Chico, esto es tan repentinamente extraño."
 msgid "Please hurry. Take this note to Tsorin immediately!"
 msgstr "Por favor apurate. Lleva esta nota a Tsorin inmediatamente!"
 
+#: scripts/town1.lua:437
+msgid "I'm Derig's granddaughter. Go find Derig in the grotto north of here."
+msgstr "Soy la nieta de Derig. Ve y encuentralo en la gruta al norte de aquí."
+
 #: scripts/town1.lua:437 scripts/town1.lua:440 scripts/town1.lua:512
 msgid "Jen:"
 msgstr "Jen:"
+
+#: scripts/town1.lua:440
+msgid ""
+"I'm Derig's granddaughter. Go find Derig in the grotto north of here. You've "
+"been there once before."
+msgstr ""
+"Soy la nieta de Derig. Ve y encuentralo en la gruta al norte de aquí. Ya has "
+"estado allí antes."
 
 #: scripts/town1.lua:443
 msgid "You've already been to the grotto."
@@ -4853,61 +4887,69 @@ msgstr "Gracias por devolver la Vara a mi abuel. Aqui hay una PiedraSol para ti.
 
 #: scripts/town1.lua:514
 msgid "You should finish Derig's assignment before I give you another."
-msgstr ""
+msgstr "Deberías terminar la tarea de Derig antes de asignarte otra."
 
 #: scripts/town2.lua:82
 msgid "Back again, are you?"
-msgstr ""
+msgstr "Otra vez eres tu?"
 
 #: scripts/town2.lua:84
 msgid ""
 "You must be an adventurer. There has been an unusual number of you people "
 "around lately."
 msgstr ""
+"Debes ser un aventurero. Ha habido una cantidad inusual de ustedes "
+"últimamente."
 
 #: scripts/town2.lua:87
 msgid "Oh, and thank you for finding the mayor."
-msgstr ""
+msgstr "Oh, y gracias por encontrar el alcalde."
 
 #: scripts/town2.lua:92
 msgid "My husband is late again."
-msgstr ""
+msgstr "My esposo está tarde de nuevo."
 
 #: scripts/town2.lua:94
 msgid "I'm getting so worried..."
-msgstr ""
+msgstr "Me estoy preocupando mucho..."
 
 #: scripts/town2.lua:95
 msgid "You don't think Malkaron has something to do with it?"
-msgstr ""
+msgstr "No crees que Malkaron tiene algo que ver con eso?"
 
 #: scripts/town2.lua:97
 msgid "Where is that man?"
-msgstr ""
+msgstr "Dónde esta ese hombre?"
 
 #: scripts/town2.lua:99
 msgid "Oh... that bad man, making me worry like this, I'm gonna kill him!"
-msgstr ""
+msgstr "Oh... ese mal hombre, me hace preocuparme así, Lo voy a matar!"
 
 #: scripts/town2.lua:105
 msgid "Thank you so much for restoring the trade route to the citizens of Randen!"
 msgstr ""
+"Muchas gracias por restaurar la ruta de intercambio con los ciudadanos de "
+"Randen!"
 
 #: scripts/town2.lua:107
 msgid "Welcome to Randen."
-msgstr ""
+msgstr "Bienvenido a Randen."
 
 #: scripts/town2.lua:110
 msgid ""
 "This is the town of Randen. We're mostly a coastal trade town, but with the "
 "bridge out, trade is extremely slow."
 msgstr ""
+"Este es el pueblo de Randen. Somos principalmente un pueblo costero "
+"mercante, pero con el puente dañado, es extremadamente lento."
 
 #: scripts/town2.lua:111
 msgid ""
 "Do you think it has something to do with Malkaron? We've heard a lot of "
 "rumors about him as of late..."
 msgstr ""
+"Crees que tiene algo que ver con Malkaron? Hemos escuchado muchos rumores "
+"acerca de el ultimamente..."
 
 #: scripts/town2.lua:116
 msgid ""
@@ -4915,282 +4957,314 @@ msgid ""
 "forgetful when he's like this. Sometimes he doesn't even lock up after "
 "himself on his way to work."
 msgstr ""
+"Mi esposo esta tan emocionado porque todos retornen seguros. El tiende a ser "
+"olvidadizo cuando esta así. A veces ni se cuida cuando regresa del trabajo."
 
 #: scripts/town2.lua:120
 msgid "Good day."
-msgstr ""
+msgstr "Buen día."
 
 #: scripts/town2.lua:124
 msgid "I'm just preparing some vegetables."
-msgstr ""
+msgstr "Solo estoy preparando algunos vegetales."
 
 #: scripts/town2.lua:125
 msgid "That's a strange knife you've got there."
-msgstr ""
+msgstr "Ese es un extraño cuchillo el que llevas."
 
 #: scripts/town2.lua:126
 msgid "What? Oh, this. Yes, it's a Phoenix Blade."
-msgstr ""
+msgstr "Qué? Ah, esto. Si, es una Hoja Fénix."
 
 #: scripts/town2.lua:127
 msgid "I found it lying about under a pile of leaves in the forest."
-msgstr ""
+msgstr "La encontré por ahí bajo una pila de hojas en el bosque."
 
 #: scripts/town2.lua:128
 msgid "Isn't there supposed to be someone out looking for that?"
-msgstr ""
+msgstr "No debería haber alguien buscandola?"
 
 #: scripts/town2.lua:129
 msgid "I heard that, too, but it's been ages and no-one has turned up."
-msgstr ""
+msgstr "Oí eso también, pero han pasado edades y nadie preguntado."
 
 #: scripts/town2.lua:130
 msgid "I would give it back, but I need it for slicing carrots!"
-msgstr ""
+msgstr "La devolvería, pero la necesito para cortar zanahorias!"
 
 #: scripts/town2.lua:131
 msgid "Your secret's safe with me."
-msgstr ""
+msgstr "Tu secreto está seguro conmigo."
 
 #: scripts/town2.lua:134
 msgid "Oh, goodness, I didn't make enough for company... sorry."
-msgstr ""
+msgstr "Oh, diablos, no hice suficiente para compañia... lo siento."
 
 #: scripts/town2.lua:141
 msgid "Wow! Mom says you're the ones who beat up the bad guys! You're so cool!"
 msgstr ""
+"Ohh! Mi mamá dice que ustedes son los que derrotan a los chicos malos! "
+"Ustedes son muy buenos!"
 
 #: scripts/town2.lua:143
 msgid "Hi!"
-msgstr ""
+msgstr "Hola!"
 
 #: scripts/town2.lua:146
 msgid "I'm hungry, I hope mom is done making lunch soon."
-msgstr ""
+msgstr "Tengo mucha hambre, espero que mamá termine de preparar la comida pronto."
 
 #: scripts/town2.lua:152
 msgid "Business is good."
-msgstr ""
+msgstr "Los negocios son buenos."
 
 #: scripts/town2.lua:154
 msgid "Now that the bridge is repaired I'm back in business!"
-msgstr ""
+msgstr "Ahora que el puente está reparado estoy de nuevo en el negocio!"
 
 #: scripts/town2.lua:158
 msgid ""
 "I hear you had something to do with speeding along the bridge's "
 "construction. I'd like you to have this."
 msgstr ""
+"Escuché que tuviste algo que ver con acelerar la construcción del puente. "
+"Quiero que tengas esto."
 
 #: scripts/town2.lua:163
 msgid "You should look around there to see if the workers left anything behind."
-msgstr ""
+msgstr "Deberias revisar por ahí para ver si los trabajadores dejaron algo."
 
 #: scripts/town2.lua:167
 msgid "I found this Olginar Seed on the bridge. You can have it."
-msgstr ""
+msgstr "Encontré esta Semilla de Olginar en el puente. Puedes tenerla."
 
 #: scripts/town2.lua:171
 msgid "Oh, and I found this curious artifact there as well..."
-msgstr ""
+msgstr "Ah, y allá también encontre este curioso artefacto..."
 
 #: scripts/town2.lua:176
 msgid "If you haven't already noticed, the bridge across Brayden river is gone."
-msgstr ""
+msgstr "Si ya no lo has notado, el puente del rio Brayden se ha ido."
 
 #: scripts/town2.lua:177
 msgid ""
 "It appears that some travelers were stopped by Malkaron's brigands on the "
 "bridge, resulting in a volley of magic that left it in cinders."
 msgstr ""
+"Parece que algunos viajeros fueron detenidos por las brigadas de Malkaron en "
+"el puente, lo que produjo una batalla mágica que lo dejó en cenizas."
 
 #: scripts/town2.lua:180
 msgid ""
 "A new bridge is supposed to be built soon. This town can't survive for long "
 "without our major trade route."
 msgstr ""
+"Se supone que un nuevo puente será construido pronto. Este pueblo no puede "
+"sobrevivir mucho sin nuestra ruta de intercambio principal."
 
 #: scripts/town2.lua:186
 msgid "Our mayor is still missing. We're not sure what to do at this point."
 msgstr ""
+"Nuestro Alcalde todavia está perdido. No estamos seguros de qué hacer en "
+"este momento."
 
 #: scripts/town2.lua:188
 msgid "$0! The mayor is back now, thank you! He wants to see you right away!"
-msgstr ""
+msgstr "$0! El Alcalde regresó, Gracias! El quiere verte inmediatamente!"
 
 #: scripts/town2.lua:190
 msgid "Thank you again for everything!"
-msgstr ""
+msgstr "Gracias por todo de nuevo!"
 
 #: scripts/town2.lua:195
 msgid ""
 "The mayor has yet to return from Andra. A few of our men are out looking for "
 "him as we speak."
 msgstr ""
+"El Alcalde todavia tiene que volver de Andra. Unos cuantos de nuestros "
+"hombres lo están buscando mientras hablamos."
 
 #: scripts/town2.lua:197
 msgid ""
 "The mayor was going to Andra to talk to the Council there. I think that he "
 "should have been back by now."
 msgstr ""
+"El Alcalde iba hacia Andra para hablar con el concejo. Creo que ya debería "
+"haber regresado."
 
 #: scripts/town2.lua:198
 msgid ""
 "We may have to go and look for him soon. We need to make sure that he is "
 "safe."
 msgstr ""
+"Quizá tengamos que ir a buscarlo pronto. Tenemos que asegurarnos que esté "
+"bien."
 
 #: scripts/town2.lua:201
 msgid ""
 "The mayor is back now, thanks to you. However, the mayor is not seeing any "
 "visitors for a while."
 msgstr ""
+"El Alcalde regresó, gracias a ti. Sin embargo, el Alcalde no desea ninguna "
+"visita por un tiempo."
 
 #: scripts/town2.lua:202
 msgid "He is still recovering from his ordeal."
-msgstr ""
+msgstr "El todavia se esta recuperando de su dura experiencia."
 
 #: scripts/town2.lua:204
 msgid "I have a scripting error."
-msgstr ""
+msgstr "Tengo un error de scripting."
 
 #: scripts/town2.lua:210
 msgid "Are you enjoying your stay?"
-msgstr ""
+msgstr "Estás disfrutando tu estancia?"
 
 #: scripts/town2.lua:213
 msgid ""
 "The mayor left for Andra with an adventurer that he had just hired and his "
 "usual contingent of guards."
 msgstr ""
+"El Alcalde se fué para Andra con un aventurero que él contrató y con su "
+"contingente habitual de guardias."
 
 #: scripts/town2.lua:214
 msgid "I wonder if they avoided the trouble at the bridge?"
-msgstr ""
+msgstr "Me pregunto si ellos evitaron el problema en el puente?"
 
 #: scripts/town2.lua:216
 msgid "Thank you!"
-msgstr ""
+msgstr "Gracias!"
 
 #: scripts/town2.lua:221
 msgid ""
 "I wonder why those adventurers were stopped at the bridge? I'm not sure I "
 "want to try crossing it just yet."
 msgstr ""
+"Me pregunto por qué detuvieron esos aventureros en el puente? No estoy "
+"seguro de querer cruzarlo por ahora."
 
 #: scripts/town2.lua:224
 msgid "How long does it take to build a bridge?"
-msgstr ""
+msgstr "Cuando tardará construir el puente?"
 
 #: scripts/town2.lua:231
 msgid "Hey, you can't be back here! What are you trying to do, steal from me?"
-msgstr ""
+msgstr "Hey, tu no puedes regresar! Qué tratas de hacer, Robarme?"
 
 #: scripts/town2.lua:235
 msgid "Thanks for rescuing me back there! Here, have this:"
-msgstr ""
+msgstr "Gracias por rescatarme! Toma esto:"
 
 #: scripts/town2.lua:237
 msgid "You acquired 1000 gold pieces!"
-msgstr ""
+msgstr "Obtienes 1000 piezas de oro!"
 
 #: scripts/town2.lua:240
 msgid "Those forces of Malkaron's sure are tough!"
-msgstr ""
+msgstr "Esas fuerzas de Malkaron segur son fuertes!"
 
 #: scripts/town2.lua:249
 msgid "How did you get in here past my locked door?"
-msgstr ""
+msgstr "Cómo llegaste aquí a través de mi puerta cerrada?"
 
 #: scripts/town2.lua:251
 msgid "Oh, $0, thank you for rescuing me!"
-msgstr ""
+msgstr "Oh, $0, gracias por rescatarme!"
 
 #: scripts/town2.lua:254
 msgid "I had a spa installed in my house! What do you think?"
-msgstr ""
+msgstr "Tenía un spa instalado en mi casa! Qué piensas?"
 
 #: scripts/town2.lua:465
 msgid "Hmmm... books about herbs."
-msgstr ""
+msgstr "Mmmm... libros sobre hierbas."
 
 #: scripts/town2.lua:475 scripts/town3.lua:196
 msgid "Inns always have boring books."
-msgstr ""
+msgstr "Las Posadas siempre tienen libros aburridos."
 
 #: scripts/town2.lua:503
 msgid "Thank you for rescuing me!"
-msgstr ""
+msgstr "Gracias por rescatarme!"
 
 #: scripts/town2.lua:553
 msgid "Hello! You haven't ventured very far!"
-msgstr ""
+msgstr "Hola! No te has aventurado tan lejos!"
 
 #: scripts/town2.lua:554
 msgid ""
 "I have been maintaining a constant prayer vigil at this point. It should "
 "discourage the monsters from emerging into the town."
 msgstr ""
+"He estado en una vigilia oratoria constate aquí. Esto deberia desanimar los "
+"monstruos a emerger en el pueblo."
 
 #: scripts/town2.lua:555
 msgid "And what if they DO come out?"
-msgstr ""
+msgstr "Y qué si SALEN?"
 
 #: scripts/town2.lua:556
 msgid "My training also included swordsmanship."
-msgstr ""
+msgstr "Mi entrenamiento también incluye esgrima."
 
 #: scripts/town2.lua:559
 msgid "I hope I am doing the right thing here."
-msgstr ""
+msgstr "Espero estar haciendo lo correcto aquí."
 
 #: scripts/town2.lua:565
 msgid "Be careful! That tunnel is infested with monsters."
-msgstr ""
+msgstr "Ten cuidado! Ese tunel está repleto de monstruos."
 
 #: scripts/town2.lua:566
 msgid ""
 "Fortunately, I have been successful in closing the Portal. No more monsters "
 "will trouble us now."
 msgstr ""
+"Afortunadamente, Pude cerrar el Portal. No más monstruos que nos preocupen "
+"ahora."
 
 #: scripts/town2.lua:569
 msgid ""
 "You can rest easy now. I have closed the Portal that let the monsters "
 "through."
-msgstr ""
+msgstr "Puedes descansar ahora. He cerrado el Portal que deja pasar los monstruos."
 
 #: scripts/town2.lua:571
 msgid "Great! Can I offer my services?"
-msgstr ""
+msgstr "Grandioso! Puedo ofrecerte mis servicios?"
 
 #: scripts/town2.lua:612
 msgid "$0, thank you for helping us escape from the orc's camp!"
-msgstr ""
+msgstr "$0, gracias por ayudarnos a escapar del campo de los orcos!"
 
 #: scripts/town2.lua:613
 msgid "Don't mention it. How did you get caught up in that mess anyway?"
-msgstr ""
+msgstr "Ni lo digas. De todas formas cómo se metieron en ese lío?"
 
 #: scripts/town2.lua:614
 msgid ""
 "Well, like I mentioned earlier, the mayor needed a bodyguard while he "
 "delivered an urgent message to some guy named Tsorin in Andra."
 msgstr ""
+"Bien, como dije antes, el Alcalde necesitaba un guardaespaldas mientras "
+"llevaba un mensaje urgente a algún tipo llamado Tsorin en Andra."
 
 #: scripts/town2.lua:615
 msgid ""
 "That's when we were caught by the orcs. They Mayor ate the note when we were "
 "under attack. I have no idea what it was about."
 msgstr ""
+"Ahí es cuando fuimos atrapados por los orcos. El Alcalde se comió la nota "
+"cuando estabamos bajo ataque. No tengo idea de que se trataba."
 
 #: scripts/town2.lua:616
 msgid "Hmm, still sounds a bit fishy."
-msgstr ""
+msgstr "Mmm, aún suena un poco extraño."
 
 #: scripts/town2.lua:617
 msgid "I'd gladly join you to find out what this is all about!"
-msgstr ""
+msgstr "Felizmente me uniría a ti para descubrir de que se trata!"
 
 #: scripts/town3.lua:35
 msgid "This is the town of Andra."
