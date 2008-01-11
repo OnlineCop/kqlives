@@ -579,6 +579,7 @@ int load_game_92 (PACKFILE * sdat)
       return 0;
    }
    pack_fread (curmap, a, sdat);
+   curmap[a] = 0; // pack_fread does not append a NULL to the end of a string.
 
    g_ent[0].tilex = pack_igetw (sdat);
    g_ent[0].tiley = pack_igetw (sdat);
