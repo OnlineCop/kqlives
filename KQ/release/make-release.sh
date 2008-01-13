@@ -55,6 +55,7 @@ gzip -9 kq-src-$VERSION.tar
 build_linux_binary ()
 {
 cd kq-src-$VERSION
+make clean
 ./configure CC="apgcc"
 cd scripts
 make
@@ -86,8 +87,34 @@ gzip -9 kq-linuxbin-$VERSION.tar
 }
 
 # Build and package linux binaries (map editor et al)
+build_linux_mapeditor ()
+{
+cd kq-src-$VERSION
+make clean
+./configure
+make mapdraw
+make mapdraw2
+make mapdump
+make mapdiff
 
+cd ..
+mkdir kq-mapeditor-$VERSION
+cd kq-mapeditor-$VERSION
 
+cp ../kq-src-$VERSION/mapdraw .
+cp ../kq-src-$VERSION/mapdraw2 .
+cp ../kq-src-$VERSION/mapdump .
+cp ../kq-src-$VERSION/mapdiff .
+cp ../kq-src-$VERSION/maps/*.pcx .
+cp ../kq-src-$VERSION/maps/mapdraw2.glade .
+
+cp ../kq-src-$VERSION/COPYING .
+# should copy other files, such as README and install.sh
+
+cd ..
+tar -cf kq-mapeditor-$VERSION.tar kq-mapeditor-$VERSION
+gzip -9 kq-mapeditor-$VERSION.tar
+}
 
 
 # Build and package windows binaries (KQ game)
@@ -155,6 +182,7 @@ rm -rf kq-*-$VERSION
 
 LIN=0
 WIN=0
+LIN_MAP=0
 
 while [ -n "$1" ]
 do
@@ -162,6 +190,8 @@ do
 		LIN=1
 	elif [ "$1" == "win" ]; then
 		WIN=1
+	elif [ "$1" == "lin-map" ]; then
+		LIN_MAP=1
 	fi
 	shift
 done
@@ -173,4 +203,8 @@ fi
 
 if [ $WIN -eq 1 ]; then
 	build_win32_binary
+fi
+
+if [ $LIN_MAP -eq 1 ]; then
+	build_linux_mapeditor
 fi
