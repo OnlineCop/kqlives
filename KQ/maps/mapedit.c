@@ -4521,30 +4521,10 @@ int startup (void)
 void update_tileset (void)
 {
    int tmapx, tmapy, i;
-   int tileset_start;
 
-   /* This will try to use the selected tileset; however, if there's a coding
-    * problem, or the file is missing, this will try the NEXT available one.
-    * If it loops through all the available tilesets and none are available,
-    * stop after an entire loop and exit the program with an error.
+   /* This will try to use the selected tileset; if it can not be found
+    * then the program will exit with an error.
     */
-   tileset_start = gmap.tileset;
-
-   while (!exists (icon_files[gmap.tileset])) {
-      error_load (icon_files[gmap.tileset]);
-      gmap.tileset++;
-      if (gmap.tileset >= NUM_TILESETS)
-         gmap.tileset = 0;
-
-      /* This is just to ensure that we don't try looping forever */
-      if (tileset_start == gmap.tileset) {
-         sprintf (strbuf, "None of the tilesets could be located!");
-         allegro_message (strbuf);
-         cleanup ();
-         exit (EXIT_FAILURE);
-      }
-   }
-
    set_pcx (&pcx_buffer, icon_files[gmap.tileset], pal, 1);
    max_sets = (pcx_buffer->h / 16);
 

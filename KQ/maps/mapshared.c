@@ -277,20 +277,25 @@ void load_map (const char *path)
 void set_pcx (BITMAP ** pcx_buf, const char *pcx_file, PALETTE pcx_pal,
               const int critical)
 {
-   if (exists (pcx_file))
-      *pcx_buf = load_pcx (pcx_file, pcx_pal);
-   else {
-      sprintf (strbuf, "Could not find file: %s.\n%s\n%s\n", pcx_file,
-         "To run mapdraw, your current directory must contain certain pcx files.",
-         "It must also contain the map file you want to edit.");
+	char filename[PATH_MAX];
+	sprintf(filename, "%s/data/%s", KQ_DATA, pcx_file);
 
-      allegro_message (strbuf);
-      if (critical) {
-         /* This means that this file is critical to the program, so we need to
-          * exit the program completely, as this cannot be recovered from.
-          */
-         cleanup ();
-         exit (EXIT_FAILURE);
+   if (exists (filename))
+      *pcx_buf = load_pcx (filename, pcx_pal);
+   else {
+      if (exists (pcx_file))
+      	*pcx_buf = load_pcx (pcx_file, pcx_pal);
+      else {
+         sprintf (strbuf, "Could not find file: %s.\n", pcx_file);
+
+         allegro_message (strbuf);
+         if (critical) {
+            /* This means that this file is critical to the program, so we need to
+             * exit the program completely, as this cannot be recovered from.
+             */
+            cleanup ();
+            exit (EXIT_FAILURE);
+         }
       }
    }
 }                               /* set_pcx () */

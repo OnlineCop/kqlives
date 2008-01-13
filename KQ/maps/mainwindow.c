@@ -24,6 +24,7 @@
 #include "mapedit2.h"
 
 #define GLADE_FILENAME "mapdraw2.glade"
+static char glade_file_path[PATH_MAX];
 
 static GtkWidget *map_drawing_area;
 static GtkWidget *tile_drawing_area;
@@ -62,7 +63,7 @@ static void on_mainwindow_destroy (GtkMenuItem * item, gpointer userdata)
 
 static void on_info_activate (GtkMenuItem * item, GtkWindow * parent_window)
 {
-   GladeXML *xml = glade_xml_new (GLADE_FILENAME, "aboutdialog", NULL);
+   GladeXML *xml = glade_xml_new (glade_file_path, "aboutdialog", NULL);
    GtkWidget *dialog = glade_xml_get_widget (xml, "aboutdialog");
    gtk_dialog_run (GTK_DIALOG (dialog));
    gtk_widget_destroy (dialog);
@@ -409,7 +410,7 @@ static void on_layerselection_changed (GtkTreeSelection * treeselection, gpointe
 static void init_entitydialog (void)
 {
    // fill the entitydialog
-   GladeXML *xml = glade_xml_new (GLADE_FILENAME, "entitydialog", NULL);
+   GladeXML *xml = glade_xml_new (glade_file_path, "entitydialog", NULL);
 #define SIGNAL_CONNECT(s,p) glade_xml_signal_connect_data (xml, #s, G_CALLBACK(s), p)
    SIGNAL_CONNECT (on_deletebutton_clicked, NULL);
    SIGNAL_CONNECT (on_entitydialog_delete_event, NULL);
@@ -438,7 +439,13 @@ static void init_entitydialog (void)
 void mainwindow (int *argc, char **argv[])
 {
    gtk_init (argc, argv);
-   GladeXML *xml = glade_xml_new (GLADE_FILENAME, "mainwindow", NULL);
+
+   /* Set up the directory to find mapdraw2.glade */
+   sprintf(glade_file_path, "%s/data/%s", KQ_DATA, GLADE_FILENAME);
+	if (!exists(glade_file_path))
+  		strcpy(glade_file_path, GLADE_FILENAME); /* maybe it is in current directory */
+
+   GladeXML *xml = glade_xml_new (glade_file_path, "mainwindow", NULL);
 
    /* get a widget (useful if you want to change something) */
    window = GTK_WINDOW (glade_xml_get_widget (xml, "mainwindow"));
