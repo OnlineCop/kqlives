@@ -41,6 +41,7 @@
  */
 const char *kqres (int dir, const char *file)
 {
+	FILE * fp;
    static char ans[PATH_MAX];
    switch (dir) {
    case DATA_DIR:
@@ -59,7 +60,12 @@ const char *kqres (int dir, const char *file)
       sprintf (ans, "./%s", file);
       break;
    case SCRIPT_DIR:
-      sprintf (ans, "scripts/%s", file);
+      sprintf (ans, "scripts/%s.lob", file);
+      fp = fopen(ans, "r");
+      if (fp == NULL)
+         sprintf (ans, "scripts/%s.lua", file);
+      else
+      	fclose(ans);
       break;
    default:
       return NULL;

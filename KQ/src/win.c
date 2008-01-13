@@ -42,6 +42,72 @@ typedef HRESULT (WINAPI * SHGETFOLDERPATH) (HWND, int, HANDLE, DWORD, LPTSTR);
 #  define SHGFP_TYPE_CURRENT 0
 
 
+/*! \brief Returns the full path for this file
+ *
+ * This function first checks if the file can be found in the user's
+ * directory. If it can not, it checks the relavent game directory
+ * (data, music, lib, etc)
+ *
+ * \param str1 The first part of the string, assuming the file can't be
+ * found in user_dir (eg. "C:\Program Files\KQ\")
+ * \param str2 The second part of the string (eg. "scripts")
+ * \param file The filename
+ * \returns the combined path
+ */
+const char * get_resource_file_path (const char * str1, const char * str2, const char * file)
+{
+   static char ans[PATH_MAX];
+   FILE * fp;
+
+   sprintf (ans, "%s/%s/%s", user_dir, str2, file);
+   fp = fopen(ans, "r");
+   if (fp == NULL)
+      sprintf (ans, "%s/%s/%s", str1, str2, file);
+   else
+      fclose(fp);
+   return ans;
+}
+
+
+/*! \brief Returns the full path for this lua file
+ *
+ * This function first checks if the lua file can be found in the user's
+ * directory. If it can not, it checks the relavent game directory
+ * (data, music, lib, etc). For each directory, it first checks for a lob
+ * file, and then it checks for a lua file. This function is similar to
+ * get_resource_file_path, but takes special considerations for lua files.
+ * Whereas get_resource_file_path takes the full filename (eg. "main.map"),
+ * this function takes the filename without extension (eg "main").
+ *
+ * \param file The filename
+ * \returns the combined path
+ */
+const char * get_lua_file_path (const char * file)
+{
+	static char ans[PATH_MAX];
+	FILE * fp;
+	
+	sprintf(ans, "%s/scripts/%s.lob", user_dir, file);
+	fp = fopen(ans, "r");
+	if (fp == NULL) {
+		sprintf(ans, "%s/scripts/%s.lua", user_dir, file);
+		fp = fopen(ans, "r");
+		if (fp == NULL) {
+			sprintf(ans, "%s/scripts/%s.lob", lib_dir, file);
+			fp = fopen(ans, "r");
+			if (fp == NULL) {
+				sprintf(ans, "%s/scripts/%s.lua", lib_dir, file);
+				fp = fopen(ans, "r");
+				if (fp == NULL)
+					return NULL;
+			}
+		}
+	}
+	
+	fclose(fp);
+	return ans;
+}
+
 
 /*! \brief Return the name of 'significant' directories.
  *
@@ -88,23 +154,24 @@ const char *kqres (int dir, const char *file)
 
    switch (dir) {
    case DATA_DIR:
-      sprintf (ans, "%s/data/%s", game_dir, file);
+      return get_resource_file_path(game_dir, "data", file);
       break;
    case MUSIC_DIR:
-      sprintf (ans, "%s/music/%s", game_dir, file);
+  	   return get_resource_file_path(game_dir, "music", file);
       break;
    case MAP_DIR:
-      sprintf (ans, "%s/maps/%s", game_dir, file);
+  	   return get_resource_file_path(game_dir, "maps", file);
       break;
    case SAVE_DIR:
    case SETTINGS_DIR:
-      sprintf (ans, "%s/%s", user_dir, file);
+  	   return get_resource_file_path(user_dir, "", file);
       break;
    case SCRIPT_DIR:
-      sprintf (ans, "%s/scripts/%s", game_dir, file);
+  	   return get_lua_file_path(file);
       break;
    default:
       return NULL;
    }
+
    return fix_filename_slashes (ans);
 }

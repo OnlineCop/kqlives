@@ -4052,15 +4052,12 @@ static int lua_dofile (lua_State * L, const char * fname)
    PACKFILE *f;
    char filename[PATH_MAX];
 
-   sprintf(filename, "%s.lob", fname);
+   sprintf(filename, "%s", fname);
 
    if ((f = pack_fopen (filename, F_READ)) == NULL) {
-      sprintf(filename, "%s.lua", fname);
-      if ((f = pack_fopen (filename, F_READ)) == NULL) {
-         sprintf (strbuf, _("Could not open script %s.lob!"), fname);
-         allegro_message (strbuf);
-         return 1;
-      }
+      sprintf (strbuf, _("Could not open script %s!"), filename);
+      allegro_message (strbuf);
+      return 1;
    }
 
    if ((lua_load (L, (lua_Chunkreader) filereader, f, filename)) != 0) {
