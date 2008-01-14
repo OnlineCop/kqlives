@@ -93,10 +93,10 @@ const char * get_lua_file_path (const char * file)
 		sprintf(ans, "%s/scripts/%s.lua", user_dir, file);
 		fp = fopen(ans, "r");
 		if (fp == NULL) {
-			sprintf(ans, "%s/scripts/%s.lob", lib_dir, file);
+			sprintf(ans, "%s/scripts/%s.lob", game_dir, file);
 			fp = fopen(ans, "r");
 			if (fp == NULL) {
-				sprintf(ans, "%s/scripts/%s.lua", lib_dir, file);
+				sprintf(ans, "%s/scripts/%s.lua", game_dir, file);
 				fp = fopen(ans, "r");
 				if (fp == NULL)
 					return NULL;
