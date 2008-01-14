@@ -56,14 +56,10 @@ static char lib_dir[PATH_MAX];
 const char * get_resource_file_path (const char * str1, const char * str2, const char * file)
 {
    static char ans[PATH_MAX];
-   FILE * fp;
 
    sprintf (ans, "%s/%s/%s", user_dir, str2, file);
-   fp = fopen(ans, "r");
-   if (fp == NULL)
+	if (!exists(ans))
       sprintf (ans, "%s/%s/%s", str1, str2, file);
-   else
-      fclose(fp);
    return ans;
 }
 
@@ -78,32 +74,28 @@ const char * get_resource_file_path (const char * str1, const char * str2, const
  * Whereas get_resource_file_path takes the full filename (eg. "main.map"),
  * this function takes the filename without extension (eg "main").
  *
+ * \param str1 The first part of the string, assuming the file can't be
+ * found in user_dir (eg. "/usr/local/lib/kq")
  * \param file The filename
  * \returns the combined path
  */
-const char * get_lua_file_path (const char * file)
+const char * get_lua_file_path (const char * str1, const char * file)
 {
 	static char ans[PATH_MAX];
-	FILE * fp;
 	
 	sprintf(ans, "%s/scripts/%s.lob", user_dir, file);
-	fp = fopen(ans, "r");
-	if (fp == NULL) {
+	if (!exists(ans)) {
 		sprintf(ans, "%s/scripts/%s.lua", user_dir, file);
-		fp = fopen(ans, "r");
-		if (fp == NULL) {
-			sprintf(ans, "%s/scripts/%s.lob", lib_dir, file);
-			fp = fopen(ans, "r");
-			if (fp == NULL) {
-				sprintf(ans, "%s/scripts/%s.lua", lib_dir, file);
-				fp = fopen(ans, "r");
-				if (fp == NULL)
+		if (!exists(ans)) {
+			sprintf(ans, "%s/scripts/%s.lob", str1, file);
+			if (!exists(ans)) {
+				sprintf(ans, "%s/scripts/%s.lua", str1, file);
+				if (!exists(ans))
 					return NULL;
 			}
 		}
 	}
 	
-	fclose(fp);
 	return ans;
 }
 
@@ -167,7 +159,7 @@ const char *kqres (int dir, const char *file)
   	   return get_resource_file_path(user_dir, "", file);
       break;
    case SCRIPT_DIR:
-  	   return get_lua_file_path(file);
+  	   return get_lua_file_path(lib_dir, file);
       break;
    default:
       return NULL;
