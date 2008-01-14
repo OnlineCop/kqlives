@@ -26,9 +26,9 @@ cd ..
 ROOT=`pwd`
 # Set these variables to the directories where your extra windows includes and libaries are (for allegro, libdumb, and lua)
 # mingw can usually find windows.h and such automatically. You probably do not need to include those directories here.
-WIN_INC=-I$HOME/tmp/include
-WIN_LIB=-L$HOME/tmp/lib
-WIN_LIB_DIR=$HOME/tmp/lib
+WIN_INC=-I$HOME/kq-win-depends/include
+WIN_LIB=-L$HOME/kq-win-depends/lib
+WIN_LIB_DIR=$HOME/kq-win-depends/lib
 
 # ===============
 
@@ -131,7 +131,7 @@ cd scripts
 make
 cd ..
 
-make kq CC="i586-mingw32msvc-cc" OBJC="i586-mingw32msvc-cc" LINK="i586-mingw32msvc-cc" INCLUDES="$WIN_INC" LDFLAGS="$WIN_LIB"
+make kq CC="i586-mingw32msvc-cc" OBJC="i586-mingw32msvc-cc" LINK="i586-mingw32msvc-cc" INCLUDES="$WIN_INC" LDFLAGS="$WIN_LIB" LIBS="-llua50 -lintl"
 
 cd ..
 mkdir kq-win32bin-$VERSION
@@ -156,6 +156,7 @@ cp ../kq-src-$VERSION/release/kq.nsi .
 
 cp $WIN_LIB_DIR/alleg42.dll .
 cp $WIN_LIB_DIR/lua50.dll .
+cp $WIN_LIB_DIR/intl.dll .
 
 makensis "-XOutFile kq-win32bin-installer-$VERSION.exe" kq.nsi
 mv kq-win32bin-installer-$VERSION.exe ..
