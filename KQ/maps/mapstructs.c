@@ -117,7 +117,7 @@ void add_change_bounding (int x, int y, int mouse_b, int *current)
  *
  * \param   x - Coordinate to place marker
  * \param   y - same
- * \param   mouse_b - Which mouse button (left/right) was pressed
+ * \param   mouse_b - Whether to add or remove marker (1 to add, 2 to remove)
  * \param   current - Number of markers currently defined
  */
 void add_change_marker (int x, int y, int mouse_b, int *current)

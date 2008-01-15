@@ -30,8 +30,12 @@ static GtkWidget *map_drawing_area;
 static GtkWidget *tile_drawing_area;
 static GtkWidget *palette_drawing_area;
 static GtkWidget *text_current_value;
+static GtkWidget *text_newmap_width;
+static GtkWidget *text_newmap_height;
+static GtkWidget *combo_iconset;
 static GtkWindow *window;
 static GtkWindow *entitydialog;
+static GtkWindow *newmapdialog;
 static GtkListStore *layers;
 static GtkListStore *eprops;
 static char *current_filename;
@@ -70,9 +74,8 @@ static void on_info_activate (GtkMenuItem * item, GtkWindow * parent_window)
    g_object_unref (xml);
 }
 
-static void load_map_and_update_stuff (char *filename)
+static void update_window ()
 {
-   do_load_map (filename);
    gtk_widget_set_size_request (map_drawing_area, gmap.xsize * 16, gmap.ysize * 16);
    if (map_drawing_area->window)
       gdk_window_invalidate_rect (map_drawing_area->window, &map_drawing_area->allocation, FALSE);
@@ -81,6 +84,69 @@ static void load_map_and_update_stuff (char *filename)
    gtk_widget_set_size_request (palette_drawing_area, -1, max_sets * ICONSET_SIZE * 16);
    if (palette_drawing_area->window)
       gdk_window_invalidate_rect (palette_drawing_area->window, &palette_drawing_area->allocation, FALSE);
+}
+
+static void create_new_map ()
+{
+
+	/* This should go in another function */
+	
+   /* Default values for the new map */
+   gmap.map_no = 0;
+   gmap.zero_zone = 0;
+   gmap.map_mode = 0;
+   gmap.can_save = 0;
+   gmap.use_sstone = 1;
+   gmap.can_warp = 0;
+   gmap.extra_byte = 0;
+   gmap.pmult = 1;
+   gmap.pdiv = 1;
+   gmap.stx = 0;
+   gmap.sty = 0;
+   gmap.warpx = 0;
+   gmap.warpy = 0;
+   gmap.revision = 2;
+   gmap.extra_sdword2 = 0;
+   gmap.song_file[0] = 0;
+   gmap.map_desc[0] = 0;
+   gmap.num_markers = 0;
+   gmap.markers = NULL;
+   gmap.num_bound_boxes = 0;
+   gmap.bound_box = NULL;
+
+   active_bound = 0;
+	/* */
+
+	bufferize();
+	load_iconsets(pal);
+   convert_icons ();
+
+   /* FIXME: load_map should do this */
+   number_of_ents = 0;
+   while (number_of_ents < 50 && gent[number_of_ents].active) {
+      ++number_of_ents;
+   }
+
+	update_window();
+}
+
+static void load_map_and_update_stuff (char *filename)
+{
+   do_load_map (filename);
+	update_window();
+}
+
+static void on_button_newmap_cancel_clicked (GtkWidget * w, gpointer user_data);
+
+gboolean on_newmapdialog_delete_event (GtkWidget * w, gpointer data)
+{
+	on_button_newmap_cancel_clicked(NULL, NULL);
+	return TRUE;
+}
+
+static void on_new_activate (GtkMenuItem * item, GtkWindow * parent_window)
+{
+	gtk_widget_show(GTK_WIDGET(newmapdialog));
 }
 
 static void on_open_activate (GtkMenuItem * item, GtkWindow * parent_window)
@@ -407,6 +473,21 @@ static void on_layerselection_changed (GtkTreeSelection * treeselection, gpointe
    }
 }
 
+static void on_button_newmap_OK_clicked (GtkWidget * w, gpointer user_data)
+{
+	gmap.xsize = atoi(gtk_entry_get_text(GTK_ENTRY(text_newmap_width)));
+	gmap.ysize = atoi(gtk_entry_get_text(GTK_ENTRY(text_newmap_height)));
+//	gmap.tileset = atoi(gtk_combo_box_get_active_text(GTK_COMBO_BOX(combo_iconset)));
+	gmap.tileset = gtk_combo_box_get_active(GTK_COMBO_BOX(combo_iconset));
+	create_new_map();
+	gtk_widget_hide(GTK_WIDGET(newmapdialog));
+}
+
+static void on_button_newmap_cancel_clicked (GtkWidget * w, gpointer user_data)
+{
+	gtk_widget_hide(GTK_WIDGET(newmapdialog));
+}
+
 static void init_entitydialog (void)
 {
    // fill the entitydialog
@@ -436,6 +517,34 @@ static void init_entitydialog (void)
    g_object_unref (xml);
 }
 
+static void init_newmapdialog (void)
+{
+	int i;
+	GladeXML *xml = glade_xml_new (glade_file_path, "newmapdialog", NULL);
+	newmapdialog = GTK_WINDOW (glade_xml_get_widget (xml, "newmapdialog"));
+
+	/* Create combo box. We can't use glade because glade does not offer
+	text-only combo boxes, which are much easier to use */
+	GtkTable * table = GTK_TABLE(glade_xml_get_widget (xml, "table_newmap"));
+	combo_iconset = gtk_combo_box_new_text();
+	for (i = 0; i < NUM_TILESETS; i++)
+		gtk_combo_box_append_text(GTK_COMBO_BOX(combo_iconset), icon_files[i]);
+	gtk_table_attach_defaults(GTK_TABLE(table), GTK_WIDGET(combo_iconset), 1, 2, 2, 3);
+	gtk_widget_show(GTK_WIDGET(combo_iconset));
+	
+   text_newmap_width = glade_xml_get_widget (xml, "text_newmap_width");
+   text_newmap_height = glade_xml_get_widget (xml, "text_newmap_height");
+
+#define SIGNAL_CONNECT(s,p) glade_xml_signal_connect_data (xml, #s, G_CALLBACK(s), p)
+	SIGNAL_CONNECT (on_button_newmap_OK_clicked, NULL);
+   SIGNAL_CONNECT (on_button_newmap_cancel_clicked, NULL);
+   SIGNAL_CONNECT (on_newmapdialog_delete_event, NULL);
+#undef SIGNAL_CONNECT
+
+   g_object_unref (xml);
+}
+
+
 void mainwindow (int *argc, char **argv[])
 {
    gtk_init (argc, argv);
@@ -453,11 +562,12 @@ void mainwindow (int *argc, char **argv[])
    tile_drawing_area = glade_xml_get_widget (xml, "currenttile");
    palette_drawing_area = glade_xml_get_widget (xml, "palette");
    text_current_value = glade_xml_get_widget (xml, "text_current_value");
-
+   
    /* connect signal handlers */
 #define SIGNAL_CONNECT(s,p) glade_xml_signal_connect_data (xml, #s, G_CALLBACK(s), p)
    SIGNAL_CONNECT (on_mainwindow_destroy, NULL);
    SIGNAL_CONNECT (on_mainwindow_delete_event, NULL);
+	SIGNAL_CONNECT (on_new_activate, window);
    SIGNAL_CONNECT (on_open_activate, window);
    SIGNAL_CONNECT (on_save_activate, window);
    SIGNAL_CONNECT (on_save_as_activate, window);
@@ -471,6 +581,8 @@ void mainwindow (int *argc, char **argv[])
    SIGNAL_CONNECT (on_text_current_value_changed, NULL);
    SIGNAL_CONNECT (on_deletebutton_clicked, NULL);
    SIGNAL_CONNECT (on_entitydialog_delete_event, NULL);
+   SIGNAL_CONNECT (on_button_newmap_OK_clicked, NULL);
+   SIGNAL_CONNECT (on_button_newmap_cancel_clicked, NULL);
    SIGNAL_CONNECT (gtk_widget_hide, NULL);
 #undef SIGNAL_CONNECT
 
@@ -518,6 +630,7 @@ void mainwindow (int *argc, char **argv[])
    gtk_tree_selection_select_iter (gtk_tree_view_get_selection (view), &layer1_iter);
    g_object_unref (xml);
    init_entitydialog ();
+   init_newmapdialog ();
 
    if (*argc > 1) {
       current_filename = g_strdup ((*argv)[1]);

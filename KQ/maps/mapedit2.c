@@ -69,7 +69,7 @@ static cairo_surface_t *convert_icon (BITMAP * icon, gboolean transparency)
    return s;
 }
 
-static void convert_icons (void)
+void convert_icons (void)
 {
    int i, j;
    for (i = 0; i < MAX_TILES; ++i) {

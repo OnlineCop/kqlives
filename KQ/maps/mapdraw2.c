@@ -89,15 +89,16 @@ s_anim adata[MAX_ANIM];
 void bufferize (void)
 {
    free (map);
-   map = (unsigned short *) malloc (gmap.xsize * gmap.ysize * 2);
+   map = (unsigned short *) malloc (gmap.xsize * gmap.ysize * sizeof(unsigned short));
 
    free (b_map);
-   b_map = (unsigned short *) malloc (gmap.xsize * gmap.ysize * 2);
+   b_map = (unsigned short *) malloc (gmap.xsize * gmap.ysize * sizeof(unsigned short));
 
    free (f_map);
-   f_map = (unsigned short *) malloc (gmap.xsize * gmap.ysize * 2);
+   f_map = (unsigned short *) malloc (gmap.xsize * gmap.ysize * sizeof(unsigned short));
 
    free (o_map);
+   /* This function assumes that a char is 1 byte. mapdraw2 may crash if this is not so. */
    o_map = (unsigned char *) malloc (gmap.xsize * gmap.ysize);
 
    free (sh_map);
@@ -107,16 +108,16 @@ void bufferize (void)
    z_map = (unsigned char *) malloc (gmap.xsize * gmap.ysize);
 
    free (c_map);
-   c_map = (unsigned short *) malloc (gmap.xsize * gmap.ysize * 2);
+   c_map = (unsigned short *) malloc (gmap.xsize * gmap.ysize * sizeof(unsigned short));
 
    free (cb_map);
-   cb_map = (unsigned short *) malloc (gmap.xsize * gmap.ysize * 2);
+   cb_map = (unsigned short *) malloc (gmap.xsize * gmap.ysize * sizeof(unsigned short));
 
    free (co_map);
    co_map = (unsigned char *) malloc (gmap.xsize * gmap.ysize);
 
    free (cf_map);
-   cf_map = (unsigned short *) malloc (gmap.xsize * gmap.ysize * 2);
+   cf_map = (unsigned short *) malloc (gmap.xsize * gmap.ysize * sizeof(unsigned short));
 
    free (csh_map);
    csh_map = (unsigned char *) malloc (gmap.xsize * gmap.ysize);
@@ -127,15 +128,15 @@ void bufferize (void)
    free (search_map);
    search_map = (unsigned char *) malloc (gmap.xsize * gmap.ysize);
 
-   memset (map, 0, gmap.xsize * gmap.ysize * 2);
-   memset (b_map, 0, gmap.xsize * gmap.ysize * 2);
-   memset (f_map, 0, gmap.xsize * gmap.ysize * 2);
+   memset (map, 0, gmap.xsize * gmap.ysize * sizeof(unsigned short));
+   memset (b_map, 0, gmap.xsize * gmap.ysize * sizeof(unsigned short));
+   memset (f_map, 0, gmap.xsize * gmap.ysize * sizeof(unsigned short));
    memset (o_map, 0, gmap.xsize * gmap.ysize);
    memset (sh_map, 0, gmap.xsize * gmap.ysize);
    memset (z_map, 0, gmap.xsize * gmap.ysize);
-   memset (c_map, 0, gmap.xsize * gmap.ysize * 2);
-   memset (cb_map, 0, gmap.xsize * gmap.ysize * 2);
-   memset (cf_map, 0, gmap.xsize * gmap.ysize * 2);
+   memset (c_map, 0, gmap.xsize * gmap.ysize * sizeof(unsigned short));
+   memset (cb_map, 0, gmap.xsize * gmap.ysize * sizeof(unsigned short));
+   memset (cf_map, 0, gmap.xsize * gmap.ysize * sizeof(unsigned short));
    memset (co_map, 0, gmap.xsize * gmap.ysize);
    memset (csh_map, 0, gmap.xsize * gmap.ysize);
    memset (cz_map, 0, gmap.xsize * gmap.ysize);
