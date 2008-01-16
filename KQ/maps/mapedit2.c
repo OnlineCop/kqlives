@@ -104,6 +104,52 @@ void convert_icons (void)
    gdk_marker_image_active = convert_icon (marker_image_active, FALSE);
 }
 
+void do_new_map (int x, int y, int tileset)
+{
+
+	/* This should go in another function */
+	
+   /* Default values for the new map */
+   gmap.map_no = 0;
+   gmap.zero_zone = 0;
+   gmap.map_mode = 0;
+   gmap.can_save = 0;
+   gmap.tileset = tileset;
+   gmap.use_sstone = 1;
+   gmap.can_warp = 0;
+   gmap.extra_byte = 0;
+   gmap.xsize = x;
+   gmap.ysize = y;
+   gmap.pmult = 1;
+   gmap.pdiv = 1;
+   gmap.stx = 0;
+   gmap.sty = 0;
+   gmap.warpx = 0;
+   gmap.warpy = 0;
+   gmap.revision = 2;
+   gmap.extra_sdword2 = 0;
+   gmap.song_file[0] = 0;
+   gmap.map_desc[0] = 0;
+   gmap.num_markers = 0;
+   gmap.markers = NULL;
+   gmap.num_bound_boxes = 0;
+   gmap.bound_box = NULL;
+
+   active_bound = 0;
+	/* */
+
+	bufferize();
+	load_iconsets(pal);
+   convert_icons ();
+
+   /* FIXME: load_map should do this */
+   number_of_ents = 0;
+   while (number_of_ents < 50 && gent[number_of_ents].active) {
+      ++number_of_ents;
+   }
+}
+
+
 void do_load_map (const char *filename)
 {
    load_map (filename);

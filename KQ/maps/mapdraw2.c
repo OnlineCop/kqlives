@@ -271,8 +271,9 @@ void remove_entity (int entity)
       gent[a - 1] = gent[a];
    }
    --number_of_ents;
+
    /* clean up the now unused entry */
-   memset (&gent[number_of_ents], sizeof (gent[number_of_ents]), 0);
+   memset (&gent[number_of_ents], 0, sizeof (gent[number_of_ents]));
 }
 
 int get_entity_at (unsigned int x, unsigned int y)
