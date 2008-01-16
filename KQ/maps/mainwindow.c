@@ -39,10 +39,12 @@ static GtkWindow *newmapdialog;
 static GtkListStore *layers;
 static GtkListStore *eprops;
 static char *current_filename;
-static unsigned int current_tile;
-static unsigned int current_layer;
-static int selected_entity;
-static int map_has_changed;
+static unsigned int current_tile = 0;
+static unsigned int current_layer = 1;
+static int selected_entity = -1;
+static int map_has_changed = FALSE;
+static gboolean bound_dragging = FALSE;
+static s_bound temp_bound;
 enum
 {
    LAYER_SHOW_COLUMN,
@@ -203,7 +205,7 @@ static gboolean on_currenttile_expose_event (GtkWidget * widget, GdkEventExpose 
    gdk_cairo_rectangle (cr, &event->area);
    cairo_clip (cr);
 
-   do_draw_tile (cr, current_tile);
+   do_draw_tile (cr, current_layer, current_tile);
 
    cairo_destroy (cr);
    return TRUE;
@@ -239,6 +241,11 @@ static void on_layerselection_changed (GtkTreeSelection * treeselection, gpointe
    if (gtk_tree_selection_get_selected (treeselection, &model, &iter)) {
       gtk_tree_model_get (model, &iter, LAYER_INDEX_COLUMN, &current_layer, -1);
    }
+
+   if (palette_drawing_area->window)
+      gdk_window_invalidate_rect (palette_drawing_area->window, &palette_drawing_area->allocation, FALSE);
+   if (tile_drawing_area->window)
+	   gtk_widget_queue_draw_area (tile_drawing_area, 0, 0, 16, 16);
 }
 
 static gboolean on_map_button_press_event (GtkWidget * widget, GdkEventButton * event, gpointer user_data)
@@ -250,7 +257,6 @@ static gboolean on_map_button_press_event (GtkWidget * widget, GdkEventButton * 
    /* current_value is a generic string that the user can edit before clicking
     * on the map. It is the box in the bottom left corner. */
    const char * current_value = gtk_entry_get_text(GTK_ENTRY(text_current_value));
-   char ch[32];
 
    /* Ignore double and triple clicks. Treat them as multiple normal clicks.
    * Without this line, you end up getting two normal clicks and a third, double
@@ -262,15 +268,13 @@ static gboolean on_map_button_press_event (GtkWidget * widget, GdkEventButton * 
    if (!(current_layer & layer_showing_flags))
       return FALSE;
 
-   active_x = x;
-   active_y = y;
-
-   /* What is the gdk constant for left mouse button? */
+   /* left mouse button */
    if (event->button == 1) {
       switch(current_layer) {
       case LAYER_1_FLAG:
       case LAYER_2_FLAG:
       case LAYER_3_FLAG:
+      case SHADOW_FLAG:
          if (event->state & GDK_CONTROL_MASK) {
             current_tile = get_tile_at (x, y, current_layer);
             gtk_widget_queue_draw_area (tile_drawing_area, 0, 0, 16, 16);
@@ -303,25 +307,36 @@ static gboolean on_map_button_press_event (GtkWidget * widget, GdkEventButton * 
       // If there is a marker here, and user is holding down Ctrl, fill
       // current_value edit box with value of marker.
          if (get_marker_value(x, y) && (event->state & GDK_CONTROL_MASK)) {
-            strcpy(ch, (char *) get_marker_value(x, y));
-            gtk_entry_set_text(GTK_ENTRY(text_current_value), ch);
+            strcpy(strbuf, (char *) get_marker_value(x, y));
+            gtk_entry_set_text(GTK_ENTRY(text_current_value), strbuf);
          } else if (!(event->state & GDK_CONTROL_MASK)) {
          // If there is no marker here, put one here, with current value of edit box.
             set_marker_at_loc(current_value, x, y);
          }
          break;
-      case SHADOW_FLAG:
-      // Shadows are not yet implemented in mapdraw2
+      case BOUNDING_FLAG:
+			for (i = 0; i < gmap.num_bound_boxes; i++)
+				if (is_contained_bound(*gmap.bound_box, x, y))
+					return FALSE;
+
+			i = gmap.num_bound_boxes;
+
+			temp_bound.x1 = x;
+			temp_bound.y1 = y;
+			bound_dragging = TRUE;
+      	break;
+      
       default:
          break;
       } /* End of switch */
 
-   /* What is the gdk constant for right mouse button? */
+   /* right mouse button */
    } else if (event->button == 3) {
       switch(current_layer) {
       case LAYER_1_FLAG:
       case LAYER_2_FLAG:
       case LAYER_3_FLAG:
+      case SHADOW_FLAG:
             set_tile_at (0, x, y, current_layer);
             break;
       case OBSTACLES_FLAG:
@@ -339,12 +354,11 @@ static gboolean on_map_button_press_event (GtkWidget * widget, GdkEventButton * 
          selected_entity = -1;
          map_change(x, y);
          break;
-      case SHADOW_FLAG:
       default:
          break;
       } /* End of switch */
 
-   /* What is the gdk constant for middle mouse button? */
+   /* middle mouse button */
    } else if (event->button == 2) {
       switch(current_layer) {
       case ZONES_FLAG:
@@ -358,6 +372,47 @@ static gboolean on_map_button_press_event (GtkWidget * widget, GdkEventButton * 
    return FALSE;
 }
 
+static gboolean on_map_button_release_event(GtkWidget * widget, GdkEventButton * event, gpointer user_data)
+{
+   unsigned int x = event->x / 16;
+   unsigned int y = event->y / 16;
+   unsigned int i = 0;
+   short x1, y1;
+
+   /* Can't edit what you can't see. This prevents accidents. */
+   if (!(current_layer & layer_showing_flags))
+      return FALSE;
+	
+	switch (current_layer) {
+	case BOUNDING_FLAG:
+		if (bound_dragging) {
+			i = gmap.num_bound_boxes;
+			x1 = temp_bound.x1;
+			y1 = temp_bound.y1;
+
+			set_bounds(&temp_bound, x1, y1, x, y);
+
+			if (!bound_in_bound2(&temp_bound, gmap.bound_box, gmap.num_bound_boxes)) {
+				gmap.bound_box = realloc (gmap.bound_box, sizeof(s_bound) * (i + 1));
+				if (gmap.bound_box == NULL) {
+					printf("realloc failed. Unable to allocate memory for another bound box. Exiting.\n");
+					gtk_main_quit();
+				}
+
+				set_bounds(&gmap.bound_box[i], x1, y1, x, y);
+				gmap.bound_box[i].btile = 0; // User should be able to choose this.
+				update_window(); // Poor clipping. TODO.
+				gmap.num_bound_boxes++;
+			}
+
+			bound_dragging = FALSE;
+		}
+		break;
+	default:
+		break;
+	}
+}
+
 static gboolean on_map_motion_notify_event(GtkWidget * widget, GdkEventButton * event, gpointer user_data)
 {
    unsigned int x = event->x / 16;
@@ -367,7 +422,6 @@ static gboolean on_map_motion_notify_event(GtkWidget * widget, GdkEventButton * 
    /* current_value is a generic string that the user can edit before clicking
     * on the map. It is the box in the bottom left corner. */
    const char * current_value = gtk_entry_get_text(GTK_ENTRY(text_current_value));
-   char ch[32];
 
    /* Can't edit what you can't see. This prevents accidents. */
    if (!(current_layer & layer_showing_flags))
@@ -378,6 +432,7 @@ static gboolean on_map_motion_notify_event(GtkWidget * widget, GdkEventButton * 
       case LAYER_1_FLAG:
       case LAYER_2_FLAG:
       case LAYER_3_FLAG:
+      case SHADOW_FLAG:
          set_tile_at (current_tile, x, y, current_layer);
          break;
       case OBSTACLES_FLAG:
@@ -396,6 +451,7 @@ static gboolean on_map_motion_notify_event(GtkWidget * widget, GdkEventButton * 
       case LAYER_1_FLAG:
       case LAYER_2_FLAG:
       case LAYER_3_FLAG:
+      case SHADOW_FLAG:
             set_tile_at (0, x, y, current_layer);
             break;
       case OBSTACLES_FLAG:
@@ -413,7 +469,6 @@ static gboolean on_map_motion_notify_event(GtkWidget * widget, GdkEventButton * 
          selected_entity = -1;
          map_change(x, y);
          break;
-      case SHADOW_FLAG:
       default:
          break;
       }
@@ -568,6 +623,7 @@ void mainwindow (int *argc, char **argv[])
    SIGNAL_CONNECT (on_info_activate, window);
    SIGNAL_CONNECT (on_currenttile_expose_event, NULL);
    SIGNAL_CONNECT (on_map_button_press_event, NULL);
+   SIGNAL_CONNECT (on_map_button_release_event, NULL);
    SIGNAL_CONNECT (on_map_motion_notify_event, NULL);
    SIGNAL_CONNECT (on_palette_button_press_event, NULL);
 #undef SIGNAL_CONNECT
@@ -592,6 +648,7 @@ void mainwindow (int *argc, char **argv[])
    ADD_LAYER (ZONES_FLAG, "Zones");
    ADD_LAYER (MARKERS_FLAG, "Markers");
    ADD_LAYER (ENTITIES_FLAG, "Entities");
+   ADD_LAYER (BOUNDING_FLAG, "Bouding Boxes");
 #undef ADD_LAYER
 
    GtkTreeView *view = GTK_TREE_VIEW (glade_xml_get_widget (xml, "layers"));
@@ -621,8 +678,11 @@ void mainwindow (int *argc, char **argv[])
    if (*argc > 1) {
       current_filename = g_strdup ((*argv)[1]);
       do_load_map(current_filename);
-      update_window();
    }
+   else
+      do_new_map(50, 50, 1);
+
+   update_window();
 
    gtk_main ();
 }

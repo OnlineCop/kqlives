@@ -34,7 +34,8 @@
 s_bound bound_box[MAX_BOUNDS];
 
 
-/*! \brief See if this bounding area is found anywhere within these coords
+/*! \brief See if this bounding area overlaps (or is contained inside of) any
+ * other bounding area, or vice versa.
  *
  * \param   which - Bounding area to check
  * \param   num_bound_boxes Number of elements in the \sa bound_box array
@@ -93,9 +94,75 @@ int bound_in_bound (s_bound *which, int num_bound_boxes)
       }
    }
 
-   /* Since we're out of the loop, overlap was found */
    return was_found;
 }
+
+/*! \brief See if this bounding area overlaps (or is contained inside of) any
+ * bounding area in the given array, or vice versa. Note that this function is
+ * identical to the one above, except that we pass a pointer to the bound_box
+ * array, rather than just assuming the one we want to check against.
+ *
+ * \param   which - Bounding area to check
+ * \param   bound_box - pointer to the bounding boxes we are checking against
+ * \param   num_bound_boxes Number of elements in the \sa bound_box array
+ * \return  1 if 'which' coords found anywhere withing any other boxes
+ */
+int bound_in_bound2 (s_bound *which, s_bound * bound_box, int num_bound_boxes)
+{
+   /* Check if any part of box1 is inside box2 (or box2 in box1) */
+
+   int i, j, k;
+   int true1, true2; // See if an entire query is true
+   int was_found;
+
+   /* We can use an array to speed this up so we don't have to duplicate
+    * identical code
+    */
+   int x1[2] = {which->x1, which->x2};
+   int y1[2] = {which->y1, which->y2};
+   int x2[2];  // Defined inside for..loop for all bounding areas
+   int y2[2];  // Defined inside for..loop for all bounding areas
+
+   /* This will contain a small hack. Assign the results of the queries to
+    * variables. We can break out with a "nothing found" in these cases:
+    *
+    * 1) NEITHER x-coords is true
+    * 2) NEITHER y-coords is true
+    *
+    * Else, something was overlapping, and we'll return '1'
+    */
+   was_found = 0;
+   for (i = 0; i < num_bound_boxes; i++) {
+      x2[0] = bound_box[i].x1;
+      x2[1] = bound_box[i].x2;
+      y2[0] = bound_box[i].y1;
+      y2[1] = bound_box[i].y2;
+
+      for (j = 0; j < 2; j++) {
+         true1 = (x1[j] >= x2[j] && x1[j] <= x2[1 - j]);
+         true2 = (x2[j] >= x1[j] && x2[j] <= x1[1 - j]);
+         if (!true1 && !true2) {
+            continue;
+         }
+
+         for (k = 0; k < 2; k++) {
+            true1 = (y1[k] >= y2[k] && y1[k] <= y2[1 - k]);
+            true2 = (y2[k] >= y1[k] && y2[k] <= y1[1 - k]);
+            if (!true1 && !true2) {
+               continue;
+            } else {
+               was_found = 1;
+            }
+         }
+      }
+      if (was_found) {
+         break;
+      }
+   }
+
+   return was_found;
+}
+
 
 
 

@@ -164,7 +164,7 @@ int startup (void)
    gmap.map_no = -1;
    gmap.tileset = 0;
 
-   bufferize ();
+//   bufferize ();
 
    create_trans_table (&colormap, pal, 128, 128, 128, NULL);
    color_map = &colormap;

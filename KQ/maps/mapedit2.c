@@ -294,18 +294,50 @@ void do_draw_map (cairo_t * cr, GdkRectangle * area, unsigned int layerflags)
          cairo_paint (cr);
       }
    }
+
+   if (layerflags & BOUNDING_FLAG) {
+   	for (i = 0; i < gmap.num_bound_boxes; ++i) {
+			s_bound bound = gmap.bound_box[i];
+   		cairo_set_line_width (cr, 1);
+			cairo_set_source_rgb (cr, 1, 1, 0);
+			cairo_rectangle (cr, bound.x1 * 16, bound.y1 * 16, (bound.x2 - bound.x1 + 1) * 16, (bound.y2 - bound.y1 + 1) * 16);
+			cairo_stroke (cr);
+		}
+   }
 }
 
-void do_draw_tile (cairo_t * cr, unsigned int tile)
+void do_draw_tile (cairo_t * cr, unsigned int layer, unsigned int tile)
 {
-   cairo_set_source_surface (cr, gdk_icons[tile], 0, 0);
-   cairo_paint (cr);
+	if (layer == SHADOW_FLAG) {
+		if (tile > MAX_SHADOWS)
+			tile = 0;
+		cairo_set_source_surface(cr, gdk_shadows[tile], 0, 0);
+	} else {
+   	if (tile > MAX_TILES)
+   		tile = 0;
+   	cairo_set_source_surface (cr, gdk_icons[tile], 0, 0);
+	}
+  	cairo_paint (cr);
 }
 
 void do_draw_palette (cairo_t * cr, GdkRectangle * area, unsigned int w,
                       unsigned int layer, unsigned int tile)
 {
    unsigned int i, j, t;
+	
+	if (layer == SHADOW_FLAG) {
+		// draw shadows.
+		for (i = area->y / 16; i <= (area->y + area->height) / 16; ++i) {
+			for (j = 0; j < w / 16; ++j) {
+				t = i * (w / 16) + j;
+				if (t > MAX_SHADOWS)
+					break;
+				cairo_set_source_surface (cr, gdk_shadows[t], j * 16, i * 16);
+				cairo_paint (cr);
+			}
+		}
+	} else {
+	
    for (i = area->y / 16; i <= (area->y + area->height) / 16; ++i) {
       for (j = 0; j < w / 16; ++j) {
          t = i * (w / 16) + j;
@@ -315,6 +347,8 @@ void do_draw_palette (cairo_t * cr, GdkRectangle * area, unsigned int w,
          cairo_paint (cr);
       }
    }
+   
+	}
 }
 
 unsigned int get_tile_at (unsigned int x, unsigned int y, unsigned int layer)
@@ -328,11 +362,9 @@ unsigned int get_tile_at (unsigned int x, unsigned int y, unsigned int layer)
    case LAYER_3_FLAG:
       if (f_map[i])
          return f_map[i];
-      // fallthrough
    case LAYER_2_FLAG:
       if (b_map[i])
          return b_map[i];
-      // fallthrough
    case LAYER_1_FLAG:
       return map[i];
    case SHADOW_FLAG:

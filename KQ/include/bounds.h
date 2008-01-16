@@ -52,6 +52,7 @@ typedef struct
 
 
 int bound_in_bound (s_bound *, int);
+int bound_in_bound2 (s_bound *, s_bound *, int);
 int is_contained_bound (s_bound, int, int);
 void set_bounds (s_bound *, int, int, int, int);
 

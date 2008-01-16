@@ -36,6 +36,7 @@ enum
    MARKERS_FLAG = 1 << 6,
    ENTITIES_FLAG = 1 << 7,
    MAGIC_PINK_FLAG = 1 << 8,
+   BOUNDING_FLAG = 1 << 9,
 };
 enum
 {
@@ -53,7 +54,7 @@ enum
 void do_draw_map (cairo_t * cr, GdkRectangle * area, unsigned int layerflags);
 void do_draw_palette (cairo_t * cr, GdkRectangle * area, unsigned int w,
                       unsigned int layer, unsigned int tile);
-void do_draw_tile (cairo_t * cr, unsigned int tile);
+void do_draw_tile (cairo_t * cr, unsigned int layer, unsigned int tile);
 void do_new_map (int x, int y, int tileset);
 void do_load_map (const char *filename);
 unsigned int get_tile_at (unsigned int x, unsigned int y, unsigned int layer);
