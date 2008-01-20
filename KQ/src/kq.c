@@ -65,6 +65,7 @@
 #include "setup.h"
 #include "sgame.h"
 #include "shopmenu.h"
+//#include "console.h"
 
 #include <locale.h>
 
@@ -483,7 +484,7 @@ static void allocate_stuff (void)
 {
    int i, p;
 
-   kfonts = alloc_bmp (744, 60, "kfonts");
+   kfonts = alloc_bmp (1024, 60, "kfonts");
 
    for (i = 0; i < 5; i++)
       sfonts[i] = alloc_bmp (60, 8, "sfonts[i]");
@@ -1194,7 +1195,9 @@ int main (int argc, const char *argv[])
             if (bhelp) {
                /* TODO: In-game help system. */
             }
-
+			if (key[KEY_BACKSLASH]) {
+			  //run_console();
+			}
             if (alldead) {
                clear (screen);
                do_transition (TRANS_FADE_IN, 16);
@@ -1432,6 +1435,7 @@ static void prepare_map (int msx, int msy, int mvx, int mvy)
 void program_death (char *message)
 {
    char internal_buffer[80];
+   memset(internal_buffer, '\0', sizeof(internal_buffer));
    strcat (strncpy (internal_buffer, message, sizeof (internal_buffer) - 1),
            "\n");
    TRACE ("%s\n", message);
@@ -1701,7 +1705,7 @@ static void startup (void)
    load_heroes ();
 
    pb = load_datafile_object (PCX_DATAFILE, "ALLFONTS_PCX");
-   blit ((BITMAP *) pb->dat, kfonts, 0, 0, 0, 0, 744, 60);
+   blit ((BITMAP *) pb->dat, kfonts, 0, 0, 0, 0, 1024, 60);
    unload_datafile_object (pb);
 
    pb = load_datafile_object (PCX_DATAFILE, "ENTITIES_PCX");

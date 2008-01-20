@@ -1276,16 +1276,16 @@ static unsigned int glyph_lookup[][2] =
   {
     {0x00c9, 'E' - 32}, /* E-acute */
     {0x00d3, 'O' - 32}, /* O-acute */
-    {0x00df, 'B' - 32}, /* sharp s */
-    {0x00e1, 'a' - 32}, /* a-grave */
-    {0x00e4, 'a' - 32}, /* a-umlaut */
-    {0x00e9, 'e' - 32}, /* e-acute */
+    {0x00df, 107}, /* sharp s */
+    {0x00e1, 92}, /* a-grave */
+    {0x00e4, 94}, /* a-umlaut */
+    {0x00e9, 95}, /* e-acute */
     {0x00ed, 'i' - 32}, /* i-acute */
-    {0x00f1, 'n' - 32}, /* n-tilde */
-    {0x00f3, 'o' - 32}, /* o-acute */
-    {0x00f6, 'o' - 32}, /* o-umlaut */
-    {0x00fa, 'u' - 32}, /* u-acute */
-    {0x00fc, 'u' - 32}, /* u-umlaut */
+    {0x00f1, 108}, /* n-tilde */
+    {0x00f3, 99}, /* o-acute */
+    {0x00f6, 102}, /* o-umlaut */
+    {0x00fa, 103}, /* u-acute */
+    {0x00fc, 106}, /* u-umlaut */
     {0, 0},
   };
 /*! \brief Get glyph index
