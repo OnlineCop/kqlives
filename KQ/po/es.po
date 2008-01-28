@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: es\n"
 "Report-Msgid-Bugs-To: peterhull90@users.sourceforge.net\n"
-"POT-Creation-Date: 2008-01-28 16:50-0500\n"
-"PO-Revision-Date: 2008-01-28 16:48-0500\n"
+"POT-Creation-Date: 2008-01-28 18:35-0500\n"
+"PO-Revision-Date: 2008-01-28 18:16-0500\n"
 "Last-Translator: Edgar Alberto Molina Rojas <edgar@heuristicsi.com>\n"
 "Language-Team: Spanish <kqlives-main@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -485,15 +485,66 @@ msgstr "Un hechizo sea sobre ti... un hechizo sobre todos!"
 
 #: scripts/cave3a.lua:115
 msgid "The door creaks open noisily."
-msgstr "La puerta se habre con chirridos."
+msgstr "La puerta se abre con chirridos."
+
+#: scripts/cave3a.lua:165
+msgid "No, really. "
+msgstr ""
+
+#: scripts/cave3a.lua:165
+msgid " need to tell the Oracle about this before "
+msgstr ""
+
+#: scripts/cave3a.lua:165
+msgid " go through this TravelPoint!"
+msgstr ""
+
+#: scripts/cave3a.lua:175
+msgid "Looks like it's empty."
+msgstr ""
 
 #: scripts/cave3a.lua:177
 msgid "Something from inside grabs you!"
 msgstr "Algo desde adentro te agarra!"
 
+#: scripts/cave3a.lua:185
+msgid "What a strange, glowing portal we have here..."
+msgstr ""
+
+#: scripts/cave3a.lua:197
+#, fuzzy
+msgid "This wall looks funny..."
+msgstr "Mmm... esta pared se ve rara."
+
 #: scripts/cave3a.lua:198
 msgid "You push at the wall. Something shifts."
 msgstr "Presionas la pared. Algo se mueve."
+
+#: scripts/cave3a.lua:218
+#, fuzzy
+msgid "Hey, who's that?!"
+msgstr "Hey ahora, qué es esto?"
+
+#: scripts/cave3a.lua:236
+msgid "That looked like the missing statue Tsorin was talking about!"
+msgstr ""
+
+#: scripts/cave3a.lua:237
+msgid "And those were Malkaron's men!"
+msgstr ""
+
+#: scripts/cave3a.lua:239
+msgid "That looked like Malkaron's men with the Denorian's statue!"
+msgstr ""
+
+#: scripts/cave3a.lua:243
+#, fuzzy
+msgid "I've got to report this to the Oracle!"
+msgstr "Tengo que revisar esto yá mismo!"
+
+#: scripts/cave3a.lua:245
+msgid "We've got to report this to the Oracle!"
+msgstr ""
 
 #: scripts/cave4.lua:41
 msgid "Oh, $0, it's great to see you!"
@@ -597,17 +648,19 @@ msgstr "Cerrado."
 
 #: scripts/cave4.lua:157
 msgid "What luck! The key from that crazy Demnas guy unlocks this door!"
-msgstr ""
+msgstr "Que suerte! La llave de ese loco de Demnas abrió esta puerta!"
 
 #: scripts/cave4.lua:164
 msgid "Aw... it's full of normal junk."
-msgstr ""
+msgstr "Au... esto está lleno de basura normal."
 
 #: scripts/cave4.lua:204
 msgid ""
 "The Denorians were right. There really WAS a troll. Looks like it's already "
 "dead, though."
 msgstr ""
+"Los Denorianos estaban en lo correcto. Realmente HABIA un trol. Parece que "
+"ya esta muerto, creo."
 
 #: scripts/cave4.lua:205
 msgid "The troll suddenly lunges at you... it was only asleep!"
@@ -2043,7 +2096,7 @@ msgid ""
 "you'll have to go all the way back to Andra."
 msgstr ""
 "No tenemos bases en el territorio de los duendes. Si te metes en verdaderos "
-"problemas, tendras que regresar hasta Andra."
+"problemas, tendrás que regresar hasta Andra."
 
 #: scripts/fort.lua:39
 msgid "Make sure to stock up on supplies."
@@ -2132,6 +2185,9 @@ msgid ""
 "some caves to reach it. Then make your way up to the Oracle. Is that "
 "understood?"
 msgstr ""
+"Al sur de aquí hay un rio que necesitarás cruzar. Ve hacia la torre en el "
+"pequeño grupo de montañas hacia el oeste de aquí. Debes atravesar algunas "
+"cuevas para alcanzarla. Entonces dirijete hacia el Oraculo. Entendiste?"
 
 #: scripts/fort.lua:84
 msgid "Yeah, I guess so... it all seems clear enough."
@@ -2342,10 +2398,12 @@ msgid ""
 "This village is often overlooked by Malkaron's armies, so we are relatively "
 "safe."
 msgstr ""
+"Esta villa a veces está super vigilada por las fuerzas de Malkaron, así que "
+"estamos relativamente a salvo."
 
 #: scripts/goblin.lua:16
 msgid "Booga-booga! I'm a goblin! Rowr!"
-msgstr ""
+msgstr "Booga-booga! Soy un duende! Arrr!"
 
 #: scripts/grotto.lua:98
 msgid "Thank you for your assistance, $0. I have another request for you."
@@ -2843,102 +2901,107 @@ msgstr ""
 
 #: scripts/main.lua:118
 msgid "Hey! The pendant is glowing!"
-msgstr ""
+msgstr "Hey! El pendiente está brillando!"
 
 #: scripts/main.lua:119
 msgid "The doors fly open and the pendant disappears in a puff of smoke."
 msgstr ""
+"Las puertas salen volando y el pendiente desaparece en una nube de humo."
 
 #: scripts/main.lua:122
 msgid "The doors open with a shower of rust."
-msgstr ""
+msgstr "Las puertas se abren con una nube de polvo."
 
 #: scripts/main.lua:124
 msgid "The tower appears to be sealed. Maybe we need something to get in here?"
-msgstr ""
+msgstr "La torre parece estar sellada. De pronto necesitamos algo para entrar?"
 
 #: scripts/main.lua:129
 msgid "I can't get in here anymore!"
-msgstr ""
+msgstr "No puedo entrar aquí de nuevo!"
 
 #: scripts/main.lua:212
 msgid "The Coliseum is closed."
-msgstr ""
+msgstr "El Coliseo está cerrado."
 
 #: scripts/main.lua:222
 msgid "You are not allowed in the village."
-msgstr ""
+msgstr "No eres bienvenido a la villa."
 
 #: scripts/main.lua:223
 msgid "You sneak in anyway."
-msgstr ""
+msgstr "Te escabulles de todas formas."
 
 #: scripts/main.lua:265
 msgid "This will be fortress for Malkaron"
-msgstr ""
+msgstr "Esto será fortaleza para Malkaron"
 
 #: scripts/main.lua:365
 msgid "The underwater tunnel should go here."
-msgstr ""
+msgstr "El tunel submarino debe ir aquí."
 
 #: scripts/main.lua:369
 msgid "The second part of the underwater tunnel should go here."
-msgstr ""
+msgstr "La segunda parte del tunel submarino debería ir aquí."
 
 #: scripts/main.lua:373
 msgid "This is where the castle town of Xenar goes."
-msgstr ""
+msgstr "Aquí es donde va el castillo de Xenar."
 
 #: scripts/main.lua:374
 msgid "It's not finished yet."
-msgstr ""
+msgstr "No está terminado todavia."
 
 #: scripts/main.lua:377
 msgid ""
 "This is the cave behind the Xenar Castle. Sorry, you can't go in there yet."
 msgstr ""
+"Esta es la cueva detrás del Castillo Xenar. Lo siento, no puedes entrar aquí "
+"todavia."
 
 #: scripts/main.lua:380 scripts/main.lua:384
 msgid "This is as far as the dock goes."
-msgstr ""
+msgstr "Hasta aquí llega el muelle."
 
 #: scripts/main.lua:388 scripts/main.lua:392
 msgid "This is where a short pass or cave goes."
-msgstr ""
+msgstr "Aquí es donde va un atajo o una cueva."
 
 #: scripts/main.lua:396
 msgid "This is where a new cave goes."
-msgstr ""
+msgstr "Aquí es donde una nueva cueva va."
 
 #: scripts/main.lua:399
 msgid "This is Binderak's cave."
-msgstr ""
+msgstr "Esta es la cueva de Binderak."
 
 #: scripts/main.lua:411
 msgid "Hmm... there's a huge iron door blocking the entrance to this cave."
-msgstr ""
+msgstr "Mmm... hay una gran puerta de acero bloqueando la entrada a la cueva."
 
 #: scripts/main.lua:413
 msgid ""
 "This seems strange. I wonder if this has something to do with the Denorian's "
 "request."
 msgstr ""
+"Esto se ve extraño. Me pregunto si tiene algo que ver con la solicitud de "
+"Denorian."
 
 #: scripts/main.lua:415
 msgid "Stones 1, 4 then 3..."
-msgstr ""
+msgstr "Piedtras 1, 4 y luego 3..."
 
 #: scripts/main.lua:420
 msgid "Bingo."
-msgstr ""
+msgstr "Bingo."
 
 #: scripts/main.lua:435
 msgid "Ah, there we go."
-msgstr ""
+msgstr "Oh, allá vamos."
 
 #: scripts/main.lua:437
 msgid "I think this entrance will open once I have all the opal stuff."
-msgstr ""
+msgstr "Creo que esta entrada se abrirá una vez tenga todas las cosas de opal."
 
 #: scripts/manor.lua:79
 msgid "I would be useful to you, since I can use Rage in battle."
@@ -3054,20 +3117,19 @@ msgstr "Primero, Nostik te regala esto."
 
 #: scripts/manor.lua:244
 msgid "Do you want the long version or the short version?"
-msgstr ""
+msgstr "Quieres la version larga o la corta?"
 
 #: scripts/manor.lua:245
-#, fuzzy
 msgid "  long"
-msgstr "  no"
+msgstr "  larga"
 
 #: scripts/manor.lua:246
 msgid "  short"
-msgstr ""
+msgstr "  corta"
 
 #: scripts/manor.lua:247
 msgid "  neither"
-msgstr ""
+msgstr "  ninguna"
 
 #: scripts/manor.lua:250
 msgid ""
@@ -3200,7 +3262,7 @@ msgstr ""
 
 #: scripts/manor.lua:285
 msgid "Do you need me to explain it again?"
-msgstr ""
+msgstr "Quieres que te lo explique de nuevo?"
 
 #: scripts/manor.lua:286 scripts/town4.lua:246 scripts/town4.lua:288
 #: src/setup.c:244 src/setup.c:266
@@ -4894,6 +4956,8 @@ msgid ""
 "I'm Derig's granddaughter. Go find Derig in the grotto north of here. You've "
 "been there once before."
 msgstr ""
+"Soy la nieta de Derig. Ve y encuentralo en la gruta al norte de aquí. Ya has "
+"estado allá antes."
 
 #: scripts/town1.lua:443
 msgid "You've already been to the grotto."
