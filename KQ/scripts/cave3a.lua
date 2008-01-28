@@ -162,7 +162,7 @@ function zone_handler(zn)
         or2 = "we"
       end
 
-      bubble(HERO1, "No, really. "..or1.." need to tell the Oracle about this before "..or2.." go through this TravelPoint!")
+      bubble(HERO1, _"No, really. "..or1.._" need to tell the Oracle about this before "..or2.._" go through this TravelPoint!")
     end
 
   elseif (zn == 20) then
@@ -172,7 +172,7 @@ function zone_handler(zn)
     cancombat = pick({pr=25, value = 1}, {pr=75, value = 0}).value
 
     if (cancombat == 0) then
-      bubble(HERO1, "Looks like it's empty.")
+      bubble(HERO1, _"Looks like it's empty.")
     else
       msg(_"Something from inside grabs you!", 255, 0)
       combat(60)
@@ -182,7 +182,7 @@ function zone_handler(zn)
     warp("dsportal1", 8)
 
   elseif (zn == 22) then
-    bubble(HERO1, "What a strange, glowing portal we have here...")
+    bubble(HERO1, _"What a strange, glowing portal we have here...")
 
   elseif (zn == 23) then
     set_progress(P_WALKING, 0)
@@ -194,7 +194,7 @@ function zone_handler(zn)
 
   elseif (zn == 25) then
     local x, y = marker("dsportal1")
-    bubble(HERO1, "This wall looks funny...")
+    bubble(HERO1, _"This wall looks funny...")
     msg(_"You push at the wall. Something shifts.", 255, 0)
     set_zone(x + 16, y + 2, 0)
     set_zone(x + 17, y + 2, 0)
@@ -215,7 +215,7 @@ function LOC_monsters_statue()
   set_ent_script(3, "R8K")
   set_ent_script(4, "U1R8K")
 
-  bubble(HERO1, "Hey, who's that?!")
+  bubble(HERO1, _"Hey, who's that?!")
 
   if (get_numchrs() == 1) then
     set_ent_script(HERO1, "U2")
@@ -233,16 +233,16 @@ function LOC_monsters_statue()
   end
 
   if (get_progress(P_DENORIAN) == 0) then
-    bubble(HERO1, "That looked like the missing statue Tsorin was talking about!")
-    bubble(HERO1, "And those were Malkaron's men!")
+    bubble(HERO1, _"That looked like the missing statue Tsorin was talking about!")
+    bubble(HERO1, _"And those were Malkaron's men!")
   else
-    bubble(HERO1, "That looked like Malkaron's men with the Denorian's statue!")
+    bubble(HERO1, _"That looked like Malkaron's men with the Denorian's statue!")
   end
 
   if (get_numchrs() == 1) then
-    bubble(HERO1, "I've got to report this to the Oracle!")
+    bubble(HERO1, _"I've got to report this to the Oracle!")
   else
-    bubble(HERO1, "We've got to report this to the Oracle!")
+    bubble(HERO1, _"We've got to report this to the Oracle!")
   end
 
 end
