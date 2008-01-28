@@ -80,7 +80,7 @@ function entity_handler(en)
 
   elseif (en == 5) then
     if (get_progress(P_TALK_TSORIN) == 4) then
-      bubble(en, _"Lieutenant:", "South of here is a river you'll need to cross. Head for the tower in the small group of mountains due west from there. You just have to go through some caves to reach it. Then make your way up to the Oracle. Is that understood?")
+      bubble(en, _"Lieutenant:", _"South of here is a river you'll need to cross. Head for the tower in the small group of mountains due west from there. You just have to go through some caves to reach it. Then make your way up to the Oracle. Is that understood?")
       bubble(HERO1, _"Yeah, I guess so... it all seems clear enough.")
       bubble(en, _"Good. Head out whenever you're ready.")
     else
