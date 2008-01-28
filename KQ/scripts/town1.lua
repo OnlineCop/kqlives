@@ -509,7 +509,7 @@ function LOC_talk_jen (en)
       end
     end -- P_UCOIN
   elseif (get_progress(P_TALK_TSORIN) == 1) then
-    bubble(en, _"Jen:", "You must be looking for Derig, my grandfather. Find him in the grotto north of here.")
+    bubble(en, _"Jen:", _"You must be looking for Derig, my grandfather. Find him in the grotto north of here.")
   elseif (get_progress(P_TALK_TSORIN) == 2) then
     bubble(en, _"You should finish Derig's assignment before I give you another.")
   end -- P_TALK_TSORIN

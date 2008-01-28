@@ -3,13 +3,13 @@
 # Copyright (C) 2007 various people
 # This file is distributed under the same license as the KQ package.
 #
-# Edgar Alberto Molina Rojas <edgar@heuristicsi.com>, 2007.
+# Edgar Alberto Molina Rojas <edgar@heuristicsi.com>, 2007, 2008.
 msgid ""
 msgstr ""
 "Project-Id-Version: es\n"
 "Report-Msgid-Bugs-To: peterhull90@users.sourceforge.net\n"
-"POT-Creation-Date: 2007-11-21 17:37-0500\n"
-"PO-Revision-Date: 2007-12-03 12:07-0500\n"
+"POT-Creation-Date: 2008-01-28 16:50-0500\n"
+"PO-Revision-Date: 2008-01-28 16:48-0500\n"
 "Last-Translator: Edgar Alberto Molina Rojas <edgar@heuristicsi.com>\n"
 "Language-Team: Spanish <kqlives-main@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -134,6 +134,15 @@ msgstr "Debí haber sido un florista como mi padre."
 msgid "Now you see why I should've been a florist..."
 msgstr "Ahora ves porque debí haber sido un florista..."
 
+#: scripts/bridge.lua:162
+msgid "Ahhhhh!!!"
+msgstr ""
+
+#: scripts/bridge.lua:163
+#, fuzzy
+msgid "Help!"
+msgstr "Ayuda KQ"
+
 #: scripts/bridge2.lua:30
 msgid "There have been no further threats. Thank you."
 msgstr "No han habido más amenazas. Gracias."
@@ -225,28 +234,32 @@ msgid ""
 "Some moron rode a wagon over here with STONE RIMS! I'd like to find the no-"
 "good, lousy..."
 msgstr ""
+"Algún imbécil paso por aquí en un camión con LLANTAS DE PIEDRA! Quisiera "
+"encontrarlo, patético..."
 
 #: scripts/camp.lua:52
 msgid "It sure it clammy in here..."
-msgstr ""
+msgstr "Aquí es seguramente humedo..."
 
 #: scripts/camp.lua:60
 msgid ""
 "Wow, thanks for helping me! When we get back to my place, feel free to stop "
 "by sometime!"
 msgstr ""
+"Vaya, gracias por ayudarme! Cuando regresemos a mi casa, sientete libre de "
+"pasar alguna vez!"
 
 #: scripts/camp.lua:63
 msgid "My place is right next to the mayor's."
-msgstr ""
+msgstr "Mi casa está justo al lado de la del alcalde."
 
 #: scripts/camp.lua:68
 msgid "Thanks for your help! I should be able to find my way out."
-msgstr ""
+msgstr "Gracias por tu ayuda! Ya debería poder encontrar la salida."
 
 #: scripts/camp.lua:71
 msgid "Don't worry about me. I'm still looking for the exit..."
-msgstr ""
+msgstr "No te preocupes por mi. Todavia estoy buscando la salida..."
 
 #: scripts/camp.lua:273 scripts/dville.lua:25
 msgid "You're not welcome here!"
@@ -452,115 +465,124 @@ msgstr "Seguro. Aquí vas."
 
 #: scripts/cave3a.lua:36
 msgid "You cannot stop us! Begone!"
-msgstr ""
+msgstr "No puedes detenernos! Desaparece!"
 
 #: scripts/cave3a.lua:38
 msgid "This statue is ours! You cannot have it!"
-msgstr ""
+msgstr "Esta estatua es nuestra! No puedes tenerla!"
 
 #: scripts/cave3a.lua:40
 msgid "This is the other broken half of the stolen Oracle Statue!"
-msgstr ""
+msgstr "Esta es la otra mitad de la estatua robada del Oraculo!"
 
 #: scripts/cave3a.lua:42
 msgid "We will die before we give you the statue!"
-msgstr ""
+msgstr "Moriremos antes que darte la estatua!"
 
 #: scripts/cave3a.lua:44
 msgid "A curse be upon you... a curse upon you all!"
-msgstr ""
+msgstr "Un hechizo sea sobre ti... un hechizo sobre todos!"
 
 #: scripts/cave3a.lua:115
 msgid "The door creaks open noisily."
-msgstr ""
+msgstr "La puerta se habre con chirridos."
 
 #: scripts/cave3a.lua:177
 msgid "Something from inside grabs you!"
-msgstr ""
+msgstr "Algo desde adentro te agarra!"
 
 #: scripts/cave3a.lua:198
 msgid "You push at the wall. Something shifts."
-msgstr ""
+msgstr "Presionas la pared. Algo se mueve."
 
 #: scripts/cave4.lua:41
 msgid "Oh, $0, it's great to see you!"
-msgstr ""
+msgstr "Oh, $0, que bueno verte!"
 
 #: scripts/cave4.lua:42
 msgid ""
 "I traced the missing statue here to Demnas, but before I could confront him, "
 "a horde of Malkaron's followers attacked him."
 msgstr ""
+"Seguí la estatua perdida hasta aquí a Demnas, pero antes de poder "
+"confrontarlo, una horda de seguidores de Malkaron lo atacó."
 
 #: scripts/cave4.lua:43
 msgid "Malkaron's minions have been here?"
-msgstr ""
+msgstr "Los discipulos de Malkaron han estado allí?"
 
 #: scripts/cave4.lua:44
 msgid ""
 "Yes, and during the battle, the statue was broken in half and Malkaron's men "
 "took off with it."
 msgstr ""
+"Sí y durante la batalla, la estatua se rompió a la mitad y los hombres de "
+"Malkaron se la llevaron."
 
 #: scripts/cave4.lua:45
 msgid ""
 "Demnas was so enraged that when he found me, he locked me in this room with "
 "this troll."
 msgstr ""
+"Demnas estaba tan enfadado que cuando me encontró, me encerró en este cuarto "
+"con este troll."
 
 #: scripts/cave4.lua:46
 msgid "A troll? So there really IS a troll? How did you defeat it?"
-msgstr ""
+msgstr "Un troll? Así que realmente HAY un troll? Cómo lo derrotaste?"
 
 #: scripts/cave4.lua:47
 msgid "I haven't. I hit it with a sleep spell as soon as I was locked in here."
 msgstr ""
+"No lo he hecho. Lo golpee con un hechizo de sueño mientras estaba encerrado."
 
 #: scripts/cave4.lua:49
 msgid "It's down the stairs right there. Why don't you go take care of it now?"
-msgstr ""
+msgstr "Está bajando las escaleras. Por qué no the haces cargo de el ahora?"
 
 #: scripts/cave4.lua:53
 msgid ""
 "$0! I saw you run down the stairs there before I could tell you about the "
 "troll!"
 msgstr ""
+"$o, Ví que bajaste las escaleras corriendo, antes que te pudiera contarte "
+"sobre el troll!"
 
 #: scripts/cave4.lua:54
 msgid "Yea, the troll was asleep, but it wasn't much of a problem to beat."
-msgstr ""
+msgstr "Sí, el troll estaba dormido, pero no fue mucho problema vencerlo."
 
 #: scripts/cave4.lua:55
 msgid "My, my. So modest."
-msgstr ""
+msgstr "No, no. Tan modesto."
 
 #: scripts/cave4.lua:57
 msgid "Well, what can I say? I'm just that good!"
-msgstr ""
+msgstr "Pues, que puedo decir? Soy solo así de bueno!"
 
 #: scripts/cave4.lua:59
 msgid "Well, what can we say? We're just that good!"
-msgstr ""
+msgstr "Pues, que podemos decir? Somos solo así de buenos!"
 
 #: scripts/cave4.lua:61
 msgid "If that's so, then let me join your party!"
-msgstr ""
+msgstr "Si eso es así, entonces dejeme unirme a su grupo!"
 
 #: scripts/cave4.lua:68
 msgid "I'll wait up here. I'm not ready to take on a troll just yet."
-msgstr ""
+msgstr "Esperaré arriba. No estoy listo para enfrentarme a un troll."
 
 #: scripts/cave4.lua:71
 msgid "Good work! Let me join your team!"
-msgstr ""
+msgstr "Buen trabajo! Dejame unirme a tu equipo!"
 
 #: scripts/cave4.lua:75
 msgid "Hi, $0. Let me join your team!"
-msgstr ""
+msgstr "Hola, $0. Dejame unirme a tu equipo!"
 
 #: scripts/cave4.lua:83
 msgid "Not so fast!"
-msgstr ""
+msgstr "No tan rápido!"
 
 #: scripts/cave4.lua:155 scripts/dville.lua:182 scripts/estate.lua:113
 #: scripts/manor.lua:166 scripts/temple1.lua:232 scripts/tower.lua:479
@@ -625,7 +647,7 @@ msgstr ""
 #: scripts/cave4.lua:297 scripts/temple1.lua:314 scripts/town2.lua:598
 #: scripts/town2.lua:643
 msgid "If you need me, I'll be back at the manor."
-msgstr ""
+msgstr "Si me necesitas regresaré a manor."
 
 #: scripts/cave4.lua:309
 msgid ""
@@ -2020,88 +2042,108 @@ msgid ""
 "We have no outposts in goblin territory. If you get into real trouble, "
 "you'll have to go all the way back to Andra."
 msgstr ""
+"No tenemos bases en el territorio de los duendes. Si te metes en verdaderos "
+"problemas, tendras que regresar hasta Andra."
 
 #: scripts/fort.lua:39
 msgid "Make sure to stock up on supplies."
-msgstr ""
+msgstr "Asegurate de reunir provisiones."
 
 #: scripts/fort.lua:43
 msgid "We cannot let you pass."
-msgstr ""
+msgstr "No podemos dejarte pasar."
 
 #: scripts/fort.lua:45
 msgid ""
 "The Lieutenant requires Tsorin's authorization before anyone can pass "
 "through here."
 msgstr ""
+"El Teniente requiere la autorización de Tsorin antes que alguien pueda pasar "
+"por aquí."
 
 #: scripts/fort.lua:47
 msgid "You are free to come and go as you please."
-msgstr ""
+msgstr "Eres libre de entrar y salir cuando quieras."
 
 #: scripts/fort.lua:52
 msgid "No one is allowed through right now."
-msgstr ""
+msgstr "No está permitido pasar por ahora."
 
 #: scripts/fort.lua:54
 msgid ""
 "Show Tsorin's seal to this man next to me. He will inform the Lieutenant "
 "that you have it."
 msgstr ""
+"Muestrale el sello de Tsorin a el hombre que está junto a mi. El informará "
+"al Teniente que lo tienes."
 
 #: scripts/fort.lua:56
 msgid "Be careful in the goblin lands."
-msgstr ""
+msgstr "Se cuidadoso en las tierras de los duendes."
 
 #: scripts/fort.lua:61
 msgid "Only Captain Tsorin can authorize you to come through here."
-msgstr ""
+msgstr "Solo el Capitán Tsorin puede autorizar tu llegada hasta aquí."
 
 #: scripts/fort.lua:64
 msgid ""
 "Tsorin sends his greetings to you. You are to let me pass through to the "
 "Oracle's Tower."
 msgstr ""
+"Tsorin envia sus saludos. Deben dejarme pasar hacia la torre del Oraculo."
 
 #: scripts/fort.lua:66
 msgid ""
 "Tsorin sends his greetings to you. You are to let us pass through to the "
 "Oracle's Tower."
 msgstr ""
+"Tsorin envia sus saludos. Deben dejarnos pasar hacia la torre del Oraculo."
 
 #: scripts/fort.lua:68
 msgid "I see that you are bearing his seal. Very well."
-msgstr ""
+msgstr "Veo que usas su sello. Muy Bien."
 
 #: scripts/fort.lua:69
 msgid "I'll tell the Lieutenant you're here."
-msgstr ""
+msgstr "Le diré al Teniente que estas aquí."
 
 #: scripts/fort.lua:76
 msgid "The Lieutenant says you are free to go into goblin lands. Be cautious."
 msgstr ""
+"El Teniente dice que eres libre de ir hacia las tierras de los Duendes. Ten "
+"cuidado."
 
 #: scripts/fort.lua:78
 msgid ""
 "We have received word that the goblin lands are peaceful now. Thank you for "
 "your help."
 msgstr ""
+"Hemos recibido información que las Tierras de los Duendes son pacíficas "
+"ahora. Gracias por tu ayuda."
 
 #: scripts/fort.lua:83
 msgid "Lieutenant:"
+msgstr "Teniente:"
+
+#: scripts/fort.lua:83
+msgid ""
+"South of here is a river you'll need to cross. Head for the tower in the "
+"small group of mountains due west from there. You just have to go through "
+"some caves to reach it. Then make your way up to the Oracle. Is that "
+"understood?"
 msgstr ""
 
 #: scripts/fort.lua:84
 msgid "Yeah, I guess so... it all seems clear enough."
-msgstr ""
+msgstr "Sí, Eso creo... Todo parece más claro ahora."
 
 #: scripts/fort.lua:85
 msgid "Good. Head out whenever you're ready."
-msgstr ""
+msgstr "Bien. Partan cuando estén listos."
 
 #: scripts/fort.lua:87
 msgid "Best of luck to you."
-msgstr ""
+msgstr "La mejor de las suertes para ustedes."
 
 #: scripts/global.lua:353
 msgid "Reading makes me sleepy..."
@@ -2335,7 +2377,7 @@ msgid ""
 "$0, Tsorin says that a special treasure of the goblins, the Oracle Statue, "
 "has been stolen."
 msgstr ""
-"$0, Tsorin dise que un tesoro especial de los duendes, la Estatua del "
+"$0, Tsorin dice que un tesoro especial de los duendes, la Estatua del "
 "Oráculo, ha sido robada."
 
 #: scripts/grotto.lua:115
@@ -3010,6 +3052,23 @@ msgstr "Puede ser tonto que te salgas sin escuchar lo que tengo para decirte."
 msgid "First, Nostik gives you this."
 msgstr "Primero, Nostik te regala esto."
 
+#: scripts/manor.lua:244
+msgid "Do you want the long version or the short version?"
+msgstr ""
+
+#: scripts/manor.lua:245
+#, fuzzy
+msgid "  long"
+msgstr "  no"
+
+#: scripts/manor.lua:246
+msgid "  short"
+msgstr ""
+
+#: scripts/manor.lua:247
+msgid "  neither"
+msgstr ""
+
 #: scripts/manor.lua:250
 msgid ""
 "The world is in an upheaval right now. Malkaron is a military general who, "
@@ -3138,6 +3197,20 @@ msgstr ""
 "Tendrán que detener los monstruos. Ellos son los ojos y oídos de Malkaron y "
 "si ellos encuentran el báculo antes de que ustedes lo hagan, estaremos en "
 "problemas de nuevo."
+
+#: scripts/manor.lua:285
+msgid "Do you need me to explain it again?"
+msgstr ""
+
+#: scripts/manor.lua:286 scripts/town4.lua:246 scripts/town4.lua:288
+#: src/setup.c:244 src/setup.c:266
+msgid "  yes"
+msgstr "  sí"
+
+#: scripts/manor.lua:287 scripts/town4.lua:247 scripts/town4.lua:287
+#: src/setup.c:244 src/setup.c:266
+msgid "  no"
+msgstr "  no"
 
 #: scripts/manor.lua:289
 msgid "I hope this helps you have a better understanding of what's going on."
@@ -4656,6 +4729,10 @@ msgstr "`El Frente de la Playa'"
 msgid "`The Eye of Sardine'"
 msgstr "`El Ojo de Sardina'"
 
+#: scripts/town1.lua:260
+msgid "Hmm, sounds strangely familiar."
+msgstr ""
+
 #: scripts/town1.lua:263
 msgid "`The Battle Is Over'"
 msgstr "`La Batalla se Terminó'"
@@ -4803,9 +4880,20 @@ msgstr "Chico, esto es tan repentinamente extraño."
 msgid "Please hurry. Take this note to Tsorin immediately!"
 msgstr "Por favor apurate. Lleva esta nota a Tsorin inmediatamente!"
 
+#: scripts/town1.lua:437
+#, fuzzy
+msgid "I'm Derig's granddaughter. Go find Derig in the grotto north of here."
+msgstr "Debes encontrar a Derig en la gruta. El está en algún lugar."
+
 #: scripts/town1.lua:437 scripts/town1.lua:440 scripts/town1.lua:512
 msgid "Jen:"
 msgstr "Jen:"
+
+#: scripts/town1.lua:440
+msgid ""
+"I'm Derig's granddaughter. Go find Derig in the grotto north of here. You've "
+"been there once before."
+msgstr ""
 
 #: scripts/town1.lua:443
 msgid "You've already been to the grotto."
@@ -4881,6 +4969,13 @@ msgid ""
 "Thanks for returning the Rod to my grandfather. Here is a SunStone for you."
 msgstr ""
 "Gracias por devolver la Vara a mi abuel. Aqui hay una PiedraSol para ti."
+
+#: scripts/town1.lua:512
+msgid ""
+"You must be looking for Derig, my grandfather. Find him in the grotto north "
+"of here."
+msgstr ""
+"Debes buscar a Derig, mi abuelo. Encuentralo en la gruta al norte de aquí."
 
 #: scripts/town1.lua:514
 msgid "You should finish Derig's assignment before I give you another."
@@ -5270,141 +5365,155 @@ msgstr "Felizmente me uniría a ti para descubrir de que se trata!"
 
 #: scripts/town3.lua:35
 msgid "This is the town of Andra."
-msgstr ""
+msgstr "Este es el pueblo de Andra."
 
 #: scripts/town3.lua:41
 msgid "I wish the weapon shop sold slingshots."
-msgstr ""
+msgstr "Quisiera que la tienda de armas vendiera balas para honda."
 
 #: scripts/town3.lua:44
 msgid "We're guarding against goblins."
-msgstr ""
+msgstr "Estamos patrullando contra duendes."
 
 #: scripts/town3.lua:47
 msgid "Caffeine, caffeine, caffeine, caffeine..."
-msgstr ""
+msgstr "Cafeina, cafeina, cafeina, cafeina..."
 
 #: scripts/town3.lua:181
 msgid "Various books about magic."
-msgstr ""
+msgstr "Varios libros sobre magia."
 
 #: scripts/town3.lua:184
 msgid "The art of battle-magic."
-msgstr ""
+msgstr "El arte de la batalla-magia."
 
 #: scripts/town3.lua:187
 msgid "How magic can make you rich!"
-msgstr ""
+msgstr "Cómo puede hacerte rico la magia!"
 
 #: scripts/town3.lua:190
 msgid "Ten reasons why you should never call a wizard 'pencil-neck'."
-msgstr ""
+msgstr "Diez razones de por qué nunca debes llamar a un mago 'cuello de lápiz'"
 
 #: scripts/town3.lua:203
 msgid "The barrel is empty."
-msgstr ""
+msgstr "El barríl está vacío."
 
 #: scripts/town3.lua:215
 msgid ""
 "To the north of here is a temple. It is nearly impenetrable from the "
 "outside, even to Malkaron's armies."
 msgstr ""
+"Hacia el norte de este templo. Es casi impenetrable desde el exterior, hasta "
+"para los ejercitos de Malkaron."
 
 #: scripts/town3.lua:216
 msgid ""
 "However, monsters have somehow appeared INSIDE the temple. They need help in "
 "any way possible."
 msgstr ""
+"Sin embargo, de alguna forma han aparecido monstruos DENTRO del templo. "
+"Ellos necesitan ayuda de cualquier manera posible."
 
 #: scripts/town3.lua:217
 msgid "I can probably help. What can I do?"
-msgstr ""
+msgstr "Quizá pueda ayudar. Que puedo hacer?"
 
 #: scripts/town3.lua:218
 msgid ""
 "I hear that the monsters are coming through a portal in the caves under the "
 "temple. Seal it up to stop the monsters."
 msgstr ""
+"Escuché que los monstruos llegan a través de un portal en las cuevas bajo el "
+"templo. Séllalo para detener los monstruos. "
 
 #: scripts/town3.lua:219
 msgid "How do I seal the portal?"
-msgstr ""
+msgstr "Cómo sello el portal?"
 
 #: scripts/town3.lua:220
 msgid "I don't know. You should ask someone in the temple."
-msgstr ""
+msgstr "No lo sé. Deberías preguntarle a alguien en el templo."
 
 #: scripts/town3.lua:222
 msgid "Use that Goblin Item to seal the portal in the temple."
-msgstr ""
+msgstr "Usa ese Item de Duende para sellar el portal en el templo."
 
 #: scripts/town3.lua:224
 msgid "Good work in the temple! We thank you most graciously!"
-msgstr ""
+msgstr "Buen trabajo en el templo! Te agradecemos mucho!"
 
 #: scripts/town3.lua:231
 msgid "Tsorin:"
-msgstr ""
+msgstr "Tsorin:"
 
 #: scripts/town3.lua:232
 msgid "I'm not sure. To get through the pass to the south, I guess."
-msgstr ""
+msgstr "No estoy seguro. Para pasar hacia el sur, Imagino."
 
 #: scripts/town3.lua:233
 msgid ""
 "I'm afraid I cannot allow that. There is a civil upheaval in the Goblin "
 "Lands and so cannot allow anyone to pass."
 msgstr ""
+"Me temo que no lo puedo permitir. Hay una revuelta civil en las Tierras de "
+"los Duendes y por lo tanto no puedo permitir que nadie pase."
 
 #: scripts/town3.lua:235
 msgid "I'm pretty sure I need to get through there."
-msgstr ""
+msgstr "Estoy muy seguro que necesito pasar por ahí."
 
 #: scripts/town3.lua:237
 msgid "We're pretty sure we need to get through there."
-msgstr ""
+msgstr "Estamos muy seguros que necesitamos pasar por allí."
 
 #: scripts/town3.lua:239
 msgid "Tsorin eyes you warily."
-msgstr ""
+msgstr "Tsorin parpadea enfadado."
 
 #: scripts/town3.lua:240
 msgid ""
 "Well, I have to know if I can trust you first. Here, take this note to Derig."
 msgstr ""
+"Bien, primero tengo que saber si puedo confiar en ti, lleva esta nota a "
+"Derig."
 
 #: scripts/town3.lua:241
 msgid "Tsorin hands you an envelope with his seal on it."
-msgstr ""
+msgstr "Tsorin te entrega un sobre con su sello en el."
 
 #: scripts/town3.lua:242
 msgid ""
 "He lives back in Ekla, and if he says you can pass, I shall let you pass."
-msgstr ""
+msgstr "El vive en Ekla, y si él te dice que puedes pasar, Te dejaré pasar."
 
 #: scripts/town3.lua:246
 msgid ""
 "If you have trouble finding Derig, ask around town. Someone's bound to know "
 "where he's wandered off to."
 msgstr ""
+"Si tienes problema para encontrar a Derig, pregunta en el pueblo. Alguien "
+"debe dónde permanece él."
 
 #: scripts/town3.lua:248
 msgid "You hand the note to Tsorin."
-msgstr ""
+msgstr "Le pasas la nota a Tsorin."
 
 #: scripts/town3.lua:249
 msgid ""
 "Hmm, I see. Since Derig says you are trustworthy, I can let you pass through "
 "the fort."
 msgstr ""
+"Mmm, Ya veo. Si Derig dice que eres de confianza, te dejaré pasar por el "
+"fuerte."
 
 #: scripts/town3.lua:251
 msgid "Can you tell me why I need this security clearance?"
-msgstr ""
+msgstr "Puedes decirme por qué necesito esta tarjeta de seguridad?"
 
 #: scripts/town3.lua:253
 msgid "Can you tell us why we need this security clearance?"
-msgstr ""
+msgstr "Puedes decirnos por qué necesitamos esta tarjeta de seguridad?"
 
 #: scripts/town3.lua:255
 msgid ""
@@ -5412,296 +5521,325 @@ msgid ""
 "caused such problems that civil war has ensued. As a safety to our citizens, "
 "we have closed the border to try to capture the thief or thieves."
 msgstr ""
+"La estatua del Oraculo fue robada de la villa shrine al sur de aquí. Esto ha "
+"causado tantos problemas que una guerra civil es segura. Y como seguridad "
+"para nuestros ciudadanos, hemos cerrado la forntera para intentar capturar "
+"su ladrón o ladrones."
 
 #: scripts/town3.lua:257
 msgid "If you want, I can help find this missing statue."
-msgstr ""
+msgstr "Si quieres, puedo ayudar a encontrar la estatua perdida."
 
 #: scripts/town3.lua:259
 msgid "If you want, we can help you find this missing statue."
-msgstr ""
+msgstr "Si quieres, podemos ayudarte a encontrar la estatua perdida."
 
 #: scripts/town3.lua:261
 msgid ""
 "That would be wonderful! Find the Oracle to the south and ask her what she "
 "would like you to do."
 msgstr ""
+"Eso seria maravilloso! Encuentra el Oraculo al sur y preguntale si ella "
+"quiere ayudarte a hacerlo."
 
 #: scripts/town3.lua:262
 msgid ""
 "Present this Seal to the guards, and tell them that you're acting with my "
 "authority."
 msgstr ""
+"Presentale este Sello a los guardias y diles que actuas con mi autoridad."
 
 #: scripts/town3.lua:263
 msgid "Tsorin's Seal procured!"
-msgstr ""
+msgstr "Recibes el Sello de Tsorin!"
 
 #: scripts/town3.lua:264
 msgid ""
 "I'm fear I cannot send anyone to protect you - you must take the utmost care."
 msgstr ""
+"Me temo que no puedo enviar a nadie para protegerte - debes tener extremo "
+"cuidado."
 
 #: scripts/town3.lua:268
 msgid ""
 "You can find the Oracle to the south. She will help you find this missing "
 "statue."
 msgstr ""
+"Puedes encontrar el Oraculo al sur. Ella te ayudará a encontrar esta estatua "
+"perdida."
 
 #: scripts/town3.lua:270
 msgid "Thank you for all you've done."
-msgstr ""
+msgstr "Gracias por todo lo que has hecho."
 
 #: scripts/town4.lua:42
 msgid "Opal armor? I have no idea where you would find something like that."
-msgstr ""
+msgstr "armadura Opal? No tengo ni idea de donde podrás encontrar algo así."
 
 #: scripts/town4.lua:43
 msgid ""
 "You should go talk to Gelik. He's old... he knows all kinds of stuff. He "
 "lives up in the north end of town."
 msgstr ""
+"Deberías ir a hablar con Gelik. El es viejo... él sabe de todo. Vive en al "
+"final de la parte de norte del pueblo."
 
 #: scripts/town4.lua:45
 msgid "So how do you like our little town?"
-msgstr ""
+msgstr "Y... como te parece nuestro pueblo?"
 
 #: scripts/town4.lua:47
 msgid "Oh, not too bad. Needs more flowers, though..."
-msgstr ""
+msgstr "Oh, nada mal. Necesita más flores, creo..."
 
 #: scripts/town4.lua:52
 msgid "I planted all of the flowers in this town. I love flowers."
-msgstr ""
+msgstr "Yo planté todas las flores en este pueblo. Amo las flores."
 
 #: scripts/town4.lua:54
 msgid ""
 "Well, you've certainly done a good job on them. Have you ever considered "
 "birchleaf fertilizer for extra color?"
 msgstr ""
+"Pues, ciertamente has hecho un buen trabajo con eso. Ház considerado "
+"fertilizande de Hoja de Abedul para tener colo extra?"
 
 #: scripts/town4.lua:57
 msgid "Did I mention that I love flowers?"
-msgstr ""
+msgstr "Mencioné que amo las flores?"
 
 #: scripts/town4.lua:60
 msgid "Did you meet the old flower lady? She's nuts!"
-msgstr ""
+msgstr "Ya conociste la anciana de las flores? Está loca!"
 
 #: scripts/town4.lua:63
 msgid ""
 "You should go talk to Trezin on the other side of town. He's selling his "
 "house, and it's a really good deal."
 msgstr ""
+"Deberías hablar con Trezin al otro lado del pueblo. El está vendiendo su "
+"casa, y es muy buen trato."
 
 #: scripts/town4.lua:66
 msgid "Oh, how I love to look into your eyes..."
-msgstr ""
+msgstr "Oh, como amo mirar tus ojos..."
 
 #: scripts/town4.lua:69
 msgid "Oh, you're so sweet!"
-msgstr ""
+msgstr "Oh, eres tan dulce!"
 
 #: scripts/town4.lua:78
 msgid "Hello, nice day isn't it?"
-msgstr ""
+msgstr "Hola, lindo día cierto?"
 
 #: scripts/town4.lua:81
 msgid "So the duck says, 200 gp... same as in town."
-msgstr ""
+msgstr "Entonces el pato dice, 200 po... igual que en el pueblo."
 
 #: scripts/town4.lua:82
 msgid "Ha ha ha ha!"
-msgstr ""
+msgstr "Ja ja ja ja!"
 
 #: scripts/town4.lua:83
 msgid "Don't you get it?"
-msgstr ""
+msgstr "No lo entendiste?"
 
 #: scripts/town4.lua:85
 msgid "You don't get it."
-msgstr ""
+msgstr "No entiendes."
 
 #: scripts/town4.lua:88
 msgid "My roommate tells the worst jokes."
-msgstr ""
+msgstr "Mi compañero de cuarto dice las peores bromas."
 
 #: scripts/town4.lua:91
 msgid "...Huh?"
-msgstr ""
+msgstr "...Mmm?"
 
 #: scripts/town4.lua:92
 msgid "Oh, hi... I'm sick."
-msgstr ""
+msgstr "Oh, hola... me enfermé."
 
 #: scripts/town4.lua:95
 msgid "zzz"
-msgstr ""
+msgstr "zzz"
 
 #: scripts/town4.lua:95
 msgid "ZZZ"
-msgstr ""
+msgstr "ZZZ"
 
 #: scripts/town4.lua:95
 msgid "ZZZ... Long live KQlives!... zzz..."
-msgstr ""
+msgstr "ZZZ... Larga vida KQlives!... zzz..."
 
 #: scripts/town4.lua:98
 msgid "My son is sick in bed."
-msgstr ""
+msgstr "Mi hijo esta enfermo en cama."
 
 #: scripts/town4.lua:220
 msgid "Seaside Inn"
-msgstr ""
+msgstr "Estancia La Playa"
 
 #: scripts/town4.lua:245
 msgid "Take a nap?"
-msgstr ""
-
-#: scripts/town4.lua:246 scripts/town4.lua:288 src/setup.c:244 src/setup.c:266
-msgid "  yes"
-msgstr "  sí"
-
-#: scripts/town4.lua:247 scripts/town4.lua:287 src/setup.c:244 src/setup.c:266
-msgid "  no"
-msgstr "  no"
+msgstr "Una ciesta?"
 
 #: scripts/town4.lua:281
 msgid "Hey, the name's Trezin, and have I got a deal for you!"
-msgstr ""
+msgstr "Hey, el nombre es Trezin y tiene Tengo una oferta para ti!"
 
 #: scripts/town4.lua:283
 msgid "Oh great. This guy sounds like another used-chariot salesman. Sign..."
 msgstr ""
+"En serio. Este chico suena como otro vendedor de segunda mano. Firma..."
 
 #: scripts/town4.lua:285
 msgid "You can have this lovely house"
-msgstr ""
+msgstr "Puedes tener esta hermosa casa"
 
 #: scripts/town4.lua:286
 msgid "for a mere 7500 GP. Sound good?"
-msgstr ""
+msgstr "por solo 7500 PO. Suena bien?"
 
 #: scripts/town4.lua:289
 msgid "So be it. You know where I am if you change your mind."
-msgstr ""
+msgstr "Que así sea. Sabes dónde estoy por si cambias de opinión."
 
 #: scripts/town4.lua:294
 msgid ""
 "Hmm... looks like you're a bit short on funds. Fear not. I'll be here should "
 "you manage to find enough money."
 msgstr ""
+"Mmm... Parece que estas un poco corto de fondos. No temas. Estaré aquí "
+"deberías encontrar suficiente dinero."
 
 #: scripts/town4.lua:296
 msgid "Yea, or swipe it out of your purse, you old windbag..."
-msgstr ""
+msgstr "Sí, o sacalo de tu bolso, viejo tacaño..."
 
 #: scripts/town4.lua:298
 msgid "Yea; fear not, maybe I'll even consider buying it!"
-msgstr ""
+msgstr "Sí; no temas, quizá considere comprarla!"
 
 #: scripts/town4.lua:299
 msgid "Jerk..."
-msgstr ""
+msgstr "Imbecil..."
 
 #: scripts/town4.lua:303
 msgid "Fantastic! You know a good deal when you see one."
-msgstr ""
+msgstr "Fantástico! Sabes cuando es un buen trato al verlo."
 
 #: scripts/town4.lua:304
 msgid "Oh, there are some things you should know about the house."
-msgstr ""
+msgstr "Ah, hay algunas cosas que debes saber acerca de la casa."
 
 #: scripts/town4.lua:305
 msgid "First off, you can sleep here fully recover HP and MP for free!"
-msgstr ""
+msgstr "Primero, puedes dormir aquí y recuperar totalmente tu SL y PM gratis!"
 
 #: scripts/town4.lua:307
 msgid ""
 "No way! Did he say free?! You mean I can sleep in my OWN house, in my OWN "
 "bed for free?! Oh wow!"
 msgstr ""
+"En serio! Dijiste gratis?! Quieres decir que puedo dormir en mi PROPIA casa, "
+"en mi PROPIA cama gratis?! Wow!"
 
 #: scripts/town4.lua:309
 msgid ""
 "Secondly, there is a save spot right in the house! How's that for "
 "convenience?"
 msgstr ""
+"Segundo, hay un punto de guardado dentro de la casa! así que para que sirve "
+"eso?"
 
 #: scripts/town4.lua:311
 msgid ""
 "Yea, and how's a nice knuckle sandwich sound for convenience? Just LEAVE "
 "already you old geezer!"
 msgstr ""
+"Sí, y para que sirve el crujido de un buen sandwich? Solo PRUEBALO anciano!"
 
 #: scripts/town4.lua:313
 msgid ""
 "And lastly, I've even left a little something inside for you. It's a very "
 "handy spell called Warp."
 msgstr ""
+"Y por ultimo, Hasta te dejé algo adentro. Es un hechizo muy útil llamado "
+"Teletransportación."
 
 #: scripts/town4.lua:314
 msgid "The Warp spell lets you escape from dungeons and other such places."
 msgstr ""
+"El hechizo de Teletransportaciń te permite escapar de calabozos y lugares "
+"como esos."
 
 #: scripts/town4.lua:315
 msgid ""
 "As a bonus, you can use Warp from anywhere on the world map and it will "
 "bring you back to the house! Great huh?"
 msgstr ""
+"Como un extra, tu puedes usar Teletransportación desde cualquier lugar en el "
+"mapa mundial y te traerá a la casa! Grandioso cierto?"
 
 #: scripts/town4.lua:317
 msgid "Not if you're anywhere around it when I get back, it's not!"
-msgstr ""
+msgstr "No si estas en cualquier lugar cercano cuando regrese, No lo es!"
 
 #: scripts/town4.lua:319
 msgid ""
 "Well, enough of my yapping. Go in and see for yourself!, I've got to go put "
 "this money somewhere safe!"
 msgstr ""
+"Bien, basta de introducciones. Ve y observalo por tu mismo!, Tengo que "
+"guardar este dinero en un lugar seguro!"
 
 #: scripts/town4.lua:321
 msgid "Oh, I can tell you where to put it that'll keep it really safe..."
-msgstr ""
+msgstr "Oh, puedo decirte dónde guardarlo y que permanecerá muy seguro..."
 
 #: scripts/town4.lua:334
 msgid "What are you waiting for? Go in and take a look around."
-msgstr ""
+msgstr "Qué esperas? Ve y hecha un vistazo."
 
 #: scripts/town4.lua:342
 msgid "What?"
-msgstr ""
+msgstr "Qué?"
 
 #: scripts/town4.lua:350
 msgid "Just great... how am I supposed to get back?"
-msgstr ""
+msgstr "Grandioso... como se supone que regrese?"
 
 #: scripts/town4.lua:354
 msgid "I have to find him! I'm not letting him get away from me that easily."
-msgstr ""
+msgstr "Tengo que encontrarlo! No lo dejaré ir así de fácil!"
 
 #: scripts/town4.lua:356
 msgid "Oh well..."
-msgstr ""
+msgstr "Oh bien..."
 
 #: scripts/town4.lua:359
 msgid ""
 "Sigh. I guess I'll just have to keep going and hope I find a way to get back."
 msgstr ""
+"Mmm. Imagino que debo dejar de correr y esperar por encontrar una forma de "
+"salir."
 
 #: scripts/town4.lua:370
 msgid "So, you're looking for Opal armor eh? Well, I know of one piece."
-msgstr ""
+msgstr "Yí, estas buscando la armadura Opal no? Bien, Se de una parte."
 
 #: scripts/town4.lua:371
 msgid ""
 "The Opal Helmet belongs to a wealthy man named Dungar who lives in his own "
 "private estate east of town."
 msgstr ""
+"El Casco Opal pertenece a un hombre adinerado llamado Dungar que vive en su "
+"propio estado al este del pueblo."
 
 #: scripts/town4.lua:372
 msgid "You should go and talk to him."
-msgstr ""
+msgstr "Deberias ir y hablarle."
 
 #: scripts/town4.lua:373
 msgid ""
@@ -6759,6 +6897,70 @@ msgstr ""
 msgid "This spa is relaxing."
 msgstr ""
 
+#: maps/mapdraw2.glade:8
+msgid "Mapdraw"
+msgstr ""
+
+#: maps/mapdraw2.glade:22
+msgid "_Map"
+msgstr ""
+
+#: maps/mapdraw2.glade:83
+#, fuzzy
+msgid "_Edit"
+msgstr "Salir"
+
+#: maps/mapdraw2.glade:129
+msgid "_View"
+msgstr ""
+
+#: maps/mapdraw2.glade:136
+#, fuzzy
+msgid "_Help"
+msgstr "Ayuda KQ"
+
+#: maps/mapdraw2.glade:198
+msgid "Current Value:   "
+msgstr ""
+
+#: maps/mapdraw2.glade:382
+msgid "Homepage"
+msgstr ""
+
+#: maps/mapdraw2.glade:383
+msgid "translator-credits"
+msgstr ""
+
+#: maps/mapdraw2.glade:399
+#, fuzzy
+msgid "Entity"
+msgstr "Salir"
+
+#: maps/mapdraw2.glade:441
+msgid "<b>Entity</b>"
+msgstr ""
+
+#: maps/mapdraw2.glade:543
+msgid "iconset:"
+msgstr ""
+
+#: maps/mapdraw2.glade:554
+msgid "height:"
+msgstr ""
+
+#: maps/mapdraw2.glade:565
+#, fuzzy
+msgid "width:"
+msgstr "Gol:"
+
+#: maps/mapdraw2.glade:585
+msgid "gtk-cancel"
+msgstr ""
+
+#: maps/mapdraw2.glade:597
+msgid "gtk-ok"
+msgstr ""
+
 #: src/combat.c:294
 #, c-format
 msgid "HP:%d (%d)"
@@ -6901,32 +7103,38 @@ msgstr "Has sido emboscado(a)!"
 msgid "You've surprised the enemy!"
 msgstr "Sorprendiste al enemigo!"
 
-#: src/credits.c:108
+#: src/credits.c:109
 msgid "Press F1 for help"
 msgstr "Presione F1 para Ayuda"
 
-#: src/credits.c:135
+#: src/credits.c:136
 msgid "*CHEAT MODE ON*"
 msgstr "*MODO TRAMPAS ENCENDIDO*"
 
-#: src/credits.c:139
+#: src/credits.c:136
+#, fuzzy
+msgid "*CHEAT MODE OFF*"
+msgstr "*MODO TRAMPAS ENCENDIDO*"
+
+#: src/credits.c:140
 msgid "*DEBUG MODE ON*"
 msgstr "*MODO DEPURACIÓN ENCENDIDO*"
 
-#: src/draw.c:1191
+#: src/draw.c:1263
 msgid "UTF-8 decode error"
 msgstr ""
 
-#: src/draw.c:1195
-msgid "UTF-8 3 and 4 bytes chars not implemented"
+#: src/draw.c:1318
+#, c-format
+msgid "Invalid glyph index: %d"
 msgstr ""
 
-#: src/draw.c:1260
+#: src/draw.c:1340
 #, c-format
 msgid "print_font: Bad font index, %d"
 msgstr ""
 
-#: src/draw.c:1295
+#: src/draw.c:1375
 #, c-format
 msgid "print_num: Bad font index, %d"
 msgstr ""
@@ -6973,7 +7181,7 @@ msgstr "Optimizar"
 msgid "Remove"
 msgstr "Remover"
 
-#: src/eqpmenu.c:234 src/sgame.c:1168
+#: src/eqpmenu.c:234 src/sgame.c:1169
 msgid "Empty"
 msgstr "Vacío"
 
@@ -7354,17 +7562,17 @@ msgstr "Línea #%d %d en (%s %s) %s\n"
 msgid "Script error. See allegro.log"
 msgstr "Error del script. Vea allegro.log"
 
-#: src/intrface.c:4060
-#, c-format
-msgid "Could not open script %s.lob!"
+#: src/intrface.c:4058
+#, fuzzy, c-format
+msgid "Could not open script %s!"
 msgstr "Imposible abrir el script %s.lob!"
 
-#: src/intrface.c:4067
+#: src/intrface.c:4064
 #, c-format
 msgid "Could not parse script %s!"
 msgstr "Imposible parsear el script %s!"
 
-#: src/intrface.c:4074
+#: src/intrface.c:4071
 #, c-format
 msgid "lua_pcall failed while calling script %s!"
 msgstr "lua_pcall falló al llamar el script %s!"
@@ -7414,80 +7622,80 @@ msgstr "Sabiduría sube!"
 msgid "%s learned!"
 msgstr "aprendiste %s!"
 
-#: src/kq.c:466
+#: src/kq.c:467
 #, c-format
 msgid "Could not allocate %s!."
 msgstr "Imposible asignar %s!."
 
-#: src/kq.c:725
+#: src/kq.c:726
 msgid "Could not open treasure.log!"
 msgstr "Imposible abrir treasure.log!"
 
-#: src/kq.c:732
+#: src/kq.c:733
 msgid "Could not open progress.log!"
 msgstr "Imposible abrir progress.log!"
 
-#: src/kq.c:938
+#: src/kq.c:939
 msgid "Could not load character graphics!"
 msgstr "Imposible cargar los gráficos de carácter!"
 
-#: src/kq.c:1023
+#: src/kq.c:1024
 msgid "Alt+W Pressed:"
 msgstr "Alt+W Presionado:"
 
-#: src/kq.c:1036
+#: src/kq.c:1037
 #, c-format
 msgid "Program terminated: user pressed Alt+X"
 msgstr "Programa terminado: el usuario presiono Alt+X"
 
-#: src/kq.c:1062
+#: src/kq.c:1063
 msgid "Cannot open hero data file"
 msgstr "Imposible abrir el archivo de datos del heroe"
 
-#: src/kq.c:1073
+#: src/kq.c:1074
 msgid "Could not load kqfaces.pcx!"
 msgstr "Imposible cargar kqfaces.pcx!"
 
-#: src/kq.c:1111
+#: src/kq.c:1112
 #, c-format
 msgid "Could not load map %s!"
 msgstr "Imposible cargar el mapa %s!"
 
-#: src/kq.c:1154
+#: src/kq.c:1155
 #, c-format
 msgid "Sorry, no help screen at this time.\n"
 msgstr "Perdón, por ahora no tenemos pantalla de ayuda.\n"
 
-#: src/kq.c:1488
+#: src/kq.c:1492
 msgid "X-ALT pressed... exiting."
 msgstr "X-ALT presionado... saliendo."
 
-#: src/kq.c:1613
+#: src/kq.c:1617
 #, c-format
 msgid "Error with sound: %s\n"
 msgstr "Error con el sounido: %s\n"
 
-#: src/kq.c:1633
+#: src/kq.c:1637
 msgid "Only joysticks/gamepads with at least 4 buttons can be used."
 msgstr "Solo joysticks/gamepads con al menos 4 botones pueden ser utilizados."
 
-#: src/kq.c:1642
+#: src/kq.c:1646
 msgid "Could not load misc.pcx!"
 msgstr "Imposible cargar misc.pcx!"
 
-#: src/kq.c:1716
+#: src/kq.c:1720
 msgid "Could not load tileset.kq"
 msgstr "Imposible cargar tileset.kq"
 
-#: src/kq.c:1723
+#: src/kq.c:1727
 msgid "Too many tilesets defined in tileset.kq"
 msgstr "Demasiados tilesets definidos en tileset.kq"
 
-#: src/kq.c:1859
+#: src/kq.c:1863
 msgid "X-Alt pressed - exiting"
 msgstr "X-Alt presionado - saliendo"
 
-#: src/kq.c:1948
+#: src/kq.c:1952
 msgid "Repulse has worn off!"
 msgstr "Se ha acabado la Repulsión!"
 
@@ -7663,7 +7871,7 @@ msgstr "Disponible:"
 msgid "In party:"
 msgstr "Utilizado:"
 
-#: src/selector.c:676 src/sgame.c:1291 src/sgame.c:1399 src/shopmenu.c:754
+#: src/selector.c:676 src/sgame.c:1292 src/sgame.c:1400 src/shopmenu.c:754
 msgid "Exit"
 msgstr "Salir"
 
@@ -7956,100 +8164,100 @@ msgstr "Error. numchrs en el juego guardado > PSIZE"
 msgid "Error. number of chars in saved game > sizeof(curmap)"
 msgstr "Error. número de caracteres en la juego guardado > sizeof(curmap)"
 
-#: src/sgame.c:589
+#: src/sgame.c:590
 msgid "Error. number of progress indicators > sizeof(progress)"
 msgstr "Error. número de indicadores de progreso > sizeof(progress)"
 
-#: src/sgame.c:602
+#: src/sgame.c:603
 msgid "Error. number of treasure indicators > sizeof(treasure)"
 msgstr "Error. número de indicadores de tesoro > sizeof(treasure)"
 
-#: src/sgame.c:615
+#: src/sgame.c:616
 msgid "Error. number of non-combat spell indicators > sizeof(save_spells)"
 msgstr ""
 "Error. número de indicadores de hechizos de anti-combate > sizeof"
 "(save_spells)"
 
-#: src/sgame.c:629
+#: src/sgame.c:630
 msgid "Error. number of inventory items > MAX_INV"
 msgstr "Error. número de items de inventario > MAX_INV"
 
-#: src/sgame.c:648
+#: src/sgame.c:649
 msgid "Error. number of special items > MAX_SPECIAL_ITEMS"
 msgstr "Error. número de items especiales > MAX_SPECIAL_ITEMS"
 
-#: src/sgame.c:662
+#: src/sgame.c:663
 msgid "Error. number of shops saved > NUMSHOPS"
 msgstr "Error. número de compras guardadas > NUMSHOPS"
 
-#: src/sgame.c:804 src/sgame.c:902
+#: src/sgame.c:805 src/sgame.c:903
 msgid "Could not save game data."
 msgstr "Imposible guardar los datos del juego."
 
-#: src/sgame.c:1142
+#: src/sgame.c:1143
 msgid "Loading"
 msgstr "Cargar."
 
-#: src/sgame.c:1145
+#: src/sgame.c:1146
 msgid "Saving"
 msgstr "Guardar"
 
-#: src/sgame.c:1148
+#: src/sgame.c:1149
 msgid "Delete"
 msgstr "Eliminar"
 
-#: src/sgame.c:1164
+#: src/sgame.c:1165
 msgid "Wrong version"
 msgstr "Versión incorrecta"
 
-#: src/sgame.c:1175
+#: src/sgame.c:1176
 #, c-format
 msgid "L: %02d"
 msgstr "N: %02d"
 
-#: src/sgame.c:1177
+#: src/sgame.c:1178
 msgid "H:"
 msgstr "S:"
 
-#: src/sgame.c:1178
+#: src/sgame.c:1179
 msgid "M:"
 msgstr "M:"
 
-#: src/sgame.c:1188
+#: src/sgame.c:1189
 #, c-format
 msgid "T %d:%02d"
 msgstr "T %d:%02d"
 
-#: src/sgame.c:1191
+#: src/sgame.c:1192
 #, c-format
 msgid "G %d"
 msgstr "O %d"
 
-#: src/sgame.c:1288
+#: src/sgame.c:1289
 msgid "Continue"
 msgstr "Continuar"
 
-#: src/sgame.c:1289
+#: src/sgame.c:1290
 msgid "New Game"
 msgstr "  Nuevo"
 
-#: src/sgame.c:1290 src/sgame.c:1398
+#: src/sgame.c:1291 src/sgame.c:1399
 msgid "Config"
 msgstr "Config"
 
-#: src/sgame.c:1338
+#: src/sgame.c:1339
 msgid "Then exit you shall!"
 msgstr "Entonces saldréis!"
 
-#: src/sgame.c:1378
+#: src/sgame.c:1379
 msgid "Save  "
 msgstr "Guardar"
 
-#: src/sgame.c:1385
+#: src/sgame.c:1386
 msgid "[Save]"
 msgstr "[Guardar]"
 
-#: src/sgame.c:1397
+#: src/sgame.c:1398
 msgid "Load"
 msgstr "Cargar"
 
@@ -8127,55 +8335,3 @@ msgstr "Eso cuesta %d po."
 #: src/shopmenu.c:658
 msgid "That can not be sold!"
 msgstr "Eso no se puede vender!"
-
-#~ msgid "Ahhhhh!!!"
-#~ msgstr "Ahhhhh!!!"
-
-#~ msgid "Help!"
-#~ msgstr "Ayuda!"
-
-#~ msgid "Do you want the long version or the short version?"
-#~ msgstr "Deseas la versión larga o la corta?"
-
-#~ msgid "  long"
-#~ msgstr "larga"
-
-#~ msgid "  short"
-#~ msgstr "corta"
-
-#~ msgid "  neither"
-#~ msgstr "  ninguna"
-
-#~ msgid "Do you need me to explain it again?"
-#~ msgstr "Necesitas que te lo explique de nuevo?"
-
-#~ msgid "Hmm, sounds strangely familiar."
-#~ msgstr "Mmm, esto me suena extrañamente familiar."
-
-#~ msgid ""
-#~ "I'm Derig's granddaughter. Go find Derig in the grotto north of here."
-#~ msgstr ""
-#~ "Soy la nieta de Derig. Ve y encuentralo en la gruta al norte de aquí."
-
-#~ msgid ""
-#~ "I'm Derig's granddaughter. Go find Derig in the grotto north of here. "
-#~ "You've been there once before."
-#~ msgstr ""
-#~ "Soy la nieta de Derig. Ve y encuentralo en la gruta al norte de aquí. Ya "
-#~ "has estado allí antes."
-
-#, fuzzy
-#~ msgid "_Edit"
-#~ msgstr "Salir"
-
-#, fuzzy
-#~ msgid "_Help"
-#~ msgstr "Ayuda KQ"
-
-#, fuzzy
-#~ msgid "Entity"
-#~ msgstr "Salir"
-
-#, fuzzy
-#~ msgid "*CHEAT MODE OFF*"
-#~ msgstr "*MODO TRAMPAS ENCENDIDO*"
