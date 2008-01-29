@@ -85,20 +85,16 @@ void print_font (BITMAP *, int, int, const char *, int);
 /*  effects.c -> only place (RB IDEA: moving it there?)  */
 void print_num (BITMAP *, int, int, char *, int);
 
-/*  intrface.c  */
-/* void thought_text (int, char *, char *, char *, char *); */
-
 /*  intrface.c, setup.c  */
-/* void bubble_text (int, char *, char *, char *, char *); */
 void text_ex (int, int, const char *);
 
 /*  intrface.c, setup.c  */
 int prompt (int, int, int, char *, char *, char *, char *);
-int prompt_ex (int, const char *, char *[], int);
+int prompt_ex (int, const char *, const char *[], int);
 
 /*  combat.c, hskill.c, intrface.c, (item|shop)menu.c,  */
 /*  kq.c, sgame.c                                       */
-void message (char *, int, int, int, int);
+void message (const char *, int, int, int, int);
 
 /*  intrface.c, kq.c  */
 void set_view (int, int, int, int, int);

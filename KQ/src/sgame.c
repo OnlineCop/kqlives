@@ -83,8 +83,6 @@ static void delete_game (void);
 static int saveload (int);
 static int confirm_action (void);
 
-extern void display_credits (void);
-
 
 /*! \brief Confirm save
  *
@@ -133,11 +131,11 @@ static int confirm_action (void)
  */
 static int confirm_quit (void)
 {
-   static char *opts[2];
+   const char *opts[2];
+   int ans;
    opts[0]=_("Yes");
    opts[1]=_("No");
    /*strcpy(opts[1], "No");*/
-   int ans;
    ans = prompt_ex (0, _("Are you sure you want to quit this game?"), opts, 2);
    return ans == 0 ? 1 : 0;
 }
@@ -191,6 +189,12 @@ static void delete_game (void)
 }
 
 
+
+static int load_game_91 (PACKFILE * sdat);
+static int load_game_92 (PACKFILE * sdat);
+
+
+
 /*! \brief Load game
  *
  * Uh-huh.
@@ -201,7 +205,7 @@ static void delete_game (void)
 static int load_game (void)
 {
    PACKFILE *sdat;
-   int a, b, thr, tmin;
+   int a;
    unsigned char tv;
 
    sprintf (strbuf, "sg%d.sav", save_ptr);
@@ -538,7 +542,7 @@ int load_game_91 (PACKFILE * sdat)
  * Author: Winter Knight
  * \returns 1 if load succeeded, 0 otherwise
  */
-int load_game_92 (PACKFILE * sdat)
+static int load_game_92 (PACKFILE * sdat)
 {
    int a, b, c, d;
 
@@ -767,6 +771,10 @@ void load_sgstats (void)
 
 
 
+static int save_game_92 (void);
+
+
+
 /*! \brief Save game
  *
  * You guessed it... save the game.
@@ -842,7 +850,7 @@ static int save_game (void)
       pack_iputw (g_inv[a][1], sdat);
    }
    /* PH FIXME: do we _really_ want things like controls and screen */
-   /* mode to be saved/loaded ?
+   /* mode to be saved/loaded ? */
    /* WK: No. */
    pack_iputl (gsvol, sdat);
    pack_iputl (gmvol, sdat);
@@ -876,9 +884,10 @@ static int save_game (void)
  *
  * \returns 0 if save failed, 1 if success
  */
-int save_game_92 (PACKFILE * sdat)
+static int save_game_92 (void)
 {
    int a, b, c, d;
+   PACKFILE * sdat;
 
    for (b = 0; b < PSIZE; b++) {
       sid[save_ptr][b] = 0;
@@ -989,7 +998,7 @@ int save_game_92 (PACKFILE * sdat)
 
       /* Find last valid (non-zero) shop item for this shop */
       for (c = SHOPITEMS - 1; c >= 0; c--)
-         if (shops[b].items > 0)
+         if (shops[b].items[c] > 0)
             break;
       c++;
 
@@ -1374,10 +1383,10 @@ int start_menu (int skip_splash)
  */
 int system_menu (void)
 {
-   int stop = 0, ptr = 0, temp = 0;
+   int stop = 0, ptr = 0;
    char save_str[10];
-   strcpy(save_str, _("Save  "));
    int text_color = FNORMAL;
+   strcpy(save_str, _("Save  "));
 
    if (cansave == 0) {
       text_color = FDARK;

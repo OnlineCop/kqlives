@@ -37,7 +37,7 @@
 
 void process_entities (void);   /*  kq.c  */
 int entityat (int, int, int);   /*  kq.c  */
-void set_script (int, char *);  /*  intrface.c  */
+void set_script (int, const char *);  /*  intrface.c  */
 void place_ent (int, int, int); /*  intrface.c, kq.c  */
 void count_entities (void);     /*  kq.c  */
 

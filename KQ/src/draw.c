@@ -156,29 +156,6 @@ static void border (BITMAP * where, int x, int y, int x2, int y2)
 
 
 
-/*! \brief Draw text bubble
- *
- * Draw a regular text bubble and display the text.
- *
- * \param   who Entity that is speaking
- * \param   sp1 Line 1 of text
- * \param   sp2 Line 2 of text
- * \param   sp3 Line 3 of text
- * \param   sp4 Line 4 of text
- *
- * \sa bubble_text_ex()
- */
-void bubble_text (int who, char *sp1, char *sp2, char *sp3, char *sp4)
-{
-   strcpy (msgbuf[0], parse_string (sp1));
-   strcpy (msgbuf[1], parse_string (sp2));
-   strcpy (msgbuf[2], parse_string (sp3));
-   strcpy (msgbuf[3], parse_string (sp4));
-   generic_text (who, B_TEXT);
-}
-
-
-
 /*! \brief Scale colours
  *
  * This takes a bitmap and scales it to fit in the color range specified.
@@ -740,7 +717,7 @@ static void draw_midlayer (void)
  *
  * \param   map - The map containing the bounded area data
  */
-static void draw_playerbound ()
+static void draw_playerbound (void)
 {
    int dx, dy, xtc, ytc;
    s_bound *b, *found = NULL;
@@ -1065,7 +1042,7 @@ void menubox (BITMAP * where, int x, int y, int w, int h, int c)
  * \param   x_m X-coord of top-left (like xofs)
  * \param   y_m Y-coord of top-left
  */
-void message (char *m, int icn, int delay, int x_m, int y_m)
+void message (const char *m, int icn, int delay, int x_m, int y_m)
 {
    char msg[1024];
    const char *s;
@@ -1334,7 +1311,7 @@ static int get_glyph_index(unsigned int cp)
 void print_font (BITMAP *where, int sx, int sy, const char *msg, int cl)
 {
    int z = 0, hgt = 8;
-   unsigned int cc;
+   unsigned int cc = 0;
 
    if (cl < 0 || cl > 6) {
       sprintf (strbuf, _("print_font: Bad font index, %d"), cl);
@@ -1479,7 +1456,7 @@ int prompt (int who, int numopt, int bstyle, char *sp1, char *sp2, char *sp3,
  * \param   n_opt The number of options
  * \return  option selected, 0= first option etc.
  */
-int prompt_ex (int who, const char *ptext, char *opt[], int n_opt)
+int prompt_ex (int who, const char *ptext, const char *opt[], int n_opt)
 {
    int curopt = 0;
    int topopt = 0;
@@ -1827,26 +1804,4 @@ void text_ex (int fmt, int who, const char *s)
       s = relay (s);
       generic_text (who, fmt);
    }
-}
-
-
-
-/*! \brief Draw thought bubble
- *
- * Draw a thought bubble and display the text.
- *
- * \sa      thought_text_ex()
- * \param   who Entity that is speaking
- * \param   sp1 Line 1 of text
- * \param   sp2 Line 2 of text
- * \param   sp3 Line 3 of text
- * \param   sp4 Line 4 of text
- */
-void thought_text (int who, char *sp1, char *sp2, char *sp3, char *sp4)
-{
-   strcpy (msgbuf[0], parse_string (sp1));
-   strcpy (msgbuf[1], parse_string (sp2));
-   strcpy (msgbuf[2], parse_string (sp3));
-   strcpy (msgbuf[3], parse_string (sp4));
-   generic_text (who, B_THOUGHT);
 }

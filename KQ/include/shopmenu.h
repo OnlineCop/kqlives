@@ -29,7 +29,7 @@
 
 void do_inn_effects (int);      /*  only in intrface.c  */
 void draw_shopgold (void);      /*  only in shopmenu.c  */
-void inn (char *, int, int);    /*  only in intrface.c  */
+void inn (const char *, int, int);    /*  only in intrface.c  */
 int shop (int);                 /*  only in intrface.c  */
 
 

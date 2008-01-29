@@ -60,6 +60,12 @@ void do_load_map (const char *filename);
 unsigned int get_tile_at (unsigned int x, unsigned int y, unsigned int layer);
 void set_tile_at (unsigned int tile, unsigned int x, unsigned int y,
                   unsigned int layer);
+void set_obstacle_at (unsigned int obstacle, unsigned int x, unsigned int y);
+void set_zone_at (unsigned int zone, unsigned int x, unsigned int y);
+void set_marker_at_loc (char * value, unsigned int x, unsigned int y);
+void remove_marker (unsigned int x, unsigned int y);
+char * get_marker_value (unsigned int x, unsigned int y);
+unsigned int get_zone_at (unsigned int x, unsigned int y);
 void map_change (unsigned int x, unsigned int y);
 
 void convert_icons (void);

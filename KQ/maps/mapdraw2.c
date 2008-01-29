@@ -151,8 +151,7 @@ void bufferize (void)
  */
 int startup (void)
 {
-   int k, a;
-   COLOR_MAP colormap;
+   static COLOR_MAP colormap;
 
    /* Buffer for all strings */
    strbuf = (char *) malloc (256);

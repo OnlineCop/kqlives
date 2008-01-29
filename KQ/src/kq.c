@@ -65,7 +65,6 @@
 #include "setup.h"
 #include "sgame.h"
 #include "shopmenu.h"
-//#include "console.h"
 
 #include <locale.h>
 
@@ -350,7 +349,7 @@ s_progress progresses[120] = {      // 120 progress
 void activate (void)
 {
    int zx, zy, looking_at_x = 0, looking_at_y = 0, p, q,
-      target_char_facing = 0, tf, mb;
+      target_char_facing = 0, tf;
 
    unpress ();
 
@@ -636,7 +635,7 @@ void calc_viewport (int center)
  *              to use the default: s_map::stx and s_map::sty)
  * \param   mvy New y-coord for camera
  */
-void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
+void change_map (const char *map_name, int msx, int msy, int mvx, int mvy)
 {
    load_map (map_name);
    prepare_map (msx, msy, mvx, mvy);
@@ -659,7 +658,7 @@ void change_map (char *map_name, int msx, int msy, int mvx, int mvy)
  * \param   offset_x Push player left/right this many tiles from the marker
  * \param   offset_y Push player up/down this many tiles from the marker
  */
-void change_mapm (char *map_name, const char *marker_name, int offset_x,
+void change_mapm (const char *map_name, const char *marker_name, int offset_x,
                   int offset_y)
 {
    int msx = 0, msy = 0, mvx = 0, mvy = 0;
@@ -957,7 +956,7 @@ void init_players (void)
  *
  * \param   msg String to add to log file
  */
-void klog (char *msg)
+void klog (const char *msg)
 {
    TRACE ("%s\n", msg);
 }
@@ -1140,11 +1139,12 @@ static void load_map (const char *map_name)
  */
 int main (int argc, const char *argv[])
 {
+   int stop, game_on, skip_splash;
+   int i;
+
    setlocale (LC_ALL, "");
    bindtextdomain (PACKAGE, KQ_LOCALE);
    textdomain (PACKAGE);
-   int stop, game_on, skip_splash;
-   int i;
 
    skip_splash = 0;
    for (i = 1; i < argc; i++) {
@@ -1195,9 +1195,7 @@ int main (int argc, const char *argv[])
             if (bhelp) {
                /* TODO: In-game help system. */
             }
-			if (key[KEY_BACKSLASH]) {
-			  //run_console();
-			}
+
             if (alldead) {
                clear (screen);
                do_transition (TRANS_FADE_IN, 16);
@@ -1434,13 +1432,9 @@ static void prepare_map (int msx, int msy, int mvx, int mvy)
  */
 void program_death (char *message)
 {
-   char internal_buffer[80];
-   memset(internal_buffer, '\0', sizeof(internal_buffer));
-   strcat (strncpy (internal_buffer, message, sizeof (internal_buffer) - 1),
-           "\n");
    TRACE ("%s\n", message);
    deallocate_stuff ();
-   allegro_message (internal_buffer);
+   allegro_message ("%s\n", message);
    set_gfx_mode (GFX_TEXT, 0, 0, 0, 0);
    exit (EXIT_FAILURE);
 }
@@ -1549,7 +1543,7 @@ void reset_timer_events (void)
 /*! \brief Resets the world. Called every new game and load game
  *  This function may be called multiple times in some cases. That should be ok.
  */
-void reset_world()
+void reset_world(void)
 {
    int i, j;
 

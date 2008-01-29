@@ -47,7 +47,7 @@ static int current_music_player;
  * Initializes the music players. Must be called before any other
  * music function. Needs to be shutdown when finished.
  */
-void init_music ()
+void init_music (void)
 {
    atexit (&dumb_exit);
    dumb_register_stdfiles ();
@@ -100,7 +100,7 @@ void set_music_volume (float volume)
  * Does whatever is needed to ensure the music keeps playing.
  * It's safe to call this too much, but shouldn't be called inside a timer.
  */
-void poll_music ()
+void poll_music (void)
 {
    if (is_sound != 0) {
       al_poll_duh (mod_player[current_music_player]);

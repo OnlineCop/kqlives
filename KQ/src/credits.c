@@ -41,7 +41,7 @@ static int ease (int);
  *  why wasn't günter here?, i added him, but while there's not utf-8
  *  support, i'll write gunter
  */
-static char *credits[] = {
+static const char *credits[] = {
    "(C) 2001 DoubleEdge Software",
    "(C) 2002-7 KQ Lives Team",
    "http://kqlives.sourceforge.net/",
@@ -54,7 +54,7 @@ static char *credits[] = {
    "Rey Brujo",
    "Matthew Leverton",
    "Sam Hocevar",
-   "Gunther Brammer",
+   "Günther Brammer",
    "WinterKnight",
    "Edgar Alberto Molina",
    NULL
@@ -62,7 +62,7 @@ static char *credits[] = {
 
 
 
-static char **cc = NULL;
+static const char **cc = NULL;
 static short int etab[32];
 static BITMAP *wk = NULL;
 
@@ -106,9 +106,9 @@ void deallocate_credits (void)
 void display_credits (void)
 {
    static char *pressf1;
-   pressf1 = _("Press F1 for help");
    int i, x0, e;
    static int last_e = 999;
+   pressf1 = _("Press F1 for help");
    if (wk == NULL) {
       allocate_credits ();
    }

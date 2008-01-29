@@ -10,14 +10,15 @@
  * it would probably be here.                                              *
 \***************************************************************************/
 
+
+#include "mapdraw.h"
+#include <locale.h>
+
 /* Something for allegro version compatibility */
 /* ..can we use the textout_ex() and friends? */
 #if (ALLEGRO_VERSION >= 4 && ALLEGRO_SUB_VERSION >= 1)
 #define HAVE_TEXT_EX
 #endif
-
-#include "mapdraw.h"
-#include <locale.h>
 
 /* globals */
 
@@ -387,7 +388,7 @@ void clear_shadows (void)
  *
  * \param   buff String of text to be printed to the screen
  */
-void cmessage (char *buff)
+void cmessage (const char *buff)
 {
    int msg_length;
 
@@ -2091,7 +2092,7 @@ void goto_coords (void)
  *
  * \param   msg The message you want sent to the LOG file
  */
-void klog (char *msg)
+void klog (const char *msg)
 {
    char err_msg[80];
    FILE *ff;
@@ -4098,7 +4099,7 @@ int show_help (void)
    /* The first line in the help menu needs to be the total width, for correct
     * calculation later on
     */
-   char *help_keys[NUMBER_OF_ITEMS] = {
+   const char *help_keys[NUMBER_OF_ITEMS] = {
       // This first line needs to be the length of the longest line to display correctly
       "                              THIS IS THE HELP DIALOG (F1)                              ",
       "                              ============================",

@@ -114,7 +114,7 @@ extern void cleanup (void);
 void clear_layer (void);
 void clear_obstructs (void);
 void clear_shadows (void);
-void cmessage (char *);
+void cmessage (const char *);
 int confirm_exit (void);
 void copy (void);
 void copy_layer (void);
@@ -131,7 +131,7 @@ int get_line (const int, const int, char *, const int);
 void get_tile (void);
 void global_change (void);
 void goto_coords (void);
-void klog (char *);
+void klog (const char *);
 void kq_yield (void);
 void make_rect (BITMAP *, const int, const int);
 void normalize_view (void);
@@ -218,7 +218,7 @@ extern short icon_set, num_markers;
 
 /* extern s_marker markers[MAX_MARKERS]; */
 
-extern char *icon_files[NUM_TILESETS];
+extern const char *icon_files[NUM_TILESETS];
 
 extern const int htiles, vtiles;
 extern int number_of_ents, current_ent;

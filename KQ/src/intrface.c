@@ -253,7 +253,9 @@ static int KQ_shop_add_item (lua_State *);
 static int KQ_shop_create (lua_State *);
 static int KQ_stop_song (lua_State *);
 static int KQ_thought_ex (lua_State *);
+#ifdef DEBUGMODE
 static int KQ_traceback (lua_State *);
+#endif
 static int KQ_unpause_map_song (lua_State *);
 static int KQ_use_up (lua_State *);
 static int KQ_view_range (lua_State *);
@@ -540,7 +542,7 @@ static int KQ_check_map_change (void)
          change_mapm (tmap_name, marker_name, tmx, tmy);
          changing_map = NOT_CHANGING;
          break;
-      default:
+      case NOT_CHANGING:
          break;
    }
    return 0;
@@ -639,7 +641,6 @@ void do_luacheat (void)
 void do_luainit (const char *fname, int global)
 {
    int oldtop;
-   char sname[32];
    const struct luaL_reg *rg = lrs;
    if (theL != NULL) {
       do_luakill ();
@@ -793,8 +794,6 @@ void do_zone (int zn_num)
  */
 void lua_user_init(void)
 {
-   int a, b;
-
    do_luakill();
    do_luainit("init", 1);
    lua_getglobal (theL, "lua_user_init");
@@ -1252,7 +1251,7 @@ static int KQ_calc_viewport (lua_State * L)
  */
 static int KQ_change_map (lua_State * L)
 {
-   strcpy (tmap_name, (char *) lua_tostring (L, 1));
+   strcpy (tmap_name, lua_tostring (L, 1));
    if (lua_type (L, 2) == LUA_TSTRING) {
       /* it's the ("map", "marker") form */
       strcpy (marker_name, lua_tostring (L, 2));
@@ -1755,12 +1754,13 @@ static int KQ_door_in (lua_State * L)
 
 static int KQ_door_out (lua_State * L)
 {
-   use_sstone = 1;
    int x, y;
+   use_sstone = 1;
 
    if (lua_type (L, 1) == LUA_TSTRING) {
       /* It's in "marker" form */
-      s_marker *m = find_marker (lua_tostring (L, 1), 1);
+      s_marker *m;
+      m = find_marker (lua_tostring (L, 1), 1);
       x = m->x + (int) lua_tonumber (L, 2);
       y = m->y + (int) lua_tonumber (L, 3);
    } else {
@@ -2453,7 +2453,7 @@ static int KQ_in_forest (lua_State * L)
 
 static int KQ_inn (lua_State * L)
 {
-   inn ((char *) lua_tostring (L, 1), (int) lua_tonumber (L, 2),
+   inn (lua_tostring (L, 1), (int) lua_tonumber (L, 2),
         (int) lua_tonumber (L, 3));
    return 0;
 }
@@ -2503,7 +2503,7 @@ static int KQ_light_mbox (lua_State * L)
 
 static int KQ_log (lua_State * L)
 {
-   klog ((char *) lua_tostring (L, 1));
+   klog (lua_tostring (L, 1));
    return 0;
 }
 
@@ -2675,7 +2675,7 @@ static int KQ_move_entity (lua_State * L)
 static int KQ_msg (lua_State * L)
 {
    int icn = lua_isnumber (L, 2) ? (int) lua_tonumber (L, 2) : 255;
-   message ((char *) lua_tostring (L, 1), icn, (int) lua_tonumber (L, 3), xofs,
+   message (lua_tostring (L, 1), icn, (int) lua_tonumber (L, 3), xofs,
             yofs);
    return 0;
 }
@@ -2761,7 +2761,7 @@ static int KQ_play_map_song (lua_State * L)
 
 static int KQ_play_song (lua_State * L)
 {
-   play_music ((char *) lua_tostring (L, 1), 0);
+   play_music (lua_tostring (L, 1), 0);
    return 0;
 }
 
@@ -2794,7 +2794,7 @@ static int KQ_pnum (lua_State * L)
  */
 static int KQ_prompt (lua_State * L)
 {
-   char *txt[4];
+   const char *txt[4];
    char pbuf[256];
    int a, b, nopts, nonblank;
 
@@ -2809,7 +2809,7 @@ static int KQ_prompt (lua_State * L)
    nonblank = 0;
 
    for (a = 0; a < 4; a++) {
-      txt[a] = (char *) lua_tostring (L, a + 4);
+      txt[a] = lua_tostring (L, a + 4);
       if (txt[a] && (strlen (txt[a]) > 0))
          nonblank = a + 1;
    }
@@ -2835,7 +2835,7 @@ static int KQ_prompt (lua_State * L)
 static int KQ_ptext (lua_State * L)
 {
    print_font (double_buffer, (int) lua_tonumber (L, 1) + xofs,
-               (int) lua_tonumber (L, 2) + yofs, (char *) lua_tostring (L, 3),
+               (int) lua_tonumber (L, 2) + yofs, lua_tostring (L, 3),
                (int) lua_tonumber (L, 4));
    return 0;
 }
@@ -3168,7 +3168,7 @@ static int KQ_set_ent_script (lua_State * L)
 {
    int a = real_entity_num (L, 1);
 
-   set_script (a, (char *) lua_tostring (L, 2));
+   set_script (a, lua_tostring (L, 2));
    return 0;
 }
 
@@ -4055,21 +4055,21 @@ static int lua_dofile (lua_State * L, const char * fname)
    sprintf(filename, "%s", fname);
 
    if ((f = pack_fopen (filename, F_READ)) == NULL) {
-      sprintf (strbuf, _("Could not open script %s!"), filename);
-      allegro_message (strbuf);
-      return 1;
+      sprintf(filename, "%s.lua", fname);
+      if ((f = pack_fopen (filename, F_READ)) == NULL) {
+         allegro_message (_("Could not open script %s.lob!"), fname);
+         return 1;
+      }
    }
 
    if ((lua_load (L, (lua_Chunkreader) filereader, f, filename)) != 0) {
-      sprintf (strbuf, _("Could not parse script %s!"), filename);
-      allegro_message (strbuf);
+      allegro_message (_("Could not parse script %s!"), filename);
       pack_fclose (f);
       return 1;
    }
 
    if (lua_pcall (L, 0, LUA_MULTRET, 0) != 0) {
-      sprintf(strbuf, _("lua_pcall failed while calling script %s!"), filename);
-      allegro_message (strbuf);
+      allegro_message (_("lua_pcall failed while calling script %s!"), filename);
       pack_fclose (f);
       return 1;
    }

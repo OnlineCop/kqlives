@@ -345,7 +345,7 @@ static void party_remove (int id)
  * \returns index of player (0..numchrs-1) or -1 if cancelled or
  *          SEL_ALL_ALLIES if 'all' was selected (by pressing L or R)
  */
-int select_any_player (int csa, int icn, char *msg)
+int select_any_player (int csa, int icn, const char *msg)
 {
    int stop = 0, ptr, shy, k, sa;
 

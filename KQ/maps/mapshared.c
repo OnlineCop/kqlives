@@ -105,7 +105,7 @@ PALETTE pal = {
 // *INDENT-ON*
 
 
-char *icon_files[NUM_TILESETS] = {
+const char *icon_files[NUM_TILESETS] = {
    "land.pcx", "newtown.pcx", "castle.pcx", "Incave.pcx", "village.pcx",
    "mount.pcx", "shrine.pcx", "fortress.pcx"
 };

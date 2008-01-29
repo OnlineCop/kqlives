@@ -716,7 +716,7 @@ static void process_entity (int target_entity)
  * \param   target_entity Entity to process
  * \param   movestring The script
  */
-void set_script (int target_entity, char *movestring)
+void set_script (int target_entity, const char *movestring)
 {
    g_ent[target_entity].moving = 0;
    g_ent[target_entity].movcnt = 0;

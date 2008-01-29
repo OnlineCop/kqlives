@@ -25,7 +25,7 @@
 
 
 int select_player (void);                 /*  menu.c  */
-int select_any_player (int, int, char *); /*  (item|mas)menu.c  */
+int select_any_player (int, int, const char *); /*  (item|mas)menu.c  */
 int select_hero (int, int, int);          /*  enemyc.c, heroc.c  */
 int select_enemy (int, int);              /*  enemyc.c, heroc.c, hskill.c  */
 int auto_select_hero (int, int);          /*  enemyc.c, heroc.c  */

@@ -125,6 +125,7 @@ static void buy_menu (void)
 {
    int stop = 0, cost;
    int xptr = 1, yptr = 0, k, i, j, a, max, max_x = 0;
+   unsigned short item_no;
 
    for (a = 0; a < noi; a++)
       if (shops[shop_no].items_current[a] > max_x)
@@ -172,7 +173,7 @@ static void buy_menu (void)
                         _("Sold Out!"), k);
       }
 
-      unsigned short item_no = shops[shop_no].items[yptr];
+      item_no = shops[shop_no].items[yptr];
       print_font (double_buffer,
                   160 - (strlen (items[item_no].desc) * 4) + xofs,
                   176 + yofs, items[item_no].desc, FNORMAL);
@@ -380,7 +381,7 @@ static void draw_sideshot (int selected_item)
  * \param   gpc Gold per character (base price)
  * \param   pay If 0, staying is free.
  */
-void inn (char *iname, int gpc, int pay)
+void inn (const char *iname, int gpc, int pay)
 {
    int a, b, my = 0, stop = 0, gpts;
 

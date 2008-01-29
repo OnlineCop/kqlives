@@ -32,6 +32,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "kq.h"
+#include "movement.h"
 
 
 static int compose_path (AL_CONST int *, int, int, char *, int);

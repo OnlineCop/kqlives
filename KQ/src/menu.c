@@ -220,7 +220,7 @@ static void ilist_add (ILIST *l, const char *key, const char *text)
  * \author PH
  * \date 20050429
  */
-void ilist_clear (ILIST * l)
+static void ilist_clear (ILIST * l)
 {
    int i;
    for (i = 0; i < l->count; ++i) {

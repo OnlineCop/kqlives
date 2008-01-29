@@ -51,20 +51,17 @@ AC_HEADER_TIME
 AC_STRUCT_TM
 AC_C_VOLATILE
 
-WARNING_CFLAGS="-Wall -W -Wno-unused-parameter -Wshadow -Wmissing-prototypes \
--Wredundant-decls -Wendif-labels -Wpointer-arith \
--Wcast-qual -Wcast-align -Wwrite-strings"
 WARNING_CFLAGS="-Wall -Wextra -Wfloat-equal -Wredundant-decls \
--Wmissing-noreturn -Wno-shadow -Wendif-labels -Wlarger-than-65500 \
--Wpointer-arith -Wno-cast-qual -Wcast-align -Wwrite-strings \
--Winline -Wformat=2 -Winit-self -Wno-switch-default \
--Wno-switch-enum -Wno-unused-parameter -Wundef -Wno-error \
--Wmissing-declarations -Wmissing-prototypes -Wstrict-prototypes \
--Wold-style-definition -Wdeclaration-after-statement \
--Wbad-function-cast"
+-Wmissing-noreturn -Wendif-labels -Wunused-parameter \
+-Wpointer-arith -Wwrite-strings -Wcast-align -Wcast-qual \
+-Winline -Wformat=2 -Winit-self \
+-Wswitch-enum -Wunused-parameter -Wundef -Wno-error \
+-Wmissing-declarations -Werror-implicit-function-declaration -Wmissing-prototypes -Wstrict-prototypes \
+-Wold-style-definition -Wdeclaration-after-statement"
+# -Wswitch-default -Wlarger-than-65500 -Wshadow
 kq_save_CFLAGS="$CFLAGS"
 CFLAGS="$CFLAGS $WARNING_CFLAGS"
-AC_COMPILE_IFELSE("", [], [WARNING_CFLAGS=""])
+AC_COMPILE_IFELSE(AC_LANG_PROGRAM, [], [WARNING_CFLAGS=""])
 CFLAGS="$kq_save_CFLAGS"
 AC_SUBST(WARNING_CFLAGS)
 
@@ -114,4 +111,3 @@ esac
 AM_CONDITIONAL(BUNDLE, test x$bundle = xyes)
 AC_CONFIG_FILES([Makefile scripts/Makefile po/Makefile.in])
 AC_OUTPUT
-

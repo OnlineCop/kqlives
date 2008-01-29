@@ -353,8 +353,8 @@ typedef struct
 } s_special_item;
 
 
-void change_map (char *, int, int, int, int);   /*  intrface.c, magic.c  */
-void change_mapm (char *, const char *, int, int);      /*  intrface.c */
+void change_map (const char *, int, int, int, int);   /*  intrface.c, magic.c  */
+void change_mapm (const char *, const char *, int, int);      /*  intrface.c */
 void readcontrols (void);       /*  everywhere ;)  */
 void calc_viewport (int);       /*  entity.c, intrface.c  */
 void zone_check (void);         /*  entity.c  */
@@ -363,7 +363,7 @@ void check_animation (void);    /*  draw.c, intrface.c  */
 void activate (void);           /*  only in entity.c  */
 void unpress (void);            /*  everywhere ;)  */
 void wait_enter (void);         /*  everywhere ;)  */
-void klog (char *);             /*  draw.c, intrface.c, magic.c, setup.c  */
+void klog (const char *);             /*  draw.c, intrface.c, magic.c, setup.c  */
 void init_players (void);       /*  sgame.c  */
 void kwait (int);               /*  intrface.c  */
 void program_death (char *);    /*  everywhere ;)  */
@@ -372,6 +372,7 @@ void wait_for_entity (int, int);        /*  intrface.c  */
 char *get_timer_event (void);   /*  entity.c, kq.c  */
 int add_timer_event (const char *, int);        /*  intrface.c  */
 void reset_timer_events (void); /*  intrface.c  */
+void reset_world(void);         /*  sgame.c  */
 
 
 
