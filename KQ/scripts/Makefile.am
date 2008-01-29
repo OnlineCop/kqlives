@@ -6,13 +6,11 @@
 
 CPP=cpp -P -undef
 
-INCLUDES:=$(top_srcdir)/include/itemdefs.h
-
 .plua.lob:
 	luac -o $@ $<
 
-.lua.plua: $(INCLUDES)
-	$(CPP) $(foreach X, $(INCLUDES), -include $(X)) $< > $@
+.lua.plua: $(top_srcdir)/include/itemdefs.h
+	$(CPP) -include $(top_srcdir)/include/itemdefs.h $< > $@
 
 cscripts_DATA = bridge2.lob dville.lob \
 	starting.lob bridge.lob estate.lob \
