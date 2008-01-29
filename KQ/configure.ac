@@ -8,8 +8,6 @@ AC_CONFIG_HEADER([config.h])
 AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
 AM_INIT_AUTOMAKE
-AM_GNU_GETTEXT([external])
-AM_GNU_GETTEXT_VERSION(0.16.1)
 
 # Checks for programs.
 AC_PROG_CC
@@ -17,14 +15,28 @@ AM_PROG_CC_C_O
 AC_PROG_CPP
 AM_PROG_OBJC
 
+# gettext
+dnl AM_GNU_GETTEXT([external])
+AC_GNU_SOURCE
+AM_GNU_GETTEXT
+AM_GNU_GETTEXT_VERSION(0.16.1)
+
 # Check for allegro
+AC_ARG_WITH(allegro-prefix, AS_HELP_STRING([--with-allegro-prefix=DIR], [Prefix where liballegro is installed]),
+            ALLEGRO_CONFIG_prefix="$withval", ALLEGRO_CONFIG_prefix="")
+AS_IF([test x$ALLEGRO_CONFIG_prefix != x],[
+echo bar
+ALLEGRO_LIBS="-L${ALLEGRO_CONFIG_prefix}/lib"
+],[
+echo foo
 AC_CHECK_PROG([HAVE_ALLEGRO], [allegro-config], [yes])
+])
 if test "${HAVE_ALLEGRO}" == "yes" ; then
   ALLEGRO_LIBS=`allegro-config --libs`
 else
   # there is no allegro-config under windows
-  AC_CHECK_LIB(alleg, create_bitmap, [HAVE_ALLEGRO=yes])
-  ALLEGRO_LIBS='-lalleg'
+  AC_CHECK_LIB(alleg, create_bitmap, [HAVE_ALLEGRO=yes], [], [$ALLEGRO_LIBS])
+  ALLEGRO_LIBS="${ALLEGRO_LIBS} -lalleg"
 fi
 if test "${HAVE_ALLEGRO}" != "yes" ; then
   AC_MSG_ERROR([Allegro not found])
@@ -66,8 +78,6 @@ CFLAGS="$kq_save_CFLAGS"
 AC_SUBST(WARNING_CFLAGS)
 
 # Checks for libraries and library functions.
-AC_FUNC_MALLOC
-AC_FUNC_REALLOC
 AC_CHECK_FUNCS([atexit gettimeofday memmove memset mkdir pow strchr strstr])
 AC_CHECK_LIB(dumb, dumb_exit, [ALLEGRO_LIBS="-ldumb $ALLEGRO_LIBS"], [AC_MSG_ERROR([Dumb not found])])
 AX_CHECK_ALDUMB([ALLEGRO_LIBS="-laldmb $ALLEGRO_LIBS"], [AC_MSG_ERROR([Aldumb not found])], [$ALLEGRO_LIBS])
@@ -109,5 +119,5 @@ case ${host} in
      ;;
 esac
 AM_CONDITIONAL(BUNDLE, test x$bundle = xyes)
-AC_CONFIG_FILES([Makefile scripts/Makefile po/Makefile.in])
+AC_CONFIG_FILES([intl/Makefile po/Makefile.in scripts/Makefile Makefile])
 AC_OUTPUT

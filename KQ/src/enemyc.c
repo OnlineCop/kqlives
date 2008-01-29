@@ -26,9 +26,6 @@
  * \date ??????
  */
 
-#include <stdio.h>
-#include <string.h>
-
 #include "kq.h"
 #include "combat.h"
 #include "draw.h"
@@ -38,6 +35,9 @@
 #include "res.h"
 #include "selector.h"
 #include "skills.h"
+
+#include <stdio.h>
+#include <string.h>
 
 /*! Index related to enemies in an encounter */
 int cf[NUM_FIGHTERS];

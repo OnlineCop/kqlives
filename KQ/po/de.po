@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: KQ 0.99\n"
 "Report-Msgid-Bugs-To: peterhull90@users.sourceforge.net\n"
-"POT-Creation-Date: 2007-11-21 17:37-0500\n"
+"POT-Creation-Date: 2008-01-28 16:50-0500\n"
 "PO-Revision-Date: 2007-03-07 22:55+0100\n"
 "Last-Translator: Guenther Brammer <GBrammer@gmx.de>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
@@ -125,6 +125,14 @@ msgstr ""
 
 #: scripts/bridge.lua:125
 msgid "Now you see why I should've been a florist..."
+msgstr ""
+
+#: scripts/bridge.lua:162
+msgid "Ahhhhh!!!"
+msgstr ""
+
+#: scripts/bridge.lua:163
+msgid "Help!"
 msgstr ""
 
 #: scripts/bridge2.lua:30
@@ -2065,6 +2073,14 @@ msgstr ""
 msgid "Lieutenant:"
 msgstr ""
 
+#: scripts/fort.lua:83
+msgid ""
+"South of here is a river you'll need to cross. Head for the tower in the "
+"small group of mountains due west from there. You just have to go through "
+"some caves to reach it. Then make your way up to the Oracle. Is that "
+"understood?"
+msgstr ""
+
 #: scripts/fort.lua:84
 msgid "Yeah, I guess so... it all seems clear enough."
 msgstr ""
@@ -2961,6 +2977,22 @@ msgstr ""
 msgid "First, Nostik gives you this."
 msgstr ""
 
+#: scripts/manor.lua:244
+msgid "Do you want the long version or the short version?"
+msgstr ""
+
+#: scripts/manor.lua:245
+msgid "  long"
+msgstr ""
+
+#: scripts/manor.lua:246
+msgid "  short"
+msgstr ""
+
+#: scripts/manor.lua:247
+msgid "  neither"
+msgstr ""
+
 #: scripts/manor.lua:250
 msgid ""
 "The world is in an upheaval right now. Malkaron is a military general who, "
@@ -3056,6 +3088,20 @@ msgstr ""
 msgid ""
 "You will need to stop the monsters. They are Malkaron's eyes and ears, and "
 "if they find the staff before you do, we may be in trouble again."
+msgstr ""
+
+#: scripts/manor.lua:285
+msgid "Do you need me to explain it again?"
+msgstr ""
+
+#: scripts/manor.lua:286 scripts/town4.lua:246 scripts/town4.lua:288
+#: src/setup.c:244 src/setup.c:266
+msgid "  yes"
+msgstr ""
+
+#: scripts/manor.lua:287 scripts/town4.lua:247 scripts/town4.lua:287
+#: src/setup.c:244 src/setup.c:266
+msgid "  no"
 msgstr ""
 
 #: scripts/manor.lua:289
@@ -4512,6 +4558,10 @@ msgstr ""
 msgid "`The Eye of Sardine'"
 msgstr ""
 
+#: scripts/town1.lua:260
+msgid "Hmm, sounds strangely familiar."
+msgstr ""
+
 #: scripts/town1.lua:263
 msgid "`The Battle Is Over'"
 msgstr ""
@@ -4647,8 +4697,18 @@ msgstr ""
 msgid "Please hurry. Take this note to Tsorin immediately!"
 msgstr ""
 
+#: scripts/town1.lua:437
+msgid "I'm Derig's granddaughter. Go find Derig in the grotto north of here."
+msgstr ""
+
 #: scripts/town1.lua:437 scripts/town1.lua:440 scripts/town1.lua:512
 msgid "Jen:"
+msgstr ""
+
+#: scripts/town1.lua:440
+msgid ""
+"I'm Derig's granddaughter. Go find Derig in the grotto north of here. You've "
+"been there once before."
 msgstr ""
 
 #: scripts/town1.lua:443
@@ -4721,6 +4781,12 @@ msgstr ""
 #: scripts/town1.lua:505
 msgid ""
 "Thanks for returning the Rod to my grandfather. Here is a SunStone for you."
+msgstr ""
+
+#: scripts/town1.lua:512
+msgid ""
+"You must be looking for Derig, my grandfather. Find him in the grotto north "
+"of here."
 msgstr ""
 
 #: scripts/town1.lua:514
@@ -5355,14 +5421,6 @@ msgstr ""
 
 #: scripts/town4.lua:245
 msgid "Take a nap?"
-msgstr ""
-
-#: scripts/town4.lua:246 scripts/town4.lua:288 src/setup.c:244 src/setup.c:266
-msgid "  yes"
-msgstr ""
-
-#: scripts/town4.lua:247 scripts/town4.lua:287 src/setup.c:244 src/setup.c:266
-msgid "  no"
 msgstr ""
 
 #: scripts/town4.lua:281
@@ -6558,6 +6616,66 @@ msgstr ""
 msgid "This spa is relaxing."
 msgstr ""
 
+#: maps/mapdraw2.glade:8
+msgid "Mapdraw"
+msgstr ""
+
+#: maps/mapdraw2.glade:22
+msgid "_Map"
+msgstr ""
+
+#: maps/mapdraw2.glade:83
+msgid "_Edit"
+msgstr ""
+
+#: maps/mapdraw2.glade:129
+msgid "_View"
+msgstr ""
+
+#: maps/mapdraw2.glade:136
+msgid "_Help"
+msgstr ""
+
+#: maps/mapdraw2.glade:198
+msgid "Current Value:   "
+msgstr ""
+
+#: maps/mapdraw2.glade:382
+msgid "Homepage"
+msgstr ""
+
+#: maps/mapdraw2.glade:383
+msgid "translator-credits"
+msgstr ""
+
+#: maps/mapdraw2.glade:399
+msgid "Entity"
+msgstr ""
+
+#: maps/mapdraw2.glade:441
+msgid "<b>Entity</b>"
+msgstr ""
+
+#: maps/mapdraw2.glade:543
+msgid "iconset:"
+msgstr ""
+
+#: maps/mapdraw2.glade:554
+msgid "height:"
+msgstr ""
+
+#: maps/mapdraw2.glade:565
+msgid "width:"
+msgstr ""
+
+#: maps/mapdraw2.glade:585
+msgid "gtk-cancel"
+msgstr ""
+
+#: maps/mapdraw2.glade:597
+msgid "gtk-ok"
+msgstr ""
+
 #: src/combat.c:294
 #, c-format
 msgid "HP:%d (%d)"
@@ -6700,32 +6818,37 @@ msgstr ""
 msgid "You've surprised the enemy!"
 msgstr ""
 
-#: src/credits.c:108
+#: src/credits.c:109
 msgid "Press F1 for help"
 msgstr ""
 
-#: src/credits.c:135
+#: src/credits.c:136
 msgid "*CHEAT MODE ON*"
 msgstr ""
 
-#: src/credits.c:139
+#: src/credits.c:136
+msgid "*CHEAT MODE OFF*"
+msgstr ""
+
+#: src/credits.c:140
 msgid "*DEBUG MODE ON*"
 msgstr ""
 
-#: src/draw.c:1191
+#: src/draw.c:1263
 msgid "UTF-8 decode error"
 msgstr ""
 
-#: src/draw.c:1195
-msgid "UTF-8 3 and 4 bytes chars not implemented"
+#: src/draw.c:1318
+#, c-format
+msgid "Invalid glyph index: %d"
 msgstr ""
 
-#: src/draw.c:1260
+#: src/draw.c:1340
 #, c-format
 msgid "print_font: Bad font index, %d"
 msgstr ""
 
-#: src/draw.c:1295
+#: src/draw.c:1375
 #, c-format
 msgid "print_num: Bad font index, %d"
 msgstr ""
@@ -6772,7 +6895,7 @@ msgstr ""
 msgid "Remove"
 msgstr ""
 
-#: src/eqpmenu.c:234 src/sgame.c:1168
+#: src/eqpmenu.c:234 src/sgame.c:1169
 msgid "Empty"
 msgstr ""
 
@@ -7150,17 +7273,17 @@ msgstr ""
 msgid "Script error. See allegro.log"
 msgstr ""
 
-#: src/intrface.c:4060
+#: src/intrface.c:4058
 #, c-format
-msgid "Could not open script %s.lob!"
+msgid "Could not open script %s!"
 msgstr ""
 
-#: src/intrface.c:4067
+#: src/intrface.c:4064
 #, c-format
 msgid "Could not parse script %s!"
 msgstr ""
 
-#: src/intrface.c:4074
+#: src/intrface.c:4071
 #, c-format
 msgid "lua_pcall failed while calling script %s!"
 msgstr ""
@@ -7210,80 +7333,80 @@ msgstr ""
 msgid "%s learned!"
 msgstr ""
 
-#: src/kq.c:466
+#: src/kq.c:467
 #, c-format
 msgid "Could not allocate %s!."
 msgstr ""
 
-#: src/kq.c:725
+#: src/kq.c:726
 msgid "Could not open treasure.log!"
 msgstr ""
 
-#: src/kq.c:732
+#: src/kq.c:733
 msgid "Could not open progress.log!"
 msgstr ""
 
-#: src/kq.c:938
+#: src/kq.c:939
 msgid "Could not load character graphics!"
 msgstr ""
 
-#: src/kq.c:1023
+#: src/kq.c:1024
 msgid "Alt+W Pressed:"
 msgstr ""
 
-#: src/kq.c:1036
+#: src/kq.c:1037
 #, c-format
 msgid "Program terminated: user pressed Alt+X"
 msgstr ""
 
-#: src/kq.c:1062
+#: src/kq.c:1063
 msgid "Cannot open hero data file"
 msgstr ""
 
-#: src/kq.c:1073
+#: src/kq.c:1074
 msgid "Could not load kqfaces.pcx!"
 msgstr ""
 
-#: src/kq.c:1111
+#: src/kq.c:1112
 #, c-format
 msgid "Could not load map %s!"
 msgstr ""
 
-#: src/kq.c:1154
+#: src/kq.c:1155
 #, c-format
 msgid "Sorry, no help screen at this time.\n"
 msgstr ""
 
-#: src/kq.c:1488
+#: src/kq.c:1492
 msgid "X-ALT pressed... exiting."
 msgstr ""
 
-#: src/kq.c:1613
+#: src/kq.c:1617
 #, c-format
 msgid "Error with sound: %s\n"
 msgstr ""
 
-#: src/kq.c:1633
+#: src/kq.c:1637
 msgid "Only joysticks/gamepads with at least 4 buttons can be used."
 msgstr ""
 
-#: src/kq.c:1642
+#: src/kq.c:1646
 msgid "Could not load misc.pcx!"
 msgstr ""
 
-#: src/kq.c:1716
+#: src/kq.c:1720
 msgid "Could not load tileset.kq"
 msgstr ""
 
-#: src/kq.c:1723
+#: src/kq.c:1727
 msgid "Too many tilesets defined in tileset.kq"
 msgstr ""
 
-#: src/kq.c:1859
+#: src/kq.c:1863
 msgid "X-Alt pressed - exiting"
 msgstr ""
 
-#: src/kq.c:1948
+#: src/kq.c:1952
 msgid "Repulse has worn off!"
 msgstr ""
 
@@ -7457,7 +7580,7 @@ msgstr ""
 msgid "In party:"
 msgstr ""
 
-#: src/selector.c:676 src/sgame.c:1291 src/sgame.c:1399 src/shopmenu.c:754
+#: src/selector.c:676 src/sgame.c:1292 src/sgame.c:1400 src/shopmenu.c:754
 msgid "Exit"
 msgstr ""
 
@@ -7747,98 +7870,98 @@ msgstr ""
 msgid "Error. number of chars in saved game > sizeof(curmap)"
 msgstr ""
 
-#: src/sgame.c:589
+#: src/sgame.c:590
 msgid "Error. number of progress indicators > sizeof(progress)"
 msgstr ""
 
-#: src/sgame.c:602
+#: src/sgame.c:603
 msgid "Error. number of treasure indicators > sizeof(treasure)"
 msgstr ""
 
-#: src/sgame.c:615
+#: src/sgame.c:616
 msgid "Error. number of non-combat spell indicators > sizeof(save_spells)"
 msgstr ""
 
-#: src/sgame.c:629
+#: src/sgame.c:630
 msgid "Error. number of inventory items > MAX_INV"
 msgstr ""
 
-#: src/sgame.c:648
+#: src/sgame.c:649
 msgid "Error. number of special items > MAX_SPECIAL_ITEMS"
 msgstr ""
 
-#: src/sgame.c:662
+#: src/sgame.c:663
 msgid "Error. number of shops saved > NUMSHOPS"
 msgstr ""
 
-#: src/sgame.c:804 src/sgame.c:902
+#: src/sgame.c:805 src/sgame.c:903
 msgid "Could not save game data."
 msgstr ""
 
-#: src/sgame.c:1142
+#: src/sgame.c:1143
 msgid "Loading"
 msgstr ""
 
-#: src/sgame.c:1145
+#: src/sgame.c:1146
 msgid "Saving"
 msgstr ""
 
-#: src/sgame.c:1148
+#: src/sgame.c:1149
 msgid "Delete"
 msgstr ""
 
-#: src/sgame.c:1164
+#: src/sgame.c:1165
 msgid "Wrong version"
 msgstr ""
 
-#: src/sgame.c:1175
+#: src/sgame.c:1176
 #, c-format
 msgid "L: %02d"
 msgstr ""
 
-#: src/sgame.c:1177
+#: src/sgame.c:1178
 msgid "H:"
 msgstr ""
 
-#: src/sgame.c:1178
+#: src/sgame.c:1179
 msgid "M:"
 msgstr ""
 
-#: src/sgame.c:1188
+#: src/sgame.c:1189
 #, c-format
 msgid "T %d:%02d"
 msgstr ""
 
-#: src/sgame.c:1191
+#: src/sgame.c:1192
 #, c-format
 msgid "G %d"
 msgstr ""
 
-#: src/sgame.c:1288
+#: src/sgame.c:1289
 msgid "Continue"
 msgstr ""
 
-#: src/sgame.c:1289
+#: src/sgame.c:1290
 msgid "New Game"
 msgstr ""
 
-#: src/sgame.c:1290 src/sgame.c:1398
+#: src/sgame.c:1291 src/sgame.c:1399
 msgid "Config"
 msgstr ""
 
-#: src/sgame.c:1338
+#: src/sgame.c:1339
 msgid "Then exit you shall!"
 msgstr ""
 
-#: src/sgame.c:1378
+#: src/sgame.c:1379
 msgid "Save  "
 msgstr ""
 
-#: src/sgame.c:1385
+#: src/sgame.c:1386
 msgid "[Save]"
 msgstr ""
 
-#: src/sgame.c:1397
+#: src/sgame.c:1398
 msgid "Load"
 msgstr ""
 

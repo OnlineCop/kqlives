@@ -1,4 +1,4 @@
-SUBDIRS = po scripts
+SUBDIRS = intl po scripts
 bin_PROGRAMS = kq mapdraw mapdiff mapdump $(MAPDRAW2)
 EXTRA_PROGRAMS = mapdraw2
 
@@ -91,7 +91,11 @@ musicdir = $(pkgdatadir)/music
 dist_man_MANS = debian/kq.6
 
 AM_CPPFLAGS = $(WARNING_CFLAGS) -I$(top_srcdir)/include \
-	-DKQ_BIN=\"$(bindir)/kq$(EXEEXT)\" -DKQ_DATA=\"$(pkgdatadir)\" -DKQ_LIB=\"$(pkglibdir)\" -DKQ_LOCALE=\"$(localedir)\"
+	-DKQ_BIN=\"$(bindir)/kq$(EXEEXT)\" \
+	-DKQ_DATA=\"$(pkgdatadir)\" \
+	-DKQ_LIB=\"$(pkglibdir)\" \
+	-DKQ_LOCALE=\"$(localedir)\" \
+	-Iintl -I$(top_srcdir)/intl
 
 if BUNDLE
 all-local: KQ.app

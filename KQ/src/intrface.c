@@ -37,10 +37,13 @@
 #include <string.h>
 #ifdef HAVE_LUA50_LUA_H
 #include <lua50/lua.h>
+#include <lua50/lauxlib.h>
 #elif defined HAVE_LUA5_1_LUA_H
 #include <lua5.1/lua.h>
+#include <lua5.1/lauxlib.h>
 #else
 #include <lua.h>
+#include <lauxlib.h>
 #endif /* HAVE_LUA50_LUA_H */
 #endif /* KQ_SCAN_DEPEND */
 #include "combat.h"
@@ -69,11 +72,11 @@
 #define LUA_PLR_KEY "_obj"
 #define NUM_IFUNCS   142
 
-struct luaL_reg
+/*struct luaL_reg
 {
    const char *name;
    lua_CFunction func;
-};
+};*/
 
 
 /* Internal functions */
