@@ -84,7 +84,7 @@ static void fieldsort (void);
 static const char *filereader (lua_State *, PACKFILE *, size_t *);
 static void init_markers (lua_State *);
 static void init_obj (lua_State *);
-static int lua_dofile (lua_State *, const char *);
+int lua_dofile (lua_State *, const char *);
 static int real_entity_num (lua_State *, int);
 // void remove_special_item (int index);
 
@@ -1040,8 +1040,8 @@ static int KQ_add_quest_item (lua_State * L)
 
 static int KQ_create_special_item (lua_State * L)
 {
-   const char * name = lua_tostring(L, 1);
-   const char * description = lua_tostring(L, 2);
+   const unsigned char * name = lua_tostring(L, 1);
+   const unsigned char * description = lua_tostring(L, 2);
    int icon = lua_tonumber(L, 3);
    int index = lua_tonumber(L, 4);
 
@@ -4050,7 +4050,7 @@ static int KQ_warp (lua_State * L)
  * \param fname the full path of the file to read sans extension
  * \return 0 on success, 1 on error
  */
-static int lua_dofile (lua_State * L, const char * fname)
+int lua_dofile (lua_State * L, const char * fname)
 {
    PACKFILE *f;
    char filename[PATH_MAX];
