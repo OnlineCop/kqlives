@@ -26,9 +26,9 @@ cd ..
 ROOT=`pwd`
 # Set these variables to the directories where your extra windows includes and libaries are (for allegro, libdumb, and lua)
 # mingw can usually find windows.h and such automatically. You probably do not need to include those directories here.
-WIN_INC=-I$HOME/kq-win-depends/include
-WIN_LIB=-L$HOME/kq-win-depends/lib
-WIN_LIB_DIR=$HOME/kq-win-depends/lib
+WIN_INC=-I$HOME/kq-win32-depends/include
+WIN_LIB=-L$HOME/kq-win32-depends/lib
+WIN_LIB_DIR=$HOME/kq-win32-depends/lib
 
 # ===============
 
@@ -46,6 +46,8 @@ rm `find -type f | grep .cvswrappers`
 build_source ()
 {
 autoreconf -i
+rm *.o kq mapd* scripts/*.lob scripts/pscripts/*
+rmdir scripts/pscripts
 cd ..
 tar -cf kq-src-$VERSION.tar kq-src-$VERSION
 gzip -9 kq-src-$VERSION.tar
@@ -61,6 +63,7 @@ cd scripts
 make
 cd ..
 make kq
+strip kq
 
 cd ..
 mkdir kq-linuxbin-$VERSION
@@ -187,11 +190,11 @@ LIN_MAP=0
 
 while [ -n "$1" ]
 do
-	if [ "$1" == "lin" ]; then
+	if [ "$1" = "lin" ]; then
 		LIN=1
-	elif [ "$1" == "win" ]; then
+	elif [ "$1" = "win" ]; then
 		WIN=1
-	elif [ "$1" == "lin-map" ]; then
+	elif [ "$1" = "lin-map" ]; then
 		LIN_MAP=1
 	fi
 	shift
