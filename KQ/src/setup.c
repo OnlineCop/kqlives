@@ -52,7 +52,7 @@ static DATAFILE *sfx[MAX_SAMPLES];
 
 /*  Internal functions  */
 static int load_samples (void);
-static int getavalue (char *, int, int, int, int);
+static int getavalue (const char *, int, int, int, int);
 static int getakey (void);
 static void parse_allegro_setup (void);
 static void parse_jb_setup (void);
@@ -100,6 +100,7 @@ void config_menu (void)
 {
    int stop = 0, ptr = 0, p;
    int temp_key = 0;
+   static const char *dc[MENU_SIZE];
 
 #ifdef DEBUGMODE
    #define MENU_SIZE 18
@@ -119,7 +120,6 @@ void config_menu (void)
       row[p] = (p + 7) * 8;     // (p * 8) + 56
 
    /* Helper strings */
-   static char *dc[MENU_SIZE];
    dc[0]=_("Display KQ in a window.");
    dc[1]=_("Stretch to fit 640x480 resolution.");
    dc[2]=_("Display the frame rate during play.");
@@ -473,7 +473,7 @@ static int getakey (void)
  * \param   sp Show percent. If sp==1, show as a percentage of maxu
  * \returns the new value for option, or -1 if cancelled.
  */
-static int getavalue (char *capt, int minu, int maxu, int cv, int sp)
+static int getavalue (const char *capt, int minu, int maxu, int cv, int sp)
 {
    int stop = 0, a, b;
 
