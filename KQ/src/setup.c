@@ -100,13 +100,13 @@ void config_menu (void)
 {
    int stop = 0, ptr = 0, p;
    int temp_key = 0;
-   static const char *dc[MENU_SIZE];
 
 #ifdef DEBUGMODE
    #define MENU_SIZE 18
 #else
    #define MENU_SIZE 17
 #endif
+   static const char *dc[MENU_SIZE];
 
    /* Define rows with appropriate spacings for breaks between groups */
    int row[MENU_SIZE];
