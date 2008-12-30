@@ -18,11 +18,14 @@
 --
 -- P_FTOTAL: Total number of floor switches activated
 -- P_FLOOR1..P_FLOOR4: Status of this floor switch
+-- Hint: press bottom left and top right.
 --
 -- SI_BSTONES: # of Black stones in your inventory
 -- SI_WSTONES: # of White stones in your inventory
 -- P_STONE1..P_STONE4: Whether this stone is in your inventory
 -- P_WALL1..P_WALL4: Which stone (if any) is in this wall slot
+-- Hint: Stones should be placed in the holes in this order
+-- from left to right: black, white, white, black.
 --
 -- P_DOOROPEN: (4: Single treasure, left floor switch)
 -- P_DOOROPEN2: (3: Treasure room, bottom)
@@ -375,9 +378,9 @@ function refresh()
 
   -- Floor switches (2: Floor switches)
   LOC_set_floor("floor1", P_FLOOR1, "floor1a", "floor1b")
-  LOC_set_floor("floor1", P_FLOOR2, "floor2a", "floor2b")
-  LOC_set_floor("floor1", P_FLOOR3, "floor3a", "floor3b")
-  LOC_set_floor("floor1", P_FLOOR4, "floor4a", "floor4b")
+  LOC_set_floor("floor2", P_FLOOR2, "floor2a", "floor2b")
+  LOC_set_floor("floor3", P_FLOOR3, "floor3a", "floor3b")
+  LOC_set_floor("floor4", P_FLOOR4, "floor4a", "floor4b")
 
   -- Wall holes (3: Treasure room, top left)
   LOC_set_wall("wall1", P_WALL1)
@@ -486,13 +489,13 @@ function zone_handler(zn)
   elseif (zn == 12) then
     LOC_floor_switch(P_FLOOR1)
 
-  -- Floor switch (2: Floor switches, bottom left)
-  elseif (zn == 13) then
-    LOC_floor_switch(P_FLOOR2)
-
   -- Floor switch (2: Floor switches, top right)
-  elseif (zn == 14) then
+  elseif (zn == 13) then
     LOC_floor_switch(P_FLOOR3)
+
+  -- Floor switch (2: Floor switches, bottom left)
+  elseif (zn == 14) then
+    LOC_floor_switch(P_FLOOR2)
 
   -- Floor switch (2: Floor switches, bottom right)
   elseif (zn == 15) then
