@@ -62,10 +62,8 @@ static NSString* get_resource_file_path(NSString* base, NSString* subdir, NSStri
     return fullpath;
   }
   fullpath = [NSString pathWithComponents: [NSArray arrayWithObjects: base, subdir, file, nil]];
-  if ([fm fileExistsAtPath: fullpath]) {
-    return fullpath;
-  }
-  return nil;
+  /* return this, even if it doesn't exist */
+  return fullpath;
 }
 
 /*! \brief Returns the full path for this lua file
@@ -100,10 +98,8 @@ NSString* get_lua_file_path(NSString* base, NSString* file) {
     return fullpath;
   }
   fullpath = [path stringByAppendingPathExtension: @"lob"];
-  if ([fm fileExistsAtPath: fullpath]) {
-    return fullpath;
-  }
-  return nil;
+  /* return this, even if it doesn't exist */
+  return fullpath;
 }
 
 
