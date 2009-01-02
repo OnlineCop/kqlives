@@ -65,6 +65,7 @@
 #include "setup.h"
 #include "sgame.h"
 #include "shopmenu.h"
+#include "console.h"
 
 #include <locale.h>
 
@@ -1143,8 +1144,8 @@ int main (int argc, const char *argv[])
    int i;
 
    setlocale (LC_ALL, "");
-   bindtextdomain (PACKAGE, KQ_LOCALE);
-   textdomain (PACKAGE);
+   (void) bindtextdomain (PACKAGE, KQ_LOCALE);
+   (void) textdomain (PACKAGE);
 
    skip_splash = 0;
    for (i = 1; i < argc; i++) {
@@ -1195,7 +1196,11 @@ int main (int argc, const char *argv[])
             if (bhelp) {
                /* TODO: In-game help system. */
             }
-
+			#ifdef DEBUGMODE
+			if (key[KEY_BACKSLASH]) {
+				run_console();
+			}
+			#endif
             if (alldead) {
                clear (screen);
                do_transition (TRANS_FADE_IN, 16);
@@ -1430,7 +1435,7 @@ static void prepare_map (int msx, int msy, int mvx, int mvy)
  *
  * \param   message Text to put into log
  */
-void program_death (char *message)
+void program_death (const char *message)
 {
    TRACE ("%s\n", message);
    deallocate_stuff ();

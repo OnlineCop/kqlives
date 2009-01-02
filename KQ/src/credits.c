@@ -105,7 +105,7 @@ void deallocate_credits (void)
 
 void display_credits (void)
 {
-   static char *pressf1;
+   static const char *pressf1;
    int i, x0, e;
    static int last_e = 999;
    pressf1 = _("Press F1 for help");

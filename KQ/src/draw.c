@@ -41,7 +41,7 @@
 #include "res.h"
 #include "setup.h"
 #include "timing.h"
-/*#include "console.h"*/
+#include "console.h"
 
 /* Globals */
 #define MSG_ROWS 4
@@ -99,7 +99,9 @@ void blit2screen (int xw, int yw)
                 makecol (0, 0, 0));
       print_font (double_buffer, xofs, yofs, fbuf, FNORMAL);
    }
-   /*display_console(xw, yw);*/
+   #ifdef DEBUGMODE
+   display_console(xw, yw);
+   #endif
    if (stretch_view == 1)
       stretch_blit (double_buffer, screen, xw, yw, 320, 240, 0, 0, 640, 480);
    else
@@ -1377,8 +1379,8 @@ void print_num (BITMAP * where, int sx, int sy, char *msg, int cl)
  * \param   sp4 Line 4 of text
  * \returns index of option chosen (0..numopt-1)
  */
-int prompt (int who, int numopt, int bstyle, char *sp1, char *sp2, char *sp3,
-            char *sp4)
+int prompt (int who, int numopt, int bstyle, const char *sp1, const char *sp2, 
+	const char *sp3, const char *sp4)
 {
    int ly, stop = 0, ptr = 0, a;
 

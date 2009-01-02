@@ -42,6 +42,9 @@
 static NSString *user_dir;
 static NSString *game_dir;
 static BOOL init_path = NO;
+static NSString* get_resource_file_path(NSString* base, NSString* subdir, NSString* file);
+static NSString* get_lua_file_path(NSString* base, NSString* file);
+const char *kqres (int dir, const char *file);
 
 /*! \brief Returns the full path for this file
  *

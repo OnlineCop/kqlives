@@ -89,7 +89,8 @@ void print_num (BITMAP *, int, int, char *, int);
 void text_ex (int, int, const char *);
 
 /*  intrface.c, setup.c  */
-int prompt (int, int, int, char *, char *, char *, char *);
+int prompt (int, int, int, const char *, const char *, 
+	const char *, const char *);
 int prompt_ex (int, const char *, const char *[], int);
 
 /*  combat.c, hskill.c, intrface.c, (item|shop)menu.c,  */

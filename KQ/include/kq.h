@@ -41,6 +41,17 @@
 #include "config.h"
 #endif
 
+#ifdef __GNUC__
+#define NORETURN __attribute__((noreturn))
+#else
+#ifdef _MSC_VER
+#define NORETURN __declspec(noreturn)
+#else
+#define NORETURN
+#endif /* MSVC */
+#endif /* GNUC */
+
+
 #include "gettext.h"
 #define _(s) gettext(s)
 
@@ -347,8 +358,8 @@ s_fighter;
  */
 typedef struct
 {
-	unsigned char name[38];
-	unsigned char description[40];
+	char name[38];
+	char description[40];
 	short icon;
 } s_special_item;
 
@@ -366,7 +377,7 @@ void wait_enter (void);         /*  everywhere ;)  */
 void klog (const char *);             /*  draw.c, intrface.c, magic.c, setup.c  */
 void init_players (void);       /*  sgame.c  */
 void kwait (int);               /*  intrface.c  */
-void program_death (char *);    /*  everywhere ;)  */
+NORETURN void program_death (const char *);    /*  everywhere ;)  */
 int in_party (int);             /*  combat.c, intrface.c  */
 void wait_for_entity (int, int);        /*  intrface.c  */
 char *get_timer_event (void);   /*  entity.c, kq.c  */

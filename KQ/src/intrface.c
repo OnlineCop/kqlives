@@ -26,6 +26,7 @@
  * \date Updated 20021125 -- Added extra functions
  * \date Updated 20030308 -- Added object interface
  * \date Updated 20051220 -- Change to Lua 5
+ * \date Updated 20070809 -- Console stuff
  *
  * This file implements the interface between
  * the C code and the Lua scripts.
@@ -66,6 +67,7 @@
 #include "sgame.h"
 #include "shopmenu.h"
 #include "timing.h"
+#include "console.h"
 
 /* Defines */
 #define LUA_ENT_KEY "_ent"
@@ -82,6 +84,7 @@
 /* Internal functions */
 static void fieldsort (void);
 static const char *filereader (lua_State *, PACKFILE *, size_t *);
+static const char *stringreader (lua_State *, char**, size_t *);
 static void init_markers (lua_State *);
 static void init_obj (lua_State *);
 int lua_dofile (lua_State *, const char *);
@@ -187,6 +190,7 @@ static int KQ_place_ent (lua_State *);
 static int KQ_play_map_song (lua_State *);
 static int KQ_play_song (lua_State *);
 static int KQ_pnum (lua_State *);
+static int KQ_print(lua_State* );
 static int KQ_prompt (lua_State *);
 static int KQ_ptext (lua_State *);
 static int KQ_read_controls (lua_State *);
@@ -369,6 +373,7 @@ static const struct luaL_reg lrs[] = {
    {"play_map_song",    KQ_play_map_song},
    {"play_song",        KQ_play_song},
    {"pnum",             KQ_pnum},
+   {"print",			KQ_print},
    {"prompt",           KQ_prompt},
    {"ptext",            KQ_ptext},
    {"read_controls",    KQ_read_controls},
@@ -840,11 +845,33 @@ static const char *filereader (lua_State * L, PACKFILE * f, size_t * size)
 {
    static char buf[1024];
    /* Avoid 'unused' warning */
-   L = L;
+   (void) L;
    *size = pack_fread (buf, sizeof (buf), f);
    return buf;
 }
 
+/*! \brief Read string chunk
+ *
+ * Read in a complete string  for the Lua system to compile
+ *
+ * \param L the Lua state (ignored)
+ * \param f a pointer to a pointer to the string
+ * \param size [out] the number of bytes in the string
+ */
+static const char *stringreader (lua_State * L, char** f, size_t * size)
+{
+  char* ans = *f;
+   /* Avoid 'unused' warning */
+  (void) L;
+  if (ans == NULL) {
+    *size = 0;
+  }
+  else {
+    *size = strlen(ans);
+    *f = NULL;
+  }
+  return ans;
+}
 
 
 /*! \brief Find a marker
@@ -1040,8 +1067,8 @@ static int KQ_add_quest_item (lua_State * L)
 
 static int KQ_create_special_item (lua_State * L)
 {
-   const unsigned char * name = lua_tostring(L, 1);
-   const unsigned char * description = lua_tostring(L, 2);
+   const char * name = lua_tostring(L, 1);
+   const char * description = lua_tostring(L, 2);
    int icon = lua_tonumber(L, 3);
    int index = lua_tonumber(L, 4);
 
@@ -1054,7 +1081,7 @@ static int KQ_create_special_item (lua_State * L)
 
 static int KQ_add_special_item (lua_State * L)
 {
-   int index, quantity, i;
+   int index, quantity;
 
    index = lua_tonumber(L, 1);
 
@@ -1203,7 +1230,7 @@ static int KQ_add_timer (lua_State * L)
  */
 static int KQ_battle (lua_State * L)
 {
-   L = L;
+   (void) L;
    return 1;
 }
 
@@ -1545,9 +1572,7 @@ static int KQ_chest (lua_State * L)
 
 static int KQ_clear_buffer (lua_State * L)
 {
-/*  RB: TODO  */
-   if (L != NULL)
-      L = L;
+	(void) L;
    clear_bitmap (double_buffer);
    return 0;
 }
@@ -1659,9 +1684,7 @@ static int KQ_destroy_bmp (lua_State * L)
 
 static int KQ_destroy_df (lua_State * L)
 {
-/*  RB: TODO  */
-   if (L != NULL)
-      L = L;
+   (void) L;
    unload_datafile_object (g_df);
    return 0;
 }
@@ -1804,9 +1827,7 @@ static int KQ_drawframe (lua_State * L)
 
 static int KQ_drawmap (lua_State * L)
 {
-/*  RB: TODO  */
-   if (L != NULL)
-      L = L;
+	(void) L;
    drawmap ();
    return 0;
 }
@@ -2634,7 +2655,7 @@ static int KQ_move_entity (lua_State * L)
 {
    int entity_id = real_entity_num (L, 1);
    int kill, target_x, target_y;
-   int result;
+
    char buffer[1024];
 
    if (lua_type (L, 2) == LUA_TSTRING) {
@@ -2648,7 +2669,7 @@ static int KQ_move_entity (lua_State * L)
       kill = (int) lua_tonumber (L, 4);
    }
 
-   result = find_path (entity_id, g_ent[entity_id].tilex,
+   find_path (entity_id, g_ent[entity_id].tilex,
                        g_ent[entity_id].tiley, target_x, target_y, buffer,
                        sizeof (buffer));
 
@@ -2687,9 +2708,7 @@ static int KQ_msg (lua_State * L)
 
 static int KQ_orient_heroes (lua_State * L)
 {
-/*  RB: TODO  */
-   if (L != NULL)
-      L = L;
+   (void) L;
    /*
    if (numchrs == 2) {
       lastm[1] = MOVE_NOT;
@@ -2720,9 +2739,7 @@ static int KQ_orient_heroes (lua_State * L)
 
 static int KQ_pause_song (lua_State * L)
 {
-/*  RB: TODO  */
-   if (L != NULL)
-      L = L;
+   (void) L;
    pause_music ();
    return 0;
 }
@@ -2753,9 +2770,7 @@ static int KQ_place_ent (lua_State * L)
 
 static int KQ_play_map_song (lua_State * L)
 {
-/*  RB: TODO  */
-   if (L != NULL)
-      L = L;
+   (void) L;
    play_music (g_map.song_file, 0);
    return 0;
 }
@@ -2943,9 +2958,7 @@ static int KQ_rest (lua_State * L)
 /*! \brief Update the screen */
 static int KQ_screen_dump (lua_State * L)
 {
-/*  RB: TODO  */
-   if (L != NULL)
-      L = L;
+   (void) L;
    blit2screen (xofs, yofs);
    return 0;
 }
@@ -3883,9 +3896,7 @@ static int KQ_shop_add_item (lua_State * L)
 
 static int KQ_stop_song (lua_State * L)
 {
-/*  RB: TODO  */
-   if (L != NULL)
-      L = L;
+   (void) L;
    stop_music ();
    return 0;
 }
@@ -3938,9 +3949,7 @@ static int KQ_traceback (lua_State * theL)
 
 static int KQ_unpause_map_song (lua_State * L)
 {
-/*  RB: TODO  */
-   if (L != NULL)
-      L = L;
+	(void) L;
    resume_music ();
    return 0;
 }
@@ -3978,9 +3987,7 @@ static int KQ_wait (lua_State * L)
 
 static int KQ_wait_enter (lua_State * L)
 {
-/*  RB: TODO  */
-   if (L != NULL)
-      L = L;
+   (void) L;
    wait_enter ();
    return 0;
 }
@@ -4080,7 +4087,62 @@ int lua_dofile (lua_State * L, const char * fname)
    return 0;
 }
 
+/*! \brief Obey a command typed in from the console
+ *
+ * Take the given string and execute it.
+ * Prints out any returned values to the console
+ * 
+ * \param L the Lua state
+ * \param cmd the string to execute
+ */
+static int lua_dostring (lua_State * L, const char *cmd)
+{
+   int retval, nrets, i;
+   nrets = lua_gettop(L);
+   retval = lua_load (L, (lua_Chunkreader) stringreader, &cmd, "<console>");
+   if (retval != 0) {
+     scroll_console("Parse error");
+     return retval;
+   }
+   retval = lua_pcall (L, 0, LUA_MULTRET, 0);
+   if (retval != 0) {
+     scroll_console("Execute error");
+     return retval;
+	}
+   nrets = lua_gettop(L) - nrets;
+   for (i=0; i<nrets; ++i) {
+     scroll_console(lua_tostring(L, -nrets + i));
+   }
+   lua_pop(L, nrets);
+   return 0;
+}
 
+/*! \brief Obey a command typed in from the console
+ *
+ * Take the given string and execute it.
+ * Prints out any returned values to the console
+ * 
+ * \param cmd the string to execute
+ */
+void do_console_command(const char* cmd) {
+  if (theL != NULL) {
+    lua_dostring(theL, cmd);
+  }
+  else {
+    scroll_console("No script engine running");
+  }
+}
+
+/*! \brief Print text to the console
+ *
+ * Prints out the arg
+ * 
+ * \param L Lua state
+ */
+int KQ_print(lua_State* L) {
+	scroll_console(lua_tostring(L, 1));
+	return 0;
+}
 
 /*! \brief Get party array
  *
