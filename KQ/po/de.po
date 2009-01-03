@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: KQ 0.99\n"
 "Report-Msgid-Bugs-To: peterhull90@users.sourceforge.net\n"
-"POT-Creation-Date: 2008-01-28 16:50-0500\n"
+"POT-Creation-Date: 2008-02-25 22:31+0000\n"
 "PO-Revision-Date: 2007-03-07 22:55+0100\n"
 "Last-Translator: Guenther Brammer <GBrammer@gmx.de>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
@@ -125,14 +125,6 @@ msgstr ""
 
 #: scripts/bridge.lua:125
 msgid "Now you see why I should've been a florist..."
-msgstr ""
-
-#: scripts/bridge.lua:162
-msgid "Ahhhhh!!!"
-msgstr ""
-
-#: scripts/bridge.lua:163
-msgid "Help!"
 msgstr ""
 
 #: scripts/bridge2.lua:30
@@ -456,12 +448,60 @@ msgstr ""
 msgid "The door creaks open noisily."
 msgstr ""
 
+#: scripts/cave3a.lua:165
+msgid "No, really. "
+msgstr ""
+
+#: scripts/cave3a.lua:165
+msgid " need to tell the Oracle about this before "
+msgstr ""
+
+#: scripts/cave3a.lua:165
+msgid " go through this TravelPoint!"
+msgstr ""
+
+#: scripts/cave3a.lua:175
+msgid "Looks like it's empty."
+msgstr ""
+
 #: scripts/cave3a.lua:177
 msgid "Something from inside grabs you!"
 msgstr ""
 
+#: scripts/cave3a.lua:185
+msgid "What a strange, glowing portal we have here..."
+msgstr ""
+
+#: scripts/cave3a.lua:197
+msgid "This wall looks funny..."
+msgstr ""
+
 #: scripts/cave3a.lua:198
 msgid "You push at the wall. Something shifts."
+msgstr ""
+
+#: scripts/cave3a.lua:218
+msgid "Hey, who's that?!"
+msgstr ""
+
+#: scripts/cave3a.lua:236
+msgid "That looked like the missing statue Tsorin was talking about!"
+msgstr ""
+
+#: scripts/cave3a.lua:237
+msgid "And those were Malkaron's men!"
+msgstr ""
+
+#: scripts/cave3a.lua:239
+msgid "That looked like Malkaron's men with the Denorian's statue!"
+msgstr ""
+
+#: scripts/cave3a.lua:243
+msgid "I've got to report this to the Oracle!"
+msgstr ""
+
+#: scripts/cave3a.lua:245
+msgid "We've got to report this to the Oracle!"
 msgstr ""
 
 #: scripts/cave4.lua:41
@@ -2559,7 +2599,7 @@ msgid ""
 "inside."
 msgstr ""
 
-#: scripts/init.lua:13 src/sgame.c:388
+#: scripts/init.lua:13 src/sgame.c:392
 msgid "Use to reach ruins"
 msgstr ""
 
@@ -2567,118 +2607,118 @@ msgstr ""
 msgid "Unadium Coin"
 msgstr ""
 
-#: scripts/init.lua:14 src/sgame.c:395
+#: scripts/init.lua:14 src/sgame.c:399
 msgid "Nullify magic"
 msgstr ""
 
-#: scripts/init.lua:14 src/sgame.c:394
+#: scripts/init.lua:14 src/sgame.c:398
 msgid "Cancellation Rod"
 msgstr ""
 
-#: scripts/init.lua:15 src/sgame.c:402
+#: scripts/init.lua:15 src/sgame.c:406
 msgid "Magical goblin gem"
 msgstr ""
 
-#: scripts/init.lua:15 src/sgame.c:401
+#: scripts/init.lua:15 src/sgame.c:405
 msgid "Jade Pendant"
 msgstr ""
 
-#: scripts/init.lua:16 src/sgame.c:408
+#: scripts/init.lua:16 src/sgame.c:412
 msgid "Goblin Jewel"
 msgstr ""
 
-#: scripts/init.lua:16 src/sgame.c:409
+#: scripts/init.lua:16 src/sgame.c:413
 msgid "Precious artifact"
 msgstr ""
 
-#: scripts/init.lua:17 src/sgame.c:415
+#: scripts/init.lua:17 src/sgame.c:419
 msgid "White Stone"
 msgstr ""
 
-#: scripts/init.lua:17 src/sgame.c:416
+#: scripts/init.lua:17 src/sgame.c:420
 msgid "Smooth white rock"
 msgstr ""
 
-#: scripts/init.lua:18 src/sgame.c:422
+#: scripts/init.lua:18 src/sgame.c:426
 msgid "Black Stone"
 msgstr ""
 
-#: scripts/init.lua:18 src/sgame.c:423
+#: scripts/init.lua:18 src/sgame.c:427
 msgid "Smooth black rock"
 msgstr ""
 
-#: scripts/init.lua:19 scripts/init.lua:20 scripts/init.lua:24 src/sgame.c:430
-#: src/sgame.c:437 src/sgame.c:465 src/sgame.c:486
+#: scripts/init.lua:19 scripts/init.lua:20 scripts/init.lua:24 src/sgame.c:434
+#: src/sgame.c:441 src/sgame.c:469 src/sgame.c:490
 msgid "Unlock stuff"
 msgstr ""
 
-#: scripts/init.lua:19 src/sgame.c:429
+#: scripts/init.lua:19 src/sgame.c:433
 msgid "Ember's Key"
 msgstr ""
 
-#: scripts/init.lua:20 src/sgame.c:436
+#: scripts/init.lua:20 src/sgame.c:440
 msgid "Bronze Key"
 msgstr ""
 
-#: scripts/init.lua:21 src/sgame.c:444
+#: scripts/init.lua:21 src/sgame.c:448
 msgid "Broken in half"
 msgstr ""
 
-#: scripts/init.lua:21 src/sgame.c:443
+#: scripts/init.lua:21 src/sgame.c:447
 msgid "Denorian Statue"
 msgstr ""
 
-#: scripts/init.lua:22 src/sgame.c:450
+#: scripts/init.lua:22 src/sgame.c:454
 msgid "Opal Helmet"
 msgstr ""
 
 #: scripts/init.lua:22 scripts/init.lua:23 scripts/init.lua:25
-#: scripts/init.lua:26 src/sgame.c:451 src/sgame.c:458 src/sgame.c:472
-#: src/sgame.c:479
+#: scripts/init.lua:26 src/sgame.c:455 src/sgame.c:462 src/sgame.c:476
+#: src/sgame.c:483
 msgid "Piece of opal set"
 msgstr ""
 
-#: scripts/init.lua:23 src/sgame.c:457
+#: scripts/init.lua:23 src/sgame.c:461
 msgid "Opal Shield"
 msgstr ""
 
-#: scripts/init.lua:24 src/sgame.c:464
+#: scripts/init.lua:24 src/sgame.c:468
 msgid "Iron Key"
 msgstr ""
 
-#: scripts/init.lua:25 src/sgame.c:471
+#: scripts/init.lua:25 src/sgame.c:475
 msgid "Opal Band"
 msgstr ""
 
-#: scripts/init.lua:26 src/sgame.c:478
+#: scripts/init.lua:26 src/sgame.c:482
 msgid "Opal Armour"
 msgstr ""
 
-#: scripts/init.lua:27 src/sgame.c:485
+#: scripts/init.lua:27 src/sgame.c:489
 msgid "Cave Key"
 msgstr ""
 
-#: scripts/init.lua:28 src/sgame.c:493
+#: scripts/init.lua:28 src/sgame.c:497
 msgid "Sealed envelope"
 msgstr ""
 
-#: scripts/init.lua:28 src/sgame.c:492
+#: scripts/init.lua:28 src/sgame.c:496
 msgid "Tsorin's Note"
 msgstr ""
 
-#: scripts/init.lua:29 src/sgame.c:499
+#: scripts/init.lua:29 src/sgame.c:503
 msgid "Derig's Note"
 msgstr ""
 
-#: scripts/init.lua:29 src/sgame.c:500
+#: scripts/init.lua:29 src/sgame.c:504
 msgid "Encrypted message"
 msgstr ""
 
-#: scripts/init.lua:30 src/sgame.c:507
+#: scripts/init.lua:30 src/sgame.c:511
 msgid "Unlock grotto ruins"
 msgstr ""
 
-#: scripts/init.lua:30 src/sgame.c:506
+#: scripts/init.lua:30 src/sgame.c:510
 msgid "Rusty Key"
 msgstr ""
 
@@ -6818,7 +6858,7 @@ msgstr ""
 msgid "You've surprised the enemy!"
 msgstr ""
 
-#: src/credits.c:109
+#: src/credits.c:111
 msgid "Press F1 for help"
 msgstr ""
 
@@ -6834,21 +6874,21 @@ msgstr ""
 msgid "*DEBUG MODE ON*"
 msgstr ""
 
-#: src/draw.c:1263
+#: src/draw.c:1240
 msgid "UTF-8 decode error"
 msgstr ""
 
-#: src/draw.c:1318
+#: src/draw.c:1295
 #, c-format
 msgid "Invalid glyph index: %d"
 msgstr ""
 
-#: src/draw.c:1340
+#: src/draw.c:1317
 #, c-format
 msgid "print_font: Bad font index, %d"
 msgstr ""
 
-#: src/draw.c:1375
+#: src/draw.c:1352
 #, c-format
 msgid "print_num: Bad font index, %d"
 msgstr ""
@@ -6895,7 +6935,7 @@ msgstr ""
 msgid "Remove"
 msgstr ""
 
-#: src/eqpmenu.c:234 src/sgame.c:1169
+#: src/eqpmenu.c:234 src/sgame.c:1178
 msgid "Empty"
 msgstr ""
 
@@ -7210,85 +7250,85 @@ msgstr ""
 msgid "Couldn't steal!"
 msgstr ""
 
-#: src/intrface.c:625
+#: src/intrface.c:633
 msgid "Cheating complete."
 msgstr ""
 
-#: src/intrface.c:650
+#: src/intrface.c:657
 msgid "Could not initialise scripting engine"
 msgstr ""
 
-#: src/intrface.c:875
+#: src/intrface.c:902
 #, c-format
 msgid "Marker %s not found."
 msgstr ""
 
-#: src/intrface.c:1493
+#: src/intrface.c:1520
 #, c-format
 msgid "Found %d gp!"
 msgstr ""
 
-#: src/intrface.c:1525
+#: src/intrface.c:1552
 #, c-format
 msgid "%s procured!"
 msgstr ""
 
-#: src/intrface.c:1527
+#: src/intrface.c:1554
 #, c-format
 msgid "%s ^%d procured!"
 msgstr ""
 
-#: src/intrface.c:1535
+#: src/intrface.c:1562
 #, c-format
 msgid "%s not taken!"
 msgstr ""
 
-#: src/intrface.c:1537
+#: src/intrface.c:1564
 #, c-format
 msgid "%s ^%d not taken!"
 msgstr ""
 
-#: src/intrface.c:2827
+#: src/intrface.c:2855
 msgid "Choose one"
 msgstr ""
 
-#: src/intrface.c:3870
+#: src/intrface.c:3898
 #, c-format
 msgid "Tried to add too many different items to a shop. Maximum is %d\n"
 msgstr ""
 
-#: src/intrface.c:3921
+#: src/intrface.c:3949
 #, c-format
 msgid ""
 "%s\n"
 "Stack trace:\n"
 msgstr ""
 
-#: src/intrface.c:3924
+#: src/intrface.c:3952
 #, c-format
 msgid "#%d Line %d in (%s %s) %s\n"
 msgstr ""
 
-#: src/intrface.c:3928
+#: src/intrface.c:3956
 msgid "Script error. See allegro.log"
 msgstr ""
 
-#: src/intrface.c:4058
+#: src/intrface.c:4088
 #, c-format
-msgid "Could not open script %s!"
+msgid "Could not open script %s.lob!"
 msgstr ""
 
-#: src/intrface.c:4064
+#: src/intrface.c:4094
 #, c-format
 msgid "Could not parse script %s!"
 msgstr ""
 
-#: src/intrface.c:4071
+#: src/intrface.c:4100
 #, c-format
 msgid "lua_pcall failed while calling script %s!"
 msgstr ""
 
-#: src/itemmenu.c:146 src/sgame.c:105 src/shopmenu.c:90 src/shopmenu.c:575
+#: src/itemmenu.c:146 src/sgame.c:103 src/shopmenu.c:90 src/shopmenu.c:576
 msgid "Confirm/Cancel"
 msgstr "Bestätigen/Abbrechen"
 
@@ -7333,41 +7373,41 @@ msgstr ""
 msgid "%s learned!"
 msgstr ""
 
-#: src/kq.c:467
+#: src/kq.c:466
 #, c-format
 msgid "Could not allocate %s!."
 msgstr ""
 
-#: src/kq.c:726
+#: src/kq.c:725
 msgid "Could not open treasure.log!"
 msgstr ""
 
-#: src/kq.c:733
+#: src/kq.c:732
 msgid "Could not open progress.log!"
 msgstr ""
 
-#: src/kq.c:939
+#: src/kq.c:938
 msgid "Could not load character graphics!"
 msgstr ""
 
-#: src/kq.c:1024
+#: src/kq.c:1023
 msgid "Alt+W Pressed:"
 msgstr ""
 
-#: src/kq.c:1037
+#: src/kq.c:1036
 #, c-format
 msgid "Program terminated: user pressed Alt+X"
 msgstr ""
 
-#: src/kq.c:1063
+#: src/kq.c:1062
 msgid "Cannot open hero data file"
 msgstr ""
 
-#: src/kq.c:1074
+#: src/kq.c:1073
 msgid "Could not load kqfaces.pcx!"
 msgstr ""
 
-#: src/kq.c:1112
+#: src/kq.c:1111
 #, c-format
 msgid "Could not load map %s!"
 msgstr ""
@@ -7377,36 +7417,36 @@ msgstr ""
 msgid "Sorry, no help screen at this time.\n"
 msgstr ""
 
-#: src/kq.c:1492
+#: src/kq.c:1486
 msgid "X-ALT pressed... exiting."
 msgstr ""
 
-#: src/kq.c:1617
+#: src/kq.c:1611
 #, c-format
 msgid "Error with sound: %s\n"
 msgstr ""
 
-#: src/kq.c:1637
+#: src/kq.c:1631
 msgid "Only joysticks/gamepads with at least 4 buttons can be used."
 msgstr ""
 
-#: src/kq.c:1646
+#: src/kq.c:1640
 msgid "Could not load misc.pcx!"
 msgstr ""
 
-#: src/kq.c:1720
+#: src/kq.c:1714
 msgid "Could not load tileset.kq"
 msgstr ""
 
-#: src/kq.c:1727
+#: src/kq.c:1721
 msgid "Too many tilesets defined in tileset.kq"
 msgstr ""
 
-#: src/kq.c:1863
+#: src/kq.c:1857
 msgid "X-Alt pressed - exiting"
 msgstr ""
 
-#: src/kq.c:1952
+#: src/kq.c:1946
 msgid "Repulse has worn off!"
 msgstr ""
 
@@ -7439,7 +7479,7 @@ msgstr ""
 msgid "Time:"
 msgstr ""
 
-#: src/menu.c:121 src/shopmenu.c:264 src/shopmenu.c:423
+#: src/menu.c:121 src/shopmenu.c:265 src/shopmenu.c:424
 msgid "Gold:"
 msgstr ""
 
@@ -7580,7 +7620,7 @@ msgstr ""
 msgid "In party:"
 msgstr ""
 
-#: src/selector.c:676 src/sgame.c:1292 src/sgame.c:1400 src/shopmenu.c:754
+#: src/selector.c:676 src/sgame.c:1301 src/sgame.c:1409 src/shopmenu.c:755
 msgid "Exit"
 msgstr ""
 
@@ -7830,138 +7870,138 @@ msgstr ""
 msgid "Press CONFIRM to exit this screen"
 msgstr ""
 
-#: src/sgame.c:137
+#: src/sgame.c:136
 msgid "Yes"
 msgstr ""
 
-#: src/sgame.c:138
+#: src/sgame.c:137
 msgid "No"
 msgstr ""
 
-#: src/sgame.c:141
+#: src/sgame.c:139
 msgid "Are you sure you want to quit this game?"
 msgstr "Willst du dieses Spiel wirklich beenden?"
 
-#: src/sgame.c:160
+#: src/sgame.c:158
 msgid "File Deleted"
 msgstr ""
 
-#: src/sgame.c:176
+#: src/sgame.c:174
 msgid "File Not Deleted"
 msgstr ""
 
-#: src/sgame.c:210
+#: src/sgame.c:214
 msgid "Could not load saved game."
 msgstr ""
 
-#: src/sgame.c:221
+#: src/sgame.c:225
 msgid "Saved game format is not current."
 msgstr ""
 
-#: src/sgame.c:387
+#: src/sgame.c:391
 msgid "Unadium coin"
 msgstr ""
 
-#: src/sgame.c:553
+#: src/sgame.c:557
 msgid "Error. numchrs in saved game > PSIZE"
 msgstr ""
 
-#: src/sgame.c:578
+#: src/sgame.c:582
 msgid "Error. number of chars in saved game > sizeof(curmap)"
 msgstr ""
 
-#: src/sgame.c:590
+#: src/sgame.c:594
 msgid "Error. number of progress indicators > sizeof(progress)"
 msgstr ""
 
-#: src/sgame.c:603
+#: src/sgame.c:607
 msgid "Error. number of treasure indicators > sizeof(treasure)"
 msgstr ""
 
-#: src/sgame.c:616
+#: src/sgame.c:620
 msgid "Error. number of non-combat spell indicators > sizeof(save_spells)"
 msgstr ""
 
-#: src/sgame.c:630
+#: src/sgame.c:634
 msgid "Error. number of inventory items > MAX_INV"
 msgstr ""
 
-#: src/sgame.c:649
+#: src/sgame.c:653
 msgid "Error. number of special items > MAX_SPECIAL_ITEMS"
 msgstr ""
 
-#: src/sgame.c:663
+#: src/sgame.c:667
 msgid "Error. number of shops saved > NUMSHOPS"
 msgstr ""
 
-#: src/sgame.c:805 src/sgame.c:903
+#: src/sgame.c:813 src/sgame.c:912
 msgid "Could not save game data."
 msgstr ""
 
-#: src/sgame.c:1143
+#: src/sgame.c:1152
 msgid "Loading"
 msgstr ""
 
-#: src/sgame.c:1146
+#: src/sgame.c:1155
 msgid "Saving"
 msgstr ""
 
-#: src/sgame.c:1149
+#: src/sgame.c:1158
 msgid "Delete"
 msgstr ""
 
-#: src/sgame.c:1165
+#: src/sgame.c:1174
 msgid "Wrong version"
 msgstr ""
 
-#: src/sgame.c:1176
+#: src/sgame.c:1185
 #, c-format
 msgid "L: %02d"
 msgstr ""
 
-#: src/sgame.c:1178
+#: src/sgame.c:1187
 msgid "H:"
 msgstr ""
 
-#: src/sgame.c:1179
+#: src/sgame.c:1188
 msgid "M:"
 msgstr ""
 
-#: src/sgame.c:1189
+#: src/sgame.c:1198
 #, c-format
 msgid "T %d:%02d"
 msgstr ""
 
-#: src/sgame.c:1192
+#: src/sgame.c:1201
 #, c-format
 msgid "G %d"
 msgstr ""
 
-#: src/sgame.c:1289
+#: src/sgame.c:1298
 msgid "Continue"
 msgstr ""
 
-#: src/sgame.c:1290
+#: src/sgame.c:1299
 msgid "New Game"
 msgstr ""
 
-#: src/sgame.c:1291 src/sgame.c:1399
+#: src/sgame.c:1300 src/sgame.c:1408
 msgid "Config"
 msgstr ""
 
-#: src/sgame.c:1339
+#: src/sgame.c:1348
 msgid "Then exit you shall!"
 msgstr ""
 
-#: src/sgame.c:1379
+#: src/sgame.c:1389
 msgid "Save  "
 msgstr ""
 
-#: src/sgame.c:1386
+#: src/sgame.c:1395
 msgid "[Save]"
 msgstr ""
 
-#: src/sgame.c:1398
+#: src/sgame.c:1407
 msgid "Load"
 msgstr ""
 
@@ -7969,73 +8009,73 @@ msgstr ""
 msgid "No room!"
 msgstr ""
 
-#: src/shopmenu.c:143 src/shopmenu.c:752
+#: src/shopmenu.c:144 src/shopmenu.c:753
 msgid "Buy"
 msgstr ""
 
-#: src/shopmenu.c:172
+#: src/shopmenu.c:173
 msgid "Sold Out!"
 msgstr ""
 
-#: src/shopmenu.c:363
+#: src/shopmenu.c:364
 #, c-format
 msgid "Own: %d"
 msgstr ""
 
-#: src/shopmenu.c:366
+#: src/shopmenu.c:367
 #, c-format
 msgid "Eqp: %d"
 msgstr ""
 
-#: src/shopmenu.c:417
+#: src/shopmenu.c:418
 #, c-format
 msgid "The cost is %d gp for the night."
 msgstr ""
 
-#: src/shopmenu.c:430
+#: src/shopmenu.c:431
 msgid "Do you wish to stay?"
 msgstr ""
 
-#: src/shopmenu.c:434
+#: src/shopmenu.c:435
 msgid "You can't afford to stay here."
 msgstr ""
 
-#: src/shopmenu.c:441
+#: src/shopmenu.c:442
 msgid "yes"
 msgstr ""
 
-#: src/shopmenu.c:442
+#: src/shopmenu.c:443
 msgid "no"
 msgstr ""
 
-#: src/shopmenu.c:501 src/shopmenu.c:545
+#: src/shopmenu.c:502 src/shopmenu.c:546
 #, c-format
 msgid "Sell for %d gp?"
 msgstr ""
 
-#: src/shopmenu.c:511
+#: src/shopmenu.c:512
 msgid "How many?"
 msgstr ""
 
-#: src/shopmenu.c:518
+#: src/shopmenu.c:519
 #, c-format
 msgid "%d of %d"
 msgstr ""
 
-#: src/shopmenu.c:620 src/shopmenu.c:753
+#: src/shopmenu.c:621 src/shopmenu.c:754
 msgid "Sell"
 msgstr ""
 
-#: src/shopmenu.c:646
+#: src/shopmenu.c:647
 #, c-format
 msgid "%d gp for each one."
 msgstr ""
 
-#: src/shopmenu.c:651
+#: src/shopmenu.c:652
 #, c-format
 msgid "That's worth %d gp."
 msgstr ""
 
-#: src/shopmenu.c:658
+#: src/shopmenu.c:659
 msgid "That can not be sold!"
 msgstr ""
