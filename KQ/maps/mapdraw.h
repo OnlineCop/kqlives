@@ -1,5 +1,5 @@
 /***************************************************************************\
- * This is the header file for the KQ map editor, suppored by the kqlives  *
+ * This is the header file for the KQ map editor, supported by the kqlives *
  * community.  Questions and suggestions to the group are welcome.  Please *
  * join our mailing list: kqlives-main@lists.sourceforge.net               *
  *                                                                         *
@@ -11,9 +11,13 @@
 #ifndef __MAPDRAW_H
 #define __MAPDRAW_H
 
-/* TT: Added per request, as MAX_PATH is not defined on some archetectures */
+/* TT: Added per request, as MAX_PATH is not defined on some architectures */
 #ifndef MAX_PATH
+#ifdef PATH_MAX
+#define MAX_PATH PATH_MAX
+#else
 #define MAX_PATH 1024
+#endif
 #endif
 
 #include <allegro.h>
