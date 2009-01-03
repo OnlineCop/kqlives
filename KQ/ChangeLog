@@ -1,3 +1,697 @@
+2009-01-03  peterhull90  <peterhull90@iMac.local>
+
+	* maps/mapdraw.h: Fixed typos and made it use PATH_MAX if available
+
+2009-01-02  peterhull90  <peterhull90@iMac.local>
+
+	* Info-KQ_osx.plist, KQ-osx.xcodeproj/.cvsignore, KQ-osx.xcodeproj/project.pbxuser, KQ-osx.xcodeproj/project.pbxproj:
+	Added XCode 2.x project
+
+	* include/console.h, include/draw.h, include/kq.h, src/console.c, src/credits.c, src/draw.c, src/intrface.c, src/kq.c, src/osx.m:
+	Implemented console (only when DEBUGMODE is defined)
+	Fixed some compiler warnings
+
+2008-12-30  peterhull90  <peterhull90@iMac.local>
+
+	* src/osx.m: Changed handling of resource paths that don't exist.
+
+	* scripts/tower.lua:
+	Fixed cosmetic bug where floor switches did not change when stepped on.
+	Added code comment with the solution for the stones and floor switches puzzles.
+
+2008-02-24  peterhull90  <peterhull90@iMac.local>
+
+	* src/setup.c:
+	Fix for 'warning: ISO C90 forbids mixed declarations and code' that actually compiles!
+
+	* src/setup.c:
+	Fix for 'warning: ISO C90 forbids mixed declarations and code'
+
+2008-01-31  wk2  <wk2@iMac.local>
+
+	* release/make-release.sh:
+	* Fixed bug that prevented make-release.sh from functioning properly on Bourne compatible shells.
+	* Updated default INC and LIB dirs, and we now strip linux binaries.
+
+2008-01-31  wk2  <wk2@iMac.local>
+
+	* release/make-release.sh:
+	* Fixed bug that prevented make-release.sh from functioning properly on Bourne compatible shells.
+	* Updated default INC and LIB dirs, and we now strip linux binaries.
+
+2008-01-30  wk2  <wk2@iMac.local>
+
+	* README_MINGW.txt:
+	* Added instructions for cross-compiling for Windows from Linux
+
+	* src/intrface.c:
+	* KQ wasn't compiling. Fixed that. Redefined lua_dofile to not be static, to match the definition in lauxlib.h
+
+2008-01-29  evoguenther  <evoguenther@iMac.local>
+
+	* Makefile.am, README_MINGW.txt, configure.ac, po/de.po, src/enemyc.c, src/intrface.c:
+	Use gettexts "intl" feature
+	Some Win32 buildfixes
+	Update de.po
+
+	* src/sgame.c, src/shopmenu.c, include/shopmenu.h, maps/mapdiff.c, maps/mapdraw.h, maps/mapdraw2.c, maps/mapedit.c, maps/mapedit2.h, maps/mapshared.c, src/credits.c, src/draw.c, src/entity.c, src/intrface.c, src/kq.c, src/menu.c, src/movement.c, src/music.c, src/selector.c, AUTHORS, configure.ac, include/draw.h, include/entity.h, include/intrface.h, include/kq.h, include/selector.h:
+	Some harmless cleanups
+
+	* scripts/Makefile.am: use portable make
+
+2008-01-28  edgarmolina  <edgarmolina@iMac.local>
+
+	* po/es.po: more spanish
+
+	* scripts/cave3a.lua: gettext lines
+
+	* scripts/town1.lua: Spanish translation
+
+	* po/kq.pot: Spanish translations
+
+	* po/es.po: Spanish translation
+
+	* scripts/fort.lua: Some translations
+
+2008-01-20  peterhull90  <peterhull90@iMac.local>
+
+	* data/mpcx.dat, src/draw.c, src/kq.c:
+	Changes to allow accented characters for language translations.
+	* Modified datafile with new glyphs
+	* Modified UTF-8 support to find those glyphs
+	* Modified main file to allow the larger glyph bitmap
+
+2008-01-16  wk2  <wk2@iMac.local>
+
+	* maps/mapedit2.c, maps/mapedit2.h, src/bounds.c, include/bounds.h, maps/mainwindow.c, maps/mapdraw2.c, maps/mapdraw2.glade:
+	* Added shadows to mapdraw2
+	* Added bounding boxes to mapdraw2
+	* Misc fixes.
+
+	* maps/mainwindow.c, maps/mapdraw2.c, maps/mapdraw2.glade, maps/mapedit2.c, maps/mapedit2.h:
+	* made mapdraw2's current_value text box behavior less weird.
+	* made it so that you could place tiles in mapdraw2 by dragging the mouse over the map area.
+	* fixed a bug that sometimes resulted in phantom entities with maps saved with mapdraw2. Sometimes, after deleting an
+	entity, and then saving the map, the entity would come back.
+	* made the function names in mapdraw2 more consistent, and rearranged some functions to make them easier to find.
+
+2008-01-15  wk2  <wk2@iMac.local>
+
+	* maps/mainwindow.c, maps/mapdraw2.c, maps/mapdraw2.glade, maps/mapedit2.c, maps/mapedit2.h, maps/mapstructs.c:
+	* Added the ability to create new maps from within mapdraw2. mapdraw2 no longer needs mapdraw's assistance (although some
+	things are still easier in mapdraw).
+	* Properly aligned mapdraw2.glade. This was done automatically when I saved the new file with glade-3.
+
+2008-01-14  peterhull90  <peterhull90@iMac.local>
+
+	* src/osx.m:
+	Added path searching as implemented by wk2 for unix and windows
+
+2008-01-14  wk2  <wk2@iMac.local>
+
+	* src/unix.c:
+	* Made "get_lua_file_path more flexible, so it can be ported to kq.c, and used for all OSes.
+	* Changed the clunky "open file to see if it exists" method with the convenient allegro function "exists()".
+
+	* po/es.po, scripts/.cvsignore, .cvsignore, po/.cvsignore:
+	Updated .cvsignore files. Mostly in regards to gettext. Also added cheat.lua to scripts/.cvsignore.
+
+	* release/make-release.sh:
+	Ammended make-release.sh to link KQ with Windows gettext libraries.
+
+	* src/win.c: KQ compiles for Windows again.
+
+2008-01-13  wk2  <wk2@iMac.local>
+
+	* release/make-release.sh:
+	* Added a function for creating a Linux release for the mapeditor files. It still needs some touching up.
+
+	* maps/mapedit.c, maps/mapshared.c, maps/mainwindow.c:
+	* mapdraw and mapdraw2 first look for pcx files (and mapdraw2's mapdraw2.glade) in DATA_DIR/data/<file_name>, and if that
+	fails, it looks in the current directory for these files.
+	* mapdraw no longer loops through the pcx files if it can't find the required one. It halts if one is missing. This
+	shouldn't happen anyway.
+
+	* src/dos.c, src/intrface.c, src/unix.c, src/win.c, src/beos.c:
+	* KQ now checks the user's home directory for resource files before it checks the KQ install directory.
+	* Had to modify the way kqres handles scripts. It now requires that ".lob" and ".lua" be ommitted.
+	* I probably broke MacOSX, because osx.m was written in a language I am unfamiliar with, and I would not have been able to
+	test it anyway (no Mac)
+	* I was unable to test the changes I made to beos.c, dos.c, and win.c.
+
+2008-01-11  wk2  <wk2@iMac.local>
+
+	* src/sgame.c:
+	* Added a NULL terminator to the end of curmap when loading. Loading a game would fail in some unusual situations.
+
+2007-12-03  edgarmolina  <edgarmolina@iMac.local>
+
+	* po/es.po, scripts/town1.lua:
+	741 translated messages, 4 fuzzy translations, 1065 untranslated
+	messages.
+
+2007-11-30  edgarmolina  <edgarmolina@iMac.local>
+
+	* po/es.po:
+	Finished the manor stage spanish translation
+
+	* scripts/manor.lua:
+
+	Added some strings to gettext
+
+2007-11-27  peterhull90  <peterhull90@iMac.local>
+
+	* src/draw.c:
+	Added some more glyph indexes (no glyphs yet though) and 3 and 4 byte UTF-8 support, which will need checking. Invalid glyphs are logged, but appear as spaces and don't cause program_death any more.
+
+	* src/credits.c: Added WinterKnight and updated year to 2007
+
+2007-11-26  edgarmolina  <edgarmolina@iMac.local>
+
+	* po/es.po:
+	568 Translated messages, 1220 resting
+
+2007-11-26  peterhull90  <peterhull90@iMac.local>
+
+	* src/bounds.c: Undocumented parameter fixed (doxygen warning)
+
+2007-11-26  edgarmolina  <edgarmolina@iMac.local>
+
+	* po/es.po:
+	Finish translating starting and town1
+
+	* po/es.po:
+
+	Translated Starting and half of Town1
+
+2007-11-26  wk2  <wk2@iMac.local>
+
+	* AUTHORS: Added myself to the list of AUTHORS
+
+	* README: Added some info into the README about debugging and cheating.
+
+	* src/credits.c, src/sgame.c:
+	Fixed a couple of syntax errors that prevented KQ from compiling.
+
+2007-11-25  peterhull90  <peterhull90@iMac.local>
+
+	* src/draw.c:
+	UTF-8 fixes, glyphs mapped to unaccented latin chars for now
+
+2007-11-24  evoguenther  <evoguenther@iMac.local>
+
+	* po/POTFILES.in, maps/mapdraw2.glade:
+	Add maps/mapdraw2.glade to POTFILES.in
+
+2007-11-23  edgarmolina  <edgarmolina@iMac.local>
+
+	* po/es.po:
+	Translated more messages
+
+2007-11-21  edgarmolina  <edgarmolina@iMac.local>
+
+	* po/es.po:
+
+	Some strings translated, some from the main menu
+
+	* po/es.po, po/kq.pot, po/LINGUAS, po/de.po:
+
+	added es locale and updated linguas, de.po and kq.pot to the last
+	gettext messages
+
+	* src/setup.c, src/shopmenu.c, KQ-Linux.kdevelop/KQ.kdevelop, KQ-Linux.kdevelop/KQ.kdevses, src/draw.c, src/eskill.c, src/heroc.c, src/hskill.c, src/intrface.c, src/itemmenu.c, src/kq.c, src/magic.c, src/masmenu.c, src/menu.c, src/music.c, src/music_dumb.c, src/music_jgmod.c, src/scrnshot.c, src/selector.c:
+
+	Added _("") to strings to use gettext interpreter
+
+2007-11-20  evoguenther  <evoguenther@iMac.local>
+
+	* po/Rules-Lua, po/de.po, po/kq.pot, scripts/Makefile.am, INSTALL, Makefile.am, po/Makefile.in.in:
+	Fix make distcheck
+
+2007-11-19  peterhull90  <peterhull90@iMac.local>
+
+	* src/draw.c: UTF-8 decoding added
+
+2007-11-19  edgarmolina  <edgarmolina@iMac.local>
+
+	* src/eqpmenu.c:
+
+	Updated to gettext
+
+	* src/entity.c, src/enemyc.c: *** empty log message ***
+
+	* src/draw.c:
+
+	Updated strings to gettext
+
+	* src/credits.c:
+
+	Modified strings to use gettext, added gunther and myself to the credits
+
+	* src/combat.c:
+
+	Updated strings to use gettext
+
+	* src/sgame.c:
+
+	Added _("") to all the string to use gettext
+
+2007-11-18  evoguenther  <evoguenther@iMac.local>
+
+	* po/LINGUAS, po/de.po, po/kq.pot, src/kq.c: run make update-po.
+
+	* scripts/town7.lua, scripts/town8.lua, scripts/cave3a.lua, scripts/cave4.lua, scripts/cave5.lua, scripts/coliseum.lua, scripts/cult.lua, scripts/dville.lua, scripts/estate.lua, scripts/fort.lua, scripts/global.lua, scripts/goblin.lua, scripts/grotto.lua, scripts/grotto2.lua, scripts/guild.lua, scripts/init.lua, scripts/main.lua, scripts/manor.lua, scripts/pass.lua, scripts/starting.lua, scripts/sunarin.lua, scripts/temple1.lua, scripts/temple2.lua, scripts/tower.lua, scripts/town1.lua, scripts/town2.lua, scripts/town3.lua, scripts/town4.lua, scripts/town5.lua, scripts/town6.lua, scripts/bridge.lua, scripts/bridge2.lua, scripts/camp.lua, scripts/cave1.lua, scripts/cave2.lua:
+	Mark all messages in the Lua scripts for translation.
+
+	* other/luaxgettext, po/Makefile.in.in, po/POTFILES.in, po/POTFILES.lua, src/intrface.c:
+	Add support for Lua with a modified script from Yann Dirson for Wesnoth.
+
+	luaxgettext only works with benign input files, but that shouldn't be a problem as we control all input files.
+
+	Export the gettext function to lua.
+
+2007-11-17  edgarmolina  <edgarmolina@iMac.local>
+
+	* KQ-Linux.kdevelop/KQ.kdevelop, maps/mapdump.c, maps/mapedit.c, po/LINGUAS, po/de.po, po/kq.pot, src/kq.c, src/sgame.c:
+	Added #include <locale.h> to mapdump.c and mapedit.c
+	beta translation files
+
+	* KQ-Linux.kdevelop/Doxyfile, KQ-Linux.kdevelop/KQ.kdevelop, KQ-Linux.kdevelop/KQ.kdevelop.pcs, KQ-Linux.kdevelop/KQ.kdevses, KQ-Linux.kdevelop/config.log:
+	*** empty log message ***
+
+2007-11-17  evoguenther  <evoguenther@iMac.local>
+
+	* maps/mapdraw.h, maps/mapdraw2.c, maps/mapdump.c, maps/mapedit.c, po/LINGUAS, po/Makevars, po/POTFILES.in, po/de.po, po/kq.pot, src/kq.c, Makefile.am, configure.ac, include/gettext.h, include/kq.h, maps/mapdiff.c:
+	Add gettext support.
+
+2007-11-13  wk2  <wk2@iMac.local>
+
+	* scripts/pscripts/town6.lua, scripts/pscripts/town7.lua, scripts/pscripts/town4.lua, scripts/pscripts/town5.lua, scripts/pscripts/town1.lua, scripts/pscripts/town2.lua, scripts/pscripts/town3.lua, scripts/pscripts/starting.lua, scripts/pscripts/temple1.lua, scripts/pscripts/temple2.lua, scripts/pscripts/tower.lua, scripts/pscripts/grotto2.lua, scripts/pscripts/guild.lua, scripts/pscripts/main.lua, scripts/pscripts/manor.lua, scripts/pscripts/pass.lua, scripts/pscripts/estate.lua, scripts/pscripts/fort.lua, scripts/pscripts/grotto.lua, scripts/pscripts/coliseum.lua, scripts/pscripts/cult.lua, scripts/pscripts/dville.lua, scripts/pscripts/cave2.lua, scripts/pscripts/cave3a.lua, scripts/pscripts/cave3b.lua, scripts/pscripts/cave4.lua, scripts/pscripts/cheat.lua, scripts/pscripts/.cvsignore, scripts/pscripts/bridge.lua, scripts/pscripts/camp.lua, scripts/pscripts/cave1.lua:
+	Removing pscripst from cvs.
+
+	* src/masmenu.c, src/menu.c, src/setup.c, src/sgame.c, src/shopmenu.c, src/eskill.c, src/heroc.c, src/hskill.c, src/intrface.c, src/kq.c, src/magic.c, scripts/town6.lua, scripts/town7.lua, src/combat.c, src/draw.c, src/enemyc.c, scripts/town5.lua, scripts/coliseum.lua, scripts/cult.lua, scripts/dville.lua, scripts/estate.lua, scripts/global.lua, scripts/grotto.lua, scripts/grotto2.lua, scripts/guild.lua, scripts/init.lua, scripts/main.lua, scripts/preall.sh, scripts/temple2.lua, scripts/tower.lua, scripts/town1.lua, scripts/town3.lua, include/res.h, include/shopmenu.h, scripts/cave4.lua, scripts/cave5.lua, include/intrface.h, include/kq.h, include/magic.h, include/progress.h:
+	Changed the way special items work. They are added and removed via lua scripts.
+	Changed the save game format to include special items.
+	Modified scripts to set and remove special items.
+	Removed progress.h, as it is no longer needed.
+
+2007-11-12  wk2  <wk2@iMac.local>
+
+	* src/combat.c: Random encounters were accidently temporarily disabled.
+
+2007-11-10  peterhull90  <peterhull90@iMac.local>
+
+	* src/combat.c:
+	Bug fix: hero_level and encounter were used before initialisation
+
+2007-10-27  wk2  <wk2@iMac.local>
+
+	* release/kq.nsi, release/linux-bin-README, release/linux-bin-install.sh, release/make-release.sh, release/win32-bin-COPYING, release/win32-bin-README:
+	Adding files that I use to create releases to the repository.
+
+2007-09-17  peterhull90  <peterhull90@iMac.local>
+
+	* Mac/README.rtf: Removed text about a patch being required
+
+2007-09-10  peterhull90  <peterhull90@iMac.local>
+
+	* src/enemyc.c: Added formatting command for doxygen
+
+2007-09-02  wk2  <wk2@iMac.local>
+
+	* scripts/cave5.lua: Fixed "blowup" bug that caused freeze.
+	Thanks Jonathan Hepburn for the patch.
+
+2007-09-01  wk2  <wk2@iMac.local>
+
+	* src/unix.c:
+	Reverted my previous comment in unix.c. mkdir has no effect on existing
+	directories.
+
+	* Makefile.am, include/combat.h, include/heroc.h, include/intrface.h, include/itemdefs.h, include/kq.h, include/magic.h, include/progress.h, include/res.h, include/sgame.h, include/shopmenu.h, include/structs.h, scripts/Makefile.am, scripts/allsc.txt, scripts/coliseum.lua, scripts/global.lua, scripts/init.lua, scripts/starting.lua, src/combat.c, src/disk.c, src/draw.c, src/enemyc.c, src/entity.c, src/heroc.c, src/intrface.c, src/kq.c, src/magic.c, src/menu.c, src/res.c, src/sgame.c, src/shopmenu.c, src/unix.c:
+	Big changes. Geared towards removing content from C Code, and putting it into scripts.
+	1) map_no
+	2) removed progress.h
+	3) shop into init.lua:init_shops
+	4) lua lob
+	5) separated progress to shops_time, save_spells, etc.
+	6) malloc to fixed array
+
+	1) Removed most of the code in progress.h and put it into global.lua
+	2) map_no is no longer used, although mapdraw programs can still read and write it.
+	3) Shops are no longer defined in code. They are now defined in init_shop in the new
+	script init.lua. Added a s_shops structure to replace the funky multi-dimensional
+	shops array.
+	4) KQ will attempt to load the appropriate lob file from the scripts directory. If
+	the lob file is not there, it will try to load the equivalent lua file. You do not
+	have to compile scripts. You still have to "prepare" them if they use any item
+	constants.
+	5) The progress array was being used to store progress, shop visit times, and
+	magical spell status. I split these into different arrays, maintaining backwards
+	compatibility.
+	6) Some arrays, such as progress, were inappropriately using malloc and free, when
+	being declared with a fixed size would have been appropriate. I fixed some of these.
+
+2007-08-31  wk2  <wk2@iMac.local>
+
+	* maps/mapdraw2.c, maps/mapedit.c, maps/mapedit2.c, maps/mapfile.c, maps/mapshared.c:
+	Fixed segfault in mapdraw2. Both mapdraw and mapdraw2 work OK now.
+	Misc map fixes.
+
+	* .cvsignore: Needed update. Should work better now.
+
+2007-08-30  wk2  <wk2@iMac.local>
+
+	* maps/mapdraw.h, maps/mapedit.c, maps/mapfile.c, maps/mapshared.c, maps/mapstructs.c:
+	Fixed glibc abort in mapdraw. Markers would get added, but no memory would be allocated for them.
+	I removed the markers array and superseded it with gmap.markers.
+
+	* maps/camp.map, scripts/camp.lua:
+	Reverted previous changes. They were designed to fix the "diagonal avoidance" bug, which has already been fixed.
+	Instead, they introduce a bug. Specifically, they disallowed the player from completing Cassandra's side quest.
+
+2007-08-29  teamterradactyl  <teamterradactyl@iMac.local>
+
+	* maps/mapedit.c: Tightened a few loops
+
+2007-08-29  wk2  <wk2@iMac.local>
+
+	* fix.bat: Putting it back.
+
+	* readme.txt, setup.cfg, COPYING, COPYING.txt, fix.bat, fixbe.sh, fixosx.sh, fixunix.sh, kq.cfg, kq.gdt, kq.gpr:
+	Removed several unnecessary files.
+
+2007-08-20  wk2  <wk2@iMac.local>
+
+	* maps/mapedit2.c: Slightly clarified convert_icon()
+
+	* maps/mapdraw2.glade, maps/mapshared.c:
+	Fixed segfault in mapdraw2. Changed mapdraw2 menu to English.
+
+	* include/kq.h, include/structs.h, src/kq.c: Cleaned up code.
+
+2007-08-12  teamterradactyl  <teamterradactyl@iMac.local>
+
+	* maps/Changes.txt: Change log for the map editor (initial upload)
+
+2007-08-11  teamterradactyl  <teamterradactyl@iMac.local>
+
+	* maps/town6.map, maps/camp.map, maps/main.map:
+	Layout fixes and added some bounding boxes
+
+	* maps/readme.txt: Updated details about map editor
+
+	* maps/mapedit.c, maps/mapedit2.c, maps/mapshared.c, maps/mapdraw.h, maps/mapdump.c:
+	A few updates to the map editor
+
+	* scripts/town5.lua, scripts/camp.lua, scripts/cave5.lua, scripts/temple1.lua, scripts/town2.lua:
+	Added comments
+
+	* src/heroc.c, src/kq.c, src/entity.c: Minor fixes
+
+2007-08-10  peterhull90  <peterhull90@iMac.local>
+
+	* maps/mapshared.c: Fix for seg fault in Linux when saving maps
+	http://sourceforge.net/mailarchive/message.php?msg_name=d343164f0708071546q607f5961vce2c97938a4032f2%40mail.gmail.com
+
+2007-08-09  peterhull90  <peterhull90@iMac.local>
+
+	* scripts/pscripts/.cvsignore:
+	Ignore these files as they are generated by the preprocessor
+
+2007-07-26  wk2  <wk2@iMac.local>
+
+	* maps/mapedit2.c:
+	mapedit2 now works in Windows. It was a one line fix. Took me almost 2 weeks to track down.
+
+2007-07-24  wk2  <wk2@iMac.local>
+
+	* maps/mainwindow.c, maps/mapedit2.c, maps/mapshared.c:
+
+	Fixed segfault in mapdraw2 after adding markers. gmap.markers now points to valid memory.
+	mapdraw2 no longer uses duplicate variable num_markers. It only uses gmap.num_markers.
+
+2007-07-11  peterhull90  <peterhull90@iMac.local>
+
+	* src/setup.c: [ 1750665 ] Helper strings in Config Menu out of order
+
+2007-05-27  wk2  <wk2@iMac.local>
+
+	* Makefile.am:
+	Added sunarin.lob. It was getting built, because everything in KQ/scripts
+	gets built. But it wasn't getting removed, because it wasn't in the Makefile.
+	This was causing problems for some people.
+
+2007-05-26  wk2  <wk2@iMac.local>
+
+	* src/entity.c:
+
+	Fixed zone and entity avoidance bugs. #1674841 #1674825 #1675502(partial)
+
+	* maps/mapshared.c:
+
+	If Misc.pcx is not in your current directory, you now get a more helpful
+	error message.
+
+	* maps/mainwindow.c, maps/mapdraw.h, maps/mapdraw2.c, maps/mapdraw2.glade, maps/mapdraw2.h, maps/mapedit2.c, maps/mapedit2.h, maps/mapshared.c:
+
+	Made mapdraw2 interface slightly more intuitive. Cleaned up code a bit.
+
+2007-03-22  teamterradactyl  <teamterradactyl@iMac.local>
+
+	* maps/main.map: Fixed an obstacle problem by Oracle's caves
+
+2007-03-16  wk2  <wk2@iMac.local>
+
+	* scripts/town5.lua:
+
+	Prevent player from losing the Ember's Key if he hasn't acquired Ayla yet.
+	That way, he can come back and have her join when her quest is finished being written.
+	Also, prevents permanent lockout from acuiring Ayla if the player forgot to talk to her, or didn't see her on his way out of the Ember's Guild.
+
+	* scripts/dville.lua, scripts/guild.lua, scripts/sunarin.lua, scripts/tower.lua, scripts/town1.lua:
+
+	Added some notes regarding how close certain quests are to being completely written.
+	Notes are in both code and character bubbles.
+
+	* scripts/main.lua:
+
+	Changed abrupt to halt to informative message regarding future Malkaron's fortress.
+
+	* scripts/town8.lua:
+
+	Fixed a couple of warps. They tried to warp to non-existant markers.
+
+	* scripts/cult.lua:
+
+	No longer freezes when you rescue Breanne.
+
+	* maps/goblin.map:
+
+	Fixed a couple of warps. They tried to warp to non-existant markers.
+
+	* maps/cave5.map:
+
+	Missing obstacles allowed you to walk through walls.
+
+2007-03-15  wk2  <wk2@iMac.local>
+
+	* maps/mainwindow.c, maps/mapdraw2.glade, maps/mapedit2.c, maps/mapedit2.h:
+
+	Added several features, such as editing zones, obstacles, and markers.
+	Improved UI flexibility and functionality.
+
+2007-03-08  wk2  <wk2@iMac.local>
+
+	* scripts/temple1.lua:
+
+	Fixed game freezes if you talk to priest from the West bug.
+
+	* src/combat.c:
+
+	Added no_monsters cheat (includes non-random encounters)
+	Fixed repulse bypasses non-random encounters bug (such as the Opal Dragon)
+
+	* include/kq.h, src/setup.c, src/kq.c:
+
+	Added no_monsters cheat (includes non-random encounters)
+
+	* scripts/prep.pl:
+
+	Removed stray end brace "}". Should work now.
+
+	* src/combat.c:
+
+	Fixed every_hit_999 cheat
+
+	* include/kq.h:
+
+	Added extra cheats no_random_encounters and every_hit_999
+
+	* src/setup.c:
+
+	Added extra cheats no_random_encounters and every_hit_999
+	Save debugging mode on exit
+
+	* src/combat.c, src/kq.c:
+
+	Added extra cheats no_random_encounters and every_hit_999
+
+	* src/sgame.c:
+	Prevent segfault in cheat mode by declaring mutable string save_str onto the stack.
+
+	* maps/mapshared.c:
+	Declaring bound_box before using is not redundant. Required to compile.
+
+2007-03-07  evoguenther  <evoguenther@iMac.local>
+
+	* Makefile.am, configure.ac, include/kq.h, maps/mapdraw2.c, maps/mapedit2.c, maps/mapfile.c:
+	Linux: Fix some "fails to build" errors
+
+2007-03-07  teamterradactyl  <teamterradactyl@iMac.local>
+
+	* maps/camp.map: Fixed a missing obstacle to a tree base
+
+	* scripts/town2.lua: (Hopefully) fixed treasure chest removal bug
+
+	* maps/mapdraw.h: Added #ifndef MAX_PATH, if not already defined
+
+	* maps/camp.map: Added missing obstacle
+
+2007-03-05  teamterradactyl  <teamterradactyl@iMac.local>
+
+	* src/kq.c: Minor code clean-up
+
+	* src/sgame.c: Cleaned up the system menu a bit
+
+	* src/combat.c: Changed program_exit to return(1)
+
+	* scripts/sunarin.lua: Added zones, corrected typos
+
+	* other/tileset.txt: Uniformed tiles, added FORTRESS tileset
+
+	* other/rescmp.c: Fixed formatting, shuffled functions around
+
+	* maps/mapshared.c: Removed redundant s_bound prototype
+
+	* maps/makefile: Corrected MAKE errors with the current makefile
+
+	* maps/sunarin.map: Extra marker by the king
+
+	* include/mpcx.h: Renamed FORTRESS.PCX to FORTRESS_PCX
+
+	* data/tileset.kq, data/mpcx.dat: Updated available tilesets
+
+2006-11-12  peterhull90  <peterhull90@iMac.local>
+
+	* data/tileset.kq: Added fortress.pcx tileset
+
+	* other/.cvsignore: Added cvsignore for this directory
+
+2006-11-12  teamterradactyl  <teamterradactyl@iMac.local>
+
+	* data/mpcx.dat: New Sunarin fortress added
+
+	* include/mpcx.h, include/selector.h, include/kq.h:
+	Dumping a few updates into the CVS
+
+	* maps/sunarin.map: New Sunarin fortress
+
+	* maps/fortress.pcx: New fortress tilemap
+
+2006-11-12  peterhull90  <peterhull90@iMac.local>
+
+	* other/hero.txt, other/rescmp.c, other/tileset.txt:
+	Raw files for *.kq and their compiler
+
+2006-11-12  teamterradactyl  <teamterradactyl@iMac.local>
+
+	* maps/cave3a.map, maps/fort.map, maps/guild.map, maps/main.map, maps/mapdata.c, maps/mapdiff.c, maps/mapdraw.h, maps/mapdump.c, maps/mapedit.c, maps/mapent.c, maps/mapfile.c, maps/mapshared.c, maps/mapstructs.c, maps/town1.map, maps/town3.map, maps/town4.map, maps/town5.map:
+	Dumping a few updates into the CVS
+
+	* scripts/sunarin.lua: Initial script created for new Sunarin fortress
+
+	* scripts/bridge.lua, scripts/bridge2.lua, scripts/camp.lua, scripts/cave1.lua, scripts/cave2.lua, scripts/cave3a.lua, scripts/cave3b.lua, scripts/cave4.lua, scripts/cave5.lua, scripts/cave6a.lua, scripts/cave6b.lua, scripts/coliseum.lua, scripts/cult.lua, scripts/dville.lua, scripts/estate.lua, scripts/esteria.lua, scripts/fort.lua, scripts/global.lua, scripts/goblin.lua, scripts/grotto.lua, scripts/grotto2.lua, scripts/guild.lua, scripts/main.lua, scripts/manor.lua, scripts/pass.lua, scripts/shrine.lua, scripts/starting.lua, scripts/temple1.lua, scripts/temple2.lua, scripts/tower.lua, scripts/town1.lua, scripts/town2.lua, scripts/town3.lua, scripts/town4.lua, scripts/town5.lua, scripts/town6.lua, scripts/town7.lua, scripts/town8.lua, scripts/tunnel.lua, src/credits.c, src/draw.c, src/entity.c, src/intrface.c, src/res.c:
+	Dumping a few updates into the CVS
+
+2006-08-01  teamterradactyl  <teamterradactyl@iMac.local>
+
+	* maps/make.bat: Added the -O2 compile flag for extra warnings
+
+	* maps/mapdraw2.c: Fixed spacing; no other changes made
+
+	* maps/bridge.map, maps/bridge2.map, maps/camp.map, maps/cave1.map, maps/cave3a.map, maps/guild.map, maps/town2.map, maps/town4.map, maps/town5.map, maps/town6.map, maps/town7.map, maps/town8.map, scripts/bridge2.lua, scripts/camp.lua, scripts/cave1.lua, scripts/cave3a.lua, scripts/cave4.lua, scripts/estate.lua, scripts/grotto.lua, scripts/guild.lua, scripts/main.lua, scripts/manor.lua, scripts/starting.lua, scripts/tower.lua, scripts/town1.lua, scripts/town2.lua, scripts/town4.lua, scripts/town5.lua, scripts/town6.lua, scripts/town7.lua, scripts/town8.lua, scripts/bridge.lua:
+	Updated to map revision 2, includes bounded areas
+
+	* src/kq.c, src/entity.c, src/intrface.c:
+	Initialized variables that were giving compile warnings
+
+	* src/misc/runner.c: Fixed spacing; no other changes made
+
+2006-07-30  peterhull90  <peterhull90@iMac.local>
+
+	* Makefile.am: Added new files to build
+
+2006-07-27  evoguenther  <evoguenther@iMac.local>
+
+	* Makefile.am, configure.ac, src/intrface.c:
+	configure searches for Debian's place for Lua 5.1, too
+
+2006-07-27  teamterradactyl  <teamterradactyl@iMac.local>
+
+	* src/setup.c, src/sgame.c, src/shopmenu.c, src/masmenu.c, src/menu.c, src/movement.c, src/music_dumb.c, src/music_jgmod.c, src/res.c, src/selector.c, src/credits.c, src/disk.c, src/dos.c, src/draw.c, src/effects.c, src/enemyc.c, src/entity.c, src/eqpmenu.c, src/eskill.c, src/fade.c, src/heroc.c, src/hskill.c, src/intrface.c, src/itemmenu.c, src/kq.c, src/magic.c, src/beos.c, src/bounds.c, src/combat.c, scripts/pass.lua, scripts/starting.lua, scripts/temple1.lua, scripts/temple2.lua, scripts/tower.lua, scripts/town1.lua, scripts/town2.lua, scripts/town3.lua, scripts/town4.lua, scripts/town5.lua, scripts/town6.lua, scripts/town7.lua, scripts/town8.lua, scripts/cave1.lua, scripts/cave3a.lua, scripts/cave3b.lua, scripts/cave4.lua, scripts/cave5.lua, scripts/coliseum.lua, scripts/cult.lua, scripts/dville.lua, scripts/estate.lua, scripts/fort.lua, scripts/global.lua, scripts/goblin.lua, scripts/grotto.lua, scripts/grotto2.lua, scripts/guild.lua, scripts/main.lua, scripts/manor.lua, scripts/bridge.lua, scripts/bridge2.lua, scripts/camp.lua, mkfiles/makefile.all, mkfiles/makefile.cfg:
+	Alphabetized stuff and added bounding areas
+
+	* maps/town5.map, maps/town6.map, maps/town7.map, maps/town8.map, maps/cave6a.map, maps/cave6b.map, maps/coliseum.map, maps/cult.map, maps/dville.map, maps/estate.map, maps/fort.map, maps/goblin.map, maps/grotto.map, maps/grotto2.map, maps/guild.map, maps/main.map, maps/manor.map, maps/pass.map, maps/starting.map, maps/temple1.map, maps/temple2.map, maps/tower.map, maps/town1.map, maps/town2.map, maps/town3.map, maps/town4.map, maps/bridge.map, maps/bridge2.map, maps/camp.map, maps/cave1.map, maps/cave2.map, maps/cave3a.map, maps/cave3b.map, maps/cave4.map, maps/cave5.map:
+	Updated to map revision 2, includes bounded areas
+
+	* maps/newtown.pcx: Updated some tiles
+
+	* maps/mapfile.c, maps/mapshared.c, maps/mapstructs.c, maps/make.bat, maps/mapdiff.c, maps/mapdraw.h, maps/mapdump.c, maps/mapedit.c, maps/mapent.c, include/bounds.h, include/disk.h, include/draw.h, include/enemyc.h, include/intrface.h, include/itemmenu.h, include/kq.h, include/menu.h, include/selector.h, include/setup.h, include/sgame.h, include/shopmenu.h, include/structs.h, include/timing.h:
+	Alphabetized stuff and added bounding areas
+
+	* data/mpcx.dat: Updated some tiles
+
+2006-07-10  peterhull90  <peterhull90@iMac.local>
+
+	* include/timing.h, src/combat.c, src/draw.c, src/effects.c, src/hskill.c, src/intrface.c, src/kq.c, src/setup.c, src/heroc.c, src/sgame.c, src/shopmenu.c, src/timing.c:
+	Renamed wait to kq_wait because the former caused conflicts on OS X
+
+2006-05-29  peterhull90  <peterhull90@iMac.local>
+
+	* Makefile.am, src/unix.c:
+	Installs scripts in $(pkglibdir) (usually /usr/lib/kq)
+	instead of $(pkgdatadir) (/usr/share/kq) because compiled LUA scripts
+	are platform-specific and should therefore be treated as code, not data.
+	It also changes the binary name in the $(KQ_BIN) variable from "KQ" to
+	"kq" so that the executable path detection in src/unix.c works.
+	Submitted by Sam Hocevar
+
+	* scripts/cult.lua, src/intrface.c:
+	fixes a crash in cult.lua when the game is not run
+	from the development directory.
+	Submitted by Sam Hocevar
+
+2006-05-27  peterhull90  <peterhull90@iMac.local>
+
+	* ChangeLog: Updates ChangeLog as auto-generated by emacs
+
+2006-05-02  peterhull90  <peterhull90@iMac.local>
+
+	* src/intrface.c: Added marker() function
+
+2006-05-02  teamterradactyl  <teamterradactyl@iMac.local>
+
+	* maps/mapedit.c:
+	Added ability to change relative numbers (plus and minus signs)
+
+	* maps/mapfile.c: Fixed typo in one comment
+
+	* maps/mount.pcx: Changed a tile from transparent
+
+	* maps/manor.map, maps/pass.map, maps/temple1.map, maps/temple2.map, maps/town1.map, maps/bridge.map, maps/bridge2.map, maps/camp.map, maps/cave1.map, maps/cave2.map, maps/cave3a.map, maps/cave3b.map, maps/cave4.map, maps/cave5.map, maps/cave6a.map, maps/cave6b.map, maps/coliseum.map, maps/cult.map, maps/dville.map, maps/estate.map, maps/fort.map, maps/goblin.map, maps/grotto.map, maps/grotto2.map, maps/guild.map, maps/main.map, scripts/coliseum.lua, scripts/bridge.lua, scripts/bridge2.lua, scripts/camp.lua, scripts/cave1.lua, scripts/cave2.lua, scripts/cave3a.lua, scripts/cave3b.lua, scripts/cave4.lua, scripts/cave5.lua, scripts/cave6a.lua, scripts/cave6b.lua, scripts/cult.lua, scripts/dville.lua, scripts/estate.lua, scripts/fort.lua, scripts/global.lua, scripts/goblin.lua, scripts/grotto.lua, scripts/grotto2.lua, scripts/guild.lua, scripts/main.lua, scripts/manor.lua, scripts/pass.lua, scripts/temple1.lua, scripts/temple2.lua, scripts/tower.lua, scripts/town1.lua, scripts/town2.lua, scripts/town3.lua, scripts/town4.lua, scripts/town5.lua, scripts/town6.lua, scripts/town7.lua, scripts/town8.lua:
+	Script updates, map changes
+
 2006-05-02  peterhull90  <peterhull90@dell>
 
 	* src/intrface.c: Added marker() function
