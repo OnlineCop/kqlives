@@ -12,6 +12,9 @@ CPP=cpp -P -undef
 .lua.plua: $(top_srcdir)/include/itemdefs.h
 	$(CPP) -include $(top_srcdir)/include/itemdefs.h $< > $@
 
+KQ.app:
+	install -C $(cscripts_DATA) ../$@/Contents/Resources/scripts
+
 cscripts_DATA = bridge2.lob dville.lob \
 	starting.lob bridge.lob estate.lob \
 	temple1.lob camp.lob esteria.lob \

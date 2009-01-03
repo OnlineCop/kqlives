@@ -8,7 +8,7 @@ kq_SOURCES = src/enemyc.c src/intrface.c src/sgame.c src/bounds.c \
 	src/disk.c src/eskill.c src/kq.c  src/res.c \
 	src/fade.c src/magic.c src/scrnshot.c \
 	src/draw.c src/heroc.c src/masmenu.c src/selector.c \
-	src/effects.c src/hskill.c src/menu.c  src/setup.c \
+	src/effects.c src/hskill.c src/menu.c  src/setup.c src/console.c\
 	include/combat.h include/fade.h include/masmenu.h include/setup.h \
 	include/credits.h include/heroc.h include/menu.h include/sgame.h \
 	include/disk.h include/hskill.h include/movement.h include/shopmenu.h \
@@ -18,7 +18,7 @@ kq_SOURCES = src/enemyc.c src/intrface.c src/sgame.c src/bounds.c \
 	include/entity.h include/kq.h include/res.h include/timing.h \
 	include/eqpmenu.h include/kqsnd.h include/scrnshot.h \
 	include/eskill.h include/magic.h include/selector.h \
-	include/bounds.h include/gettext.h 
+	include/bounds.h include/gettext.h include/console.h
 
 EXTRA_kq_SOURCES = src/unix.c src/osx.m src/beos.c src/win.c src/dos.c src/winres.rc
 kq_LDADD = $(kq_extra_files) $(ALLEGRO_LIBS) $(LIBINTL)
@@ -48,13 +48,13 @@ APPR=KQ.app/Contents/Resources
 KQ.app: kq
 	install -d $(APPR)/data $(APPR)/music $(APPR)/scripts $(APPR)/maps
 	install -d KQ.app/Contents/MacOS
-	install -C Mac/Info.plist KQ.app/Contents
+	install -C $(top_srcdir)/Mac/Info.plist KQ.app/Contents
 	install -C kq KQ.app/Contents/MacOS
-	install -C $(dist_gfx_DATA) $(APPR)/data
-	install -C $(dist_map_DATA) $(APPR)/maps
-	install -C $(dist_music_DATA) $(APPR)/music
-	install -C $(cscripts_DATA) $(APPR)/scripts
-	install Mac/KQ-icon.icns $(APPR)/KQ.icns
+	install -C $(addprefix $(top_srcdir)/,$(dist_gfx_DATA)) $(APPR)/data
+	install -C $(addprefix $(top_srcdir)/,$(dist_map_DATA)) $(APPR)/maps
+	install -C $(addprefix $(top_srcdir)/,$(dist_music_DATA)) $(APPR)/music
+	install -C $(top_srcdir)/Mac/KQ-icon.icns $(APPR)/KQ.icns
+	$(MAKE) -C scripts $@
 
 winres.o: winres.rc
 	windres $< -o $@
@@ -68,7 +68,7 @@ dist_map_DATA = maps/starting.map maps/bridge2.map \
 	maps/cave4.map maps/main.map maps/town5.map maps/manor.map maps/town6.map \
 	maps/cave5.map maps/town7.map maps/cave6a.map maps/town8.map \
 	maps/cave6b.map  maps/coliseum.map maps/pass.map \
-	maps/cult.map maps/dville.map
+	maps/cult.map maps/dville.map maps/sunarin.map
 
 mapdir = $(pkgdatadir)/maps
 

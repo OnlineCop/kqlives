@@ -1,12 +1,13 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ(2.52)
-AC_INIT(KQ, 0.99, [peterhull90@users.sourceforge.net])
+AC_PREREQ(2.62)
+AC_INIT([KQ],[0.99],[peterhull90@users.sourceforge.net])
 AC_CONFIG_SRCDIR([src/kq.c])
 AC_CONFIG_HEADER([config.h])
 AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
+AC_PROG_MKDIR_P
 AM_INIT_AUTOMAKE
 
 # Checks for programs.
@@ -17,7 +18,7 @@ AM_PROG_OBJC
 
 # gettext
 dnl AM_GNU_GETTEXT([external])
-AC_GNU_SOURCE
+AC_USE_SYSTEM_EXTENSIONS
 AM_GNU_GETTEXT
 AM_GNU_GETTEXT_VERSION(0.16.1)
 
@@ -90,7 +91,7 @@ PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.8.0 libglade-2.0 >= 2.4.0],
   [MAPDRAW2=""])
 AC_SUBST(MAPDRAW2)
 
-m4_ifdef([AS_HELP_STRING], , [m4_define([AS_HELP_STRING], m4_defn([AC_HELP_STRING]))])
+m4_ifdef([AS_HELP_STRING], , [m4_define([AS_HELP_STRING], m4_defn([AS_HELP_STRING]))])
 AC_ARG_WITH(2xsai, AS_HELP_STRING([--with-2xsai], [Use the 2xSAI library (default NO)]), AC_SUBST(kq_use_2xsai,1))
 AC_ARG_ENABLE(debug, AS_HELP_STRING([--enable-debug], [Enable debug mode]),
   [AC_DEFINE(DEBUGMODE,1,[Some debug options])])
