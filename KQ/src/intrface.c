@@ -80,7 +80,7 @@
    lua_CFunction func;
 };*/
 
-
+void do_console_command(const char* cmd);
 /* Internal functions */
 static void fieldsort (void);
 static const char *filereader (lua_State *, PACKFILE *, size_t *);
@@ -1072,8 +1072,10 @@ static int KQ_create_special_item (lua_State * L)
    int icon = lua_tonumber(L, 3);
    int index = lua_tonumber(L, 4);
 
-   strncpy(special_items[index].name, name, 40);
-   strncpy(special_items[index].description, description, 40);
+   strncpy(special_items[index].name, name, sizeof(special_items[index].name));
+   special_items[index].name[sizeof(special_items[index].name) - 1] = '\0';
+   strncpy(special_items[index].description, description, sizeof(special_items[index].description));
+   special_items[index].description[sizeof(special_items[index].description) - 1] = '\0';
    special_items[index].icon = icon;
    return 0;
 }
