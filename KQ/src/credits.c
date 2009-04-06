@@ -43,7 +43,7 @@ static int ease (int);
  */
 static const char *credits[] = {
    "(C) 2001 DoubleEdge Software",
-   "(C) 2002-7 KQ Lives Team",
+   "(C) 2002-9 KQ Lives Team",
    "http://kqlives.sourceforge.net/",
    "Peter Hull",
    "TeamTerradactyl",
