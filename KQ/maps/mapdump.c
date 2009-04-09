@@ -96,7 +96,7 @@ void error_load (const char *problem_file)
 
    strcat (strncpy (err_msg, problem_file, sizeof (err_msg) - 1), "\n");
    TRACE ("%s: could not load %s\n", allegro_error, problem_file);
-   allegro_message (err_msg);
+   allegro_message ("%s", err_msg);
 }                               /* error_load () */
 
 

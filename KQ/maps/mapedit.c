@@ -1295,7 +1295,7 @@ void draw_menubars (void)
 
    if (grab_tile) {
       print_sfont (column[4], row[4], "Currently grabbing:", double_buffer);
-      sprintf (strbuf, dt[draw_mode_display]);
+      sprintf (strbuf, "%s", dt[draw_mode_display]);
       print_sfont (column[4] + 24, row[5], strbuf, double_buffer);
    }                            // if (grab_tile)
 
@@ -2099,7 +2099,7 @@ void klog (const char *msg)
 
    strcat (strncpy (err_msg, msg, sizeof (err_msg) - 1), "\n");
    TRACE ("%s\n%s\n", msg, allegro_error);
-   allegro_message (err_msg);
+   allegro_message ("%s", err_msg);
 
    ff = fopen ("mapdraw.log", "a");
    if (!ff)

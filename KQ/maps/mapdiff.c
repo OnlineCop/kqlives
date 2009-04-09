@@ -139,7 +139,7 @@ void check_entities (void)
           || (_cmdnum) || (_atype) || (_snapback) || (_facehero) || (_transl)
           || (_script)) {
          sprintf (strbuf, "\nCharacter %d:\tmap 1 value:\tmap 2 value:\n", i);
-         fprintf (stdout, strbuf);
+         fprintf (stdout, "%s", strbuf);
          for (j = 0; j < (signed) strlen (strbuf) + 4; j++)
             fprintf (stdout, "=");
          fprintf (stdout, "\n");
@@ -682,8 +682,8 @@ void error_load (const char *problem_file)
 
    sprintf (strbuf, "Could not load \"%s\"\n", problem_file);
    strcat (strncpy (err_msg, strbuf, sizeof (err_msg) - 1), "\n");
-   TRACE (strbuf);
-   allegro_message (err_msg);
+   TRACE ("%s", strbuf);
+   allegro_message ("%s", err_msg);
 }                               /* error_load () */
 
 
@@ -781,7 +781,7 @@ void load_maps (const char *filename1, const char *filename2)
     */
    if (gmap1.xsize != gmap2.xsize || gmap1.ysize != gmap2.ysize) {
       sprintf (strbuf, "The maps are different sizes. Exiting.\n");
-      allegro_message (strbuf);
+      allegro_message ("%s", strbuf);
       exit (EXIT_FAILURE);
    }
 }                               /* load_maps () */

@@ -288,7 +288,7 @@ void set_pcx (BITMAP ** pcx_buf, const char *pcx_file, PALETTE pcx_pal,
       else {
          sprintf (strbuf, "Could not find file: %s.\n", pcx_file);
 
-         allegro_message (strbuf);
+         allegro_message ("%s", strbuf);
          if (critical) {
             /* This means that this file is critical to the program, so we need to
              * exit the program completely, as this cannot be recovered from.
