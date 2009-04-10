@@ -680,8 +680,14 @@ static int load_game_92 (PACKFILE * sdat)
       for (d = 0; d < c; d++)
          shops[a].items_current[d] = pack_igetw (sdat);
 
-      for (; d < NUMSHOPS; d++)
+      for (; d < SHOPITEMS; d++)
          shops[a].items_current[d] = shops[a].items_max[d];
+   }
+   /* Replenish all shops that were not saved (haven't been visited yet) */
+   for (a = b; a < NUMSHOPS; a++)
+   {
+	  for (d = 0; d < SHOPITEMS; d++)
+		 shops[a].items_current[d] = shops[a].items_max[d];
    }
    return 1;
 }
