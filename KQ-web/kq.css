@@ -1,0 +1,55 @@
+/* 
+    Document   : kq
+    Created on : May 6, 2009, 8:57:38 PM
+    Author     : peterhull
+    Description:
+        Main stylesheet.
+*/
+
+/* 
+   Syntax recommendation http://www.w3.org/TR/REC-CSS2/
+*/
+
+body {background-color:black; color: white; font-family:sans-serif}
+#content {
+    background-color: navy;
+    
+    border-right-style: solid;
+    border-left-style: solid;
+    border-bottom-style: solid;
+    border-top-style: solid;
+    border-right-width: 1px;
+    border-left-width: 1px;
+    border-bottom-width: 1px;
+    border-top-width: 1px;
+    border-right-color: white;
+    border-left-color: white;
+    border-bottom-color: white;
+    border-top-color: white;
+    padding-right: 1em;
+    padding-left: 1em;
+    padding-bottom: 1em;
+    padding-top: 1em;
+}
+#logo {
+    height: 96px;
+    background-image: url(gfx/pete-kq-logo.png);
+    background-repeat: no-repeat;
+}
+#navbar ul
+{
+width:100%;
+padding:0;
+list-style-type:none;
+}
+#navbar a
+{
+width:6em;
+text-decoration:none;
+color: white;
+background-color:#333333;
+padding:0.2em 0.6em;
+margin: 1px
+}
+#navbar a:hover {background-color:navy}
+#navbar li {display:inline}
