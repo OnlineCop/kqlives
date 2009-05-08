@@ -4,7 +4,7 @@
 	<title>KQ</title>
 	<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
 	<meta name="author" content="Peter Hull">
-        <meta name="rcsid" content="$Id: index.shtml,v 1.7 2009-05-06 21:27:31 peterhull90 Exp $">
+        <!-- $Id: index.shtml,v 1.8 2009-05-08 20:02:18 peterhull90 Exp $" -->
         <link rel="stylesheet" type="text/css" href="kq.css"/>
 </head>
 
@@ -13,14 +13,13 @@
 <div id="content">
 KQ is a console-style role playing game. Originally developed by JoshBolduc, abandoned, and then rescued by the Allegro community.
 <ul>
-    <li>AboutKQ - About this project.</li>
-    <li>Download - Or you can get the latest cvs version</li>
-    <li>ProjectNews - What's happening?</li>
-    <li>FrequentlyAskedQuestions - What is KQ all about?</li>
-    <li>DevelopersInfo - Info for developers.</li>
-    <li>ScreenShots - What does it look like?</li>
-    <li>TeamMembers - Who's working on this?</li>
-    <li>GameInfo - Characters, Locations and more...</li>
+    <li><a href="about.shtml">About KQ</a> - About this project.</li>
+    <li><a href="download.shtml">Download</a> - Or you can get the latest cvs version</li>
+    <li>Project News - What's happening?</li>
+    <li><a href="developers.shtml">Developers Info</a> - Info for developers.</li>
+    <li>Screen Shots - What does it look like?</li>
+    <li>Team Members - Who's working on this?</li>
+    <li>Game Info - Characters, Locations and more...</li>
     <li>Links - Stuff we like!</li>
 </ul>
 </div>

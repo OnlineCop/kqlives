@@ -1,0 +1,17 @@
+<!-- $Id: about.shtml,v 1.1 2009-05-08 20:02:48 peterhull90 Exp $ -->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" type="text/css" href="kq.css"/>
+  </head>
+  <body>
+<!--#include virtual="header.html" -->
+<div id="content">
+
+      TODO write content
+</div>
+<!--#include virtual="footer.html" -->
+  </body>
+</html>

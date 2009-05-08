@@ -4,6 +4,7 @@
     Author     : peterhull
     Description:
         Main stylesheet.
+    Version    : $Id: kq.css,v 1.2 2009-05-08 20:02:18 peterhull90 Exp $
 */
 
 /* 
@@ -36,6 +37,7 @@ body {background-color:black; color: white; font-family:sans-serif}
     background-image: url(gfx/pete-kq-logo.png);
     background-repeat: no-repeat;
 }
+
 #navbar ul
 {
 width:100%;
