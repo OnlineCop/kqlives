@@ -145,7 +145,7 @@ function zone_handler(zn)
       local wife = 1
 
       set_progress(P_TALKGELIK, 4)
-      set_ent_facing(en, FACE_DOWN)
+      set_ent_facing(wife, FACE_DOWN)
       bubble(wife, _"Oh $0!")
       bubble(wife, _"I woke up because I thought I heard fighting in your room.")
       bubble(wife, _"When I turned to wake Dungar, I realized that he was dead.")
