@@ -24,4 +24,4 @@
 void display_console(int xofs, int yofs);
 void run_console(void);
 void scroll_console(const char* text);
-#endif __CONSOLE_H__
+#endif /*__CONSOLE_H__ */
