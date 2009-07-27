@@ -479,7 +479,7 @@ function opaldragon()
     if (get_numchrs() > 1) then
       set_autoparty(1)
       set_ent_script(HERO2, "L1")
-      wait_for_entity(HERO2, HERO12)
+      wait_for_entity(HERO2, HERO2)
       -- Face 'up'
       set_ent_facing(HERO2, FACE_UP)
       set_autoparty(0)
