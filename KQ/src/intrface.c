@@ -4097,7 +4097,7 @@ int lua_dofile (lua_State * L, const char * fname)
  * \param L the Lua state
  * \param cmd the string to execute
  */
-static int lua_dostring (lua_State * L, const char *cmd)
+static int kq_dostring (lua_State * L, const char *cmd)
 {
    int retval, nrets, i;
    nrets = lua_gettop(L);
@@ -4128,7 +4128,7 @@ static int lua_dostring (lua_State * L, const char *cmd)
  */
 void do_console_command(const char* cmd) {
   if (theL != NULL) {
-    lua_dostring(theL, cmd);
+    kq_dostring(theL, cmd);
   }
   else {
     scroll_console("No script engine running");
