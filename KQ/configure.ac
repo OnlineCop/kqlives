@@ -82,6 +82,7 @@ AC_SUBST(WARNING_CFLAGS)
 AC_CHECK_FUNCS([atexit gettimeofday memmove memset mkdir pow strchr strstr])
 AC_CHECK_LIB(dumb, dumb_exit, [ALLEGRO_LIBS="-ldumb $ALLEGRO_LIBS"], [AC_MSG_ERROR([Dumb not found])])
 AX_CHECK_ALDUMB([ALLEGRO_LIBS="-laldmb $ALLEGRO_LIBS"], [AC_MSG_ERROR([Aldumb not found])], [$ALLEGRO_LIBS])
+AC_SEARCH_LIBS(sqrt, m)
 AC_SEARCH_LIBS(lua_gettop, lua50 lua5.1 lua, [], [AC_MSG_ERROR([Lua not found])])
 
 PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.8.0 libglade-2.0 >= 2.4.0],
