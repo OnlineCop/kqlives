@@ -116,7 +116,7 @@ const char *kqres (int dir, const char *file)
 {
    static char ans[PATH_MAX];
    NSString* found;
-   NSString* nsfile = [NSString stringWithCString: file];
+   NSString* nsfile = [NSString stringWithUTF8String: file];
    if (init_path == NO) {
       /* Get home directory */
 
@@ -154,6 +154,6 @@ const char *kqres (int dir, const char *file)
      found = nil;
      break;
    }
-   
-   return found == nil ? NULL : strncpy (ans,[found cString], sizeof(ans));
+   /* Return UTF8 string for Allegro */
+   return found == nil ? NULL : strncpy (ans,[found UTF8String], sizeof(ans));
 }
