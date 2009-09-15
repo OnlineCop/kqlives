@@ -379,7 +379,7 @@ function book_talk(ent)
           _"What language is this written in?",
           _"The pages are stuck together!?"))
 	
-  elseif (party[0] == Cassandra) then
+  elseif (party[0] == Casandra) then
     bubble(HERO1, pick(_"Boring.",
            _"Somebody should burn these.",
            _"Terrible... just terrible."))
@@ -389,7 +389,7 @@ function book_talk(ent)
            _"Why would I read this?",
            _"Can't talk... reading."))
   else
-    message("Script Error. global.lua:book_talk()", 255, 0)
+    msg("Script Error. global.lua:book_talk()", 255, 0)
   end
 
 end
@@ -429,7 +429,7 @@ function touch_fire(ent)
            _"Someone should clean all this soot out of here.",
            _"Well, my face is warm now, but my butt is still freezing!"))
   
-  elseif (party[0] == Cassandra) then
+  elseif (party[0] == Casandra) then
     bubble(HERO1, pick(_"Something's burning. I hope it's one of those stupid books!",
            _"The fire is getting low.",
            _"Yessir, this is a fire."))
@@ -440,7 +440,7 @@ function touch_fire(ent)
            _"This is making me sleepy."))
            
   else
-    message("Script Error. global.lua:touch_fire()", 255, 0)
+    msg("Script Error. global.lua:touch_fire()", 255, 0)
   end
   
 end
