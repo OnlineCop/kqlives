@@ -603,9 +603,6 @@ int skill_use (int who)
       tgt = select_enemy (who, 0);
       if (tgt == -1)
          return 0;
-      cts = party[pidx[who]].lvl * 2 + 35;
-      if (cts > 95)
-         cts = 95;
       tx = fighter[who].cx;
       ty = fighter[who].cy;
       fighter[who].cx = fighter[tgt].cx - 16;
@@ -646,6 +643,9 @@ int skill_use (int who)
          }
       }
 #else
+      cts = party[pidx[who]].lvl * 2 + 35;
+      if (cts > 95)
+         cts = 95;
       if (rand () % 100 < cts) {
          if (fighter[tgt].steal_item_rare > 0 && (rand () % 100) < 5) {
             /* This steals a rare item from monster, if there is one */

@@ -577,7 +577,7 @@ int combat_spell (int whom, int is_item)
 static void cure_oneall_allies (int caster, int tgt, int spell_number)
 {
    int a = 0, b = 0, z = 0, spwr;
-   int nt, st, nn;
+   int nt, st;
 
    if (tgt == SEL_ALL_ALLIES) {
       if (caster < PSIZE) {
@@ -587,11 +587,9 @@ static void cure_oneall_allies (int caster, int tgt, int spell_number)
          nt = numens;
          st = PSIZE;
       }
-      nn = 1;
    } else {
       st = tgt;
       nt = 1;
-      nn = 0;
    }
    spwr =
       magic[spell_number].dmg +

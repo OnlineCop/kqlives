@@ -710,9 +710,7 @@ static void do_round (void)
 {
    int a;
    int index;
-   int st;
 
-   st = 0;
    timer_count = 0;
    while (!combatend) {
       if (timer_count >= 10) {
@@ -1291,7 +1289,7 @@ void multi_fight (int ar)
    int kw[NUM_FIGHTERS];
    int ares[NUM_FIGHTERS];
 
-   st = nd = deadcount = 0;
+   deadcount = 0;
    for (index = 0; index < NUM_FIGHTERS; index++) {
       deffect[index] = 0;
       ta[index] = 0;

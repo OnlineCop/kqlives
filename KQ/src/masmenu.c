@@ -335,9 +335,8 @@ int learn_new_spells (int who)
  */
 static int need_spell (int ca, int ta, int sn)
 {
-   int a, b, vc = 0, cs;
+   int a, b, vc = 0;
 
-   cs = pidx[ca];
    if (ta < numchrs)
       vc = pidx[ta];
    switch (sn) {
