@@ -35,7 +35,7 @@
 static int init_path = 0;
 static char user_dir[PATH_MAX];
 static char game_dir[PATH_MAX];
-typedef HRESULT (WINAPI * SHGETFOLDERPATH) (HWND, int, HANDLE, DWORD, LPTSTR);
+typedef HRESULT (WINAPI * SHGETFOLDERPATH) (HWND, int, HANDLE, DWORD, LPWSTR);
 
 #  define CSIDL_FLAG_CREATE 0x8000
 #  define CSIDL_APPDATA 0x1A
@@ -120,21 +120,22 @@ const char *kqres (int dir, const char *file)
    HINSTANCE SHFolder;
    SHGETFOLDERPATH SHGetFolderPath;
    char *home;
-   static char ans[PATH_MAX];
 
    if (!init_path) {
-      home = ans;
+	WCHAR tmp[PATH_MAX];
+      home = NULL;
       /* Get home directory; this bit originally written by SH */
       SHFolder = LoadLibrary ("shfolder.dll");
       if (SHFolder != NULL) {
          SHGetFolderPath =
-            (void *) GetProcAddress (SHFolder, "SHGetFolderPathA");
+            (void *) GetProcAddress (SHFolder, "SHGetFolderPathW");
          if (SHGetFolderPath != NULL) {
             /* Get the "Application Data" folder for the current user */
             if (SHGetFolderPath
                 (NULL, CSIDL_APPDATA | CSIDL_FLAG_CREATE, NULL,
-                 SHGFP_TYPE_CURRENT, home) != S_OK)
-               *home = '\0';
+                 SHGFP_TYPE_CURRENT, tmp) = S_OK) {
+				home = uconvert(tmp, U_UNICODE, NULL, U_UTF8, 0);
+			   }
          }
          FreeLibrary (SHFolder);
       }
@@ -172,6 +173,4 @@ const char *kqres (int dir, const char *file)
    default:
       return NULL;
    }
-
-   return fix_filename_slashes (ans);
 }
