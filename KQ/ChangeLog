@@ -1,3 +1,88 @@
+2009-12-14  peterhull90  <peterhull90@iMac.local>
+
+	* src/win.c:
+	Fix for 2279522 fails if unicode characters in home path for Windows (untested)
+
+2009-10-16  wk2  <wk2@iMac.local>
+
+	* configure.ac:
+	* set minimum autoconf version to 2.61, down from 2.62. We don't use anything exclusive to the newer version.
+
+2009-09-15  peterhull90  <peterhull90@iMac.local>
+
+	* scripts/global.lua: Fix for Crash on book read (bug 2855162)
+
+	* src/combat.c, src/hskill.c, src/magic.c, src/masmenu.c, src/setup.c:
+	Removed some dead stores
+
+	* src/osx.m:
+	Converted paths to UTF-8 in case they contain unicode characters.
+
+2009-09-08  peterhull90  <peterhull90@iMac.local>
+
+	* configure.ac: Fix for bug 2847115 KQ does not find Lua (5.1)
+
+2009-07-29  peterhull90  <peterhull90@iMac.local>
+
+	* src/intrface.c:
+	Renamed lua_dostring to avoid compilation errors as discussed in 2827343
+
+2009-07-27  peterhull90  <peterhull90@iMac.local>
+
+	* include/console.h: Applied fix for 2827343 as supplied by elhaard
+
+	* scripts/cave5.lua: Fix for bug 2004652 as provided by elhaard
+
+2009-06-09  peterhull90  <peterhull90@iMac.local>
+
+	* scripts/estate.lua:
+	Fix for Games crashes in Dungar's house - ID: 2796679 submitted by ryankohn
+
+2009-04-29  teamterradactyl  <teamterradactyl@iMac.local>
+
+	* maps/town1.map:
+	Player is partially visible when exiting buildings diagonally.  Added a few more "black" strips to cover the player better.
+
+2009-04-27  teamterradactyl  <teamterradactyl@iMac.local>
+
+	* maps/makefile: Needed to add mapstructs.o to mapdraw's executable.
+
+2009-04-10  peterhull90  <peterhull90@iMac.local>
+
+	* src/sgame.c:
+	Fixed bug where shops were always 'sold out' after restoring from save, as reported by Z.
+
+2009-04-09  peterhull90  <peterhull90@iMac.local>
+
+	* maps/mapdiff.c, maps/mapdump.c, maps/mapedit.c, maps/mapshared.c, src/movement.c:
+	Changes to fix compiler warnings as submitted by Sascha Mann
+
+2009-04-06  peterhull90  <peterhull90@iMac.local>
+
+	* po/kq.pot: Updated because strings had moved
+
+	* src/credits.c: Bumped year to 2009
+
+2009-03-30  peterhull90  <peterhull90@iMac.local>
+
+	* src/intrface.c:
+	Fixed bug in KQ_create_special item. Fixed one warning.
+
+2009-01-03  peterhull90  <peterhull90@iMac.local>
+
+	* ChangeLog: Updated with latest CVS comment  n
+
+	* scripts/Makefile.am:
+	Updates to build system since console.[ch] has been added
+
+	* po/de.po, po/es.po, po/kq.pot:
+	Changes due to minor changes in script line numbers
+
+	* Makefile.am, configure.ac, acinclude.m4:
+	Updates to build system since console.[ch] has been added
+
+	* maps/mapdraw.h: Fixed typos and made it use PATH_MAX if available
+
 2009-01-03  peterhull90  <peterhull90@iMac.local>
 
 	* maps/mapdraw.h: Fixed typos and made it use PATH_MAX if available
