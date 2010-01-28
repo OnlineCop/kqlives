@@ -612,7 +612,7 @@ function LOC_join_casandra(en)
   bubble(en, _"$0, thank you for helping us escape from the orc's camp!")
   bubble(HERO1, _"Don't mention it. How did you get caught up in that mess anyway?")
   bubble(en, _"Well, like I mentioned earlier, the mayor needed a bodyguard while he delivered an urgent message to some guy named Tsorin in Andra.")
-  bubble(en, _"That's when we were caught by the orcs. They Mayor ate the note when we were under attack. I have no idea what it was about.")
+  bubble(en, _"That's when we were caught by the orcs. The Mayor ate the note when we were under attack. I have no idea what it was about.")
   bubble(HERO1, _"Hmm, still sounds a bit fishy.")
   bubble(en, _"I'd gladly join you to find out what this is all about!")
 
