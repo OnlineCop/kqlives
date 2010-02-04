@@ -1204,8 +1204,11 @@ s_erow erows[NUM_ETROWS] = {
 #define MAP_GROTTO2 0
 #define MAP_GUILD 0
 #define MAP_PASS 0
+#define MAP_SHRINE 0
 #define MAP_TEMPLE1 0
 #define MAP_TEMPLE2 0
+#define MAP_TUNNEL 0
+#define MAP_TUNNEL2 0
 #define MAP_TOWER 0
 #define MAP_CAVE5 0
 #define MAP_MAIN 0
@@ -1217,6 +1220,7 @@ s_erow erows[NUM_ETROWS] = {
  *   Zone:      What triggers this battle
  *   Enc:       The 1-in-enc chance there will NOT be combat
  *   Etnum:     Select rows in the Encounter table
+ *   Eidx:      Select row out of the etnum; 99 for random
  *   "BMusic":  Music file to play
  *   "BackImg": Background image
  */

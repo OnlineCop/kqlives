@@ -457,7 +457,7 @@ int add_timer_event (const char *n, int delta)
  * \param   bname Name of bitmap
  * \returns the pointer to the created bitmap
  */
-BITMAP *alloc_bmp (int bx, int by, char *bname)
+BITMAP *alloc_bmp (int bx, int by, const char *bname)
 {
    BITMAP *tmp;
 
@@ -1577,7 +1577,7 @@ void reset_world(void)
          shops[i].items_replenish_time[j] = 0;
       }
    }
-   
+
    lua_user_init();
 }
 

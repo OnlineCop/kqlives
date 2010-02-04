@@ -19,7 +19,7 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-/*! \file 
+/*! \file
  * \brief Hero skills
  *
  * \author JB
@@ -388,7 +388,7 @@ void reveal (int tgt)
 
 
 
-/*! \brief Activate the special skill 
+/*! \brief Activate the special skill
  *
  * This function activates the special skill for a hero,
  * including targetting etc. if required.

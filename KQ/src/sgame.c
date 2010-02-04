@@ -61,8 +61,7 @@
 
 /* These describe the save slots. Number of characters, gp, etc */
 /* They are used to make the save menu prettier. */
-int snc[NUMSG], sgp[NUMSG], shr[NUMSG], smin[NUMSG], sid[NUMSG][PSIZE],
-   slv[NUMSG][PSIZE];
+int snc[NUMSG], sgp[NUMSG], shr[NUMSG], smin[NUMSG], sid[NUMSG][PSIZE], slv[NUMSG][PSIZE];
 unsigned char shp[NUMSG][PSIZE], smp[NUMSG][PSIZE];
 
 /* Which save_slot the player is pointing to */
@@ -100,8 +99,7 @@ static int confirm_action (void)
       return 1;
    blit (double_buffer, back, 0, 0, 0, 0, 352, 280);
    menubox (double_buffer, 128, pointer_offset + 12, 14, 1, DARKBLUE);
-   print_font (double_buffer, 136, pointer_offset + 20, _("Confirm/Cancel"),
-               FNORMAL);
+   print_font (double_buffer, 136, pointer_offset + 20, _("Confirm/Cancel"), FNORMAL);
    blit2screen (0, 0);
    blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
    while (!stop) {
@@ -155,8 +153,7 @@ static void delete_game (void)
    a = remove (kqres (SAVE_DIR, strbuf));
    if (a == 0) {
       menubox (double_buffer, 128, pointer_offset + 12, 12, 1, DARKBLUE);
-      print_font (double_buffer, 136, pointer_offset + 20, _("File Deleted"),
-                  FNORMAL);
+      print_font (double_buffer, 136, pointer_offset + 20, _("File Deleted"), FNORMAL);
 
       snc[save_ptr] = 0;
       sgp[save_ptr] = 0;
@@ -171,8 +168,7 @@ static void delete_game (void)
 
    } else {
       menubox (double_buffer, 128, pointer_offset + 12, 16, 1, DARKBLUE);
-      print_font (double_buffer, 136, pointer_offset + 20, _("File Not Deleted"),
-                  FNORMAL);
+      print_font (double_buffer, 136, pointer_offset + 20, _("File Not Deleted"), FNORMAL);
    }
    blit2screen (0, 0);
    blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
@@ -232,8 +228,7 @@ static int load_game (void)
    timer_count = 0;
    ksec = 0;
    hold_fade = 0;
-   change_map (curmap, g_ent[0].tilex, g_ent[0].tiley, g_ent[0].tilex,
-               g_ent[0].tiley);
+   change_map (curmap, g_ent[0].tilex, g_ent[0].tiley, g_ent[0].tilex, g_ent[0].tiley);
    /* Set music and sound volume */
    set_volume (gsvol, -1);
    set_music_volume (((float) gmvol) / 255.0);
@@ -360,7 +355,7 @@ int load_game_91 (PACKFILE * sdat)
       player_special_items[SI_BLACKSTONE] = progress[P_BSTONES];
    if (progress[P_EMBERSKEY] == 2)
       player_special_items[SI_EMBERSKEY] = 1;
-   if (progress[P_BRONZEKEY] == 1) 
+   if (progress[P_BRONZEKEY] == 1)
       player_special_items[SI_BRONZEKEY] = 1;
    if (progress[P_DENORIAN] == 3 || progress[P_DENORIAN] == 4)
       player_special_items[SI_DENORIANSTATUE] = 1;
@@ -653,7 +648,7 @@ static int load_game_92 (PACKFILE * sdat)
       message(_("Error. number of special items > MAX_SPECIAL_ITEMS"), 255, 0, 0, 0);
       return 0;
    }
-   
+
    for (a = 0; a < b; a++)
       player_special_items[a] = pack_getc (sdat);   /* index */
 
@@ -1012,7 +1007,7 @@ static int save_game_92 (void)
       for (d = 0; d < c; d++)
          pack_iputw (shops[b].items_current[d], sdat);
    }
-   
+
 
    pack_fclose (sdat);
    return 1;
@@ -1177,12 +1172,10 @@ static void show_sgstats (int saving)
          menubox (double_buffer, 72, pointer_offset, 29, 4, BLUE);
 
       if (snc[sg] == -1)
-         print_font (double_buffer, 136, pointer_offset + 20, _("Wrong version"),
-                     FNORMAL);
+         print_font (double_buffer, 136, pointer_offset + 20, _("Wrong version"), FNORMAL);
       else {
          if (snc[sg] == 0)
-            print_font (double_buffer, 168, pointer_offset + 20, _("Empty"),
-                        FNORMAL);
+            print_font (double_buffer, 168, pointer_offset + 20, _("Empty"), FNORMAL);
          else {
             for (a = 0; a < snc[sg]; a++) {
                hx = a * 72 + 84;
@@ -1202,11 +1195,9 @@ static void show_sgstats (int saving)
                rectfill (double_buffer, hx + 32, hy + 17, hx + 32 + b, hy + 21, 25);
             }
             sprintf (strbuf, _("T %d:%02d"), shr[sg], smin[sg]);
-            print_font (double_buffer, 236, pointer_offset + 12, strbuf,
-                        FNORMAL);
+            print_font (double_buffer, 236, pointer_offset + 12, strbuf, FNORMAL);
             sprintf (strbuf, _("G %d"), sgp[sg]);
-            print_font (double_buffer, 236, pointer_offset + 28, strbuf,
-                        FNORMAL);
+            print_font (double_buffer, 236, pointer_offset + 28, strbuf, FNORMAL);
          }
       }
    }
@@ -1247,8 +1238,7 @@ int start_menu (int skip_splash)
 
          kq_wait (1000);
          for (a = 0; a < 42; a++) {
-            stretch_blit (staff, double_buffer, 0, 0, 72, 226, 124 - (a * 32),
-                          22 - (a * 96), 72 + (a * 64), 226 + (a * 192));
+            stretch_blit (staff, double_buffer, 0, 0, 72, 226, 124 - (a * 32), 22 - (a * 96), 72 + (a * 64), 226 + (a * 192));
             blit2screen (0, 0);
             kq_wait (100);
          }
@@ -1279,8 +1269,7 @@ int start_menu (int skip_splash)
       bg = load_datafile_object (PCX_DATAFILE, "TITLE_PCX");
       for (a = 0; a < 16; a++) {
          clear_to_color (double_buffer, 15 - a);
-         masked_blit ((BITMAP *) bg->dat, double_buffer, 0, 0, 0, 60 - (a * 4),
-                      320, 124);
+         masked_blit ((BITMAP *) bg->dat, double_buffer, 0, 0, 0, 60 - (a * 4), 320, 124);
          blit2screen (0, 0);
          kq_wait (a == 0 ? 500 : 100);
       }
@@ -1335,8 +1324,7 @@ int start_menu (int skip_splash)
       if (balt) {
          unpress ();
          if (ptr == 0) {         /* User selected "Continue" */
-            if (snc[0] == 0 && snc[1] == 0 && snc[2] == 0 && snc[3] == 0
-                && snc[4] == 0)
+            if (snc[0] == 0 && snc[1] == 0 && snc[2] == 0 && snc[3] == 0 && snc[4] == 0)
                stop = 2;
             else if (saveload (0) == 1)
                   stop = 1;

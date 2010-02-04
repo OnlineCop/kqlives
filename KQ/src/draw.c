@@ -59,7 +59,8 @@ static void draw_midlayer (void);
 static void draw_playerbound (void);
 static void draw_shadows (void);
 static void draw_textbox (int);
-static void generic_text (int, int);
+static void draw_porttextbox (int, int);
+static void generic_text (int, int, int);
 const char *parse_string (const char *);
 static const char *relay (const char *);
 static void set_textpos (int);
@@ -95,8 +96,7 @@ void blit2screen (int xw, int yw)
    if (show_frate == 1) {
       char fbuf[16];
       sprintf (fbuf, "%3d", frate);
-      rectfill (double_buffer, xofs, yofs, xofs + 24, yofs + 8,
-                makecol (0, 0, 0));
+      rectfill (double_buffer, xofs, yofs, xofs + 24, yofs + 8, makecol (0, 0, 0));
       print_font (double_buffer, xofs, yofs, fbuf, FNORMAL);
    }
    #ifdef DEBUGMODE
@@ -307,9 +307,7 @@ static void draw_backlayer (void)
             if (xtc + dx >= box.x1 && xtc + dx <= box.x2) {
                here = ((ytc + dy) * g_map.xsize) + xtc + dx;
                pix = map_seg[here];
-               blit (map_icons[tilex[pix]], double_buffer, 0, 0,
-                     dx * 16 + xofs, dy * 16 + yofs, 16, 16);
-
+               blit (map_icons[tilex[pix]], double_buffer, 0, 0, dx * 16 + xofs, dy * 16 + yofs, 16, 16);
             }
          }
       }
@@ -362,8 +360,7 @@ static void draw_char (int xw, int yw)
          }
          if (is_forestsquare (g_ent[i].tilex, g_ent[i].tiley)) {
             f = !g_ent[i].moving;
-            if (g_ent[i].moving
-                && is_forestsquare (g_ent[i].x / 16, g_ent[i].y / 16))
+            if (g_ent[i].moving && is_forestsquare (g_ent[i].x / 16, g_ent[i].y / 16))
                f = 1;
             if (f) {
                clear_to_color (tc, 0);
@@ -443,9 +440,7 @@ static void draw_char (int xw, int yw)
 
       } else {
          /* It's an NPC */
-         if (g_ent[i].active && g_ent[i].tilex >= view_x1
-             && g_ent[i].tilex <= view_x2 && g_ent[i].tiley >= view_y1
-             && g_ent[i].tiley <= view_y2) {
+         if (g_ent[i].active && g_ent[i].tilex >= view_x1 && g_ent[i].tilex <= view_x2 && g_ent[i].tiley >= view_y1 && g_ent[i].tiley <= view_y2) {
             if (dx >= -16 && dx <= 336 && dy >= -16 && dy <= 256) {
                spr = (g_ent[i].eid >= ID_ENEMY) ? eframes[g_ent[i].chrx][fr] :
                   frames[g_ent[i].eid][fr];
@@ -507,15 +502,13 @@ static void draw_forelayer (void)
                // Used in several places in this loop, so shortened the name
                here = ((ytc + dy) * g_map.xsize) + xtc + dx;
                pix = f_seg[here];
-               draw_sprite (double_buffer, map_icons[tilex[pix]],
-                            dx * 16 + xofs, dy * 16 + yofs);
+               draw_sprite (double_buffer, map_icons[tilex[pix]], dx * 16 + xofs, dy * 16 + yofs);
 
 #ifdef DEBUGMODE
                if (debugging > 3) {
                   // Obstacles
                   if (o_seg[here] == 1)
-                     draw_sprite (double_buffer, obj_mesh, dx * 16 + xofs,
-                                  dy * 16 + yofs);
+                     draw_sprite (double_buffer, obj_mesh, dx * 16 + xofs, dy * 16 + yofs);
 
                   // Zones
 #if (ALLEGRO_VERSION >= 4 && ALLEGRO_SUB_VERSION >= 1)
@@ -523,53 +516,34 @@ static void draw_forelayer (void)
                      // Do nothing
                   } else if (z_seg[here] < 10) {
                      /* The zone's number is single-digit, center vert+horiz */
-                     textprintf_ex (double_buffer, font, dx * 16 + 4 + xofs,
-                                    dy * 16 + 4 + yofs,
-                                    makecol (255, 255, 255), 0, "%d",
-                                    z_seg[here]);
+                     textprintf_ex (double_buffer, font, dx * 16 + 4 + xofs, dy * 16 + 4 + yofs, makecol (255, 255, 255), 0, "%d", z_seg[here]);
                   } else if (z_seg[here] < 100) {
                      /* The zone's number is double-digit, center only vert */
-                     textprintf_ex (double_buffer, font, dx * 16 + xofs,
-                                    dy * 16 + 4 + yofs,
-                                    makecol (255, 255, 255), 0, "%d",
-                                    z_seg[here]);
+                     textprintf_ex (double_buffer, font, dx * 16 + xofs, dy * 16 + 4 + yofs, makecol (255, 255, 255), 0, "%d", z_seg[here]);
                   } else if (z_seg[here] < 10) {
                      /* The zone's number is triple-digit.  Print the 100's
                       * digit in top-center of the square; the 10's and 1's
                       * digits on bottom of the square
                       */
-                     textprintf_ex (double_buffer, font, dx * 16 + 4 + xofs,
-                                    dy * 16 + yofs, makecol (255, 255, 255), 0,
-                                    "%d", (int) (z_seg[here] / 100));
-                     textprintf_ex (double_buffer, font, dx * 16 + xofs,
-                                    dy * 16 + 8 + yofs,
-                                    makecol (255, 255, 255), 0,
-                                    "%02d", (int) (z_seg[here] % 100));
+                     textprintf_ex (double_buffer, font, dx * 16 + 4 + xofs, dy * 16 + yofs, makecol (255, 255, 255), 0, "%d", (int) (z_seg[here] / 100));
+                     textprintf_ex (double_buffer, font, dx * 16 + xofs, dy * 16 + 8 + yofs, makecol (255, 255, 255), 0, "%02d", (int) (z_seg[here] % 100));
                   }
 #else
                   if (z_seg[here] == 0) {
                      // Do nothing
                   } else if (z_seg[here] < 10) {
                      /* The zone's number is single-digit, center vert+horiz */
-                     textprintf (double_buffer, font, dx * 16 + 4 + xofs,
-                                 dy * 16 + 4 + yofs, makecol (255, 255, 255),
-                                 "%d", z_seg[here]);
+                     textprintf (double_buffer, font, dx * 16 + 4 + xofs, dy * 16 + 4 + yofs, makecol (255, 255, 255), "%d", z_seg[here]);
                   } else if (z_seg[here] < 100) {
                      /* The zone's number is double-digit, center only vert */
-                     textprintf (double_buffer, font, dx * 16 + xofs,
-                                 dy * 16 + 4 + yofs, makecol (255, 255, 255),
-                                 "%d", z_seg[here]);
+                     textprintf (double_buffer, font, dx * 16 + xofs, dy * 16 + 4 + yofs, makecol (255, 255, 255), "%d", z_seg[here]);
                   } else if (z_seg[here] < 10) {
                      /* The zone's number is triple-digit.  Print the 100's
                       * digit in top-center of the square; the 10's and 1's
                       * digits on bottom of the square
                       */
-                     textprintf (double_buffer, font, dx * 16 + 4 + xofs,
-                                 dy * 16 + yofs, makecol (255, 255, 255), "%d",
-                                 (int) (z_seg[here] / 100));
-                     textprintf (double_buffer, font, dx * 16 + xofs,
-                                 dy * 16 + 8 + yofs, makecol (255, 255, 255),
-                                 "%02d", (int) (z_seg[here] % 100));
+                     textprintf (double_buffer, font, dx * 16 + 4 + xofs, dy * 16 + yofs, makecol (255, 255, 255), "%d", (int) (z_seg[here] / 100));
+                     textprintf (double_buffer, font, dx * 16 + xofs, dy * 16 + 8 + yofs, makecol (255, 255, 255), "%02d", (int) (z_seg[here] % 100));
                   }
 #endif /* (ALLEGRO_VERSION) */
                }
@@ -617,8 +591,7 @@ void draw_icon (BITMAP * where, int ino, int icx, int icy)
  * \param   bg Colour/style of background
  * \param   bstyle Style of border
  */
-static void draw_kq_box (BITMAP * where, int x1, int y1, int x2, int y2,
-                         int bg, int bstyle)
+static void draw_kq_box (BITMAP * where, int x1, int y1, int x2, int y2, int bg, int bstyle)
 {
    int a;
    /* Draw a maybe-translucent background */
@@ -704,8 +677,7 @@ static void draw_midlayer (void)
             if (xtc + dx >= box.x1 && xtc + dx <= box.x2) {
                here = ((ytc + dy) * g_map.xsize) + xtc + dx;
                pix = b_seg[here];
-               draw_sprite (double_buffer, map_icons[tilex[pix]],
-                            dx * 16 + xofs, dy * 16 + yofs);
+               draw_sprite (double_buffer, map_icons[tilex[pix]], dx * 16 + xofs, dy * 16 + yofs);
             }
          }
       }
@@ -746,14 +718,12 @@ static void draw_playerbound (void)
       for (dy = 0; dy < 16; dy++) {
          if (ytc + dy < found->y1 || ytc + dy > found->y2) {
             for (dx = 0; dx < 21; dx++) {
-               blit (map_icons[tilex[found->btile]], double_buffer, 0, 0,
-                     dx * 16 + xofs, dy * 16 + yofs, 16, 16);
+               blit (map_icons[tilex[found->btile]], double_buffer, 0, 0, dx * 16 + xofs, dy * 16 + yofs, 16, 16);
             }
          } else {
             for (dx = 0; dx < 21; dx++) {
                if (xtc + dx < found->x1 || xtc + dx > found->x2) {
-                  blit (map_icons[tilex[found->btile]], double_buffer, 0, 0,
-                        dx * 16 + xofs, dy * 16 + yofs, 16, 16);
+                  blit (map_icons[tilex[found->btile]], double_buffer, 0, 0, dx * 16 + xofs, dy * 16 + yofs, 16, 16);
                }
             }
          }
@@ -790,13 +760,11 @@ static void draw_shadows (void)
 
    for (dy = 0; dy < 16; dy++) {
       for (dx = 0; dx < 21; dx++) {
-         if (ytc + dy >= view_y1 && xtc + dx >= view_x1 && ytc + dy <= view_y2
-             && xtc + dx <= view_x2) {
+         if (ytc + dy >= view_y1 && xtc + dx >= view_x1 && ytc + dy <= view_y2 && xtc + dx <= view_x2) {
             here = ((ytc + dy) * g_map.xsize) + xtc + dx;
             pix = s_seg[here];
             if (pix > 0)
-               draw_trans_sprite (double_buffer, shadow[pix], dx * 16 + xofs,
-                                  dy * 16 + yofs);
+               draw_trans_sprite (double_buffer, shadow[pix], dx * 16 + xofs, dy * 16 + yofs);
          }
       }
    }
@@ -855,8 +823,7 @@ static void draw_textbox (int bstyle)
    wid = gbbw * 8 + 16;
    hgt = gbbh * 12 + 16;
 
-   draw_kq_box (double_buffer, gbbx + xofs, gbby + yofs, gbbx + xofs + wid,
-                gbby + yofs + hgt, BLUE, bstyle);
+   draw_kq_box (double_buffer, gbbx + xofs, gbby + yofs, gbbx + xofs + wid, gbby + yofs + hgt, BLUE, bstyle);
    if (gbt != -1) {
       /* select the correct stem-thingy that comes out of the speech bubble */
       stem = bub[gbt + (bstyle == B_THOUGHT ? 4 : 0)];
@@ -865,11 +832,51 @@ static void draw_textbox (int bstyle)
    }
 
    for (a = 0; a < gbbh; a++) {
-      print_font (double_buffer, gbbx + 8 + xofs, a * 12 + gbby + 8 + yofs,
-                  msgbuf[a], FBIG);
+      print_font (double_buffer, gbbx + 8 + xofs, a * 12 + gbby + 8 + yofs, msgbuf[a], FBIG);
    }
 }
 
+
+
+/*! \brief Draw text box with portrait
+ *
+ *  Shows the player's portrait and name with the text.
+ *
+ * \date 20081218 Z9484
+ * \param   bstyle Style (B_TEXT or B_THOUGHT or B_MESSAGE)
+ * \param   chr (what chr is talking)
+ */
+
+
+static void draw_porttextbox (int bstyle, int chr)
+{
+   int wid, hgt, a;
+   //BITMAP *stem;
+/*    BITMAP *tm; */
+
+   wid = gbbw * 8 + 16;
+   hgt = gbbh * 12 + 16;
+   chr = chr - 4; //I dont know why this is necessary. But for some reason who is offset by 4. -Z
+
+   draw_kq_box (double_buffer, gbbx + xofs, gbby + yofs, gbbx + xofs + wid, gbby + yofs + hgt, BLUE, bstyle);
+
+
+   for (a = 0; a < gbbh; a++) {
+      print_font (double_buffer, gbbx + 8 + xofs, a * 12 + gbby + 8 + yofs, msgbuf[a], FBIG);
+   }
+
+   a--;
+   int linexofs;
+   linexofs = a * 12;
+
+   menubox (double_buffer, 19, 172 - linexofs, 4, 4, BLUE); //191 136
+   menubox (double_buffer, 66, 196 - linexofs, strlen (party[chr].name), 1, BLUE);//160
+
+   draw_sprite (double_buffer, players[chr].portrait, 24, 177 - linexofs);//196 141
+   print_font (double_buffer, 74, 204 - linexofs, party[chr].name, FNORMAL);  //168
+
+
+}
 
 
 /*! \brief Draw the map
@@ -925,10 +932,8 @@ void drawmap (void)
       draw_trans_sprite (double_buffer, b_repulse, 2 + xofs, 2 + yofs);
    }
    if (display_desc == 1) {
-      menubox (double_buffer, 152 - (strlen (g_map.map_desc) * 4) + xofs,
-               8 + yofs, strlen (g_map.map_desc), 1, BLUE);
-      print_font (double_buffer, 160 - (strlen (g_map.map_desc) * 4) + xofs,
-                  16 + yofs, g_map.map_desc, FNORMAL);
+      menubox (double_buffer, 152 - (strlen (g_map.map_desc) * 4) + xofs, 8 + yofs, strlen (g_map.map_desc), 1, BLUE);
+      print_font (double_buffer, 160 - (strlen (g_map.map_desc) * 4) + xofs, 16 + yofs, g_map.map_desc, FNORMAL);
    }
 }
 
@@ -941,7 +946,7 @@ void drawmap (void)
  * \param   who Character that is speaking/thinking (ignored for B_MESSAGE style)
  * \param   box_style Style (B_TEXT or B_THOUGHT or B_MESSAGE)
  */
-static void generic_text (int who, int box_style)
+static void generic_text (int who, int box_style, int isPort)
 {
    int a, stop = 0;
    int len;
@@ -957,7 +962,7 @@ static void generic_text (int who, int box_style)
             gbbw = len;
       }
    }
-   set_textpos (box_style == B_MESSAGE ? -1 : who);
+   set_textpos ((box_style == B_MESSAGE) ? -1 : (isPort == 0) ? who : 255);
    if (gbbw == -1 || gbbh == -1)
       return;
    unpress ();
@@ -965,7 +970,10 @@ static void generic_text (int who, int box_style)
    while (!stop) {
       check_animation ();
       drawmap ();
-      draw_textbox (box_style);
+      if (isPort == 0)
+         draw_textbox (box_style);
+      else
+         draw_porttextbox (box_style, who);
       blit2screen (xofs, yofs);
       readcontrols ();
       if (balt) {
@@ -998,17 +1006,17 @@ int is_forestsquare (int fx, int fy)
    f = map_seg[(fy * g_map.xsize) + fx];
 // TT: EDIT
    switch (f) {
-   case 63:
-   case 65:
-   case 66:
-   case 67:
-   case 71:
-   case 72:
-   case 73:
-   case 74:
-      return 1;
-   default:
-      return 0;
+      case 63:
+      case 65:
+      case 66:
+      case 67:
+      case 71:
+      case 72:
+      case 73:
+      case 74:
+         return 1;
+      default:
+         return 0;
    }
 }
 
@@ -1074,19 +1082,16 @@ void message (const char *m, int icn, int delay, int x_m, int y_m)
       /* Draw the box and maybe the icon */
       if (icn == 255) {
          /* No icon */
-         menubox (double_buffer, 152 - (max_len * 4) + x_m, 108 + y_m, max_len,
-                  num_lines, DARKBLUE);
+         menubox (double_buffer, 152 - (max_len * 4) + x_m, 108 + y_m, max_len, num_lines, DARKBLUE);
       } else {
          /* There is an icon; make the box a little bit bigger to the left */
-         menubox (double_buffer, 144 - (max_len * 4) + x_m, 108 + y_m,
-                  max_len + 1, num_lines, DARKBLUE);
+         menubox (double_buffer, 144 - (max_len * 4) + x_m, 108 + y_m, max_len + 1, num_lines, DARKBLUE);
          draw_icon (double_buffer, icn, 152 - (max_len * 4) + x_m, 116 + y_m);
       }
 
       /* Draw the text */
       for (i = 0; i < num_lines; ++i) {
-         print_font (double_buffer, 160 - (max_len * 4) + x_m,
-                     116 + 8 * i + y_m, msgbuf[i], FNORMAL);
+         print_font (double_buffer, 160 - (max_len * 4) + x_m, 116 + 8 * i + y_m, msgbuf[i], FNORMAL);
       }
       /* Show it */
       blit2screen (x_m, y_m);
@@ -1145,159 +1150,169 @@ const char *parse_string (const char *the_string)
  * \author PH
  * \date 20071116
  */
-static const char* decode_utf8(const char* string, unsigned int* cp) 
+static const char* decode_utf8(const char* string, unsigned int* cp)
 {
-  char ch = *string;
-  if ((ch & 0x80) == 0x0)
-    {
+   char ch = *string;
+   if ((ch & 0x80) == 0x0)
+   {
       /* single byte */
       *cp = (int) ch;
       ++string;
-    }
-  else if ((ch & 0xe0) == 0xc0) 
-    {
+   }
+   else if ((ch & 0xe0) == 0xc0)
+   {
       /* double byte */
       *cp = ((ch & 0x1f) << 6);
       ++string;
       ch = *string;
-      if ((ch & 0xc0) == 0x80) 
-	{
-	  *cp |= (ch & 0x3f);
-	  ++string;
-	}
-      else 
-	{
-	  string = NULL;
-	}
-    }
-  else if ((ch & 0xf0) == 0xe0) 
-    {
+
+      if ((ch & 0xc0) == 0x80)
+      {
+         *cp |= (ch & 0x3f);
+         ++string;
+      }
+      else
+      {
+         string = NULL;
+      }
+   }
+   else if ((ch & 0xf0) == 0xe0)
+   {
       /* triple */
       *cp = (ch & 0x0f) << 12;
       ++string;
       ch = *string;
-      if ((ch & 0xc0) == 0x80) 
-	{
-	  *cp |= (ch & 0x3f) << 6;
-	  ++string;
-	  ch = *string;
-	  if ((ch & 0xc0) == 0x80)
-	    {
-	      *cp |= (ch & 0x3f);
-	      ++string;
-	    }
-	  else 
-	    {
-	      string = NULL;
-	    }
-	}
-      else 
-	{
-	  string = NULL;
-	}
-    }
-  else if ((ch & 0xf8) == 0xe0) 
-    {
+      if ((ch & 0xc0) == 0x80)
+      {
+         *cp |= (ch & 0x3f) << 6;
+         ++string;
+         ch = *string;
+         if ((ch & 0xc0) == 0x80)
+         {
+            *cp |= (ch & 0x3f);
+            ++string;
+         }
+         else
+         {
+            string = NULL;
+         }
+      }
+      else
+      {
+         string = NULL;
+      }
+   }
+   else if ((ch & 0xf8) == 0xe0)
+   {
       /* Quadruple */
       *cp = (ch & 0x0f) << 18;
       ++string;
       ch = *string;
-      if ((ch & 0xc0) == 0x80) 
-	{
-	  *cp |= (ch & 0x3f) << 12;
-	  ++string;
-	  ch = *string;
-	  if ((ch & 0xc0) == 0x80)
-	    {
-	      *cp |= (ch & 0x3f) << 6;
-	      ++string;
-	      ch = *string;
-	      if ((ch & 0xc0) == 0x80)
-		{
-		  *cp |= (ch & 0x3f);
-		  ++string;
-		}
-	      else
-		{
-		  string = NULL;
-		}
-	    }
-	  else 
-	    {
-	      string = NULL;
-	    }
-	}
-      else 
-	{
-	  string = NULL;
-	}
-
-    }
-  else
-    {
+      if ((ch & 0xc0) == 0x80)
+      {
+         *cp |= (ch & 0x3f) << 12;
+         ++string;
+         ch = *string;
+         if ((ch & 0xc0) == 0x80)
+         {
+            *cp |= (ch & 0x3f) << 6;
+            ++string;
+            ch = *string;
+            if ((ch & 0xc0) == 0x80)
+            {
+               *cp |= (ch & 0x3f);
+               ++string;
+            }
+            else
+            {
+               string = NULL;
+            }
+         }
+         else
+         {
+            string = NULL;
+         }
+      }
+      else
+      {
+         string = NULL;
+      }
+   }
+   else
+   {
       string = NULL;
-    }
-  if (string == NULL) 
-    {
+   }
+
+   if (string == NULL)
+   {
       program_death(_("UTF-8 decode error"));
-    }
-  return string;
+   }
+   return string;
 }
 
+
+
 /*! \brief glyph look up table
- * 
- * maps unicode char to glyph index for characters > 128. 
+ *
+ * maps unicode char to glyph index for characters > 128.
  * { unicode, glyph }
  * n.b. must be sorted in order of unicode char
  * and terminated by {0, 0}
  */
-static unsigned int glyph_lookup[][2] = 
-  {
-    {0x00c9, 'E' - 32}, /* E-acute */
-    {0x00d3, 'O' - 32}, /* O-acute */
-    {0x00df, 107}, /* sharp s */
-    {0x00e1, 92}, /* a-grave */
-    {0x00e4, 94}, /* a-umlaut */
-    {0x00e9, 95}, /* e-acute */
-    {0x00ed, 'i' - 32}, /* i-acute */
-    {0x00f1, 108}, /* n-tilde */
-    {0x00f3, 99}, /* o-acute */
-    {0x00f6, 102}, /* o-umlaut */
-    {0x00fa, 103}, /* u-acute */
-    {0x00fc, 106}, /* u-umlaut */
-    {0, 0},
-  };
+static unsigned int glyph_lookup[][2] =
+{
+   {0x00c9, 'E' - 32}, /* E-acute */
+   {0x00d3, 'O' - 32}, /* O-acute */
+   {0x00df, 107}, /* sharp s */
+   {0x00e1, 92}, /* a-grave */
+   {0x00e4, 94}, /* a-umlaut */
+   {0x00e9, 95}, /* e-acute */
+   {0x00ed, 'i' - 32}, /* i-acute */
+   {0x00f1, 108}, /* n-tilde */
+   {0x00f3, 99}, /* o-acute */
+   {0x00f6, 102}, /* o-umlaut */
+   {0x00fa, 103}, /* u-acute */
+   {0x00fc, 106}, /* u-umlaut */
+   {0, 0},
+};
+
+
+
 /*! \brief Get glyph index
  *
  * Convert a unicode char to a glyph index.
  * \param cp unicode character
- * \return glyph index 
+ * \return glyph index
  * \author PH
  * \date 20071116
- * \note uses inefficient linear search for now. 
+ * \note uses inefficient linear search for now.
  */
-static int get_glyph_index(unsigned int cp) 
+static int get_glyph_index(unsigned int cp)
 {
-  int i;
-  if (cp < 128) 
-    {
+   int i;
+   if (cp < 128)
+   {
       return cp - 32;
-    }
-  /* otherwise look up */
-  i = 0;
-  while (glyph_lookup[i][0] != 0)
-    {
+   }
+
+   /* otherwise look up */
+   i = 0;
+   while (glyph_lookup[i][0] != 0)
+   {
       if (glyph_lookup[i][0] == cp)
-	{
-	  return glyph_lookup[i][1];
-	}
+      {
+         return glyph_lookup[i][1];
+      }
       ++i;
-    }
-  /* didn't find it */
-  sprintf(strbuf, _("Invalid glyph index: %d"), cp);
-  klog(strbuf);
-  return 0;
+   }
+
+   /* didn't find it */
+   sprintf(strbuf, _("Invalid glyph index: %d"), cp);
+   klog(strbuf);
+   return 0;
 }
+
+
 
 /*! \brief Display string
  *
@@ -1379,10 +1394,10 @@ void print_num (BITMAP * where, int sx, int sy, char *msg, int cl)
  * \param   sp4 Line 4 of text
  * \returns index of option chosen (0..numopt-1)
  */
-int prompt (int who, int numopt, int bstyle, const char *sp1, const char *sp2, 
-	const char *sp3, const char *sp4)
+int prompt (int who, int numopt, int bstyle, const char *sp1, const char *sp2, const char *sp3, const char *sp4)
 {
    int ly, stop = 0, ptr = 0, a;
+   unsigned int str_len;
 
    gbbw = 1;
    gbbh = 0;
@@ -1393,10 +1408,11 @@ int prompt (int who, int numopt, int bstyle, const char *sp1, const char *sp2,
    strcpy (msgbuf[3], parse_string (sp4));
    unpress ();
    for (a = 0; a < 4; a++) {
-      if (strlen (msgbuf[a]) > 1) {
+      str_len = strlen (msgbuf[a]);
+      if (str_len > 1) {
          gbbh = a + 1;
-         if ((signed int) strlen (msgbuf[a]) > gbbw)
-            gbbw = strlen (msgbuf[a]);
+         if ((signed int) str_len > gbbw)
+            gbbw = str_len;
       }
    }
    set_textpos (who);
@@ -1410,8 +1426,7 @@ int prompt (int who, int numopt, int bstyle, const char *sp1, const char *sp2,
 /*           for (a = 0; a < gbbh; a++) */
 /*              print_font (double_buffer, gbbx + 8 + xofs, */
 /*                          a * 12 + gbby + 8 + yofs, msgbuf[a], FBIG); */
-      draw_sprite (double_buffer, menuptr, gbbx + xofs + 8,
-                   ptr * 12 + ly + yofs);
+      draw_sprite (double_buffer, menuptr, gbbx + xofs + 8, ptr * 12 + ly + yofs);
       blit2screen (xofs, yofs);
 
       readcontrols ();
@@ -1474,7 +1489,7 @@ int prompt_ex (int who, const char *ptext, const char *opt[], int n_opt)
       ptext = relay (ptext);
       if (ptext) {
          /* print prompt pages prior to the last one */
-         generic_text (who, B_TEXT);
+         generic_text (who, B_TEXT, 0);
       } else {
          /* do prompt and options */
          int a;
@@ -1508,15 +1523,11 @@ int prompt_ex (int who, const char *ptext, const char *opt[], int n_opt)
             set_textpos (who);
             draw_textbox (B_TEXT);
             /* Draw the  options text */
-            draw_kq_box (double_buffer, winx - 5, winy - 5,
-                         winx + winwidth * 8 + 13,
-                         winy + winheight * 12 + 5, BLUE, B_TEXT);
+            draw_kq_box (double_buffer, winx - 5, winy - 5, winx + winwidth * 8 + 13, winy + winheight * 12 + 5, BLUE, B_TEXT);
             for (i = 0; i < winheight; ++i) {
-               print_font (double_buffer, winx + 8, winy + i * 12,
-                           opt[i + topopt], FBIG);
+               print_font (double_buffer, winx + 8, winy + i * 12, opt[i + topopt], FBIG);
             }
-            draw_sprite (double_buffer, menuptr, winx + 8 - menuptr->w,
-                         (curopt - topopt) * 12 + winy + 4);
+            draw_sprite (double_buffer, menuptr, winx + 8 - menuptr->w, (curopt - topopt) * 12 + winy + 4);
             /* Draw the 'up' and 'down' markers if there are more options than will fit in the window */
             if (topopt > 0)
                draw_sprite (double_buffer, upptr, winx, winy - 8);
@@ -1686,8 +1697,7 @@ void revert_cframes (int who, int aflag)
 
    while (a < a1) {
       for (p = 0; p < MAXCFRAMES; p++) {
-         blit (tcframes[a][p], cframes[a][p], 0, 0, 0, 0, fighter[a].cw,
-               fighter[a].cl);
+         blit (tcframes[a][p], cframes[a][p], 0, 0, 0, 0, fighter[a].cw, fighter[a].cl);
       }
       ++a;
    }
@@ -1804,6 +1814,30 @@ void text_ex (int fmt, int who, const char *s)
 
    while (s) {
       s = relay (s);
-      generic_text (who, fmt);
+      generic_text (who, fmt, 0);
+   }
+}
+
+
+
+/*! \brief Display speech/thought bubble with portrait
+ * \author Z9484
+ * \date 2008
+ *
+ * Displays text, like bubble_text, but passing the args
+ * through the relay function first
+ * \date updated 20030401 merged thought and speech
+ * \sa bubble_text()
+ * \param   fmt Format, B_TEXT or B_THOUGHT
+ * \param   who Character that is speaking
+ * \param   s The text to display
+ */
+void porttext_ex (int fmt, int who, const char *s)
+{
+   s = parse_string (s);
+
+   while (s) {
+      s = relay (s);
+      generic_text (who, fmt, 1);
    }
 }

@@ -80,6 +80,8 @@
    lua_CFunction func;
 };*/
 
+
+
 void do_console_command(const char* cmd);
 /* Internal functions */
 static void fieldsort (void);
@@ -101,6 +103,7 @@ static int KQ_add_timer (lua_State *);
 static int KQ_battle (lua_State *);
 static int KQ_blit (lua_State *);
 static int KQ_bubble_ex (lua_State *);
+static int KQ_portbubble_ex (lua_State *);
 static int KQ_calc_viewport (lua_State *);
 static int KQ_change_map (lua_State *);
 static int KQ_check_key (lua_State *);
@@ -127,6 +130,7 @@ static int KQ_drawframe (lua_State *);
 static int KQ_drawmap (lua_State *);
 static int KQ_drawsprite (lua_State *);
 static int KQ_face_each_other (lua_State *);
+static int KQ_gameover_ex (lua_State *);
 static int KQ_get_alldead (lua_State *);
 static int KQ_get_autoparty (lua_State *);
 static int KQ_get_bounds (lua_State *);
@@ -260,6 +264,7 @@ static int KQ_shop_add_item (lua_State *);
 static int KQ_shop_create (lua_State *);
 static int KQ_stop_song (lua_State *);
 static int KQ_thought_ex (lua_State *);
+static int KQ_portthought_ex (lua_State *);
 #ifdef DEBUGMODE
 static int KQ_traceback (lua_State *);
 #endif
@@ -286,6 +291,7 @@ static const struct luaL_reg lrs[] = {
    {"battle",           KQ_battle},
    {"blit",             KQ_blit},
    {"bubble_ex",        KQ_bubble_ex},
+   {"portbubble_ex",    KQ_portbubble_ex},
    {"calc_viewport",    KQ_calc_viewport},
    {"change_map",       KQ_change_map},
    {"check_key",        KQ_check_key},
@@ -311,6 +317,7 @@ static const struct luaL_reg lrs[] = {
    {"drawmap",          KQ_drawmap},
    {"drawsprite",       KQ_drawsprite},
    {"face_each_other",  KQ_face_each_other},
+   {"gameover_ex",      KQ_gameover_ex},
    {"get_alldead",      KQ_get_alldead},
    {"get_autoparty",    KQ_get_autoparty},
    {"get_bounds",       KQ_get_bounds},
@@ -373,7 +380,7 @@ static const struct luaL_reg lrs[] = {
    {"play_map_song",    KQ_play_map_song},
    {"play_song",        KQ_play_song},
    {"pnum",             KQ_pnum},
-   {"print",			KQ_print},
+   {"print",            KQ_print},
    {"prompt",           KQ_prompt},
    {"ptext",            KQ_ptext},
    {"read_controls",    KQ_read_controls},
@@ -443,6 +450,7 @@ static const struct luaL_reg lrs[] = {
    {"shop",             KQ_shop},
    {"stop_song",        KQ_stop_song},
    {"thought_ex",       KQ_thought_ex},
+   {"portthought_ex",   KQ_portthought_ex},
    {"unpause_map_song", KQ_unpause_map_song},
    {"use_up",           KQ_use_up},
    {"view_range",       KQ_view_range},
@@ -454,6 +462,8 @@ static const struct luaL_reg lrs[] = {
    {NULL, NULL}
 };
 
+
+
 /*! \brief Holds a reference to the zone handler function */
 /*int ref_zone_handler;*/
 
@@ -464,45 +474,30 @@ static struct s_field
    int id;
 }
 
-
 // *INDENT-OFF*
 fields[] = {
-   // Name of entity
-   {"name", 0},
-   // Entity experience
-   {"xp", 1},
-   // Experience left for next level-up
-   {"next", 2},
-   // Current level of entity
-   {"lvl", 3},
-   // Magic actually required for a spell (can be reduced with I_MANALOCKET)
-   {"mrp", 4},
-   // Entity's current hit points
-   {"hp", 5},
-   // Maximum hit points
-   {"mhp", 6},
-   // Current magic points
-   {"mp", 7},
-   // Maximum magic points
-   {"mmp", 8},
-   // Index # of entity, which determines look and skills
-   {"id", 9},
-    /* Position of entity, (X,Y) */
-   {"tilex", 10},
-   {"tiley", 11},
-    /* Entity ID */
-   {"eid", 12},
-    /* Appearance of entity */
-   {"chrx", 13},
-    /* Direction facing */
-   {"facing", 14},
-    /* Active or not */
-   {"active", 15},
-    /* Some functions */
-    {"say", 16},
-    {"think", 17},
+   {"name", 0},     // Name of entity
+   {"xp", 1},       // Entity experience
+   {"next", 2},     // Experience left for next level-up
+   {"lvl", 3},      // Current level of entity
+   {"mrp", 4},      // Magic actually required for a spell (can be reduced with I_MANALOCKET)
+   {"hp", 5},       // Entity's current hit points
+   {"mhp", 6},      // Maximum hit points
+   {"mp", 7},       // Current magic points
+   {"mmp", 8},      // Maximum magic points
+   {"id", 9},       // Index # of entity, which determines look and skills
+   {"tilex", 10},   // Position of entity, full x tile
+   {"tiley", 11},   // Position of entity, full y tile
+   {"eid", 12},     // Entity ID
+   {"chrx", 13},    // Appearance of entity
+   {"facing", 14},  // Direction facing
+   {"active", 15},  // Active or not
+   {"say", 16},     // Some functions #1
+   {"think", 17},   // Some functions #2
 };
 // *INDENT-ON*
+
+
 
 /*
  * PH's own notes:
@@ -534,6 +529,7 @@ static enum
 } changing_map;
 
 
+
 /*! \brief Check to change the map
  *
  * Check to see if we can change the map.  Does nothing if we are already in
@@ -546,11 +542,16 @@ static int KQ_check_map_change (void)
          change_map (tmap_name, tmx, tmy, tmvx, tmvy);
          changing_map = NOT_CHANGING;
          break;
+
       case CHANGE_TO_MARKER:
          change_mapm (tmap_name, marker_name, tmx, tmy);
          changing_map = NOT_CHANGING;
          break;
+
       case NOT_CHANGING:
+         break;
+
+      default:
          break;
    }
    return 0;
@@ -634,6 +635,9 @@ void do_luacheat (void)
    KQ_check_map_change ();
    message (_("Cheating complete."), 255, 50, xofs, yofs);
 }
+
+
+
 #endif
 
 
@@ -792,6 +796,8 @@ void do_zone (int zn_num)
    KQ_check_map_change ();
 }
 
+
+
 /*! \brief Initialize world specific variables
  *
  * This function is called on a new game, or when loading a game.
@@ -850,6 +856,8 @@ static const char *filereader (lua_State * L, PACKFILE * f, size_t * size)
    return buf;
 }
 
+
+
 /*! \brief Read string chunk
  *
  * Read in a complete string  for the Lua system to compile
@@ -872,6 +880,7 @@ static const char *stringreader (lua_State * L, char** f, size_t * size)
   }
   return ans;
 }
+
 
 
 /*! \brief Find a marker
@@ -1065,6 +1074,7 @@ static int KQ_add_quest_item (lua_State * L)
 }
 
 
+
 static int KQ_create_special_item (lua_State * L)
 {
    const char * name = lua_tostring(L, 1);
@@ -1081,6 +1091,7 @@ static int KQ_create_special_item (lua_State * L)
 }
 
 
+
 static int KQ_add_special_item (lua_State * L)
 {
    int index, quantity;
@@ -1091,7 +1102,7 @@ static int KQ_add_special_item (lua_State * L)
       quantity = lua_tonumber (L, 2);
    else
       quantity = 1;
-   
+
    player_special_items[index] += quantity;
    return 0;
 
@@ -1099,7 +1110,7 @@ static int KQ_add_special_item (lua_State * L)
 
 
    player_special_items[num_special_items] = index;
-   
+
 
    table_name = lua_tostring (L, 1);
 
@@ -1112,17 +1123,17 @@ static int KQ_add_special_item (lua_State * L)
    lua_pushstring(L, "index"); // now the string "index" is just above the table on the stack
    lua_gettable(L, -2); // finds the table foo in stack position -2, pops "bar" off the stack, pushes on foo["bar"]
    index = lua_tonumber(L, -1);
-   
+
    lua_getglobal(L, table_name);
    lua_pushstring(L, "name");
    lua_gettable(L, -2);
    name = lua_tostring (L, -1);
-   
+
    lua_getglobal(L, table_name);
    lua_pushstring(L, "description");
    lua_gettable(L, -2);
    description = lua_tostring (L, -1);
-   
+
    lua_getglobal(L, table_name);
    lua_pushstring(L, "icon");
    lua_gettable(L, -2);
@@ -1152,6 +1163,8 @@ static int KQ_add_special_item (lua_State * L)
 #endif // if 0
 }
 
+
+
 static int KQ_has_special_item (lua_State * L)
 {
    int index;
@@ -1166,6 +1179,7 @@ static int KQ_has_special_item (lua_State * L)
 }
 
 
+
 static int KQ_remove_special_item (lua_State * L)
 {
    int index = lua_tonumber(L, 1);
@@ -1173,13 +1187,16 @@ static int KQ_remove_special_item (lua_State * L)
    return 0;
 }
 
+
+
 #if 0
 void add_special_item (int index, int quantity)
 {
-   
-   
-   
+
+
+
 }
+
 
 
 void remove_special_item (int index)
@@ -1205,6 +1222,9 @@ void remove_special_item (int index)
       }
    }
 }
+
+
+
 #endif
 
 static int KQ_add_timer (lua_State * L)
@@ -1264,6 +1284,20 @@ static int KQ_bubble_ex (lua_State * L)
    const char *msg = lua_tostring (L, 2);
 
    text_ex (B_TEXT, entity, msg);
+   return 0;
+}
+
+
+
+/* Adds portrait to bubble message.
+ * /date Z9484 20081218
+ */
+static int KQ_portbubble_ex (lua_State * L)
+{
+   int entity = real_entity_num (L, 1);
+   const char *msg = lua_tostring (L, 2);
+
+   porttext_ex (B_TEXT, entity, msg);
    return 0;
 }
 
@@ -1331,65 +1365,86 @@ static int KQ_char_getter (lua_State * L)
    if (pl) {
       /* These properties relate to s_player structures */
       switch (prop) {
-      case 0:
-         lua_pushstring (L, pl->name);
-         break;
-      case 1:
-         lua_pushnumber (L, pl->xp);
-         break;
-      case 2:
-         lua_pushnumber (L, pl->next);
-         break;
-      case 3:
-         lua_pushnumber (L, pl->lvl);
-         break;
-      case 4:
-         lua_pushnumber (L, pl->mrp);
-         break;
-      case 5:
-         lua_pushnumber (L, pl->hp);
-         break;
-      case 6:
-         lua_pushnumber (L, pl->mhp);
-         break;
-      case 7:
-         lua_pushnumber (L, pl->mp);
-         break;
-      case 8:
-         lua_pushnumber (L, pl->mmp);
-         break;
-      case 9:
-         lua_pushnumber (L, pl - party);
-         break;
+         case 0:
+            lua_pushstring (L, pl->name);
+            break;
+
+         case 1:
+            lua_pushnumber (L, pl->xp);
+            break;
+
+         case 2:
+            lua_pushnumber (L, pl->next);
+            break;
+
+         case 3:
+            lua_pushnumber (L, pl->lvl);
+            break;
+
+         case 4:
+            lua_pushnumber (L, pl->mrp);
+            break;
+
+         case 5:
+            lua_pushnumber (L, pl->hp);
+            break;
+
+         case 6:
+            lua_pushnumber (L, pl->mhp);
+            break;
+
+         case 7:
+            lua_pushnumber (L, pl->mp);
+            break;
+
+         case 8:
+            lua_pushnumber (L, pl->mmp);
+            break;
+
+         case 9:
+            lua_pushnumber (L, pl - party);
+            break;
+
+         default:
+            break;
       }
    }
    if (ent) {
       /* These properties relate to s_entity structures */
       switch (prop) {
-      case 10:
-         lua_pushnumber (L, ent->tilex);
-         break;
-      case 11:
-         lua_pushnumber (L, ent->tiley);
-         break;
-      case 12:
-         lua_pushnumber (L, ent->eid);
-         break;
-      case 13:
-         lua_pushnumber (L, ent->chrx);
-         break;
-      case 14:
-         lua_pushnumber (L, ent->facing);
-         break;
-      case 15:
-         lua_pushnumber (L, ent->active);
-         break;
-      case 16:
-         lua_pushcfunction (L, KQ_bubble_ex);
-         break;
-      case 17:
-         lua_pushcfunction (L, KQ_thought_ex);
+         case 10:
+            lua_pushnumber (L, ent->tilex);
+            break;
 
+         case 11:
+            lua_pushnumber (L, ent->tiley);
+            break;
+
+         case 12:
+            lua_pushnumber (L, ent->eid);
+            break;
+
+         case 13:
+            lua_pushnumber (L, ent->chrx);
+            break;
+
+         case 14:
+            lua_pushnumber (L, ent->facing);
+            break;
+
+         case 15:
+            lua_pushnumber (L, ent->active);
+            break;
+
+         case 16:
+            lua_pushcfunction (L, KQ_bubble_ex);
+            break;
+
+         case 17:
+            lua_pushcfunction (L, KQ_thought_ex);
+
+         default:
+            break;
       }
    }
    if (top == lua_gettop (L)) {
@@ -1431,61 +1486,79 @@ static int KQ_char_setter (lua_State * L)
    if (pl) {
       /* These properties relate to 's_player' structures */
       switch (prop) {
-      case 0:
-         strncpy (pl->name, lua_tostring (L, 3), sizeof (pl->name));
-         break;
-      case 1:
-         pl->xp = (int) lua_tonumber (L, 3);
-         break;
-      case 2:
-         pl->next = (int) lua_tonumber (L, 3);
-         break;
-      case 3:
-         pl->lvl = (int) lua_tonumber (L, 3);
-         break;
-      case 4:
-         pl->mrp = (int) lua_tonumber (L, 3);
-         break;
-      case 5:
-         pl->hp = (int) lua_tonumber (L, 3);
-         break;
-      case 6:
-         pl->mhp = (int) lua_tonumber (L, 3);
-         break;
-      case 7:
-         pl->mp = (int) lua_tonumber (L, 3);
-         break;
-      case 8:
-         pl->mmp = (int) lua_tonumber (L, 3);
-         break;
-      case 9:
-         /* id is readonly */
-         break;
-      default:
-         break;
+         case 0:
+            strncpy (pl->name, lua_tostring (L, 3), sizeof (pl->name));
+            break;
+
+         case 1:
+            pl->xp = (int) lua_tonumber (L, 3);
+            break;
+
+         case 2:
+            pl->next = (int) lua_tonumber (L, 3);
+            break;
+
+         case 3:
+            pl->lvl = (int) lua_tonumber (L, 3);
+            break;
+
+         case 4:
+            pl->mrp = (int) lua_tonumber (L, 3);
+            break;
+
+         case 5:
+            pl->hp = (int) lua_tonumber (L, 3);
+            break;
+
+         case 6:
+            pl->mhp = (int) lua_tonumber (L, 3);
+            break;
+
+         case 7:
+            pl->mp = (int) lua_tonumber (L, 3);
+            break;
+
+         case 8:
+            pl->mmp = (int) lua_tonumber (L, 3);
+            break;
+
+         case 9:
+            /* id is readonly */
+            break;
+
+         default:
+            break;
       }
    }
    if (ent) {
       /* these properties relate to 's_entity' structures */
       switch (prop) {
-      case 10:
-         ent->tilex = (int) lua_tonumber (L, 3);
-         break;
-      case 11:
-         ent->tiley = (int) lua_tonumber (L, 3);
-         break;
-      case 12:
-         ent->eid = (int) lua_tonumber (L, 3);
-         break;
-      case 13:
-         ent->chrx = (int) lua_tonumber (L, 3);
-         break;
-      case 14:
-         ent->facing = (int) lua_tonumber (L, 3);
-         break;
-      case 15:
-         ent->active = (int) lua_tonumber (L, 3);
-         break;
+         case 10:
+            ent->tilex = (int) lua_tonumber (L, 3);
+            break;
+
+         case 11:
+            ent->tiley = (int) lua_tonumber (L, 3);
+            break;
+
+         case 12:
+            ent->eid = (int) lua_tonumber (L, 3);
+            break;
+
+         case 13:
+            ent->chrx = (int) lua_tonumber (L, 3);
+            break;
+
+         case 14:
+            ent->facing = (int) lua_tonumber (L, 3);
+            break;
+
+         case 15:
+            ent->active = (int) lua_tonumber (L, 3);
+            break;
+
+         default:
+            break;
       }
    }
    return 0;
@@ -1574,7 +1647,7 @@ static int KQ_chest (lua_State * L)
 
 static int KQ_clear_buffer (lua_State * L)
 {
-	(void) L;
+   (void) L;
    clear_bitmap (double_buffer);
    return 0;
 }
@@ -1656,8 +1729,7 @@ static int KQ_create_bmp (lua_State * L)
 
 static int KQ_create_df (lua_State * L)
 {
-   g_df = load_datafile_object (kqres (DATA_DIR, lua_tostring (L, 1)),
-                                lua_tostring (L, 2));
+   g_df = load_datafile_object (kqres (DATA_DIR, lua_tostring (L, 1)), lua_tostring (L, 2));
    return 0;
 }
 
@@ -1808,8 +1880,7 @@ static int KQ_draw_pstat (lua_State * L)
    int a = (int) lua_tonumber (L, 1);
 
    if (a >= 0 && a <= 7)
-      draw_playerstat (double_buffer, a, (int) lua_tonumber (L, 2) + xofs,
-                       (int) lua_tonumber (L, 3) + yofs);
+      draw_playerstat (double_buffer, a, (int) lua_tonumber (L, 2) + xofs, (int) lua_tonumber (L, 3) + yofs);
    return 0;
 }
 
@@ -1829,7 +1900,7 @@ static int KQ_drawframe (lua_State * L)
 
 static int KQ_drawmap (lua_State * L)
 {
-	(void) L;
+   (void) L;
    drawmap ();
    return 0;
 }
@@ -1873,6 +1944,14 @@ static int KQ_face_each_other (lua_State * L)
       }
    }
    return 0;
+}
+
+
+
+static int KQ_gameover_ex (lua_State * L)
+{
+   alldead = 1;
+   return 1;
 }
 
 
@@ -2395,6 +2474,9 @@ static int KQ_get_tile_all (lua_State * L)
    lua_pushnumber (L, s_seg[offset]);
    return 6;
 }
+
+
+
 #endif
 
 
@@ -2671,9 +2753,7 @@ static int KQ_move_entity (lua_State * L)
       kill = (int) lua_tonumber (L, 4);
    }
 
-   find_path (entity_id, g_ent[entity_id].tilex,
-                       g_ent[entity_id].tiley, target_x, target_y, buffer,
-                       sizeof (buffer));
+   find_path (entity_id, g_ent[entity_id].tilex, g_ent[entity_id].tiley, target_x, target_y, buffer, sizeof (buffer));
 
    /*  FIXME: The fourth parameter is a ugly hack for now.  */
    if (kill)
@@ -3353,8 +3433,7 @@ static int KQ_set_marker (lua_State * L)
    if ((m = find_marker (marker_name, 0)) == NULL) {
       /* Need to add a new marker */
       g_map.markers =
-         (s_marker *) realloc (g_map.markers,
-                               sizeof (s_marker) * (g_map.num_markers + 1));
+         (s_marker *) realloc (g_map.markers, sizeof (s_marker) * (g_map.num_markers + 1));
       m = &g_map.markers[g_map.num_markers++];
       strcpy (m->name, marker_name);
    }
@@ -3809,6 +3888,8 @@ static int KQ_set_warp (lua_State * L)
    return 0;
 }
 
+
+
 static int KQ_set_can_use_item (lua_State * L)
 {
    can_use_item = (int) lua_tonumber (L, 1);
@@ -3861,6 +3942,7 @@ static int KQ_shop (lua_State * L)
 }
 
 
+
 static int KQ_shop_create (lua_State * L)
 {
    int index;
@@ -3871,6 +3953,7 @@ static int KQ_shop_create (lua_State * L)
    num_shops = (index + 1) > num_shops ? index + 1 : num_shops;
    return 0;
 }
+
 
 
 static int KQ_shop_add_item (lua_State * L)
@@ -3896,6 +3979,7 @@ static int KQ_shop_add_item (lua_State * L)
 }
 
 
+
 static int KQ_stop_song (lua_State * L)
 {
    (void) L;
@@ -3910,6 +3994,16 @@ static int KQ_thought_ex (lua_State * L)
    int entity = real_entity_num (L, 1);
    const char *msg = lua_tostring (L, 2);
    text_ex (B_THOUGHT, entity, msg);
+   return 0;
+}
+
+
+
+static int KQ_portthought_ex (lua_State * L)
+{
+   int entity = real_entity_num (L, 1);
+   const char *msg = lua_tostring (L, 2);
+   porttext_ex (B_THOUGHT, entity, msg);
    return 0;
 }
 
@@ -3945,13 +4039,15 @@ static int KQ_traceback (lua_State * theL)
    return 1;
 }
 
+
+
 #endif
 
 
 
 static int KQ_unpause_map_song (lua_State * L)
 {
-	(void) L;
+   (void) L;
    resume_music ();
    return 0;
 }
@@ -4089,11 +4185,13 @@ int lua_dofile (lua_State * L, const char * fname)
    return 0;
 }
 
+
+
 /*! \brief Obey a command typed in from the console
  *
  * Take the given string and execute it.
  * Prints out any returned values to the console
- * 
+ *
  * \param L the Lua state
  * \param cmd the string to execute
  */
@@ -4110,7 +4208,7 @@ static int kq_dostring (lua_State * L, const char *cmd)
    if (retval != 0) {
      scroll_console("Execute error");
      return retval;
-	}
+   }
    nrets = lua_gettop(L) - nrets;
    for (i=0; i<nrets; ++i) {
      scroll_console(lua_tostring(L, -nrets + i));
@@ -4119,32 +4217,38 @@ static int kq_dostring (lua_State * L, const char *cmd)
    return 0;
 }
 
+
+
 /*! \brief Obey a command typed in from the console
  *
  * Take the given string and execute it.
  * Prints out any returned values to the console
- * 
+ *
  * \param cmd the string to execute
  */
 void do_console_command(const char* cmd) {
-  if (theL != NULL) {
-    kq_dostring(theL, cmd);
-  }
-  else {
-    scroll_console("No script engine running");
-  }
+   if (theL != NULL) {
+      kq_dostring(theL, cmd);
+   }
+   else {
+      scroll_console("No script engine running");
+   }
 }
+
+
 
 /*! \brief Print text to the console
  *
  * Prints out the arg
- * 
+ *
  * \param L Lua state
  */
 int KQ_print(lua_State* L) {
-	scroll_console(lua_tostring(L, 1));
-	return 0;
+   scroll_console(lua_tostring(L, 1));
+   return 0;
 }
+
+
 
 /*! \brief Get party array
  *
@@ -4241,14 +4345,17 @@ static int real_entity_num (lua_State * L, int pos)
    if (lua_isnumber (L, pos)) {
       int ee = (int) lua_tonumber (L, pos);
       switch (ee) {
-      case HERO1:
-         return 0;
-      case HERO2:
-         return 1;
-      case 255:
-         return 255;
-      default:
-         return ee + PSIZE;
+         case HERO1:
+            return 0;
+
+         case HERO2:
+            return 1;
+
+         case 255:
+            return 255;
+
+         default:
+            return ee + PSIZE;
       }
    }
    if (lua_istable (L, pos)) {
@@ -4262,3 +4369,6 @@ static int real_entity_num (lua_State * L, int pos)
    }
    return 255;                  /* means "nobody" */
 }
+
+
+

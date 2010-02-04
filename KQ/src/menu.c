@@ -106,9 +106,8 @@ void draw_mainmenu (int swho)
    int p;
 
    timer_count = 0;
-   for (p = 0; p < 2; p++)
-      menubox (double_buffer, 44 + xofs, p * 64 + 64 + yofs, 18, 6,
-               swho == p ? DARKBLUE : BLUE);
+   for (p = 0; p < PSIZE; p++)
+      menubox (double_buffer, 44 + xofs, p * 64 + 64 + yofs, 18, 6, swho == p ? DARKBLUE : BLUE);
    menubox (double_buffer, 204 + xofs, 64 + yofs, 7, 6, BLUE);
    menubox (double_buffer, 204 + xofs, 128 + yofs, 7, 6, BLUE);
    print_font (double_buffer, 220 + xofs, 72 + yofs, _("Items"), FGOLD);
@@ -121,14 +120,11 @@ void draw_mainmenu (int swho)
    print_font (double_buffer, 212 + xofs, 164 + yofs, _("Gold:"), FGOLD);
    /* PH: print time as h:mm */
    sprintf (strbuf, "%d:%02d", khr, kmin);
-   print_font (double_buffer, 268 - (strlen (strbuf) * 8) + xofs, 144 + yofs,
-               strbuf, FNORMAL);
+   print_font (double_buffer, 268 - (strlen (strbuf) * 8) + xofs, 144 + yofs, strbuf, FNORMAL);
    sprintf (strbuf, "%d", gp);
-   print_font (double_buffer, 268 - (strlen (strbuf) * 8) + xofs, 172 + yofs,
-               strbuf, FNORMAL);
+   print_font (double_buffer, 268 - (strlen (strbuf) * 8) + xofs, 172 + yofs, strbuf, FNORMAL);
    if (swho != -1)
-      menubox (double_buffer, 44 + xofs, swho * 64 + 64 + yofs, 18, 6,
-               DARKBLUE);
+      menubox (double_buffer, 44 + xofs, swho * 64 + 64 + yofs, 18, 6, DARKBLUE);
    for (p = 0; p < numchrs; p++)
       draw_playerstat (double_buffer, pidx[p], 52 + xofs, p * 64 + 76 + yofs);
 }
@@ -152,8 +148,7 @@ void draw_playerstat (BITMAP * where, int i, int dx, int dy)
    draw_stsicon (where, 0, i, 8, dx + 48, dy + 8);
    print_font (where, dx + 48, dy + 16, _("LV"), FGOLD);
    sprintf (strbuf, "%d", party[i].lvl);
-   print_font (where, dx + 104 - (strlen (strbuf) * 8), dy + 16, strbuf,
-               FNORMAL);
+   print_font (where, dx + 104 - (strlen (strbuf) * 8), dy + 16, strbuf, FNORMAL);
    print_font (where, dx + 48, dy + 24, _("HP"), FGOLD);
    print_font (where, dx + 104, dy + 24, "/", FNORMAL);
    sprintf (strbuf, "%d", party[i].hp);
@@ -517,14 +512,11 @@ static void quest_info (void)
       menubox (double_buffer, 88 + xofs, 188 + yofs, 18, 3, BLUE);
       for (i = 0; i < 10; ++i) {
          if (i + base < quest_list.count)
-            print_font (double_buffer, 104 + xofs, 100 + 8 * i + yofs,
-                        quest_list.root[i + base].key, FNORMAL);
+            print_font (double_buffer, 104 + xofs, 100 + 8 * i + yofs, quest_list.root[i + base].key, FNORMAL);
       }
-      draw_sprite (double_buffer, menuptr, 88 + xofs,
-                   100 + 8 * (ii - base) + yofs);
+      draw_sprite (double_buffer, menuptr, 88 + xofs, 100 + 8 * (ii - base) + yofs);
       if (ii < quest_list.count) {
-         print_font (double_buffer, 96 + xofs, 196 + yofs,
-                     quest_list.root[ii].text, FNORMAL);
+         print_font (double_buffer, 96 + xofs, 196 + yofs, quest_list.root[ii].text, FNORMAL);
       }
       blit2screen (xofs, yofs);
       readcontrols ();
@@ -626,23 +618,19 @@ void spec_items (void)
       check_animation ();
       drawmap ();
       menubox (double_buffer, 72 + xofs, 12 + yofs, 20, 1, BLUE);
-      print_font (double_buffer, 108 + xofs, 20 + yofs, _("Special Items"),
-                  FGOLD);
+      print_font (double_buffer, 108 + xofs, 20 + yofs, _("Special Items"), FGOLD);
       menubox (double_buffer, 72 + xofs, 36 + yofs, 20, 19, BLUE);
       for (a = 0; a < num_items; a++) {
          draw_icon (double_buffer, special_items[list_item_which[a]].icon, 88 + xofs, a * 8 + 44 + yofs);
-         print_font (double_buffer, 96 + xofs, a * 8 + 44 + yofs,
-                     special_items[list_item_which[a]].name, FNORMAL);
+         print_font (double_buffer, 96 + xofs, a * 8 + 44 + yofs, special_items[list_item_which[a]].name, FNORMAL);
          if (list_item_quantity[a] > 1) {
             sprintf (strbuf, "^%d", list_item_quantity[a]);
-            print_font (double_buffer, 224 + xofs, a * 8 + 44 + yofs,
-                        strbuf, FNORMAL);
+            print_font (double_buffer, 224 + xofs, a * 8 + 44 + yofs, strbuf, FNORMAL);
          }
       }
       menubox (double_buffer, 72 + xofs, 204 + yofs, 20, 1, BLUE);
       a = strlen (special_items[list_item_which[ptr]].description) * 4;
-      print_font (double_buffer, 160 - a + xofs, 212 + yofs,
-                  special_items[list_item_which[ptr]].description, FNORMAL);
+      print_font (double_buffer, 160 - a + xofs, 212 + yofs, special_items[list_item_which[ptr]].description, FNORMAL);
       draw_sprite (double_buffer, menuptr, 72 + xofs, ptr * 8 + 44 + yofs);
       blit2screen (xofs, yofs);
       readcontrols ();
@@ -692,16 +680,14 @@ static void status_screen (int ch)
       menubox (double_buffer, xofs, 72 + yofs, 18, 17, BLUE);
       print_font (double_buffer, 8 + xofs, 80 + yofs, _("Exp:"), FGOLD);
       sprintf (strbuf, "%d", party[c].xp);
-      print_font (double_buffer, 152 - (strlen (strbuf) * 8) + xofs,
-                  80 + yofs, strbuf, FNORMAL);
+      print_font (double_buffer, 152 - (strlen (strbuf) * 8) + xofs, 80 + yofs, strbuf, FNORMAL);
       print_font (double_buffer, 8 + xofs, 88 + yofs, _("Next:"), FGOLD);
       // TT: Does this mean we can only level up to 50?
       if (party[c].lvl < 50)
          sprintf (strbuf, "%d", party[c].next - party[c].xp);
       else
          sprintf (strbuf, "%d", 0);
-      print_font (double_buffer, 152 - (strlen (strbuf) * 8) + xofs,
-                  88 + yofs, strbuf, FNORMAL);
+      print_font (double_buffer, 152 - (strlen (strbuf) * 8) + xofs, 88 + yofs, strbuf, FNORMAL);
       print_font (double_buffer, 8 + xofs, 104 + yofs, _("Strength"), FGOLD);
       print_font (double_buffer, 8 + xofs, 112 + yofs, _("Agility"), FGOLD);
       print_font (double_buffer, 8 + xofs, 120 + yofs, _("Vitality"), FGOLD);
@@ -724,8 +710,7 @@ static void status_screen (int ch)
             i += 8;
          print_font (double_buffer, 96 + xofs, i + yofs, "$", FGOLD);
          sprintf (strbuf, "%d", fighter[ch].stats[p]);
-         print_font (double_buffer, 152 - (strlen (strbuf) * 8) + xofs,
-                     i + yofs, strbuf, FNORMAL);
+         print_font (double_buffer, 152 - (strlen (strbuf) * 8) + xofs, i + yofs, strbuf, FNORMAL);
       }
 
       menubox (double_buffer, 160 + xofs, 16 + yofs, 18, 16, BLUE);
@@ -747,8 +732,7 @@ static void status_screen (int ch)
       print_font (double_buffer, 168 + xofs, 144 + yofs, _("Time"), FNORMAL);
 
       for (i = 0; i < 16; i++) {
-         rectfill (double_buffer, 240 + xofs, i * 8 + 25 + yofs, 310 + xofs,
-                   i * 8 + 31 + yofs, 3);
+         rectfill (double_buffer, 240 + xofs, i * 8 + 25 + yofs, 310 + xofs, i * 8 + 31 + yofs, 3);
          if (fighter[ch].res[i] < 0) {
             bc = 18;            // bright red, meaning WEAK defense
             z = abs (fighter[ch].res[i]);
@@ -762,16 +746,12 @@ static void status_screen (int ch)
 
          if (z > 0)
             for (p = 0; p < z; p++)
-               rectfill (double_buffer, p * 7 + 241 + xofs,
-                         i * 8 + 26 + yofs, p * 7 + 246 + xofs,
-                         i * 8 + 30 + yofs, bc + p);
+               rectfill (double_buffer, p * 7 + 241 + xofs, i * 8 + 26 + yofs, p * 7 + 246 + xofs, i * 8 + 30 + yofs, bc + p);
       }
       menubox (double_buffer, 160 + xofs, 160 + yofs, 18, 6, BLUE);
       for (i = 0; i < 6; i++) {
-         draw_icon (double_buffer, items[party[c].eqp[i]].icon, 168 + xofs,
-                    i * 8 + 168 + yofs);
-         print_font (double_buffer, 176 + xofs, i * 8 + 168 + yofs,
-                     items[party[c].eqp[i]].name, FNORMAL);
+         draw_icon (double_buffer, items[party[c].eqp[i]].icon, 168 + xofs, i * 8 + 168 + yofs);
+         print_font (double_buffer, 176 + xofs, i * 8 + 168 + yofs, items[party[c].eqp[i]].name, FNORMAL);
       }
       blit2screen (xofs, yofs);
       readcontrols ();

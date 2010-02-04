@@ -292,48 +292,56 @@ void config_menu (void)
             while ((temp_key = getakey ()) == 0);
             kup = temp_key;
             unpress ();
+            temp_key = 0;
             set_config_int (NULL, "kup", kup);
             break;
          case 5:
             while ((temp_key = getakey ()) == 0);
             kdown = temp_key;
             unpress ();
+            temp_key = 0;
             set_config_int (NULL, "kdown", kdown);
             break;
          case 6:
             while ((temp_key = getakey ()) == 0);
             kleft = temp_key;
             unpress ();
+            temp_key = 0;
             set_config_int (NULL, "kleft", kleft);
             break;
          case 7:
             while ((temp_key = getakey ()) == 0);
             kright = temp_key;
             unpress ();
+            temp_key = 0;
             set_config_int (NULL, "kright", kright);
             break;
          case 8:
             while ((temp_key = getakey ()) == 0);
             kalt = temp_key;
             unpress ();
+            temp_key = 0;
             set_config_int (NULL, "kalt", kalt);
             break;
          case 9:
             while ((temp_key = getakey ()) == 0);
             kctrl = temp_key;
             unpress ();
+            temp_key = 0;
             set_config_int (NULL, "kctrl", kctrl);
             break;
          case 10:
             while ((temp_key = getakey ()) == 0);
             kenter = temp_key;
             unpress ();
+            temp_key = 0;
             set_config_int (NULL, "kenter", kenter);
             break;
          case 11:
             while ((temp_key = getakey ()) == 0);
             kesc = temp_key;
             unpress ();
+            temp_key = 0;
             set_config_int (NULL, "kesc", kesc);
             break;
          case 12:
