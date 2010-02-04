@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: es\n"
 "Report-Msgid-Bugs-To: peterhull90@users.sourceforge.net\n"
-"POT-Creation-Date: 2008-02-25 22:31+0000\n"
+"POT-Creation-Date: 2009-04-06 14:47+0100\n"
 "PO-Revision-Date: 2008-01-28 18:16-0500\n"
 "Last-Translator: Edgar Alberto Molina Rojas <edgar@heuristicsi.com>\n"
 "Language-Team: Spanish <kqlives-main@lists.sourceforge.net>\n"
@@ -627,7 +627,7 @@ msgid "Not so fast!"
 msgstr "No tan rápido!"
 
 #: scripts/cave4.lua:155 scripts/dville.lua:182 scripts/estate.lua:113
-#: scripts/manor.lua:166 scripts/temple1.lua:232 scripts/tower.lua:479
+#: scripts/manor.lua:166 scripts/temple1.lua:232 scripts/tower.lua:482
 #: scripts/town1.lua:184 scripts/town2.lua:376 scripts/town2.lua:471
 #: scripts/town3.lua:144 scripts/town4.lua:223 scripts/town4.lua:270
 #: scripts/town4.lua:273 scripts/town5.lua:198 scripts/town5.lua:252
@@ -4172,509 +4172,509 @@ msgstr ""
 msgid "Save it. You won't change my mind."
 msgstr ""
 
-#: scripts/tower.lua:96
+#: scripts/tower.lua:99
 msgid "$0, thank you for coming."
 msgstr ""
 
-#: scripts/tower.lua:98
+#: scripts/tower.lua:101
 msgid "Hello, um... Oracle. How did you know I was coming?"
 msgstr ""
 
-#: scripts/tower.lua:100
+#: scripts/tower.lua:103
 msgid "Hello, um... Oracle. How did you know we were coming?"
 msgstr ""
 
-#: scripts/tower.lua:102
+#: scripts/tower.lua:105
 msgid "Tsorin sent a messenger here, of course."
 msgstr ""
 
-#: scripts/tower.lua:103
+#: scripts/tower.lua:106
 msgid ""
 "I'm surprised that you came up to see me, seeing as how the TravelPoint is "
 "back in the caves from whence you came."
 msgstr ""
 
-#: scripts/tower.lua:107 scripts/tower.lua:127 scripts/tower.lua:145
+#: scripts/tower.lua:110 scripts/tower.lua:130 scripts/tower.lua:148
 msgid ""
 "I am glad you stopped by, though. There is civil unrest in the goblin lands "
 "to the south."
 msgstr ""
 
-#: scripts/tower.lua:108
+#: scripts/tower.lua:111
 msgid ""
 "The Statue, which I gave to the Denorians as a gift, has been stolen. "
 "Because of that, there is much unrest."
 msgstr ""
 
-#: scripts/tower.lua:110 scripts/tower.lua:136
+#: scripts/tower.lua:113 scripts/tower.lua:139
 msgid ""
 "I am a bit hurried in my quest to find... well, something of importance."
 msgstr ""
 
-#: scripts/tower.lua:112
+#: scripts/tower.lua:115
 msgid "We are a bit hurried in our quest to find... well..."
 msgstr ""
 
-#: scripts/tower.lua:113
+#: scripts/tower.lua:116
 msgid "To find, um... something of importance."
 msgstr ""
 
-#: scripts/tower.lua:115
+#: scripts/tower.lua:118
 msgid ""
 "Yes, but would you consider helping my people find their missing Statue?"
 msgstr ""
 
-#: scripts/tower.lua:120
+#: scripts/tower.lua:123
 msgid ""
 "Thank you so much. Please talk to the head of the Denorian Council to find "
 "out more information."
 msgstr ""
 
-#: scripts/tower.lua:122
+#: scripts/tower.lua:125
 msgid ""
 "That is too bad. But if you would like to help in the future, please talk to "
 "the head of the Denorian Council."
 msgstr ""
 
-#: scripts/tower.lua:124
+#: scripts/tower.lua:127
 msgid "The Denorian village is south of here, by the mountain stream."
 msgstr ""
 
-#: scripts/tower.lua:129
+#: scripts/tower.lua:132
 msgid "Yes, I know. The Denorian Council told me about the missing statue."
 msgstr ""
 
-#: scripts/tower.lua:131 scripts/tower.lua:149
+#: scripts/tower.lua:134 scripts/tower.lua:152
 msgid "Yes, we know. The Denorian Council told us about the missing statue."
 msgstr ""
 
-#: scripts/tower.lua:133
+#: scripts/tower.lua:136
 msgid "Oh! So you've agreed to help?"
 msgstr ""
 
-#: scripts/tower.lua:134
+#: scripts/tower.lua:137
 msgid "Well ...mumble... no..."
 msgstr ""
 
-#: scripts/tower.lua:138
+#: scripts/tower.lua:141
 msgid "Not exactly..."
 msgstr ""
 
-#: scripts/tower.lua:139
+#: scripts/tower.lua:142
 msgid ""
 "We are a bit hurried in our quest to find... well, something of importance."
 msgstr ""
 
-#: scripts/tower.lua:141
+#: scripts/tower.lua:144
 msgid ""
 "Oh, I see. Your quest must be very important, then. Very well, I shall ask "
 "someone else."
 msgstr ""
 
-#: scripts/tower.lua:147
+#: scripts/tower.lua:150
 msgid ""
 "Yes, I know. The Denorian Council told me about the missing statue but I "
 "haven't found anything yet."
 msgstr ""
 
-#: scripts/tower.lua:150
+#: scripts/tower.lua:153
 msgid "We haven't found anything yet, however."
 msgstr ""
 
-#: scripts/tower.lua:152
+#: scripts/tower.lua:155
 msgid "Don't worry; I'm sure you'll find something. Good luck to you!"
 msgstr ""
 
-#: scripts/tower.lua:157
+#: scripts/tower.lua:160
 msgid ""
 "I am glad you stopped by, though. I hear some of the civil unrest in the "
 "goblin lands has let up somewhat."
 msgstr ""
 
-#: scripts/tower.lua:158
+#: scripts/tower.lua:161
 msgid "Yes, a Narakian named Demnas supposedly stole the missing statue."
 msgstr ""
 
-#: scripts/tower.lua:159
+#: scripts/tower.lua:162
 msgid "And did you get the statue back?"
 msgstr ""
 
-#: scripts/tower.lua:160
+#: scripts/tower.lua:163
 msgid ""
 "Well, only half of it. It seems it was broken in half before we ever got to "
 "it."
 msgstr ""
 
-#: scripts/tower.lua:162
+#: scripts/tower.lua:165
 msgid "Which means someone may still have it."
 msgstr ""
 
-#: scripts/tower.lua:164
+#: scripts/tower.lua:167
 msgid "Which means someone probably still has it."
 msgstr ""
 
-#: scripts/tower.lua:166
+#: scripts/tower.lua:169
 msgid "Could you do me a favor?"
 msgstr ""
 
-#: scripts/tower.lua:171
+#: scripts/tower.lua:174
 msgid "Thank you so very much."
 msgstr ""
 
-#: scripts/tower.lua:173
+#: scripts/tower.lua:176
 msgid ""
 "Well, that's alright. You've done enough already. Thank you so very much."
 msgstr ""
 
-#: scripts/tower.lua:178
+#: scripts/tower.lua:181
 msgid "I am glad you stopped by, though. I hear..."
 msgstr ""
 
-#: scripts/tower.lua:179
+#: scripts/tower.lua:182
 msgid "...wait!"
 msgstr ""
 
-#: scripts/tower.lua:181
+#: scripts/tower.lua:184
 msgid ""
 "This is the Denorian Statue. I rescued it from a guy named Demnas and his "
 "troll."
 msgstr ""
 
-#: scripts/tower.lua:183
+#: scripts/tower.lua:186
 msgid ""
 "This is the Denorian Statue. We rescued it from a guy named Demnas and his "
 "troll."
 msgstr ""
 
-#: scripts/tower.lua:185
+#: scripts/tower.lua:188
 msgid "So you did... What happened to it? Part of it is missing."
 msgstr ""
 
-#: scripts/tower.lua:191
+#: scripts/tower.lua:194
 msgid ""
 "I'm not too sure. He accused me of trying to steal the second half of it "
 "from him."
 msgstr ""
 
-#: scripts/tower.lua:193
+#: scripts/tower.lua:196
 msgid ""
 "We're not too sure. He accused us of trying to steal the second half of it "
 "from him."
 msgstr ""
 
-#: scripts/tower.lua:195
+#: scripts/tower.lua:198
 msgid "Second half? It sounds as if someone else may have gotten to him first."
 msgstr ""
 
-#: scripts/tower.lua:197
+#: scripts/tower.lua:200
 msgid "That's what I think as well."
 msgstr ""
 
-#: scripts/tower.lua:199
+#: scripts/tower.lua:202
 msgid "That's what we think as well."
 msgstr ""
 
-#: scripts/tower.lua:201
+#: scripts/tower.lua:204
 msgid ""
 "Well, either way, if you could return that half back to the Denorian "
 "village, it will help with the unrest."
 msgstr ""
 
-#: scripts/tower.lua:205
+#: scripts/tower.lua:208
 msgid ""
 "It was Malkaron's armies. They had a spat with Demnas and when the statue "
 "broke, they stole half of it."
 msgstr ""
 
-#: scripts/tower.lua:207
+#: scripts/tower.lua:210
 msgid "Demnas thought I was with them and locked me in with a troll."
 msgstr ""
 
-#: scripts/tower.lua:209
+#: scripts/tower.lua:212
 msgid "Demnas thought CORIN was with them and locked him in with a troll."
 msgstr ""
 
-#: scripts/tower.lua:211
+#: scripts/tower.lua:214
 msgid "Oh, how awful!"
 msgstr ""
 
-#: scripts/tower.lua:212
+#: scripts/tower.lua:215
 msgid ""
 "It's alright. Everything worked out. But now we have to consider Malkaron's "
 "involvement in this."
 msgstr ""
 
-#: scripts/tower.lua:213
+#: scripts/tower.lua:216
 msgid "Yes, I certainly hope you get to the bottom of this."
 msgstr ""
 
-#: scripts/tower.lua:214
+#: scripts/tower.lua:217
 msgid ""
 "Would you return the statue to the Denorian village? It is a very important "
 "treasure."
 msgstr ""
 
-#: scripts/tower.lua:218
+#: scripts/tower.lua:221
 msgid ""
 "I am glad you stopped by. The Denorians sent word that you returned part of "
 "their statue."
 msgstr ""
 
-#: scripts/tower.lua:219
+#: scripts/tower.lua:222
 msgid "Yea, well, someone had to do something about that whole mess..."
 msgstr ""
 
-#: scripts/tower.lua:221
+#: scripts/tower.lua:224
 msgid "An important question is, who has the other half?"
 msgstr ""
 
-#: scripts/tower.lua:223
+#: scripts/tower.lua:226
 msgid ""
 "That's a good question. I'm searching for the same person... or persons, for "
 "that matter."
 msgstr ""
 
-#: scripts/tower.lua:225
+#: scripts/tower.lua:228
 msgid "That's a good question. We're searching for the same person."
 msgstr ""
 
-#: scripts/tower.lua:226
+#: scripts/tower.lua:229
 msgid "Or persons, for that matter."
 msgstr ""
 
-#: scripts/tower.lua:228
+#: scripts/tower.lua:231
 msgid ""
 "Be careful. Whoever is out there may do rash and unpredictable things if he "
 "thinks you are following him."
 msgstr ""
 
-#: scripts/tower.lua:230
+#: scripts/tower.lua:233
 msgid "An important question is, what will we do about Malkaron's followers?"
 msgstr ""
 
-#: scripts/tower.lua:232
+#: scripts/tower.lua:235
 msgid "That's actually what I'm trying to find out."
 msgstr ""
 
-#: scripts/tower.lua:234
+#: scripts/tower.lua:237
 msgid "That's actually what we're trying to find out."
 msgstr ""
 
-#: scripts/tower.lua:236
+#: scripts/tower.lua:239
 msgid "If Malkaron is responsible for all this upheaval, you must be careful."
 msgstr ""
 
-#: scripts/tower.lua:237
+#: scripts/tower.lua:240
 msgid ""
 "One as strong as he may do rash and unpredictable things if he thinks you "
 "are following him."
 msgstr ""
 
-#: scripts/tower.lua:240
+#: scripts/tower.lua:243
 msgid "Yes, I was warned to keep my party small."
 msgstr ""
 
-#: scripts/tower.lua:242
+#: scripts/tower.lua:245
 msgid ""
 "Yes, we were warned to keep our numbers small. That's why we're traveling in "
 "a party of only two."
 msgstr ""
 
-#: scripts/tower.lua:244
+#: scripts/tower.lua:247
 msgid "Well, I wish you luck. Thank you for all you've done already."
 msgstr ""
 
-#: scripts/tower.lua:257
+#: scripts/tower.lua:260
 msgid ""
 "This whole thing sure seems fishy. I hope I can figure out what's going on."
 msgstr ""
 
-#: scripts/tower.lua:258
+#: scripts/tower.lua:261
 msgid ""
 "I wonder if this statue has anything to do with this missing staff Nostik "
 "wants everyone to find?"
 msgstr ""
 
-#: scripts/tower.lua:262
+#: scripts/tower.lua:265
 msgid "...I should probably stop talking to myself too."
 msgstr ""
 
-#: scripts/tower.lua:269
+#: scripts/tower.lua:272
 msgid "Hey $0."
 msgstr ""
 
-#: scripts/tower.lua:271
+#: scripts/tower.lua:274
 msgid "Yeah?"
 msgstr ""
 
-#: scripts/tower.lua:272
+#: scripts/tower.lua:275
 msgid ""
 "Do you think that this statue could have something to with this missing "
 "staff Nostik wants us to find?"
 msgstr ""
 
-#: scripts/tower.lua:273
+#: scripts/tower.lua:276
 msgid "Whoa, $1. Keep your voice down!"
 msgstr ""
 
-#: scripts/tower.lua:274
+#: scripts/tower.lua:277
 msgid "Oh, right. Sorry."
 msgstr ""
 
-#: scripts/tower.lua:275
+#: scripts/tower.lua:278
 msgid "So... do you?"
 msgstr ""
 
-#: scripts/tower.lua:276
+#: scripts/tower.lua:279
 msgid ""
 "I never thought of that. Let's hope that it doesn't. We have no choice but "
 "to go on anyways."
 msgstr ""
 
-#: scripts/tower.lua:277
+#: scripts/tower.lua:280
 msgid "Yeah, I guess you're right. Let's go."
 msgstr ""
 
-#: scripts/tower.lua:280
+#: scripts/tower.lua:283
 msgid "Oh, one last thing. I have a request of you before you go."
 msgstr ""
 
-#: scripts/tower.lua:284
+#: scripts/tower.lua:287
 msgid ""
 "If you can, please get rid of the monsters in the caves below. You can also "
 "use my TravelPoint in the caves as well."
 msgstr ""
 
-#: scripts/tower.lua:285
+#: scripts/tower.lua:288
 msgid "Good luck. I hope to meet with you again."
 msgstr ""
 
-#: scripts/tower.lua:290
+#: scripts/tower.lua:293
 msgid ""
 "The monsters in the caves below appeared out of nowhere. Please get rid of "
 "them so travelers who wish to use my TravelPoint may do so."
 msgstr ""
 
-#: scripts/tower.lua:301
+#: scripts/tower.lua:304
 msgid ""
 "Oracle! I saw Malkaron's monsters take some statue that looked like you "
 "through the portal below!"
 msgstr ""
 
-#: scripts/tower.lua:302 scripts/tower.lua:305
+#: scripts/tower.lua:305 scripts/tower.lua:308
 msgid "At least, it looked like part of a statue, anyway."
 msgstr ""
 
-#: scripts/tower.lua:304
+#: scripts/tower.lua:307
 msgid ""
 "Oracle! We saw Malkaron's monsters take some statue that looked like you "
 "through the portal below!"
 msgstr ""
 
-#: scripts/tower.lua:307
+#: scripts/tower.lua:310
 msgid ""
 "That must have been the Denorian's statue; that has been stolen from the "
 "village to the south."
 msgstr ""
 
-#: scripts/tower.lua:312
+#: scripts/tower.lua:315
 msgid ""
 "Oracle! I saw Malkaron's monsters take the stolen statue through the portal "
 "below!"
 msgstr ""
 
-#: scripts/tower.lua:314
+#: scripts/tower.lua:317
 msgid ""
 "Oracle! We saw Malkaron's monsters take your statue through the portal below!"
 msgstr ""
 
-#: scripts/tower.lua:317
+#: scripts/tower.lua:320
 msgid "You must go after it! That statue is very important to my people."
 msgstr ""
 
-#: scripts/tower.lua:321
+#: scripts/tower.lua:324
 msgid "Please hurry and get that statue back!"
 msgstr ""
 
-#: scripts/tower.lua:324 scripts/town1.lua:313
+#: scripts/tower.lua:327 scripts/town1.lua:313
 msgid "Welcome back."
 msgstr ""
 
-#: scripts/tower.lua:325
+#: scripts/tower.lua:328
 msgid "Oracle! The monsters went through the portal below with your statue!"
 msgstr ""
 
-#: scripts/tower.lua:327
+#: scripts/tower.lua:330
 msgid "I went through the portal, but was sent to Maldea somehow."
 msgstr ""
 
-#: scripts/tower.lua:329
+#: scripts/tower.lua:332
 msgid "We went through the portal, but were was sent to Maldea somehow."
 msgstr ""
 
-#: scripts/tower.lua:331
+#: scripts/tower.lua:334
 msgid ""
 "Yes, the statue probably disrupted the portal somehow. I'm glad to see you "
 "made it back safely."
 msgstr ""
 
-#: scripts/tower.lua:333
+#: scripts/tower.lua:336
 msgid "I ask you to find the missing statue, if you possibly can."
 msgstr ""
 
-#: scripts/tower.lua:335
+#: scripts/tower.lua:338
 msgid ""
 "Please continue your search for the statue. It is very important to my "
 "people."
 msgstr ""
 
-#: scripts/tower.lua:337
+#: scripts/tower.lua:340
 msgid "And would you be able to take care of the monsters in the caves below?"
 msgstr ""
 
-#: scripts/tower.lua:341
+#: scripts/tower.lua:344
 msgid "I thank you for looking into the missing statue situation."
 msgstr ""
 
-#: scripts/tower.lua:342
+#: scripts/tower.lua:345
 msgid ""
 "There are still monsters lurking around in the caves below. Please get rid "
 "of them."
 msgstr ""
 
-#: scripts/tower.lua:345
+#: scripts/tower.lua:348
 msgid "The monsters are gone! Thank you so much!"
 msgstr ""
 
-#: scripts/tower.lua:483
+#: scripts/tower.lua:486
 msgid "Wow! There are a lot of strange books here."
 msgstr ""
 
-#: scripts/tower.lua:523 scripts/tower.lua:553
+#: scripts/tower.lua:526 scripts/tower.lua:556
 msgid "Black Stone procured!"
 msgstr ""
 
-#: scripts/tower.lua:533 scripts/tower.lua:543
+#: scripts/tower.lua:536 scripts/tower.lua:546
 msgid "White Stone procured!"
 msgstr ""
 
-#: scripts/tower.lua:576
+#: scripts/tower.lua:579
 msgid "Oh! I think I stepped on a switch!"
 msgstr ""
 
-#: scripts/tower.lua:659
+#: scripts/tower.lua:662
 msgid "The Oracle is not to be disturbed!"
 msgstr ""
 
-#: scripts/tower.lua:859
+#: scripts/tower.lua:862
 msgid "What stone will you place?"
 msgstr ""
 
-#: scripts/tower.lua:860
+#: scripts/tower.lua:863
 msgid "  black"
 msgstr ""
 
-#: scripts/tower.lua:861
+#: scripts/tower.lua:864
 msgid "  white"
 msgstr ""
 
@@ -7175,21 +7175,21 @@ msgstr "*MODO TRAMPAS ENCENDIDO*"
 msgid "*DEBUG MODE ON*"
 msgstr "*MODO DEPURACIÓN ENCENDIDO*"
 
-#: src/draw.c:1240
+#: src/draw.c:1242
 msgid "UTF-8 decode error"
 msgstr ""
 
-#: src/draw.c:1295
+#: src/draw.c:1297
 #, c-format
 msgid "Invalid glyph index: %d"
 msgstr ""
 
-#: src/draw.c:1317
+#: src/draw.c:1319
 #, c-format
 msgid "print_font: Bad font index, %d"
 msgstr ""
 
-#: src/draw.c:1352
+#: src/draw.c:1354
 #, c-format
 msgid "print_num: Bad font index, %d"
 msgstr ""
@@ -7551,55 +7551,55 @@ msgstr "Nada para robar!"
 msgid "Couldn't steal!"
 msgstr "Imposible robar!"
 
-#: src/intrface.c:633
+#: src/intrface.c:635
 msgid "Cheating complete."
 msgstr "Trampa completada."
 
-#: src/intrface.c:657
+#: src/intrface.c:659
 msgid "Could not initialise scripting engine"
 msgstr "Imposible inicializar el motor de scripting"
 
-#: src/intrface.c:902
+#: src/intrface.c:904
 #, c-format
 msgid "Marker %s not found."
 msgstr "Marcador %s no encontrado."
 
-#: src/intrface.c:1520
+#: src/intrface.c:1524
 #, c-format
 msgid "Found %d gp!"
 msgstr "Encontráste %d po!"
 
-#: src/intrface.c:1552
+#: src/intrface.c:1556
 #, c-format
 msgid "%s procured!"
 msgstr "Obtienes %s!"
 
-#: src/intrface.c:1554
+#: src/intrface.c:1558
 #, c-format
 msgid "%s ^%d procured!"
 msgstr "Obtienes %s ^%d!"
 
-#: src/intrface.c:1562
+#: src/intrface.c:1566
 #, c-format
 msgid "%s not taken!"
 msgstr "%s rechazados!"
 
-#: src/intrface.c:1564
+#: src/intrface.c:1568
 #, c-format
 msgid "%s ^%d not taken!"
 msgstr "%s ^%d rechazados!"
 
-#: src/intrface.c:2855
+#: src/intrface.c:2847
 msgid "Choose one"
 msgstr "Escoge Uno"
 
-#: src/intrface.c:3898
+#: src/intrface.c:3888
 #, c-format
 msgid "Tried to add too many different items to a shop. Maximum is %d\n"
 msgstr ""
 "Intento de adicionar muchos ítems diferentes a una tienda. El Máximo es %d\n"
 
-#: src/intrface.c:3949
+#: src/intrface.c:3937
 #, c-format
 msgid ""
 "%s\n"
@@ -7608,26 +7608,26 @@ msgstr ""
 "%s\n"
 "Traza de Pila:\n"
 
-#: src/intrface.c:3952
+#: src/intrface.c:3940
 #, c-format
 msgid "#%d Line %d in (%s %s) %s\n"
 msgstr "Línea #%d %d en (%s %s) %s\n"
 
-#: src/intrface.c:3956
+#: src/intrface.c:3944
 msgid "Script error. See allegro.log"
 msgstr "Error del script. Vea allegro.log"
 
-#: src/intrface.c:4088
+#: src/intrface.c:4072
 #, fuzzy, c-format
 msgid "Could not open script %s.lob!"
 msgstr "Imposible abrir el script %s.lob!"
 
-#: src/intrface.c:4094
+#: src/intrface.c:4078
 #, c-format
 msgid "Could not parse script %s!"
 msgstr "Imposible parsear el script %s!"
 
-#: src/intrface.c:4100
+#: src/intrface.c:4084
 #, c-format
 msgid "lua_pcall failed while calling script %s!"
 msgstr "lua_pcall falló al llamar el script %s!"
@@ -7677,80 +7677,80 @@ msgstr "Sabiduría sube!"
 msgid "%s learned!"
 msgstr "aprendiste %s!"
 
-#: src/kq.c:466
+#: src/kq.c:467
 #, c-format
 msgid "Could not allocate %s!."
 msgstr "Imposible asignar %s!."
 
-#: src/kq.c:725
+#: src/kq.c:726
 msgid "Could not open treasure.log!"
 msgstr "Imposible abrir treasure.log!"
 
-#: src/kq.c:732
+#: src/kq.c:733
 msgid "Could not open progress.log!"
 msgstr "Imposible abrir progress.log!"
 
-#: src/kq.c:938
+#: src/kq.c:939
 msgid "Could not load character graphics!"
 msgstr "Imposible cargar los gráficos de carácter!"
 
-#: src/kq.c:1023
+#: src/kq.c:1024
 msgid "Alt+W Pressed:"
 msgstr "Alt+W Presionado:"
 
-#: src/kq.c:1036
+#: src/kq.c:1037
 #, c-format
 msgid "Program terminated: user pressed Alt+X"
 msgstr "Programa terminado: el usuario presiono Alt+X"
 
-#: src/kq.c:1062
+#: src/kq.c:1063
 msgid "Cannot open hero data file"
 msgstr "Imposible abrir el archivo de datos del heroe"
 
-#: src/kq.c:1073
+#: src/kq.c:1074
 msgid "Could not load kqfaces.pcx!"
 msgstr "Imposible cargar kqfaces.pcx!"
 
-#: src/kq.c:1111
+#: src/kq.c:1112
 #, c-format
 msgid "Could not load map %s!"
 msgstr "Imposible cargar el mapa %s!"
 
-#: src/kq.c:1155
+#: src/kq.c:1156
 #, c-format
 msgid "Sorry, no help screen at this time.\n"
 msgstr "Perdón, por ahora no tenemos pantalla de ayuda.\n"
 
-#: src/kq.c:1486
+#: src/kq.c:1491
 msgid "X-ALT pressed... exiting."
 msgstr "X-ALT presionado... saliendo."
 
-#: src/kq.c:1611
+#: src/kq.c:1616
 #, c-format
 msgid "Error with sound: %s\n"
 msgstr "Error con el sounido: %s\n"
 
-#: src/kq.c:1631
+#: src/kq.c:1636
 msgid "Only joysticks/gamepads with at least 4 buttons can be used."
 msgstr "Solo joysticks/gamepads con al menos 4 botones pueden ser utilizados."
 
-#: src/kq.c:1640
+#: src/kq.c:1645
 msgid "Could not load misc.pcx!"
 msgstr "Imposible cargar misc.pcx!"
 
-#: src/kq.c:1714
+#: src/kq.c:1719
 msgid "Could not load tileset.kq"
 msgstr "Imposible cargar tileset.kq"
 
-#: src/kq.c:1721
+#: src/kq.c:1726
 msgid "Too many tilesets defined in tileset.kq"
 msgstr "Demasiados tilesets definidos en tileset.kq"
 
-#: src/kq.c:1857
+#: src/kq.c:1862
 msgid "X-Alt pressed - exiting"
 msgstr "X-Alt presionado - saliendo"
 
-#: src/kq.c:1946
+#: src/kq.c:1951
 msgid "Repulse has worn off!"
 msgstr "Se ha acabado la Repulsión!"
 

@@ -1,5 +1,5 @@
-scripts/bridge2.lua
 scripts/bridge.lua
+scripts/bridge2.lua
 scripts/camp.lua
 scripts/cave1.lua
 scripts/cave2.lua
@@ -17,8 +17,8 @@ scripts/esteria.lua
 scripts/fort.lua
 scripts/global.lua
 scripts/goblin.lua
-scripts/grotto2.lua
 scripts/grotto.lua
+scripts/grotto2.lua
 scripts/guild.lua
 scripts/init.lua
 scripts/main.lua
@@ -41,4 +41,3 @@ scripts/town6.lua
 scripts/town7.lua
 scripts/town8.lua
 scripts/tunnel.lua
-
