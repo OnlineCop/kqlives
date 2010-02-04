@@ -51,7 +51,7 @@ end
 
 
 function LOC_choose_hero()
--- It is unfair to ask the player to choose a character when they no nothing
+-- It is unfair to ask the player to choose a character when they know nothing
 -- about the game, or what the stats mean. So we automatically choose NOSLOM.
 -- The player can set their party however they want later in the game. --WK
 
@@ -269,12 +269,10 @@ function LOC_storyline(en)
     set_ent_script(HERO1, "R2F1W30")
     wait_for_entity(HERO1, HERO1)
 
-    bubble(HERO1, "$0:",
-                  _"What was that?")
+    bubble(HERO1, "$0:", _"What was that?")
     set_ftile("wall", 310)
     wait(30)
-    bubble(HERO1, "$0:",
-                  _"That wasn't there a second ago!")
+    bubble(HERO1, "$0:", _"That wasn't there a second ago!")
 
     set_ent_script(HERO1, "U1")
     wait_for_entity(HERO1, HERO1)
@@ -296,8 +294,7 @@ function LOC_storyline(en)
     set_ent_script(HERO1, "U7")
     wait_for_entity(HERO1, HERO1)
 
-    bubble(HERO1, "$0:",
-                  _"Oh, no. I hope this isn't another eviction notice.")
+    bubble(HERO1, "$0:", _"Oh, no. I hope this isn't another eviction notice.")
 
     wait(25)
     set_mtile("door", 0)
@@ -323,8 +320,7 @@ function LOC_storyline(en)
     set_ent_script(HERO1, "U7")
     wait_for_entity(HERO1, HERO1)
 
-    bubble(HERO1, "$0:",
-                  _"You wanted to see me sir?")
+    bubble(HERO1, "$0:", _"You wanted to see me sir?")
     bubble(1, _"Yes $0. It is time for you to leave the temple and discover the world. I have found the perfect way for you to do that.")
     bubble(HERO1, _"Excellent sir. What am I to do?")
     bubble(1, _"A note addressed to you has mysteriously appeared on the door of your private chambers. It was brought to me.")
@@ -366,8 +362,7 @@ function LOC_storyline(en)
     set_ent_script(HERO1, "F2W30F1W30F3W50U2R1")
     wait_for_entity(HERO1, HERO1)
 
-    bubble(HERO1, "$0:",
-                  _"Come out, come out, wherever you are, Nella!")
+    bubble(HERO1, "$0:", _"Come out, come out, wherever you are, Nella!")
 
     set_ent_script(HERO1, "R1U1W30F2W30F1W30F3W30")
     wait_for_entity(HERO1, HERO1)
@@ -421,8 +416,7 @@ function LOC_storyline(en)
     set_ent_script(HERO1, "L9")
     wait_for_entity(HERO1, HERO1)
 
-    bubble(HERO1, "$0:",
-                  _"I was told you had a new mission for me, sir.")
+    bubble(HERO1, "$0:", _"I was told you had a new mission for me, sir.")
     bubble(2, _"Yes $0. A message from Military Intelligence came for you today. You are to go to Reisha Mountain.")
     bubble(HERO1, _"Yes, sir. What are my orders?")
     bubble(2, _"This is the letter which we received.")
@@ -449,8 +443,7 @@ function LOC_storyline(en)
     set_ftile("table", 312)
     wait(50)
 
-    bubble(HERO1, "$0:",
-                   _"This is so perfect.")
+    bubble(HERO1, "$0:", _"This is so perfect.")
     bubble(HERO1, _"Just as my luck starts running out, along comes an opportunity to get out of town, and possibly make some serious coin on the way.")
     bubble(HERO1, _"Anyone this desperate must have a lot of dough to back it up, and I'm just the one to steal it from him!")
 
@@ -468,8 +461,7 @@ function LOC_storyline(en)
 
     set_ent_speed(HERO1, 5)
 
-    bubble(HERO1, "$0:",
-                  _"This does not look good. I'm almost positive the handwriting on this note is the same as...")
+    bubble(HERO1, "$0:", _"This does not look good. I'm almost positive the handwriting on this note is the same as...")
     wait(50)
     set_ent_facing(HERO1, FACE_DOWN)
     wait(50)
