@@ -1,3 +1,7 @@
+2010-02-04  onlinecop  <onlinecop@gmail.com>
+
+	* Makefile.am had redundancies that needed to be cleaned up.
+
 2009-12-14  peterhull90  <peterhull90@iMac.local>
 
 	* src/win.c:
@@ -2504,7 +2508,7 @@
 	* src/scrnshot.c: added #include <stdio.h>
 
 	* src/kq.c: added screen shot support (from Matthew)
-	
+
 
 /*
    KQ is Copyright (C) 2002 by Josh Bolduc
