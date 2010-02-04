@@ -10,7 +10,8 @@ CFLAGS+=-I../include
 
 all: mapdraw$(EXE_SUFFIX) mapdump$(EXE_SUFFIX) mapdiff$(EXE_SUFFIX)
 
-mapdraw$(EXE_SUFFIX): bounds.o disk.o mapdata.o mapedit.o mapent.o mapfile.o mapshared.o mapstructs.o 
+mapdraw$(EXE_SUFFIX): bounds.o disk.o mapdata.o mapedit.o mapent.o \
+	mapfile.o mapshared.o mapstructs.o
 	$(LINK.o) $^ -o $@ $(LDFLAGS)
 
 disk.o: ../src/disk.c $(DISK_H)
