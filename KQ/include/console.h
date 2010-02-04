@@ -19,9 +19,14 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#ifndef __CONSOLE_H__
-#define __CONSOLE_H__
+
+#ifndef __CONSOLE_H
+#define __CONSOLE_H
+
+
 void display_console(int xofs, int yofs);
 void run_console(void);
 void scroll_console(const char* text);
-#endif /*__CONSOLE_H__ */
+
+
+#endif  /* __CONSOLE_H */
