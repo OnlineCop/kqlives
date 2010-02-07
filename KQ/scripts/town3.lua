@@ -261,7 +261,7 @@ function LOC_talk_tsorin(en)
     bubble(en, _"That would be wonderful! Find the Oracle to the south and ask her what she would like you to do.")
     bubble(en, _"Present this Seal to the guards, and tell them that you're acting with my authority.")
     msg(_"Tsorin's Seal procured!", 25, 0)
-    bubble(en, _"I'm fear I cannot send anyone to protect you - you must take the utmost care.")
+    bubble(en, _"I'm afraid I cannot send anyone to protect you - you must take the utmost care.")
     set_progress(P_TALK_TSORIN, 3)
     remove_special_item(SI_NOTE_DERIG)
   elseif (get_progress(P_TALK_TSORIN) == 3) then
