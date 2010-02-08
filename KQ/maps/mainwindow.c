@@ -322,8 +322,8 @@ static gboolean on_map_button_press_event (GtkWidget *widget, GdkEventButton *ev
 
          i = gmap.num_bound_boxes;
 
-         temp_bound.x1 = x;
-         temp_bound.y1 = y;
+         temp_bound.left = x;
+         temp_bound.top = y;
          bound_dragging = TRUE;
          break;
 
@@ -388,8 +388,8 @@ static gboolean on_map_button_release_event(GtkWidget *widget, GdkEventButton *e
    case BOUNDING_FLAG:
       if (bound_dragging) {
          i = gmap.num_bound_boxes;
-         x1 = temp_bound.x1;
-         y1 = temp_bound.y1;
+         x1 = temp_bound.left;
+         y1 = temp_bound.top;
 
          set_bounds (&temp_bound, x1, y1, x, y);
 
