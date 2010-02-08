@@ -63,10 +63,10 @@ PACKAGE_OBJ = fix.bat    \
 ###############################################################################
 
 RES_C=src/res.c
-FILES:= bounds.c combat.c credits.c disk.c draw.c effects.c enemyc.c entity.c \
-	eqpmenu.c eskill.c fade.c heroc.c hskill.c intrface.c itemmenu.c kq.c \
-	magic.c masmenu.c menu.c movement.c music_dumb.c music_jgmod.c res.c \
-	scrnshot.c selector.c setup.c sgame.c shopmenu.c timing.c $(EXTRAFILES)
+FILES := bounds.c combat.c console.c credits.c disk.c draw.c effects.c enemyc.c \
+	entity.c eqpmenu.c eskill.c fade.c heroc.c hskill.c intrface.c itemmenu.c \
+	kq.c magic.c masmenu.c menu.c movement.c music.c res.c scrnshot.c \
+	selector.c setup.c sgame.c shopmenu.c timing.c $(EXTRAFILES)
 
 
 #                                                                             #
