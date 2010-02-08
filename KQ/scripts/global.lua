@@ -236,6 +236,18 @@ function bubble(ent, ...)
 end
 
 
+function portbubble(ent, ...)
+  s = ""
+  for i = 1, arg.n do
+    if (i ~= 1) then
+      s = s.."\n"
+    end
+    s = s..arg[i]
+  end
+  portbubble_ex(ent, s)
+end
+
+
 -- See function bubble()
 function thought(ent, ...)
   s = ""
@@ -250,15 +262,43 @@ function thought(ent, ...)
 end
 
 
+function portthought(ent, ...)
+  s = ""
+  for i = 1, arg.n do
+    if (i ~= 1) then
+      s = s.."\n"..arg[i]
+    else
+      s = s..arg[i]
+    end
+  end
+  portthought_ex(ent, s)
+end
+
+
+function gameover(ent, ...)
+  s = ""
+  for i = 1, arg.n do
+    if (i ~= 1) then
+      s = s.."\n"..arg[i]
+    else
+      s = s..arg[i]
+    end
+  end
+  portbubble(ent, s)
+  gameover_ex()
+end
+
+
 function get_quest_info()
    if LOC_add_quest_item then
       LOC_add_quest_item()
    end
 
-   add_quest_item("About...", "This doesn't do much yet")
-   add_quest_item("Test1", "Some test info")
-   add_quest_item("Sensar", "He rages!")
+   add_quest_item(_"About...", _"This doesn't do much yet")
+   add_quest_item(_"Test1",    _"Some test info")
+   add_quest_item(_"Sensar",   _"He rages!")
 end
+
 
 -- backward compat
 change_mapm = change_map
@@ -353,17 +393,17 @@ function book_talk(ent)
     bubble(HERO1, pick(_"Reading makes me sleepy...",
            _"So many books...",
            _"Reading is for wimps."))
-  
+
   elseif (party[0] == Temmin) then
-  bubble(HERO1, pick(_"If only I had more time...",
-         _"So many books...",
-         _"Some of these are pretty old."))
-  
+    bubble(HERO1, pick(_"If only I had more time...",
+           _"So many books...",
+           _"Some of these are pretty old."))
+
   elseif (party[0] == Sarina) then
-  bubble(HERO1, pick(_"Ugh... this would take me forever to read.",
-         _"I never liked reading.",
-         _"Who wrote this trash?"))
-  
+    bubble(HERO1, pick(_"Ugh... this would take me forever to read.",
+           _"I never liked reading.",
+           _"Who wrote this trash?"))
+
   elseif (party[0] == Noslom) then
     bubble(HERO1, pick(_"Fascinating.",
            _"I have this one.",
@@ -378,18 +418,18 @@ function book_talk(ent)
     bubble(HERO1, pick(_"I don't have time for this.",
           _"What language is this written in?",
           _"The pages are stuck together!?"))
-	
+
   elseif (party[0] == Casandra) then
     bubble(HERO1, pick(_"Boring.",
            _"Somebody should burn these.",
            _"Terrible... just terrible."))
-	
+
   elseif (party[0] == Corin) then
-	 bubble(HERO1, pick(_"Doesn't anybody leave spellbooks lying around?",
+    bubble(HERO1, pick(_"Doesn't anybody leave spellbooks lying around?",
            _"Why would I read this?",
            _"Can't talk... reading."))
   else
-    msg("Script Error. global.lua:book_talk()", 255, 0)
+    message("Script Error. global.lua:book_talk()", 255, 0)
   end
 
 end
@@ -398,12 +438,12 @@ end
 -- This function can be called whenever the hero touches a fire
 function touch_fire(ent)
   local x
-  
+
   if (party[0] == Sensar) then
     bubble(HERO1, pick(_"What th..? Ouch! That's hot!",
            _"There's no way I'm sticking my hand in that fire!",
            _"This feels pretty nice."))
-           
+
   elseif (party[0] == Temmin) then
     bubble(HERO1, pick(_"Ah, the age-old fire.",
            _"This needs more coal.",
@@ -428,7 +468,7 @@ function touch_fire(ent)
     bubble(HERO1, pick(_"I wonder how hot this is?",
            _"Someone should clean all this soot out of here.",
            _"Well, my face is warm now, but my butt is still freezing!"))
-  
+
   elseif (party[0] == Casandra) then
     bubble(HERO1, pick(_"Something's burning. I hope it's one of those stupid books!",
            _"The fire is getting low.",
@@ -438,11 +478,11 @@ function touch_fire(ent)
     bubble(HERO1, pick(_"I sure like fire.",
            _"Watching this is relaxing.",
            _"This is making me sleepy."))
-           
+
   else
-    msg("Script Error. global.lua:touch_fire()", 255, 0)
+    message("Script Error. global.lua:touch_fire()", 255, 0)
   end
-  
+
 end
 
 
