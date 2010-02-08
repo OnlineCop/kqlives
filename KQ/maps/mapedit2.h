@@ -47,33 +47,29 @@ enum
    ENTITY_N_COLUMNS
 };
 
-#define OBSTACLES_CYCLE 6 /* MAX_OBSTACLES + 1 */
-#define ZONES_UP 257 /* MAX_ZONES + 1 */
-#define ZONES_DOWN 258 /* MAX_ZONES + 2 */
+#define OBSTACLES_CYCLE 6       /* MAX_OBSTACLES + 1 */
+#define ZONES_UP 257            /* MAX_ZONES + 1 */
+#define ZONES_DOWN 258          /* MAX_ZONES + 2 */
 
-void do_draw_map (cairo_t * cr, GdkRectangle * area, unsigned int layerflags);
-void do_draw_palette (cairo_t * cr, GdkRectangle * area, unsigned int w,
-                      unsigned int layer, unsigned int tile);
-void do_draw_tile (cairo_t * cr, unsigned int layer, unsigned int tile);
-void do_new_map (int x, int y, int tileset);
-void do_load_map (const char *filename);
-unsigned int get_tile_at (unsigned int x, unsigned int y, unsigned int layer);
-void set_tile_at (unsigned int tile, unsigned int x, unsigned int y,
-                  unsigned int layer);
-void set_obstacle_at (unsigned int obstacle, unsigned int x, unsigned int y);
-void set_zone_at (unsigned int zone, unsigned int x, unsigned int y);
-void set_marker_at_loc (char * value, unsigned int x, unsigned int y);
-void remove_marker (unsigned int x, unsigned int y);
-char * get_marker_value (unsigned int x, unsigned int y);
-unsigned int get_zone_at (unsigned int x, unsigned int y);
-void map_change (unsigned int x, unsigned int y);
 
+void change_entity_model (GtkListStore *, int, char *, char *);
 void convert_icons (void);
-
-
+void do_draw_map (cairo_t *, GdkRectangle *, unsigned int);
+void do_draw_palette (cairo_t *, GdkRectangle *, unsigned int, unsigned int, unsigned int);
+void do_draw_tile (cairo_t *, unsigned int, unsigned int);
+void do_load_map (const char *);
+void do_new_map (int, int, int);
+void fill_entity_model (GtkListStore *, int);
+char *get_marker_value (unsigned int, unsigned int);
+unsigned int get_tile_at (unsigned int, unsigned int, unsigned int);
+unsigned int get_zone_at (unsigned int, unsigned int);
 GtkListStore *create_entity_model (void);
-void fill_entity_model (GtkListStore * store, int entity);
-void change_entity_model (GtkListStore * store, int entity, char *valuepath,
-                          char *value);
+void map_change (unsigned int, unsigned int);
+void remove_marker (unsigned int, unsigned int);
+void set_marker_at_loc (char *, unsigned int, unsigned int);
+void set_obstacle_at (unsigned int, unsigned int, unsigned int);
+void set_tile_at (unsigned int, unsigned int, unsigned int, unsigned int);
+void set_zone_at (unsigned int, unsigned int, unsigned int);
 
-#endif // MAPEDIT2_H_INC
+
+#endif  // MAPEDIT2_H_INC

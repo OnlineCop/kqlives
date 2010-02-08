@@ -129,7 +129,7 @@ unsigned short *map, *b_map, *f_map, *c_map, *cf_map, *cb_map;
 unsigned char *z_map, *sh_map, *o_map, *cz_map, *csh_map, *co_map;
 unsigned char *search_map;
 
-s_bound bound_box[MAX_BOUNDS]; // WK - not redundant. Used on line 266
+s_bound bound_box[MAX_BOUNDS];  // WK - not redundant. Used on line 266
 
 /*! \brief Blit to screen
  *
@@ -187,7 +187,7 @@ void load_map (const char *path)
    }
 
    strcpy (map_path, load_fname);
-   strcpy (map_fname, get_filename(load_fname));
+   strcpy (map_fname, get_filename (load_fname));
 
    load_s_map (&gmap, pf);
 
@@ -256,8 +256,8 @@ void load_map (const char *path)
       adata[i] = tanim[gmap.tileset][i];
 
    /* Note: try to use gmap.num_markers, rather than num_markers. It is bad
-   programming practice to store the same variable in multiple places.
-   mapdraw2 uses gmap.num_markers exclusively. */
+      programming practice to store the same variable in multiple places.
+      mapdraw2 uses gmap.num_markers exclusively. */
    num_markers = gmap.num_markers;
 
    num_bound_boxes = gmap.num_bound_boxes;
@@ -277,14 +277,15 @@ void load_map (const char *path)
 void set_pcx (BITMAP ** pcx_buf, const char *pcx_file, PALETTE pcx_pal,
               const int critical)
 {
-	char filename[PATH_MAX];
-	sprintf(filename, "%s/data/%s", KQ_DATA, pcx_file);
+   char filename[PATH_MAX];
+
+   sprintf (filename, "%s/data/%s", KQ_DATA, pcx_file);
 
    if (exists (filename))
       *pcx_buf = load_pcx (filename, pcx_pal);
    else {
       if (exists (pcx_file))
-      	*pcx_buf = load_pcx (pcx_file, pcx_pal);
+         *pcx_buf = load_pcx (pcx_file, pcx_pal);
       else {
          sprintf (strbuf, "Could not find file: %s.\n", pcx_file);
 
@@ -325,13 +326,13 @@ void shared_startup (void)
 
    set_palette (pal);
 
-	/* Give several variables sane defaults */
+   /* Give several variables sane defaults */
 
-	map = b_map = f_map = c_map = cf_map = cb_map = 0;
-	z_map = sh_map = o_map = cz_map = csh_map = co_map = 0;
-	search_map = 0;
-	gmap.markers = NULL;
-	gmap.num_markers = num_markers = 0;
+   map = b_map = f_map = c_map = cf_map = cb_map = 0;
+   z_map = sh_map = o_map = cz_map = csh_map = co_map = 0;
+   search_map = 0;
+   gmap.markers = NULL;
+   gmap.num_markers = num_markers = 0;
 
 
    /* Used for icons */
@@ -447,6 +448,7 @@ void visual_map (s_show showing, const char *save_fname)
             draw_sprite (bmp, mesh1[o_map[w] - 1], i * 16, j * 16);
 
          if ((showing.zones) && (z_map[w] > 0)) {
+
 /* This check is here because of the differing versions of the Allegro library */
 #ifdef HAVE_TEXT_EX
             if (z_map[w] < 10) {
@@ -524,8 +526,8 @@ void visual_map (s_show showing, const char *save_fname)
    /* Show boundary boxes */
    if (showing.boundaries == 1) {
       for (i = 0; i < gmap.num_bound_boxes; i++) {
-         rect (bmp, bound_box[i].x1 * 16, bound_box[i].y1 * 16,
-               bound_box[i].x2 * 16 + 15, bound_box[i].y2 * 16 + 15, 24);
+         rect (bmp, bound_box[i].left * 16, bound_box[i].top * 16,
+               bound_box[i].right * 16 + 15, bound_box[i].bottom * 16 + 15, 24);
       }
    }
 

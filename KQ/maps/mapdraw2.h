@@ -33,6 +33,7 @@ int get_entity_at (unsigned int x, unsigned int y);
 extern s_map gmap;
 extern s_entity gent[];
 extern unsigned short *map, *b_map, *f_map, *c_map, *cf_map, *cb_map;
+
 #define MAX_TILES    1024
 #define ICONSET_SIZE   20       /* Number of icons shown in the icon map */
 extern short max_sets;

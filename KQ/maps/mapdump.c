@@ -139,12 +139,13 @@ int main (int argc, char *argv[])
    setlocale (LC_ALL, "");
    bindtextdomain (PACKAGE, KQ_LOCALE);
    textdomain (PACKAGE);
-   
+
    char fn[PATH_MAX], *filenames[PATH_MAX];
    int i, number_of_files = 0, verbose = 0;
    int force_overwrite = 0;
    char *output_ext = "pcx";
    COLOR_MAP cmap;
+
    /* Regular and default values (incase an option is not specified) */
    s_show showing, d_showing;
 
@@ -228,9 +229,7 @@ int main (int argc, char *argv[])
             if (number_of_files < PATH_MAX)
                filenames[number_of_files++] = argv[i];
             else {
-               fprintf (stderr,
-                        "Too many files specified on command line (max %d)\n",
-                        PATH_MAX);
+               fprintf (stderr, "Too many files specified on command line (max %d)\n", PATH_MAX);
                return 1;
             }
          } else
@@ -290,7 +289,8 @@ int main (int argc, char *argv[])
                fprintf (stdout, "  - \"%s\" created with mode \"%d\"\n", fn,
                         gmap.map_mode);
          } else {
-            fprintf (stdout, "Warning: The file \"%s\" already exists.\n         Use the \"%s\" or \"%s\" option to force overwrite.\n",
+            fprintf (stdout,
+                     "Warning: The file \"%s\" already exists.\n         Use the \"%s\" or \"%s\" option to force overwrite.\n",
                      fn, OPTION_OVERWRITE, OPTION_OVERWRITE_LONG);
          }
       }

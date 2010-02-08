@@ -40,10 +40,11 @@ static cairo_surface_t *gdk_marker_image;
 static cairo_surface_t *gdk_marker_image_active;
 
 
-static cairo_surface_t *convert_icon (BITMAP * icon, gboolean transparency)
+static cairo_surface_t *convert_icon (BITMAP *icon, gboolean transparency)
 {
    int row, col;
    unsigned char *gdk_icon_data;
+
    gdk_icon_data = malloc (icon->h * icon->w * 4);
    for (row = 0; row < icon->h; ++row) {
       for (col = 0; col < icon->w; ++col) {
@@ -56,6 +57,7 @@ static cairo_surface_t *convert_icon (BITMAP * icon, gboolean transparency)
             gdk_icon_data[(row * 16 + col) * 4 + 3] = 0x80;
          } else {
             unsigned char alpha = 0xff - icon->line[row][col * 4 + 3];
+
             gdk_icon_data[(row * 16 + col) * 4 + 0] = icon->line[row][col * 4 + 2] * alpha / 0xff;      // blue
             gdk_icon_data[(row * 16 + col) * 4 + 1] = icon->line[row][col * 4 + 1] * alpha / 0xff;      // green
             gdk_icon_data[(row * 16 + col) * 4 + 2] = icon->line[row][col * 4 + 0] * alpha / 0xff;      // red
@@ -66,12 +68,14 @@ static cairo_surface_t *convert_icon (BITMAP * icon, gboolean transparency)
    cairo_surface_t *s =
       cairo_image_surface_create_for_data (gdk_icon_data, CAIRO_FORMAT_ARGB32,
                                            icon->w, icon->h, 0);
+
    return s;
 }
 
 void convert_icons (void)
 {
    int i, j;
+
    for (i = 0; i < MAX_TILES; ++i) {
       if (!icons[i]) {
          printf ("icons[%d] is 0", i);
@@ -107,8 +111,8 @@ void convert_icons (void)
 void do_new_map (int x, int y, int tileset)
 {
 
-	/* This should go in another function */
-	
+   /* This should go in another function */
+
    /* Default values for the new map */
    gmap.map_no = 0;
    gmap.zero_zone = 0;
@@ -136,10 +140,9 @@ void do_new_map (int x, int y, int tileset)
    gmap.bound_box = NULL;
 
    active_bound = 0;
-	/* */
 
-	bufferize();
-	load_iconsets(pal);
+   bufferize ();
+   load_iconsets (pal);
    convert_icons ();
 
    /* FIXME: load_map should do this */
@@ -214,8 +217,7 @@ void do_draw_map (cairo_t * cr, GdkRectangle * area, unsigned int layerflags)
                                       dy * 16);
             cairo_paint (cr);
          }
-         if (layerflags & SHADOW_FLAG && sh_map[i]
-             && sh_map[i] < MAX_SHADOWS) {
+         if (layerflags & SHADOW_FLAG && sh_map[i] && sh_map[i] < MAX_SHADOWS) {
             cairo_set_source_surface (cr, gdk_shadows[sh_map[i]], dx * 16,
                                       dy * 16);
             cairo_paint (cr);
@@ -257,10 +259,10 @@ void do_draw_map (cairo_t * cr, GdkRectangle * area, unsigned int layerflags)
             cairo_set_source_rgb (cr, 1, 1, 1);
             char *s = g_strdup_printf ("%d", z_map[i]);
             cairo_text_extents_t extents;
+
             cairo_text_extents (cr, s, &extents);
             cairo_move_to (cr,
-                           dx * 16 + 8 - extents.width / 2 -
-                           extents.x_bearing,
+                           dx * 16 + 8 - extents.width / 2 - extents.x_bearing,
                            dy * 16 + 8 - extents.height / 2 -
                            extents.y_bearing);
             cairo_show_text (cr, s);
@@ -296,59 +298,62 @@ void do_draw_map (cairo_t * cr, GdkRectangle * area, unsigned int layerflags)
    }
 
    if (layerflags & BOUNDING_FLAG) {
-   	for (i = 0; i < gmap.num_bound_boxes; ++i) {
-			s_bound bound = gmap.bound_box[i];
-   		cairo_set_line_width (cr, 1);
-			cairo_set_source_rgb (cr, 1, 1, 0);
-			cairo_rectangle (cr, bound.x1 * 16, bound.y1 * 16, (bound.x2 - bound.x1 + 1) * 16, (bound.y2 - bound.y1 + 1) * 16);
-			cairo_stroke (cr);
-		}
+      for (i = 0; i < gmap.num_bound_boxes; ++i) {
+         s_bound bound = gmap.bound_box[i];
+
+         cairo_set_line_width (cr, 1);
+         cairo_set_source_rgb (cr, 1, 1, 0);
+         cairo_rectangle (cr, bound.x1 * 16, bound.y1 * 16,
+                          (bound.x2 - bound.x1 + 1) * 16,
+                          (bound.y2 - bound.y1 + 1) * 16);
+         cairo_stroke (cr);
+      }
    }
 }
 
 void do_draw_tile (cairo_t * cr, unsigned int layer, unsigned int tile)
 {
-	if (layer == SHADOW_FLAG) {
-		if (tile > MAX_SHADOWS)
-			tile = 0;
-		cairo_set_source_surface(cr, gdk_shadows[tile], 0, 0);
-	} else {
-   	if (tile > MAX_TILES)
-   		tile = 0;
-   	cairo_set_source_surface (cr, gdk_icons[tile], 0, 0);
-	}
-  	cairo_paint (cr);
+   if (layer == SHADOW_FLAG) {
+      if (tile > MAX_SHADOWS)
+         tile = 0;
+      cairo_set_source_surface (cr, gdk_shadows[tile], 0, 0);
+   } else {
+      if (tile > MAX_TILES)
+         tile = 0;
+      cairo_set_source_surface (cr, gdk_icons[tile], 0, 0);
+   }
+   cairo_paint (cr);
 }
 
 void do_draw_palette (cairo_t * cr, GdkRectangle * area, unsigned int w,
                       unsigned int layer, unsigned int tile)
 {
    unsigned int i, j, t;
-	
-	if (layer == SHADOW_FLAG) {
-		// draw shadows.
-		for (i = area->y / 16; i <= (area->y + area->height) / 16; ++i) {
-			for (j = 0; j < w / 16; ++j) {
-				t = i * (w / 16) + j;
-				if (t > MAX_SHADOWS)
-					break;
-				cairo_set_source_surface (cr, gdk_shadows[t], j * 16, i * 16);
-				cairo_paint (cr);
-			}
-		}
-	} else {
-	
-   for (i = area->y / 16; i <= (area->y + area->height) / 16; ++i) {
-      for (j = 0; j < w / 16; ++j) {
-         t = i * (w / 16) + j;
-         if (t > MAX_TILES)
-            break;
-         cairo_set_source_surface (cr, gdk_icons[t], j * 16, i * 16);
-         cairo_paint (cr);
+
+   if (layer == SHADOW_FLAG) {
+      // draw shadows.
+      for (i = area->y / 16; i <= (area->y + area->height) / 16; ++i) {
+         for (j = 0; j < w / 16; ++j) {
+            t = i * (w / 16) + j;
+            if (t > MAX_SHADOWS)
+               break;
+            cairo_set_source_surface (cr, gdk_shadows[t], j * 16, i * 16);
+            cairo_paint (cr);
+         }
       }
+   } else {
+
+      for (i = area->y / 16; i <= (area->y + area->height) / 16; ++i) {
+         for (j = 0; j < w / 16; ++j) {
+            t = i * (w / 16) + j;
+            if (t > MAX_TILES)
+               break;
+            cairo_set_source_surface (cr, gdk_icons[t], j * 16, i * 16);
+            cairo_paint (cr);
+         }
+      }
+
    }
-   
-	}
 }
 
 unsigned int get_tile_at (unsigned int x, unsigned int y, unsigned int layer)
@@ -358,6 +363,7 @@ unsigned int get_tile_at (unsigned int x, unsigned int y, unsigned int layer)
    if (y >= (unsigned int) gmap.ysize)
       y = gmap.ysize - 1;
    unsigned int i = (y * gmap.xsize) + x;
+
    switch (layer) {
    case LAYER_3_FLAG:
       if (f_map[i])
@@ -385,6 +391,7 @@ void set_tile_at (unsigned int tile, unsigned int x, unsigned int y,
    if (y >= (unsigned int) gmap.ysize)
       y = gmap.ysize - 1;
    unsigned int i = (y * gmap.xsize) + x;
+
    switch (layer) {
    case LAYER_1_FLAG:
       map[i] = tile;
@@ -402,19 +409,20 @@ void set_tile_at (unsigned int tile, unsigned int x, unsigned int y,
    default:
       break;
    }
-   map_change(x, y);
+   map_change (x, y);
 }
 
 void set_obstacle_at (unsigned int obstacle, unsigned int x, unsigned int y)
 {
    int i;
+
    i = y * gmap.xsize + x;
 
    if (obstacle <= MAX_OBSTACLES)
       o_map[i] = obstacle;
    else if (obstacle == OBSTACLES_CYCLE)
       o_map[i] = (o_map[i] + 1) % (MAX_OBSTACLES + 1);
-   map_change(x, y);
+   map_change (x, y);
 }
 
 unsigned int get_zone_at (unsigned int x, unsigned int y)
@@ -427,6 +435,7 @@ unsigned int get_zone_at (unsigned int x, unsigned int y)
 void set_zone_at (unsigned int zone, unsigned int x, unsigned int y)
 {
    int i;
+
    i = y * gmap.xsize + x;
 
    if (zone < MAX_ZONES)
@@ -435,7 +444,7 @@ void set_zone_at (unsigned int zone, unsigned int x, unsigned int y)
       z_map[i] = (z_map[i] + 1) % MAX_ZONES;
    else if (zone == ZONES_DOWN)
       z_map[i] = (z_map[i] - 1) % MAX_ZONES;
-   map_change(x, y);
+   map_change (x, y);
 }
 
 /* returns which marker if there is a marker at the specified location.
@@ -443,6 +452,7 @@ void set_zone_at (unsigned int zone, unsigned int x, unsigned int y)
 unsigned int which_marker (unsigned int x, unsigned int y)
 {
    int i;
+
    for (i = 0; i < gmap.num_markers; i++)
       if (gmap.markers[i].x == x && gmap.markers[i].y == y)
          return i;
@@ -450,7 +460,7 @@ unsigned int which_marker (unsigned int x, unsigned int y)
    return MAX_MARKERS;
 }
 
-void new_marker (char * value, unsigned int x, unsigned int y)
+void new_marker (char *value, unsigned int x, unsigned int y)
 {
    if (gmap.num_markers >= MAX_MARKERS)
       return;
@@ -464,11 +474,12 @@ void new_marker (char * value, unsigned int x, unsigned int y)
 void remove_marker (unsigned int x, unsigned int y)
 {
    int i;
-   if ((i = which_marker(x, y)) < MAX_MARKERS) {
+
+   if ((i = which_marker (x, y)) < MAX_MARKERS) {
       for (; i < gmap.num_markers; i++) {
          gmap.markers[i].x = gmap.markers[i + 1].x;
          gmap.markers[i].y = gmap.markers[i + 1].y;
-         strcpy(gmap.markers[i].name, gmap.markers[i + 1].name);
+         strcpy (gmap.markers[i].name, gmap.markers[i + 1].name);
       }
       gmap.num_markers--;
    }
@@ -478,22 +489,26 @@ void remove_marker (unsigned int x, unsigned int y)
    map_change (x + 1, y - 1);
 }
 
-void set_marker_at_loc (char * value, unsigned int x, unsigned int y)
+void set_marker_at_loc (char *value, unsigned int x, unsigned int y)
 {
    unsigned int i;
-   if ((i = which_marker(x, y)) < MAX_MARKERS) {
-      strcpy(gmap.markers[i].name, value);
+
+   if ((i = which_marker (x, y)) < MAX_MARKERS) {
+      strcpy (gmap.markers[i].name, value);
    } else {
-      new_marker(value, x, y);
-      map_change (x, y); map_change (x + 1, y);
-      map_change (x, y - 1); map_change (x + 1, y - 1);
+      new_marker (value, x, y);
+      map_change (x, y);
+      map_change (x + 1, y);
+      map_change (x, y - 1);
+      map_change (x + 1, y - 1);
    }
 }
 
-char * get_marker_value (unsigned int x, unsigned int y)
+char *get_marker_value (unsigned int x, unsigned int y)
 {
    int i;
-   if ((i = which_marker(x, y)) < MAX_MARKERS)
+
+   if ((i = which_marker (x, y)) < MAX_MARKERS)
       return gmap.markers[i].name;
    else
       return NULL;
@@ -508,6 +523,7 @@ GtkListStore *create_entity_model (void)
       gtk_list_store_new (ENTITY_N_COLUMNS, G_TYPE_STRING, G_TYPE_INT,
                           G_TYPE_INT, G_TYPE_UINT);
    GtkTreeIter iter;
+
 #define ADD_LAYER(p) \
    gtk_list_store_append (store, &iter); \
    gtk_list_store_set (store, &iter, \
@@ -548,10 +564,12 @@ GtkListStore *create_entity_model (void)
 void fill_entity_model (GtkListStore * store, int entity)
 {
    GtkTreeIter iter;
+
    gtk_tree_model_get_iter_first (GTK_TREE_MODEL (store), &iter);
    do {
       int offset;
       unsigned int size;
+
       gtk_tree_model_get (GTK_TREE_MODEL (store), &iter, ENTITY_REF_COLUMN,
                           &offset, ENTITY_SIZEOF_COLUMN, &size, -1);
       switch (size) {
@@ -583,13 +601,16 @@ void change_entity_model (GtkListStore * store, int entity, char *valuepath,
       return;
    char *p;
    long int ivalue = strtol (value, &p, 10);
+
    if (*p)
       return;
    GtkTreeIter iter;
+
    gtk_tree_model_get_iter_from_string (GTK_TREE_MODEL (store), &iter,
                                         valuepath);
    int offset;
    unsigned int size;
+
    gtk_tree_model_get (GTK_TREE_MODEL (store), &iter, ENTITY_REF_COLUMN,
                        &offset, ENTITY_SIZEOF_COLUMN, &size, -1);
    switch (size) {

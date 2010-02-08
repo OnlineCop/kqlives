@@ -602,23 +602,22 @@ void check_map (void)
          if (bound_box_num < gmap1.num_bound_boxes
              && bound_box_num < gmap2.num_bound_boxes) {
             // The other map has the same number of bounding boxes; compare the values.
-            if ((_b1[bound_box_num].x1 != _b2[bound_box_num].x1) ||
-                (_b1[bound_box_num].y1 != _b2[bound_box_num].y1) ||
-                (_b1[bound_box_num].x2 != _b2[bound_box_num].x2) ||
-                (_b1[bound_box_num].y2 != _b2[bound_box_num].y2)
-               ) {
+            if ((_b1[bound_box_num].left != _b2[bound_box_num].left)
+                || (_b1[bound_box_num].top != _b2[bound_box_num].top)
+                || (_b1[bound_box_num].right != _b2[bound_box_num].right)
+                || (_b1[bound_box_num].bottom != _b2[bound_box_num].bottom)) {
                fprintf (stdout, "  - Map1 Boundary #%d: (%d, %d), (%d, %d)\n",
                         bound_box_num,
-                        _b1[bound_box_num].x1,
-                        _b1[bound_box_num].y1,
-                        _b1[bound_box_num].x2, _b1[bound_box_num].y2);
+                        _b1[bound_box_num].left,
+                        _b1[bound_box_num].top,
+                        _b1[bound_box_num].right,
+                        _b1[bound_box_num].bottom);
                fprintf (stdout, "  - Map2 Boundary #%d: (%d, %d), (%d, %d)\n",
                         bound_box_num,
-                        _b2[bound_box_num].x1,
-                        _b2[bound_box_num].y1,
-                        _b2[bound_box_num].x2,
-                        _b2[bound_box_num].y2
-                       );
+                        _b2[bound_box_num].left,
+                        _b2[bound_box_num].top,
+                        _b2[bound_box_num].right,
+                        _b2[bound_box_num].bottom);
             }
          } else {
             // The other map does not have that bounding box, print "only in map #"
@@ -626,20 +625,18 @@ void check_map (void)
                fprintf (stdout, "  Bound Box #%d only in Map #2\n",
                         bound_box_num + 1);
                fprintf (stdout, "  - Map2: (%d, %d), (%d, %d)\n",
-                        _b2[bound_box_num].x1,
-                        _b2[bound_box_num].y1,
-                        _b2[bound_box_num].x2,
-                        _b2[bound_box_num].y2
-               	     );
+                        _b2[bound_box_num].left,
+                        _b2[bound_box_num].top,
+                        _b2[bound_box_num].right,
+                        _b2[bound_box_num].bottom);
             } else if (gmap2.num_bound_boxes <= bound_box_num) {
                fprintf (stdout, "  Bound Box #%d only in Map #1\n",
                         bound_box_num + 1);
                fprintf (stdout, "  - Map1: (%d, %d), (%d, %d)\n",
-                        _b1[bound_box_num].x1,
-                        _b1[bound_box_num].y1,
-                        _b1[bound_box_num].x2,
-                        _b1[bound_box_num].y2
-               	     );
+                        _b1[bound_box_num].left,
+                        _b1[bound_box_num].top,
+                        _b1[bound_box_num].right,
+                        _b1[bound_box_num].bottom);
             }
          }
          bound_box_num++;
@@ -816,12 +813,12 @@ void usage (const char *argv)
 
 int main (int argc, char *argv[])
 {
+   int i, number_of_files = 0;
+   char *filenames[PATH_MAX];
+
    setlocale (LC_ALL, "");
    bindtextdomain (PACKAGE, KQ_LOCALE);
    textdomain (PACKAGE);
-   
-   int i, number_of_files = 0;
-   char *filenames[PATH_MAX];
 
    startup ();
 

@@ -23,6 +23,7 @@
 #include <allegro.h>
 
 #ifdef HAVE_CONFIG_H
+
 /* Have to undef some stuff because Allegro defines it - thanks guys
 */
 #undef PACKAGE_TARNAME
@@ -52,10 +53,10 @@
 #define MAX_SHADOWS     12
 #define MAX_OBSTACLES   5
 #define MAX_MARKERS     256
-#define SW              800      // Must be a multiple of 16
-#define SH              600      // Must be a multiple of 16
-#define TH              16       /* Tile Height */
-#define TW              16       /* Tile Width */
+#define SW              800     // Must be a multiple of 16
+#define SH              600     // Must be a multiple of 16
+#define TH              16      /* Tile Height */
+#define TW              16      /* Tile Width */
 #define WBUILD          1
 
 #define MAP_LAYER1      1       /* Map (sea-level) */
@@ -153,12 +154,12 @@ void process_movement_joy (void);
 int prompt_BMP_PCX (void);
 void read_controls (void);
 void resize_map (const int);
-int select_layer1   (void);
-int select_layer2   (void);
-int select_layer3   (void);
-int select_layer12  (void);
-int select_layer13  (void);
-int select_layer23  (void);
+int select_layer1 (void);
+int select_layer2 (void);
+int select_layer3 (void);
+int select_layer12 (void);
+int select_layer13 (void);
+int select_layer23 (void);
 int select_layer123 (void);
 void select_only (const int, const int);
 int show_all (void);

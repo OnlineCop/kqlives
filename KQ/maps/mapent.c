@@ -173,6 +173,7 @@ void draw_ents (void)
 {
    int d, x0, y0;
    BITMAP *ent;
+
    x0 = window_x * 16;
    y0 = window_y * 16;
 
@@ -367,8 +368,10 @@ void place_entity (int ent_x, int ent_y)
 void update_entities (void)
 {
    int response, done;
+
    /* Entity's index */
    int et = 0;
+
    /* Key press */
    int c;
 

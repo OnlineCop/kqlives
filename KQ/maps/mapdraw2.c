@@ -34,7 +34,7 @@ int main (int argc, char *argv[])
    setlocale (LC_ALL, "");
    bindtextdomain (PACKAGE, KQ_LOCALE);
    textdomain (PACKAGE);
-   
+
    chdir ("maps");
    install_allegro (SYSTEM_NONE, &errno, atexit);
    if (!startup ()) {
@@ -45,12 +45,10 @@ int main (int argc, char *argv[])
    cleanup ();
    allegro_exit ();
    return 0;
-}
-END_OF_MAIN ()
+} END_OF_MAIN ()
 
 
 // FIXME: The following stuff shouldn't be here
-
 /*! Current sequence position of animated tiles */
 unsigned short tilex[MAX_TILES];
 
@@ -128,15 +126,15 @@ void bufferize (void)
    free (search_map);
    search_map = (unsigned char *) malloc (gmap.xsize * gmap.ysize);
 
-   memset (map, 0, gmap.xsize * gmap.ysize * sizeof(unsigned short));
-   memset (b_map, 0, gmap.xsize * gmap.ysize * sizeof(unsigned short));
-   memset (f_map, 0, gmap.xsize * gmap.ysize * sizeof(unsigned short));
+   memset (map, 0, gmap.xsize * gmap.ysize * sizeof (unsigned short));
+   memset (b_map, 0, gmap.xsize * gmap.ysize * sizeof (unsigned short));
+   memset (f_map, 0, gmap.xsize * gmap.ysize * sizeof (unsigned short));
    memset (o_map, 0, gmap.xsize * gmap.ysize);
    memset (sh_map, 0, gmap.xsize * gmap.ysize);
    memset (z_map, 0, gmap.xsize * gmap.ysize);
-   memset (c_map, 0, gmap.xsize * gmap.ysize * sizeof(unsigned short));
-   memset (cb_map, 0, gmap.xsize * gmap.ysize * sizeof(unsigned short));
-   memset (cf_map, 0, gmap.xsize * gmap.ysize * sizeof(unsigned short));
+   memset (c_map, 0, gmap.xsize * gmap.ysize * sizeof (unsigned short));
+   memset (cb_map, 0, gmap.xsize * gmap.ysize * sizeof (unsigned short));
+   memset (cf_map, 0, gmap.xsize * gmap.ysize * sizeof (unsigned short));
    memset (co_map, 0, gmap.xsize * gmap.ysize);
    memset (csh_map, 0, gmap.xsize * gmap.ysize);
    memset (cz_map, 0, gmap.xsize * gmap.ysize);
@@ -278,6 +276,7 @@ void remove_entity (int entity)
 int get_entity_at (unsigned int x, unsigned int y)
 {
    int i;
+
    for (i = 0; i < number_of_ents; i++)
       if (gent[i].tilex == x && gent[i].tiley == y)
          return i;

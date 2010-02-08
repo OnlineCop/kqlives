@@ -75,7 +75,8 @@ s_anim tanim[NUM_TILESETS][MAX_ANIM] = {
    /* shrine.bmp */
    {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}},
    /* fortress.pcx */
-   {{120, 123, 30}, {124, 129, 25}, {130, 133, 30}, {134, 137, 25}, {138, 139, 30}},
+   {{120, 123, 30}, {124, 129, 25}, {130, 133, 30}, {134, 137, 25},
+    {138, 139, 30}},
 };
 
 /*! Tile animation specifiers for the current tileset */
@@ -271,9 +272,10 @@ void cleanup (void)
 {
    int k, j;
 
-   for (k = 0; k < MAX_EPICS; k++)
+   for (k = 0; k < MAX_EPICS; k++) {
       for (j = 0; j < 12; j++)
          destroy_bitmap (eframes[k][j]);
+   }
    destroy_bitmap (double_buffer);
    destroy_bitmap (mesh2);
    destroy_bitmap (mesh3);
@@ -516,6 +518,7 @@ void copy_region (void)
 {
    /* Area block coords */
    int zx, zy;
+
    /* Used to swap 'backward' copy areas */
    int swapx, swapy, coord1, coord2;
 
@@ -566,6 +569,7 @@ void copy_region (void)
 int count_current_obstacles (void)
 {
    int i = 0, j;
+
    for (j = 0; j < gmap.xsize * gmap.ysize; j++) {
       if (o_map[j] == curobs) {
          i++;
@@ -582,6 +586,7 @@ int count_current_obstacles (void)
 int count_current_shadows (void)
 {
    int i = 0, j;
+
    for (j = 0; j < gmap.xsize * gmap.ysize; j++) {
       if (sh_map[j] == curshadow) {
          i++;
@@ -598,6 +603,7 @@ int count_current_shadows (void)
 int count_current_zones (void)
 {
    int i = 0, j;
+
    for (j = 0; j < gmap.xsize * gmap.ysize; j++) {
       if (z_map[j] == curzone) {
          i++;
@@ -702,8 +708,10 @@ void draw_map (void)
 {
    /* Coordinates inside the view-window */
    int dx, dy;
+
    /* Index for tiles inside the view-window */
    int w;
+
    /* Size of the map or view-window, whichever is smaller */
    int maxx, maxy;
    int i;
@@ -753,7 +761,7 @@ void draw_map (void)
       break;
    default:
       break;
-   }                      // switch (draw_mode)
+   }                            // switch (draw_mode)
 
    /* This loop will draw everything within the view-window */
    for (dy = 0; dy < maxy; dy++) {
@@ -790,6 +798,7 @@ void draw_map (void)
 
          /* Draw the Zones */
          if ((showing.zones) && (z_map[w] > 0)) {
+
 /* This check is here because of the differing versions of the Allegro library */
 #ifdef HAVE_TEXT_EX
             if (z_map[w] < 10) {
@@ -846,7 +855,6 @@ void draw_map (void)
                     && curzone > 0))
                draw_sprite (double_buffer, mesh2, dx * 16, dy * 16);
          }
-
          // Try to hilight the currently-selected attrib
          if (curr_x != NULL && curr_y != NULL) {
             if ((window_x + dx == *curr_x && window_y + dy == *curr_y)
@@ -871,7 +879,8 @@ void draw_map (void)
    /* Draw the Markers */
    if (showing.markers == 1 && num_markers > 0) {
       for (i = 0; i < num_markers; ++i) {
-         if ((gmap.markers[i].x >= window_x) && (gmap.markers[i].x < window_x + htiles)
+         if ((gmap.markers[i].x >= window_x)
+             && (gmap.markers[i].x < window_x + htiles)
              && (gmap.markers[i].y >= window_y)
              && (gmap.markers[i].y < window_y + vtiles)) {
             draw_sprite (double_buffer, marker_image,
@@ -917,21 +926,21 @@ void draw_map (void)
       // Using this simply because it will hold our 4 coords easier
       s_bound crect;
 
-      crect.x1 = (copyx1 - window_x) * 16;
-      crect.y1 = (copyy1 - window_y) * 16;
-      crect.x2 = copyx2 < window_x + htiles ?
+      crect.left = (copyx1 - window_x) * 16;
+      crect.top = (copyy1 - window_y) * 16;
+      crect.right = copyx2 < window_x + htiles ?
          (copyx2 - window_x) * 16 + 15 : htiles * 16;
-      crect.y2 = copyy2 < window_y + vtiles ?
+      crect.bottom = copyy2 < window_y + vtiles ?
          (copyy2 - window_y) * 16 + 15 : vtiles * 16;
 
       if (copying == 0) {
          /* Highlight the selected tile (takes into account window's coords) */
-         rect (double_buffer, crect.x1 - 1, crect.y1 - 1,
-                              crect.x2 + 1, crect.y2 + 1, 25);
+         rect (double_buffer, crect.left - 1, crect.top - 1, crect.right + 1,
+               crect.bottom + 1, 25);
       } else {
          /* Only the initial tile is selected */
-         rect (double_buffer, crect.x1 - 1, crect.y1 - 1,
-                              crect.x1 + 16, crect.y1 + 16, 25);
+         rect (double_buffer, crect.left - 1, crect.top - 1, crect.left + 16,
+               crect.top + 16, 25);
       }
    }
 
@@ -954,11 +963,11 @@ void draw_map (void)
 
       /* Draw a rectangle around the current selection, if it exists */
       if (active_bound) {
-         rectb.x1 = (bound_box[num_bound_boxes].x1 - window_x) * 16;
-         rectb.y1 = (bound_box[num_bound_boxes].y1 - window_y) * 16;
-         rectb.x2 = (bound_box[num_bound_boxes].x1 - window_x) * 16 + 15;
-         rectb.y2 = (bound_box[num_bound_boxes].y1 - window_y) * 16 + 15;
-         rect (double_buffer, rectb.x1, rectb.y1, rectb.x2, rectb.y2, 41);
+         rectb.left = (bound_box[num_bound_boxes].left - window_x) * 16;
+         rectb.top = (bound_box[num_bound_boxes].top - window_y) * 16;
+         rectb.right = (bound_box[num_bound_boxes].left - window_x) * 16 + 15;
+         rectb.bottom = (bound_box[num_bound_boxes].top - window_y) * 16 + 15;
+         rect (double_buffer, rectb.left, rectb.top, rectb.right, rectb.bottom, 41);
       }
    }
 }                               /* draw_map () */
@@ -1262,23 +1271,18 @@ void draw_menubars (void)
    /* Displays whether or not we are over a bounded area */
    if (draw_mode == MAP_BOUNDS && num_bound_boxes > 0) {
       sprintf (strbuf, "Bounding Area #%d: (%d, %d) (%d, %d), tile=%d",
-               curbound_box,
-               bound_box[curbound_box].x1,
-               bound_box[curbound_box].y1,
-               bound_box[curbound_box].x2,
-               bound_box[curbound_box].y2,
-               bound_box[curbound_box].btile
-              );
+               curbound_box, bound_box[curbound_box].left,
+               bound_box[curbound_box].top, bound_box[curbound_box].right,
+               bound_box[curbound_box].bottom, bound_box[curbound_box].btile);
       print_sfont (column[4], row[0], strbuf, double_buffer);
       xp = mouse_x / 16 + window_x;
       yp = mouse_y / 16 + window_y;
       for (p = 0; p < num_bound_boxes; p++) {
-         if ((xp >= bound_box[p].x1 && xp <= bound_box[p].x2) &&
-             (yp >= bound_box[p].y1 && yp <= bound_box[p].y2)) {
+         if ((xp >= bound_box[p].left && xp <= bound_box[p].right)
+             && (yp >= bound_box[p].top && yp <= bound_box[p].bottom)) {
             sprintf (strbuf, "Area #%d: (%d, %d) (%d, %d), tile=%d", p,
-                     bound_box[p].x1, bound_box[p].y1,
-                     bound_box[p].x2, bound_box[p].y2,
-                     bound_box[p].btile);
+                     bound_box[p].left, bound_box[p].top, bound_box[p].right,
+                     bound_box[p].bottom, bound_box[p].btile);
             print_sfont (column[4], row[1], strbuf, double_buffer);
          }
       }
@@ -2147,7 +2151,7 @@ int main (int argc, char *argv[])
    setlocale (LC_ALL, "");
    bindtextdomain (PACKAGE, KQ_LOCALE);
    textdomain (PACKAGE);
-   
+
    int main_stop = 0, oldmouse_x = 0, oldmouse_y = 0;
    int i;
 
@@ -2196,7 +2200,6 @@ int main (int argc, char *argv[])
             scare_mouse ();
          }
       }
-
       // "Q" will exit the program
       if (key[KEY_Q])
          main_stop = confirm_exit ();
@@ -2941,6 +2944,7 @@ int process_keyboard (const int k)
 void process_menu_bottom (const int cx, const int cy)
 {
    int response;
+
    scare_mouse ();
 
    /* The mouse is over 'Icon:' menu */
@@ -3408,7 +3412,7 @@ void process_mouse (const int mouse_button)
          case (MAP_MARKERS):
             /* Add or change a marker */
             add_change_marker (window_x + x, window_y + y, mouse_button,
-               &curmarker);
+                               &curmarker);
 
             /* This isn't ideal, but just wait for the button to be released */
             while (mouse_b)
@@ -3417,7 +3421,7 @@ void process_mouse (const int mouse_button)
          case (MAP_BOUNDS):
             /* Add or remove boundaries */
             add_change_bounding (window_x + x, window_y + y, mouse_button,
-               &curbound_box);
+                                 &curbound_box);
 
             /* Wait for button to be released */
             while (mouse_b)
@@ -3487,12 +3491,12 @@ void process_mouse (const int mouse_button)
          case (MAP_MARKERS):
             /* Remove a marker */
             add_change_marker (window_x + x, window_y + y, mouse_button,
-               &curmarker);
+                               &curmarker);
             break;
          case (MAP_BOUNDS):
             /* Remove a boundary */
             add_change_bounding (window_x + x, window_y + y, mouse_button,
-               &curbound_box);
+                                 &curbound_box);
             break;
          default:
             break;
@@ -3516,34 +3520,34 @@ void process_mouse (const int mouse_button)
 void process_movement (int val)
 {
    switch (val) {
-      case (KEY_PGUP):
-         /* Move the view-window up one page */
-         window_y -= vtiles;
-         break;
-      case (KEY_PGDN):
-         /* Move the view-window down one page */
-         window_y += vtiles;
-         break;
-      case (KEY_TAB):
-         /* Move the view-window right one page */
-         window_x += htiles;
-         break;
-      case (KEY_BACKSPACE):
-         /* Move the view-window left one page */
-         window_x -= htiles;
-         break;
-      case (KEY_END):
-         /* Move the view-window to the bottom-right edge of the map */
-         window_x = gmap.xsize - htiles;
-         window_y = gmap.ysize - vtiles;
-         break;
-      case (KEY_HOME):
-         /* Move the view-window to the top-left edge of the map */
-         window_x = 0;
-         window_y = 0;
-         break;
-      default:
-         break;
+   case (KEY_PGUP):
+      /* Move the view-window up one page */
+      window_y -= vtiles;
+      break;
+   case (KEY_PGDN):
+      /* Move the view-window down one page */
+      window_y += vtiles;
+      break;
+   case (KEY_TAB):
+      /* Move the view-window right one page */
+      window_x += htiles;
+      break;
+   case (KEY_BACKSPACE):
+      /* Move the view-window left one page */
+      window_x -= htiles;
+      break;
+   case (KEY_END):
+      /* Move the view-window to the bottom-right edge of the map */
+      window_x = gmap.xsize - htiles;
+      window_y = gmap.ysize - vtiles;
+      break;
+   case (KEY_HOME):
+      /* Move the view-window to the top-left edge of the map */
+      window_x = 0;
+      window_y = 0;
+      break;
+   default:
+      break;
    }
 
    /* Process single-tile movements.
@@ -3551,37 +3555,37 @@ void process_movement (int val)
     * out of the function before we can process the horizontal movement)
     */
    switch (val) {
-      case (KEY_UP):
-      case (KEY_7_PAD):
-      case (KEY_8_PAD):
-      case (KEY_9_PAD):
-         window_y--;
-         break;
-      case (KEY_DOWN):
-      case (KEY_1_PAD):
-      case (KEY_2_PAD):
-      case (KEY_3_PAD):
-         window_y++;
-         break;
-      default:
-         break;
+   case (KEY_UP):
+   case (KEY_7_PAD):
+   case (KEY_8_PAD):
+   case (KEY_9_PAD):
+      window_y--;
+      break;
+   case (KEY_DOWN):
+   case (KEY_1_PAD):
+   case (KEY_2_PAD):
+   case (KEY_3_PAD):
+      window_y++;
+      break;
+   default:
+      break;
    }
 
    switch (val) {
-      case (KEY_LEFT):
-      case (KEY_1_PAD):
-      case (KEY_4_PAD):
-      case (KEY_7_PAD):
-         window_x--;
-         break;
-      case (KEY_RIGHT):
-      case (KEY_3_PAD):
-      case (KEY_6_PAD):
-      case (KEY_9_PAD):
-         window_x++;
-         break;
-      default:
-         break;
+   case (KEY_LEFT):
+   case (KEY_1_PAD):
+   case (KEY_4_PAD):
+   case (KEY_7_PAD):
+      window_x--;
+      break;
+   case (KEY_RIGHT):
+   case (KEY_3_PAD):
+   case (KEY_6_PAD):
+   case (KEY_9_PAD):
+      window_x++;
+      break;
+   default:
+      break;
    }
 }                               /* process_movement () */
 
@@ -3612,10 +3616,10 @@ void process_movement_joy (void)
       up |= stk->stick[0].axis[1].d1;
       down |= stk->stick[0].axis[1].d2;
 
-      jaccept |= stk->button[0].b;  // Not really used here
-      jcancel |= stk->button[1].b;  // Ditto
-      jmove   |= stk->button[2].b;
-      jjump   |= stk->button[3].b;
+      jaccept |= stk->button[0].b;      // Not really used here
+      jcancel |= stk->button[1].b;      // Ditto
+      jmove |= stk->button[2].b;
+      jjump |= stk->button[3].b;
    }
 
    /* We cannot have left AND right movement simultaneously */
@@ -3709,6 +3713,7 @@ void read_controls (void)
 {
    int mouse_button, oldx, oldy;
    int val;
+
    needupdate = 0;
 
    /******************************************
@@ -4099,7 +4104,8 @@ int show_help (void)
    /* The first line in the help menu needs to be the total width, for correct
     * calculation later on
     */
-   const char *help_keys[NUMBER_OF_ITEMS] = {
+   const char *help_keys[NUMBER_OF_ITEMS] =
+   {
       // This first line needs to be the length of the longest line to display correctly
       "                              THIS IS THE HELP DIALOG (F1)                              ",
       "                              ============================",
@@ -4143,11 +4149,9 @@ int show_help (void)
    i = (htiles * 16 - strlen (*help_keys) * FW) / 2;
    j = (vtiles * 16 - NUMBER_OF_ITEMS * 8) / 2;
 
-   rectfill (double_buffer, i - 5, j - 5,
-             i + (strlen (*help_keys) * FW) + 4,
+   rectfill (double_buffer, i - 5, j - 5, i + (strlen (*help_keys) * FW) + 4,
              j + (NUMBER_OF_ITEMS * (FH + 1)) + 4, 0);
-   rect (double_buffer, i - 3, j - 3,
-         i + (strlen (*help_keys) * FW) + 2,
+   rect (double_buffer, i - 3, j - 3, i + (strlen (*help_keys) * FW) + 2,
          j + (NUMBER_OF_ITEMS * (FH + 1)) + 2, 255);
 
    this_counter = 0;
@@ -4236,9 +4240,10 @@ int startup (void)
 
    /* Create the picture used for the mouse */
    mouse_pic = create_bitmap (4, 6);
-   for (ky = 0; ky < 6; ky++)
+   for (ky = 0; ky < 6; ky++) {
       for (kx = 0; kx < 4; kx++)
          mouse_pic->line[ky][kx] = mousepic[ky * 4 + kx];
+   }
    set_mouse_speed (4, 4);
 
    /* Screen buffer */
@@ -4280,9 +4285,10 @@ int startup (void)
 
    mesh2 = create_bitmap (16, 16);
    clear (mesh2);
-   for (ky = 0; ky < 16; ky++)
+   for (ky = 0; ky < 16; ky++) {
       for (kx = 0; kx < 16; kx++)
          mesh2->line[ky][kx] = hilite[ky * 16 + kx];
+   }
 
    /* Used to show map boundaries */
    static unsigned char diag_bars[] = {
@@ -4306,9 +4312,10 @@ int startup (void)
 
    mesh3 = create_bitmap (16, 16);
    clear (mesh3);
-   for (ky = 0; ky < 16; ky++)
+   for (ky = 0; ky < 16; ky++) {
       for (kx = 0; kx < 16; kx++)
          mesh3->line[ky][kx] = diag_bars[ky * 16 + kx];
+   }
 
    /* Entity images */
    init_entities ();
@@ -4470,9 +4477,10 @@ int startup (void)
 
    mesh_h = create_bitmap (16, 16);
    clear (mesh_h);
-   for (ky = 0; ky < 16; ky++)
+   for (ky = 0; ky < 16; ky++) {
       for (kx = 0; kx < 16; kx++)
          mesh_h->line[ky][kx] = hilite_attrib[ky * 16 + kx];
+   }
 
    /* Check for availability of joystick */
    if (use_joy == 1)
@@ -4484,6 +4492,7 @@ int startup (void)
       use_joy = 0;
 
       int i;
+
       if (poll_joystick () == 0) {
          for (i = num_joysticks - 1; i >= 0; i--) {
             if (joy[i].num_buttons >= 4) {
@@ -4501,13 +4510,13 @@ int startup (void)
 
 #if WANT_DIALOG
    /* Set up menu-driven colors */
-   gui_fg_color = makecol(255, 255, 255);
-   gui_mg_color = makecol(128, 128, 128);
-   gui_bg_color = makecol(0, 0, 0);
-   set_dialog_color(the_dialog, gui_fg_color, gui_bg_color);
+   gui_fg_color = makecol (255, 255, 255);
+   gui_mg_color = makecol (128, 128, 128);
+   gui_bg_color = makecol (0, 0, 0);
+   set_dialog_color (the_dialog, gui_fg_color, gui_bg_color);
 
    /* Make the dialog background color black */
-   the_dialog[0].bg = makecol(0, 0, 0);
+   the_dialog[0].bg = makecol (0, 0, 0);
 #endif
 
    return 1;

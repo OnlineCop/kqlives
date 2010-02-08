@@ -26,6 +26,7 @@
 void error_load (const char *problem_file)
 {
    int i = 0;
+
    ASSERT (problem_file);
 
    sprintf (strbuf, "Could not load \"%s\"", problem_file);
@@ -313,6 +314,7 @@ int new_map (void)
    // Remove the markers from the map
    for (m = gmap.markers + num_markers; m > gmap.markers; --m) {
       int curmarker = num_markers;
+
       // This removes the marker
       add_change_marker (m->x, m->y, 2, &curmarker);
    }
@@ -367,7 +369,7 @@ void prompt_load_map (void)
    char path[MAX_PATH];
    int response;
 
-   strcpy(path, map_path);
+   strcpy (path, map_path);
 
    response = file_select_ex ("Open map...", path, "MAP;/-h-s-r", 1024, 300, 200);
 
@@ -378,9 +380,9 @@ void prompt_load_map (void)
 
    replace_extension (path, path, "map", sizeof (path));
 
-   if (!strcmp(path, map_path)) {
+   if (!strcmp (path, map_path)) {
       // Filenames are the same; reload (only display filename, not whole path)
-      sprintf (strbuf, "Reload %s? (y/n)", get_filename(path));
+      sprintf (strbuf, "Reload %s? (y/n)", get_filename (path));
    } else {
       // Filename different; load
       sprintf (strbuf, "Load %s? (y/n)", path);

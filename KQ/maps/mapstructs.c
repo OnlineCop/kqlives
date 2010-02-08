@@ -75,15 +75,15 @@ void add_change_bounding (int x, int y, int mouse_b, int *current)
 
          if (!active_bound) {
             /* We are not already tracking a boundary, so create new */
-            b->x1 = x;
-            b->y1 = y;
+            b->left = x;
+            b->top = y;
             active_bound = 1;
          } else {
             /* We have started tracking a boundary already, meaning we
              * already have the top-left coords. Now we just need the
              * bottom-right ones.
              */
-            if (b->x1 == x || b->y1 == y) {
+            if (b->left == x || b->top == y) {
                /* Our bounding rectangle will never be only 1-tile high or
                 * wide, so do not allow that small of an area to be selected.
                 */
@@ -92,13 +92,14 @@ void add_change_bounding (int x, int y, int mouse_b, int *current)
 
             /* Used only to check if boundaries are okay */
             s_bound temp;
-            set_bounds (&temp, b->x1, b->y1, x, y);
+
+            set_bounds (&temp, b->left, b->top, x, y);
             /* Don't allow the user to begin (or end) any portion of a bounding
              * area if it has any points contained in another bounding area's
              * region.
              */
             if (!bound_in_bound (&temp, num_bound_boxes)) {
-               set_bounds (b, temp.x1, temp.y1, temp.x2, temp.y2);
+               set_bounds (b, temp.left, temp.top, temp.right, temp.bottom);
                num_bound_boxes++;
                active_bound = 0;
             }
@@ -181,22 +182,22 @@ void bound_rect (BITMAP *where, s_bound b, int color)
 {
    s_bound rectb;
 
-   rectb.x1 = (b.x1 - window_x) * 16;
-   rectb.y1 = (b.y1 - window_y) * 16;
+   rectb.left = (b.left - window_x) * 16;
+   rectb.top = (b.top - window_y) * 16;
 
-   if (b.x1 < window_x + htiles) {
-      rectb.x2 = (b.x2 - window_x) * 16 + 15;
+   if (b.left < window_x + htiles) {
+      rectb.right = (b.right - window_x) * 16 + 15;
    } else {
-      rectb.x2 = htiles * 16;
+      rectb.right = htiles * 16;
    }
 
-   if (b.y1 < window_y + htiles) {
-      rectb.y2 = (b.y2 - window_y) * 16 + 15;
+   if (b.top < window_y + htiles) {
+      rectb.bottom = (b.bottom - window_y) * 16 + 15;
    } else {
-      rectb.y2 = vtiles * 16;
+      rectb.bottom = vtiles * 16;
    }
 
-   rect (where, rectb.x1, rectb.y1, rectb.x2, rectb.y2, color);
+   rect (where, rectb.left, rectb.top, rectb.right, rectb.bottom, color);
 }
 
 
@@ -230,10 +231,11 @@ int find_bound (int direction, int *current)
       /* Center map on current Box, if it's not too big */
 
       int x, y;
-      x = (bound_box[*current].x2 - bound_box[*current].x1) / 2 +
-         bound_box[*current].x1;
-      y = (bound_box[*current].y2 - bound_box[*current].y1) / 2 +
-         bound_box[*current].y1 + 1;
+
+      x = (bound_box[*current].right - bound_box[*current].left) / 2 +
+         bound_box[*current].left;
+      y = (bound_box[*current].bottom - bound_box[*current].top) / 2 +
+         bound_box[*current].top + 1;
 
       center_window (x, y);
    } else if (direction == 1) {
@@ -316,37 +318,37 @@ void orient_bounds (int current)
 {
    int width, height;
 
-   width = bound_box[current].x2 - bound_box[current].x1;
-   height = bound_box[current].y2 - bound_box[current].y1;
+   width = bound_box[current].right - bound_box[current].left;
+   height = bound_box[current].bottom - bound_box[current].top;
 
    if (width > htiles - 1) {
       /* Boundary is larger than window's width */
 
       /* Move window's left edge to the box's left edge */
-      window_x = bound_box[current].x1;
+      window_x = bound_box[current].left;
    } else {
       /* Boundary fits inside viewable window */
 
       /* Move window just enough to see the entire box */
-      if (bound_box[current].x1 < window_x)
-         window_x = bound_box[current].x1;
-      else if (bound_box[current].x2 > window_x + htiles - 1)
-         window_x = bound_box[current].x2 - htiles + 1;
+      if (bound_box[current].left < window_x)
+         window_x = bound_box[current].left;
+      else if (bound_box[current].right > window_x + htiles - 1)
+         window_x = bound_box[current].right - htiles + 1;
    }
 
    if (height > vtiles - 1) {
       /* Boundary is larger than window's height */
 
       /* Move window's top edge to the box's top edge */
-      window_y = bound_box[current].y1;
+      window_y = bound_box[current].top;
    } else {
       /* Boundary fits inside viewable window */
 
       /* Move window just enough to see the entire box */
-      if (bound_box[current].y1 < window_y)
-         window_y = bound_box[current].y1;
-      else if (bound_box[current].y2 > window_y + vtiles - 1)
-         window_y = bound_box[current].y2 - vtiles + 1;
+      if (bound_box[current].top < window_y)
+         window_y = bound_box[current].top;
+      else if (bound_box[current].bottom > window_y + vtiles - 1)
+         window_y = bound_box[current].bottom - vtiles + 1;
    }
 }
 
