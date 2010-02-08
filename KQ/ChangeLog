@@ -1,3 +1,10 @@
+2010-02-07  onlinecop  <onlinecop@gmail.com>
+
+	* src/draw.c, src/intrface.c, scripts/global.lua:
+	Implemented hero pictures in thought and bubble dialogs, per Z9484's inclusion in KQtheBetrayer.
+	* data/mpcx.dat: Added shrine.pcx (identical to underwater.pcx), new battle backgrounds, extra tiles is most tilemaps, and new entities per Z9484's inclusion in KQtheBetrayer.
+	* include/bounds.h src/bounds.c: Changed x1, x2, y1, y2 to left, right, top, bottom (respectively)
+
 2010-02-04  onlinecop  <onlinecop@gmail.com>
 
 	* Makefile.am had redundancies that needed to be cleaned up.
