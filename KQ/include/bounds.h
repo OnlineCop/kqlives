@@ -1,5 +1,5 @@
 /*! \page License
-   KQ is Copyright (C) 2002 - Josh Bolduc
+   KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
 
@@ -19,14 +19,18 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+
+#ifndef __BOUNDS_H
+#define __BOUNDS_H 1
+
+
 /*! \file
  * \brief Contains functions specific to bounded areas
  * \author TT
  * \date 20060720
  */
 
-#ifndef __BOUNDS_H
-#define __BOUNDS_H
+
 
 #define MAX_BOUNDS    256
 
@@ -43,11 +47,11 @@
  */
 typedef struct
 {
-   short x1;   /*!< The top-left coordinates of the bounding box */
-   short y1;   /*!< The top-left coordinates of the bounding box */
-   short x2;   /*!< The bottom-right coordinates of the bounding box */
-   short y2;   /*!< The bottom-right coordinates of the bounding box */
-   short btile; /*!< Index of the tile to draw everywhere BUT here */
+   short left;                  /*!< Left edge of the bounding box */
+   short top;                   /*!< Top edge of the bounding box */
+   short right;                 /*!< Right edge of the bounding box */
+   short bottom;                /*!< Bottom edge of the bounding box */
+   short btile;                 /*!< Index of the tile to draw everywhere BUT here */
 } s_bound;
 
 
@@ -58,5 +62,6 @@ void set_bounds (s_bound *, int, int, int, int);
 
 extern short num_bound_boxes;
 extern s_bound bound_box[MAX_BOUNDS];
+
 
 #endif /*  __BOUNDS_H  */

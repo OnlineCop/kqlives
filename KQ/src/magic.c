@@ -1,4 +1,4 @@
-/*
+/*! \page License
    KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
@@ -18,6 +18,7 @@
    the Free Software Foundation,
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
+
 
 #include <stdio.h>
 #include <string.h>
@@ -371,16 +372,19 @@ int cast_spell (int whom, int is_item)
          check for spell failure - only applies to spells that
          don't have a hit% or do damage
        */
+
 /*  DS IDEA: move this code to the function non_dmg_save() */
       if (magic[spell_number].dmg == 0 && magic[spell_number].bon == 0
           && magic[spell_number].hit == 0) {
          if (rand () % 100 + 1 >
              fighter[whom].stats[A_AUR + magic[spell_number].stat]) {
+
 /*  DS: The spell fail, so set ta[target] to MISS */
             if (tgt != SEL_ALL_ALLIES)
                ta[tgt] = MISS;
             else {
                int i, nt, st;
+
                if (whom < PSIZE) {
                   nt = numchrs;
                   st = 0;
@@ -612,6 +616,7 @@ static void cure_oneall_allies (int caster, int tgt, int spell_number)
    }
    if (tgt == SEL_ALL_ALLIES)
       b = b / z;
+
 /*
    If you wonder why I do this separate like this, it's just for looks.
    This way, it displays the amounts on screen, then adds the hp after
@@ -812,6 +817,7 @@ static void geffect_all_allies (int caster, int spell_number)
  */
 static void geffect_one_ally (int caster, int tgt, int spell_number)
 {
+
 /*  DS: The same problem of heal_one_ally(), this have been tested in
         cast_spell(), because the hit% of all magics with good effect
         are 0
@@ -824,6 +830,7 @@ static void geffect_one_ally (int caster, int tgt, int spell_number)
       return;
    }
 #endif
+
 /*  DS: Now the 'caster' argument isn't used, so I'm doing this: */
    caster = caster;
    switch (spell_number) {
@@ -906,6 +913,7 @@ static void heal_one_ally (int caster, int tgt, int spell_number)
       return;
    }
 #endif
+
 /*  DS: Now the 'caster' argument isn't used, so I'm doing this: */
    caster = caster;
    switch (spell_number) {
@@ -980,6 +988,7 @@ int mp_needed (int who, int spell_number)
  */
 int non_dmg_save (int tgt, int per)
 {
+
 /*  RB TODO:  */
    tgt = tgt;
    if (per == 0)
@@ -1191,7 +1200,7 @@ static void special_spells (int caster, int spell_number)
          do_transition (TRANS_FADE_IN, 2);
          combatend = 2;
       } else {
-         if (!strcmp(curmap, "main")) {
+         if (!strcmp (curmap, "main")) {
             /* TT: I would like to have a check here: if the player casts Warp,
              * the player can select WHERE to warp to, instead of just to the
              * house, etc.

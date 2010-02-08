@@ -1,5 +1,5 @@
-/*!
-   KQ is Copyright (C) 2002 - Josh Bolduc
+/*! \page License
+   KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
 
@@ -19,18 +19,22 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+
+#ifndef __STRUCTS_H
+#define __STRUCTS_H 1
+
+
 /*! \file
  * \brief Structures common to mapedit and the game (s_map and s_entity)
  * \author PH
  * \date 20030805
  */
 
-#ifndef __STRUCTS_H
-#define __STRUCTS_H
-
 #include "bounds.h"
 
 #define MAX_ANIM 5
+
+
 
 /*! \brief Position marker
  *
@@ -49,6 +53,7 @@ typedef struct
 } s_marker;
 
 
+
 /*! \brief Map definition
  *
  * This is the structure of each map on disk
@@ -64,7 +69,7 @@ typedef struct
    unsigned char tileset;       /*!< Which tile-set to use */
    unsigned char use_sstone;    /*!< Non-zero if sunstone works on this map */
    unsigned char can_warp;      /*!< Non-zero if Warp is allowed in this map */
-   unsigned char extra_byte;   /*!< Currently unused */
+   unsigned char extra_byte;    /*!< Currently unused */
    int xsize;                   /*!< Map width */
    int ysize;                   /*!< Map height */
    int pmult;                   /*!< Parallax multiplier */
@@ -81,8 +86,8 @@ typedef struct
    s_marker *markers;           /*!< Pointer to the array markers */
    short num_bound_boxes;       /*!< Number of bounding boxes in this map */
    s_bound *bound_box;          /*!< Pointer to the array bound_box */
-}
-s_map;
+} s_map;
+
 
 
 /*! \brief Entity
@@ -119,8 +124,8 @@ typedef struct
    char script[60];             //!< Movement/action script (pacing, etc.)
    unsigned short target_x;     //!< Scripted x-coord the ent is moving to
    unsigned short target_y;     //!< Scripted y-coord the ent is moving to
-}
-s_entity;
+} s_entity;
+
 
 
 /*! \brief Animation specifier
@@ -133,8 +138,9 @@ typedef struct
    unsigned short start;        /*!< First tile in sequence  */
    unsigned short end;          /*!< Last tile in sequence */
    unsigned short delay;        /*!< Frames to wait between tile changes */
-}
-s_anim;
+} s_anim;
+
+
 
 /*! \brief Tileset definition
  *
@@ -149,6 +155,7 @@ typedef struct
 } s_tileset;
 
 
+
 /*! \brief Progress Dump
  *
  * Contains the names of all the P_* progress constants
@@ -157,8 +164,7 @@ typedef struct
 {
    unsigned int num_progress;   /*!< Number of current progress */
    char name[18];               /*!< Name of current progress */
-}
-s_progress;
+} s_progress;
 
 
 #endif /*__STRUCTS_H*/

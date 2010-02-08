@@ -1,4 +1,4 @@
-/*
+/*! \page License
    KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
@@ -18,6 +18,7 @@
    the Free Software Foundation,
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
+
 
 /*! \file
  * \brief Effects and animations
@@ -55,6 +56,7 @@
 void death_animation (int tgt, int aflag)
 {
    int a, f, dx, dy, n, g, p;
+
    // TT: used for the slow_computer routine
    int count;
 
@@ -123,6 +125,7 @@ void death_animation (int tgt, int aflag)
 void display_amount (int tgt, int cl, int aflag)
 {
    int dx, dy, sz, c, f, n, g, k, p, z;
+
    /* TT: used for the slow_computer routine */
    int pcount, ccount;
 

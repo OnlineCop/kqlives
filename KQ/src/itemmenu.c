@@ -1,4 +1,4 @@
-/*
+/*! \page License
    KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
@@ -18,6 +18,7 @@
    the Free Software Foundation,
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
+
 
 /*! \file
  * \brief Item menu code
@@ -713,6 +714,7 @@ static void sort_items (void)
 int useup_item (int item_id)
 {
    int i;
+
    for (i = 0; i < MAX_INV; ++i) {
       if (g_inv[i][0] == item_id) {
          remove_item (i, 1);

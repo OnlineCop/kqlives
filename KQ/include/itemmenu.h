@@ -1,5 +1,5 @@
-/*
-   KQ is Copyright (C) 2002 - Josh Bolduc
+/*! \page License
+   KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
 
@@ -19,16 +19,19 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+
 #ifndef __ITEMMENU_H
-#define __ITEMMENU_H
+#define __ITEMMENU_H 1
+
+
+#define MAX_ITEMS           9
+
 
 void camp_item_menu (void);     /*  menu.c  */
 int check_inventory (int, int); /*  many functions ;)  */
 int item_effects (int, int, int);       /*  heroc.c  */
 void remove_item (int, int);    /*  (eqp|shop)menu.c, heroc.c  */
+int useup_item (int);
 
-extern int useup_item (int);
-
-#define MAX_ITEMS           9
 
 #endif /*  __ITEMMENU_H  */

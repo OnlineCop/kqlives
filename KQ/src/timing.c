@@ -1,4 +1,4 @@
-/*
+/*! \page License
    KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
@@ -19,6 +19,7 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+
 /*! \file
  * \brief Timing handler functions
  * \author ML
@@ -27,10 +28,9 @@
  * Looks after keeping the music playing whilst the game is 'paused'
  */
 #ifdef _WIN32
-#include <windef.h>
-
-#include <stdarg.h>
-#include <winbase.h>
+# include <windef.h>
+# include <stdarg.h>
+# include <winbase.h>
 #endif
 
 #include "kq.h"
@@ -43,6 +43,7 @@ static int frate;
 #ifdef HAVE_SYS_SELECT_H
 #include <sys/select.h>
 #include <sys/time.h>
+
 
 /*! \brief Pause the game for a period of time
  *
@@ -77,7 +78,7 @@ void kq_wait (long ms)
  * Calculates the time since the last call and
  * waits the remaining time for the next scheduled
  * screen update.
- * 
+ *
  * \param   fps The targeted frames per second
  * \returns The actual frames per second
  */
@@ -87,6 +88,7 @@ int limit_frame_rate (int fps)
    struct timeval tv = { 0, 0 };
    struct timeval timeout = { 0, 0 };
    time_t seconds;
+
    gettimeofday (&tv, 0);
    /* The time between now and (last exec + delay) */
    timeout.tv_usec = last_exec.tv_usec - tv.tv_usec + (1000000 / fps)
@@ -118,6 +120,7 @@ void kq_wait (long ms)
 {
    /* dumb's doc says to call poll_music each bufsize / freq seconds */
    static const int delay = 1000 * 4096 * 4 / 44100;
+
    while (ms > 0) {
       if (ms > delay) {
          Sleep (delay);
@@ -136,6 +139,7 @@ int limit_frame_rate (int fps)
 {
    static long last_exec = 0;
    long now, delay;
+
    now = GetTickCount ();
    delay = last_exec - now + 1000 / fps;
 //   skips = delay;
@@ -180,6 +184,7 @@ void kq_wait (long ms)
 int limit_frame_rate (int fps)
 {
    static int last_ksec = 0;
+
    vsync ();
    ++frate;
    if (last_ksec != ksec) {
@@ -189,4 +194,7 @@ int limit_frame_rate (int fps)
    }
    return mfrate;
 }
-#endif
+
+
+
+#endif  // HAVE_SYS_SELECT_H

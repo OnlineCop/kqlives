@@ -1,5 +1,5 @@
-/*
-   KQ is Copyright (C) 2002 - Josh Bolduc
+/*! \page License
+   KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
 
@@ -19,6 +19,11 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+
+#ifndef __SCRNSHOT_H
+#define __SCRNSHOT_H 1
+
+
 /*! \file
  * \brief Screenshot handling header
  *
@@ -26,9 +31,6 @@
  * \author ML
  * \date September 2002
  */
-
-#ifndef __SCRNSHOT_H
-#define __SCRNSHOT_H
 
 #define SS_SAVED_OK        0
 #define SS_BAD_FOLDER      1
@@ -39,5 +41,6 @@
 extern const char *ss_exit_msg[5];
 
 int save_screenshot (BITMAP *, const char *);   /* kq.c */
+
 
 #endif //__SCRNSHOT_H

@@ -1,4 +1,4 @@
-/*
+/*! \page License
    KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
@@ -18,6 +18,7 @@
    the Free Software Foundation,
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
+
 
 /*! \file
  * \brief Specifics for BeOS platforms
@@ -42,8 +43,9 @@
  */
 const char *kqres (int dir, const char *file)
 {
-	FILE * fp;
+   FILE *fp;
    static char ans[PATH_MAX];
+
    switch (dir) {
    case DATA_DIR:
       sprintf (ans, "data/%s", file);
@@ -62,11 +64,11 @@ const char *kqres (int dir, const char *file)
       break;
    case SCRIPT_DIR:
       sprintf (ans, "scripts/%s.lob", file);
-      fp = fopen(ans, "r");
+      fp = fopen (ans, "r");
       if (fp == NULL)
          sprintf (ans, "scripts/%s.lua", file);
       else
-      	fclose(ans);
+         fclose (ans);
       break;
    default:
       return NULL;

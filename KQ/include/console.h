@@ -1,5 +1,5 @@
-/*
-   KQ is Copyright (C) 2002 - Josh Bolduc
+/*! \page License
+   KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
 
@@ -21,12 +21,12 @@
 
 
 #ifndef __CONSOLE_H
-#define __CONSOLE_H
+#define __CONSOLE_H 1
 
 
-void display_console(int xofs, int yofs);
-void run_console(void);
-void scroll_console(const char* text);
+void display_console (int, int);
+void run_console (void);
+void scroll_console (const char *);
 
 
 #endif  /* __CONSOLE_H */

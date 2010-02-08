@@ -1,5 +1,5 @@
-/*
-   KQ is Copyright (C) 2002 - Josh Bolduc
+/*! \page License
+   KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
 
@@ -19,9 +19,9 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#ifndef __SHOPMENU_H
-#define __SHOPMENU_H
 
+#ifndef __SHOPMENU_H
+#define __SHOPMENU_H 1
 
 
 #define NUMSHOPS      50
@@ -44,7 +44,9 @@ typedef struct
    unsigned short items_replenish_time[SHOPITEMS];
 } s_shop;
 
+
 extern s_shop shops[NUMSHOPS];      /* sgame.c intrface.c */
 extern unsigned short num_shops;    /* sgame.c intrface.c */
+
 
 #endif /*  __SHOPMENU_H  */

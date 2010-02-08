@@ -1,4 +1,4 @@
-/*
+/*! \page License
    KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
@@ -18,6 +18,7 @@
    the Free Software Foundation,
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
+
 
 /*! \file
  * \brief   Hero combat
@@ -54,6 +55,7 @@
 int can_use_item = 1;
 
 /* Internal variables */
+
 /* Text names of hero skills */
 char sk_names[MAXCHRS][7];
 
@@ -611,14 +613,14 @@ void hero_choose_action (int who)
    int my = 0, chi[9], tt;
    char ca[9][8];
 
-   strcpy(sk_names[0],_("Rage"));
-   strcpy(sk_names[1],_("Sweep"));
-   strcpy(sk_names[2],_("Infuse"));
-   strcpy(sk_names[3],_("Prayer"));
-   strcpy(sk_names[4],_("Boost"));
-   strcpy(sk_names[5],_("Cover"));
-   strcpy(sk_names[6],_("Steal"));
-   strcpy(sk_names[7],_("Sense"));
+   strcpy (sk_names[0], _("Rage"));
+   strcpy (sk_names[1], _("Sweep"));
+   strcpy (sk_names[2], _("Infuse"));
+   strcpy (sk_names[3], _("Prayer"));
+   strcpy (sk_names[4], _("Boost"));
+   strcpy (sk_names[5], _("Cover"));
+   strcpy (sk_names[6], _("Steal"));
+   strcpy (sk_names[7], _("Sense"));
 
    if (cact[who] == 0)
       return;
@@ -921,9 +923,8 @@ static int hero_invokeitem (int whom, int eno)
       return 1;
    }
 
-   /*
-      This will likely become a separate function, but here is
-      where we are invoking items.
+   /* This will likely become a separate function, but here is
+    * where we are invoking items.
     */
    if (eno == I_STAFF1) {
       strcpy (ctext, _("Neutralize Poison"));
@@ -958,6 +959,7 @@ static int hero_invokeitem (int whom, int eno)
 static void hero_run (void)
 {
    int a, b = 0, c = 0, bt = 0, ct = 0, p, fr, fx, fy, g = 0;
+
    // TT: slow_computer additions for speed-ups
    int count;
 
@@ -982,8 +984,7 @@ static void hero_run (void)
       }
    }
    if (c == 0)
-      program_death
-         (_("Fatal error: Why are the heroes running from dead enemies?"));
+      program_death (_("Fatal error: Why are the heroes running from dead enemies?"));
    else
       ct = ct / c;
    if (bt > ct)

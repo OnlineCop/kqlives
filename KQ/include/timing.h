@@ -1,5 +1,5 @@
-/*
-   KQ is Copyright (C) 2002 - Josh Bolduc
+/*! \page License
+   KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
 
@@ -19,10 +19,13 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+
 #ifndef __TIMING_H
-#define __TIMING_H
+#define __TIMING_H 1
+
 
 void kq_wait (long ms);
 int limit_frame_rate (int fps);
 
-#endif
+
+#endif // __TIMING_H

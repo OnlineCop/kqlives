@@ -1,5 +1,5 @@
-/*
-   KQ is Copyright (C) 2002 - Josh Bolduc
+/*! \page License
+   KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
 
@@ -19,8 +19,10 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+
 #ifndef __INTRFACE_H
-#define __INTRFACE_H
+#define __INTRFACE_H 1
+
 
 /* Special identifiers for bubble() */
 #define HERO1             200
@@ -36,7 +38,7 @@ void do_postexec (void);        /*  kq.c  */
 void do_timefunc (const char *);
 void do_zone (int);             /*  kq.c  */
 void init_shops (void);         /* sgame.c */
-void lua_user_init(void);        /*  kq.c */
+void lua_user_init (void);      /*  kq.c */
 
 
 #endif /*  __INTRFACE_H  */

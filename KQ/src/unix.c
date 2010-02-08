@@ -1,4 +1,4 @@
-/*
+/*! \page License
    KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
@@ -18,6 +18,7 @@
    the Free Software Foundation,
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
+
 
 /*! \file
  * \brief Specifics for unix-like platforms
@@ -53,15 +54,17 @@ static char lib_dir[PATH_MAX];
  * \param file The filename
  * \returns the combined path
  */
-const char * get_resource_file_path (const char * str1, const char * str2, const char * file)
+const char *get_resource_file_path (const char *str1, const char *str2,
+                                    const char *file)
 {
    static char ans[PATH_MAX];
 
    sprintf (ans, "%s/%s/%s", user_dir, str2, file);
-	if (!exists(ans))
+   if (!exists (ans))
       sprintf (ans, "%s/%s/%s", str1, str2, file);
    return ans;
 }
+
 
 
 /*! \brief Returns the full path for this lua file
@@ -79,25 +82,27 @@ const char * get_resource_file_path (const char * str1, const char * str2, const
  * \param file The filename
  * \returns the combined path
  */
-const char * get_lua_file_path (const char * str1, const char * file)
+const char *get_lua_file_path (const char *str1, const char *file)
 {
-	static char ans[PATH_MAX];
-	
-	sprintf(ans, "%s/scripts/%s.lob", user_dir, file);
-	if (!exists(ans)) {
-		sprintf(ans, "%s/scripts/%s.lua", user_dir, file);
-		if (!exists(ans)) {
-			sprintf(ans, "%s/scripts/%s.lob", str1, file);
-			if (!exists(ans)) {
-				sprintf(ans, "%s/scripts/%s.lua", str1, file);
-				if (!exists(ans))
-					return NULL;
-			}
-		}
-	}
-	
-	return ans;
+   static char ans[PATH_MAX];
+
+   sprintf (ans, "%s/scripts/%s.lob", user_dir, file);
+   if (!exists (ans)) {
+      sprintf (ans, "%s/scripts/%s.lua", user_dir, file);
+      if (!exists (ans)) {
+         sprintf (ans, "%s/scripts/%s.lob", str1, file);
+         if (!exists (ans)) {
+            sprintf (ans, "%s/scripts/%s.lua", str1, file);
+            if (!exists (ans))
+               return NULL;
+         }
+      }
+   }
+
+   return ans;
 }
+
+
 
 /*! \brief Return the name of 'significant' directories.
  *
@@ -112,6 +117,7 @@ const char * get_lua_file_path (const char * str1, const char * file)
 const char *kqres (int dir, const char *file)
 {
    char exe[PATH_MAX];
+
    if (!init_path) {
       /* Get home directory; this bit originally written by SH */
       struct passwd *pwd;
@@ -146,20 +152,20 @@ const char *kqres (int dir, const char *file)
    }
    switch (dir) {
    case DATA_DIR:
-      return get_resource_file_path(data_dir, "data", file);
+      return get_resource_file_path (data_dir, "data", file);
       break;
    case MUSIC_DIR:
-  	   return get_resource_file_path(data_dir, "music", file);
+      return get_resource_file_path (data_dir, "music", file);
       break;
    case MAP_DIR:
-  	   return get_resource_file_path(data_dir, "maps", file);
+      return get_resource_file_path (data_dir, "maps", file);
       break;
    case SAVE_DIR:
    case SETTINGS_DIR:
-  	   return get_resource_file_path(user_dir, "", file);
+      return get_resource_file_path (user_dir, "", file);
       break;
    case SCRIPT_DIR:
-  	   return get_lua_file_path(lib_dir, file);
+      return get_lua_file_path (lib_dir, file);
       break;
    default:
       return NULL;

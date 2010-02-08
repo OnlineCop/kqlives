@@ -1,4 +1,4 @@
-/*
+/*! \page License
    KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
@@ -19,10 +19,11 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+
 /*! \file
  * \brief Screenshot handling
  *
- * Saves screen bitmaps to disk 
+ * Saves screen bitmaps to disk
  * \author ML
  * \date September 2002
  */
@@ -60,11 +61,13 @@ int save_screenshot (BITMAP * src_bmp, const char *prefix)
    /* this is defined as 8 to keep DOS support */
 #define SAVE_NAME_SIZE (8)
    const char *savedir = kqres (SAVE_DIR, ".");
+
    /* check to make sure the folder exists, but ignore errors if the
     * directory contains '.' because allegro cannot detect it. */
    if (strchr (savedir, '.') || file_exists (savedir, FA_DIREC, NULL)) {
       /* the name can only be up to SAVE_NAME_SIZE-1 characters */
       int prefix_len = strlen (prefix);
+
       if (prefix_len < SAVE_NAME_SIZE) {
          struct al_ffblk old_file;      /* structure to store matched files */
          int last = -1;         /* will store the latest screenshot number */
@@ -72,13 +75,14 @@ int save_screenshot (BITMAP * src_bmp, const char *prefix)
          /* construct the wild card to look like "saves/prefix*.pcx" */
          sprintf (filename, "%s/%s*.pcx", savedir, prefix);
 
-         /* 
-            now, lets look for pre-existing screen shots 
+         /*
+            now, lets look for pre-existing screen shots
             this is done, just to find the highest number already used
           */
          if (!al_findfirst (filename, &old_file, 255)) {
             do {
                char buffer[SAVE_NAME_SIZE + 1];
+
                /* always should be 12 characters, ie: shot1234.pcx */
                if (strlen (get_filename (old_file.name)) == SAVE_NAME_SIZE + 4) {
                   /* ie: if the filename found is "c:\kq\saves\shot0001.pcx", convert it to "0001" */
@@ -117,9 +121,7 @@ int save_screenshot (BITMAP * src_bmp, const char *prefix)
                if (src_bmp == screen)
                   destroy_bitmap (temp);
             } else {
-               TRACE
-                  (_("the bitmap [0x%p] is invalid (or unable to create sub bitmap)\n"),
-                   src_bmp);
+               TRACE (_("the bitmap [0x%p] is invalid (or unable to create sub bitmap)\n"), src_bmp);
                return SS_BAD_BITMAP;
             }
          } else {

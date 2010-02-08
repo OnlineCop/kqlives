@@ -1,4 +1,4 @@
-/*
+/*! \page License
    KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
@@ -18,6 +18,7 @@
    the Free Software Foundation,
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
+
 
 /*! \file
  * \brief In-game music routines
@@ -96,6 +97,7 @@ void play_music (const char *music_name, long position)
 {
    if (is_sound != 0) {
       char filename[PATH_MAX];
+
       stop_music ();
       strcpy (filename, kqres (MUSIC_DIR, music_name));
       if (strstr (filename, ".mod"))

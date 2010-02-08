@@ -1,4 +1,4 @@
-/*
+/*! \page License
    KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
@@ -19,6 +19,7 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+
 /*! \file
  * \brief Functions to load/save to disk
  *
@@ -38,10 +39,10 @@ static int save_s_bound (const s_bound *, PACKFILE *);
 
 int load_s_bound (s_bound * b, PACKFILE * f)
 {
-   b->x1 = pack_igetw (f);
-   b->y1 = pack_igetw (f);
-   b->x2 = pack_igetw (f);
-   b->y2 = pack_igetw (f);
+   b->left = pack_igetw (f);
+   b->top = pack_igetw (f);
+   b->right = pack_igetw (f);
+   b->bottom = pack_igetw (f);
    b->btile = pack_igetw (f);
    return 0;
 }
@@ -50,10 +51,10 @@ int load_s_bound (s_bound * b, PACKFILE * f)
 
 int save_s_bound (const s_bound * b, PACKFILE * f)
 {
-   pack_iputw (b->x1, f);
-   pack_iputw (b->y1, f);
-   pack_iputw (b->x2, f);
-   pack_iputw (b->y2, f);
+   pack_iputw (b->left, f);
+   pack_iputw (b->top, f);
+   pack_iputw (b->right, f);
+   pack_iputw (b->bottom, f);
    pack_iputw (b->btile, f);
    return 0;
 }
@@ -135,6 +136,7 @@ int save_s_entity (s_entity * s, PACKFILE * f)
 int load_s_map (s_map * sm, PACKFILE * f)
 {
    int i;
+
    sm->map_no = pack_getc (f);
    sm->zero_zone = pack_getc (f);
    sm->map_mode = pack_getc (f);
@@ -192,7 +194,7 @@ int save_s_map (s_map * sm, PACKFILE * f)
    int i;
 
    /* pack_putc (sm->map_no, f); */
-   pack_putc (0, f); /* To maintain compatibility. */
+   pack_putc (0, f);            /* To maintain compatibility. */
 
    pack_putc (sm->zero_zone, f);
    pack_putc (sm->map_mode, f);
@@ -210,9 +212,9 @@ int save_s_map (s_map * sm, PACKFILE * f)
    pack_iputl (sm->warpx, f);
    pack_iputl (sm->warpy, f);
    //pack_iputl (1, f);           /* Revision 1 */
-   sm->revision = 2; // Force new revision: 2
+   sm->revision = 2;            // Force new revision: 2
 
-   pack_iputl (sm->revision, f);           /* Revision 2 */
+   pack_iputl (sm->revision, f);        /* Revision 2 */
    pack_iputl (sm->extra_sdword2, f);
    pack_fwrite (sm->song_file, sizeof (sm->song_file), f);
    pack_fwrite (sm->map_desc, sizeof (sm->map_desc), f);
@@ -259,6 +261,7 @@ int save_s_marker (const s_marker * m, PACKFILE * f)
 int load_s_player (s_player * s, PACKFILE * f)
 {
    int i;
+
    pack_fread (s->name, sizeof (s->name), f);
    pack_getc (f);               /* alignment */
    pack_getc (f);               /* alignment */
@@ -296,6 +299,7 @@ int load_s_player (s_player * s, PACKFILE * f)
 int save_s_player (s_player * s, PACKFILE * f)
 {
    int i;
+
    pack_fwrite (s->name, sizeof (s->name), f);
    pack_putc (0, f);            /* alignment */
    pack_putc (0, f);            /* alignment */
@@ -333,6 +337,7 @@ int save_s_player (s_player * s, PACKFILE * f)
 int load_s_tileset (s_tileset * s, PACKFILE * f)
 {
    int i;
+
    pack_fread (s->icon_set, sizeof (s->icon_set), f);
    for (i = 0; i < MAX_ANIM; ++i) {
       s->tanim[i].start = pack_igetw (f);
@@ -347,6 +352,7 @@ int load_s_tileset (s_tileset * s, PACKFILE * f)
 int save_s_tileset (s_tileset * s, PACKFILE * f)
 {
    int i;
+
    pack_fwrite (s->icon_set, sizeof (s->icon_set), f);
    for (i = 0; i < MAX_ANIM; ++i) {
       pack_iputw (s->tanim[i].start, f);

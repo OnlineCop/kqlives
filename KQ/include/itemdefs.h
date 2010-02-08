@@ -1,5 +1,5 @@
-/*
-   KQ is Copyright (C) 2002 - Josh Bolduc
+/*! \page License
+   KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
 
@@ -19,14 +19,18 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+
+#ifndef __ITEMDEFS_H
+#define __ITEMDEFS_H 1
+
+
 /*! \file
  * \brief Defines for all items
  * \author JB
  * \date ??????
  */
 
-#ifndef __ITEMDEFS_H
-#define __ITEMDEFS_H
+
 
 /* The description for these items are in src\res.c */
 

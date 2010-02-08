@@ -1,5 +1,5 @@
-/*
-   KQ is Copyright (C) 2002 - Josh Bolduc
+/*! \page License
+   KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
 
@@ -19,8 +19,10 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+
 #ifndef __MAGIC_H
-#define __MAGIC_H
+#define __MAGIC_H 1
+
 
 /*! \file
  * \brief Stuff to work with magic.
@@ -102,10 +104,8 @@ void special_damage_oneall_enemies (int, int, int, int, int);   /*  eskill.c her
 int res_adjust (int, int, int); /*  combat.c, itemmenu.c  */
 int res_throw (int, int);       /*  combat.c, eskill.c  */
 int non_dmg_save (int, int);    /*  combat.c, eskill.c  */
-int mp_needed (int, int);       /*  enemyc.c, hskill.c,  */
-                                 /*  masmenu.c, heroc.c   */
-void adjust_hp (int, int);      /*  combat.c, [he]skill.c,     */
-                                 /*  (item|mas)menu.c, heroc.c  */
+int mp_needed (int, int);       /*  enemyc.c, hskill.c, masmenu.c, heroc.c  */
+void adjust_hp (int, int);      /*  combat.c, [he]skill.c, (item|mas)menu.c, heroc.c  */
 void adjust_mp (int, int);      /*  eskill.c, itemmenu.c  */
 int do_shell_check (int, int);  /*  hskill.c, itemmenu.c  */
 int do_shield_check (int, int); /*  only in combat.c  */

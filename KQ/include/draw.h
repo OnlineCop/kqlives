@@ -1,5 +1,5 @@
-/*
-   KQ is Copyright (C) 2002 - Josh Bolduc
+/*! \page License
+   KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
 
@@ -19,10 +19,10 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#ifndef __DRAW_H
-#define __DRAW_H
 
-/*! \file */
+#ifndef __DRAW_H
+#define __DRAW_H 1
+
 
 #include <allegro.h>
 
@@ -48,7 +48,7 @@
 
 /*  draw global functions  */
 
-/*  combat.c, effects.c, (item|mas|shop|eqp)menu.c, heroc.c, kq.c  */
+/*  combat.c, effects.c, (item|mas|shop|eqp)menu.c, heroc.c, kq.c,  */
 /*  [he]skill.c, intrface.c, selector.c, menu.c, setup.c, sgame.c  */
 void blit2screen (int, int);
 
@@ -74,12 +74,12 @@ int is_forestsquare (int, int);
 /*  selector.c, setup.c, sgame.c  */
 void drawmap (void);
 
-/*  combat.c, (eqp|item|mas|shop)menu.c, heroc.c, hskill.c  */
-/*  menu.c, selector.c, setup.c, sgame.c, intrface.c        */
+/*  combat.c, (eqp|item|mas|shop)menu.c, heroc.c, hskill.c,  */
+/*  menu.c, selector.c, setup.c, sgame.c, intrface.c  */
 void menubox (BITMAP *, int, int, int, int, int);
 
 /*  combat.c, (eqp|item|mas|shop)menu.c, heroc.c, hskill.c,  */
-/*  intrface.c, selector.c, setup.c, sgame.c, menu.c,        */
+/*  intrface.c, selector.c, setup.c, sgame.c, menu.c  */
 void print_font (BITMAP *, int, int, const char *, int);
 
 /*  effects.c -> only place (RB IDEA: moving it there?)  */
@@ -93,8 +93,7 @@ void porttext_ex (int, int, const char *);
 int prompt (int, int, int, const char *, const char *, const char *, const char *);
 int prompt_ex (int, const char *, const char *[], int);
 
-/*  combat.c, hskill.c, intrface.c, (item|shop)menu.c,  */
-/*  kq.c, sgame.c                                       */
+/*  combat.c, hskill.c, intrface.c, (item|shop)menu.c, kq.c, sgame.c  */
 void message (const char *, int, int, int, int);
 
 /*  intrface.c, kq.c  */

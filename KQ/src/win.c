@@ -1,4 +1,4 @@
-/*
+/*! \page License
    KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
@@ -19,6 +19,7 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+
 /*! \file
  * \brief Specifics for Windows
  *
@@ -30,6 +31,7 @@
 
 #include <allegro.h>
 #include <winalleg.h>
+#include <stdio.h>
 #include "kq.h"
 
 static int init_path = 0;
@@ -54,19 +56,21 @@ typedef HRESULT (WINAPI * SHGETFOLDERPATH) (HWND, int, HANDLE, DWORD, LPWSTR);
  * \param file The filename
  * \returns the combined path
  */
-const char * get_resource_file_path (const char * str1, const char * str2, const char * file)
+const char *get_resource_file_path (const char *str1, const char *str2,
+                                    const char *file)
 {
    static char ans[PATH_MAX];
-   FILE * fp;
+   FILE *fp;
 
    sprintf (ans, "%s/%s/%s", user_dir, str2, file);
-   fp = fopen(ans, "r");
+   fp = fopen (ans, "r");
    if (fp == NULL)
       sprintf (ans, "%s/%s/%s", str1, str2, file);
    else
-      fclose(fp);
+      fclose (fp);
    return ans;
 }
+
 
 
 /*! \brief Returns the full path for this lua file
@@ -82,31 +86,32 @@ const char * get_resource_file_path (const char * str1, const char * str2, const
  * \param file The filename
  * \returns the combined path
  */
-const char * get_lua_file_path (const char * file)
+const char *get_lua_file_path (const char *file)
 {
-	static char ans[PATH_MAX];
-	FILE * fp;
-	
-	sprintf(ans, "%s/scripts/%s.lob", user_dir, file);
-	fp = fopen(ans, "r");
-	if (fp == NULL) {
-		sprintf(ans, "%s/scripts/%s.lua", user_dir, file);
-		fp = fopen(ans, "r");
-		if (fp == NULL) {
-			sprintf(ans, "%s/scripts/%s.lob", game_dir, file);
-			fp = fopen(ans, "r");
-			if (fp == NULL) {
-				sprintf(ans, "%s/scripts/%s.lua", game_dir, file);
-				fp = fopen(ans, "r");
-				if (fp == NULL)
-					return NULL;
-			}
-		}
-	}
-	
-	fclose(fp);
-	return ans;
+   static char ans[PATH_MAX];
+   FILE *fp;
+
+   sprintf (ans, "%s/scripts/%s.lob", user_dir, file);
+   fp = fopen (ans, "r");
+   if (fp == NULL) {
+      sprintf (ans, "%s/scripts/%s.lua", user_dir, file);
+      fp = fopen (ans, "r");
+      if (fp == NULL) {
+         sprintf (ans, "%s/scripts/%s.lob", game_dir, file);
+         fp = fopen (ans, "r");
+         if (fp == NULL) {
+            sprintf (ans, "%s/scripts/%s.lua", game_dir, file);
+            fp = fopen (ans, "r");
+            if (fp == NULL)
+               return NULL;
+         }
+      }
+   }
+
+   fclose (fp);
+   return ans;
 }
+
 
 
 /*! \brief Return the name of 'significant' directories.
@@ -122,7 +127,8 @@ const char *kqres (int dir, const char *file)
    char *home;
 
    if (!init_path) {
-	WCHAR tmp[PATH_MAX];
+      WCHAR tmp[PATH_MAX];
+
       home = NULL;
       /* Get home directory; this bit originally written by SH */
       SHFolder = LoadLibrary ("shfolder.dll");
@@ -133,9 +139,9 @@ const char *kqres (int dir, const char *file)
             /* Get the "Application Data" folder for the current user */
             if (SHGetFolderPath
                 (NULL, CSIDL_APPDATA | CSIDL_FLAG_CREATE, NULL,
-                 SHGFP_TYPE_CURRENT, tmp) = S_OK) {
-				home = uconvert(tmp, U_UNICODE, NULL, U_UTF8, 0);
-			   }
+                 SHGFP_TYPE_CURRENT, tmp) == S_OK) {
+               home = uconvert (tmp, U_UNICODE, NULL, U_UTF8, 0);
+            }
          }
          FreeLibrary (SHFolder);
       }
@@ -155,20 +161,20 @@ const char *kqres (int dir, const char *file)
 
    switch (dir) {
    case DATA_DIR:
-      return get_resource_file_path(game_dir, "data", file);
+      return get_resource_file_path (game_dir, "data", file);
       break;
    case MUSIC_DIR:
-  	   return get_resource_file_path(game_dir, "music", file);
+      return get_resource_file_path (game_dir, "music", file);
       break;
    case MAP_DIR:
-  	   return get_resource_file_path(game_dir, "maps", file);
+      return get_resource_file_path (game_dir, "maps", file);
       break;
    case SAVE_DIR:
    case SETTINGS_DIR:
-  	   return get_resource_file_path(user_dir, "", file);
+      return get_resource_file_path (user_dir, "", file);
       break;
    case SCRIPT_DIR:
-  	   return get_lua_file_path(file);
+      return get_lua_file_path (file);
       break;
    default:
       return NULL;

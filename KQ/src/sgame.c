@@ -1,4 +1,4 @@
-/*
+/*! \page License
    KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
@@ -18,6 +18,7 @@
    the Free Software Foundation,
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
+
 
 /*! \file
  * \brief Save and Load game
@@ -131,9 +132,10 @@ static int confirm_quit (void)
 {
    const char *opts[2];
    int ans;
-   opts[0]=_("Yes");
-   opts[1]=_("No");
-   /*strcpy(opts[1], "No");*/
+
+   opts[0] = _("Yes");
+   opts[1] = _("No");
+   /*strcpy(opts[1], "No"); */
    ans = prompt_ex (0, _("Are you sure you want to quit this game?"), opts, 2);
    return ans == 0 ? 1 : 0;
 }
@@ -168,7 +170,8 @@ static void delete_game (void)
 
    } else {
       menubox (double_buffer, 128, pointer_offset + 12, 16, 1, DARKBLUE);
-      print_font (double_buffer, 136, pointer_offset + 20, _("File Not Deleted"), FNORMAL);
+      print_font (double_buffer, 136, pointer_offset + 20,
+                  _("File Not Deleted"), FNORMAL);
    }
    blit2screen (0, 0);
    blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
@@ -213,9 +216,9 @@ static int load_game (void)
 
    tv = pack_getc (sdat);
    if (tv == 92)
-      a = load_game_92(sdat);
+      a = load_game_92 (sdat);
    else if (tv == 91)
-      a = load_game_91(sdat);
+      a = load_game_91 (sdat);
    else {
       a = 0;
       message (_("Saved game format is not current."), 255, 0, 0, 0);
@@ -234,6 +237,8 @@ static int load_game (void)
    set_music_volume (((float) gmvol) / 255.0);
    return 1;
 }
+
+
 
 int load_game_91 (PACKFILE * sdat)
 {
@@ -268,7 +273,7 @@ int load_game_91 (PACKFILE * sdat)
       save_spells[a] = pack_getc (sdat);
    }
 
-   for (a = 0; a < sizeof(treasure); a++) {
+   for (a = 0; a < sizeof (treasure); a++) {
       treasure[a] = pack_getc (sdat);
    }
    for (a = 0; a < NUMSHOPS; a++) {
@@ -377,8 +382,6 @@ int load_game_91 (PACKFILE * sdat)
       player_special_items[SI_NOTE_DERIG] = 1;
    if (progress[P_TALKOLDMAN] > 2)
       player_special_items[SI_RUSTYKEY] = 1;
-
-
 
 #if 0
    a = 0;
@@ -528,8 +531,11 @@ int load_game_91 (PACKFILE * sdat)
 #undef P_TALK_TSORIN
 #undef P_TALKOLDMAN
 
+
    return 1;
 }
+
+
 
 /*! \brief Load game
  *
@@ -559,85 +565,86 @@ static int load_game_92 (PACKFILE * sdat)
    }
 
    /* Zero set empty party character(s), if any */
-   for (; a < PSIZE; a++)
-   {
+   for (; a < PSIZE; a++) {
       pidx[a] = 0;
       g_ent[a].active = 0;
    }
 
    /* Load number of, and data on all characters in game */
-   pack_igetw (sdat); /* max number of characters is fixed in KQ */
+   pack_igetw (sdat);           /* max number of characters is fixed in KQ */
    for (a = 0; a < MAXCHRS; a++) {
       load_s_player (&party[a], sdat);
    }
 
    /* Load map name and location */
    a = pack_igetw (sdat);
-   if (a > sizeof(curmap)) {
-      message(_("Error. number of chars in saved game > sizeof(curmap)"), 255, 0, 0, 0);
+   if (a > sizeof (curmap)) {
+      message (_("Error. number of chars in saved game > sizeof(curmap)"), 255,
+               0, 0, 0);
       return 0;
    }
    pack_fread (curmap, a, sdat);
-   curmap[a] = 0; // pack_fread does not append a NULL to the end of a string.
+   curmap[a] = 0;               // pack_fread does not append a NULL to the end of a string.
 
    g_ent[0].tilex = pack_igetw (sdat);
    g_ent[0].tiley = pack_igetw (sdat);
 
    /* Load Quest Info */
    b = pack_igetw (sdat);
-   if (b > sizeof(progress)) {
-      message(_("Error. number of progress indicators > sizeof(progress)"), 255, 0, 0, 0);
+   if (b > sizeof (progress)) {
+      message (_("Error. number of progress indicators > sizeof(progress)"),
+               255, 0, 0, 0);
       return 0;
    }
    for (a = 0; a < b; a++)
       progress[a] = pack_getc (sdat);
 
    /* zero-set blank Quest Info */
-   for (; a < sizeof(progress); a++)
+   for (; a < sizeof (progress); a++)
       progress[a] = 0;
 
    /* Load treasure info */
    b = pack_igetw (sdat);
-   if (b > sizeof(treasure)) {
-      message(_("Error. number of treasure indicators > sizeof(treasure)"), 255, 0, 0, 0);
+   if (b > sizeof (treasure)) {
+      message (_("Error. number of treasure indicators > sizeof(treasure)"),
+               255, 0, 0, 0);
       return 0;
    }
    for (a = 0; a < b; a++)
       treasure[a] = pack_getc (sdat);
 
    /* zero-set blank treasure info */
-   for (; a < sizeof(treasure); a++)
+   for (; a < sizeof (treasure); a++)
       treasure[a] = 0;
 
    /* Load spell info */
    b = pack_igetw (sdat);
-   if (b > sizeof(save_spells)) {
-      message(_("Error. number of non-combat spell indicators > sizeof(save_spells)"), 255, 0, 0, 0);
+   if (b > sizeof (save_spells)) {
+      message (_("Error. number of non-combat spell indicators > sizeof(save_spells)"),
+               255, 0, 0, 0);
       return 0;
    }
    for (a = 0; a < b; a++)
       save_spells[a] = pack_getc (sdat);
 
    /* zero-set empty spell slots */
-   for (; a < sizeof(save_spells); a++)
+   for (; a < sizeof (save_spells); a++)
       save_spells[a] = 0;
 
 
    /* Load player inventory */
    b = pack_igetw (sdat);
    if (b > MAX_INV) {
-      message(_("Error. number of inventory items > MAX_INV"), 255, 0, 0, 0);
+      message (_("Error. number of inventory items > MAX_INV"), 255, 0, 0, 0);
       return 0;
    }
-   for (a = 0; a < b; a++)
-   {
+   for (a = 0; a < b; a++) {
       g_inv[a][0] = pack_igetw (sdat);
       g_inv[a][1] = pack_igetw (sdat);
    }
 
    /* zero-set empty inventory slots */
-   for (; a < MAX_INV; a++)
-   {
+   for (; a < MAX_INV; a++) {
       g_inv[a][0] = 0;
       g_inv[a][1] = 0;
    }
@@ -645,12 +652,13 @@ static int load_game_92 (PACKFILE * sdat)
    /* Load special items info */
    b = pack_igetw (sdat);
    if (b > MAX_SPECIAL_ITEMS) {
-      message(_("Error. number of special items > MAX_SPECIAL_ITEMS"), 255, 0, 0, 0);
+      message (_("Error. number of special items > MAX_SPECIAL_ITEMS"), 255, 0,
+               0, 0);
       return 0;
    }
 
    for (a = 0; a < b; a++)
-      player_special_items[a] = pack_getc (sdat);   /* index */
+      player_special_items[a] = pack_getc (sdat);       /* index */
 
    /* zero-set empty special item slots */
    for (; a < MAX_SPECIAL_ITEMS; a++)
@@ -667,8 +675,7 @@ static int load_game_92 (PACKFILE * sdat)
     * a = current shop index
     * c = number of items in current shop
     * d = current item index */
-   for (a = 0; a < b; a++)
-   {
+   for (a = 0; a < b; a++) {
       shop_time[a] = pack_igetw (sdat);
       c = pack_igetw (sdat);
 
@@ -679,10 +686,9 @@ static int load_game_92 (PACKFILE * sdat)
          shops[a].items_current[d] = shops[a].items_max[d];
    }
    /* Replenish all shops that were not saved (haven't been visited yet) */
-   for (a = b; a < NUMSHOPS; a++)
-   {
-	  for (d = 0; d < SHOPITEMS; d++)
-		 shops[a].items_current[d] = shops[a].items_max[d];
+   for (a = b; a < NUMSHOPS; a++) {
+      for (d = 0; d < SHOPITEMS; d++)
+         shops[a].items_current[d] = shops[a].items_max[d];
    }
    return 1;
 }
@@ -726,7 +732,7 @@ void load_sgstats (void)
                sid[a][b] = pack_igetw (ldat);
                // sid[a][b] = 0; // Temp: Debugging / Testing
             }
-            pack_igetw (ldat); // Number of characters in game. Assume MAXCHRS
+            pack_igetw (ldat);  // Number of characters in game. Assume MAXCHRS
             for (b = 0; b < MAXCHRS; b++) {
                load_s_player (&tpm, ldat);
                for (c = 0; c < snc[a]; c++) {
@@ -740,8 +746,7 @@ void load_sgstats (void)
                   }
                }
             }
-         }
-         else if (vc == 91) {
+         } else if (vc == 91) {
             snc[a] = pack_igetl (ldat);
             sgp[a] = pack_igetl (ldat);
             shr[a] = pack_igetl (ldat);
@@ -762,8 +767,7 @@ void load_sgstats (void)
                   }
                }
             }
-         }
-         else
+         } else
             snc[a] = -1;
          pack_fclose (ldat);
       }
@@ -787,7 +791,7 @@ static int save_game (void)
    PACKFILE *sdat;
    int a, b;
 
-   return save_game_92();
+   return save_game_92 ();
 
    /* Rest of this function is no longer used */
 
@@ -826,7 +830,7 @@ static int save_game (void)
       save_s_player (&party[a], sdat);
    }
    pack_fwrite (curmap, 16, sdat);
-   for (a = 0; a < sizeof(progress); a++) { /* sizeof(progress) is 1750 */
+   for (a = 0; a < sizeof (progress); a++) {  /* sizeof(progress) is 1750 */
       pack_putc (progress[a], sdat);
    }
    for (a = 0; a < NUMSHOPS; a++) {           /* NUMSHOPS is 50 */
@@ -835,10 +839,10 @@ static int save_game (void)
    for (a = 0; a < SIZE_SAVE_RESERVE1; a++) { /* SAVE_RESERVE_SIZE1 is 150 */
       pack_putc (0, sdat);
    }
-   for (a = 0; a < sizeof(save_spells); a++) { /* sizeof(save_spells) is 50 */
-       pack_putc (save_spells[a], sdat);
+   for (a = 0; a < sizeof (save_spells); a++) { /* sizeof(save_spells) is 50 */
+      pack_putc (save_spells[a], sdat);
    }
-   for (a = 0; a < sizeof(treasure); a++) { /* sizeof(treasure) is 1000 */
+   for (a = 0; a < sizeof (treasure); a++) {    /* sizeof(treasure) is 1000 */
       pack_putc (treasure[a], sdat);
    }
    for (a = 0; a < NUMSHOPS; a++) {
@@ -878,6 +882,7 @@ static int save_game (void)
 }
 
 
+
 /*! \brief Save game 92
  *
  * Save the game, using KQ Save Game Format 92 (Beta)
@@ -888,7 +893,7 @@ static int save_game (void)
 static int save_game_92 (void)
 {
    int a, b, c, d;
-   PACKFILE * sdat;
+   PACKFILE *sdat;
 
    for (b = 0; b < PSIZE; b++) {
       sid[save_ptr][b] = 0;
@@ -933,22 +938,22 @@ static int save_game_92 (void)
    }
 
    /* Save map name and location */
-   pack_iputw (strlen(curmap), sdat);
-   pack_fwrite (curmap, strlen(curmap), sdat);
+   pack_iputw (strlen (curmap), sdat);
+   pack_fwrite (curmap, strlen (curmap), sdat);
 
    pack_iputw (g_ent[0].tilex, sdat);
    pack_iputw (g_ent[0].tiley, sdat);
 
 
    /* Save quest info */
-   for (a = sizeof(progress) - 1; a >= 0; a--)
+   for (a = sizeof (progress) - 1; a >= 0; a--)
       if (progress[a] > 0)
          break;
    /* We increment "a" because after the prev loop, it equals the number
     * of the last quest with a value, not the number of quests with a value */
    a++;
 
-   pack_iputw(a, sdat);
+   pack_iputw (a, sdat);
    for (b = 0; b < a; b++)
       pack_putc (progress[b], sdat);
 
@@ -965,7 +970,7 @@ static int save_game_92 (void)
    /* Save spell info (P_REPULSE is 48) */
    pack_iputw (sizeof (save_spells), sdat);
    for (a = 0; a < sizeof (save_spells); a++) { /* sizeof(save_spells) is 50 */
-       pack_putc (save_spells[a], sdat);
+      pack_putc (save_spells[a], sdat);
    }
 
    /* Save player inventory */
@@ -1172,7 +1177,8 @@ static void show_sgstats (int saving)
          menubox (double_buffer, 72, pointer_offset, 29, 4, BLUE);
 
       if (snc[sg] == -1)
-         print_font (double_buffer, 136, pointer_offset + 20, _("Wrong version"), FNORMAL);
+         print_font (double_buffer, 136, pointer_offset + 20,
+                     _("Wrong version"), FNORMAL);
       else {
          if (snc[sg] == 0)
             print_font (double_buffer, 168, pointer_offset + 20, _("Empty"), FNORMAL);
@@ -1238,7 +1244,8 @@ int start_menu (int skip_splash)
 
          kq_wait (1000);
          for (a = 0; a < 42; a++) {
-            stretch_blit (staff, double_buffer, 0, 0, 72, 226, 124 - (a * 32), 22 - (a * 96), 72 + (a * 64), 226 + (a * 192));
+            stretch_blit (staff, double_buffer, 0, 0, 72, 226, 124 - (a * 32),
+                          22 - (a * 96), 72 + (a * 64), 226 + (a * 192));
             blit2screen (0, 0);
             kq_wait (100);
          }
@@ -1269,7 +1276,8 @@ int start_menu (int skip_splash)
       bg = load_datafile_object (PCX_DATAFILE, "TITLE_PCX");
       for (a = 0; a < 16; a++) {
          clear_to_color (double_buffer, 15 - a);
-         masked_blit ((BITMAP *) bg->dat, double_buffer, 0, 0, 0, 60 - (a * 4), 320, 124);
+         masked_blit ((BITMAP *) bg->dat, double_buffer, 0, 0, 0, 60 - (a * 4),
+                      320, 124);
          blit2screen (0, 0);
          kq_wait (a == 0 ? 500 : 100);
       }
@@ -1282,7 +1290,7 @@ int start_menu (int skip_splash)
    }
 #endif
 
-   reset_world();
+   reset_world ();
 
    /* Draw menu and handle menu selection */
    while (!stop) {
@@ -1323,21 +1331,22 @@ int start_menu (int skip_splash)
       }
       if (balt) {
          unpress ();
-         if (ptr == 0) {         /* User selected "Continue" */
-            if (snc[0] == 0 && snc[1] == 0 && snc[2] == 0 && snc[3] == 0 && snc[4] == 0)
+         if (ptr == 0) {        /* User selected "Continue" */
+            if (snc[0] == 0 && snc[1] == 0 && snc[2] == 0 && snc[3] == 0
+                && snc[4] == 0)
                stop = 2;
             else if (saveload (0) == 1)
-                  stop = 1;
+               stop = 1;
             redraw = 1;
-         } else if (ptr == 1) {   /* User selected "New Game" */
+         } else if (ptr == 1) { /* User selected "New Game" */
             stop = 2;
-         } else if (ptr == 2) {   /* Config */
+         } else if (ptr == 2) { /* Config */
             clear (double_buffer);
             config_menu ();
             redraw = 1;
 
             /* TODO: Save Global Settings Here */
-         } else if (ptr == 3) {   /* Exit */
+         } else if (ptr == 3) { /* Exit */
             unload_datafile_object (bg);
             klog (_("Then exit you shall!"));
             return 2;
@@ -1380,13 +1389,14 @@ int system_menu (void)
    int stop = 0, ptr = 0;
    char save_str[10];
    int text_color = FNORMAL;
-   strcpy(save_str, _("Save  "));
+
+   strcpy (save_str, _("Save  "));
 
    if (cansave == 0) {
       text_color = FDARK;
 #ifdef KQ_CHEATS
       if (cheat) {
-         strcpy(save_str, _("[Save]"));
+         strcpy (save_str, _("[Save]"));
          text_color = FNORMAL;
       }
 #endif /* KQ_CHEATS */
@@ -1397,10 +1407,10 @@ int system_menu (void)
       drawmap ();
       menubox (double_buffer, xofs, yofs, 8, 4, BLUE);
 
-      print_font (double_buffer, 16 + xofs, 8 + yofs, save_str,  text_color);
-      print_font (double_buffer, 16 + xofs, 16 + yofs, _("Load"),   FNORMAL);
+      print_font (double_buffer, 16 + xofs, 8 + yofs, save_str, text_color);
+      print_font (double_buffer, 16 + xofs, 16 + yofs, _("Load"), FNORMAL);
       print_font (double_buffer, 16 + xofs, 24 + yofs, _("Config"), FNORMAL);
-      print_font (double_buffer, 16 + xofs, 32 + yofs, _("Exit"),   FNORMAL);
+      print_font (double_buffer, 16 + xofs, 32 + yofs, _("Exit"), FNORMAL);
 
       draw_sprite (double_buffer, menuptr, 0 + xofs, ptr * 8 + 8 + yofs);
       blit2screen (xofs, yofs);
@@ -1439,7 +1449,7 @@ int system_menu (void)
          }
 
          if (ptr == 1) {
-            if (saveload(0) != 0)
+            if (saveload (0) != 0)
                stop = 1;
          }
 

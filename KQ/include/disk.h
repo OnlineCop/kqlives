@@ -1,5 +1,5 @@
-/*
-   KQ is Copyright (C) 2002 - Josh Bolduc
+/*! \page License
+   KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
 
@@ -19,19 +19,22 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+
 #ifndef __DISK_H
-#define __DISK_H
+#define __DISK_H 1
+
 
 #include "kq.h"
 #include "entity.h"
 
-int load_s_map (s_map * sm, PACKFILE * f);
-int save_s_map (s_map * sm, PACKFILE * f);
-int load_s_entity (s_entity * s, PACKFILE * f);
-int save_s_entity (s_entity * s, PACKFILE * f);
-int load_s_player (s_player * s, PACKFILE * f);
-int save_s_player (s_player * s, PACKFILE * f);
-int load_s_tileset (s_tileset * s, PACKFILE * f);
-int save_s_tileset (s_tileset * s, PACKFILE * f);
+int load_s_map (s_map *, PACKFILE *);
+int save_s_map (s_map *, PACKFILE *);
+int load_s_entity (s_entity *, PACKFILE *);
+int save_s_entity (s_entity *, PACKFILE *);
+int load_s_player (s_player *, PACKFILE *);
+int save_s_player (s_player *, PACKFILE *);
+int load_s_tileset (s_tileset *, PACKFILE *);
+int save_s_tileset (s_tileset *, PACKFILE *);
+
 
 #endif /*__DISK_H*/

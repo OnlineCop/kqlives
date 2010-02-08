@@ -1,5 +1,5 @@
-/*
-   KQ is Copyright (C) 2002 - Josh Bolduc
+/*! \page License
+   KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
 
@@ -18,10 +18,11 @@
    the Free Software Foundation,
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
-#ifndef __CREDITS_H
-#define __CREDITS_H
 
-/*! file */
+
+#ifndef __CREDITS_H
+#define __CREDITS_H 1
+
 
 /*! Allocate memory for credits display */
 void allocate_credits (void);
@@ -32,4 +33,5 @@ void deallocate_credits (void);
 /*! Display credits (call in a loop) */
 void display_credits (void);
 
-#endif
+
+#endif // __CREDITS_H

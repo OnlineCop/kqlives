@@ -1,5 +1,5 @@
-/*
-   KQ is Copyright (C) 2002 - Josh Bolduc
+/*! \page License
+   KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
 
@@ -19,8 +19,10 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+
 #ifndef __SETUP_H
-#define __SETUP_H
+#define __SETUP_H 1
+
 
 /*! \file */
 
@@ -42,7 +44,7 @@
 
 
                                 /*  This is in addition to setup.c:  */
-void parse_setup (void);        /*  kq.c,  */
+void parse_setup (void);        /*  kq.c  */
 void config_menu (void);        /*  sgame.c  */
 void show_help (void);          /*  sgame.c  */
 void set_graphics_mode (void);  /*  kq.c, sgame.c  */
@@ -87,6 +89,8 @@ static char *keynames[] = {
    "ALTGR", "LWIN", "RWIN",
    "MENU", "SCRLOCK", "NUMLOCK", "CAPSLOCK"
 };
+
+
 
 #define N_KEYNAMES (sizeof (keynames) / sizeof (*keynames))
 const char *kq_keyname (int);

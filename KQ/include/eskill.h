@@ -1,5 +1,5 @@
-/*
-   KQ is Copyright (C) 2002 - Josh Bolduc
+/*! \page License
+   KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
 
@@ -19,19 +19,19 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+
+#ifndef __ESKILL_H
+#define __ESKILL_H 1
+
+
 /*! \file
  * \brief Enemy Skills header file
  *
  * This file contains only one function
  */
 
-#ifndef __ESKILL_H
-#define __ESKILL_H
-
-
 
 void combat_skill (int);        /*  enemyc.c  */
-
 
 
 #endif /*  __ESKILL_H  */

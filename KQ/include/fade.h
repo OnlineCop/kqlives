@@ -1,5 +1,5 @@
-/*
-   KQ is Copyright (C) 2002 - Josh Bolduc
+/*! \page License
+   KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
 
@@ -19,13 +19,16 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+
 #ifndef __FADE_H
-#define __FADE_H
+#define __FADE_H 1
+
 
 #define TRANS_FADE_IN    1
 #define TRANS_FADE_OUT   2
 #define TRANS_FADE_WHITE 3
 
-void do_transition (int type, int param);
+void do_transition (int, int);
 
-#endif
+
+#endif  // __FADE_H

@@ -1,5 +1,5 @@
-/*
-   KQ is Copyright (C) 2002 - Josh Bolduc
+/*! \page License
+   KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
 
@@ -19,20 +19,13 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#ifndef __HSKILL_H
-#define __HSKILL_H
 
+#ifndef __HSKILL_H
+#define __HSKILL_H 1
 
 
 int hero_skillcheck (int);      /*  heroc.c  */
 int skill_use (int);            /*  heroc.c  */
-
-
-
-#if 0
-void infusion (int, int);       /*  staticed  */
-#endif /*  0  */
-
 
 
 #endif /*  __HSKILL_H  */

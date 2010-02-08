@@ -1,4 +1,4 @@
-/*
+/*! \page License
    KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
@@ -19,6 +19,7 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+
 /*! \file
  * \brief Stuff relating to credits display:
  *        The original authors, new team etc are name-checked
@@ -36,6 +37,7 @@ static int ease (int);
 
 
 /*! Array of strings */
+
 /*! edgarmolina: i think that the credits aren't in any language
  *  so they could be leaved untouched.
  *  why wasn't günter here?, i added him, but while there's not utf-8
@@ -71,15 +73,15 @@ static volatile int ticks = 0;
 static void ticker (void)
 {
    ticks++;
-}
+} END_OF_FUNCTION (ticker)
 
-END_OF_FUNCTION (ticker);
 
 
 void allocate_credits (void)
 {
    unsigned int tlen = 0;
    int i;
+
    for (cc = credits; *cc; ++cc) {
       if (strlen (*cc) > tlen)
          tlen = strlen (*cc);
@@ -109,6 +111,7 @@ void display_credits (void)
    static const char *pressf1;
    int i, x0, e;
    static int last_e = 999;
+
    pressf1 = _("Press F1 for help");
    if (wk == NULL) {
       allocate_credits ();

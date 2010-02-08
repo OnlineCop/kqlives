@@ -1,4 +1,4 @@
-/*
+/*! \page License
    KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
@@ -18,6 +18,7 @@
    the Free Software Foundation,
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
+
 
 /*! \file
  * \brief Various hero and enemy selectors
@@ -125,6 +126,7 @@ int auto_select_enemy (int whom, int csts)
 int auto_select_hero (int whom, int csts)
 {
    int a, cntr = 0;
+
 /*  RB TODO  */
    whom = whom;
    if (numchrs == 1) {
@@ -182,6 +184,7 @@ static int can_attack (int tgt)
 static int mini_menu (int omask)
 {
    int cp;
+
    cp = 0;
 
    /* If no actions were allowed, or just one, skip the menu */
@@ -259,6 +262,7 @@ static int mini_menu (int omask)
 static void party_add (int id, int lead)
 {
    s_entity *t;
+
    if (numchrs < MAXCHRS) {
       if (numchrs > 0) {
          memcpy (&g_ent[numchrs], &g_ent[numchrs - 1], sizeof (*g_ent));
@@ -311,6 +315,7 @@ void party_newlead (void)
 static void party_remove (int id)
 {
    int i;
+
    for (i = 0; i < numchrs; ++i) {
       if (pidx[i] == id) {
          --numchrs;
@@ -361,8 +366,8 @@ int select_any_player (int csa, int icn, const char *msg)
       if (csa < TGT_ALLY_ALL) {
          menubox (double_buffer, 152 - ((strlen (msg) + 1) * 4) + xofs,
                   8 + yofs, strlen (msg) + 1, 1, BLUE);
-         draw_icon (double_buffer, icn,
-                    160 - ((strlen (msg) + 1) * 4) + xofs, 16 + yofs);
+         draw_icon (double_buffer, icn, 160 - ((strlen (msg) + 1) * 4) + xofs,
+                    16 + yofs);
          print_font (double_buffer, 168 - ((strlen (msg) + 1) * 4) + xofs,
                      16 + yofs, msg, FNORMAL);
       }
@@ -615,10 +620,10 @@ int select_hero (int whom, int multi, int csd)
 
 
 /*! \brief Select your party
- * 
+ *
  * This allows you to select the heroes in your party,
  * taking a list of available characters.
- * If there are two heroes active, you can select 
+ * If there are two heroes active, you can select
  * which one is going to be the leader.
  * \author PH
  * \date 20030603
@@ -634,6 +639,7 @@ int select_party (int *avail, int n_avail, int numchrs_max)
    int running = 1;
    int hero = -1;
    int mask;
+
    cur = 0;
    if (avail == NULL) {
       /* check input parameters */

@@ -1,5 +1,5 @@
-/*
-   KQ is Copyright (C) 2002 - Josh Bolduc
+/*! \page License
+   KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
 
@@ -19,9 +19,9 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#ifndef __SGAME_H
-#define __SGAME_H
 
+#ifndef __SGAME_H
+#define __SGAME_H 1
 
 
 /* Number of save game slots */
@@ -32,7 +32,6 @@
 void load_sgstats (void);       /*  kq.c  */
 int start_menu (int);           /*  kq.c  */
 int system_menu (void);         /*  kq.c  */
-
 
 
 #endif /*  __SGAME_H  */

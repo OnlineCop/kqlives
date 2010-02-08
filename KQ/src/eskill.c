@@ -1,4 +1,4 @@
-/*
+/*! \page License
    KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
@@ -19,6 +19,7 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+
 #include <stdio.h>
 #include <string.h>
 
@@ -36,8 +37,8 @@
 #include "res.h"
 #include "setup.h"
 
-/*! \file 
- * \brief Enemy skills 
+/*! \file
+ * \brief Enemy skills
  */
 
 

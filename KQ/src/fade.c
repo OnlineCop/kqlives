@@ -1,4 +1,4 @@
-/*
+/*! \page License
    KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
@@ -18,6 +18,7 @@
    the Free Software Foundation,
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
+
 
 /*! \file
  * \brief Palette fading routines
@@ -57,6 +58,7 @@ static void _fade_from_range (AL_CONST PALETTE source, AL_CONST PALETTE dest,
 {
    PALETTE temp;
    int c, start, last;
+
    /* make sure fade speed is in range */
    if (speed < 1)
       speed = 1;
@@ -83,8 +85,8 @@ static void _fade_from_range (AL_CONST PALETTE source, AL_CONST PALETTE dest,
 
 
 /*! \brief Perform one of a range of palette transitions
- * 
- * Fade to black, white or to the game palette (pal) 
+ *
+ * Fade to black, white or to the game palette (pal)
  *
  * \param   type Any of TRANS_FADE_IN, TRANS_FADE_OUT, TRANS_FADE_WHITE
  * \param   param Speed of transition
@@ -95,11 +97,13 @@ void do_transition (int type, int param)
       _fade_from_range (black_palette, pal, param, 0, PAL_SIZE - 1);
    } else if (type == TRANS_FADE_OUT) {
       PALETTE temp;
+
       get_palette (temp);
       _fade_from_range (temp, black_palette, param, 0, PAL_SIZE - 1);
    } else if (type == TRANS_FADE_WHITE) {
       PALETTE temp, whp;
       int a;
+
       get_palette (temp);
       for (a = 0; a < 256; a++) {
          whp[a].r = 63;

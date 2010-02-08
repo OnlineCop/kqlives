@@ -1,4 +1,4 @@
-/*
+/*! \page License
    KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
@@ -19,6 +19,7 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+
 /*! \file
  * \brief In-game music routines
  *
@@ -30,6 +31,7 @@
 
 #include "kq.h"
 #ifndef KQ_USE_JGMOD            /* { */
+
 /* DUMB version of music */
 #include <aldumb.h>
 #include "music.h"
@@ -122,6 +124,7 @@ void play_music (const char *music_name, long position)
 {
    if (is_sound != 0) {
       char filename[PATH_MAX];
+
       stop_music ();
       strcpy (filename, kqres (MUSIC_DIR, music_name));
       if (strstr (filename, ".mod"))
@@ -199,6 +202,8 @@ void resume_music (void)
       al_resume_duh (mod_player[current_music_player]);
    }
 }
+
+
 
 #else /* } KQ_USE_JGMOD { */
 #include <jgmod.h>
@@ -326,5 +331,7 @@ void resume_music ()
 {
    resume_mod ();
 }
+
+
 
 #endif /* } KQ_USE_JGMOD */

@@ -1,5 +1,5 @@
-/*
-   KQ is Copyright (C) 2002 - Josh Bolduc
+/*! \page License
+   KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
 
@@ -19,25 +19,15 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#ifndef __MASMENU_H
-#define __MASMENU_H
 
+#ifndef __MASMENU_H
+#define __MASMENU_H 1
 
 
 int learn_new_spells (int);     /*  kq.c, menu.c, combat.c  */
 void camp_spell_menu (int);     /*  menu.c  */
 
 extern int close_menu;          /*  menu.c  */
-
-
-
-#if 0
-int need_spell (int, int, int); /*  staticed  */
-void camp_draw_spell_menu (int, int, int);      /*  staticed  */
-void camp_spell_targeting (int, int);   /*  staticed  */
-int camp_castable (int, int);   /*  staticed  */
-#endif /*  0  */
-
 
 
 #endif /*  __MASMENU_H  */

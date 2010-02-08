@@ -1,4 +1,4 @@
-/*
+/*! \page License
    KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
@@ -18,6 +18,7 @@
    the Free Software Foundation,
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
+
 
 /*! \file
  * \brief Main file for KQ
@@ -79,13 +80,16 @@ char curmap[16];
  * bool.  Most if not all of these are updated in readcontrols() below ....
  */
 int right, left, up, down, besc, balt, bctrl, benter, bhelp;
+
 /*!  Scan codes for the keys (help is always F1)*/
 int kright, kleft, kup, kdown, kesc, kenter, kalt, kctrl;
+
 /*! Joystick buttons */
 int jbalt, jbctrl, jbenter, jbesc;
 
 /*! View and character positions */
 int vx, vy, mx, my;
+
 /*! What was the last direction each player moved in */
 int steps = 0;
 
@@ -103,17 +107,23 @@ BITMAP *obj_mesh;
 
 /*! Layers in the map */
 unsigned short *map_seg = NULL, *b_seg = NULL, *f_seg = NULL;
+
 /*! Zone, shadow and obstacle layers */
 unsigned char *z_seg = NULL, *s_seg = NULL, *o_seg = NULL;
+
 /*! keeps track of tasks completed and treasure chests opened */
 unsigned char progress[SIZE_PROGRESS];
 unsigned char treasure[SIZE_TREASURE];
+
 /*! keeps track of when shops were last visited */
 unsigned short shop_time[NUMSHOPS];
+
 /*! keeps track of non-combat spell statuses (currently only repulse) */
 unsigned char save_spells[SIZE_SAVE_SPELL];
+
 /*! Current map */
 s_map g_map;
+
 /*! Current entities (players+NPCs) */
 s_entity g_ent[MAX_ENT + PSIZE];
 
@@ -125,44 +135,63 @@ s_anim adata[MAX_ANIM];
 
 /*! Number of enemies */
 int noe = 0;
+
 /*! Identifies characters in the party */
 int pidx[MAXCHRS];
+
 /*! Number of characters in the party */
 int numchrs = 0;
+
 /*! Current gold */
 int gp = 0;
+
 /*! pixel offset in the current map view */
 int xofs, yofs;
+
 /*! Sound and music volume */
 int gsvol = 250, gmvol = 250;
+
 /*! Is the party under 'automatic' (i.e. scripted) control */
 unsigned char autoparty = 0;
+
 /*! Are all heroes dead? */
 unsigned char alldead = 0;
+
 /*! Is sound activated/available? */
 unsigned char is_sound = 1, sound_avail;
+
 /*! Makes is_active() return TRUE even if the character is dead */
 unsigned char deadeffect = 0;
+
 /*! Does the viewport follow the characters?*/
 unsigned char vfollow = 1;
+
 /*! Whether the sun stone can be used in this map*/
 unsigned char use_sstone = 0;
+
 /*! Version number (used for version control in sgame.c) */
 const unsigned char kq_version = 92;
+
 /*! If non-zero, don't do fade effects. The only place this is
  * set is in scripts. */
 unsigned char hold_fade = 0;
+
 /*! True if player can save at this point */
 unsigned char cansave = 0;
+
 /*! True if the intro is to be skipped (the bit where the heroes learn of the quest) */
 unsigned char skip_intro = 0;
+
 /*! Graphics mode settings */
 unsigned char wait_retrace = 0, windowed = 0, stretch_view = 0, cpu_usage = 0;
+
 /*! Current sequence position of animated tiles */
 unsigned short tilex[MAX_TILES];
+
 /*! Current 'time' for animated tiles. When this increments to adata[].delay,
  * the next tile is shown */
 unsigned short adelay[MAX_ANIM];
+
 /*! Temporary buffer for string operations (used everywhere!) */
 char *strbuf = NULL;
 
@@ -199,17 +228,23 @@ unsigned short lup[MAXCHRS][20] = {
 
 /*! Characters when they are in combat */
 s_fighter fighter[NUM_FIGHTERS];
+
 /*! Temp store for adjusted stats */
 s_fighter tempa, tempd;
 
 /*! Name of current shop */
 char sname[39];
+
 /*! Number of items in a shop */
 int noi;
+
 /*! Items in a shop */
 /* int shin[SHOPITEMS]; One global variable down; 999,999 to go --WK */
+
+
 /*! Should we display a box with ctext in it (used in combat) */
 int dct = 0;
+
 /*! Name of current spell or special ability */
 char ctext[39];
 
@@ -241,8 +276,10 @@ COLOR_MAP cmap;
 
 /*! Party can run away from combat? */
 unsigned char can_run = 1;
+
 /*! Is the map description is displayed on screen? */
 unsigned char display_desc = 0;
+
 /*! Which map layers should be drawn. These are set when the map is loaded;
     see change_map()
  */
@@ -250,22 +287,30 @@ unsigned char draw_background = 1, draw_middle = 1,
    draw_foreground = 1, draw_shadow = 1;
 /*! Items in inventory. g_inv[][0] is the item id, g_inv[][1] is the quantity */
 unsigned short g_inv[MAX_INV][2];
+
 /*! An array to hold all of the special items and descriptions in the game */
 s_special_item special_items[MAX_SPECIAL_ITEMS];
+
 /*! An array to hold which special items the character has, and how many */
 short player_special_items[MAX_SPECIAL_ITEMS];
+
 /*! The number of special items that the character possesses */
 short num_special_items = 0;
+
 /*! View coordinates; the view is a way of selecting a subset of the map to show. */
 int view_x1, view_y1, view_x2, view_y2, view_on = 0;
+
 /*! Are we in combat mode? */
 int in_combat = 0;
+
 /*! Frame rate stuff */
 int show_frate = 0;
+
 /*! Should we use the joystick */
 int use_joy = 1;
 
 #ifdef KQ_CHEATS
+
 /*! Is cheat mode activated? */
 int cheat = 0;
 int no_random_encounters = 0;
@@ -285,6 +330,8 @@ static struct timer_event
    char name[32];               /*!< Name of the event */
    int when;                    /*!< Time when it will trigger */
 } timer_events[5];
+
+
 
 static int next_event_time;     /*!< The time the next event will trigger */
 
@@ -430,6 +477,7 @@ int add_timer_event (const char *n, int delta)
 {
    int w = delta + ksec;
    int i;
+
    for (i = 0; i < 5; ++i) {
       if (*timer_events[i].name == '\0') {
          memcpy (timer_events[i].name, n, sizeof (timer_events[i].name));
@@ -445,6 +493,7 @@ int add_timer_event (const char *n, int delta)
 
 
 #ifdef DEBUGMODE
+
 /*! \brief Create bitmap
  *
  * This function allocates a bitmap and kills the
@@ -688,6 +737,7 @@ void check_animation (void)
 {
    int i, j;
    int diff = animation_count;
+
    animation_count -= diff;
    if (!diff)
       return;
@@ -709,6 +759,7 @@ void check_animation (void)
 
 
 #ifdef DEBUGMODE
+
 /*! \brief Write debug data to disk
  *
  * Writes the treasure and progress arrays in text format to "treasure.log"
@@ -732,10 +783,8 @@ void data_dump (void)
       if (!ff)
          program_death (_("Could not open progress.log!"));
       for (a = 0; a < 120; a++) {
-         fprintf (ff, "%d: %s = %d\n",
-                  progresses[a].num_progress,
-                  progresses[a].name,
-                  progress[a]);
+         fprintf (ff, "%d: %s = %d\n", progresses[a].num_progress,
+                  progresses[a].name, progress[a]);
       }
       fprintf (ff, "\n");
       for (a = 0; a < NUMSHOPS; a++)
@@ -829,8 +878,7 @@ static void deallocate_stuff (void)
       free (o_seg);
    if (strbuf)
       free (strbuf);
-/*    if (savedir) */
-/*       free (savedir); */
+
 
    if (is_sound) {
       shutdown_music ();
@@ -1058,6 +1106,7 @@ void load_heroes (void)
    PACKFILE *f;
    DATAFILE *pcxb;
    int i;
+
    /* Hero stats */
    if ((f = pack_fopen (kqres (DATA_DIR, "hero.kq"), F_READ_PACKED)) == NULL) {
       program_death (_("Cannot open hero data file"));
@@ -1093,6 +1142,7 @@ static void load_map (const char *map_name)
 {
    int i;
    PACKFILE *pf;
+
    reset_timer_events ();
    if (hold_fade == 0)
       do_transition (TRANS_FADE_OUT, 4);
@@ -1153,7 +1203,7 @@ int main (int argc, const char *argv[])
          skip_splash = 1;
 
       if (!strcmp (argv[i], "--help")) {
-         printf(_("Sorry, no help screen at this time.\n"));
+         printf (_("Sorry, no help screen at this time.\n"));
          return EXIT_SUCCESS;
       }
    }
@@ -1163,12 +1213,12 @@ int main (int argc, const char *argv[])
    /* While KQ is running (playing or at startup menu) */
    while (game_on) {
       switch (start_menu (skip_splash)) {
-      case 0: /* Continue */
+      case 0:                  /* Continue */
          break;
-      case 1: /* New game */
+      case 1:                  /* New game */
          change_map ("starting", 0, 0, 0, 0);
          break;
-      default: /* Exit */
+      default:                 /* Exit */
          game_on = 0;
          break;
       }
@@ -1196,11 +1246,11 @@ int main (int argc, const char *argv[])
             if (bhelp) {
                /* TODO: In-game help system. */
             }
-			#ifdef DEBUGMODE
-			if (key[KEY_BACKSLASH]) {
-				run_console();
-			}
-			#endif
+#ifdef DEBUGMODE
+            if (key[KEY_BACKSLASH]) {
+               run_console ();
+            }
+#endif
             if (alldead) {
                clear (screen);
                do_transition (TRANS_FADE_IN, 16);
@@ -1214,9 +1264,7 @@ int main (int argc, const char *argv[])
    remove_int (time_counter);
    deallocate_stuff ();
    return EXIT_SUCCESS;
-}
-
-END_OF_MAIN ();
+} END_OF_MAIN()
 
 
 
@@ -1229,6 +1277,7 @@ END_OF_MAIN ();
 static void map_alloc (void)
 {
    int tiles = g_map.xsize * g_map.ysize;
+
    free (map_seg);
    map_seg = (unsigned short *) malloc (tiles * sizeof (short));
 
@@ -1254,6 +1303,7 @@ static void map_alloc (void)
 static inline long long gettime ()
 {
    struct timeval tv;
+
    gettimeofday (&tv, 0);
    return (tv.tv_sec * 1000000) + (tv.tv_usec);
 }
@@ -1264,6 +1314,7 @@ int maybe_poll_joystick ()
 {
    long long lasttime = 0;
    long long nowtime = gettime ();
+
    if ((unsigned long long) nowtime > (unsigned long long) lasttime) {
       lasttime = nowtime + 150000;
       return poll_joystick ();
@@ -1292,9 +1343,7 @@ static void my_counter (void)
 
    animation_count++;
    timer_count++;
-}
-
-END_OF_FUNCTION (my_counter);
+} END_OF_FUNCTION (my_counter)
 
 
 
@@ -1457,6 +1506,7 @@ void program_death (const char *message)
 void readcontrols (void)
 {
    JOYSTICK_INFO *stk;
+
    poll_music ();
 
    /* PH 2002.09.21 in case this is needed (not sure on which platforms it is) */
@@ -1482,6 +1532,7 @@ void readcontrols (void)
    /* PH modified - need to hold down for 0.50 sec */
    if (key[KEY_ALT] && key[KEY_X]) {
       int kill_time = timer_count + KQ_TICKS / 2;
+
       while (key[KEY_ALT] && key[KEY_X]) {
          if (timer_count >= kill_time) {
             /* Pressed, now wait for release */
@@ -1539,16 +1590,18 @@ void readcontrols (void)
 void reset_timer_events (void)
 {
    int i;
+
    for (i = 0; i < 5; ++i)
       *timer_events[i].name = '\0';
    next_event_time = INT_MAX;
 }
 
 
+
 /*! \brief Resets the world. Called every new game and load game
  *  This function may be called multiple times in some cases. That should be ok.
  */
-void reset_world(void)
+void reset_world (void)
 {
    int i, j;
 
@@ -1578,7 +1631,7 @@ void reset_world(void)
       }
    }
 
-   lua_user_init();
+   lua_user_init ();
 }
 
 
@@ -1761,6 +1814,7 @@ static void startup (void)
 }
 
 
+
 /*! \brief Keep track of the time the game has been in play
  */
 static void time_counter (void)
@@ -1771,9 +1825,7 @@ static void time_counter (void)
       khr++;
    }
 
-}
-
-END_OF_FUNCTION (time_counter);
+} END_OF_FUNCTION (time_counter)
 
 
 
@@ -1840,6 +1892,7 @@ void wait_for_entity (int est, int efi)
 
    if (est > efi) {
       int temp = est;
+
       est = efi;
       efi = temp;
    }
@@ -1934,11 +1987,12 @@ void warp (int wtx, int wty, int fspeed)
 void zone_check (void)
 {
    unsigned short stc, zx, zy;
+
    zx = g_ent[0].x / 16;
    zy = g_ent[0].y / 16;
 
    if (save_spells[P_REPULSE] > 0) {
-      if (!strcmp(curmap, "main"))
+      if (!strcmp (curmap, "main"))
          save_spells[P_REPULSE]--;
       else {
          if (save_spells[P_REPULSE] > 1)

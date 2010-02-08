@@ -1,4 +1,4 @@
-/*
+/*! \page License
    KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
@@ -18,6 +18,7 @@
    the Free Software Foundation,
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
+
 
 /*! \file
  * \brief Hero skills
@@ -156,6 +157,7 @@ static void infusion (int c, int sn)
    int j;
 
    switch (sn) {
+
 /* TT TODO: Sort all of these by element type
  * (poison, fire, etc) then by damage.
  */
@@ -345,6 +347,7 @@ static void infusion (int c, int sn)
 void reveal (int tgt)
 {
    int c, d = 0, g = 0, b;
+
    do_transition (TRANS_FADE_OUT, 4);
    menubox (double_buffer, 84, 56, 17, 13, BLUE);
    sprintf (strbuf, _("Name: %s"), fighter[tgt].name);

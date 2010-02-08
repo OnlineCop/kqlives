@@ -1,5 +1,5 @@
-/*
-   KQ is Copyright (C) 2002 - Josh Bolduc
+/*! \page License
+   KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
 
@@ -19,12 +19,14 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+
+#ifndef __HEROC_H
+#define __HEROC_H 1
+
+
 /*! \file
  * \brief Hero combat header file
  */
-
-#ifndef __HEROC_H
-#define __HEROC_H
 
 /*! \name Hero identifiers */
 #define SENSAR            0

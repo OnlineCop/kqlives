@@ -1,4 +1,4 @@
-/*
+/*! \page License
    KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
@@ -18,6 +18,7 @@
    the Free Software Foundation,
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
+
 
 /*! \file
  * \brief Setup and menu code
@@ -59,6 +60,7 @@ static void parse_jb_setup (void);
 
 
 /*! \brief Play sound effects / music if adjusting it */
+
 /* TT: looks like a hack to me! :-) */
 /* PH: I cannot tell a lie: it was Matthew... */
 #define IF_VOLUME_ALERT() \
@@ -84,8 +86,7 @@ static void citem (int y, const char *caption, const char *value,
                    const int color)
 {
    print_font (double_buffer, 48 + xofs, y + yofs, caption, color);
-   print_font (double_buffer, 280 - 8 * strlen (value) + xofs, y + yofs, value,
-               color);
+   print_font (double_buffer, 280 - 8 * strlen (value) + xofs, y + yofs, value, color);
 }
 
 
@@ -102,14 +103,15 @@ void config_menu (void)
    int temp_key = 0;
 
 #ifdef DEBUGMODE
-   #define MENU_SIZE 18
+# define MENU_SIZE 18
 #else
-   #define MENU_SIZE 17
+# define MENU_SIZE 17
 #endif
    static const char *dc[MENU_SIZE];
 
    /* Define rows with appropriate spacings for breaks between groups */
    int row[MENU_SIZE];
+
    for (p = 0; p < 4; p++)
       row[p] = (p + 4) * 8;     // (p * 8) + 32
    for (p = 4; p < 12; p++)
@@ -120,25 +122,25 @@ void config_menu (void)
       row[p] = (p + 7) * 8;     // (p * 8) + 56
 
    /* Helper strings */
-   dc[0]=_("Display KQ in a window.");
-   dc[1]=_("Stretch to fit 640x480 resolution.");
-   dc[2]=_("Display the frame rate during play.");
-   dc[3]=_("Wait for vertical retrace.");
-   dc[4]=_("Key used to move up.");
-   dc[5]=_("Key used to move down.");
-   dc[6]=_("Key used to move left.");
-   dc[7]=_("Key used to move right.");
-   dc[8]=_("Key used to confirm action.");
-   dc[9]=_("Key used to cancel action.");
-   dc[10]=_("Key used to call character menu.");
-   dc[11]=_("Key used to call system menu.");
-   dc[12]=_("Toggle sound and music on/off.");
-   dc[13]=_("Overall sound volume (affects music).");
-   dc[14]=_("Music volume.");
-   dc[15]=_("Animation speed-ups for slow machines.");
-   dc[16]=_("Toggle how to allocate CPU usage.");
+   dc[0] = _("Display KQ in a window.");
+   dc[1] = _("Stretch to fit 640x480 resolution.");
+   dc[2] = _("Display the frame rate during play.");
+   dc[3] = _("Wait for vertical retrace.");
+   dc[4] = _("Key used to move up.");
+   dc[5] = _("Key used to move down.");
+   dc[6] = _("Key used to move left.");
+   dc[7] = _("Key used to move right.");
+   dc[8] = _("Key used to confirm action.");
+   dc[9] = _("Key used to cancel action.");
+   dc[10] = _("Key used to call character menu.");
+   dc[11] = _("Key used to call system menu.");
+   dc[12] = _("Toggle sound and music on/off.");
+   dc[13] = _("Overall sound volume (affects music).");
+   dc[14] = _("Music volume.");
+   dc[15] = _("Animation speed-ups for slow machines.");
+   dc[16] = _("Toggle how to allocate CPU usage.");
 #ifdef DEBUGMODE
-      dc[17]=_("Things you can do only in DebugMode.");
+   dc[17] = _("Things you can do only in DebugMode.");
 #endif
 
    unpress ();
@@ -148,8 +150,7 @@ void config_menu (void)
       check_animation ();
       drawmap ();
       menubox (double_buffer, 88 + xofs, yofs, 16, 1, BLUE);
-      print_font (double_buffer, 96 + xofs, 8 + yofs, _("KQ Configuration"),
-                  FGOLD);
+      print_font (double_buffer, 96 + xofs, 8 + yofs, _("KQ Configuration"), FGOLD);
       menubox (double_buffer, 32 + xofs, 24 + yofs, 30, MENU_SIZE + 3, BLUE);
 
       citem (row[0], _("Windowed mode:"), windowed == 1 ? _("YES") : _("NO"), FNORMAL);
@@ -481,14 +482,10 @@ static int getavalue (const char *capt, int minu, int maxu, int cv, int sp)
       return -1;
    while (!stop) {
       check_animation ();
-      menubox (double_buffer, 148 - (maxu * 4) + xofs, 100 + yofs, maxu + 1,
-               3, DARKBLUE);
-      print_font (double_buffer, 160 - (strlen (capt) * 4) + xofs,
-                  108 + yofs, capt, FGOLD);
-      print_font (double_buffer, 152 - (maxu * 4) + xofs, 116 + yofs, "<",
-                  FNORMAL);
-      print_font (double_buffer, 160 + (maxu * 4) + xofs, 116 + yofs, ">",
-                  FNORMAL);
+      menubox (double_buffer, 148 - (maxu * 4) + xofs, 100 + yofs, maxu + 1, 3, DARKBLUE);
+      print_font (double_buffer, 160 - (strlen (capt) * 4) + xofs, 108 + yofs, capt, FGOLD);
+      print_font (double_buffer, 152 - (maxu * 4) + xofs, 116 + yofs, "<", FNORMAL);
+      print_font (double_buffer, 160 + (maxu * 4) + xofs, 116 + yofs, ">", FNORMAL);
       b = 160 - (maxu * 4) + xofs;
       for (a = 0; a < cv; a++) {
          rectfill (double_buffer, a * 8 + b + 1, 117 + yofs, a * 8 + b + 7,
@@ -584,7 +581,8 @@ static int load_samples (void)
    for (index = 0; index < MAX_SAMPLES; index++) {
       sfx[index] = load_datafile_object (SOUND_DATAFILE, sndfiles[index]);
       if (sfx[index] == NULL) {
-         sprintf (strbuf, _("Error loading .WAV file: %s.\n"), sndfiles[index]);
+         sprintf (strbuf, _("Error loading .WAV file: %s.\n"),
+                  sndfiles[index]);
          klog (strbuf);
          return 1;
       }
@@ -604,6 +602,7 @@ static int load_samples (void)
 static void parse_allegro_setup (void)
 {
    const char *cfg = kqres (SETTINGS_DIR, "kq.cfg");
+
    if (!exists (cfg)) {
       /* config file does not exist. Fall back to setup.cfg */
       /* Transitional code */
@@ -691,6 +690,7 @@ static void parse_jb_setup (void)
 {
    FILE *s;
    int dab = 0;
+
    /* Default key assignments */
    kup = KEY_UP;
    kdown = KEY_DOWN;

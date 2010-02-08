@@ -1,4 +1,4 @@
-/*
+/*! \page License
    KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
@@ -18,6 +18,7 @@
    the Free Software Foundation,
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
+
 
 /*! \file
  * \brief NPC movement routines
@@ -94,16 +95,18 @@ static int compose_path (AL_CONST int *map, int target_x, int target_y,
       }
 
       /*  move as many squares down as possible  */
-      while ((y < g_map.ysize - 1) &&
-             (map[(y + 1) * g_map.xsize + x] == (value - 1)) && (value > 1)) {
+      while ((y < g_map.ysize - 1)
+             && (map[(y + 1) * g_map.xsize + x] == (value - 1))
+             && (value > 1)) {
          value--;
          y++;
          temp[index--] = 'U';
       }
 
       /*  move as many squares right as possible  */
-      while ((x < g_map.xsize - 1) &&
-             (map[y * g_map.xsize + (x + 1)] == (value - 1)) && (value > 1)) {
+      while ((x < g_map.xsize - 1)
+             && (map[y * g_map.xsize + (x + 1)] == (value - 1))
+             && (value > 1)) {
          value--;
          x++;
          temp[index--] = 'L';
@@ -227,8 +230,7 @@ static int minimize_path (AL_CONST char *source, char *target, int size)
 
       source_index++;
       repetition = 1;
-      while ((source[source_index] == value) &&
-             (source[source_index] != '\0')) {
+      while ((source[source_index] == value) && (source[source_index] != '\0')) {
          source_index++;
          repetition++;
       }
@@ -250,7 +252,7 @@ static int minimize_path (AL_CONST char *source, char *target, int size)
 /*! \brief Internal path search routine.
  *
  * This function uses recursivity to find the shortest path to the target
- * point. Once it returns 0, 
+ * point. Once it returns 0,
  *
  * \param id  [in]     The ID of the entity moving around.
  * \param map [in,out] The map in where to write the paths.
@@ -271,8 +273,8 @@ static int minimize_path (AL_CONST char *source, char *target, int size)
  * \sa copy_map compose_path find_path minimize_path
  */
 static int search_paths (int id, int *map, int step, int source_x,
-                         int source_y, int target_x, int target_y,
-                         int start_x, int start_y, int limit_x, int limit_y)
+                         int source_y, int target_x, int target_y, int start_x,
+                         int start_y, int limit_x, int limit_y)
 {
    int index;
    int value;

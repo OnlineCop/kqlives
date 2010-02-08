@@ -1,5 +1,5 @@
-/*
-   KQ is Copyright (C) 2002 - Josh Bolduc
+/*! \page License
+   KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
 
@@ -19,8 +19,10 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+
 #ifndef __MUSIC_H
-#define __MUSIC_H
+#define __MUSIC_H 1
+
 
 /* ML: include aldumb.h here, because other modules really don't know that
 	we are using dumb, and it doesn't make sense to have to include aldumb
@@ -39,4 +41,5 @@ void pause_music (void);
 void resume_music (void);
 void stop_music (void);
 
-#endif
+
+#endif // __MUSIC_H

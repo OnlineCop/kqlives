@@ -1,4 +1,4 @@
-/*
+/*! \page License
    KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
@@ -18,6 +18,7 @@
    the Free Software Foundation,
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
+
 
 /*! \file
  * \brief Entity functions
@@ -67,6 +68,7 @@ static void wander (int);
 static void chase (int target_entity)
 {
    int emoved = 0;
+
    if (g_ent[target_entity].chasing == 0) {
       if (entity_near (target_entity, 0, 3) == 1
           && rand () % 100 <= g_ent[target_entity].extra) {
@@ -168,14 +170,14 @@ int entityat (int ox, int oy, int who)
       if (g_ent[i].active && ox == g_ent[i].tilex && oy == g_ent[i].tiley) {
          if (who >= PSIZE) {
             if (g_ent[who].eid == ID_ENEMY && i < PSIZE) {
-               if (combat(0) == 1)
+               if (combat (0) == 1)
                   g_ent[who].active = 0;
                return 0;
             }
             return i + 1;
          } else {
             if (g_ent[i].eid == ID_ENEMY) {
-               if (combat(0) == 1)
+               if (combat (0) == 1)
                   g_ent[i].active = 0;
                return 0;
             }
@@ -295,6 +297,7 @@ static void follow (int tx, int ty)
 static void getcommand (int target_entity)
 {
    char s;
+
    /* PH FIXME: prevented from running off end of string */
    if (g_ent[target_entity].sidx < sizeof (g_ent[target_entity].script))
       s = g_ent[target_entity].script[g_ent[target_entity].sidx++];
@@ -437,18 +440,17 @@ static int move (int target_entity, int dx, int dy)
       return 0;
 
    // Make sure that the player can't avoid special zones by moving diagonally.
-   if (dx && dy)
-   {
+   if (dx && dy) {
       source_tile = ty * g_map.xsize + tx;
       if (z_seg[source_tile] != z_seg[source_tile + dx]
          || z_seg[source_tile] != z_seg[source_tile + dy * g_map.xsize]) {
          if (ent->facing == FACE_LEFT || ent->facing == FACE_RIGHT) {
-            if (!obstruction(tx, ty, dx, 0, TRUE))
+            if (!obstruction (tx, ty, dx, 0, TRUE))
                dy = 0;
             else
                dx = 0;
-         } else {   // They are facing up or down.
-            if (!obstruction(tx, ty, 0, dy, TRUE))
+         } else {               // They are facing up or down.
+            if (!obstruction (tx, ty, 0, dy, TRUE))
                dx = 0;
             else
                dy = 0;
@@ -581,6 +583,7 @@ static void player_move (void)
 {
    int oldx = g_ent[0].tilex;
    int oldy = g_ent[0].tiley;
+
    readcontrols ();
 
    if (balt)
@@ -610,6 +613,7 @@ void process_entities (void)
 {
    int i;
    const char *t_evt;
+
    for (i = 0; i < MAX_ENT; i++)
       if (g_ent[i].active == 1)
          speed_adjust (i);
@@ -635,6 +639,7 @@ static void process_entity (int target_entity)
 {
    s_entity *ent = &g_ent[target_entity];
    s_player *player = 0;
+
    ent->scount = 0;
 
    if (!ent->active)
@@ -663,7 +668,7 @@ static void process_entity (int target_entity)
          target (target_entity);
          break;
       }
-   } else {                  /* if (.moving==0) */
+   } else {                     /* if (.moving==0) */
       if (ent->tilex * 16 > ent->x)
          ++ent->x;
       if (ent->tilex * 16 < ent->x)
@@ -802,6 +807,7 @@ static void target (int target_entity)
 {
    int dx, dy, ax, ay, emoved = 0;
    s_entity *ent = &g_ent[target_entity];
+
    ax = dx = ent->target_x - ent->tilex;
    ay = dy = ent->target_y - ent->tiley;
    if (ax < 0)

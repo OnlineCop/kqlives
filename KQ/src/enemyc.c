@@ -1,4 +1,4 @@
-/*
+/*! \page License
    KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
@@ -18,6 +18,7 @@
    the Free Software Foundation,
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
+
 
 /*! \file
  * \brief Enemy combat
@@ -328,6 +329,7 @@ void enemy_init (void)
 {
    int i, p;
    s_fighter *f;
+
    if (enemies == NULL)
       load_enemies ();
    for (i = 0; i < numens; ++i) {
@@ -550,6 +552,7 @@ static void load_enemies (void)
    int i, tmp, lx, ly, p;
    FILE *edat;
    s_fighter *f;
+
    if (enemies != NULL) {
       /* Already done the loading */
       return;
@@ -903,6 +906,7 @@ static int spell_setup (int whom, int z)
 void unload_enemies (void)
 {
    int i;
+
    if (enemies != NULL) {
       for (i = 0; i < enemies_n; ++i) {
          destroy_bitmap (enemies[i]->img);

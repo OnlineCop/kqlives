@@ -1,5 +1,5 @@
-/*
-   KQ is Copyright (C) 2002 - Josh Bolduc
+/*! \page License
+   KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
 
@@ -19,10 +19,12 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#ifndef __ENTITY_H
-#define __ENTITY_H
 
-/*! \file 
+#ifndef __ENTITY_H
+#define __ENTITY_H 1
+
+
+/*! \file
  * \brief Stuff related to entities on the map
  *
  * An entity is a hero, or an NPC.
@@ -34,32 +36,12 @@
 #define ID_ENEMY    254
 
 
-
 void process_entities (void);   /*  kq.c  */
 int entityat (int, int, int);   /*  kq.c  */
 void set_script (int, const char *);  /*  intrface.c  */
 void place_ent (int, int, int); /*  intrface.c, kq.c  */
 void count_entities (void);     /*  kq.c  */
 
-
-
-#if 0
-int entity_near (int, int, int);        /*  staticed  */
-void speed_adjust (int);        /*  staticed  */
-void process_entity (int);      /*  staticed  */
-void lastm_check (int);         /*  staticed  */
-void follow (void);             /*  staticed  */
-void wander (int);              /*  staticed  */
-void player_move (void);        /*  staticed  */
-void moveup (int);              /*  staticed  */
-void movedown (int);            /*  staticed  */
-void moveright (int);           /*  staticed  */
-void moveleft (int);            /*  staticed  */
-int obstruction (int, int, int, int);   /*  staticed  */
-void parsems (int);             /*  staticed  */
-void getcommand (int);          /*  staticed  */
-void entscript (int);           /*  staticed  */
-#endif /*  0  */
 
 /* move modes */
 #define MM_STAND  0

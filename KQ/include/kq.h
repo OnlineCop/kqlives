@@ -1,5 +1,5 @@
 /*! \page License
-   KQ is Copyright (C) 2002 - Josh Bolduc
+   KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
 
@@ -19,14 +19,16 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+
+#ifndef __KQ_H
+#define __KQ_H 1
+
+
 /*! \file
  * \brief Main include file for KQ
  * \author JB
  * \date ??????
  */
-
-#ifndef __KQ_H
-#define __KQ_H
 
 #include <allegro.h>
 
@@ -66,6 +68,7 @@
 #define PSIZE               2
 #define MAXFRAMES          12
 #define MAXEFRAMES         12
+
 /* PH: MAXCFRAMES never seems to be used properly -
    all frames are identical for enemies?
  */
@@ -82,6 +85,7 @@
 #define CURE_CHECK       9993
 #define MAX_SHADOWS        12
 #define MAX_INV            64
+
 /* Maximum number of special items allowed in the world */
 #define MAX_SPECIAL_ITEMS  50
 #define MAX_PLAYER_SPECIAL_ITEMS 20
@@ -95,7 +99,9 @@
 /* Get the directory for application data (music, gfx, etc.)
    or user data (screenshots, prefs, saved games)
  */
-const char *kqres (int dir_id, const char *file);
+const char *kqres (int, const char *);
+
+
 #define DATA_DIR       0
 #define MAP_DIR        1
 #define SAVE_DIR       2
@@ -270,8 +276,9 @@ typedef struct
    unsigned char sts[24];
    unsigned char eqp[6];        /*!< Weapons, armor, etc. equipped */
    unsigned char spells[60];    /*!< Known spells */
-}
-s_player;
+} s_player;
+
+
 
 /*! \brief Hero information
  *
@@ -286,8 +293,9 @@ typedef struct
    BITMAP *cframes[MAXCFRAMES]; /*!< Frames for combat */
    int xpi, bxp, hpi, mpi;      /*!< for level_up() */
    int stat_mult[NUM_STATS];    /*!<stats multipliers for level calculations (see player2fighter() ) */
-}
-s_heroinfo;
+} s_heroinfo;
+
+
 
 /*! \brief Fighter
  *
@@ -348,8 +356,8 @@ typedef struct
    int imb_a;
    int imb[2];
    BITMAP *img;
-}
-s_fighter;
+} s_fighter;
+
 
 
 /*! \brief Special Items
@@ -358,9 +366,9 @@ s_fighter;
  */
 typedef struct
 {
-	char name[38];
-	char description[40];
-	short icon;
+   char name[38];
+   char description[40];
+   short icon;
 } s_special_item;
 
 
@@ -374,7 +382,7 @@ void check_animation (void);    /*  draw.c, intrface.c  */
 void activate (void);           /*  only in entity.c  */
 void unpress (void);            /*  everywhere ;)  */
 void wait_enter (void);         /*  everywhere ;)  */
-void klog (const char *);             /*  draw.c, intrface.c, magic.c, setup.c  */
+void klog (const char *);       /*  draw.c, intrface.c, magic.c, setup.c  */
 void init_players (void);       /*  sgame.c  */
 void kwait (int);               /*  intrface.c  */
 NORETURN void program_death (const char *);    /*  everywhere ;)  */
@@ -383,39 +391,27 @@ void wait_for_entity (int, int);        /*  intrface.c  */
 char *get_timer_event (void);   /*  entity.c, kq.c  */
 int add_timer_event (const char *, int);        /*  intrface.c  */
 void reset_timer_events (void); /*  intrface.c  */
-void reset_world(void);         /*  sgame.c  */
+void reset_world (void);        /*  sgame.c  */
 
 
 
 extern char curmap[16];         /*  sgame.c, draw.c, magic.c */
 
-extern int right;               /*  intrface.c, (eqp|item|mas|shop)menu.c,  */
-                        /*  entity.c, menu.c, selector.c, setup.c,  */
-                        /*  heroc.c                                 */
+extern int right;               /*  intrface.c, (eqp|item|mas|shop)menu.c, entity.c, menu.c, selector.c, setup.c, heroc.c  */
 
-extern int left;                /*  intrface.c, (eqp|item|mas|shop)menu.c,  */
-                        /*  entity.c, menu.c, selector.c, setup.c,  */
-                        /*  heroc.c                                 */
+extern int left;                /*  intrface.c, (eqp|item|mas|shop)menu.c, entity.c, menu.c, selector.c, setup.c, heroc.c  */
 
-extern int up;                  /*  selector.c, (eqp|item|mas|shop)menu.c,  */
-                        /*  heroc.c, intrface.c, menu.c, entity.c,  */
-                        /*  setup.c, sgame.c, draw.c                */
+extern int up;                  /*  selector.c, (eqp|item|mas|shop)menu.c, heroc.c, intrface.c, menu.c, entity.c, setup.c, sgame.c, draw.c  */
 
-extern int down;                /*  selector.c, (eqp|item|mas|shop)menu.c,  */
-                        /*  heroc.c, intrface.c, menu.c, entity.c,  */
-                        /*  setup.c, sgame.c, draw.c                */
+extern int down;                /*  selector.c, (eqp|item|mas|shop)menu.c, heroc.c, intrface.c, menu.c, entity.c, setup.c, sgame.c, draw.c  */
 
-extern int besc;                /*  intrface.c, setup.c, sgame.c            */
+extern int besc;                /*  intrface.c, setup.c, sgame.c  */
 
 extern int benter;              /*  entity.c, intrface.c, setup.c, sgame.c  */
 
-extern int balt;                /*  selector.c, (eqp|item|mas|shop)menu.c,  */
-                        /*  heroc.c, intrface.c, menu.c, setup.c,   */
-                        /*  draw.c, sgame.c                         */
+extern int balt;                /*  selector.c, (eqp|item|mas|shop)menu.c, heroc.c, intrface.c, menu.c, setup.c, draw.c, sgame.c  */
 
-extern int bctrl;               /*  selector.c, (eqp|item|mas|shop)menu.c,  */
-                        /*  sgame.c, heroc.c, intrface.c, setup.c,  */
-                        /*  menu.c                                  */
+extern int bctrl;               /*  selector.c, (eqp|item|mas|shop)menu.c, sgame.c, heroc.c, intrface.c, setup.c, menu.c  */
 
 extern int bhelp;
 extern int kright;              /*  setup.c, sgame.c  */

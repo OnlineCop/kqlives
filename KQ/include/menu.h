@@ -1,5 +1,5 @@
-/*
-   KQ is Copyright (C) 2002 - Josh Bolduc
+/*! \page License
+   KQ is Copyright (C) 2002 by Josh Bolduc
 
    This file is part of KQ... a freeware RPG.
 
@@ -19,9 +19,9 @@
        675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#ifndef __MENU_H
-#define __MENU_H
 
+#ifndef __MENU_H
+#define __MENU_H 1
 
 
 #include "kq.h"
@@ -32,8 +32,7 @@ void draw_mainmenu (int);       /*  selector.c  */
 void draw_playerstat (BITMAP *, int, int, int); /*  intrface.c, masmenu.c, menu.c  */
 int give_xp (int, int, int);    /*  intrface.c, combat.c  */
 void menu (void);               /*  entity.c  */
-void revert_equipstats (void);  /*  heroc.c, (item|mas)menu.c,  */
-                                /*  magic.c, combat.c           */
+void revert_equipstats (void);  /*  heroc.c, (item|mas)menu.c, magic.c, combat.c  */
 void spec_items (void);         /*  only in menu.c  */
 void update_equipstats (void);  /*  (eqp|item|mas)menu.c, heroc.c  */
 
@@ -55,6 +54,7 @@ typedef struct info_item
    char *key;                   /*!< The identifying title */
    char *text;                  /*!< The actual info */
 } IITEM;
+
 
 
 /* Dynamic array for the hints/reminders */
