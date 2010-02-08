@@ -117,9 +117,10 @@ function entity_handler(en)
           set_ent_script(en, "L1D2")
           wait_for_entity(en, en)
           bubble(en, _"Good luck in your endeavours.")
-	  if (get_numchrs() > 1) then -- Skip this partnering up bit.
-	     return
-	  end
+
+          if (get_numchrs() > 1) then -- Skip this partnering up bit.
+            return
+          end
 
           if (get_progress(P_OLDPARTNER) > 0) then
             set_progress(P_FINALPARTNER, get_progress(P_OLDPARTNER))
@@ -271,7 +272,7 @@ function zone_handler(zn)
 
   elseif (zn == 10) then
     door_out("battle")
-  
+
   elseif (zn == 11) then
     set_save(0)
 
@@ -284,7 +285,7 @@ function zone_handler(zn)
 
   elseif (zn == 14) then
     door_in("after_battle")
-    
+
   elseif (zn == 15) then
     if (get_progress(P_BATTLESTATUS) > 0) then
       bubble(HERO1, _"I'm not ready yet.")
