@@ -303,9 +303,9 @@ void do_draw_map (cairo_t * cr, GdkRectangle * area, unsigned int layerflags)
 
          cairo_set_line_width (cr, 1);
          cairo_set_source_rgb (cr, 1, 1, 0);
-         cairo_rectangle (cr, bound.x1 * 16, bound.y1 * 16,
-                          (bound.x2 - bound.x1 + 1) * 16,
-                          (bound.y2 - bound.y1 + 1) * 16);
+         cairo_rectangle (cr, bound.left * 16, bound.top * 16,
+                          (bound.right - bound.left + 1) * 16,
+                          (bound.bottom - bound.top + 1) * 16);
          cairo_stroke (cr);
       }
    }
