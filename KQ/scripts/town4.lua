@@ -28,6 +28,9 @@ function autoexec()
   end
 
   -- Warped inside "bounded area #0", the house of the player
+  -- OC: HACK, since it is possible that someone changing the map could remove
+  -- the original bounding box and replace it with one that is NOT the 0th
+  -- index, causing problems here.
   if (get_bounds(HERO1) == 0) then
     set_sstone(0)
     set_desc(0)
