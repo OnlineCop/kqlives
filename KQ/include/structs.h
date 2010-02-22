@@ -31,27 +31,8 @@
  */
 
 #include "bounds.h"
-
-#define MAX_ANIM 5
-
-
-
-/*! \brief Position marker
- *
- * A marker is a named position on the map.
- * These are set up in the mapeditor and accessed via scripts.
- * They are to make it easier to pinpoint locations in the maps,
- * for example, the locations that doors lead to.
- * \author PH
- * \date 20050126
- */
-typedef struct
-{
-   char name[32];               /*!< The name of this marker */
-   short x;                     /*!< The X position it refers to */
-   short y;                     /*!< The Y position it refers to */
-} s_marker;
-
+#include "enums.h"
+#include "markers.h"
 
 
 /*! \brief Map definition
@@ -167,4 +148,117 @@ typedef struct
 } s_progress;
 
 
-#endif /*__STRUCTS_H*/
+/*! \brief Player */
+typedef struct
+{
+   char name[9];                /*!< Entity name */
+   int xp;                      /*!< Entity experience */
+   int next;                    /*!< Experience needed for level-up */
+   int lvl;                     /*!< Entity's level */
+   int mrp;                     /*!< Magic use rate (0-100) */
+   int hp;                      /*!< Hit points */
+   int mhp;                     /*!< Maximum hit points */
+   int mp;                      /*!< Magic points */
+   int mmp;                     /*!< Maximum magic points */
+   int stats[NUM_STATS];
+   char res[16];
+   unsigned char sts[24];
+   unsigned char eqp[6];        /*!< Weapons, armor, etc. equipped */
+   unsigned char spells[60];    /*!< Known spells */
+} s_player;
+
+
+
+/*! \brief Hero information
+ *
+ * This holds static or constant information about a hero. PH: It's not fully used yet
+ * the intention is to cut down on some of those globals.
+ */
+typedef struct
+{
+   s_player plr;                /*!< all other statistics */
+   BITMAP *portrait;            /*!< The hero's portrait for the stats screen */
+   BITMAP *frames[MAXFRAMES];   /*!< Frames for movement */
+   BITMAP *cframes[MAXCFRAMES]; /*!< Frames for combat */
+   int xpi, bxp, hpi, mpi;      /*!< for level_up() */
+   int stat_mult[NUM_STATS];    /*!<stats multipliers for level calculations (see player2fighter() ) */
+} s_heroinfo;
+
+
+
+/*! \brief Fighter
+ *
+ * s_player is transformed into a s_fighter during combat.
+ * See enemy_init() for more information on the fields.
+ */
+typedef struct
+{
+   char name[25];               /*!<\brief Name */
+   int xp;                      /*!<\brief eXperience Points */
+   int gp;                      /*!<\brief Gold Points */
+   int lvl;                     /*!<\brief LeVeL */
+   int cx;                      /*!<\brief x-coord of image in datafile */
+   int cy;                      /*!<\brief y-coord of image in datafile */
+   int cw;                      /*!<\brief width in datafile */
+   int cl;                      /*!<\brief height in datafile */
+   int hp;                      /*!<\brief Hit Points */
+   int mhp;                     /*!<\brief Max Hit Points */
+   int mp;                      /*!<\brief Magic Points */
+   int mmp;                     /*!<\brief Max Magic Points */
+   int dip;                     /*!<\brief Defeat Item Probability
+                                 * Probability in % that the enemy will yield an item when defeated.
+                                 */
+   int defeat_item_common;      /*!<\brief Defeat Item Common
+                                 * If the enemy yields an item, you will get this item 95% of the time.
+                                 */
+   int defeat_item_rare;        /*!<\brief Defeat Item Rare
+                                 * If the enemy yields an item, you will get this item 5% of the time.
+                                 */
+   int steal_item_common;       /*!<\brief Steal Item Common
+                                 * If Ayla steals something, she will get this item 95% of the time.
+                                 */
+   int steal_item_rare;         /*!<\brief Steal Item Rare
+                                 * If Ayla steals something, she will get this item 5% of the time.
+                                 */
+   int stats[NUM_STATS];        /*!<\brief See A_* constants in kq.h */
+   char res[16];                /*!<\brief See R_* constants in kq.h */
+   unsigned char facing;        /*!<\brief Direction character's sprite faces */
+   unsigned char aframe;        /*!<\brief Battle sprite to display (standing, casting, attacking) */
+   unsigned char crit;
+   unsigned char sts[24];
+   unsigned char defend;
+   unsigned char ai[8];
+   unsigned char aip[8];
+   unsigned char atrack[8];
+   int csmem;
+   int ctmem;
+   int cwt;                     /*!< \brief Current Weapon Type
+                                 * The shape of the currently held weapon (sword, dagger, axe etc) \sa hero_init()
+                                 */
+   int welem;                   /*!<\brief Which Element type (sick, fire, water, etc.) */
+   int unl;                     /*!<\brief UNLiving (undead), like zombies, skeletons, etc. */
+   int aux;
+   int bonus;
+   int bstat;
+   int mrp;
+   int imb_s;
+   int imb_a;
+   int imb[2];
+   BITMAP *img;
+} s_fighter;
+
+
+
+/*! \brief Special Items
+ *
+ * Contains a list of the special items in the player's party (Opal Armor et al)
+ */
+typedef struct
+{
+   char name[38];
+   char description[40];
+   short icon;
+} s_special_item;
+
+
+#endif  /* __STRUCTS_H */

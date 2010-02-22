@@ -11,8 +11,8 @@
 \***************************************************************************/
 
 
-#include "mapdraw.h"
 #include <locale.h>
+#include "mapdraw.h"
 
 /* Something for allegro version compatibility */
 /* ..can we use the textout_ex() and friends? */
@@ -1820,6 +1820,7 @@ void get_tile (void)
 {
    int tile = ((window_y + y) * gmap.xsize) + window_x + x;
    int i;
+   s_bound *found_box;
 
    switch (draw_mode) {
    case MAP_LAYER1:
@@ -1867,11 +1868,11 @@ void get_tile (void)
       break;
    case MAP_BOUNDS:
       /* Put here to be thorough, but it won't really do us any good */
-      for (i = 0; i < num_bound_boxes; i++) {
-         if (is_contained_bound (bound_box[i], window_x + x, window_y + y)) {
-            curbound_box = i;
-         }
-      }
+      found_box = is_contained_bound (bound_box, num_bound_boxes,
+                                      window_x + x, window_y + y,
+                                      window_x + x, window_y + y);
+      if (found_box != NULL)
+         curbound_box = found_box - bound_box;
       break;
    default:
       break;
@@ -2148,12 +2149,12 @@ void kq_yield (void)
 /* Welcome to Mapdraw, folks! */
 int main (int argc, char *argv[])
 {
+   int main_stop = 0, oldmouse_x = 0, oldmouse_y = 0;
+   int i;
+
    setlocale (LC_ALL, "");
    bindtextdomain (PACKAGE, KQ_LOCALE);
    textdomain (PACKAGE);
-
-   int main_stop = 0, oldmouse_x = 0, oldmouse_y = 0;
-   int i;
 
    row[0] = vtiles * 16 + 6;
    for (i = 1; i < 8; i++) {
@@ -4195,73 +4196,11 @@ int show_preview (void)
  */
 int startup (void)
 {
-   int kx, ky, a;
+   int a, i, kx, ky;
    COLOR_MAP cmap;
 
-   if (allegro_init () != 0)
-      return 0;
-
-   /* Buffer for all strings */
-   strbuf = (char *) malloc (256);
-
-   install_keyboard ();
-   install_timer ();
-
-   /* Determine if user wants to use Windowed or Regular Mode */
-   if (WBUILD == 1) {
-      if (set_gfx_mode (GFX_AUTODETECT_WINDOWED, SW, SH, 0, 0) != 0) {
-         if (set_gfx_mode (GFX_SAFE, SW, SH, 0, 0) != 0) {
-            set_gfx_mode (GFX_TEXT, 0, 0, 0, 0);
-            allegro_message ("Unable to set any graphic mode\n%s\n",
-                             allegro_error);
-            return 0;
-         }
-      }
-   } else {
-      if (set_gfx_mode (GFX_AUTODETECT, SW, SH, 0, 0) != 0) {
-         if (set_gfx_mode (GFX_SAFE, SW, SH, 0, 0) != 0) {
-            set_gfx_mode (GFX_TEXT, 0, 0, 0, 0);
-            allegro_message ("Unable to set any graphic mode\n%s\n",
-                             allegro_error);
-            return 0;
-         }
-      }                         // if (WBUILD)
-   }
-
-   /* Check for the presence of a mouse */
-   a = install_mouse ();
-   if (a == -1) {
-      nomouse = 1;
-      klog ("Mouse not found!\n");
-      rest (1000);
-   }
-
-   shared_startup ();
-
-   /* Create the picture used for the mouse */
-   mouse_pic = create_bitmap (4, 6);
-   for (ky = 0; ky < 6; ky++) {
-      for (kx = 0; kx < 4; kx++)
-         mouse_pic->line[ky][kx] = mousepic[ky * 4 + kx];
-   }
-   set_mouse_speed (4, 4);
-
-   /* Screen buffer */
-   double_buffer = create_bitmap (SW, SH);
-   clear (double_buffer);
-
-   gmap.map_no = -1;
-   gmap.tileset = 0;
-   gmap.xsize = htiles;
-   gmap.ysize = vtiles;
-
-   bufferize ();
-
-   create_trans_table (&cmap, pal, 128, 128, 128, NULL);
-   color_map = &cmap;
-
-   font6 = create_bitmap (6, 546);
-   getfont ();
+   // This turns the other/indent.pro settings off:
+   // *INDENT-OFF*
 
    /* Used for highlighting */
    unsigned char hilite[] = {
@@ -4283,13 +4222,6 @@ int startup (void)
       00, 00, 00, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 00, 00, 00,
    };
 
-   mesh2 = create_bitmap (16, 16);
-   clear (mesh2);
-   for (ky = 0; ky < 16; ky++) {
-      for (kx = 0; kx < 16; kx++)
-         mesh2->line[ky][kx] = hilite[ky * 16 + kx];
-   }
-
    /* Used to show map boundaries */
    static unsigned char diag_bars[] = {
       25, 25, 00, 00, 00, 00, 00, 00, 25, 25, 00, 00, 00, 00, 00, 00,
@@ -4309,31 +4241,6 @@ int startup (void)
       00, 00, 25, 25, 00, 00, 00, 00, 00, 00, 25, 25, 00, 00, 00, 00,
       00, 25, 25, 00, 00, 00, 00, 00, 00, 25, 25, 00, 00, 00, 00, 00,
    };
-
-   mesh3 = create_bitmap (16, 16);
-   clear (mesh3);
-   for (ky = 0; ky < 16; ky++) {
-      for (kx = 0; kx < 16; kx++)
-         mesh3->line[ky][kx] = diag_bars[ky * 16 + kx];
-   }
-
-   /* Entity images */
-   init_entities ();
-   showing.entities = 0;
-   showing.obstacles = 0;
-   showing.shadows = 0;
-   showing.zones = 0;
-   showing.markers = 0;
-   showing.boundaries = 0;
-   showing.last_layer = draw_mode;
-   showing.layer[0] = 1;
-   showing.layer[1] = 1;
-   showing.layer[2] = 1;
-
-   icon_set = 0;
-
-   // This turns the other/indent.pro settings off:
-   // *INDENT-OFF*
 
    unsigned char arrow_up[] = {
       00, 00, 00, 00, 00, 00, 00, 60, 00, 00, 00, 00, 00, 00, 00, 00,
@@ -4430,8 +4337,122 @@ int startup (void)
       00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
    };
 
+   /* Used for highlighting */
+   static unsigned char hilite_attrib[] = {
+      24, 24, 00, 00, 00, 00, 00, 24, 24, 00, 00, 00, 00, 00, 24, 24,
+      24, 24, 24, 00, 00, 00, 00, 24, 24, 00, 00, 00, 00, 24, 24, 24,
+      00, 24, 24, 24, 00, 00, 00, 24, 24, 00, 00, 00, 24, 24, 24, 00,
+      00, 00, 24, 24, 24, 00, 00, 24, 24, 00, 00, 24, 24, 24, 00, 00,
+      00, 00, 00, 24, 00, 00, 00, 00, 00, 00, 00, 00, 24, 00, 00, 00,
+      00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
+      00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
+      24, 24, 24, 24, 00, 00, 00, 00, 00, 00, 00, 00, 24, 24, 24, 24,
+      24, 24, 24, 24, 00, 00, 00, 00, 00, 00, 00, 00, 24, 24, 24, 24,
+      00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
+      00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
+      00, 00, 00, 24, 00, 00, 00, 00, 00, 00, 00, 00, 24, 00, 00, 00,
+      00, 00, 24, 24, 24, 00, 00, 24, 24, 00, 00, 24, 24, 24, 00, 00,
+      00, 24, 24, 24, 00, 00, 00, 24, 24, 00, 00, 00, 24, 24, 24, 00,
+      24, 24, 24, 00, 00, 00, 00, 24, 24, 00, 00, 00, 00, 24, 24, 24,
+      24, 24, 00, 00, 00, 00, 00, 24, 24, 00, 00, 00, 00, 00, 24, 24,
+   };
+
    // This turns the other/indent.pro settings back on:
    // *INDENT-ON*
+
+   if (allegro_init () != 0)
+      return 0;
+
+   /* Buffer for all strings */
+   strbuf = (char *) malloc (256);
+
+   install_keyboard ();
+   install_timer ();
+
+   /* Determine if user wants to use Windowed or Regular Mode */
+   if (WBUILD == 1) {
+      if (set_gfx_mode (GFX_AUTODETECT_WINDOWED, SW, SH, 0, 0) != 0) {
+         if (set_gfx_mode (GFX_SAFE, SW, SH, 0, 0) != 0) {
+            set_gfx_mode (GFX_TEXT, 0, 0, 0, 0);
+            allegro_message ("Unable to set any graphic mode\n%s\n",
+                             allegro_error);
+            return 0;
+         }
+      }
+   } else {
+      if (set_gfx_mode (GFX_AUTODETECT, SW, SH, 0, 0) != 0) {
+         if (set_gfx_mode (GFX_SAFE, SW, SH, 0, 0) != 0) {
+            set_gfx_mode (GFX_TEXT, 0, 0, 0, 0);
+            allegro_message ("Unable to set any graphic mode\n%s\n",
+                             allegro_error);
+            return 0;
+         }
+      }                         // if (WBUILD)
+   }
+
+   /* Check for the presence of a mouse */
+   a = install_mouse ();
+   if (a == -1) {
+      nomouse = 1;
+      klog ("Mouse not found!\n");
+      rest (1000);
+   }
+
+   shared_startup ();
+
+   /* Create the picture used for the mouse */
+   mouse_pic = create_bitmap (4, 6);
+   for (ky = 0; ky < 6; ky++) {
+      for (kx = 0; kx < 4; kx++)
+         mouse_pic->line[ky][kx] = mousepic[ky * 4 + kx];
+   }
+   set_mouse_speed (4, 4);
+
+   /* Screen buffer */
+   double_buffer = create_bitmap (SW, SH);
+   clear (double_buffer);
+
+   gmap.map_no = -1;
+   gmap.tileset = 0;
+   gmap.xsize = htiles;
+   gmap.ysize = vtiles;
+
+   bufferize ();
+
+   create_trans_table (&cmap, pal, 128, 128, 128, NULL);
+   color_map = &cmap;
+
+   font6 = create_bitmap (6, 546);
+   getfont ();
+
+   mesh2 = create_bitmap (16, 16);
+   clear (mesh2);
+   for (ky = 0; ky < 16; ky++) {
+      for (kx = 0; kx < 16; kx++)
+         mesh2->line[ky][kx] = hilite[ky * 16 + kx];
+   }
+
+   mesh3 = create_bitmap (16, 16);
+   clear (mesh3);
+   for (ky = 0; ky < 16; ky++) {
+      for (kx = 0; kx < 16; kx++)
+         mesh3->line[ky][kx] = diag_bars[ky * 16 + kx];
+   }
+
+   /* Entity images */
+   init_entities ();
+   showing.entities = 0;
+   showing.obstacles = 0;
+   showing.shadows = 0;
+   showing.zones = 0;
+   showing.markers = 0;
+   showing.boundaries = 0;
+   showing.last_layer = draw_mode;
+   showing.layer[0] = 1;
+   showing.layer[1] = 1;
+   showing.layer[2] = 1;
+
+   icon_set = 0;
 
    /* Create the arrow bitmaps
     *
@@ -4455,26 +4476,6 @@ int startup (void)
       }
    }
 
-   /* Used for highlighting */
-   static unsigned char hilite_attrib[] = {
-      24, 24, 00, 00, 00, 00, 00, 24, 24, 00, 00, 00, 00, 00, 24, 24,
-      24, 24, 24, 00, 00, 00, 00, 24, 24, 00, 00, 00, 00, 24, 24, 24,
-      00, 24, 24, 24, 00, 00, 00, 24, 24, 00, 00, 00, 24, 24, 24, 00,
-      00, 00, 24, 24, 24, 00, 00, 24, 24, 00, 00, 24, 24, 24, 00, 00,
-      00, 00, 00, 24, 00, 00, 00, 00, 00, 00, 00, 00, 24, 00, 00, 00,
-      00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
-      00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
-      24, 24, 24, 24, 00, 00, 00, 00, 00, 00, 00, 00, 24, 24, 24, 24,
-      24, 24, 24, 24, 00, 00, 00, 00, 00, 00, 00, 00, 24, 24, 24, 24,
-      00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
-      00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
-      00, 00, 00, 24, 00, 00, 00, 00, 00, 00, 00, 00, 24, 00, 00, 00,
-      00, 00, 24, 24, 24, 00, 00, 24, 24, 00, 00, 24, 24, 24, 00, 00,
-      00, 24, 24, 24, 00, 00, 00, 24, 24, 00, 00, 00, 24, 24, 24, 00,
-      24, 24, 24, 00, 00, 00, 00, 24, 24, 00, 00, 00, 00, 24, 24, 24,
-      24, 24, 00, 00, 00, 00, 00, 24, 24, 00, 00, 00, 00, 00, 24, 24,
-   };
-
    mesh_h = create_bitmap (16, 16);
    clear (mesh_h);
    for (ky = 0; ky < 16; ky++) {
@@ -4490,8 +4491,6 @@ int startup (void)
       use_joy = 0;
    } else {
       use_joy = 0;
-
-      int i;
 
       if (poll_joystick () == 0) {
          for (i = num_joysticks - 1; i >= 0; i--) {

@@ -20,35 +20,46 @@
 */
 
 
-#ifndef __ENTITY_H
-#define __ENTITY_H 1
+#ifndef __PLATFORM_H
+#define __PLATFORM_H 1
 
 
 /*! \file
- * \brief Stuff related to entities on the map
- *
- * An entity is a hero, or an NPC.
- * \author JB
- * \date ??????
+ * \brief Platform-specific interfaces, prototypes, and #defines
+ * \author OC
+ * \date 20100221
  */
 
-#define MAX_ENT     50
-#define ID_ENEMY    254
+
+enum eDirectories
+{
+   DATA_DIR        = 0,
+   MAP_DIR         = 1,
+   SAVE_DIR        = 2,
+   MUSIC_DIR       = 3,
+   SCRIPT_DIR      = 4,
+   SETTINGS_DIR    = 5,
+};
 
 
-void process_entities (void);   /*  kq.c  */
-int entityat (int, int, int);   /*  kq.c  */
-void set_script (int, const char *);  /*  intrface.c  */
-void place_ent (int, int, int); /*  intrface.c, kq.c  */
-void count_entities (void);     /*  kq.c  */
+#define PCX_DATAFILE   kqres(DATA_DIR, "mpcx.dat")
+#define SPELL_DATAFILE kqres(DATA_DIR, "ssprites.dat")
+#define SOUND_DATAFILE kqres(DATA_DIR, "kqsnd.dat")
 
 
-/* move modes */
-#define MM_STAND  0
-#define MM_WANDER 1
-#define MM_SCRIPT 2
-#define MM_CHASE  3
-#define MM_TARGET 4
+
+/* Get the directory for application data (music, gfx, etc.)
+   or user data (screenshots, prefs, saved games)
+ */
+const char *kqres (enum eDirectories, const char *);
 
 
-#endif  /* __ENTITY_H */
+#ifdef ALLEGRO_BEOS
+inline long long gettime ();
+int maybe_poll_joystick ();
+#else
+#define maybe_poll_joystick poll_joystick
+#endif
+
+
+#endif  /* __PLATFORM_H */

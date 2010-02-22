@@ -34,4 +34,4 @@ int start_menu (int);           /*  kq.c  */
 int system_menu (void);         /*  kq.c  */
 
 
-#endif /*  __SGAME_H  */
+#endif  /* __SGAME_H */

@@ -97,4 +97,4 @@ const char *kq_keyname (int);
 #endif
 
 
-#endif /*  __SETUP_H  */
+#endif  /* __SETUP_H */

@@ -30,14 +30,14 @@
  */
 
 #include <allegro.h>
-#include <winalleg.h>
 #include <stdio.h>
-#include "kq.h"
+#include <winalleg.h>
+#include "platform.h"
 
 static int init_path = 0;
 static char user_dir[PATH_MAX];
 static char game_dir[PATH_MAX];
-typedef HRESULT (WINAPI * SHGETFOLDERPATH) (HWND, int, HANDLE, DWORD, LPWSTR);
+typedef HRESULT (WINAPI *SHGETFOLDERPATH) (HWND, int, HANDLE, DWORD, LPWSTR);
 
 #  define CSIDL_FLAG_CREATE 0x8000
 #  define CSIDL_APPDATA 0x1A
@@ -120,7 +120,7 @@ const char *get_lua_file_path (const char *file)
  * \param   file File name below that directory.
  * \returns the combined path
  */
-const char *kqres (int dir, const char *file)
+const char *kqres (enum eDirectories dir, const char *file)
 {
    HINSTANCE SHFolder;
    SHGETFOLDERPATH SHGetFolderPath;

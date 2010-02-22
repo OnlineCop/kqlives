@@ -34,4 +34,4 @@
 void combat_skill (int);        /*  enemyc.c  */
 
 
-#endif /*  __ESKILL_H  */
+#endif  /* __ESKILL_H */

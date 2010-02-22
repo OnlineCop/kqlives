@@ -32,20 +32,15 @@
 #import <Foundation/Foundation.h>
 #include <string.h>
 
-/* I can't include kq.h here as it clashes with some stupid OS9 names like shadow and strbuf */
-#define DATA_DIR       0
-#define MAP_DIR        1
-#define SAVE_DIR       2
-#define MUSIC_DIR      3
-#define SCRIPT_DIR     4
-#define SETTINGS_DIR   5
+#include <allegro.h>
+#include "platform.h"
 
 static NSString *user_dir;
 static NSString *game_dir;
 static BOOL init_path = NO;
 static NSString* get_resource_file_path(NSString* base, NSString* subdir, NSString* file);
 static NSString* get_lua_file_path(NSString* base, NSString* file);
-const char *kqres (int dir, const char *file);
+
 
 /*! \brief Returns the full path for this file
  *
@@ -69,6 +64,8 @@ static NSString* get_resource_file_path(NSString* base, NSString* subdir, NSStri
   /* return this, even if it doesn't exist */
   return fullpath;
 }
+
+
 
 /*! \brief Returns the full path for this lua file
  *
@@ -107,13 +104,14 @@ NSString* get_lua_file_path(NSString* base, NSString* file) {
 }
 
 
+
 /*! \brief Return the name of 'significant' directories.
  *
  * \param dir Enumerated constant for directory type  \sa DATA_DIR et al.
  * \param file File name below that directory.
  * \returns The combined path
  */
-const char *kqres (int dir, const char *file)
+const char *kqres (enum eDirectories dir, const char *file)
 {
    static char ans[PATH_MAX];
    NSString* found;

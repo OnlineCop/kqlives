@@ -37,21 +37,23 @@
 #include <ctype.h>
 #include <string.h>
 
-#include "kq.h"
 #include "combat.h"
 #include "credits.h"
 #include "disk.h"
 #include "draw.h"
 #include "fade.h"
 #include "intrface.h"
+#include "kq.h"
 #include "magic.h"
 #include "masmenu.h"
 #include "menu.h"
 #include "music.h"
+#include "platform.h"
 #include "res.h"
 #include "setup.h"
 #include "sgame.h"
 #include "shopmenu.h"
+#include "structs.h"
 #include "timing.h"
 
 /*! \brief No game-wide globals in this file. */
@@ -189,8 +191,8 @@ static void delete_game (void)
 
 
 
-static int load_game_91 (PACKFILE * sdat);
-static int load_game_92 (PACKFILE * sdat);
+static int load_game_91 (PACKFILE *);
+static int load_game_92 (PACKFILE *);
 
 
 
@@ -240,7 +242,7 @@ static int load_game (void)
 
 
 
-int load_game_91 (PACKFILE * sdat)
+int load_game_91 (PACKFILE *sdat)
 {
    int a, b;
 
@@ -543,7 +545,7 @@ int load_game_91 (PACKFILE * sdat)
  * Author: Winter Knight
  * \returns 1 if load succeeded, 0 otherwise
  */
-static int load_game_92 (PACKFILE * sdat)
+static int load_game_92 (PACKFILE *sdat)
 {
    int a, b, c, d;
 

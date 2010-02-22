@@ -33,6 +33,7 @@
 #include <stdio.h>
 
 #include "kq.h"
+#include "platform.h"
 #include "scrnshot.h"
 
 /*! \brief Lookup table for error/success messages */

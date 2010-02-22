@@ -31,10 +31,11 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "kq.h"
 #include "combat.h"
 #include "draw.h"
+#include "kq.h"
 #include "music.h"
+#include "platform.h"
 #include "res.h"
 #include "setup.h"
 #include "timing.h"

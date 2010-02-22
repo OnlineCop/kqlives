@@ -30,8 +30,11 @@
  * Take from diffs supplied by Edge (<hardedged@excite.com>)
  */
 
+#include <allegro.h>
 #include <stdio.h>
-#include "kq.h"
+#include <sys/time.h>
+
+#include "platform.h"
 
 
 
@@ -41,7 +44,7 @@
  * \param   file File name below that directory.
  * \returns the combined path
  */
-const char *kqres (int dir, const char *file)
+const char *kqres (enum eDirectories dir, const char *file)
 {
    FILE *fp;
    static char ans[PATH_MAX];
@@ -74,4 +77,28 @@ const char *kqres (int dir, const char *file)
       return NULL;
    }
    return ans;
+}
+
+
+/* Timing specific to the beos OS */
+inline long long gettime ()
+{
+   struct timeval tv;
+
+   gettimeofday (&tv, 0);
+   return (tv.tv_sec * 1000000) + (tv.tv_usec);
+}
+
+
+
+int maybe_poll_joystick ()
+{
+   long long lasttime = 0;
+   long long nowtime = gettime ();
+
+   if ((unsigned long long) nowtime > (unsigned long long) lasttime) {
+      lasttime = nowtime + 150000;
+      return poll_joystick ();
+   } else
+      return -1;
 }

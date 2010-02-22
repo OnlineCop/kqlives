@@ -30,11 +30,11 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "kq.h"
 #include "draw.h"
 #include "fade.h"
 #include "itemdefs.h"
 #include "itemmenu.h"
+#include "kq.h"
 #include "magic.h"
 #include "music.h"
 #include "res.h"

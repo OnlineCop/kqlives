@@ -26,10 +26,10 @@
  * \date 20060720
  */
 
-#include <stdio.h>
 #include <ctype.h>
+#include <stdio.h>
 
-#include "kq.h"
+#include "../include/bounds.h"
 
 
 s_bound bound_box[MAX_BOUNDS];
@@ -168,17 +168,30 @@ int bound_in_bound2 (s_bound *which, s_bound *bound_box, int num_bound_boxes)
 
 
 
-/* Check whether these coordinates are within the given bounding area
- * \param   b - The specified bounding area we are to check
- * \param   x - Coordinates that we want to see if they are contained within
- * \param   y - the specified bounding area
+/*! \brief Determine whether the coordinates are within any bounding boxes
+ *
+ * \param   boxes_array - Address of array
+ * \param   num_boxes - Number of array elements
+ * \param   left - Left edge of current bounding area
+ * \param   top - Top edge of current bounding area
+ * \param   right - Right edge of current bounding area
+ * \param   bottom - Bottom edge of current bounding area
+ *
+ * \returns NULL if not found, else address within boxes_array array
  */
-int is_contained_bound (s_bound b, int x, int y)
+s_bound *is_contained_bound (s_bound *boxes_array, unsigned int num_boxes,
+                             int left, int top, int right, int bottom)
 {
-   if (x >= b.left && x <= b.right && y >= b.top && y <= b.bottom)
-      return 1;
-   else
-      return 0;
+   unsigned int i;
+
+   for (i = 0; i < num_boxes; i++) {
+      if (left >= boxes_array[i].left && right <= boxes_array[i].right
+          && top >= boxes_array[i].top && bottom <= boxes_array[i].bottom) {
+         return (&boxes_array[i]);
+      }
+   }
+
+   return NULL;
 }
 
 

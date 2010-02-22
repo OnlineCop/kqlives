@@ -34,4 +34,4 @@ void fight_animation (int, int, int);   /*  combat.c  */
 int is_active (int);            /*  hskill.c  */
 
 
-#endif /*  __EFFECTS_H  */
+#endif  /* __EFFECTS_H */

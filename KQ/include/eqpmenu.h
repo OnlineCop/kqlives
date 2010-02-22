@@ -27,4 +27,4 @@
 void equip_menu (int);          /*  menu.c  */
 
 
-#endif /*  __EQPMENU_H  */
+#endif  /* __EQPMENU_H */

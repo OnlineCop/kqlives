@@ -34,4 +34,4 @@ void deallocate_credits (void);
 void display_credits (void);
 
 
-#endif // __CREDITS_H
+#endif  /* __CREDITS_H */

@@ -35,6 +35,9 @@
  */
 
 
+#include "enums.h"
+
+
 #define BATTLE_INC    20
 #define ROUND_MAX    400
 #define DMG_RND_MIN    2
@@ -65,4 +68,4 @@ extern unsigned char ms;        /*  heroc.c  */
 extern struct DATAFILE *backart;        /*  hskill.c  */
 
 
-#endif /*  __COMBAT_H  */
+#endif  /* __COMBAT_H */

@@ -227,4 +227,4 @@
 #define I_DYNAMITE          190  /* Dynamite */
 
 
-#endif /*  __ITEMDEFS_H  */
+#endif  /* __ITEMDEFS_H */

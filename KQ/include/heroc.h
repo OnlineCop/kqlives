@@ -47,4 +47,4 @@ int available_spells (int);     /*  hskill.c  */
 int combat_spell_menu (int);    /*  hskill.c  */
 
 
-#endif /*  __HEROC_H  */
+#endif  /* __HEROC_H */

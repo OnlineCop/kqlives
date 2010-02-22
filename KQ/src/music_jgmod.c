@@ -29,11 +29,13 @@
 
 #ifdef KQ_USE_JGMOD
 
-#include <string.h>
 #include <jgmod.h>
+#include <string.h>
 
 #include "kq.h"
 #include "music.h"
+#include "platform.h"
+
 
 static JGMOD *gsong;
 

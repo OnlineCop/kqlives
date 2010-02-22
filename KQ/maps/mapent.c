@@ -93,13 +93,12 @@ void displace_entities (void)
 void draw_entdata (const int ent_index)
 {
    int ent_x, ent_y;
-   char *dir_facing[4] = { "S", "N", "W", "E" };
-   char *ent_movemode[4] =
-      { "stand (0)", "wander (1)", "script (2)", "chase (3)" };
-   char *ent_atype[2] = { "normal", "constant" };
-   char *ent_obsmode[2] = { "ignore obstructions", "obstructive" };
-   char *ent_transl[2] = { "opaque", "translucent" };
-   char *do_dont[2] = { "", "don't " };
+   const char *dir_facing[4] = { "S", "N", "W", "E" };
+   const char *ent_movemode[4] = { "stand (0)", "wander (1)", "script (2)", "chase (3)" };
+   const char *ent_atype[2] = { "normal", "constant" };
+   const char *ent_obsmode[2] = { "ignore obstructions", "obstructive" };
+   const char *ent_transl[2] = { "opaque", "translucent" };
+   const char *do_dont[2] = { "", "don't " };
 
    /* Move the window so the user can see the selected entity and make sure
       the view isn't out of the boundaries */

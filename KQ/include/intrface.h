@@ -41,4 +41,4 @@ void init_shops (void);         /* sgame.c */
 void lua_user_init (void);      /*  kq.c */
 
 
-#endif /*  __INTRFACE_H  */
+#endif  /* __INTRFACE_H */

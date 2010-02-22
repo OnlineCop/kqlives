@@ -29,8 +29,10 @@
  * This includes any bits which are specific for DOS platforms
  */
 
+#include <allegro.h>
 #include <stdio.h>
-#include "kq.h"
+
+#include "platform.h"
 
 
 
@@ -40,7 +42,7 @@
  * \param   file File name below that directory.
  * \returns the combined path
  */
-const char *kqres (int dir, const char *file)
+const char *kqres (enum eDirectories dir, const char *file)
 {
    FILE *fp;
    static char ans[PATH_MAX];

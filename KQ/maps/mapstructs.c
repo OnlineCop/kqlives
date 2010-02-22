@@ -24,12 +24,11 @@ void add_change_bounding (int x, int y, int mouse_b, int *current)
    s_bound *b;
    s_bound *found = NULL;
 
+   /* Used only to check if boundaries are okay */
+   s_bound temp;
+
    /* Does a bounding box exist at this coordinate? */
-   for (b = bound_box; b < bound_box + num_bound_boxes; ++b) {
-      if (is_contained_bound (*b, x, y)) {
-         found = b;
-      }
-   }
+   found = is_contained_bound(bound_box, num_bound_boxes, x, y, x, y);
 
    if (mouse_b == 2) {
       /* We will unset the active_bound variable if a right-click is ever
@@ -83,17 +82,29 @@ void add_change_bounding (int x, int y, int mouse_b, int *current)
              * already have the top-left coords. Now we just need the
              * bottom-right ones.
              */
-            if (b->left == x || b->top == y) {
-               /* Our bounding rectangle will never be only 1-tile high or
+            if (b->left == x && b->top == y) {
+               /* Our bounding rectangle will never be only 1-tile high and
                 * wide, so do not allow that small of an area to be selected.
                 */
                return;
             }
 
-            /* Used only to check if boundaries are okay */
-            s_bound temp;
+            if (x <= b->left) {
+               temp.left = x;
+               temp.right = b->left;
+            } else {
+               temp.left = b->left;
+               temp.right = x;
+            }
 
-            set_bounds (&temp, b->left, b->top, x, y);
+            if (y <= b->top) {
+               temp.top = y;
+               temp.bottom = b->top;
+            } else {
+               temp.top = b->top;
+               temp.bottom = y;
+            }
+
             /* Don't allow the user to begin (or end) any portion of a bounding
              * area if it has any points contained in another bounding area's
              * region.

@@ -30,4 +30,4 @@ void enemy_chooseaction (int);  /*  combat.c  */
 void enemy_charmaction (int);   /*  combat.c, heroc.c  */
 
 
-#endif /*  __ENEMYC_H  */
+#endif  /* __ENEMYC_H */

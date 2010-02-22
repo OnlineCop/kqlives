@@ -31,4 +31,4 @@
 void do_transition (int, int);
 
 
-#endif  // __FADE_H
+#endif  /* __FADE_H */

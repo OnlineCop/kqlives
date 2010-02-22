@@ -29,11 +29,12 @@
 
 #ifndef KQ_USE_JGMOD
 
-#include <string.h>
 #include <aldumb.h>
+#include <string.h>
 
 #include "kq.h"
 #include "music.h"
+#include "platform.h"
 
 /*  Private variables  */
 #define MAX_MUSIC_PLAYERS 3

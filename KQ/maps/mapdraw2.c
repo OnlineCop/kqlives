@@ -27,7 +27,7 @@
 
 #include "mapdraw.h"
 #include "mapdraw2.h"
-#include "disk.h"
+#include "../include/disk.h"
 
 int main (int argc, char *argv[])
 {

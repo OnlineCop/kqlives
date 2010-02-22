@@ -709,15 +709,12 @@ static void draw_midlayer (void)
 static void draw_playerbound (void)
 {
    int dx, dy, xtc, ytc;
-   s_bound *b, *found = NULL;
+   s_bound *found = NULL;
 
    /* Is the player standing inside a bounding area? */
-   for (b = g_map.bound_box; b < g_map.bound_box + g_map.num_bound_boxes; ++b) {
-      /* Check if first person in party is standing inside a bounded area */
-      if (is_contained_bound (*b, g_ent[0].tilex, g_ent[0].tiley)) {
-         found = b;
-      }
-   }
+   found = is_contained_bound (g_map.bound_box, g_map.num_bound_boxes,
+                               g_ent[0].tilex, g_ent[0].tiley, g_ent[0].tilex,
+                               g_ent[0].tiley);
 
    xtc = vx >> 4;
    ytc = vy >> 4;
@@ -745,7 +742,6 @@ static void draw_playerbound (void)
             }
          }
       }
-
    }
 }
 

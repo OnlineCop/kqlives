@@ -591,11 +591,10 @@ static void player_move (void)
    if (benter)
       menu ();
 #ifdef KQ_CHEATS
-   if (key[KEY_F10]) {
-      unpress ();
+   if (bcheat)
       do_luacheat ();
-   }
 #endif
+
    move (0, right ? 1 : left ? -1 : 0, down ? 1 : up ? -1 : 0);
    if (g_ent[0].moving) {
       follow (oldx, oldy);

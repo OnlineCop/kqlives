@@ -107,4 +107,4 @@ extern unsigned char DARKBLUE;
 extern unsigned char DARKRED;
 
 
-#endif /*  __DRAW_H  */
+#endif  /* __DRAW_H */

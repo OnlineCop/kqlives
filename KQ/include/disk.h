@@ -24,8 +24,9 @@
 #define __DISK_H 1
 
 
-#include "kq.h"
+#include <allegro.h>
 #include "entity.h"
+#include "structs.h"
 
 int load_s_map (s_map *, PACKFILE *);
 int save_s_map (s_map *, PACKFILE *);
@@ -37,4 +38,4 @@ int load_s_tileset (s_tileset *, PACKFILE *);
 int save_s_tileset (s_tileset *, PACKFILE *);
 
 
-#endif /*__DISK_H*/
+#endif  /* __DISK_H */

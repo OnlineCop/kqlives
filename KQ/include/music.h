@@ -42,4 +42,4 @@ void resume_music (void);
 void stop_music (void);
 
 
-#endif // __MUSIC_H
+#endif  /* __MUSIC_H */

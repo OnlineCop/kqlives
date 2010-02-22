@@ -20,18 +20,32 @@
 */
 
 
-#ifndef __ITEMMENU_H
-#define __ITEMMENU_H 1
+#ifndef __MARKERS_H
+#define __MARKERS_H 1
 
 
-#define MAX_ITEMS           9
+/*! \file
+ * \brief Structures common to mapedit and the game (s_map and s_entity)
+ * \author PH
+ * \date 20030805
+ */
 
 
-void camp_item_menu (void);     /*  menu.c  */
-int check_inventory (int, int); /*  many functions ;)  */
-int item_effects (int, int, int);       /*  heroc.c  */
-void remove_item (int, int);    /*  (eqp|shop)menu.c, heroc.c  */
-int useup_item (int);
+/*! \brief Position marker
+ *
+ * A marker is a named position on the map.
+ * These are set up in the mapeditor and accessed via scripts.
+ * They are to make it easier to pinpoint locations in the maps,
+ * for example, the locations that doors lead to.
+ * \author PH
+ * \date 20050126
+ */
+typedef struct
+{
+   char name[32];               /*!< The name of this marker */
+   short x;                     /*!< The X position it refers to */
+   short y;                     /*!< The Y position it refers to */
+} s_marker;
 
 
-#endif  /* __ITEMMENU_H */
+#endif  /* __MARKERS_H */

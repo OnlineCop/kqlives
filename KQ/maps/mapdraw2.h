@@ -27,7 +27,7 @@ void remove_entity (int entity);
 int get_entity_at (unsigned int x, unsigned int y);
 
 #ifndef __MAPDRAW_H
-#include "structs.h"
+#include "../include/structs.h"
 #include "mapdraw.h"
 
 extern s_map gmap;

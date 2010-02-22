@@ -66,4 +66,4 @@ typedef struct info_list
 } ILIST;
 
 
-#endif /*  __MENU_H  */
+#endif  /* __MENU_H */

@@ -47,6 +47,7 @@ typedef struct
 
 extern s_shop shops[NUMSHOPS];      /* sgame.c intrface.c */
 extern unsigned short num_shops;    /* sgame.c intrface.c */
+extern unsigned short shop_time[NUMSHOPS];
 
 
-#endif /*  __SHOPMENU_H  */
+#endif  /* __SHOPMENU_H */

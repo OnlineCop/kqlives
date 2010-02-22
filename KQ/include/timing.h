@@ -28,4 +28,4 @@ void kq_wait (long ms);
 int limit_frame_rate (int fps);
 
 
-#endif // __TIMING_H
+#endif  /* __TIMING_H */

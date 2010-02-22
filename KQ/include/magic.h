@@ -32,6 +32,8 @@
  */
 
 #include "kq.h"
+#include "structs.h"
+
 
 #define M_CURE1          1
 #define M_HOLD           2
@@ -112,4 +114,4 @@ int do_shield_check (int, int); /*  only in combat.c  */
 s_fighter status_adjust (int);  /*  combat.c, [he]skill.c  */
 
 
-#endif /*  __MAGIC_H  */
+#endif  /* __MAGIC_H */

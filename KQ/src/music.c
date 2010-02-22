@@ -27,14 +27,19 @@
  * Interfaces to either JGMOD or DUMB, depending on #defines
  */
 
+#include <stdio.h>
 #include <string.h>
 
 #include "kq.h"
+#include "music.h"
+#include "platform.h"
+
+
 #ifndef KQ_USE_JGMOD            /* { */
 
 /* DUMB version of music */
 #include <aldumb.h>
-#include "music.h"
+
 
 /* private variables */
 #define MAX_MUSIC_PLAYERS 3
@@ -207,9 +212,6 @@ void resume_music (void)
 
 #else /* } KQ_USE_JGMOD { */
 #include <jgmod.h>
-#include <stdio.h>
-#include "kq.h"
-#include "music.h"
 
 static JGMOD *gsong;
 

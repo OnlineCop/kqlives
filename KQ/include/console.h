@@ -25,6 +25,8 @@
 
 
 void display_console (int, int);
+void do_console_command (const char *);
+void init_console (void);
 void run_console (void);
 void scroll_console (const char *);
 

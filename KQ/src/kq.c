@@ -39,15 +39,16 @@
  * Thanks due to Edge <hardedged@excite.com> and Caz Jones for BeOS joystick fixes
  */
 
+#include <locale.h>
 #include <stdio.h>
+#include <string.h>
 #include <time.h>
 #ifdef ALLEGRO_BEOS
-#include <sys/time.h>
+# include <sys/time.h>
 #endif
-#include <string.h>
 
 
-#include "kq.h"
+#include "console.h"
 #include "credits.h"
 #include "disk.h"
 #include "draw.h"
@@ -56,19 +57,20 @@
 #include "intrface.h"
 #include "itemdefs.h"
 #include "itemmenu.h"
+#include "kq.h"
 #include "magic.h"
 #include "masmenu.h"
 #include "menu.h"
 #include "mpcx.h"
 #include "music.h"
+#include "platform.h"
 #include "res.h"
 #include "scrnshot.h"
 #include "setup.h"
 #include "sgame.h"
 #include "shopmenu.h"
-#include "console.h"
+#include "structs.h"
 
-#include <locale.h>
 
 /*! Name of the current map */
 char curmap[16];
@@ -79,7 +81,7 @@ char curmap[16];
  * Seems to use some kind of homebrew Hungarian notation; I assume 'b' means
  * bool.  Most if not all of these are updated in readcontrols() below ....
  */
-int right, left, up, down, besc, balt, bctrl, benter, bhelp;
+int right, left, up, down, besc, balt, bctrl, benter, bhelp, bcheat;
 
 /*!  Scan codes for the keys (help is always F1)*/
 int kright, kleft, kup, kdown, kesc, kenter, kalt, kctrl;
@@ -1299,35 +1301,6 @@ static void map_alloc (void)
 
 
 
-#ifdef ALLEGRO_BEOS
-static inline long long gettime ()
-{
-   struct timeval tv;
-
-   gettimeofday (&tv, 0);
-   return (tv.tv_sec * 1000000) + (tv.tv_usec);
-}
-
-
-
-int maybe_poll_joystick ()
-{
-   long long lasttime = 0;
-   long long nowtime = gettime ();
-
-   if ((unsigned long long) nowtime > (unsigned long long) lasttime) {
-      lasttime = nowtime + 150000;
-      return poll_joystick ();
-   } else
-      return -1;
-}
-
-#else
-#define maybe_poll_joystick poll_joystick
-#endif
-
-
-
 /*! \brief Allegro timer callback
  *
  * New interrupt handler set to keep game time.
@@ -1519,6 +1492,7 @@ void readcontrols (void)
    bctrl = key[kctrl];
    benter = key[kenter];
    bhelp = key[KEY_F1];
+   bcheat = key[KEY_F10];
 
    up = key[kup];
    down = key[kdown];
@@ -1811,6 +1785,7 @@ static void startup (void)
    }
 #endif
 
+   init_console ();
 }
 
 
@@ -1842,7 +1817,7 @@ void unpress (void)
    timer_count = 0;
    while (timer_count < 20) {
       readcontrols ();
-      if (!(balt || bctrl || benter || besc || up || down || right || left))
+      if (!(balt || bctrl || benter || besc || up || down || right || left || bcheat))
          break;
    }
    timer_count = 0;

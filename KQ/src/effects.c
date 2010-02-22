@@ -30,13 +30,14 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "kq.h"
 #include "combat.h"
 #include "draw.h"
 #include "effects.h"
 #include "itemmenu.h"
+#include "kq.h"
 #include "magic.h"
 #include "music.h"
+#include "platform.h"
 #include "res.h"
 #include "setup.h"
 #include "ssprites.h"

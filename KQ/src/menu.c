@@ -23,17 +23,18 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "kq.h"
 #include "draw.h"
 #include "eqpmenu.h"
 #include "heroc.h"
 #include "itemdefs.h"
 #include "itemmenu.h"
+#include "kq.h"
 #include "masmenu.h"
 #include "menu.h"
 #include "res.h"
 #include "selector.h"
 #include "setup.h"
+#include "structs.h"
 
 /*! \file
  * \brief Main menu functions

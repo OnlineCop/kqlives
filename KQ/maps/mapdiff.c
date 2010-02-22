@@ -20,6 +20,12 @@
 #define HAVE_TEXT_EX
 #endif
 
+void check_entities (void);
+void check_layers (void);
+void check_map (void);
+void load_maps (const char *, const char *);
+
+
 /* All these are here because we need two versions of everything in order to
  * diff the maps exactly:
  */
@@ -231,7 +237,7 @@ void check_entities (void)
 
 
 /*! \brief Check all map layers on both maps for differences */
-void check_layers ()
+void check_layers (void)
 {
    int i, j, k, l;
    int _map = 0, _bmap = 0, _fmap = 0, _omap = 0, _smap = 0, _zmap = 0;
@@ -674,8 +680,8 @@ void cleanup (void)
  */
 void error_load (const char *problem_file)
 {
-   ASSERT (problem_file);
    char err_msg[80];
+   ASSERT (problem_file);
 
    sprintf (strbuf, "Could not load \"%s\"\n", problem_file);
    strcat (strncpy (err_msg, strbuf, sizeof (err_msg) - 1), "\n");

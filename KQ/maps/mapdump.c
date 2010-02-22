@@ -91,8 +91,8 @@ void cleanup (void)
  */
 void error_load (const char *problem_file)
 {
-   ASSERT (problem_file);
    char err_msg[80];
+   ASSERT (problem_file);
 
    strcat (strncpy (err_msg, problem_file, sizeof (err_msg) - 1), "\n");
    TRACE ("%s: could not load %s\n", allegro_error, problem_file);
@@ -136,18 +136,19 @@ void usage (const char *argv)
 
 int main (int argc, char *argv[])
 {
-   setlocale (LC_ALL, "");
-   bindtextdomain (PACKAGE, KQ_LOCALE);
-   textdomain (PACKAGE);
-
    char fn[PATH_MAX], *filenames[PATH_MAX];
    int i, number_of_files = 0, verbose = 0;
    int force_overwrite = 0;
-   char *output_ext = "pcx";
+   const char *extensions[] = { "pcx", "bmp" };
+   const char *output_ext = extensions[0]; // default to "pcx"
    COLOR_MAP cmap;
 
    /* Regular and default values (incase an option is not specified) */
    s_show showing, d_showing;
+
+   setlocale (LC_ALL, "");
+   bindtextdomain (PACKAGE, KQ_LOCALE);
+   textdomain (PACKAGE);
 
    /* Make sure that we have some sort of input; exit with error if not */
    if (argc == 1) {
@@ -169,6 +170,7 @@ int main (int argc, char *argv[])
    showing.zones      = -1;
    showing.markers    = -1;
    showing.boundaries = -1;
+   showing.last_layer = -1;
    showing.layer[0]   = -1;
    showing.layer[1]   = -1;
    showing.layer[2]   = -1;
@@ -194,7 +196,7 @@ int main (int argc, char *argv[])
       if (!strcmp (argv[i], OPTION_VERBOSE) || !strcmp (argv[i], OPTION_VERBOSE_LONG))
          verbose = 1;
       if (!strcmp (argv[i], OPTION_BMP) || !strcmp (argv[i], OPTION_BMP_LONG))
-         output_ext = "bmp";
+         output_ext = extensions[1]; // change to "bmp"
       if (!strcmp (argv[i], OPTION_OVERWRITE) || !strcmp (argv[i], OPTION_OVERWRITE_LONG))
          force_overwrite = 1;
    }

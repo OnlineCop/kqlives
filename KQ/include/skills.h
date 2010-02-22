@@ -30,4 +30,4 @@ int skill_use (int);            /*  eskill.c, heroc.c  */
 void infusion (int, int);       /*  hskill.c  */
 
 
-#endif /*  __SKILLS_H  */
+#endif  /* __SKILLS_H */

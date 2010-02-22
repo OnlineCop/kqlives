@@ -4,11 +4,12 @@ EXTRA_PROGRAMS = mapdraw2
 
 kq_SOURCES = include/bounds.h include/combat.h include/console.h \
 	include/credits.h include/disk.h include/draw.h include/effects.h \
-	include/enemyc.h include/entity.h include/eqpmenu.h include/eskill.h \
-	include/fade.h include/gettext.h include/heroc.h include/hskill.h \
-	include/intrface.h include/itemdefs.h include/itemmenu.h include/kq.h \
-	include/kqsnd.h include/magic.h include/masmenu.h include/menu.h \
-	include/movement.h include/mpcx.h include/music.h include/res.h \
+	include/enemyc.h include/entity.h include/enums.h include/eqpmenu.h \
+	include/eskill.h include/fade.h include/gettext.h include/heroc.h \
+	include/hskill.h include/intrface.h include/itemdefs.h \
+	include/itemmenu.h include/kq.h include/kqsnd.h include/magic.h \
+	include/markers.h include/masmenu.h include/menu.h include/movement.h \
+	include/mpcx.h include/music.h include/platform.h include/res.h \
 	include/scrnshot.h include/selector.h include/setup.h include/sgame.h \
 	include/shopmenu.h include/skills.h include/ssprites.h include/structs.h \
 	include/timing.h src/bounds.c src/combat.c src/console.c src/credits.c \

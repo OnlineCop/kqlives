@@ -29,12 +29,13 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "kq.h"
 #include "combat.h"
 #include "draw.h"
+#include "kq.h"
 #include "menu.h"
 #include "selector.h"
 #include "setup.h"
+#include "structs.h"
 
 
 /*  Internal functions  */
@@ -183,9 +184,7 @@ static int can_attack (int tgt)
  */
 static int mini_menu (int omask)
 {
-   int cp;
-
-   cp = 0;
+   int cp = 0;
 
    /* If no actions were allowed, or just one, skip the menu */
    if (omask == MM_JOIN) {

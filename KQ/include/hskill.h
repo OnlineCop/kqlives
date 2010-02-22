@@ -28,4 +28,4 @@ int hero_skillcheck (int);      /*  heroc.c  */
 int skill_use (int);            /*  heroc.c  */
 
 
-#endif /*  __HSKILL_H  */
+#endif  /* __HSKILL_H */

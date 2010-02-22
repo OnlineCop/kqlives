@@ -34,4 +34,4 @@ int select_party (int *, int, int);       /*  intrface.c  */
 void party_newlead (void);                /*  selector.c, menu.c  */
 
 
-#endif /*  __SELECTOR_H  */
+#endif  /* __SELECTOR_H */

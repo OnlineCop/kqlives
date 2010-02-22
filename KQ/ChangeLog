@@ -1,3 +1,10 @@
+2010-02-21  onlinecop  <onlinecop@gmail.com>
+	* src/markers.c include/markers.h: Added to repository so they can deal with all things marker-related.
+	* include/platform.h: Added to repository to help separate platform-specific code.
+	* src/beos.c src/dos.c src/osx.m src/unix.c src/win.c: Refer to "platform.h" instead of "kq.h" (since osx.m couldn't include "kq.h").
+	* kq.c: Added "bcheat" variable so user keypresses respond correctly to F10 held down longer than a QUICK press.
+	* bounds.c: Optimized a function to determine boundary overlap
+
 2010-02-07  onlinecop  <onlinecop@gmail.com>
 
 	* src/draw.c, src/intrface.c, scripts/global.lua:

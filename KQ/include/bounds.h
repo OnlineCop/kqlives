@@ -57,11 +57,11 @@ typedef struct
 
 int bound_in_bound (s_bound *, int);
 int bound_in_bound2 (s_bound *, s_bound *, int);
-int is_contained_bound (s_bound, int, int);
+s_bound *is_contained_bound (s_bound *, unsigned int, int, int, int, int);
 void set_bounds (s_bound *, int, int, int, int);
 
 extern short num_bound_boxes;
 extern s_bound bound_box[MAX_BOUNDS];
 
 
-#endif /*  __BOUNDS_H  */
+#endif  /* __BOUNDS_H */

@@ -105,7 +105,6 @@ s_show;
 void getfont (void);
 
 /* From mapdump.c */
-void error_load (const char *);
 void usage (const char *);
 
 /* From mapedit.c */
@@ -181,7 +180,6 @@ void place_entity (int, int);
 void update_entities (void);
 
 /* From mapfile.c */
-void error_load (const char *);
 void make_mapfrompcx (void);
 void maptopcx (int format);
 int new_map (void);
@@ -210,6 +208,8 @@ void orient_markers (int);
 void rename_bound_tile (s_bound *);
 void rename_marker (s_marker *);
 
+/* One in each of: mapdiff.c, mapdump.c, and mapfile.c */
+void error_load (const char *);
 
 
 extern BITMAP *double_buffer, *pcx_buffer, *icons[MAX_TILES],

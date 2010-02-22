@@ -35,7 +35,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "kq.h"
 #include "combat.h"
 #include "draw.h"
 #include "effects.h"
@@ -43,8 +42,10 @@
 #include "heroc.h"
 #include "itemdefs.h"
 #include "itemmenu.h"
+#include "kq.h"
 #include "magic.h"
 #include "menu.h"
+#include "platform.h"
 #include "res.h"
 #include "selector.h"
 #include "setup.h"

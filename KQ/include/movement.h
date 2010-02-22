@@ -27,4 +27,4 @@
 int find_path (int, int, int, int, int, char *, int);
 
 
-#endif // __MOVEMENT_H
+#endif  /* __MOVEMENT_H */

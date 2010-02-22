@@ -30,11 +30,13 @@
  * e.g. Linux
  */
 
-#include "kq.h"
+#include <allegro.h>
 #include <pwd.h>
+#include <stdio.h>
 #include <string.h>
 #include <sys/stat.h>
-#include <stdio.h>
+
+#include "platform.h"
 
 static int init_path = 0;
 static char user_dir[PATH_MAX];
@@ -114,7 +116,7 @@ const char *get_lua_file_path (const char *str1, const char *file)
  * \param   file File name below that directory.
  * \returns the combined path
  */
-const char *kqres (int dir, const char *file)
+const char *kqres (enum eDirectories dir, const char *file)
 {
    char exe[PATH_MAX];
 

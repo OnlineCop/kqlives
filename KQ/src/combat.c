@@ -31,21 +31,25 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "kq.h"
 #include "combat.h"
 #include "draw.h"
 #include "effects.h"
 #include "enemyc.h"
+#include "enums.h"
 #include "fade.h"
 #include "heroc.h"
 #include "itemmenu.h"
+#include "kq.h"
 #include "magic.h"
 #include "masmenu.h"
 #include "menu.h"
 #include "music.h"
+#include "platform.h"
 #include "res.h"
 #include "setup.h"
+#include "structs.h"
 #include "timing.h"
+
 
 /*! \name global variables  */
 

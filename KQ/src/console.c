@@ -20,8 +20,11 @@
 */
 
 
-#include "kq.h"
 #include "console.h"
+#include "draw.h"
+#include "kq.h"
+#include "music.h"
+
 
 /*! \file
 * \brief Lua console for debugging
@@ -29,14 +32,6 @@
 * \date 20070723
 */
 
-/* Defined in intrface.c */
-extern void do_console_command (const char *);
-
-/* Defined in draw.c */
-extern void blit2screen (int xw, int yw);
-
-/* Defined in music.c */
-extern void poll_music (void);
 
 /* Internal variables */
 static struct console_state
@@ -136,6 +131,11 @@ void run_console (void)
    int c;
    int sl;
    int running;
+   unsigned int string_len;
+   unsigned int i;
+   const char get[] = "return get_progress(P_";
+   const char ret[] = "return ";
+   const char set[] = "set_progress(P_";
 
    g_console.inputline[0] = '\0';
    g_console.on = 1;
@@ -177,10 +177,9 @@ void run_console (void)
 
       case 7:                  /* ctrl g */
          do_console_command (g_console.inputline);
-         char get[23] = "return get_progress(P_\0";
-         unsigned short int i;
 
-         for (i = 0; i < sizeof (get); i++) {
+         string_len = strlen (get);
+         for (i = 0; i < string_len; i++) {
             g_console.inputline[i] = get[i];
          }
          break;
@@ -192,18 +191,18 @@ void run_console (void)
 
       case 18:                 /* ctrl r */
          do_console_command (g_console.inputline);
-         char ret[8] = "return \0";
 
-         for (i = 0; i < sizeof (ret); i++) {
+         string_len = strlen (ret);
+         for (i = 0; i < string_len; i++) {
             g_console.inputline[i] = ret[i];
          }
          break;
 
       case 19:                 /* ctrl s */
          do_console_command (g_console.inputline);
-         char set[16] = "set_progress(P_\0";
 
-         for (i = 0; i < sizeof (set); i++) {
+         string_len = strlen (set);
+         for (i = 0; i < string_len; i++) {
             g_console.inputline[i] = set[i];
          }
          break;

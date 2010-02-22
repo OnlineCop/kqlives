@@ -254,6 +254,7 @@ static gboolean on_map_button_press_event (GtkWidget *widget, GdkEventButton *ev
    unsigned int x = event->x / 16;
    unsigned int y = event->y / 16;
    unsigned int i = 0;
+   s_bound *bound;
 
    /* current_value is a generic string that the user can edit before clicking
     * on the map. It is the box in the bottom left corner. */
@@ -316,14 +317,14 @@ static gboolean on_map_button_press_event (GtkWidget *widget, GdkEventButton *ev
          }
          break;
       case BOUNDING_FLAG:
-         for (i = 0; i < gmap.num_bound_boxes; i++)
-            if (is_contained_bound (*gmap.bound_box, x, y))
-               return FALSE;
+         bound = is_contained_bound(gmap.bound_box, gmap.num_bound_boxes, x, y, x, y);
+         if (bound == NULL)
+            return FALSE;
 
          i = gmap.num_bound_boxes;
 
-         temp_bound.left = x;
-         temp_bound.top = y;
+         temp_bound.left = bound->x;
+         temp_bound.top = bound->y;
          bound_dragging = TRUE;
          break;
 

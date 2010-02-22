@@ -30,4 +30,4 @@ void camp_spell_menu (int);     /*  menu.c  */
 extern int close_menu;          /*  menu.c  */
 
 
-#endif /*  __MASMENU_H  */
+#endif  /* __MASMENU_H */

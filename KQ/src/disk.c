@@ -28,7 +28,10 @@
  * \date 20030629
  */
 
+#include "bounds.h"
 #include "disk.h"
+#include "markers.h"
+
 
 static int load_s_marker (s_marker *, PACKFILE *);
 static int save_s_marker (const s_marker *, PACKFILE *);
@@ -37,7 +40,7 @@ static int save_s_bound (const s_bound *, PACKFILE *);
 
 
 
-int load_s_bound (s_bound * b, PACKFILE * f)
+int load_s_bound (s_bound *b, PACKFILE *f)
 {
    b->left = pack_igetw (f);
    b->top = pack_igetw (f);
@@ -49,7 +52,7 @@ int load_s_bound (s_bound * b, PACKFILE * f)
 
 
 
-int save_s_bound (const s_bound * b, PACKFILE * f)
+int save_s_bound (const s_bound *b, PACKFILE *f)
 {
    pack_iputw (b->left, f);
    pack_iputw (b->top, f);
@@ -61,7 +64,7 @@ int save_s_bound (const s_bound * b, PACKFILE * f)
 
 
 
-int load_s_entity (s_entity * s, PACKFILE * f)
+int load_s_entity (s_entity *s, PACKFILE *f)
 {
    s->chrx = pack_getc (f);
    pack_getc (f);               /* alignment */
@@ -97,7 +100,7 @@ int load_s_entity (s_entity * s, PACKFILE * f)
 
 
 
-int save_s_entity (s_entity * s, PACKFILE * f)
+int save_s_entity (s_entity *s, PACKFILE *f)
 {
    pack_putc (s->chrx, f);
    pack_putc (0, f);            /* alignment */
@@ -133,7 +136,7 @@ int save_s_entity (s_entity * s, PACKFILE * f)
 
 
 
-int load_s_map (s_map * sm, PACKFILE * f)
+int load_s_map (s_map *sm, PACKFILE *f)
 {
    int i;
 
@@ -189,7 +192,7 @@ int load_s_map (s_map * sm, PACKFILE * f)
 
 
 
-int save_s_map (s_map * sm, PACKFILE * f)
+int save_s_map (s_map *sm, PACKFILE *f)
 {
    int i;
 
@@ -238,7 +241,7 @@ int save_s_map (s_map * sm, PACKFILE * f)
 
 
 
-int load_s_marker (s_marker * m, PACKFILE * f)
+int load_s_marker (s_marker *m, PACKFILE *f)
 {
    pack_fread (m->name, sizeof (m->name), f);
    m->x = pack_igetw (f);
@@ -248,7 +251,7 @@ int load_s_marker (s_marker * m, PACKFILE * f)
 
 
 
-int save_s_marker (const s_marker * m, PACKFILE * f)
+int save_s_marker (const s_marker *m, PACKFILE *f)
 {
    pack_fwrite (m->name, sizeof (m->name), f);
    pack_iputw (m->x, f);
@@ -258,7 +261,7 @@ int save_s_marker (const s_marker * m, PACKFILE * f)
 
 
 
-int load_s_player (s_player * s, PACKFILE * f)
+int load_s_player (s_player *s, PACKFILE *f)
 {
    int i;
 
@@ -296,7 +299,7 @@ int load_s_player (s_player * s, PACKFILE * f)
 
 
 
-int save_s_player (s_player * s, PACKFILE * f)
+int save_s_player (s_player *s, PACKFILE *f)
 {
    int i;
 
@@ -334,7 +337,7 @@ int save_s_player (s_player * s, PACKFILE * f)
 
 
 
-int load_s_tileset (s_tileset * s, PACKFILE * f)
+int load_s_tileset (s_tileset *s, PACKFILE *f)
 {
    int i;
 
@@ -349,7 +352,7 @@ int load_s_tileset (s_tileset * s, PACKFILE * f)
 
 
 
-int save_s_tileset (s_tileset * s, PACKFILE * f)
+int save_s_tileset (s_tileset *s, PACKFILE *f)
 {
    int i;
 

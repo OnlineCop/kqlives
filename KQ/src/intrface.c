@@ -33,22 +33,23 @@
  * the C code and the Lua scripts.
  *
  */
-#include "kq.h"
 #ifndef KQ_SCAN_DEPEND
-#include <stdio.h>
-#include <string.h>
-#ifdef HAVE_LUA50_LUA_H
-#include <lua50/lua.h>
-#include <lua50/lauxlib.h>
-#elif defined HAVE_LUA5_1_LUA_H
-#include <lua5.1/lua.h>
-#include <lua5.1/lauxlib.h>
-#else
-#include <lua.h>
-#include <lauxlib.h>
-#endif /* HAVE_LUA50_LUA_H */
+# include <stdio.h>
+# include <string.h>
+# ifdef HAVE_LUA50_LUA_H
+#  include <lua50/lua.h>
+#  include <lua50/lauxlib.h>
+# elif defined HAVE_LUA5_1_LUA_H
+#  include <lua5.1/lua.h>
+#  include <lua5.1/lauxlib.h>
+# else
+#  include <lua.h>
+#  include <lauxlib.h>
+# endif /* HAVE_LUA50_LUA_H */
 #endif /* KQ_SCAN_DEPEND */
+
 #include "combat.h"
+#include "console.h"
 #include "draw.h"
 #include "effects.h"
 #include "enemyc.h"
@@ -57,18 +58,19 @@
 #include "intrface.h"
 #include "itemdefs.h"
 #include "itemmenu.h"
+#include "kq.h"
 #include "magic.h"
 #include "masmenu.h"
 #include "menu.h"
 #include "movement.h"
 #include "music.h"
+#include "platform.h"
 #include "res.h"
 #include "selector.h"
 #include "setup.h"
 #include "sgame.h"
 #include "shopmenu.h"
 #include "timing.h"
-#include "console.h"
 
 /* Defines */
 #define LUA_ENT_KEY "_ent"
@@ -82,8 +84,6 @@
 };*/
 
 
-
-void do_console_command (const char *cmd);
 
 /* Internal functions */
 static void fieldsort (void);
@@ -280,12 +280,13 @@ static int KQ_wait_enter (lua_State *);
 static int KQ_wait_for_entity (lua_State *);
 static int KQ_warp (lua_State *);
 
-/* New functions */
-#if 0
 
-/* Not used yet */
-static int KQ_get_tile_all (lua_State *);
-#endif
+static void set_btile(int, int, int);
+static void set_mtile(int, int, int);
+static void set_ftile(int, int, int);
+static void set_zone(int, int, int);
+static void set_obs(int, int, int);
+static void set_shadow(int, int, int);
 
 
 static const struct luaL_reg lrs[] = {
@@ -1969,7 +1970,7 @@ static int KQ_face_each_other (lua_State *L)
 
 static int KQ_gameover_ex (lua_State *L)
 {
-   alldead = 1;
+   alldead = ((int) lua_tonumber (L, 1) == 0) ? 0 : 1;
    return 1;
 }
 
@@ -1996,21 +1997,22 @@ static int KQ_get_autoparty (lua_State *L)
  * This will scan through all the bounding areas on the map and return the
  * index of the one that the player is standing in:
  *
- * \param   L::1 - index of Entity
- * \returns -1 if nothing found, else index of box: 0..num_bound_boxes
+ * \param   L::1 - index of Entity (on the map)
+ * \returns -1 if nothing found, else index of box: [0..num_bound_boxes)
  */
 static int KQ_get_bounds (lua_State *L)
 {
    int a = real_entity_num (L, 1);
-   int i, found = 0;
+   s_bound *found;
 
-   for (i = 0; i < g_map.num_bound_boxes; i++) {
-      if (is_contained_bound (g_map.bound_box[i], g_ent[a].tilex, g_ent[a].tiley)) {
-         found = i;
-      }
-   }
+   found = is_contained_bound (g_map.bound_box, g_map.num_bound_boxes,
+                               g_ent[a].tilex, g_ent[a].tiley, g_ent[a].tilex,
+                               g_ent[a].tiley);
 
-   lua_pushnumber (L, found - 1);
+   if (found != NULL)
+      lua_pushnumber (L, found - g_map.bound_box);
+   else
+      lua_pushnumber (L, -1);
 
    return 1;
 }
@@ -4412,3 +4414,47 @@ static int real_entity_num (lua_State *L, int pos)
    }
    return 255;                  /* means "nobody" */
 }
+
+
+
+static void set_btile(int x, int y, int value)
+{
+   map_seg[y * g_map.xsize + x] = value;
+}
+
+
+
+static void set_mtile(int x, int y, int value)
+{
+   b_seg[y * g_map.xsize + x] = value;
+}
+
+
+
+static void set_ftile(int x, int y, int value)
+{
+   f_seg[y * g_map.xsize + x] = value;
+}
+
+
+
+static void set_zone(int x, int y, int value)
+{
+   z_seg[y * g_map.xsize + x] = value;
+}
+
+
+
+static void set_obs(int x, int y, int value)
+{
+   o_seg[y * g_map.xsize + x] = value;
+}
+
+
+
+static void set_shadow(int x, int y, int value)
+{
+   s_seg[y * g_map.xsize + x] = value;
+}
+
+

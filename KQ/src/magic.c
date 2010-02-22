@@ -23,7 +23,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "kq.h"
 #include "combat.h"
 #include "draw.h"
 #include "effects.h"
@@ -31,11 +30,13 @@
 #include "fade.h"
 #include "itemdefs.h"
 #include "itemmenu.h"
+#include "kq.h"
 #include "magic.h"
 #include "menu.h"
 #include "res.h"
 #include "setup.h"
 #include "ssprites.h"
+#include "structs.h"
 
 
 /*! \file
