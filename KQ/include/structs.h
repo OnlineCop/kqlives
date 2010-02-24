@@ -30,6 +30,8 @@
  * \date 20030805
  */
 
+#include <allegro.h>
+
 #include "bounds.h"
 #include "enums.h"
 #include "markers.h"

@@ -323,8 +323,8 @@ static gboolean on_map_button_press_event (GtkWidget *widget, GdkEventButton *ev
 
          i = gmap.num_bound_boxes;
 
-         temp_bound.left = bound->x;
-         temp_bound.top = bound->y;
+         temp_bound.left = bound->left;
+         temp_bound.top = bound->top;
          bound_dragging = TRUE;
          break;
 

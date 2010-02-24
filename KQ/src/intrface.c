@@ -33,6 +33,8 @@
  * the C code and the Lua scripts.
  *
  */
+#include "kq.h"
+
 #ifndef KQ_SCAN_DEPEND
 # include <stdio.h>
 # include <string.h>
@@ -58,7 +60,6 @@
 #include "intrface.h"
 #include "itemdefs.h"
 #include "itemmenu.h"
-#include "kq.h"
 #include "magic.h"
 #include "masmenu.h"
 #include "menu.h"
