@@ -301,7 +301,7 @@
 
 /* Begin PBXFileReference section */
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
-		8808A7E70A62F1AC00EBA666 /* Info-KQ_osx.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "Info-KQ_osx.plist"; sourceTree = "<group>"; };
+		8808A7E70A62F1AC00EBA666 /* Info-KQ_osx.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-KQ_osx.plist"; sourceTree = "<group>"; };
 		8808A7E80A62F1AD00EBA666 /* KQ.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KQ.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8808A7EB0A62F25200EBA666 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
 		8808A7EC0A62F25200EBA666 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = /System/Library/Frameworks/AudioUnit.framework; sourceTree = "<absolute>"; };
@@ -888,9 +888,11 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 8808A65C0A62EF7200EBA666 /* Build configuration list for PBXProject "KQ-osx" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 29B97314FDCFA39411CA2CEA /* KQ-osx */;
 			projectDirPath = "";
+			projectRoot = "";
 			targets = (
 				8808A79A0A62F1AC00EBA666 /* KQ-osx */,
 			);
