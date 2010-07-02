@@ -254,11 +254,11 @@ static void combat_draw_spell_menu (int c, int ptr, int pg)
    int z, j, b;
 
    menubox (double_buffer, 80, 24, 18, 12, BLUE);
-   for (j = 0; j < 12; j++) {
-      z = party[pidx[c]].spells[pg * 12 + j];
+   for (j = 0; j < NUM_SPELLS_PER_PAGE; j++) {
+      z = party[pidx[c]].spells[pg * NUM_SPELLS_PER_PAGE + j];
       if (z > 0) {
          draw_icon (double_buffer, magic[z].icon, 96, j * 8 + 32);
-         if (combat_castable (c, pg * 12 + j) == 1)
+         if (combat_castable (c, pg * NUM_SPELLS_PER_PAGE + j) == 1)
             print_font (double_buffer, 104, j * 8 + 32, magic[z].name,
                         FNORMAL);
          else
@@ -481,8 +481,8 @@ int combat_spell_menu (int c)
       }
       if (balt) {
          unpress ();
-         if (combat_castable (c, pgno * 12 + ptr) == 1) {
-            fighter[c].csmem = party[pidx[c]].spells[pgno * 12 + ptr];
+         if (combat_castable (c, pgno * NUM_SPELLS_PER_PAGE + ptr) == 1) {
+            fighter[c].csmem = party[pidx[c]].spells[pgno * NUM_SPELLS_PER_PAGE + ptr];
             stop = 2;
          }
       }

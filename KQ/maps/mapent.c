@@ -13,7 +13,7 @@
 #include "mapdraw.h"
 
 /* Number of entities, index of currently-selected entity */
-int current_ent = 0;
+unsigned int current_ent = 0;
 
 
 /*! \brief Offset the x/y coodinates of entities

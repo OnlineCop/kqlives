@@ -26,6 +26,7 @@
 #include "kq.h"
 #include "combat.h"
 #include "draw.h"
+#include "enums.h"
 #include "magic.h"
 #include "masmenu.h"
 #include "menu.h"
@@ -88,14 +89,14 @@ static void camp_draw_spell_menu (int c, int pg, int ptr)
    int l, z, j, b, a;
 
    l = pidx[c];
-   b = party[l].spells[pg * 12 + ptr];
+   b = party[l].spells[pg * NUM_SPELLS_PER_PAGE + ptr];
    menubox (double_buffer, 80 + xofs, 12 + yofs, 18, 1, BLUE);
    print_font (double_buffer, 140 + xofs, 20 + yofs, _("Magic"), FGOLD);
    menubox (double_buffer, 80 + xofs, 36 + yofs, 18, 5, BLUE);
    draw_playerstat (double_buffer, l, 88 + xofs, 44 + yofs);
    menubox (double_buffer, 80 + xofs, 92 + yofs, 18, 12, BLUE);
-   for (j = 0; j < 12; j++) {
-      z = party[l].spells[pg * 12 + j];
+   for (j = 0; j < NUM_SPELLS_PER_PAGE; j++) {
+      z = party[l].spells[pg * NUM_SPELLS_PER_PAGE + j];
       a = FDARK;
       if (camp_castable (c, z) == 1)
          a = FNORMAL;
@@ -183,14 +184,14 @@ void camp_spell_menu (int c)
          if (smove == 1) {
             smove = 0;
             if (pg[0] != pg[1] || ptr[0] != ptr[1]) {
-               a = pg[0] * 12 + ptr[0];
-               b = pg[1] * 12 + ptr[1];
+               a = pg[0] * NUM_SPELLS_PER_PAGE + ptr[0];
+               b = pg[1] * NUM_SPELLS_PER_PAGE + ptr[1];
                tsn = party[pidx[c]].spells[a];
                party[pidx[c]].spells[a] = party[pidx[c]].spells[b];
                party[pidx[c]].spells[b] = tsn;
             }
             if (pg[0] == pg[1] && ptr[0] == ptr[1]) {
-               a = pg[0] * 12 + ptr[0];
+               a = pg[0] * NUM_SPELLS_PER_PAGE + ptr[0];
                tsn = party[pidx[c]].spells[a];
                if (tsn > 0) {
                   if (camp_castable (c, tsn) == 1)
@@ -201,7 +202,7 @@ void camp_spell_menu (int c)
             pg[0] = pg[1];
             ptr[0] = ptr[1];
          } else {
-            if (party[pidx[c]].spells[pg[0] * 12 + ptr[0]] > 0) {
+            if (party[pidx[c]].spells[pg[0] * NUM_SPELLS_PER_PAGE + ptr[0]] > 0) {
                smove = 1;
                pg[1] = pg[0];
                ptr[1] = ptr[0];

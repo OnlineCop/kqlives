@@ -9,7 +9,8 @@
 \***************************************************************************/
 
 #ifndef __MAPDRAW_H
-#define __MAPDRAW_H
+#define __MAPDRAW_H 1
+
 
 /* TT: Added per request, as MAX_PATH is not defined on some architectures */
 #ifndef MAX_PATH
@@ -21,11 +22,13 @@
 #endif
 
 #include <allegro.h>
+#include <stdio.h>
+#include <string.h>
 
-#ifdef HAVE_CONFIG_H
 
 /* Have to undef some stuff because Allegro defines it - thanks guys
 */
+#ifdef HAVE_CONFIG_H
 #undef PACKAGE_TARNAME
 #undef PACKAGE_VERSION
 #undef PACKAGE_NAME
@@ -37,12 +40,12 @@
 #include "gettext.h"
 #define _(s) gettext(s)
 
-#include <stdio.h>
-#include <string.h>
-
-#include "../include/structs.h"
 #include "../include/bounds.h"
+#include "../include/structs.h"
 
+
+#define MIN_WIDTH       5
+#define MIN_HEIGHT      5
 #define MAX_WIDTH       1024
 #define MAX_HEIGHT      800
 
@@ -55,34 +58,31 @@
 #define MAX_MARKERS     256
 #define SW              800     // Must be a multiple of 16
 #define SH              600     // Must be a multiple of 16
-#define TH              16      /* Tile Height */
-#define TW              16      /* Tile Width */
+#define TH              16      // Tile Height
+#define TW              16      // Tile Width
 #define WBUILD          1
 
-#define MAP_LAYER1      1       /* Map (sea-level) */
-#define MAP_LAYER2      2       /* Background (ground-level) */
-#define MAP_LAYER3      4       /* Foreground (tree-tops, etc.) */
-#define MAP_LAYER12  (MAP_LAYER1 | MAP_LAYER2)  /* Map + background */
-#define MAP_LAYER13  (MAP_LAYER1 | MAP_LAYER3)  /* Map + foreground */
-#define MAP_LAYER23  (MAP_LAYER2 | MAP_LAYER3)  /* Background + foreground */
-#define MAP_LAYER123  (MAP_LAYER1 | MAP_LAYER2 | MAP_LAYER3)    /* Map + background + foreground */
-#define MAP_ENTITIES    8       /* Entities Attribute */
-#define MAP_OBSTACLES  16       /* Obstacles Attribute */
-#define MAP_SHADOWS    32       /* Shadows Attribute */
-#define MAP_ZONES      64       /* Zones Attribute */
-#define BLOCK_COPY    128       /* Mode to start copying an area */
-#define BLOCK_PASTE   256       /* Mode to paste the copied area */
-#define MAP_PREVIEW   512       /* Draw a proper preview with layer ordering and parallax */
-#define MAP_MARKERS  1024       /* Markers mode */
-#define MAP_BOUNDS   2048       /* Boundary mode */
+#define MAP_LAYER1      (1 << 0)      // Map (sea-level)
+#define MAP_LAYER2      (1 << 1)      // Background (ground-level)
+#define MAP_LAYER3      (1 << 2)      // Foreground (tree-tops, etc.)
+#define MAP_ENTITIES    (1 << 3)      // Entities Attribute
+#define MAP_OBSTACLES   (1 << 4)      // Obstacles Attribute
+#define MAP_SHADOWS     (1 << 5)      // Shadows Attribute
+#define MAP_ZONES       (1 << 6)      // Zones Attribute
+#define BLOCK_COPY      (1 << 7)      // Mode to start copying an area
+#define BLOCK_PASTE     (1 << 8)      // Mode to paste the copied area
+#define MAP_PREVIEW     (1 << 9)      // Draw a proper preview with layer ordering and parallax
+#define MAP_MARKERS     (1 << 10)     // Markers mode
+#define MAP_BOUNDS      (1 << 11)     // Boundary mode
 
-#define ICONSET_SIZE   20       /* Number of icons shown in the icon map */
+#define ICONSET_SIZE    20            // Number of icons shown in the icon map */
+#define ICONSET_SIZE2   (ICONSET_SIZE / 2)  // Half of the above number
 
 
 /* Something for allegro version compatibility */
 /* ..can we use the textout_ex() and friends? */
-#if (ALLEGRO_VERSION >= 4 && ALLEGRO_SUB_VERSION >= 1)
-#define HAVE_TEXT_EX
+#if (!(ALLEGRO_VERSION >= 4 && ALLEGRO_SUB_VERSION >= 1 && ALLEGRO_SUB_VERSION < 9))
+#error You need another version of Allegro.
 #endif
 
 typedef struct
@@ -92,8 +92,7 @@ typedef struct
    int boundaries;              /* Bounding boxes */
    int last_layer;              /* Tracks last-used layer */
    int layer[3];                /* Back, Mid, Fore */
-}
-s_show;
+} s_show;
 
 
 /*
@@ -108,66 +107,18 @@ void getfont (void);
 void usage (const char *);
 
 /* From mapedit.c */
-void animate (void);
 extern void bufferize (void);
 void center_window (int, int);
-void center_window_x (int);
-void center_window_y (int);
-int check_last_zone (void);
 extern void cleanup (void);
-void clear_layer (void);
-void clear_obstructs (void);
-void clear_shadows (void);
 void cmessage (const char *);
-int confirm_exit (void);
-void copy (void);
-void copy_layer (void);
-void copy_region (void);
-int count_current_obstacles (void);
-int count_current_shadows (void);
-int count_current_zones (void);
-void describe_map (void);
-void draw_layer (short *, const int);
 void draw_map (void);
-void draw_menubars (void);
-int find_cursor (int);
-int get_line (const int, const int, char *, const int);
-void get_tile (void);
-void global_change (void);
-void goto_coords (void);
-void klog (const char *);
-void kq_yield (void);
+unsigned int get_line (const int, const int, char *, const int);
 void make_rect (BITMAP *, const int, const int);
 void normalize_view (void);
-void paste (void);
-void paste_region (const int, const int);
-void paste_region_special (const int, const int);
-void preview_map (void);
 void print_sfont (const int, const int, const char *, BITMAP *);
-int process_keyboard (const int);
-void process_menu_bottom (const int, const int);
-void process_menu_right (const int, const int);
-void process_mouse (const int);
-void process_movement (int);
-void process_movement_joy (void);
-int prompt_BMP_PCX (void);
-void read_controls (void);
-void resize_map (const int);
-int select_layer1 (void);
-int select_layer2 (void);
-int select_layer3 (void);
-int select_layer12 (void);
-int select_layer13 (void);
-int select_layer23 (void);
-int select_layer123 (void);
-void select_only (const int, const int);
-int show_all (void);
-int show_help (void);
-int show_preview (void);
 int startup (void);
 void update_tileset (void);
 void wait_enter (void);
-void wipe_map (void);
 int yninput (void);
 
 /* From mapent.c */
@@ -219,14 +170,15 @@ extern BITMAP *font6, *mesh1[MAX_OBSTACLES], *mesh2, *mesh3,
 extern PALETTE pal;
 
 extern char map_fname[40], map_path[MAX_PATH], *strbuf;
-extern short icon_set, num_markers;
+extern unsigned int num_markers;
+extern unsigned int icon_set;
 
 /* extern s_marker markers[MAX_MARKERS]; */
 
 extern const char *icon_files[NUM_TILESETS];
 
 extern const int htiles, vtiles;
-extern int number_of_ents, current_ent;
+extern unsigned int number_of_ents, current_ent;
 
 extern s_entity gent[];
 extern s_map gmap;
@@ -239,11 +191,13 @@ extern s_anim adata[MAX_ANIM];
 extern int column[8], row[8];
 
 extern short window_x, window_y;
-extern short max_sets;
+extern unsigned int max_sets;
 
 extern unsigned short *map, *b_map, *f_map, *c_map, *cf_map, *cb_map;
 extern unsigned char *z_map, *sh_map, *o_map, *cz_map, *csh_map, *co_map;
 extern unsigned char *search_map;
 
 extern short active_bound;
-#endif
+
+
+#endif  /* __MAPDRAW_H */

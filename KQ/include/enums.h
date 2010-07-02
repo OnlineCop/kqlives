@@ -38,12 +38,21 @@
 // easier for a lot of IDEs to interpret.
 
 
+enum eSizes
+{
+	TILE_H = 16,
+	TILE_W = 16,
+	NUM_SPELLS_PER_PAGE = 12,
+	NUM_ITEMS_PER_PAGE = 16,
+};
+
 #define MAX_TILES        1024
 #define MAXE               41
 #define MAXCHRS             8
 #define PSIZE               2
 #define MAXFRAMES          12
 #define MAXEFRAMES         12
+
 
 /* PH: MAXCFRAMES never seems to be used properly -
    all frames are identical for enemies?
@@ -93,6 +102,7 @@
 #define A_EVD 11                // Evade
 #define A_MAG 12                // Mag.Def
 /*\}*/
+
 
 /*! \name Spells */
 /*\{*/
@@ -154,6 +164,7 @@
 #define R_NONE      16
 /*\}*/
 
+
 /*! \name Weapons */
 /*\{*/
 #define W_BASH         0
@@ -169,6 +180,7 @@
 #define W_ABOOK        28
 #define W_CHENDIGAL    29
 /*\}*/
+
 
 /*!\name Use modes
  * Specify how an item can be used.
@@ -204,6 +216,50 @@
 #define FACE_LEFT    2
 #define FACE_RIGHT   3
 /*\}*/
+
+
+/* The map modes (parallax and drawing order) are listed here in
+ * coded format. The layers are listed as 1, 2, 3, E (entity) S (shadow)
+ * and a ) or ( marks which layers use the parallax mult/div.
+ */
+enum eMapMode
+{
+   MAPMODE_12E3S    = 0,   // "12E3S "
+   MAPMODE_1E23S    = 1,   // "1E23S "
+   MAPMODE_1p2E3S   = 2,   // "1)2E3S"
+   MAPMODE_1E2p3S   = 3,   // "1E2)3S"
+   MAPMODE_1P2E3S   = 4,   // "1(2E3S"
+   MAPMODE_12EP3S   = 5,   // "12E(3S"
+
+   NUM_MAPMODES            // always last
+};
+
+
+
+enum eObstacles
+{
+	BLOCK_NONE = 0,
+	BLOCK_ALL  = 1,
+	BLOCK_U    = 2,
+	BLOCK_R    = 3,
+	BLOCK_D    = 4,
+	BLOCK_L    = 5,
+
+	NUM_OBSTACLES        // always last
+};
+
+
+enum eEquipment
+{
+	EQP_WEAPON  = 0,
+	EQP_SHIELD  = 1,
+	EQP_HELMET  = 2,
+	EQP_ARMOR   = 3,
+	EQP_HAND    = 4,
+	EQP_SPECIAL = 5,
+
+	NUM_EQUIPMENT        // always last
+};
 
 
 #endif  /* __ENUMS_H */

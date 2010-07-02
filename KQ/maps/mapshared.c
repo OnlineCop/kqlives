@@ -115,11 +115,11 @@ char map_path[MAX_PATH] = "./";
 
 /* Used for the icons */
 short active_bound = 0;
-short icon_set = 0;
-short max_sets = 51;
-short num_markers = 0;
-int number_of_ents = 0;
-short num_bound_boxes = 0;
+unsigned int icon_set = 0;
+unsigned int max_sets = 51;
+unsigned int num_markers = 0;
+unsigned int number_of_ents = 0;
+unsigned int num_bound_boxes = 0;
 
 s_map gmap;
 s_entity gent[50];
@@ -145,7 +145,7 @@ void blit2screen (void)
 
 void load_iconsets (PALETTE pal)
 {
-   int x, y;
+   unsigned int x, y;
 
    set_pcx (&pcx_buffer, icon_files[gmap.tileset], pal, 1);
    max_sets = (pcx_buffer->h / 16);
@@ -449,8 +449,6 @@ void visual_map (s_show showing, const char *save_fname)
 
          if ((showing.zones) && (z_map[w] > 0)) {
 
-/* This check is here because of the differing versions of the Allegro library */
-#ifdef HAVE_TEXT_EX
             if (z_map[w] < 10) {
                /* The zone's number is single-digit, center vert+horiz */
                textprintf_ex (bmp, font, i * 16 + 4, j * 16 + 4,
@@ -471,28 +469,6 @@ void visual_map (s_show showing, const char *save_fname)
                               makecol (255, 255, 255), 0, "%02d",
                               (int) (z_map[w] % 100));
             }
-#else
-            if (z_map[w] < 10) {
-               /* The zone's number is single-digit, center vert+horiz */
-               textprintf (bmp, font, i * 16 + 4, j * 16 + 4,
-                           makecol (255, 255, 255), "%d", z_map[w]);
-            } else if (z_map[w] < 100) {
-               /* The zone's number is double-digit, center only vert */
-               textprintf (bmp, font, i * 16, j * 16 + 4,
-                           makecol (255, 255, 255), "%d", z_map[w]);
-            } else {
-               /* The zone's number is triple-digit.  Print the 100's digit in
-                * top-center of the square; the 10's and 1's digits on bottom
-                * of the square
-                */
-               textprintf (bmp, font, i * 16 + 4, j * 16,
-                           makecol (255, 255, 255), "%d",
-                           (int) (z_map[w] / 100));
-               textprintf (bmp, font, i * 16, j * 16 + 8,
-                           makecol (255, 255, 255), "%02d",
-                           (int) (z_map[w] % 100));
-            }
-#endif
          }
 
       }

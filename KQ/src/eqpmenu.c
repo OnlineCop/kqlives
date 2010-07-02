@@ -49,14 +49,14 @@ char eqp_act;
 
 /* Internal functions */
 static void draw_equipmenu (int, int);
-static void draw_equippable (int, int, int);
+static void draw_equippable (unsigned int, unsigned int, unsigned int);
 static void calc_possible_equip (int, int);
 static void optimize_equip (int);
 static void choose_equipment (int, int);
-static void calc_equippreview (int, int, int);
+static void calc_equippreview (unsigned int, unsigned int, int);
 static void draw_equippreview (int, int, int);
-static int equip (int, int, int);
-static int deequip (int, int);
+static int equip (unsigned int, unsigned int, unsigned int);
+static int deequip (unsigned int, unsigned int);
 
 
 /*! \brief Show the effect on stats if this piece were selected
@@ -68,7 +68,7 @@ static int deequip (int, int);
  * \param   p2 Slot to consider changing
  * \param   ii New piece of equipment to compare/use
  */
-static void calc_equippreview (int aa, int p2, int ii)
+static void calc_equippreview (unsigned int aa, unsigned int p2, int ii)
 {
    int c, z;
 
@@ -95,7 +95,7 @@ static void calc_equippreview (int aa, int p2, int ii)
  */
 static void calc_possible_equip (int c, int slot)
 {
-   int k;
+   unsigned int k;
 
    tot = 0;
    for (k = 0; k < MAX_INV; k++) {
@@ -193,14 +193,20 @@ static void choose_equipment (int c, int slot)
  * \param   ptr Slot to de-equip
  * \returns 0 if unsuccessful, 1 if successful
  */
-static int deequip (int c, int ptr)
+static int deequip (unsigned int c, unsigned int ptr)
 {
    int a, b = 0;
+
+   if (ptr >= NUM_EQUIPMENT)
+      return 0;
 
    a = party[pidx[c]].eqp[ptr];
    if (a > 0)
       b = check_inventory (a, 1);
-   if (b == 0 || a == 0)
+   else
+      return 0;
+
+   if (b == 0)
       return 0;
    party[pidx[c]].eqp[ptr] = 0;
    return 1;
@@ -250,7 +256,7 @@ static void draw_equipmenu (int c, int sel)
    print_font (double_buffer, 28 + xofs, 60 + yofs, _("Body:"), FGOLD);
    print_font (double_buffer, 28 + xofs, 68 + yofs, _("Arms:"), FGOLD);
    print_font (double_buffer, 28 + xofs, 76 + yofs, _("Other:"), FGOLD);
-   for (k = 0; k < 6; k++) {
+   for (k = 0; k < NUM_EQUIPMENT; k++) {
       j = party[l].eqp[k];
       draw_icon (double_buffer, items[j].icon, 84 + xofs, k * 8 + 36 + yofs);
       print_font (double_buffer, 92 + xofs, k * 8 + 36 + yofs, items[j].name,
@@ -270,19 +276,19 @@ static void draw_equipmenu (int c, int sel)
  * \param   slot Which 'part of the body' to equip
  * \param   pptr Which page of the inventory to draw
  */
-static void draw_equippable (int c, int slot, int pptr)
+static void draw_equippable (unsigned int c, unsigned int slot, unsigned int pptr)
 {
    int z, j, k;
 
-   if (slot > -1)
+   if (slot < NUM_EQUIPMENT)
       calc_possible_equip (c, slot);
    else
       tot = 0;
-   if (tot < 16)
+   if (tot < NUM_ITEMS_PER_PAGE)
       sm = tot;
    else
-      sm = 16;
-   menubox (double_buffer, 12 + xofs, 92 + yofs, 20, 16, BLUE);
+      sm = NUM_ITEMS_PER_PAGE;
+   menubox (double_buffer, 12 + xofs, 92 + yofs, 20, NUM_ITEMS_PER_PAGE, BLUE);
    for (k = 0; k < sm; k++) {
       // j == item index #
       j = g_inv[t_inv[pptr + k]][0];
@@ -299,9 +305,10 @@ static void draw_equippable (int c, int slot, int pptr)
    }
    if (pptr > 0)
       draw_sprite (double_buffer, upptr, 180 + xofs, 98 + yofs);
-   if (tot > 16)
-      if (pptr < tot - 16)
+   if (tot > NUM_ITEMS_PER_PAGE) {
+      if (pptr < tot - NUM_ITEMS_PER_PAGE)
          draw_sprite (double_buffer, dnptr, 180 + xofs, 206 + yofs);
+   }
 }
 
 
@@ -391,25 +398,31 @@ static void draw_equippreview (int ch, int ptr, int pp)
  * \param   forced Non-zero if character doesn't already have the item (see above)
  * \returns 1 if equip was successful, 0 otherwise
  */
-static int equip (int c, int selected_item, int forced)
+static int equip (unsigned int c, unsigned int selected_item, unsigned int forced)
 {
-   int a, d, b, z, n = 0, i;
+   unsigned int a;
+   int d, b, z, n = 0, i;
+
+   if (selected_item >= MAX_INV)
+      return 0;
 
    if (forced == 0)
       d = g_inv[selected_item][0];
    else
       d = selected_item;
    a = items[d].type;
-   b = party[c].eqp[a];
-   if (a > 5)
+   if (a < NUM_EQUIPMENT)
+      b = party[c].eqp[a];
+   else
       return 0;
+
    if (items[d].eq[c] == 0)
       return 0;
-   if (a == 1)
-      if (party[c].eqp[0] > 0 && items[party[c].eqp[0]].hnds == 1)
+   if (a == EQP_SHIELD)
+      if (party[c].eqp[EQP_WEAPON] > 0 && items[party[c].eqp[EQP_WEAPON]].hnds == 1)
          return 0;
-   if (a == 0)
-      if (party[c].eqp[1] > 0 && items[d].hnds == 1)
+   else if (a == EQP_WEAPON)
+      if (party[c].eqp[EQP_SHIELD] > 0 && items[d].hnds == 1)
          return 0;
    if (b > 0) {
       for (i = 0; i < MAX_INV; i++)
@@ -444,7 +457,7 @@ static int equip (int c, int selected_item, int forced)
  *
  * \param   c Character to process
  */
-void equip_menu (int c)
+void equip_menu (unsigned int c)
 {
    int stop = 0, yptr = 0, sl = 1;
    int a, b, d;
@@ -513,7 +526,7 @@ void equip_menu (int c)
             else if (eqp_act == 3) {
                b = 0;
                d = 0;
-               for (a = 0; a < 6; a++) {
+               for (a = 0; a < NUM_EQUIPMENT; a++) {
                   if (party[pidx[c]].eqp[a] > 0) {
                      d++;
                      b += deequip (c, a);
@@ -561,12 +574,15 @@ void equip_menu (int c)
  */
 static void optimize_equip (int c)
 {
-   int a, b, z, maxx, maxi, v = 0;
+   unsigned int a;
+   int b, z, maxx, maxi, v = 0;
 
-   for (a = 0; a < 6; a++)
-      if (party[pidx[c]].eqp[a] > 0)
+   for (a = 0; a < NUM_EQUIPMENT; a++) {
+      if (party[pidx[c]].eqp[a] > 0) {
          if (deequip (c, a) == 0)
             return;
+      }
+   }
    maxx = 0;
    maxi = -1;
    calc_possible_equip (c, 0);

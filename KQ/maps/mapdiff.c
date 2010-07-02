@@ -817,9 +817,9 @@ void usage (const char *argv)
 }                               /* usage () */
 
 
-int main (int argc, char *argv[])
+int main (unsigned int argc, char *argv[])
 {
-   int i, number_of_files = 0;
+   unsigned int i, number_of_files = 0;
    char *filenames[PATH_MAX];
 
    setlocale (LC_ALL, "");
@@ -859,13 +859,4 @@ int main (int argc, char *argv[])
 
    cleanup ();
    return (EXIT_SUCCESS);
-}                               /* main () */
-
-END_OF_MAIN ();
-
-
-void klog (const char *whatever)
-{
-   (void) whatever;
-   return;
-}
+} END_OF_MAIN ()                /* main () */

@@ -11,14 +11,63 @@
 \***************************************************************************/
 
 
+#include <assert.h>
 #include <locale.h>
+
+#include "../include/enums.h"
 #include "mapdraw.h"
 
 /* Something for allegro version compatibility */
 /* ..can we use the textout_ex() and friends? */
-#if (ALLEGRO_VERSION >= 4 && ALLEGRO_SUB_VERSION >= 1)
-#define HAVE_TEXT_EX
+#if (!(ALLEGRO_VERSION >= 4 && ALLEGRO_SUB_VERSION >= 1 && ALLEGRO_SUB_VERSION < 9))
+#error You need another version of Allegro.
 #endif
+
+
+/* Prototypes */
+void animate (void);
+void center_window_x (int);
+void center_window_y (int);
+unsigned int check_last_zone (void);
+void clear_layer (void);
+void clear_obstructs (void);
+void clear_shadows (void);
+int confirm_exit (void);
+void copy (void);
+void copy_layer (void);
+void copy_region (void);
+unsigned int count_current_obstacles (void);
+unsigned int count_current_shadows (void);
+unsigned int count_current_zones (void);
+void describe_map (void);
+void draw_layer (short *, const int);
+void draw_menubars (void);
+int find_cursor (int);
+void get_tile (void);
+void global_change (void);
+void goto_coords (void);
+void klog (const char *);
+void kq_yield (void);
+void paste (void);
+void paste_region (const int, const int);
+void paste_region_special (const int, const int);
+void preview_map (void);
+int process_keyboard (const int);
+void process_menu_bottom (const int, const int);
+void process_menu_right (const int, const int);
+void process_mouse (const int);
+void process_movement (int);
+void process_movement_joy (void);
+int prompt_BMP_PCX (void);
+void read_controls (void);
+void resize_map (const int);
+void select_only (const int, const int);
+int show_all (void);
+int show_help (void);
+int show_preview (void);
+void wipe_map (void);
+
+
 
 /* globals */
 
@@ -40,8 +89,8 @@ short nomouse = 0;
  */
 short window_x = 0, window_y = 0, x = 0, y = 0;
 
-static int draw_mode = MAP_LAYER123, curtile = 0, dmode = 0;
-static int curzone = 0, curshadow = 0, curobs = 0;
+static int draw_mode = (MAP_LAYER1 | MAP_LAYER2 | MAP_LAYER3), curtile = 0, dmode = 0;
+static unsigned int curzone = 0, curshadow = 0, curobs = 0;
 static int curobs_x = -1, curobs_y = -1;
 static int curshadow_x = -1, curshadow_y = -1;
 static int curzone_x = -1, curzone_y = -1;
@@ -79,6 +128,8 @@ s_anim tanim[NUM_TILESETS][MAX_ANIM] = {
     {138, 139, 30}},
 };
 
+
+
 /*! Tile animation specifiers for the current tileset */
 s_anim adata[MAX_ANIM];
 
@@ -93,6 +144,7 @@ unsigned char mousepic[] = {
 };
 
 
+
 /* The map modes (parallax and drawing order) are listed here in
  * coded format. The layers are listed as 1, 2, 3, E (entity) S (shadow)
  * and a ) or ( marks which layers use the parallax mult/div.
@@ -105,6 +157,8 @@ static const char *map_mode_text[] = {
    "1(2E3S",
    "12E(3S",
 };
+
+
 
 /*! Current sequence position of animated tiles */
 unsigned short tilex[MAX_TILES];
@@ -140,7 +194,7 @@ int use_joy = 1;
  */
 void animate (void)
 {
-   int i, j;
+   unsigned int i, j;
 
    if (draw_mode != MAP_PREVIEW)
       return;
@@ -158,66 +212,71 @@ void animate (void)
 }                               /* animate */
 
 
+
 /*! \brief Memory allocation
  *
  * Allocation of memory, etc. for the maps
  */
 void bufferize (void)
 {
+   unsigned int size1 = gmap.xsize * gmap.ysize * sizeof (unsigned char);
+   unsigned int size2 = gmap.xsize * gmap.ysize * sizeof (unsigned short);
+
    free (map);
-   map = (unsigned short *) malloc (gmap.xsize * gmap.ysize * 2);
+   map = (unsigned short *) malloc (size2);
 
    free (b_map);
-   b_map = (unsigned short *) malloc (gmap.xsize * gmap.ysize * 2);
+   b_map = (unsigned short *) malloc (size2);
 
    free (f_map);
-   f_map = (unsigned short *) malloc (gmap.xsize * gmap.ysize * 2);
+   f_map = (unsigned short *) malloc (size2);
 
    free (o_map);
-   o_map = (unsigned char *) malloc (gmap.xsize * gmap.ysize);
+   o_map = (unsigned char *) malloc (size1);
 
    free (sh_map);
-   sh_map = (unsigned char *) malloc (gmap.xsize * gmap.ysize);
+   sh_map = (unsigned char *) malloc (size1);
 
    free (z_map);
-   z_map = (unsigned char *) malloc (gmap.xsize * gmap.ysize);
+   z_map = (unsigned char *) malloc (size1);
 
    free (c_map);
-   c_map = (unsigned short *) malloc (gmap.xsize * gmap.ysize * 2);
+   c_map = (unsigned short *) malloc (size2);
 
    free (cb_map);
-   cb_map = (unsigned short *) malloc (gmap.xsize * gmap.ysize * 2);
+   cb_map = (unsigned short *) malloc (size2);
 
    free (co_map);
-   co_map = (unsigned char *) malloc (gmap.xsize * gmap.ysize);
+   co_map = (unsigned char *) malloc (size1);
 
    free (cf_map);
-   cf_map = (unsigned short *) malloc (gmap.xsize * gmap.ysize * 2);
+   cf_map = (unsigned short *) malloc (size2);
 
    free (csh_map);
-   csh_map = (unsigned char *) malloc (gmap.xsize * gmap.ysize);
+   csh_map = (unsigned char *) malloc (size1);
 
    free (cz_map);
-   cz_map = (unsigned char *) malloc (gmap.xsize * gmap.ysize);
+   cz_map = (unsigned char *) malloc (size1);
 
    free (search_map);
-   search_map = (unsigned char *) malloc (gmap.xsize * gmap.ysize);
+   search_map = (unsigned char *) malloc (size1);
 
-   memset (map, 0, gmap.xsize * gmap.ysize * 2);
-   memset (b_map, 0, gmap.xsize * gmap.ysize * 2);
-   memset (f_map, 0, gmap.xsize * gmap.ysize * 2);
-   memset (o_map, 0, gmap.xsize * gmap.ysize);
-   memset (sh_map, 0, gmap.xsize * gmap.ysize);
-   memset (z_map, 0, gmap.xsize * gmap.ysize);
-   memset (c_map, 0, gmap.xsize * gmap.ysize * 2);
-   memset (cb_map, 0, gmap.xsize * gmap.ysize * 2);
-   memset (cf_map, 0, gmap.xsize * gmap.ysize * 2);
-   memset (co_map, 0, gmap.xsize * gmap.ysize);
-   memset (csh_map, 0, gmap.xsize * gmap.ysize);
-   memset (cz_map, 0, gmap.xsize * gmap.ysize);
+   memset (map, 0, size2);
+   memset (b_map, 0, size2);
+   memset (f_map, 0, size2);
+   memset (o_map, 0, size1);
+   memset (sh_map, 0, size1);
+   memset (z_map, 0, size1);
+   memset (c_map, 0, size2);
+   memset (cb_map, 0, size2);
+   memset (cf_map, 0, size2);
+   memset (co_map, 0, size1);
+   memset (csh_map, 0, size1);
+   memset (cz_map, 0, size1);
 
    clipb = 0;
 }                               /* bufferize () */
+
 
 
 /*! \brief Center the view-window on the given coords
@@ -231,11 +290,13 @@ void center_window (int center_x, int center_y)
 }
 
 
+
 /*! \brief Center the view-window on the x-coord */
 void center_window_x (int center_x)
 {
    window_x = center_x - (htiles / 2);
 }
+
 
 
 /*! \brief Center the view-window on the y-coord */
@@ -245,15 +306,16 @@ void center_window_y (int center_y)
 }
 
 
+
 /*! \brief Return the maximum zone used in the map
  *
  * Count and display the maximum Zone Attributes on the map
  *
  * \returns the maximum zone number in the map
  */
-int check_last_zone (void)
+unsigned int check_last_zone (void)
 {
-   int a = 0, p;
+   unsigned int a = 0, p;
 
    for (p = 0; p < gmap.xsize * gmap.ysize; p++) {
       if (z_map[p] > a)
@@ -262,6 +324,7 @@ int check_last_zone (void)
 
    return a;
 }                               /* check_last_zone () */
+
 
 
 /*! \brief Code shutdown and memory deallocation
@@ -302,13 +365,14 @@ void cleanup (void)
 }                               /* cleanup () */
 
 
+
 /*! \brief Clears a layer from the map
  *
  * Remove an entire Layer from the map
  */
 void clear_layer (void)
 {
-   int response, i, done;
+   unsigned int response, i, done;
    int selected_layer = 0;
 
    make_rect (double_buffer, 2, 15);
@@ -343,15 +407,14 @@ void clear_layer (void)
       }
    }
 
-   for (i = 0; i < gmap.xsize * gmap.ysize; i++) {
-      if (selected_layer == 1)
-         map[i] = 0;
-      else if (selected_layer == 2)
-         b_map[i] = 0;
-      else if (selected_layer == 3)
-         f_map[i] = 0;
-   }
+   if (selected_layer == 1)
+      memset (map, 0, gmap.xsize * gmap.ysize * sizeof (unsigned short));
+   else if (selected_layer == 2)
+      memset (b_map, 0, gmap.xsize * gmap.ysize * sizeof (unsigned short));
+   else if (selected_layer == 3)
+      memset (f_map, 0, gmap.xsize * gmap.ysize * sizeof (unsigned short));
 }                               /* clear_layer () */
+
 
 
 /*! \brief Clear obstructions on map
@@ -360,13 +423,11 @@ void clear_layer (void)
  */
 void clear_obstructs (void)
 {
-   int i;
-
    cmessage ("Do you want to clear Obstructions? (y/n)");
    if (yninput ())
-      for (i = 0; i < gmap.xsize * gmap.ysize; i++)
-         o_map[i] = 0;
+      memset (o_map, 0, gmap.xsize * gmap.ysize * sizeof (unsigned char));
 }                               /* clear_obstructs () */
+
 
 
 /*! \brief Clear shadows on the map
@@ -375,13 +436,11 @@ void clear_obstructs (void)
  */
 void clear_shadows (void)
 {
-   int i;
-
    cmessage ("Do you want to clear Shadows? (y/n)");
    if (yninput ())
-      for (i = 0; i < gmap.xsize * gmap.ysize; i++)
-         sh_map[i] = 0;
+      memset (sh_map, 0, gmap.xsize * gmap.ysize * sizeof (unsigned char));
 }                               /* clear_shadows () */
+
 
 
 /*! \brief Default method for displaying messages to screen
@@ -401,6 +460,7 @@ void cmessage (const char *buff)
 }                               /* cmessage () */
 
 
+
 /*! \brief Confirm exit
  *
  * Confirm that the user wants to exit the map editor
@@ -414,6 +474,7 @@ int confirm_exit (void)
 }                               /* confirm_exit () */
 
 
+
 /*! \brief Call the copy features from the menu or keyboard
  */
 void copy (void)
@@ -423,13 +484,14 @@ void copy (void)
 }
 
 
+
 /*! \brief Copy an entire layer into another
  *
  * Copy the contents of one Layer to another
  */
 void copy_layer (void)
 {
-   int response, done, a, b;
+   unsigned int response, done, a, b;
    int from_layer = 0, to_layer = 0;
 
    make_rect (double_buffer, 3, 20);
@@ -510,6 +572,7 @@ void copy_layer (void)
 }                               /* copy_layer () */
 
 
+
 /*! \brief Copy all the layers in a block area
  *
  * Copy all of the layers from one area to another
@@ -562,13 +625,14 @@ void copy_region (void)
 }                               /* copy_region () */
 
 
+
 /*! \brief Return the number of times THIS obstacle is used on the map
  *
  * \returns the number of times the obstacle is used
  */
-int count_current_obstacles (void)
+unsigned int count_current_obstacles (void)
 {
-   int i = 0, j;
+   unsigned int i = 0, j;
 
    for (j = 0; j < gmap.xsize * gmap.ysize; j++) {
       if (o_map[j] == curobs) {
@@ -579,13 +643,14 @@ int count_current_obstacles (void)
 }                               /* count_current_obstacles () */
 
 
+
 /*! \brief Return the number of times THIS shadow is used on the map
  *
  * \returns the number of times the shadow is used
  */
-int count_current_shadows (void)
+unsigned int count_current_shadows (void)
 {
-   int i = 0, j;
+   unsigned int i = 0, j;
 
    for (j = 0; j < gmap.xsize * gmap.ysize; j++) {
       if (sh_map[j] == curshadow) {
@@ -596,13 +661,14 @@ int count_current_shadows (void)
 }                               /* count_current_shadows () */
 
 
+
 /*! \brief Return the number of times THIS zone is used on the map
  *
  * \returns the number of times the zone is used
  */
-int count_current_zones (void)
+unsigned int count_current_zones (void)
 {
-   int i = 0, j;
+   unsigned int i = 0, j;
 
    for (j = 0; j < gmap.xsize * gmap.ysize; j++) {
       if (z_map[j] == curzone) {
@@ -613,13 +679,14 @@ int count_current_zones (void)
 }                               /* count_current_zones () */
 
 
+
 /*! \brief Set the map's description
  *
  * This is what displays in the game when a new map is entered (ie its name)
  */
 void describe_map (void)
 {
-   int response, done;
+   unsigned int response, done;
 
    make_rect (double_buffer, 3, 57);
    print_sfont (6, 6, "Enter map description", double_buffer);
@@ -647,6 +714,7 @@ void describe_map (void)
    }
    strcpy (gmap.map_desc, strbuf);
 }                               /* describe_map () */
+
 
 
 /*! \brief Draw the layers with parallax
@@ -700,6 +768,7 @@ void draw_layer (short *layer, const int parallax)
 }                               /* draw_layer () */
 
 
+
 /*! \brief Update the screen
  *
  * Update the screen after all controls taken care of.
@@ -714,7 +783,7 @@ void draw_map (void)
 
    /* Size of the map or view-window, whichever is smaller */
    int maxx, maxy;
-   int i;
+   unsigned int i;
 
    /* Make sure we reset the visible attributes */
    for (i = 0; i < 3; i++)
@@ -759,6 +828,7 @@ void draw_map (void)
          showing.layer[2] = 1;
       }
       break;
+
    default:
       break;
    }                            // switch (draw_mode)
@@ -785,12 +855,14 @@ void draw_map (void)
             draw_sprite (double_buffer, icons[f_map[w]], dx * 16, dy * 16);
 
          /* Draw the Shadows */
-         if ((showing.shadows) && (sh_map[w] > 0) && (sh_map[w] < MAX_SHADOWS)) {
+         assert (sh_map[w] < MAX_SHADOWS && "sh_map[w] >= MAX_SHADOWS\n");
+         if (showing.shadows && (sh_map[w] > 0)) {
             draw_trans_sprite (double_buffer, shadow[sh_map[w]], dx * 16,
                                dy * 16);
          }
 
          /* Draw the Obstacles */
+         assert (o_map[w] < MAX_OBSTACLES && "o_map[w] >= MAX_OBSTACLES\n");
          if ((showing.obstacles) && (o_map[w] > 0)
              && (o_map[w] <= MAX_OBSTACLES)) {
             draw_sprite (double_buffer, mesh1[o_map[w] - 1], dx * 16, dy * 16);
@@ -799,8 +871,6 @@ void draw_map (void)
          /* Draw the Zones */
          if ((showing.zones) && (z_map[w] > 0)) {
 
-/* This check is here because of the differing versions of the Allegro library */
-#ifdef HAVE_TEXT_EX
             if (z_map[w] < 10) {
                /* The zone's number is single-digit, center vert+horiz */
                textprintf_ex (double_buffer, font, dx * 16 + 4, dy * 16 + 4,
@@ -821,28 +891,6 @@ void draw_map (void)
                               makecol (255, 255, 255), 0, "%02d",
                               (int) (z_map[w] % 100));
             }
-#else
-            if (z_map[w] < 10) {
-               /* The zone's number is single-digit, center vert+horiz */
-               textprintf (double_buffer, font, dx * 16 + 4, dy * 16 + 4,
-                           makecol (255, 255, 255), "%d", z_map[w]);
-            } else if (z_map[w] < 100) {
-               /* The zone's number is double-digit, center only vert */
-               textprintf (double_buffer, font, dx * 16, dy * 16 + 4,
-                           makecol (255, 255, 255), "%d", z_map[w]);
-            } else {
-               /* The zone's number is triple-digit.  Print the 100's digit in
-                * top-center of the square; the 10's and 1's digits on bottom
-                * of the square
-                */
-               textprintf (double_buffer, font, dx * 16 + 4, dy * 16,
-                           makecol (255, 255, 255), "%d",
-                           (int) (z_map[w] / 100));
-               textprintf (double_buffer, font, dx * 16, dy * 16 + 8,
-                           makecol (255, 255, 255), "%02d",
-                           (int) (z_map[w] % 100));
-            }
-#endif
          }                      // if (showing.zones)
 
          /* Highlight each instance of the Attribute */
@@ -973,6 +1021,7 @@ void draw_map (void)
 }                               /* draw_map () */
 
 
+
 /*! \brief Draw the menus
  *
  * Process both the menus on the side and bottom of the screen
@@ -997,51 +1046,67 @@ void draw_menubars (void)
    case MAP_LAYER1:
       draw_mode_display = 0;
       break;
+
    case MAP_LAYER2:
       draw_mode_display = 1;
       break;
+
    case MAP_LAYER3:
       draw_mode_display = 2;
       break;
-   case MAP_LAYER12:
+
+   case (MAP_LAYER1 | MAP_LAYER2):
       draw_mode_display = 3;
       break;
-   case MAP_LAYER13:
+
+   case (MAP_LAYER1 | MAP_LAYER3):
       draw_mode_display = 4;
       break;
-   case MAP_LAYER23:
+
+   case (MAP_LAYER2 | MAP_LAYER3):
       draw_mode_display = 5;
       break;
-   case MAP_LAYER123:
+
+   case (MAP_LAYER1 | MAP_LAYER2 | MAP_LAYER3):
       draw_mode_display = 6;
       break;
+
    case MAP_SHADOWS:
       draw_mode_display = 7;
       break;
+
    case MAP_ZONES:
       draw_mode_display = 8;
       break;
+
    case MAP_OBSTACLES:
       draw_mode_display = 9;
       break;
+
    case MAP_ENTITIES:
       draw_mode_display = 10;
       break;
+
    case BLOCK_COPY:
       draw_mode_display = 11;
       break;
+
    case BLOCK_PASTE:
       draw_mode_display = 12;
       break;
+
    case MAP_PREVIEW:
       draw_mode_display = 13;
       break;
+
    case MAP_MARKERS:
       draw_mode_display = 14;
       break;
+
    case MAP_BOUNDS:
       draw_mode_display = 15;
       break;
+
    default:
       draw_mode_display = 0;
       break;
@@ -1053,45 +1118,59 @@ void draw_menubars (void)
    case MAP_LAYER1:
       draw_mode_last = 0;
       break;
+
    case MAP_LAYER2:
       draw_mode_last = 1;
       break;
+
    case MAP_LAYER3:
       draw_mode_last = 2;
       break;
-   case MAP_LAYER12:
+
+   case (MAP_LAYER1 | MAP_LAYER2):
       draw_mode_last = 3;
       break;
-   case MAP_LAYER13:
+
+   case (MAP_LAYER1 | MAP_LAYER3):
       draw_mode_last = 4;
       break;
-   case MAP_LAYER23:
+
+   case (MAP_LAYER2 | MAP_LAYER3):
       draw_mode_last = 5;
       break;
-   case MAP_LAYER123:
+
+   case (MAP_LAYER1 | MAP_LAYER2 | MAP_LAYER3):
       draw_mode_last = 6;
       break;
+
    case MAP_SHADOWS:
       draw_mode_last = 7;
       break;
+
    case MAP_ZONES:
       draw_mode_last = 8;
       break;
+
    case MAP_OBSTACLES:
       draw_mode_last = 9;
       break;
+
    case MAP_ENTITIES:
       draw_mode_last = 10;
       break;
+
    case BLOCK_COPY:
       draw_mode_last = 11;
       break;
+
    case BLOCK_PASTE:
       draw_mode_last = 12;
       break;
+
    case MAP_PREVIEW:
       draw_mode_last = 13;
       break;
+
    default:
       draw_mode_last = 0;
       break;
@@ -1198,7 +1277,7 @@ void draw_menubars (void)
    }                            // if (draw_mode == MAP_ENTITIES)
 
    /* Displays the value of the Obstacle under the mouse */
-   if (draw_mode == MAP_OBSTACLES) {
+   else if (draw_mode == MAP_OBSTACLES) {
       if (curobs > 0)
          sprintf (strbuf, "Obstacle #%d (found: %d)", curobs,
                   count_current_obstacles ());
@@ -1215,7 +1294,7 @@ void draw_menubars (void)
    }                            // if (draw_mode == MAP_OBSTALES)
 
    /* Displays the value of the Shadow under the mouse */
-   if (draw_mode == MAP_SHADOWS) {
+   else if (draw_mode == MAP_SHADOWS) {
       if (curshadow > 0)
          sprintf (strbuf, "Shadow #%d (found: %d)", curshadow,
                   count_current_shadows ());
@@ -1232,7 +1311,7 @@ void draw_menubars (void)
    }                            // if (draw_mode == MAP_SHADOWS)
 
    /* Displays the value of the Zone under the mouse */
-   if (draw_mode == MAP_ZONES) {
+   else if (draw_mode == MAP_ZONES) {
       if (curzone > 0)
          sprintf (strbuf, "Zone #%d (found: %d)", curzone,
                   count_current_zones ());
@@ -1251,7 +1330,7 @@ void draw_menubars (void)
    /* Displays both the currently selected Marker as well as the
     * Marker under the mouse
     */
-   if (draw_mode == MAP_MARKERS && num_markers > 0) {
+   else if (draw_mode == MAP_MARKERS && num_markers > 0) {
       sprintf (strbuf, "Marker #%d: %s (%d, %d)", curmarker,
                gmap.markers[curmarker].name, gmap.markers[curmarker].x,
                gmap.markers[curmarker].y);
@@ -1269,7 +1348,7 @@ void draw_menubars (void)
    }                            // if (draw_mode == MAP_MARKERS)
 
    /* Displays whether or not we are over a bounded area */
-   if (draw_mode == MAP_BOUNDS && num_bound_boxes > 0) {
+   else if (draw_mode == MAP_BOUNDS && num_bound_boxes > 0) {
       sprintf (strbuf, "Bounding Area #%d: (%d, %d) (%d, %d), tile=%d",
                curbound_box, bound_box[curbound_box].left,
                bound_box[curbound_box].top, bound_box[curbound_box].right,
@@ -1289,7 +1368,7 @@ void draw_menubars (void)
    }
 
    /* Displays the Highlight on the 4 Attributes */
-   if (draw_mode >= MAP_OBSTACLES && draw_mode <= MAP_ZONES) {
+   else if (draw_mode >= MAP_OBSTACLES && draw_mode <= MAP_ZONES) {
       if (highlight)
          sprintf (strbuf, "Highlight: ON");
       else
@@ -1297,13 +1376,7 @@ void draw_menubars (void)
       print_sfont (column[4], row[2], strbuf, double_buffer);
    }                            // if (draw_mode >= MAP_OBSTACLES)
 
-   if (grab_tile) {
-      print_sfont (column[4], row[4], "Currently grabbing:", double_buffer);
-      sprintf (strbuf, "%s", dt[draw_mode_display]);
-      print_sfont (column[4] + 24, row[5], strbuf, double_buffer);
-   }                            // if (grab_tile)
-
-   if (draw_mode == BLOCK_COPY || draw_mode == BLOCK_PASTE) {
+   else if (draw_mode == BLOCK_COPY || draw_mode == BLOCK_PASTE) {
       sprintf (strbuf, "Copy From:: (%d, %d)", (copyx1 > -1 ? copyx1 : 0),
                (copyy1 > -1 ? copyy1 : 0));
       print_sfont (column[4], row[0], strbuf, double_buffer);
@@ -1312,12 +1385,17 @@ void draw_menubars (void)
                (copyy2 > -1 ? copyy2 : 0));
       print_sfont (column[4], row[1], strbuf, double_buffer);
    }
-#define DEBUG
-#ifdef DEBUG
+
    /* Debugging values */
    sprintf (strbuf, "Last Layer: %s", dt[draw_mode_last]);
    print_sfont (column[4], row[6], strbuf, double_buffer);
-#endif
+
+   if (grab_tile) {
+      print_sfont (column[4], row[4], "Currently grabbing:", double_buffer);
+      sprintf (strbuf, "%s", dt[draw_mode_display]);
+      print_sfont (column[4] + 24, row[5], strbuf, double_buffer);
+   }                            // if (grab_tile)
+
 
    /* Add a border around the iconset on the right */
    for (p = 0; p < 8; p++) {
@@ -1327,20 +1405,19 @@ void draw_menubars (void)
 
    /* Display the iconset in the right menu */
    if (icon_set != 999) {
-      for (p = 0; p < (ICONSET_SIZE / 2); p++) {
+      for (p = 0; p < ICONSET_SIZE2; p++) {
          /* Left 20 icons */
          blit (icons[icon_set * ICONSET_SIZE + p], double_buffer, 0, 0,
                htiles * 16 + 8 + 1, p * 16 + 8 - 1, 16, 16);
-         blit (icons[icon_set * ICONSET_SIZE + p + (ICONSET_SIZE / 2)],
+         blit (icons[icon_set * ICONSET_SIZE + p + ICONSET_SIZE2],
                double_buffer, 0, 0, (htiles + 1) * 16 + 8 + 1, p * 16 + 8 - 1,
                16, 16);
          /* Right 20 icons */
-         if (icon_set * ICONSET_SIZE + p + (ICONSET_SIZE) <
-             max_sets * ICONSET_SIZE) {
-            blit (icons[icon_set * ICONSET_SIZE + p + (ICONSET_SIZE)],
+         if ((icon_set + 1) * ICONSET_SIZE + p < max_sets * ICONSET_SIZE) {
+            blit (icons[(icon_set + 1) * ICONSET_SIZE + p],
                   double_buffer, 0, 0, (htiles + 2) * 16 + 8 + 1,
                   p * 16 + 8 - 1, 16, 16);
-            blit (icons[icon_set * ICONSET_SIZE + p + (ICONSET_SIZE * 3 / 2)],
+            blit (icons[(icon_set + 1) * ICONSET_SIZE + p + ICONSET_SIZE2],
                   double_buffer, 0, 0, (htiles + 3) * 16 + 8 + 1,
                   p * 16 + 8 - 1, 16, 16);
          } else {
@@ -1349,7 +1426,7 @@ void draw_menubars (void)
              */
             blit (icons[p], double_buffer, 0, 0, (htiles + 2) * 16 + 8 + 1,
                   p * 16 + 8 - 1, 16, 16);
-            blit (icons[ICONSET_SIZE / 2 + p], double_buffer, 0, 0,
+            blit (icons[ICONSET_SIZE2 + p], double_buffer, 0, 0,
                   (htiles + 3) * 16 + 8 + 1, p * 16 + 8 - 1, 16, 16);
          }                      // if..else ()
       }                         // for (p)
@@ -1360,15 +1437,15 @@ void draw_menubars (void)
    if (curtile >= icon_set * ICONSET_SIZE
        && curtile < (icon_set + 2) * ICONSET_SIZE) {
       /* These are the left 20: */
-      xp = (curtile - (icon_set * ICONSET_SIZE)) / (ICONSET_SIZE / 2);
-      yp = (curtile - (icon_set * ICONSET_SIZE)) % (ICONSET_SIZE / 2);
+      xp = (curtile - (icon_set * ICONSET_SIZE)) / ICONSET_SIZE2;
+      yp = (curtile - (icon_set * ICONSET_SIZE)) % ICONSET_SIZE2;
 
       draw_the_rect = 1;
    } else if (curtile >= 0 && curtile < ICONSET_SIZE
               && (icon_set == max_sets - 1)) {
       /* These are the right 20: */
-      xp = (curtile / (ICONSET_SIZE / 2)) + 2;
-      yp = curtile % (ICONSET_SIZE / 2);
+      xp = (curtile / ICONSET_SIZE2) + 2;
+      yp = curtile % ICONSET_SIZE2;
 
       draw_the_rect = 1;
    }                            // if..elseif (curtile)
@@ -1409,13 +1486,8 @@ void draw_menubars (void)
          p -= 15;
 
       if (num_markers > 0) {
-#ifdef HAVE_TEXT_EX
          textprintf_ex (double_buffer, font, p, 274,
                         makecol (255, 255, 255), 0, "%d", curmarker);
-#else
-         textprintf (double_buffer, font, p, 274,
-                     makecol (255, 255, 255), "%d", curmarker);
-#endif
       }
    } else if (draw_mode == MAP_BOUNDS) {
       sprintf (strbuf, "Bound");
@@ -1487,6 +1559,7 @@ void draw_menubars (void)
 }                               /* draw_menubars () */
 
 
+
 /*! \brief Draw the shadows
  *
  * Draws the shadows onto the screen and takes into consideration any layer
@@ -1536,6 +1609,7 @@ static void draw_shadow (const int parallax)
       }
    }
 }                               /* draw_shadow () */
+
 
 
 /*! \brief Target the specified attribute on the map (so it's in view)
@@ -1752,6 +1826,7 @@ int find_cursor (int direction)
 }
 
 
+
 /*! \brief Process keyboard input
  *
  * This allows the user to type in values, such as coords, names, etc.
@@ -1763,10 +1838,10 @@ int find_cursor (int direction)
  * \returns 0 if user hits ESC (cancel)
  * \returns 1 if user hits ENTER
  */
-int get_line (const int line_x, const int line_y, char *buffer,
+unsigned int get_line (const int line_x, const int line_y, char *buffer,
               const int max_len)
 {
-   int done = 0, index = 0, ch;
+   unsigned int done = 0, index = 0, ch;
    BITMAP *under;
 
    under = create_bitmap (320, 6);
@@ -1780,8 +1855,8 @@ int get_line (const int line_x, const int line_y, char *buffer,
          buffer[index] = ch;
          buffer[index + 1] = 0;
          print_sfont (line_x, line_y, buffer, screen);
-         if (++index == max_len)
-            index = max_len - 1;
+         if (index < max_len - 1)
+            index++;
       } else {
          /* Code for ENTER */
          if (ch == 13) {
@@ -1790,8 +1865,8 @@ int get_line (const int line_x, const int line_y, char *buffer,
          } else {
             /* Code for BACKSPACE */
             if (ch == 8) {
-               if (--index < 0)
-                  index = 0;
+               if (index > 0)
+                  index--;
                buffer[index] = ' ';
                buffer[index + 1] = 0;
                blit (under, screen, 0, 0, 0, line_y, 320, 8);
@@ -1812,68 +1887,81 @@ int get_line (const int line_x, const int line_y, char *buffer,
 }                               /* get_line () */
 
 
+
 /*! \brief Gets the index of the tile under the mouse
  *
  * Grab the currently selected map tile and display it in the iconset
  */
 void get_tile (void)
 {
-   int tile = ((window_y + y) * gmap.xsize) + window_x + x;
-   int i;
+	unsigned int xx = window_x + x;
+	unsigned int yy = window_y + y;
+
+   unsigned int tile = yy * gmap.xsize + xx;
+   unsigned int i;
    s_bound *found_box;
 
    switch (draw_mode) {
    case MAP_LAYER1:
       curtile = map[tile];
       break;
+
    case MAP_LAYER2:
       curtile = b_map[tile];
       break;
+
    case MAP_LAYER3:
       curtile = f_map[tile];
       break;
+
    case MAP_ENTITIES:
-      for (tile = 0; tile < number_of_ents; tile++)
-         if ((gent[tile].tilex == window_x + x)
-             && (gent[tile].tiley == window_y + y))
+      for (tile = 0; tile < number_of_ents; tile++) {
+         if ((gent[tile].tilex == xx)
+             && (gent[tile].tiley == yy))
             current_ent = gent[tile].chrx;
+      }
       break;
+
    case MAP_OBSTACLES:
       curobs = o_map[tile];
       if (curobs > 0) {
-         *curr_x = window_x + x;
-         *curr_y = window_y + y;
+         *curr_x = xx;
+         *curr_y = yy;
       }
       break;
+
    case MAP_SHADOWS:
       curshadow = sh_map[tile];
       if (curshadow > 0) {
-         *curr_x = window_x + x;
-         *curr_y = window_y + y;
+         *curr_x = xx;
+         *curr_y = yy;
       }
       break;
+
    case MAP_ZONES:
       curzone = z_map[tile];
       if (curzone > 0) {
-         *curr_x = window_x + x;
-         *curr_y = window_y + y;
+         *curr_x = xx;
+         *curr_y = yy;
       }
       break;
+
    case MAP_MARKERS:
       for (i = 0; i < num_markers; i++) {
-         if (is_contained_marker (gmap.markers[i], window_x + x, window_y + y)) {
+         if (is_contained_marker (gmap.markers[i], xx, yy)) {
             curmarker = i;
          }
       }
       break;
+
    case MAP_BOUNDS:
       /* Put here to be thorough, but it won't really do us any good */
-      found_box = is_contained_bound (bound_box, num_bound_boxes,
-                                      window_x + x, window_y + y,
-                                      window_x + x, window_y + y);
+      found_box = is_contained_bound (bound_box, num_bound_boxes, xx, yy,
+                                      xx, yy);
       if (found_box != NULL)
          curbound_box = found_box - bound_box;
       break;
+
    default:
       break;
    }
@@ -1883,13 +1971,14 @@ void get_tile (void)
 }                               /* get_tile () */
 
 
+
 /*! \brief Change map tiles
  *
  * Change any map tiles from one icon to another throughout the map
  */
 void global_change (void)
 {
-   int response, done;
+   unsigned int response, done;
    int tile_from = 0, tile_to = 0, i;
 
    /* Layers and attributes */
@@ -2004,6 +2093,7 @@ void global_change (void)
 }                               /* global_change () */
 
 
+
 /*! \brief Move the map's window to specified coords
  *
  * This will center on the coords, if possible, else just get "close enough"
@@ -2011,7 +2101,7 @@ void global_change (void)
  */
 void goto_coords (void)
 {
-   int response, done;
+   unsigned int response, done;
    int new_x, new_y;
 
    new_x = window_x;
@@ -2091,6 +2181,7 @@ void goto_coords (void)
 }
 
 
+
 /*! \brief Error reporting tool
  *
  * Report errors and comments through this function
@@ -2114,36 +2205,19 @@ void klog (const char *msg)
 }                               /* klog () */
 
 
+
 /*! \brief Yield processor for other tasks
  *
- * This function calls rest() or yield_cpu() as appropriate for
- * the platform and allegro version
+ * This function calls rest().
  *
  * \author PH
  * \date 20050423
  */
 void kq_yield (void)
 {
-   /* TT: If this breaks stuff, let me know. I _know_ it complains that
-    * yield_timeslice() is deprecated; until I know everyone is using the most
-    * recent version of Allegro, though, we may need to keep this in here for
-    * compatibility reasons.
-    * Question: Does rest(0) or rest(1) break anything on anyone's machine?
-    */
-   if (cpu_usage == 0) {
-//      yield_timeslice ();
-   } else {
-      rest (cpu_usage - 1);
-   }
-
-// TT REMOVE:
-//#if (ALLEGRO_VERSION >= 4 && ALLEGRO_SUB_VERSION >= 2)
-//   rest (0);
-//#else
-//   yield_timeslice ();
-//#endif
-
+   rest (1);
 }
+
 
 
 /* Welcome to Mapdraw, folks! */
@@ -2208,9 +2282,8 @@ int main (int argc, char *argv[])
    }                            /* while (!main_stop) */
    cleanup ();
    return EXIT_SUCCESS;
-}                               /* main () */
+} END_OF_MAIN ()                /* main () */
 
-END_OF_MAIN ();
 
 
 /*! \brief Create a rectangle around the selection
@@ -2234,6 +2307,7 @@ void make_rect (BITMAP * where, const int rect_height, const int rect_width)
 }                               /* make_rect () */
 
 
+
 /*! \brief All this does is ensure that we are within the map boundaries */
 void normalize_view (void)
 {
@@ -2249,6 +2323,7 @@ void normalize_view (void)
 }                               /* normalize_view () */
 
 
+
 /*! \brief Paste function called from keyboard or menu
  */
 void paste (void)
@@ -2256,6 +2331,7 @@ void paste (void)
    draw_mode = BLOCK_PASTE;
    grab_tile = 0;
 }
+
 
 
 /*! \brief Paste the copied selection to all Layers
@@ -2277,8 +2353,8 @@ void paste_region (const int tx, const int ty)
    for (m = gmap.markers; m < gmap.markers + num_markers; ++m) {
       if (!(m->x < copyx1 || m->x > copyx2 || m->y < copyy1 || m->y > copyy2)) {
          /* Move the markers found within the Copy From block */
-         m->x = m->x + moved_x;
-         m->y = m->y + moved_y;
+         m->x += moved_x;
+         m->y += moved_y;
       }
    }
 
@@ -2310,6 +2386,7 @@ void paste_region (const int tx, const int ty)
 }                               /* paste_region () */
 
 
+
 /*! \brief Pastes user-defined layer(s)
  *
  * This asks the user which layer(s) s/he wants to paste to, then
@@ -2320,7 +2397,7 @@ void paste_region (const int tx, const int ty)
  */
 void paste_region_special (const int tx, const int ty)
 {
-   int response, done;
+   unsigned int response, done;
    int zx, zy, coord1, coord2;
 
    /* Layers 1-3, Shadows, Obstacles, and Zones */
@@ -2379,6 +2456,7 @@ void paste_region_special (const int tx, const int ty)
 }                               /* paste_region_special () */
 
 
+
 /*! \brief Preview map
  *
  * Draw the map with all layers on and using parallax/layering
@@ -2391,42 +2469,44 @@ void preview_map (void)
    clear_bitmap (double_buffer);
 
    switch (gmap.map_mode) {
-   case 0:
+   case MAPMODE_12E3S:  // "12E3S "
       draw_layer ((short int *) map, 0);
       draw_layer ((short int *) b_map, 0);
       draw_ents ();
       draw_layer ((short int *) f_map, 0);
       draw_shadow (0);
       break;
-   case 1:
+
+   case MAPMODE_1E23S:  // "1E23S "
       draw_layer ((short int *) map, 0);
       draw_ents ();
       draw_layer ((short int *) b_map, 0);
       draw_layer ((short int *) f_map, 0);
       draw_shadow (0);
       break;
-   case 2:
+
+   case MAPMODE_1p2E3S: // "1)2E3S"
       draw_layer ((short int *) map, 1);
       draw_layer ((short int *) b_map, 0);
       draw_ents ();
       draw_layer ((short int *) f_map, 0);
       draw_shadow (0);
       break;
+
+   case MAPMODE_1E2p3S: // "1E2)3S"
+   case MAPMODE_1P2E3S: // "1(2E3S"
+   case MAPMODE_12EP3S: // "12E(3S"
+
    default:
       sprintf (strbuf, "Mode %d preview not supported, sorry!", gmap.map_mode);
       print_sfont (8, 8, strbuf, double_buffer);
-#ifdef HAVE_TEXT_EX
       textprintf_centre_ex (double_buffer, font, double_buffer->w / 2,
                             double_buffer->h / 2, makecol (255, 255, 255), 0,
                             "Mode %d preview not supported.", gmap.map_mode);
-#else
-      textprintf_centre (double_buffer, font, double_buffer->w / 2,
-                         double_buffer->h / 2, makecol (255, 255, 255),
-                         "Mode %d preview not supported.", gmap.map_mode);
-#endif
       break;
    }
 }                               /* preview_map () */
+
 
 
 /*! \brief Displays the text on the screen
@@ -2439,7 +2519,7 @@ void preview_map (void)
  * \param   where The destination, or where it will be drawn to
  */
 void print_sfont (const int print_x, const int print_y, const char *string,
-                  BITMAP * where)
+                  BITMAP *where)
 {
    int i, c;
 
@@ -2456,13 +2536,14 @@ void print_sfont (const int print_x, const int print_y, const char *string,
 }                               /* print_sfont () */
 
 
+
 /*! \brief Keyboard input, not related to screen movement
  *
  * \param   k The keyboard key to process
  */
 int process_keyboard (const int k)
 {
-   int response;
+   unsigned int response;
 
    /* Process which key was pressed */
    switch (k) {
@@ -2470,34 +2551,42 @@ int process_keyboard (const int k)
       /* Layer 1 */
       select_only (1, MAP_LAYER1);
       break;
+
    case (KEY_2):
       /* Layer 2 */
       select_only (1, MAP_LAYER2);
       break;
+
    case (KEY_3):
       /* Layer 3 */
       select_only (1, MAP_LAYER3);
       break;
+
    case (KEY_4):
       /* Show Layers 1+2 */
-      select_only (1, MAP_LAYER12);
+      select_only (1, MAP_LAYER1 | MAP_LAYER2);
       break;
+
    case (KEY_5):
       /* Show Layers 1+3 */
-      select_only (1, MAP_LAYER13);
+      select_only (1, MAP_LAYER1 | MAP_LAYER3);
       break;
+
    case (KEY_6):
       /* Show Layers 2+3 */
-      select_only (1, MAP_LAYER23);
+      select_only (1, MAP_LAYER2 | MAP_LAYER3);
       break;
+
    case (KEY_7):
       /* Show Layers 1+2+3 */
-      select_only (1, MAP_LAYER123);
+      select_only (1, MAP_LAYER1 | MAP_LAYER2 | MAP_LAYER3);
       break;
+
    case (KEY_A):
       /* Display Layers 1+2+3 and all Attributes */
       show_all ();
       break;
+
    case (KEY_B):
       /* This will call the function where we draw the bounding boxes of all
        * the "rooms" off to the side.  This removes the need to call any sort
@@ -2511,29 +2600,32 @@ int process_keyboard (const int k)
             showing.boundaries = 0;
          } else {
             if (draw_mode == MAP_PREVIEW)
-               showing.last_layer = MAP_LAYER123;
+               showing.last_layer = (MAP_LAYER1 | MAP_LAYER2 | MAP_LAYER3);
             draw_mode = MAP_BOUNDS;
          }
       } else {
          if (draw_mode < MAP_ENTITIES)
             showing.last_layer = draw_mode;
          else if (draw_mode == MAP_PREVIEW)
-            showing.last_layer = MAP_LAYER123;
+            showing.last_layer = (MAP_LAYER1 | MAP_LAYER2 | MAP_LAYER3);
          showing.boundaries = 1;
          draw_mode = MAP_BOUNDS;
       }
       grab_tile = 0;
       break;
+
    case (KEY_C):
       /* View Layers 1+2+3, plus Entities and Shadows, as the player would see
        * the map in the game
        */
       show_preview ();
       break;
+
    case (KEY_D):
       /* Move (displace) the location of all the entities on the map */
       displace_entities ();
       break;
+
    case (KEY_E):
       /* Toggle whether entities should be shown or turned off */
       if (showing.entities == 1) {
@@ -2542,19 +2634,20 @@ int process_keyboard (const int k)
             showing.entities = 0;
          } else {
             if (draw_mode == MAP_PREVIEW)
-               showing.last_layer = MAP_LAYER123;
+               showing.last_layer = (MAP_LAYER1 | MAP_LAYER2 | MAP_LAYER3);
             draw_mode = MAP_ENTITIES;
          }
       } else {
          if (draw_mode < MAP_ENTITIES)
             showing.last_layer = draw_mode;
          else if (draw_mode == MAP_PREVIEW)
-            showing.last_layer = MAP_LAYER123;
+            showing.last_layer = (MAP_LAYER1 | MAP_LAYER2 | MAP_LAYER3);
          showing.entities = 1;
          draw_mode = MAP_ENTITIES;
       }
       grab_tile = 0;
       break;
+
    case (KEY_F):
       /* Get the first Zone used and set the indicator to that */
       if (draw_mode == MAP_ZONES)
@@ -2564,6 +2657,7 @@ int process_keyboard (const int k)
          orient_markers (curmarker);
       }
       break;
+
    case (KEY_G):
       /* Get the tile under the mouse curser, including all 5 of the
        * Attributes. This will not let you enter grab_tile mode if you are not
@@ -2591,12 +2685,14 @@ int process_keyboard (const int k)
       else
          grab_tile = 0;
       break;
+
    case (KEY_H):
       /* Highlight current obstacles, shadows, and zones */
       if (draw_mode >= MAP_OBSTACLES && draw_mode <= MAP_ZONES) {
          highlight = highlight ? 0 : 1;
       }
       break;
+
    case (KEY_J):
       /* Copy Layers 1, 2, 3 to mini PCX images */
       response = prompt_BMP_PCX ();     // Can return a 1 or 2 (BMP or PCX)
@@ -2607,6 +2703,7 @@ int process_keyboard (const int k)
          maptopcx (response);
 
       break;
+
    case (KEY_L):
       /* Get the last Zone/Marker used and set the indicator to that */
       if (draw_mode == MAP_ZONES)
@@ -2616,6 +2713,7 @@ int process_keyboard (const int k)
          orient_markers (curmarker);
       }
       break;
+
    case (KEY_M):
       /* Show markers or not */
       if (showing.markers == 1) {
@@ -2624,24 +2722,26 @@ int process_keyboard (const int k)
             showing.markers = 0;
          } else {
             if (draw_mode == MAP_PREVIEW)
-               showing.last_layer = MAP_LAYER123;
+               showing.last_layer = (MAP_LAYER1 | MAP_LAYER2 | MAP_LAYER3);
             draw_mode = MAP_MARKERS;
          }
       } else {
          if (draw_mode < MAP_ENTITIES)
             showing.last_layer = draw_mode;
          else if (draw_mode == MAP_PREVIEW)
-            showing.last_layer = MAP_LAYER123;
+            showing.last_layer = (MAP_LAYER1 | MAP_LAYER2 | MAP_LAYER3);
          showing.markers = 1;
          draw_mode = MAP_MARKERS;
       }
       grab_tile = 0;
       break;
+
    case (KEY_N):
       /* Create a new map; you can choose the tileset to use for it */
       new_map ();
       grab_tile = 0;
       break;
+
    case (KEY_O):
       /* Toggle whether obstacles should be shown or turned off */
       if (showing.obstacles == 1) {
@@ -2650,27 +2750,30 @@ int process_keyboard (const int k)
             showing.obstacles = 0;
          } else {
             if (draw_mode == MAP_PREVIEW)
-               showing.last_layer = MAP_LAYER123;
+               showing.last_layer = (MAP_LAYER1 | MAP_LAYER2 | MAP_LAYER3);
             draw_mode = MAP_OBSTACLES;
          }
       } else {
          if (draw_mode < MAP_ENTITIES)
             showing.last_layer = draw_mode;
          else if (draw_mode == MAP_PREVIEW)
-            showing.last_layer = MAP_LAYER123;
+            showing.last_layer = (MAP_LAYER1 | MAP_LAYER2 | MAP_LAYER3);
          showing.obstacles = 1;
          draw_mode = MAP_OBSTACLES;
       }
       grab_tile = 0;
       break;
+
    case (KEY_P):
       /* Paste the copied selection area */
       paste ();
       break;
+
    case (KEY_R):
       /* Resize the map's height and width */
       resize_map (0);
       break;
+
    case (KEY_S):
       /* Toggle whether shadows should be shown or turned off */
       if (showing.shadows == 1) {
@@ -2679,27 +2782,25 @@ int process_keyboard (const int k)
             showing.shadows = 0;
          } else {
             if (draw_mode == MAP_PREVIEW)
-               showing.last_layer = MAP_LAYER123;
+               showing.last_layer = (MAP_LAYER1 | MAP_LAYER2 | MAP_LAYER3);
             draw_mode = MAP_SHADOWS;
          }
       } else {
          if (draw_mode < MAP_ENTITIES)
             showing.last_layer = draw_mode;
          else if (draw_mode == MAP_PREVIEW)
-            showing.last_layer = MAP_LAYER123;
+            showing.last_layer = (MAP_LAYER1 | MAP_LAYER2 | MAP_LAYER3);
          showing.shadows = 1;
          draw_mode = MAP_SHADOWS;
       }
       grab_tile = 0;
       break;
+
    case (KEY_T):
       /* Copy a selection */
       copy ();
       break;
-   case (KEY_U):
-      if (++cpu_usage > 2)
-         cpu_usage = 0;
-      break;
+
    case (KEY_V):
       /* Save whole map as a picture */
       if (draw_mode == MAP_PREVIEW) {
@@ -2728,6 +2829,7 @@ int process_keyboard (const int k)
          visual_map (showing, "vis_map.pcx");
 
       break;
+
    case (KEY_W):
       /* TT TODO: This looks like it does the exact same thing as KEY_N:
        * create a new map.  If it does, let's just get rid of it altogether.
@@ -2735,11 +2837,13 @@ int process_keyboard (const int k)
       /* Clear the contents of the current map */
       wipe_map ();
       break;
+
    case (KEY_X):
       /* This should be a general "GOTO" but since GRAB_TILE is already
        * assigned to this letter, we'll just use this unused one. */
       goto_coords ();
       break;
+
    case (KEY_Z):
       /* Toggle whether zones should be shown or turned off */
       if (showing.zones == 1) {
@@ -2748,19 +2852,20 @@ int process_keyboard (const int k)
             showing.zones = 0;
          } else {
             if (draw_mode == MAP_PREVIEW)
-               showing.last_layer = MAP_LAYER123;
+               showing.last_layer = (MAP_LAYER1 | MAP_LAYER2 | MAP_LAYER3);
             draw_mode = MAP_ZONES;
          }
       } else {
          if (draw_mode < MAP_ENTITIES)
             showing.last_layer = draw_mode;
          else if (draw_mode == MAP_PREVIEW)
-            showing.last_layer = MAP_LAYER123;
+            showing.last_layer = (MAP_LAYER1 | MAP_LAYER2 | MAP_LAYER3);
          showing.zones = 1;
          draw_mode = MAP_ZONES;
       }
       grab_tile = 0;
       break;
+
    case (KEY_SPACE):
       /* Attempt at giving the user a chance to see the animations */
       if (draw_mode == MAP_PREVIEW)
@@ -2774,10 +2879,12 @@ int process_keyboard (const int k)
        * bogged-down.
        */
       break;
+
    case (KEY_F1):
       /* Display the help screen */
       show_help ();
       break;
+
    case (KEY_F2):
       /* Load a map */
       prompt_load_map ();
@@ -2787,6 +2894,7 @@ int process_keyboard (const int k)
 
       grab_tile = 0;
       break;
+
    case (KEY_F3):
       /* Save the map you are working on */
 
@@ -2800,34 +2908,42 @@ int process_keyboard (const int k)
 
       prompt_save_map ();
       break;
+
    case (KEY_F4):
       /* Erase an entire layer from the map */
       clear_layer ();
       break;
+
    case (KEY_F5):
       /* Load a [mini] PCX file to become a map */
       make_mapfrompcx ();
       break;
+
    case (KEY_F6):
       /* Change all instances of one tile in your map to another */
       global_change ();
       break;
+
    case (KEY_F7):
       /* Remove all Obstructions from the map */
       clear_obstructs ();
       break;
+
    case (KEY_F8):
       /* Remove all Shadows from the map */
       clear_shadows ();
       break;
+
    case (KEY_F9):
       /* Copy from one layer to another */
       copy_layer ();
       break;
+
    case (KEY_F10):
       /* Enter a description that a player sees when entering the map */
       describe_map ();
       break;
+
    case (KEY_F12):
       /* Enter the Modify Entity mode */
       showing.entities = 1;
@@ -2836,103 +2952,129 @@ int process_keyboard (const int k)
       grab_tile = 0;
       update_entities ();
       break;
+
    case (KEY_ESC):
       /* Cancel a Block Copy */
       if (copying == 1)
          copying = 0;
+
       /* Clear coordinates of copy */
       copyx1 = copyx2 = -1;
       copyy1 = copyy2 = -1;
       /* Empty the contents of the clipboard */
       clipb = 0;
       break;
+
    case (KEY_MINUS):
    case (KEY_MINUS_PAD):
       switch (draw_mode) {
 
       case MAP_ENTITIES:
          /* Select an Entity to place on the map */
-         current_ent--;
-         if (current_ent < 0)
+         if (current_ent > 0)
+            current_ent--;
+         else
             current_ent = MAX_EPICS - 1;
          break;
+
       case MAP_SHADOWS:
          /* Select the Shadow to place on the map */
-         curshadow--;
-         if (curshadow < 0)
+         if (curshadow > 0)
+            curshadow--;
+         else
             curshadow = MAX_SHADOWS - 1;
          break;
+
       case MAP_OBSTACLES:
          /* Select which Obstacle to set on the map */
-         curobs--;
-         if (curobs < 0)
-            curobs = 5;
+         if (curobs > 0)
+            curobs--;
+         else
+            curobs = MAX_OBSTACLES;
          break;
+
       case MAP_ZONES:
          /* Select a Zone to set on the map */
-         curzone--;
-         if (curzone < 0)
+         if (curzone > 0)
+            curzone--;
+         else
             curzone = MAX_ZONES - 1;
          break;
-      case MAP_MARKERS:
+
+      case MAP_MARKERS: // fall-through
       case MAP_BOUNDS:
          /* Go to previous Marker or Bounding Area on map */
          find_cursor (-1);
          break;
+
       default:
          /* Change the iconset's "page" */
-         icon_set--;
-         if (icon_set < 0)
+         if (icon_set > 0)
+            icon_set--;
+         else
             icon_set = max_sets - 1;
          break;
       }
       break;
+
    case (KEY_EQUALS):
    case (KEY_PLUS_PAD):
       /* Change the values for the current mode */
       switch (draw_mode) {
       case MAP_ENTITIES:
          /* Select an Entity to place on the map */
-         current_ent++;
-         if (current_ent == MAX_EPICS)
+         if (current_ent < MAX_EPICS - 1)
+            current_ent++;
+         else
             current_ent = 0;
          break;
+
       case MAP_SHADOWS:
          /* Select the Shadow to place on the map */
-         curshadow++;
-         if (curshadow >= MAX_SHADOWS)
+         if (curshadow < MAX_SHADOWS - 1)
+            curshadow++;
+         else
             curshadow = 0;
          break;
+
       case MAP_OBSTACLES:
          /* Select which Obstacle to set on the map */
-         curobs++;
-         if (curobs > MAX_OBSTACLES)
+         if (curobs < MAX_OBSTACLES)
+            curobs++;
+         else
             curobs = 0;
          break;
+
       case MAP_ZONES:
          /* Select a Zone to set on the map */
-         curzone++;
-         if (curzone >= MAX_ZONES)
+         if (curzone < MAX_ZONES - 1)
+            curzone++;
+         else
             curzone = 0;
          break;
+
       case MAP_MARKERS:
       case MAP_BOUNDS:
          /* Go to next Marker or Bounding Area on map */
          find_cursor (1);
          break;
+
       default:
          /* Change the iconset's "page" */
-         icon_set++;
-         if (icon_set > max_sets - 1)
+         if (icon_set < max_sets - 1)
+            icon_set++;
+         else
             icon_set = 0;
          break;
       }
       break;
+
    default:
       return 0;
    }                            /* switch (k) */
    return 1;
 }                               /* process_keyboard () */
+
 
 
 /*! \brief Select an option from the menu
@@ -2944,7 +3086,7 @@ int process_keyboard (const int k)
  */
 void process_menu_bottom (const int cx, const int cy)
 {
-   int response;
+   unsigned int response;
 
    scare_mouse ();
 
@@ -3049,8 +3191,8 @@ void process_menu_bottom (const int cx, const int cy)
          return;
       /* Make sure the value is valid */
       if (strbuf[0] == '-' || strbuf[0] == '+') {
-         response = gmap.warpx + atoi (strbuf);
-         if (response >= 0 && response < gmap.xsize) {
+         response = (gmap.warpx + atoi (strbuf));
+         if (response < gmap.xsize) {
             gmap.warpx += atoi (strbuf);
             return;
          } else {
@@ -3274,6 +3416,7 @@ void process_menu_bottom (const int cx, const int cy)
 }                               /* process_menu_bottom () */
 
 
+
 /*! \brief Select an icon from the tileset
  *
  * Selects one of the tiles from the menu on the right
@@ -3293,9 +3436,9 @@ void process_menu_right (const int cx, const int cy)
 
       /* Set the tileset to the correct "page" */
       if (icon_set + (xp / 2) > max_sets - 1)
-         curtile = ((xp - 2) * (ICONSET_SIZE / 2) + yp);
+         curtile = ((xp - 2) * ICONSET_SIZE2 + yp);
       else
-         curtile = icon_set * ICONSET_SIZE + (xp * (ICONSET_SIZE / 2) + yp);
+         curtile = icon_set * ICONSET_SIZE + (xp * ICONSET_SIZE2 + yp);
    }
 
    /* Show the correct tileset "page" when Tile Preview is clicked on */
@@ -3312,9 +3455,12 @@ void process_menu_right (const int cx, const int cy)
    /* The mouse is "somewhere" over 'Attribs' arrows */
    if ((cx >= (htiles + 1) * 16 && cx < (htiles + 4) * 16) &&
        (cy >= 316 && cy < 364)) {
-      if (draw_mode == MAP_OBSTACLES || draw_mode == MAP_SHADOWS
-          || draw_mode == MAP_ZONES || draw_mode == MAP_MARKERS
-          || draw_mode == MAP_BOUNDS) {
+      switch (draw_mode) {
+      case MAP_BOUNDS:
+      case MAP_MARKERS:
+      case MAP_OBSTACLES:
+      case MAP_SHADOWS:
+      case MAP_ZONES:
          /* This math results in the x-coord passed into the function as
           * -4, -3, -2: top row of arrows
           * -1, 0, 1: middle row of arrows
@@ -3325,10 +3471,12 @@ void process_menu_right (const int cx, const int cy)
           */
          find_cursor ((((cy - 316) / 16) * 3 +
                        (cx - ((htiles + 1) * 16)) / 16) - 4);
+         break;
       }
    }
 
 }                               /* process_menu_right () */
+
 
 
 /*! \brief Mouse input
@@ -3339,6 +3487,9 @@ void process_menu_right (const int cx, const int cy)
  */
 void process_mouse (const int mouse_button)
 {
+   unsigned int xx = window_x + x;
+   unsigned int yy = window_y + y;
+
    /* Left mouse button */
    if (mouse_button == 1) {
 
@@ -3357,22 +3508,24 @@ void process_mouse (const int mouse_button)
              * This copies all Layers and Attributes, including Entities
              */
             if (copying == 0) {
-               copyx1 = window_x + x;
-               copyy1 = window_y + y;
+               copyx1 = xx;
+               copyy1 = yy;
 
                /* Clear the end coordinates */
                copyx2 = copyy2 = -1;
                copying = 1;
             }
             break;
+
          case BLOCK_PASTE:
             /* Paste copied region(s) onto the map
              * This pastes ALL Layers/Attributes except Entities (use right-
              * click to select the Layers/Attributes you want to paste)
              */
             if (clipb != 0)
-               paste_region (window_x + x, window_y + y);
+               paste_region (xx, yy);
             break;
+
          default:
             break;
          }                      /* switch (draw_mode) */
@@ -3383,51 +3536,58 @@ void process_mouse (const int mouse_button)
          switch (draw_mode) {
          case (MAP_LAYER1):
             /* Draw to Layer 1 */
-            map[((window_y + y) * gmap.xsize) + window_x + x] = curtile;
+            map[yy * gmap.xsize + xx] = curtile;
             break;
+
          case (MAP_LAYER2):
             /* Draw to Layer 2 */
-            b_map[((window_y + y) * gmap.xsize) + window_x + x] = curtile;
+            b_map[yy * gmap.xsize + xx] = curtile;
             break;
+
          case (MAP_LAYER3):
             /* Draw to Layer 3 */
-            f_map[((window_y + y) * gmap.xsize) + window_x + x] = curtile;
+            f_map[yy * gmap.xsize + xx] = curtile;
             break;
+
          case (MAP_ENTITIES):
             /* Draw to Entity layer */
             place_entity ((mouse_x / 16) + window_x,
                           (mouse_y / 16) + window_y);
             break;
+
          case (MAP_OBSTACLES):
             /* Draw to Obstacle layer */
-            o_map[((window_y + y) * gmap.xsize) + window_x + x] = curobs;
+            o_map[yy * gmap.xsize + xx] = curobs;
             break;
+
          case (MAP_SHADOWS):
             /* Draw to Shadow layer */
-            sh_map[((window_y + y) * gmap.xsize) + window_x + x] = curshadow;
+            sh_map[yy * gmap.xsize + xx] = curshadow;
             break;
+
          case (MAP_ZONES):
             /* Draw to Zone layer */
-            z_map[((window_y + y) * gmap.xsize) + window_x + x] = curzone;
+            z_map[yy * gmap.xsize + xx] = curzone;
             break;
+
          case (MAP_MARKERS):
             /* Add or change a marker */
-            add_change_marker (window_x + x, window_y + y, mouse_button,
-                               &curmarker);
+            add_change_marker (xx, yy, mouse_button, &curmarker);
 
             /* This isn't ideal, but just wait for the button to be released */
             while (mouse_b)
                kq_yield ();
             break;
+
          case (MAP_BOUNDS):
             /* Add or remove boundaries */
-            add_change_bounding (window_x + x, window_y + y, mouse_button,
-                                 &curbound_box);
+            add_change_bounding (xx, yy, mouse_button, &curbound_box);
 
             /* Wait for button to be released */
             while (mouse_b)
                kq_yield ();
             break;
+
          default:
             break;
          }                      /* switch (draw_mode) */
@@ -3442,17 +3602,19 @@ void process_mouse (const int mouse_button)
          case BLOCK_COPY:
             /* Finish the Block Copy */
             if (copying == 1) {
-               copyx2 = window_x + x;
-               copyy2 = window_y + y;
+               copyx2 = xx;
+               copyy2 = yy;
                copy_region ();
                copying = 0;
             }
             break;
+
          case BLOCK_PASTE:
             /* Paste Layers and/or Attributes */
             if (clipb != 0)
-               paste_region_special (window_x + x, window_y + y);
+               paste_region_special (xx, yy);
             break;
+
          default:
             break;
          }                      /* switch (draw_mode) */
@@ -3463,42 +3625,49 @@ void process_mouse (const int mouse_button)
          switch (draw_mode) {
          case (MAP_LAYER1):
             /* Erase a tile from Layer 1 */
-            map[((window_y + y) * gmap.xsize) + window_x + x] = 0;
+            map[yy * gmap.xsize + xx] = 0;
             break;
+
          case (MAP_LAYER2):
             /* Erase a tile from Layer 2 */
-            b_map[((window_y + y) * gmap.xsize) + window_x + x] = 0;
+            b_map[yy * gmap.xsize + xx] = 0;
             break;
+
          case (MAP_LAYER3):
             /* Erase a tile from Layer 3 */
-            f_map[((window_y + y) * gmap.xsize) + window_x + x] = 0;
+            f_map[yy * gmap.xsize + xx] = 0;
             break;
+
          case (MAP_ENTITIES):
             /* Remove an Entity */
-            erase_entity (mouse_x / 16 + window_x, mouse_y / 16 + window_y);
+            erase_entity (mouse_x / TILE_W + window_x, mouse_y / TILE_H + window_y);
             break;
+
          case (MAP_OBSTACLES):
             /* Remove an Obstacle */
-            o_map[((window_y + y) * gmap.xsize) + window_x + x] = 0;
+            o_map[yy * gmap.xsize + xx] = 0;
             break;
+
          case (MAP_SHADOWS):
             /* Remove a Shadow */
-            sh_map[((window_y + y) * gmap.xsize) + window_x + x] = 0;
+            sh_map[yy * gmap.xsize + xx] = 0;
             break;
+
          case (MAP_ZONES):
             /* Remove a Zone */
-            z_map[((window_y + y) * gmap.xsize) + window_x + x] = 0;
+            z_map[yy * gmap.xsize + xx] = 0;
             break;
+
          case (MAP_MARKERS):
             /* Remove a marker */
-            add_change_marker (window_x + x, window_y + y, mouse_button,
-                               &curmarker);
+            add_change_marker (xx, yy, mouse_button, &curmarker);
             break;
+
          case (MAP_BOUNDS):
             /* Remove a boundary */
-            add_change_bounding (window_x + x, window_y + y, mouse_button,
-                                 &curbound_box);
+            add_change_bounding (xx, yy, mouse_button, &curbound_box);
             break;
+
          default:
             break;
          }                      /* switch (draw_mode) */
@@ -3514,6 +3683,7 @@ void process_mouse (const int mouse_button)
 }                               /* process_mouse () */
 
 
+
 /*! \brief Keyboard input associated specifically for moving around the screen
  *
  * This is a feeble attempt to support joysticks, but untested
@@ -3525,28 +3695,34 @@ void process_movement (int val)
       /* Move the view-window up one page */
       window_y -= vtiles;
       break;
+
    case (KEY_PGDN):
       /* Move the view-window down one page */
       window_y += vtiles;
       break;
+
    case (KEY_TAB):
       /* Move the view-window right one page */
       window_x += htiles;
       break;
+
    case (KEY_BACKSPACE):
       /* Move the view-window left one page */
       window_x -= htiles;
       break;
+
    case (KEY_END):
       /* Move the view-window to the bottom-right edge of the map */
       window_x = gmap.xsize - htiles;
       window_y = gmap.ysize - vtiles;
       break;
+
    case (KEY_HOME):
       /* Move the view-window to the top-left edge of the map */
       window_x = 0;
       window_y = 0;
       break;
+
    default:
       break;
    }
@@ -3562,12 +3738,14 @@ void process_movement (int val)
    case (KEY_9_PAD):
       window_y--;
       break;
+
    case (KEY_DOWN):
    case (KEY_1_PAD):
    case (KEY_2_PAD):
    case (KEY_3_PAD):
       window_y++;
       break;
+
    default:
       break;
    }
@@ -3579,16 +3757,19 @@ void process_movement (int val)
    case (KEY_7_PAD):
       window_x--;
       break;
+
    case (KEY_RIGHT):
    case (KEY_3_PAD):
    case (KEY_6_PAD):
    case (KEY_9_PAD):
       window_x++;
       break;
+
    default:
       break;
    }
 }                               /* process_movement () */
+
 
 
 /*! \brief Joystick input associated specifically for moving around the screen
@@ -3612,15 +3793,15 @@ void process_movement_joy (void)
 
    if (use_joy > 0 && poll_joystick () == 0) {
       stk = &joy[use_joy - 1];
-      left |= stk->stick[0].axis[0].d1;
+      left  |= stk->stick[0].axis[0].d1;
       right |= stk->stick[0].axis[0].d2;
-      up |= stk->stick[0].axis[1].d1;
-      down |= stk->stick[0].axis[1].d2;
+      up    |= stk->stick[0].axis[1].d1;
+      down  |= stk->stick[0].axis[1].d2;
 
       jaccept |= stk->button[0].b;      // Not really used here
       jcancel |= stk->button[1].b;      // Ditto
-      jmove |= stk->button[2].b;
-      jjump |= stk->button[3].b;
+      jmove   |= stk->button[2].b;
+      jjump   |= stk->button[3].b;
    }
 
    /* We cannot have left AND right movement simultaneously */
@@ -3673,6 +3854,7 @@ void process_movement_joy (void)
 }                               /* process_movement_joy () */
 
 
+
 /*! \brief Similar to yninput function, but for 'b/p' response
  *
  * Asks user which format to output the image in:
@@ -3684,7 +3866,7 @@ void process_movement_joy (void)
  */
 int prompt_BMP_PCX (void)
 {
-   int response, done;
+   unsigned int response, done;
 
    cmessage ("Do you want output as BMP or PCX format? (b/p)");
 
@@ -3704,6 +3886,7 @@ int prompt_BMP_PCX (void)
 
    return done - 1;
 }                               /* prompt_BMP_PCX () */
+
 
 
 /*! \brief Mouse and keyboard input
@@ -3832,6 +4015,7 @@ void read_controls (void)
 }                               /* read_controls () */
 
 
+
 /*! \brief Resize the current map
  * Changes the map's height and width
  *
@@ -3841,7 +4025,8 @@ void read_controls (void)
  */
 void resize_map (const int selection)
 {
-   int response, done;
+   unsigned int response, done;
+   unsigned int size_both = gmap.xsize * gmap.ysize;
    int old_height, old_width, new_height, new_width;
    int i, ix, iy, coord1, coord2;
    s_marker *m;
@@ -3874,7 +4059,7 @@ void resize_map (const int selection)
             }
 
             /* Make sure the value is valid */
-            if (new_width < 10 || new_width > MAX_WIDTH) {
+            if (new_width < MIN_WIDTH || new_width > MAX_WIDTH) {
                sprintf (strbuf, "Invalid width: %d", new_width);
                cmessage (strbuf);
                wait_enter ();
@@ -3909,7 +4094,7 @@ void resize_map (const int selection)
             }
 
             /* Make sure the value is valid */
-            if (new_height < 15 || new_height > MAX_HEIGHT) {
+            if (new_height < MIN_HEIGHT || new_height > MAX_HEIGHT) {
                sprintf (strbuf, "%d is an invalid height!", new_height);
                cmessage (strbuf);
                wait_enter ();
@@ -3968,27 +4153,27 @@ void resize_map (const int selection)
 
    /* Set memory for new map size */
    free (map);
-   map = (unsigned short *) malloc (gmap.xsize * gmap.ysize * 2);
+   map = (unsigned short *) malloc (size_both * 2);
    free (b_map);
-   b_map = (unsigned short *) malloc (gmap.xsize * gmap.ysize * 2);
+   b_map = (unsigned short *) malloc (size_both * 2);
    free (f_map);
-   f_map = (unsigned short *) malloc (gmap.xsize * gmap.ysize * 2);
+   f_map = (unsigned short *) malloc (size_both * 2);
    free (o_map);
-   o_map = (unsigned char *) malloc (gmap.xsize * gmap.ysize);
+   o_map = (unsigned char *) malloc (size_both);
    free (sh_map);
-   sh_map = (unsigned char *) malloc (gmap.xsize * gmap.ysize);
+   sh_map = (unsigned char *) malloc (size_both);
    free (z_map);
-   z_map = (unsigned char *) malloc (gmap.xsize * gmap.ysize);
+   z_map = (unsigned char *) malloc (size_both);
    free (search_map);
-   search_map = (unsigned char *) malloc (gmap.xsize * gmap.ysize);
+   search_map = (unsigned char *) malloc (size_both);
 
-   memset (map, 0, gmap.xsize * gmap.ysize * 2);
-   memset (b_map, 0, gmap.xsize * gmap.ysize * 2);
-   memset (f_map, 0, gmap.xsize * gmap.ysize * 2);
-   memset (o_map, 0, gmap.xsize * gmap.ysize);
-   memset (sh_map, 0, gmap.xsize * gmap.ysize);
-   memset (z_map, 0, gmap.xsize * gmap.ysize);
-   memset (search_map, 0, gmap.xsize * gmap.ysize);
+   memset (map, 0, size_both * 2);
+   memset (b_map, 0, size_both * 2);
+   memset (f_map, 0, size_both * 2);
+   memset (o_map, 0, size_both);
+   memset (sh_map, 0, size_both);
+   memset (z_map, 0, size_both);
+   memset (search_map, 0, size_both);
 
    /* Draw all the old map data into the new map size */
    for (iy = 0; iy < old_height; iy++) {
@@ -4009,25 +4194,25 @@ void resize_map (const int selection)
 
    /* Free the 'old-map copy' memory */
    free (c_map);
-   c_map = (unsigned short *) malloc (gmap.xsize * gmap.ysize * 2);
+   c_map = (unsigned short *) malloc (size_both * 2);
    free (cb_map);
-   cb_map = (unsigned short *) malloc (gmap.xsize * gmap.ysize * 2);
+   cb_map = (unsigned short *) malloc (size_both * 2);
    free (cf_map);
-   cf_map = (unsigned short *) malloc (gmap.xsize * gmap.ysize * 2);
+   cf_map = (unsigned short *) malloc (size_both * 2);
    free (co_map);
-   co_map = (unsigned char *) malloc (gmap.xsize * gmap.ysize);
+   co_map = (unsigned char *) malloc (size_both);
    free (csh_map);
-   csh_map = (unsigned char *) malloc (gmap.xsize * gmap.ysize);
+   csh_map = (unsigned char *) malloc (size_both);
    free (cz_map);
-   cz_map = (unsigned char *) malloc (gmap.xsize * gmap.ysize);
+   cz_map = (unsigned char *) malloc (size_both);
 
    /* Re-allocate memory for the 'old-map copy' for next use */
-   memset (c_map, 0, gmap.xsize * gmap.ysize * 2);
-   memset (cb_map, 0, gmap.xsize * gmap.ysize * 2);
-   memset (cf_map, 0, gmap.xsize * gmap.ysize * 2);
-   memset (co_map, 0, gmap.xsize * gmap.ysize);
-   memset (csh_map, 0, gmap.xsize * gmap.ysize);
-   memset (cz_map, 0, gmap.xsize * gmap.ysize);
+   memset (c_map, 0, size_both * 2);
+   memset (cb_map, 0, size_both * 2);
+   memset (cf_map, 0, size_both * 2);
+   memset (co_map, 0, size_both);
+   memset (csh_map, 0, size_both);
+   memset (cz_map, 0, size_both);
 
    /* Empty the clipboard */
    clipb = 0;
@@ -4042,14 +4227,6 @@ void resize_map (const int selection)
    }
 }                               /* resize_map () */
 
-
-int select_layer1   (void) { select_only (1, MAP_LAYER1); return D_O_K;}
-int select_layer2   (void) { select_only (1, MAP_LAYER2); return D_O_K;}
-int select_layer3   (void) { select_only (1, MAP_LAYER3); return D_O_K;}
-int select_layer12  (void) { select_only (1, MAP_LAYER12); return D_O_K;}
-int select_layer13  (void) { select_only (1, MAP_LAYER13); return D_O_K;}
-int select_layer23  (void) { select_only (1, MAP_LAYER23); return D_O_K;}
-int select_layer123 (void) { select_only (1, MAP_LAYER123); return D_O_K;}
 
 
 /* When the user presses keys 1-7, we need to remove all the Attributes.
@@ -4072,9 +4249,10 @@ void select_only (const int lastlayer, const int which_layer)
 }                               /* select_only () */
 
 
+
 int show_all (void)
 {
-   draw_mode = MAP_LAYER123;
+   draw_mode = (MAP_LAYER1 | MAP_LAYER2 | MAP_LAYER3);
    showing.entities = 1;
    showing.shadows = 1;
    showing.obstacles = 1;
@@ -4086,6 +4264,7 @@ int show_all (void)
 
    return D_O_K;
 }
+
 
 
 /*! \brief Handy-dandy help screen
@@ -4140,7 +4319,7 @@ int show_help (void)
       "TAB  . . . . . . . . .  Move 1 screen right  RIGHT ARROW  . . . . . . Move right 1 space",
       "",
       "Q  . . . . . . . . . . . . . . . . . . Quit  HOME . . . . . . Move to the top of the map",
-      "U  . . . . . . . . . . . . Change CPU Usage  END  . . . . . . Move to the end of the map",
+      "                                             END  . . . . . . Move to the end of the map",
       "",
       "                                  [PRESS ESC OR ENTER]"
    };
@@ -4171,6 +4350,7 @@ int show_help (void)
 }                               /* show_help () */
 
 
+
 /*! \brief Show a preview of the map that the player would see during the game
  * including parallax, layers, NPCs, and attributes
  */
@@ -4183,11 +4363,12 @@ int show_preview (void)
    showing.zones = 0;
    showing.markers = 0;
    showing.boundaries = 0;
-   showing.last_layer = MAP_LAYER123;
+   showing.last_layer = (MAP_LAYER1 | MAP_LAYER2 | MAP_LAYER3);
    grab_tile = 0;
 
    return D_O_K;
 }
+
 
 
 /*! \brief The opposite of shutdown, maybe?
@@ -4492,12 +4673,11 @@ int startup (void)
    } else {
       use_joy = 0;
 
+      // Find the first joystick/gamepad that has >= 4 buttons
       if (poll_joystick () == 0) {
-         for (i = num_joysticks - 1; i >= 0; i--) {
-            if (joy[i].num_buttons >= 4) {
-               /* Only accept joysticks/gamepads with >= 4 buttons */
-               use_joy = i + 1;
-            }
+         for (i = num_joysticks; i > 0; i--) {
+            if (joy[i - 1].num_buttons >= 4)
+               use_joy = i;
          }
       }
 
@@ -4507,7 +4687,7 @@ int startup (void)
       }
    }
 
-#if WANT_DIALOG
+#ifdef WANT_DIALOG
    /* Set up menu-driven colors */
    gui_fg_color = makecol (255, 255, 255);
    gui_mg_color = makecol (128, 128, 128);
@@ -4522,6 +4702,7 @@ int startup (void)
 }                               /* startup () */
 
 
+
 /*! \brief Update the tileset
  *
  * This changes the iconset in the menu on the right and then updates
@@ -4529,7 +4710,7 @@ int startup (void)
  */
 void update_tileset (void)
 {
-   int tmapx, tmapy, i;
+   unsigned int col, row, i;
 
    /* This will try to use the selected tileset; if it can not be found
     * then the program will exit with an error.
@@ -4537,10 +4718,10 @@ void update_tileset (void)
    set_pcx (&pcx_buffer, icon_files[gmap.tileset], pal, 1);
    max_sets = (pcx_buffer->h / 16);
 
-   for (tmapy = 0; tmapy < max_sets; tmapy++) {
-      for (tmapx = 0; tmapx < ICONSET_SIZE; tmapx++) {
-         blit (pcx_buffer, icons[tmapy * ICONSET_SIZE + tmapx], tmapx * 16,
-               tmapy * 16, 0, 0, 16, 16);
+   for (row = 0; row < max_sets; row++) {
+      for (col = 0; col < ICONSET_SIZE; col++) {
+         blit (pcx_buffer, icons[row * ICONSET_SIZE + col], col * 16,
+               row * 16, 0, 0, 16, 16);
       }
    }
    icon_set = 0;
@@ -4556,21 +4737,28 @@ void update_tileset (void)
 }                               /* update_tileset () */
 
 
+
 /*! \brief Wait for ENTER key
  *
  * There's almost no point in explaining this function further :-)
  */
 void wait_enter (void)
 {
-   int a, done;
+   unsigned int done = 0;
 
-   done = 0;
    while (!done) {
-      a = (readkey () >> 8);
-      if (a == KEY_ENTER || a == KEY_ENTER_PAD)
+      switch (readkey () >> 8) {
+      case KEY_ENTER: // fall-through
+      case KEY_ENTER_PAD:
          done = 1;
+         break;
+
+      default:
+         break;
+      }
    }
 }                               /* wait_enter () */
+
 
 
 /*! \brief Clear the contents of a map
@@ -4579,20 +4767,25 @@ void wait_enter (void)
  */
 void wipe_map (void)
 {
+   unsigned int size1, size2;
    cmessage ("Do you want to clear the whole map? (y/n)");
    if (!yninput ())
       return;
 
-   memset (map, 0, gmap.xsize * gmap.ysize * 2);
-   memset (b_map, 0, gmap.xsize * gmap.ysize * 2);
-   memset (f_map, 0, gmap.xsize * gmap.ysize * 2);
-   memset (o_map, 0, gmap.xsize * gmap.ysize);
-   memset (sh_map, 0, gmap.xsize * gmap.ysize);
-   memset (z_map, 0, gmap.xsize * gmap.ysize);
-   memset (search_map, 0, gmap.xsize * gmap.ysize);
+   size1 = gmap.xsize * gmap.ysize * sizeof (unsigned char);
+   size2 = gmap.xsize * gmap.ysize * sizeof (unsigned short);
+
+   memset (map, 0, size2);
+   memset (b_map, 0, size2);
+   memset (f_map, 0, size2);
+   memset (o_map, 0, size1);
+   memset (sh_map, 0, size1);
+   memset (z_map, 0, size1);
+   memset (search_map, 0, size1);
 
    init_entities ();
 }                               /* wipe_map () */
+
 
 
 /*! \brief Keyboard input for yes/no question
@@ -4605,17 +4798,27 @@ void wipe_map (void)
  */
 int yninput (void)
 {
-   int ch, done;
+   unsigned int done = 0;
 
-   done = 0;
    while (!done) {
       /* ENTER/ESC functions the same as Y/N */
-      ch = (readkey () >> 8);
-      if (ch == KEY_N || ch == KEY_ESC)
+      switch (readkey () >> 8) {
+      case KEY_N: // fall-through
+      case KEY_ESC:
          done = 1;
-      if (ch == KEY_Y || ch == KEY_ENTER || ch == KEY_ENTER_PAD)
+         break;
+
+      case KEY_Y: // fall-through
+      case KEY_ENTER: // fall-through
+      case KEY_ENTER_PAD:
          done = 2;
+         break;
+
+      default:
+         break;
+      }
    }
+
    blit2screen ();
    return done - 1;
 }                               /* yninput () */
