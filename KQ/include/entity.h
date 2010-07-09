@@ -32,9 +32,6 @@
  * \date ??????
  */
 
-#define MAX_ENT     50
-#define ID_ENEMY    254
-
 
 void process_entities (void);   /*  kq.c  */
 int entityat (int, int, int);   /*  kq.c  */

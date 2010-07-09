@@ -418,12 +418,13 @@ static int equip (unsigned int c, unsigned int selected_item, unsigned int force
 
    if (items[d].eq[c] == 0)
       return 0;
-   if (a == EQP_SHIELD)
+   if (a == EQP_SHIELD) {
       if (party[c].eqp[EQP_WEAPON] > 0 && items[party[c].eqp[EQP_WEAPON]].hnds == 1)
          return 0;
-   else if (a == EQP_WEAPON)
+   } else if (a == EQP_WEAPON) {
       if (party[c].eqp[EQP_SHIELD] > 0 && items[d].hnds == 1)
          return 0;
+   }
    if (b > 0) {
       for (i = 0; i < MAX_INV; i++)
          // Check if we have any items at all

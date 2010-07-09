@@ -426,51 +426,94 @@ void visual_map (s_show showing, const char *save_fname)
 {
    int i, j, w;
    BITMAP *bmp;
+   const unsigned int xsize = gmap.xsize * TILE_W;
+   const unsigned int ysize = gmap.ysize * TILE_H;
+   unsigned char *layer_c;
+   unsigned short *layer_s;
 
    /* Create a bitmap the same size as the map */
-   bmp = create_bitmap (gmap.xsize * 16, gmap.ysize * 16);
+   bmp = create_bitmap (xsize, ysize);
    clear (bmp);
 
-   for (j = 0; j < gmap.ysize; j++) {
-      for (i = 0; i < gmap.xsize; i++) {
-         /* Which tile is currently being evaluated */
-         w = gmap.xsize * j + i;
+   if (showing.layer[0]) {
+      layer_s = &map[0];
+      for (j = 0; j < ysize; j += TILE_H) {
+         for (i = 0; i < xsize; i += TILE_W) {
+            blit (icons[*layer_s], bmp, 0, 0, i, j, TILE_W, TILE_H);
+            ++layer_s;
+         }
+      }
+   }
 
-         if (showing.layer[0])
-            blit (icons[map[w]], bmp, 0, 0, i * 16, j * 16, 16, 16);
-         if (showing.layer[1])
-            draw_sprite (bmp, icons[b_map[w]], i * 16, j * 16);
-         if (showing.layer[2])
-            draw_sprite (bmp, icons[f_map[w]], i * 16, j * 16);
-         if (showing.shadows)
-            draw_trans_sprite (bmp, shadow[sh_map[w]], i * 16, j * 16);
-         if (showing.obstacles && o_map[w] > 0)
-            draw_sprite (bmp, mesh1[o_map[w] - 1], i * 16, j * 16);
+   if (showing.layer[1]) {
+      layer_s = &b_map[0];
+      for (j = 0; j < ysize; j += TILE_H) {
+         for (i = 0; i < xsize; i += TILE_W) {
+            draw_sprite (bmp, icons[*layer_s], i, j);
+            ++layer_s;
+         }
+      }
+   }
 
-         if ((showing.zones) && (z_map[w] > 0)) {
+   if (showing.layer[2]) {
+      layer_s = &f_map[0];
+      for (j = 0; j < ysize; j += TILE_H) {
+         for (i = 0; i < xsize; i += TILE_W) {
+            draw_sprite (bmp, icons[*layer_s], i, j);
+            ++layer_s;
+         }
+      }
+   }
 
-            if (z_map[w] < 10) {
-               /* The zone's number is single-digit, center vert+horiz */
-               textprintf_ex (bmp, font, i * 16 + 4, j * 16 + 4,
-                              makecol (255, 255, 255), 0, "%d", z_map[w]);
-            } else if (z_map[w] < 100) {
-               /* The zone's number is double-digit, center only vert */
-               textprintf_ex (bmp, font, i * 16, j * 16 + 4,
-                              makecol (255, 255, 255), 0, "%d", z_map[w]);
-            } else {
-               /* The zone's number is triple-digit.  Print the 100's digit in
-                * top-center of the square; the 10's and 1's digits on bottom
-                * of the square
-                */
-               textprintf_ex (bmp, font, i * 16 + 4, j * 16,
-                              makecol (255, 255, 255), 0, "%d",
-                              (int) (z_map[w] / 100));
-               textprintf_ex (bmp, font, i * 16, j * 16 + 8,
-                              makecol (255, 255, 255), 0, "%02d",
-                              (int) (z_map[w] % 100));
+   if (showing.shadows) {
+      for (j = 0; j < gmap.ysize; j++) {
+         for (i = 0; i < gmap.xsize; i++) {
+            draw_trans_sprite (bmp, shadow[sh_map[j * gmap.xsize + i]],
+                               i * TILE_W, j * TILE_H);
+         }
+      }
+   }
+
+   if (showing.obstacles) {
+      for (j = 0; j < gmap.ysize; j++) {
+         for (i = 0; i < gmap.xsize; i++) {
+            /* Which tile is currently being evaluated */
+            w = j * gmap.xsize + i;
+            if (o_map[w] > 0)
+               draw_sprite (bmp, mesh1[o_map[w] - 1], i * TILE_W, j * TILE_H);
+         }
+      }
+   }
+
+   if (showing.zones) {
+      for (j = 0; j < gmap.ysize; j++) {
+         for (i = 0; i < gmap.xsize; i++) {
+            /* Which tile is currently being evaluated */
+            w = j * gmap.xsize + i;
+            if (z_map[w] > 0) {
+
+               if (z_map[w] < 10) {
+                  /* The zone's number is single-digit, center vert+horiz */
+                  textprintf_ex (bmp, font, i * 16 + 4, j * 16 + 4,
+                                 makecol (255, 255, 255), 0, "%d", z_map[w]);
+               } else if (z_map[w] < 100) {
+                  /* The zone's number is double-digit, center only vert */
+                  textprintf_ex (bmp, font, i * 16, j * 16 + 4,
+                                 makecol (255, 255, 255), 0, "%d", z_map[w]);
+               } else {
+                  /* The zone's number is triple-digit.  Print the 100's digit
+                   * in the top-center of the square; the 10's and 1's digits
+                   * on bottom of the square
+                   */
+                  textprintf_ex (bmp, font, i * 16 + 4, j * 16,
+                                 makecol (255, 255, 255), 0, "%d",
+                                 (int) (z_map[w] / 100));
+                  textprintf_ex (bmp, font, i * 16, j * 16 + 8,
+                                 makecol (255, 255, 255), 0, "%02d",
+                                 (int) (z_map[w] % 100));
+               }
             }
          }
-
       }
    }
 
@@ -480,30 +523,33 @@ void visual_map (s_show showing, const char *save_fname)
          if (gent[i].active) {
             if (gent[i].transl == 0) {
                draw_sprite (bmp, eframes[gent[i].chrx][gent[i].facing * 3],
-                            gent[i].tilex * 16, gent[i].tiley * 16);
+                            gent[i].tilex * TILE_W, gent[i].tiley * TILE_H);
             } else {
                draw_trans_sprite (bmp,
                                   eframes[gent[i].chrx][gent[i].facing * 3],
-                                  gent[i].tilex * 16, gent[i].tiley * 16);
+                                  gent[i].tilex * TILE_W,
+                                  gent[i].tiley * TILE_H);
             }                   // if..else ()
          }
       }
    }
 
    /* Show marker flags */
-   if (showing.markers == 1 && gmap.num_markers > 0) {
+   if (showing.markers && gmap.num_markers > 0) {
       num_markers = gmap.num_markers;
       for (i = 0; i < num_markers; ++i) {
-         draw_sprite (bmp, marker_image, gmap.markers[i].x * 16 + 8,
-                      gmap.markers[i].y * 16 - 8);
+         draw_sprite (bmp, marker_image,
+                      gmap.markers[i].x * TILE_W + (TILE_W / 2),
+                      gmap.markers[i].y * TILE_H - (TILE_H / 2));
       }
    }
 
    /* Show boundary boxes */
-   if (showing.boundaries == 1) {
+   if (showing.boundaries) {
       for (i = 0; i < gmap.num_bound_boxes; i++) {
-         rect (bmp, bound_box[i].left * 16, bound_box[i].top * 16,
-               bound_box[i].right * 16 + 15, bound_box[i].bottom * 16 + 15, 24);
+         rect (bmp, bound_box[i].left * TILE_W, bound_box[i].top * TILE_H,
+               (bound_box[i].right + 1) * TILE_W - 1,
+               (bound_box[i].bottom + 1) * TILE_H - 1, 24);
       }
    }
 

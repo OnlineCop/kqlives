@@ -468,7 +468,7 @@ void fight_animation (int tgt, int who, int ma)
    int a;
 
    if (who < PSIZE)
-      a = items[party[pidx[who]].eqp[0]].eff;
+      a = items[party[pidx[who]].eqp[EQP_WEAPON]].eff;
    else
       a = fighter[who].cwt;
    draw_attacksprite (tgt, ma, a, 1);

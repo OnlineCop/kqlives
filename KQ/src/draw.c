@@ -29,20 +29,21 @@
  * Also some colour manipulation.
  */
 
+#include <assert.h>
+#include <ctype.h>
 #include <stdio.h>
 #include <string.h>
-#include <ctype.h>
 
-#include "kq.h"
 #include "combat.h"
+#include "console.h"
 #include "draw.h"
 #include "entity.h"
+#include "kq.h"
 #include "magic.h"
 #include "music.h"
 #include "res.h"
 #include "setup.h"
 #include "timing.h"
-#include "console.h"
 
 /* Globals */
 #define MSG_ROWS 4
@@ -336,6 +337,7 @@ static void draw_backlayer (void)
  */
 static void draw_char (int xw, int yw)
 {
+   unsigned int ii;
    int fr, dx, dy, i, f, fid;
    int x, y;
    int horiz, vert;
@@ -343,7 +345,8 @@ static void draw_char (int xw, int yw)
    BITMAP **sprite_base;
    BITMAP *spr = NULL;
 
-   for (i = PSIZE + noe - 1; i >= 0; i--) {
+   for (ii = PSIZE + noe; ii > 0; ii--) {
+      i = ii - 1;
       fid = g_ent[i].eid;
       dx = g_ent[i].x - vx + xw;
       dy = g_ent[i].y - vy + yw;
@@ -716,6 +719,9 @@ static void draw_playerbound (void)
                                g_ent[0].tilex, g_ent[0].tiley, g_ent[0].tilex,
                                g_ent[0].tiley);
 
+   if (!found)
+      return;
+
    xtc = vx >> 4;
    ytc = vy >> 4;
 
@@ -726,21 +732,31 @@ static void draw_playerbound (void)
     * bounded area with the tile specified by that area.
     * found->btile is most often 0, but could also be made to be water, etc.
     */
-   if (found) {
-      for (dy = 0; dy < 16; dy++) {
-         if (ytc + dy < found->top || ytc + dy > found->bottom) {
-            for (dx = 0; dx < 21; dx++) {
-               blit (map_icons[tilex[found->btile]], double_buffer, 0, 0,
-                     dx * 16 + xofs, dy * 16 + yofs, 16, 16);
-            }
-         } else {
-            for (dx = 0; dx < 21; dx++) {
-               if (xtc + dx < found->left || xtc + dx > found->right) {
-                  blit (map_icons[tilex[found->btile]], double_buffer, 0, 0,
-                        dx * 16 + xofs, dy * 16 + yofs, 16, 16);
-               }
-            }
-         }
+
+   // Top
+   for (dy = 0; dy < found->top - ytc; dy++) {
+      for (dx = 0; dx < WINDOW_TILES_W; dx++) {
+         blit (map_icons[tilex[found->btile]], double_buffer, 0, 0, dx * TILE_W + xofs, dy * TILE_H + yofs, TILE_W, TILE_H);
+      }
+   }
+
+   // Sides
+   for (dy = found->top - ytc; dy < found->bottom - ytc + 1; dy++) {
+      // Left side
+      for (dx = 0; dx < found->left - xtc; dx++) {
+         blit (map_icons[tilex[found->btile]], double_buffer, 0, 0, dx * TILE_W + xofs, dy * TILE_H + yofs, TILE_W, TILE_H);
+      }
+
+      // Right side
+      for (dx = found->right - xtc + 1; dx < WINDOW_TILES_W; dx++) {
+         blit (map_icons[tilex[found->btile]], double_buffer, 0, 0, dx * TILE_W + xofs, dy * TILE_H + yofs, TILE_W, TILE_H);
+      }
+   }
+
+   // Bottom
+   for (dy = found->bottom - ytc + 1; dy < WINDOW_TILES_H; dy++) {
+      for (dx = 0; dx < WINDOW_TILES_W; dx++) {
+         blit (map_icons[tilex[found->btile]], double_buffer, 0, 0, dx * TILE_W + xofs, dy * TILE_H + yofs, TILE_W, TILE_H);
       }
    }
 }
@@ -1007,7 +1023,7 @@ static void generic_text (int who, int box_style, int isPort)
 
 /*! \brief Check for forest square
  *
- * Helper function for the draw_char routine.  Just returns whether or not
+ * Helper function for the \sa draw_char routine.  Just returns whether or not
  * the tile at the specified co-ordinates is a forest tile.  This could be
  * a headache if the tileset changes!
  * Looks in the \p map_seg[] array
@@ -1362,6 +1378,8 @@ void print_font (BITMAP *where, int sx, int sy, const char *msg, int cl)
 void print_num (BITMAP *where, int sx, int sy, char *msg, int cl)
 {
    int z, cc;
+   assert (where && "where == NULL");
+   assert (msg && "msg == NULL");
 
    if (cl < 0 || cl > 4) {
       sprintf (strbuf, _("print_num: Bad font index, %d"), cl);
@@ -1369,8 +1387,7 @@ void print_num (BITMAP *where, int sx, int sy, char *msg, int cl)
       return;
    }
    for (z = 0; z < (signed int) strlen (msg); z++) {
-      cc = msg[z];
-      cc -= 48;
+      cc = msg[z] - '0';
       if (cc >= 0 && cc <= 9)
          masked_blit (sfonts[cl], where, cc * 6, 0, z * 6 + sx, sy, 6, 8);
    }

@@ -54,7 +54,7 @@
 #define MAX_EPICS       41
 #define MAX_ZONES       256
 #define MAX_SHADOWS     12
-#define MAX_OBSTACLES   5
+#define MAX_OBSTACLES   5        // Obstacles are 1-based, with '0' meaning "no obstacle"
 #define MAX_MARKERS     256
 #define SW              800     // Must be a multiple of 16
 #define SH              600     // Must be a multiple of 16

@@ -862,7 +862,7 @@ void draw_map (void)
          }
 
          /* Draw the Obstacles */
-         assert (o_map[w] < MAX_OBSTACLES && "o_map[w] >= MAX_OBSTACLES\n");
+         assert (o_map[w] <= MAX_OBSTACLES && "o_map[w] >= MAX_OBSTACLES\n");
          if ((showing.obstacles) && (o_map[w] > 0)
              && (o_map[w] <= MAX_OBSTACLES)) {
             draw_sprite (double_buffer, mesh1[o_map[w] - 1], dx * 16, dy * 16);
@@ -3087,6 +3087,7 @@ int process_keyboard (const int k)
 void process_menu_bottom (const int cx, const int cy)
 {
    unsigned int response;
+   int displacement;
 
    scare_mouse ();
 
@@ -3189,25 +3190,37 @@ void process_menu_bottom (const int cx, const int cy)
       /* Make sure the line isn't blank */
       if (response == 0 || strlen (strbuf) < 1)
          return;
+
       /* Make sure the value is valid */
+      displacement = atoi (strbuf);
+
+      /* Negative or explicitely positive numbers will simply be displacement
+       * values, and not exact coordinate within the map
+       */
       if (strbuf[0] == '-' || strbuf[0] == '+') {
-         response = (gmap.warpx + atoi (strbuf));
-         if (response < gmap.xsize) {
-            gmap.warpx += atoi (strbuf);
-            return;
-         } else {
+         response = (unsigned int) (gmap.warpx + displacement);
+         if (response >= gmap.xsize) {
             sprintf (strbuf, "Invalid x-coordinate for warp: %d", response);
             cmessage (strbuf);
             wait_enter ();
             return;
          }
-      } else if (!(atoi (strbuf) >= 0 && atoi (strbuf) < MAX_WIDTH)) {
-         sprintf (strbuf, "Invalid x-coordinate for warp: %d", response);
+
+         gmap.warpx += displacement;
+         return;
+      }
+
+      /* If we get here, value is a specific coordinate on the map; check
+       * that it is within the map bounds
+       */
+      if (displacement >= gmap.xsize) {
+         sprintf (strbuf, "Invalid x-coordinate for warp: %d", displacement);
          cmessage (strbuf);
          wait_enter ();
          return;
       }
-      gmap.warpx = atoi (strbuf);
+
+      gmap.warpx = displacement;
       return;
    }
 
@@ -3224,25 +3237,37 @@ void process_menu_bottom (const int cx, const int cy)
       /* Make sure the line isn't blank */
       if (response == 0 || strlen (strbuf) < 1)
          return;
+
       /* Make sure the value is valid */
+      displacement = atoi (strbuf);
+
+      /* Negative or explicitely positive numbers will simply be displacement
+       * values, and not exact coordinate within the map
+       */
       if (strbuf[0] == '-' || strbuf[0] == '+') {
-         response = gmap.warpy + atoi (strbuf);
-         if (response >= 0 && response < gmap.ysize) {
-            gmap.warpy += atoi (strbuf);
-            return;
-         } else {
+         response = (unsigned int) (gmap.warpy + displacement);
+         if (response >= gmap.ysize) {
             sprintf (strbuf, "Invalid y-coordinate for warp: %d", response);
             cmessage (strbuf);
             wait_enter ();
             return;
          }
-      } else if (!(atoi (strbuf) >= 0 && atoi (strbuf) < MAX_HEIGHT)) {
-         sprintf (strbuf, "Invalid y-coordinate for warp: %d", response);
+
+         gmap.warpy += displacement;
+         return;
+      }
+
+      /* If we get here, value is a specific coordinate on the map; check
+       * that it is within the map bounds
+       */
+      if (displacement >= gmap.ysize) {
+         sprintf (strbuf, "Invalid y-coordinate for warp: %d", displacement);
          cmessage (strbuf);
          wait_enter ();
          return;
       }
-      gmap.warpy = atoi (strbuf);
+
+      gmap.warpy = displacement;
       return;
    }
 

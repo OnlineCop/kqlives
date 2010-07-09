@@ -52,6 +52,10 @@ enum eSizes
 #define PSIZE               2
 #define MAXFRAMES          12
 #define MAXEFRAMES         12
+#define WINDOW_TILES_W     21
+#define WINDOW_TILES_H     16
+#define MAX_ENT            50
+#define ID_ENEMY          254
 
 
 /* PH: MAXCFRAMES never seems to be used properly -

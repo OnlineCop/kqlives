@@ -27,14 +27,19 @@
  * \date ??????
  */
 
+#include <assert.h>
+#include <ctype.h>
+#include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
-#include "kq.h"
 #include "combat.h"
 #include "entity.h"
+#include "enums.h"
 #include "intrface.h"
 #include "itemdefs.h"
+#include "kq.h"
 #include "menu.h"
 #include "setup.h"
 
@@ -610,12 +615,14 @@ static void player_move (void)
  */
 void process_entities (void)
 {
-   int i;
+   unsigned int i;
    const char *t_evt;
 
-   for (i = 0; i < MAX_ENT; i++)
+   for (i = 0; i < MAX_ENT; i++) {
       if (g_ent[i].active == 1)
          speed_adjust (i);
+   }
+
    /* Do timers */
    t_evt = get_timer_event ();
    if (t_evt)
@@ -677,28 +684,26 @@ static void process_entity (int target_entity)
       if (ent->tiley * 16 < ent->y)
          --ent->y;
       ent->movcnt--;
-      ent->framectr++;
 
-      if (ent->framectr > 20)
+      if (ent->framectr < 20)
+         ent->framectr++;
+      else
          ent->framectr = 0;
 
       if (ent->movcnt == 0) {
          ent->moving = 0;
          if (target_entity < PSIZE) {
             player = &party[pidx[target_entity]];
-            steps++;
-            if (steps > STEPS_NEEDED)
-               steps = STEPS_NEEDED;
+            if (steps < STEPS_NEEDED)
+               steps++;
             if (player->sts[S_POISON] > 0) {
-               player->hp--;
-               if (player->hp < 1)
-                  player->hp = 1;
+               if (player->hp > 1)
+                  player->hp--;
                play_effect (21, 128);
             }
-            if (player->eqp[5] == I_REGENERATOR) {
-               player->hp++;
-               if (player->hp > player->mhp)
-                  player->hp = player->mhp;
+            if (player->eqp[EQP_SPECIAL] == I_REGENERATOR) {
+               if (player->hp < player->mhp)
+                  player->hp++;
             }
          }
          if (target_entity == 0)

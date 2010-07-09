@@ -15,8 +15,8 @@
 
 /* Something for allegro version compatibility */
 /* ..can we use the textout_ex() and friends? */
-#if (ALLEGRO_VERSION>=4 && ALLEGRO_SUB_VERSION>=1)
-#define HAVE_TEXT_EX
+#if (!(ALLEGRO_VERSION >= 4 && ALLEGRO_SUB_VERSION >= 1 && ALLEGRO_SUB_VERSION < 9))
+#error You need another version of Allegro.
 #endif
 
 /* globals */

@@ -53,6 +53,7 @@
 #include "disk.h"
 #include "draw.h"
 #include "entity.h"
+#include "enums.h"
 #include "fade.h"
 #include "intrface.h"
 #include "itemdefs.h"
@@ -185,7 +186,7 @@ unsigned char cansave = 0;
 unsigned char skip_intro = 0;
 
 /*! Graphics mode settings */
-unsigned char wait_retrace = 0, windowed = 0, stretch_view = 0, cpu_usage = 0;
+unsigned char wait_retrace = 0, windowed = 0, stretch_view = 0, cpu_usage = 1;
 
 /*! Current sequence position of animated tiles */
 unsigned short tilex[MAX_TILES];
@@ -287,6 +288,7 @@ unsigned char display_desc = 0;
  */
 unsigned char draw_background = 1, draw_middle = 1,
    draw_foreground = 1, draw_shadow = 1;
+
 /*! Items in inventory. g_inv[][0] is the item id, g_inv[][1] is the quantity */
 unsigned short g_inv[MAX_INV][2];
 
@@ -495,6 +497,7 @@ int add_timer_event (const char *n, int delta)
 
 
 #ifdef DEBUGMODE
+BITMAP *alloc_bmp (int, int, const char *); // Get rid of "no prev prototype" warning
 
 /*! \brief Create bitmap
  *
@@ -1016,26 +1019,16 @@ void klog (const char *msg)
 
 /*! \brief Yield processor for other tasks
  *
- * This function calls rest() or yield_cpu() as appropriate for
- * the platform and allegro version
+ * This function calls rest() with the value of 'cpu_usage' as its parameter
  *
  * \author PH
  * \date 20050423
+ * \author OC
+ * \date 20100228
  */
 void kq_yield (void)
 {
-   if (cpu_usage > 2)
-      cpu_usage = 2;
-
-   /* This can call the regular yield_timeslice() function, or we can try to
-    * use rest(0) or rest(1), depending on the user's preference (and Allegro
-    * settings).
-    */
-   if (cpu_usage == 0) {
-//      yield_timeslice ();
-   } else {
-      rest (cpu_usage - 1);
-   }
+   rest (cpu_usage);
 }
 
 
@@ -1166,7 +1159,7 @@ static void load_map (const char *map_name)
    }
 
    load_s_map (&g_map, pf);
-   for (i = 0; i < 50; ++i)
+   for (i = 0; i < MAX_ENT; ++i)
       load_s_entity (&g_ent[PSIZE + i], pf);
    map_alloc ();
    for (i = 0; i < g_map.xsize * g_map.ysize; ++i)
@@ -1330,28 +1323,39 @@ static void my_counter (void)
 static void prepare_map (int msx, int msy, int mvx, int mvy)
 {
    BITMAP *pcxb;
-   unsigned char cc[4];
-   int i, o;
+   unsigned int i;
+   int o;
    DATAFILE *pb;
 
-   /* PH fixme: cc[] were not initialised to zero */
-   cc[0] = cc[1] = cc[2] = cc[3] = 0;
+   draw_background = draw_middle = draw_foreground = draw_shadow = 0;
 
    for (i = 0; i < g_map.xsize * g_map.ysize; i++) {
-      if (map_seg[i] > 0)
-         cc[0] = 1;
-      if (b_seg[i] > 0)
-         cc[1] = 1;
-      if (f_seg[i] > 0)
-         cc[2] = 1;
-      if (s_seg[i] > 0)
-         cc[3] = 1;
+      if (map_seg[i] > 0) {
+         draw_background = 1;
+         break;
+      }
    }
 
-   draw_background = cc[0];
-   draw_middle = cc[1];
-   draw_foreground = cc[2];
-   draw_shadow = cc[3];
+   for (i = 0; i < g_map.xsize * g_map.ysize; i++) {
+      if (b_seg[i] > 0) {
+         draw_middle = 1;
+         break;
+      }
+   }
+
+   for (i = 0; i < g_map.xsize * g_map.ysize; i++) {
+      if (f_seg[i] > 0) {
+         draw_foreground = 1;
+         break;
+      }
+   }
+
+   for (i = 0; i < g_map.xsize * g_map.ysize; i++) {
+      if (s_seg[i] > 0) {
+         draw_shadow = 1;
+         break;
+      }
+   }
 
    for (i = 0; i < numchrs; i++) {
       /* This allows us to either go to the map's default starting coords
@@ -1386,10 +1390,11 @@ static void prepare_map (int msx, int msy, int mvx, int mvy)
    pb = load_datafile_object (PCX_DATAFILE, tilesets[g_map.tileset].icon_set);
    pcxb = (BITMAP *) pb->dat;
 
-   for (o = 0; o < pcxb->h / 16; o++)
+   for (o = 0; o < pcxb->h / 16; o++) {
       for (i = 0; i < pcxb->w / 16; i++)
          blit ((BITMAP *) pb->dat, map_icons[o * (pcxb->w / 16) + i], i * 16,
                o * 16, 0, 0, 16, 16);
+   }
 
    unload_datafile_object (pb);
 

@@ -60,7 +60,7 @@ int bound_in_bound2 (s_bound *, s_bound *, int);
 s_bound *is_contained_bound (s_bound *, unsigned int, int, int, int, int);
 void set_bounds (s_bound *, int, int, int, int);
 
-extern short num_bound_boxes;
+extern unsigned int num_bound_boxes;
 extern s_bound bound_box[MAX_BOUNDS];
 
 

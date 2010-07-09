@@ -36,7 +36,7 @@ extern unsigned short *map, *b_map, *f_map, *c_map, *cf_map, *cb_map;
 
 #define MAX_TILES    1024
 #define ICONSET_SIZE   20       /* Number of icons shown in the icon map */
-extern short max_sets;
+extern unsigned int max_sets;
 int startup (void);
 void error_load (const char *);
 void cleanup (void);

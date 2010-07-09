@@ -9,15 +9,14 @@
  * maps.                                                                   *
 \***************************************************************************/
 
+#include <locale.h>
+
 #include "mapdraw.h"
 #include "../include/disk.h"
 
-#include <locale.h>
-
-/* Something for allegro version compatibility */
-/* ..can we use the textout_ex() and friends? */
-#if (ALLEGRO_VERSION>=4 && ALLEGRO_SUB_VERSION>=1)
-#define HAVE_TEXT_EX
+/* Force allegro compatibility */
+#if (!(ALLEGRO_VERSION>=4 && ALLEGRO_SUB_VERSION>=1 && ALLEGRO_SUB_VERSION<9))
+#error Cannot use this version of Allegro.
 #endif
 
 void check_entities (void);
@@ -93,6 +92,7 @@ static void bufferize_ex (const int which_map)
 }                               /* bufferize_ex () */
 
 
+
 /*! \brief Check both maps for differences in the entities */
 void check_entities (void)
 {
@@ -103,32 +103,32 @@ void check_entities (void)
       _script;
 
    for (i = 0; i < 50; ++i) {
-      _chrx     = gent1[i].chrx     != gent2[i].chrx     ? 1 : 0;
-      _x        = gent1[i].x        != gent2[i].x        ? 1 : 0;
-      _y        = gent1[i].y        != gent2[i].y        ? 1 : 0;
-      _tilex    = gent1[i].tilex    != gent2[i].tilex    ? 1 : 0;
-      _tiley    = gent1[i].tiley    != gent2[i].tiley    ? 1 : 0;
-      _eid      = gent1[i].eid      != gent2[i].eid      ? 1 : 0;
-      _active   = gent1[i].active   != gent2[i].active   ? 1 : 0;
-      _facing   = gent1[i].facing   != gent2[i].facing   ? 1 : 0;
-      _moving   = gent1[i].moving   != gent2[i].moving   ? 1 : 0;
-      _movcnt   = gent1[i].movcnt   != gent2[i].movcnt   ? 1 : 0;
-      _framectr = gent1[i].framectr != gent2[i].framectr ? 1 : 0;
-      _movemode = gent1[i].movemode != gent2[i].movemode ? 1 : 0;
-      _obsmode  = gent1[i].obsmode  != gent2[i].obsmode  ? 1 : 0;
-      _delay    = gent1[i].delay    != gent2[i].delay    ? 1 : 0;
-      _delayctr = gent1[i].delayctr != gent2[i].delayctr ? 1 : 0;
-      _speed    = gent1[i].speed    != gent2[i].speed    ? 1 : 0;
-      _scount   = gent1[i].scount   != gent2[i].scount   ? 1 : 0;
-      _cmd      = gent1[i].cmd      != gent2[i].cmd      ? 1 : 0;
-      _sidx     = gent1[i].sidx     != gent2[i].sidx     ? 1 : 0;
-      _extra    = gent1[i].extra    != gent2[i].extra    ? 1 : 0;
-      _chasing  = gent1[i].chasing  != gent2[i].chasing  ? 1 : 0;
-      _cmdnum   = gent1[i].cmdnum   != gent2[i].cmdnum   ? 1 : 0;
-      _atype    = gent1[i].atype    != gent2[i].atype    ? 1 : 0;
-      _snapback = gent1[i].snapback != gent2[i].snapback ? 1 : 0;
-      _facehero = gent1[i].facehero != gent2[i].facehero ? 1 : 0;
-      _transl   = gent1[i].transl   != gent2[i].transl   ? 1 : 0;
+      _chrx     = (gent1[i].chrx     != gent2[i].chrx)     ? 1 : 0;
+      _x        = (gent1[i].x        != gent2[i].x)        ? 1 : 0;
+      _y        = (gent1[i].y        != gent2[i].y)        ? 1 : 0;
+      _tilex    = (gent1[i].tilex    != gent2[i].tilex)    ? 1 : 0;
+      _tiley    = (gent1[i].tiley    != gent2[i].tiley)    ? 1 : 0;
+      _eid      = (gent1[i].eid      != gent2[i].eid)      ? 1 : 0;
+      _active   = (gent1[i].active   != gent2[i].active)   ? 1 : 0;
+      _facing   = (gent1[i].facing   != gent2[i].facing)   ? 1 : 0;
+      _moving   = (gent1[i].moving   != gent2[i].moving)   ? 1 : 0;
+      _movcnt   = (gent1[i].movcnt   != gent2[i].movcnt)   ? 1 : 0;
+      _framectr = (gent1[i].framectr != gent2[i].framectr) ? 1 : 0;
+      _movemode = (gent1[i].movemode != gent2[i].movemode) ? 1 : 0;
+      _obsmode  = (gent1[i].obsmode  != gent2[i].obsmode)  ? 1 : 0;
+      _delay    = (gent1[i].delay    != gent2[i].delay)    ? 1 : 0;
+      _delayctr = (gent1[i].delayctr != gent2[i].delayctr) ? 1 : 0;
+      _speed    = (gent1[i].speed    != gent2[i].speed)    ? 1 : 0;
+      _scount   = (gent1[i].scount   != gent2[i].scount)   ? 1 : 0;
+      _cmd      = (gent1[i].cmd      != gent2[i].cmd)      ? 1 : 0;
+      _sidx     = (gent1[i].sidx     != gent2[i].sidx)     ? 1 : 0;
+      _extra    = (gent1[i].extra    != gent2[i].extra)    ? 1 : 0;
+      _chasing  = (gent1[i].chasing  != gent2[i].chasing)  ? 1 : 0;
+      _cmdnum   = (gent1[i].cmdnum   != gent2[i].cmdnum)   ? 1 : 0;
+      _atype    = (gent1[i].atype    != gent2[i].atype)    ? 1 : 0;
+      _snapback = (gent1[i].snapback != gent2[i].snapback) ? 1 : 0;
+      _facehero = (gent1[i].facehero != gent2[i].facehero) ? 1 : 0;
+      _transl   = (gent1[i].transl   != gent2[i].transl)   ? 1 : 0;
 
       _script = 0;
       for (j = 0; j < 60; j++) {
@@ -234,6 +234,7 @@ void check_entities (void)
                   gent2[i].script);
    }
 }                               /* check_entities () */
+
 
 
 /*! \brief Check all map layers on both maps for differences */
@@ -439,6 +440,7 @@ void check_layers (void)
    if (_zmap)
       fprintf (stdout, " zmap:\t%d\n", _zmap);
 }                               /* check_layers */
+
 
 
 /*! \brief Check both maps for differences in the maps */
@@ -673,6 +675,7 @@ void cleanup (void)
 }                               /* cleanup () */
 
 
+
 /*! \brief Error in loading a map
  *
  * Display an error message for a file that doesn't exist.
@@ -688,6 +691,7 @@ void error_load (const char *problem_file)
    TRACE ("%s", strbuf);
    allegro_message ("%s", err_msg);
 }                               /* error_load () */
+
 
 
 /*! \brief Load both maps
@@ -790,6 +794,7 @@ void load_maps (const char *filename1, const char *filename2)
 }                               /* load_maps () */
 
 
+
 /*! \brief The opposite of shutdown, maybe?
  *
  * Inits everything needed for user input, graphics, etc.
@@ -806,6 +811,7 @@ int startup (void)
 }                               /* startup () */
 
 
+
 /*! \brief Display help on the command syntax */
 void usage (const char *argv)
 {
@@ -815,6 +821,7 @@ void usage (const char *argv)
    fprintf (stdout,
             "  Output will be any differences found between the two maps.\n");
 }                               /* usage () */
+
 
 
 int main (unsigned int argc, char *argv[])

@@ -52,6 +52,7 @@ enum
    LAYER_INDEX_COLUMN,
    LAYER_N_COLUMNS
 };
+
 unsigned int layer_showing_flags = LAYER_1_FLAG | LAYER_2_FLAG | LAYER_3_FLAG | SHADOW_FLAG | ENTITIES_FLAG;
 unsigned int active_x = 0;
 unsigned int active_y = 0;
@@ -62,7 +63,9 @@ void map_change (unsigned int x, unsigned int y)
    map_has_changed = TRUE;
 }
 
-static void update_window ()
+
+
+static void update_window (void)
 {
    gtk_widget_set_size_request (map_drawing_area, gmap.xsize * 16, gmap.ysize * 16);
    if (map_drawing_area->window)
@@ -74,10 +77,14 @@ static void update_window ()
       gdk_window_invalidate_rect (palette_drawing_area->window, &palette_drawing_area->allocation, FALSE);
 }
 
+
+
 static void on_mainwindow_destroy (GtkMenuItem *item, gpointer userdata)
 {
    gtk_main_quit ();
 }
+
+
 
 static void on_info_activate (GtkMenuItem *item, GtkWindow *parent_window)
 {
@@ -89,10 +96,14 @@ static void on_info_activate (GtkMenuItem *item, GtkWindow *parent_window)
    g_object_unref (xml);
 }
 
+
+
 static void on_new_activate (GtkMenuItem *item, GtkWindow *parent_window)
 {
    gtk_widget_show (GTK_WIDGET (newmapdialog));
 }
+
+
 
 static void on_open_activate (GtkMenuItem *item, GtkWindow *parent_window)
 {
@@ -111,6 +122,8 @@ static void on_open_activate (GtkMenuItem *item, GtkWindow *parent_window)
    }
    gtk_widget_destroy (dialog);
 }
+
+
 
 static void on_save_as_activate (GtkMenuItem *item, GtkWindow *parent_window)
 {
@@ -138,6 +151,8 @@ static void on_save_as_activate (GtkMenuItem *item, GtkWindow *parent_window)
    gtk_widget_destroy (dialog);
 }
 
+
+
 static void on_save_activate (GtkMenuItem *item, GtkWindow *parent_window)
 {
    if (current_filename) {
@@ -148,13 +163,16 @@ static void on_save_activate (GtkMenuItem *item, GtkWindow *parent_window)
    }
 }
 
+
+
 static gboolean on_mainwindow_delete_event (GtkWidget *widget, GdkEvent *event, gpointer user_data)
 {
+   GtkWidget *dialog;
    if (map_has_changed) {
-      GtkWidget *dialog = gtk_message_dialog_new (GTK_WINDOW (widget),
-                                                  0, GTK_MESSAGE_QUESTION,
-                                                  GTK_BUTTONS_NONE,
-                                                  "Save map before closing?");
+      dialog = gtk_message_dialog_new (GTK_WINDOW (widget),
+                                       0, GTK_MESSAGE_QUESTION,
+                                       GTK_BUTTONS_NONE,
+                                       "Save map before closing?");
       gtk_dialog_add_buttons (GTK_DIALOG (dialog), GTK_STOCK_CLOSE, GTK_RESPONSE_REJECT,
                               GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT, NULL);
       switch (gtk_dialog_run (GTK_DIALOG (dialog))) {
@@ -174,16 +192,22 @@ static gboolean on_mainwindow_delete_event (GtkWidget *widget, GdkEvent *event, 
    return map_has_changed;
 }
 
+
+
 static void on_quit_activate (GtkMenuItem *item, GtkWindow *parent_window)
 {
    on_mainwindow_delete_event (GTK_WIDGET (parent_window), NULL, NULL);
 }
+
+
 
 static void on_palette_button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer user_data)
 {
    current_tile = ((int) event->y / 16) * (widget->allocation.width / 16) + (int) event->x / 16;
    gtk_widget_queue_draw_area (tile_drawing_area, 0, 0, 16, 16);
 }
+
+
 
 static gboolean on_palette_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
@@ -198,6 +222,8 @@ static gboolean on_palette_expose_event (GtkWidget *widget, GdkEventExpose *even
    return TRUE;
 }
 
+
+
 static gboolean on_currenttile_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
    cairo_t *cr = gdk_cairo_create (widget->window);
@@ -210,6 +236,8 @@ static gboolean on_currenttile_expose_event (GtkWidget *widget, GdkEventExpose *
    cairo_destroy (cr);
    return TRUE;
 }
+
+
 
 static void on_layer_toggle (GtkCellRendererToggle *cell_renderer, gchar *path_str, gpointer user_data)
 {
@@ -234,6 +262,8 @@ static void on_layer_toggle (GtkCellRendererToggle *cell_renderer, gchar *path_s
    gdk_window_invalidate_rect (map_drawing_area->window, &map_drawing_area->allocation, FALSE);
 }
 
+
+
 static void on_layerselection_changed (GtkTreeSelection *treeselection, gpointer user_data)
 {
    GtkTreeModel *model;
@@ -248,6 +278,8 @@ static void on_layerselection_changed (GtkTreeSelection *treeselection, gpointer
    if (tile_drawing_area->window)
       gtk_widget_queue_draw_area (tile_drawing_area, 0, 0, 16, 16);
 }
+
+
 
 static gboolean on_map_button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer user_data)
 {
@@ -289,7 +321,8 @@ static gboolean on_map_button_press_event (GtkWidget *widget, GdkEventButton *ev
          break;
       case ZONES_FLAG:
          // Fill the zone with the value in current_value, unless current_value is 0
-         if (i = atoi (current_value))
+         i = atoi (current_value);
+         if (i != 0)
             set_zone_at (i, x, y);
          break;
       case ENTITIES_FLAG:
@@ -374,6 +407,8 @@ static gboolean on_map_button_press_event (GtkWidget *widget, GdkEventButton *ev
    return FALSE;
 }
 
+
+
 static gboolean on_map_button_release_event(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
 {
    unsigned int x = event->x / 16;
@@ -413,7 +448,11 @@ static gboolean on_map_button_release_event(GtkWidget *widget, GdkEventButton *e
    default:
       break;
    }
+
+   return FALSE;
 }
+
+
 
 static gboolean on_map_motion_notify_event(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
 {
@@ -442,7 +481,8 @@ static gboolean on_map_motion_notify_event(GtkWidget *widget, GdkEventButton *ev
          break;
       case ZONES_FLAG:
          // Fill the zone with the value in current_value, unless current_value is 0
-         if (i = atoi (current_value))
+         i = atoi (current_value);
+         if (i != 0)
             set_zone_at (i, x, y);
          break;
       default:
@@ -475,7 +515,11 @@ static gboolean on_map_motion_notify_event(GtkWidget *widget, GdkEventButton *ev
          break;
       }
    }
+
+   return FALSE;
 }
+
+
 
 static gboolean on_map_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
@@ -490,11 +534,15 @@ static gboolean on_map_expose_event (GtkWidget *widget, GdkEventExpose *event, g
    return TRUE;
 }
 
+
+
 static gboolean on_entitydialog_delete_event (GtkWidget *w, GdkEvent *e, gpointer user_data)
 {
    gtk_widget_hide (GTK_WIDGET (entitydialog));
    return TRUE;
 }
+
+
 
 static void eprops_edited_callback (GtkCellRendererText *cell, gchar *path_string, gchar *new_text, gpointer user_data)
 {
@@ -507,6 +555,8 @@ static void eprops_edited_callback (GtkCellRendererText *cell, gchar *path_strin
       map_change (gent[selected_entity].tilex, gent[selected_entity].tiley);
 }
 
+
+
 static void on_deletebutton_clicked (GtkButton *button, gpointer user_data)
 {
    map_change (gent[selected_entity].tilex, gent[selected_entity].tiley);
@@ -514,6 +564,8 @@ static void on_deletebutton_clicked (GtkButton *button, gpointer user_data)
    selected_entity = -1;
    gtk_widget_hide (GTK_WIDGET (entitydialog));
 }
+
+
 
 static void on_newmapdialog_OK_clicked (GtkWidget *w, gpointer user_data)
 {
@@ -528,10 +580,14 @@ static void on_newmapdialog_OK_clicked (GtkWidget *w, gpointer user_data)
    gtk_widget_hide (GTK_WIDGET (newmapdialog));
 }
 
+
+
 static void on_newmapdialog_cancel_clicked (GtkWidget *w, gpointer user_data)
 {
    gtk_widget_hide (GTK_WIDGET (newmapdialog));
 }
+
+
 
 gboolean on_newmapdialog_delete_event (GtkWidget *w, gpointer data)
 {
@@ -539,10 +595,15 @@ gboolean on_newmapdialog_delete_event (GtkWidget *w, gpointer data)
    return TRUE;
 }
 
+
+
 static void init_entitydialog (void)
 {
    // fill the entitydialog
    GladeXML *xml = glade_xml_new (glade_file_path, "entitydialog", NULL);
+   GtkTreeView *view;
+   GtkCellRenderer *renderer;
+   GtkTreeViewColumn *column;
 
 #define SIGNAL_CONNECT(s,p) glade_xml_signal_connect_data (xml, #s, G_CALLBACK(s), p)
    SIGNAL_CONNECT (on_deletebutton_clicked, NULL);
@@ -553,12 +614,12 @@ static void init_entitydialog (void)
 
    eprops = create_entity_model ();
 
-   GtkTreeView *view = GTK_TREE_VIEW (glade_xml_get_widget (xml, "entity"));
+   view = GTK_TREE_VIEW (glade_xml_get_widget (xml, "entity"));
 
    gtk_tree_view_set_model (view, GTK_TREE_MODEL (eprops));
 
-   GtkCellRenderer *renderer = gtk_cell_renderer_text_new ();
-   GtkTreeViewColumn *column = gtk_tree_view_column_new_with_attributes ("Property", renderer, "text", ENTITY_PROP_COLUMN, NULL);
+   renderer = gtk_cell_renderer_text_new ();
+   column = gtk_tree_view_column_new_with_attributes ("Property", renderer, "text", ENTITY_PROP_COLUMN, NULL);
    gtk_tree_view_append_column (view, column);
 
    renderer = gtk_cell_renderer_text_new ();
@@ -569,16 +630,19 @@ static void init_entitydialog (void)
    g_object_unref (xml);
 }
 
+
+
 static void init_newmapdialog (void)
 {
    int i;
    GladeXML *xml = glade_xml_new (glade_file_path, "newmapdialog", NULL);
+   GtkTable *table;
 
    newmapdialog = GTK_WINDOW (glade_xml_get_widget (xml, "newmapdialog"));
 
    /* Create combo box. We can't use glade because glade does not offer
       text-only combo boxes, which are much easier to use */
-   GtkTable *table = GTK_TABLE (glade_xml_get_widget (xml, "table_newmap"));
+   table = GTK_TABLE (glade_xml_get_widget (xml, "table_newmap"));
 
    combo_iconset = gtk_combo_box_new_text ();
    for (i = 0; i < NUM_TILESETS; i++)
@@ -599,8 +663,15 @@ static void init_newmapdialog (void)
 }
 
 
+
 void mainwindow (int *argc, char **argv[])
 {
+   GladeXML *xml;
+   GtkCellRenderer *renderer;
+   GtkTreeIter iter, layer1_iter;
+   GtkTreeView *view;
+   GtkTreeViewColumn *column;
+
    gtk_init (argc, argv);
 
    /* Set up the directory to find mapdraw2.glade */
@@ -608,7 +679,7 @@ void mainwindow (int *argc, char **argv[])
    if (!exists (glade_file_path))
       strcpy (glade_file_path, GLADE_FILENAME); /* maybe it is in current directory */
 
-   GladeXML *xml = glade_xml_new (glade_file_path, "mainwindow", NULL);
+   xml = glade_xml_new (glade_file_path, "mainwindow", NULL);
 
    /* get a widget (useful if you want to change something) */
    window = GTK_WINDOW (glade_xml_get_widget (xml, "mainwindow"));
@@ -639,8 +710,6 @@ void mainwindow (int *argc, char **argv[])
    // Fill the list
    layers = gtk_list_store_new (LAYER_N_COLUMNS, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_UINT);
 
-   GtkTreeIter iter, layer1_iter;
-
 #define ADD_LAYER(f, n) \
    gtk_list_store_append (layers, &iter); \
    gtk_list_store_set (layers, &iter, \
@@ -657,19 +726,19 @@ void mainwindow (int *argc, char **argv[])
    ADD_LAYER (ZONES_FLAG, "Zones");
    ADD_LAYER (MARKERS_FLAG, "Markers");
    ADD_LAYER (ENTITIES_FLAG, "Entities");
-   ADD_LAYER (BOUNDING_FLAG, "Bouding Boxes");
+   ADD_LAYER (BOUNDING_FLAG, "Bounding Boxes");
 #undef ADD_LAYER
 
-   GtkTreeView *view = GTK_TREE_VIEW (glade_xml_get_widget (xml, "layers"));
+   view = GTK_TREE_VIEW (glade_xml_get_widget (xml, "layers"));
 
    g_signal_connect (gtk_tree_view_get_selection (view), "changed", G_CALLBACK (on_layerselection_changed), NULL);
    gtk_tree_view_set_model (view, GTK_TREE_MODEL (layers));
 
-   GtkCellRenderer *renderer = gtk_cell_renderer_toggle_new ();
+   renderer = gtk_cell_renderer_toggle_new ();
 
    g_signal_connect (renderer, "toggled", G_CALLBACK (on_layer_toggle), layers);
 
-   GtkTreeViewColumn *column =
+   column =
       gtk_tree_view_column_new_with_attributes ("", renderer, "active", LAYER_SHOW_COLUMN, NULL);
 
    gtk_tree_view_append_column (view, column);
@@ -698,6 +767,8 @@ void mainwindow (int *argc, char **argv[])
 
    gtk_main ();
 }
+
+
 
 void error_load (const char *filename)
 {

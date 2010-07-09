@@ -207,9 +207,10 @@ static void beffect_one_enemy (int caster, int tgt, int spell_number)
       break;
    case M_STONE:
       if (non_dmg_save (tgt, sp_hit) == 0) {
-         for (a = 0; a < 24; a++)
+         for (a = 0; a < 24; a++) {
             if (a != S_DEAD)
                fighter[tgt].sts[a] = 0;
+         }
          fighter[tgt].sts[S_STONE] = rand () % 3 + 3;
       } else
          ta[tgt] = MISS;

@@ -135,7 +135,7 @@ extern unsigned char *z_seg, *s_seg, *o_seg;
 extern unsigned char progress[SIZE_PROGRESS];
 extern unsigned char treasure[SIZE_TREASURE];
 extern unsigned char save_spells[SIZE_SAVE_SPELL];
-extern BITMAP *kfonts/*, *portrait[MAXCHRS]*/;
+extern BITMAP *kfonts;
 extern s_map g_map;
 extern s_entity g_ent[MAX_ENT + PSIZE];
 extern s_anim tanim[MAX_TILESETS][MAX_ANIM];

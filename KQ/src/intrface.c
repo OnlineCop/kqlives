@@ -55,6 +55,7 @@
 #include "draw.h"
 #include "effects.h"
 #include "enemyc.h"
+#include "enums.h"
 #include "fade.h"
 #include "heroc.h"
 #include "intrface.h"
@@ -282,12 +283,12 @@ static int KQ_wait_for_entity (lua_State *);
 static int KQ_warp (lua_State *);
 
 
-static void set_btile(int, int, int);
-static void set_mtile(int, int, int);
-static void set_ftile(int, int, int);
-static void set_zone(int, int, int);
-static void set_obs(int, int, int);
-static void set_shadow(int, int, int);
+static void set_btile (int, int, int);
+static void set_mtile (int, int, int);
+static void set_ftile (int, int, int);
+static void set_zone (int, int, int);
+static void set_obs (int, int, int);
+static void set_shadow (int, int, int);
 
 
 static const struct luaL_reg lrs[] = {
@@ -1746,7 +1747,8 @@ static int KQ_create_bmp (lua_State *L)
 
 static int KQ_create_df (lua_State *L)
 {
-   g_df = load_datafile_object (kqres (DATA_DIR, lua_tostring (L, 1)), lua_tostring (L, 2));
+   g_df = load_datafile_object (kqres (DATA_DIR, lua_tostring (L, 1)),
+                                lua_tostring (L, 2));
    return 0;
 }
 
@@ -2234,10 +2236,10 @@ static int KQ_get_numchrs (lua_State *L)
  */
 static int KQ_get_party_eqp (lua_State *L)
 {
-   int a = (int) lua_tonumber (L, 1);
-   int b = (int) lua_tonumber (L, 2);
+   unsigned int a = (unsigned int) lua_tonumber (L, 1);
+   unsigned int b = (unsigned int) lua_tonumber (L, 2);
 
-   if (a >= 0 && a <= 7 && b >= 0 && b <= 5)
+   if (a < MAXCHRS && b < NUM_EQUIPMENT)
       lua_pushnumber (L, party[a].eqp[b]);
    return 1;
 }
@@ -3112,12 +3114,13 @@ static int KQ_select_team (lua_State *L)
 
 static int KQ_set_all_equip (lua_State *L)
 {
-   int a = (int) lua_tonumber (L, 1);
-   int b, c;
+   unsigned int a = (unsigned int) lua_tonumber (L, 1);
+   unsigned int b;
+   int c;
 
-   if (a < 0 || a > MAXCHRS)
+   if (a > MAXCHRS)
       return 0;
-   for (b = 0; b < 6; b++) {
+   for (b = 0; b < NUM_EQUIPMENT; b++) {
       c = (int) lua_tonumber (L, b + 2);
       if (c >= 0)
          party[a].eqp[b] = c;
@@ -3151,10 +3154,8 @@ static int KQ_set_autoparty (lua_State *L)
 
 static int KQ_set_background (lua_State *L)
 {
-   int a = (int) lua_tonumber (L, 1);
+   draw_background = ((int) lua_tonumber (L, 1) == 0) ? 0 : 1;
 
-   if (a == 0 || a == 1)
-      draw_background = a;
    return 0;
 }
 
@@ -3174,12 +3175,16 @@ static int KQ_set_background (lua_State *L)
 static int KQ_set_btile (lua_State *L)
 {
    if (lua_type (L, 1) == LUA_TSTRING) {
-      /* set_btile("marker", value) */
+      /* Format:
+       *    set_btile("marker", value)
+       */
       s_marker *m = find_marker (lua_tostring (L, 1), 1);
 
       set_btile (m->x, m->y, (int) lua_tonumber (L, 2));
    } else {
-      /* set_btile(x, y, value) */
+      /* Format:
+       *    set_btile(x, y, value)
+       */
       set_btile ((int) lua_tonumber (L, 1), (int) lua_tonumber (L, 2),
                  (int) lua_tonumber (L, 3));
    }
@@ -3381,10 +3386,8 @@ static int KQ_set_ent_transl (lua_State *L)
 
 static int KQ_set_foreground (lua_State *L)
 {
-   int a = (int) lua_tonumber (L, 1);
+   draw_foreground = ((int) lua_tonumber (L, 1) == 0) ? 0 : 1;
 
-   if (a == 0 || a == 1)
-      draw_foreground = a;
    return 0;
 }
 
@@ -3404,12 +3407,16 @@ static int KQ_set_foreground (lua_State *L)
 static int KQ_set_ftile (lua_State *L)
 {
    if (lua_type (L, 1) == LUA_TSTRING) {
-      /* set_ftile("marker", value) */
+      /* Format:
+       *    set_ftile("marker", value)
+       */
       s_marker *m = find_marker (lua_tostring (L, 1), 1);
 
       set_ftile (m->x, m->y, (int) lua_tonumber (L, 2));
    } else {
-      /* set_ftile(x, y, value) */
+      /* Format:
+       *    set_ftile(x, y, value)
+       */
       set_ftile ((int) lua_tonumber (L, 1), (int) lua_tonumber (L, 2),
                  (int) lua_tonumber (L, 3));
    }
@@ -3476,10 +3483,8 @@ static int KQ_set_marker (lua_State *L)
 
 static int KQ_set_midground (lua_State *L)
 {
-   int a = (int) lua_tonumber (L, 1);
+   draw_middle = ((int) lua_tonumber (L, 1) == 0) ? 0 : 1;
 
-   if (a == 0 || a == 1)
-      draw_middle = a;
    return 0;
 }
 
@@ -3499,12 +3504,16 @@ static int KQ_set_midground (lua_State *L)
 static int KQ_set_mtile (lua_State *L)
 {
    if (lua_type (L, 1) == LUA_TSTRING) {
-      /* set_mtile("marker", value) */
+      /* Format:
+       *    set_mtile("marker", value)
+       */
       s_marker *m = find_marker (lua_tostring (L, 1), 1);
 
       set_mtile (m->x, m->y, (int) lua_tonumber (L, 2));
    } else {
-      /* set_mtile(x, y, value) */
+      /* Format:
+       *    set_mtile(x, y, value)
+       */
       set_mtile ((int) lua_tonumber (L, 1), (int) lua_tonumber (L, 2),
                  (int) lua_tonumber (L, 3));
    }
@@ -3517,7 +3526,7 @@ static int KQ_set_noe (lua_State *L)
 {
    int a = (int) lua_tonumber (L, 1);
 
-   if (a >= 0 && a <= 50 + PSIZE)
+   if (a >= 0 && a <= MAX_ENT + PSIZE)
       noe = a;
    return 0;
 }
@@ -3538,12 +3547,16 @@ static int KQ_set_noe (lua_State *L)
 static int KQ_set_obs (lua_State *L)
 {
    if (lua_type (L, 1) == LUA_TSTRING) {
-      /* set_obs("marker", value) */
+      /* Format:
+       *    set_obs("marker", value)
+       */
       s_marker *m = find_marker (lua_tostring (L, 1), 1);
 
       set_obs (m->x, m->y, (int) lua_tonumber (L, 2));
    } else {
-      /* set_obs(x, y, value) */
+      /* Format:
+       *    set_obs(x, y, value)
+       */
       set_obs ((int) lua_tonumber (L, 1), (int) lua_tonumber (L, 2),
                (int) lua_tonumber (L, 3));
    }
@@ -3563,10 +3576,10 @@ static int KQ_set_obs (lua_State *L)
  */
 static int KQ_set_party_eqp (lua_State *L)
 {
-   int a = (int) lua_tonumber (L, 1);
-   int b = (int) lua_tonumber (L, 2);
+   unsigned int a = (unsigned int) lua_tonumber (L, 1);
+   unsigned int b = (unsigned int) lua_tonumber (L, 2);
 
-   if (a >= 0 && a <= 7 && b >= 0 && b <= 5)
+   if (a < MAXCHRS && b < NUM_EQUIPMENT)
       party[a].eqp[b] = (int) lua_tonumber (L, 3);
    return 0;
 }
@@ -3821,12 +3834,16 @@ static int KQ_set_save (lua_State *L)
 static int KQ_set_shadow (lua_State *L)
 {
    if (lua_type (L, 1) == LUA_TSTRING) {
-      /* set_shadow("marker", value) */
+      /* Format:
+       *    set_shadow("marker", value)
+       */
       s_marker *m = find_marker (lua_tostring (L, 1), 1);
 
       set_shadow (m->x, m->y, (int) lua_tonumber (L, 2));
    } else {
-      /* set_shadow(x, y, value) */
+      /* Format:
+       *    set_shadow(x, y, value)
+       */
       set_shadow ((int) lua_tonumber (L, 1), (int) lua_tonumber (L, 2),
                   (int) lua_tonumber (L, 3));
    }
@@ -3944,12 +3961,16 @@ static int KQ_set_can_use_item (lua_State *L)
 static int KQ_set_zone (lua_State *L)
 {
    if (lua_type (L, 1) == LUA_TSTRING) {
-      /* set_zone("marker", value) */
+      /* Format:
+       *    set_zone("marker", value)
+       */
       s_marker *m = find_marker (lua_tostring (L, 1), 1);
 
       set_zone (m->x, m->y, (int) lua_tonumber (L, 2));
    } else {
-      /* set_zone(x, y, value) */
+      /* Format:
+       *    set_zone(x, y, value)
+       */
       set_zone ((int) lua_tonumber (L, 1), (int) lua_tonumber (L, 2),
                 (int) lua_tonumber (L, 3));
    }
@@ -4418,42 +4439,42 @@ static int real_entity_num (lua_State *L, int pos)
 
 
 
-static void set_btile(int x, int y, int value)
+static void set_btile (int x, int y, int value)
 {
    map_seg[y * g_map.xsize + x] = value;
 }
 
 
 
-static void set_mtile(int x, int y, int value)
+static void set_mtile (int x, int y, int value)
 {
    b_seg[y * g_map.xsize + x] = value;
 }
 
 
 
-static void set_ftile(int x, int y, int value)
+static void set_ftile (int x, int y, int value)
 {
    f_seg[y * g_map.xsize + x] = value;
 }
 
 
 
-static void set_zone(int x, int y, int value)
+static void set_zone (int x, int y, int value)
 {
    z_seg[y * g_map.xsize + x] = value;
 }
 
 
 
-static void set_obs(int x, int y, int value)
+static void set_obs (int x, int y, int value)
 {
    o_seg[y * g_map.xsize + x] = value;
 }
 
 
 
-static void set_shadow(int x, int y, int value)
+static void set_shadow (int x, int y, int value)
 {
    s_seg[y * g_map.xsize + x] = value;
 }

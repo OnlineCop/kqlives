@@ -28,6 +28,9 @@
  * \date 20030629
  */
 
+
+#include <assert.h>
+
 #include "bounds.h"
 #include "disk.h"
 #include "markers.h"
@@ -286,7 +289,7 @@ int load_s_player (s_player *s, PACKFILE *f)
    for (i = 0; i < 24; ++i) {
       s->sts[i] = pack_getc (f);
    }
-   for (i = 0; i < 6; ++i) {
+   for (i = 0; i < NUM_EQUIPMENT; ++i) {
       s->eqp[i] = pack_getc (f);
    }
    for (i = 0; i < 60; ++i) {
@@ -324,7 +327,7 @@ int save_s_player (s_player *s, PACKFILE *f)
    for (i = 0; i < 24; ++i) {
       pack_putc (s->sts[i], f);
    }
-   for (i = 0; i < 6; ++i) {
+   for (i = 0; i < NUM_EQUIPMENT; ++i) {
       pack_putc (s->eqp[i], f);
    }
    for (i = 0; i < 60; ++i) {
