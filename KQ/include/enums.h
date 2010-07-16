@@ -42,6 +42,8 @@ enum eSizes
 {
 	TILE_H = 16,
 	TILE_W = 16,
+	ENT_W  = 16,
+	ENT_H  = 16,
 	NUM_SPELLS_PER_PAGE = 12,
 	NUM_ITEMS_PER_PAGE = 16,
 };

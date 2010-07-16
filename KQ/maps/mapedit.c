@@ -163,8 +163,8 @@ static const char *map_mode_text[] = {
 /*! Current sequence position of animated tiles */
 unsigned short tilex[MAX_TILES];
 
-const int htiles = (SW - 80) / 16;
-const int vtiles = (SH - 48) / 16;
+const int htiles = (SW - 80) / TILE_W;
+const int vtiles = (SH - 48) / TILE_H;
 int column[8], row[8];
 
 /*! Markers in use in this map */
@@ -754,15 +754,15 @@ void draw_layer (short *layer, const int parallax)
       layer_y2 = gmap.ysize;
 
    /* Calculate the pixel-based coordinate of the top left */
-   x0 = layer_x1 * 16;
-   y0 = layer_y1 * 16;
+   x0 = layer_x1 * TILE_W;
+   y0 = layer_y1 * TILE_H;
 
    /* ...And draw the tilemap */
    for (j = layer_y1; j < layer_y2; ++j) {
       for (layer_x = layer_x1; layer_x < layer_x2; ++layer_x) {
          draw_sprite (double_buffer,
                       icons[tilex[layer[layer_x + j * gmap.xsize]]],
-                      layer_x * 16 - x0, j * 16 - y0);
+                      layer_x * TILE_W - x0, j * TILE_W - y0);
       }
    }
 }                               /* draw_layer () */
@@ -790,7 +790,7 @@ void draw_map (void)
       showing.layer[i] = 0;
 
    /* Clear everything with black */
-   rectfill (double_buffer, 0, 0, htiles * 16, vtiles * 16, 0);
+   clear_bitmap (double_buffer);
 
    /* The maxx/maxy is used since the map isn't always as large as the
     * view-window; we don't want to check/update anything that would be out of
@@ -844,28 +844,28 @@ void draw_map (void)
 
          /* Clear the background before drawing */
          if ((draw_mode >= MAP_LAYER1 && draw_mode <= MAP_LAYER3))
-            rectfill (double_buffer, dx * 16, dy * 16, dx * 16 + 15,
-                      dy * 16 + 15, 0);
+            rectfill (double_buffer, dx * TILE_W, dy * TILE_H,
+                      (dx + 1) * TILE_W - 1, (dy + 1) * TILE_H - 1, 0);
 
          if (showing.layer[0])
-            draw_sprite (double_buffer, icons[map[w]], dx * 16, dy * 16);
+            draw_sprite (double_buffer, icons[map[w]], dx * TILE_W, dy * TILE_H);
          if (showing.layer[1])
-            draw_sprite (double_buffer, icons[b_map[w]], dx * 16, dy * 16);
+            draw_sprite (double_buffer, icons[b_map[w]], dx * TILE_W, dy * TILE_H);
          if (showing.layer[2])
-            draw_sprite (double_buffer, icons[f_map[w]], dx * 16, dy * 16);
+            draw_sprite (double_buffer, icons[f_map[w]], dx * TILE_W, dy * TILE_H);
 
          /* Draw the Shadows */
          assert (sh_map[w] < MAX_SHADOWS && "sh_map[w] >= MAX_SHADOWS\n");
          if (showing.shadows && (sh_map[w] > 0)) {
-            draw_trans_sprite (double_buffer, shadow[sh_map[w]], dx * 16,
-                               dy * 16);
+            draw_trans_sprite (double_buffer, shadow[sh_map[w]], dx * TILE_W,
+                               dy * TILE_H);
          }
 
          /* Draw the Obstacles */
          assert (o_map[w] <= MAX_OBSTACLES && "o_map[w] >= MAX_OBSTACLES\n");
          if ((showing.obstacles) && (o_map[w] > 0)
              && (o_map[w] <= MAX_OBSTACLES)) {
-            draw_sprite (double_buffer, mesh1[o_map[w] - 1], dx * 16, dy * 16);
+            draw_sprite (double_buffer, mesh1[o_map[w] - 1], dx * TILE_W, dy * TILE_W);
          }                      // if (showing.obstacles)
 
          /* Draw the Zones */
@@ -873,21 +873,21 @@ void draw_map (void)
 
             if (z_map[w] < 10) {
                /* The zone's number is single-digit, center vert+horiz */
-               textprintf_ex (double_buffer, font, dx * 16 + 4, dy * 16 + 4,
+               textprintf_ex (double_buffer, font, dx * TILE_W + 4, dy * TILE_H + 4,
                               makecol (255, 255, 255), 0, "%d", z_map[w]);
             } else if (z_map[w] < 100) {
                /* The zone's number is double-digit, center only vert */
-               textprintf_ex (double_buffer, font, dx * 16, dy * 16 + 4,
+               textprintf_ex (double_buffer, font, dx * TILE_W, dy * TILE_H + 4,
                               makecol (255, 255, 255), 0, "%d", z_map[w]);
             } else {
                /* The zone's number is triple-digit.  Print the 100's digit in
                 * top-center of the square; the 10's and 1's digits on bottom
                 * of the square
                 */
-               textprintf_ex (double_buffer, font, dx * 16 + 4, dy * 16,
+               textprintf_ex (double_buffer, font, dx * TILE_W + 4, dy * TILE_H,
                               makecol (255, 255, 255), 0, "%d",
                               (int) (z_map[w] / 100));
-               textprintf_ex (double_buffer, font, dx * 16, dy * 16 + 8,
+               textprintf_ex (double_buffer, font, dx * TILE_W, dy * TILE_H + TILE_H / 2,
                               makecol (255, 255, 255), 0, "%02d",
                               (int) (z_map[w] % 100));
             }
@@ -901,14 +901,14 @@ void draw_map (void)
                     && curobs > 0)
                 || (draw_mode == MAP_ZONES && z_map[w] == curzone
                     && curzone > 0))
-               draw_sprite (double_buffer, mesh2, dx * 16, dy * 16);
+               draw_sprite (double_buffer, mesh2, dx * TILE_W, dy * TILE_H);
          }
          // Try to hilight the currently-selected attrib
          if (curr_x != NULL && curr_y != NULL) {
             if ((window_x + dx == *curr_x && window_y + dy == *curr_y)
                 && (draw_mode == MAP_OBSTACLES || draw_mode == MAP_SHADOWS
                     || draw_mode == MAP_ZONES)) {
-               draw_sprite (double_buffer, mesh_h, dx * 16, dy * 16);
+               draw_sprite (double_buffer, mesh_h, dx * TILE_W, dy * TILE_H);
             }
          }
 
@@ -919,7 +919,7 @@ void draw_map (void)
    for (dy = 0; dy < vtiles; dy++) {
       for (dx = 0; dx < htiles; dx++) {
          if ((dy > maxy - 1) || (dx > maxx - 1)) {
-            draw_sprite (double_buffer, mesh3, dx * 16, dy * 16);
+            draw_sprite (double_buffer, mesh3, dx * TILE_W, dy * TILE_H);
          }
       }
    }
@@ -932,8 +932,8 @@ void draw_map (void)
              && (gmap.markers[i].y >= window_y)
              && (gmap.markers[i].y < window_y + vtiles)) {
             draw_sprite (double_buffer, marker_image,
-                         (gmap.markers[i].x - window_x) * 16 + 8,
-                         (gmap.markers[i].y - window_y) * 16 - 8);
+                         (gmap.markers[i].x - window_x) * TILE_W + TILE_W / 2,
+                         (gmap.markers[i].y - window_y) * TILE_H - TILE_H / 2);
          }                      /* If marker is visible */
       }                         /* For each marker */
 
@@ -941,8 +941,8 @@ void draw_map (void)
       if (draw_mode == MAP_MARKERS) {
          /* Put a rectangle around the selected one for clarity */
          draw_sprite (double_buffer, mesh_h,
-                      (gmap.markers[curmarker].x - window_x) * 16,
-                      (gmap.markers[curmarker].y - window_y) * 16);
+                      (gmap.markers[curmarker].x - window_x) * TILE_W,
+                      (gmap.markers[curmarker].y - window_y) * TILE_H);
       }
    }
 
@@ -957,13 +957,13 @@ void draw_map (void)
             if (gent[i].transl == 0) {
                draw_sprite (double_buffer,
                             eframes[gent[i].chrx][gent[i].facing * 3],
-                            (gent[i].tilex - window_x) * 16,
-                            (gent[i].tiley - window_y) * 16);
+                            (gent[i].tilex - window_x) * TILE_W,
+                            (gent[i].tiley - window_y) * TILE_H);
             } else {
                draw_trans_sprite (double_buffer,
                                   eframes[gent[i].chrx][gent[i].facing * 3],
-                                  (gent[i].tilex - window_x) * 16,
-                                  (gent[i].tiley - window_y) * 16);
+                                  (gent[i].tilex - window_x) * TILE_W,
+                                  (gent[i].tiley - window_y) * TILE_H);
             }                   // if..else ()
          }                      // if (gent[i].tilex/tiley)
       }                         // for (i)
@@ -974,12 +974,12 @@ void draw_map (void)
       // Using this simply because it will hold our 4 coords easier
       s_bound crect;
 
-      crect.left = (copyx1 - window_x) * 16;
-      crect.top = (copyy1 - window_y) * 16;
+      crect.left = (copyx1 - window_x) * TILE_W;
+      crect.top = (copyy1 - window_y) * TILE_H;
       crect.right = copyx2 < window_x + htiles ?
-         (copyx2 - window_x) * 16 + 15 : htiles * 16;
+         (copyx2 + 1 - window_x) * TILE_W - 1 : htiles * TILE_W;
       crect.bottom = copyy2 < window_y + vtiles ?
-         (copyy2 - window_y) * 16 + 15 : vtiles * 16;
+         (copyy2 + 1 - window_y) * TILE_H - 1 : vtiles * TILE_H;
 
       if (copying == 0) {
          /* Highlight the selected tile (takes into account window's coords) */
@@ -987,8 +987,8 @@ void draw_map (void)
                crect.bottom + 1, 25);
       } else {
          /* Only the initial tile is selected */
-         rect (double_buffer, crect.left - 1, crect.top - 1, crect.left + 16,
-               crect.top + 16, 25);
+         rect (double_buffer, crect.left - 1, crect.top - 1, crect.left + TILE_W,
+               crect.top + TILE_H, 25);
       }
    }
 
@@ -1011,10 +1011,10 @@ void draw_map (void)
 
       /* Draw a rectangle around the current selection, if it exists */
       if (active_bound) {
-         rectb.left = (bound_box[num_bound_boxes].left - window_x) * 16;
-         rectb.top = (bound_box[num_bound_boxes].top - window_y) * 16;
-         rectb.right = (bound_box[num_bound_boxes].left - window_x) * 16 + 15;
-         rectb.bottom = (bound_box[num_bound_boxes].top - window_y) * 16 + 15;
+         rectb.left = (bound_box[num_bound_boxes].left - window_x) * TILE_W;
+         rectb.top = (bound_box[num_bound_boxes].top - window_y) * TILE_W;
+         rectb.right = (bound_box[num_bound_boxes].left + 1 - window_x) * TILE_W - 1;
+         rectb.bottom = (bound_box[num_bound_boxes].top + 1 - window_y) * TILE_H - 1;
          rect (double_buffer, rectb.left, rectb.top, rectb.right, rectb.bottom, 41);
       }
    }
@@ -1177,14 +1177,14 @@ void draw_menubars (void)
    }                            /* switch (showing.last_layer) */
 
    /* Clear the bottom and right sides so we don't leave any artifacts */
-   rectfill (double_buffer, 0, vtiles * 16 + 2, htiles * 16 + 2, SH - 1, 0);
-   rectfill (double_buffer, htiles * 16 + 2, 0, SW - 1, SH - 1, 0);
+   rectfill (double_buffer, 0, vtiles * TILE_H + 2, htiles * TILE_W + 2, SH - 1, 0);
+   rectfill (double_buffer, htiles * TILE_W + 2, 0, SW - 1, SH - 1, 0);
 
    /* The white horizontal line that seperates the bottom menu */
-   hline (double_buffer, 0, vtiles * 16 + 1, htiles * 16 + 1, 255);
+   hline (double_buffer, 0, vtiles * TILE_H + 1, htiles * TILE_W + 1, 255);
 
    /* The white verticle bar that seperates the right tileset */
-   vline (double_buffer, htiles * 16 + 1, 0, vtiles * 16 + 1, 255);
+   vline (double_buffer, htiles * TILE_W + 1, 0, vtiles * TILE_H + 1, 255);
 
    /* The name of the current map */
    sprintf (strbuf, "Map:  %s", map_fname);
@@ -1265,8 +1265,8 @@ void draw_menubars (void)
 
    /* Displays the value of the Entity under the mouse */
    if (draw_mode == MAP_ENTITIES && number_of_ents > 0) {
-      xp = mouse_x / 16;
-      yp = mouse_y / 16;
+      xp = mouse_x / TILE_W;
+      yp = mouse_y / TILE_H;
 
       for (p = 0; p < number_of_ents; p++) {
          if (gent[p].tilex == window_x + xp && gent[p].tiley == window_y + yp) {
@@ -1284,8 +1284,8 @@ void draw_menubars (void)
       else
          sprintf (strbuf, "Obstacle #%d", curobs);
       print_sfont (column[4], row[0], strbuf, double_buffer);
-      xp = mouse_x / 16;
-      yp = mouse_y / 16;
+      xp = mouse_x / TILE_W;
+      yp = mouse_y / TILE_H;
       if (xp < htiles && yp < vtiles) {
          p = o_map[((window_y + yp) * gmap.xsize) + window_x + xp];
          sprintf (strbuf, "Current Tile: %d", p);
@@ -1301,8 +1301,8 @@ void draw_menubars (void)
       else
          sprintf (strbuf, "Shadow #%d", curshadow);
       print_sfont (column[4], row[0], strbuf, double_buffer);
-      xp = mouse_x / 16;
-      yp = mouse_y / 16;
+      xp = mouse_x / TILE_W;
+      yp = mouse_y / TILE_H;
       if (xp < htiles && yp < vtiles) {
          p = sh_map[((window_y + yp) * gmap.xsize) + window_x + xp];
          sprintf (strbuf, "Current Tile: %d", p);
@@ -1318,8 +1318,8 @@ void draw_menubars (void)
       else
          sprintf (strbuf, "Zone #%d", curzone);
       print_sfont (column[4], row[0], strbuf, double_buffer);
-      xp = mouse_x / 16;
-      yp = mouse_y / 16;
+      xp = mouse_x / TILE_W;
+      yp = mouse_y / TILE_W;
       if (xp < htiles && yp < vtiles) {
          p = z_map[((window_y + yp) * gmap.xsize) + window_x + xp];
          sprintf (strbuf, "Current Tile: %d", p);
@@ -1335,8 +1335,8 @@ void draw_menubars (void)
                gmap.markers[curmarker].name, gmap.markers[curmarker].x,
                gmap.markers[curmarker].y);
       print_sfont (column[4], row[0], strbuf, double_buffer);
-      xp = mouse_x / 16;
-      yp = mouse_y / 16;
+      xp = mouse_x / TILE_H;
+      yp = mouse_y / TILE_W;
       for (p = 0; p < num_markers; p++) {
          if (gmap.markers[p].x == xp + window_x && gmap.markers[p].y == yp + window_y) {
             sprintf (strbuf, "Current Marker:");
@@ -1354,8 +1354,8 @@ void draw_menubars (void)
                bound_box[curbound_box].top, bound_box[curbound_box].right,
                bound_box[curbound_box].bottom, bound_box[curbound_box].btile);
       print_sfont (column[4], row[0], strbuf, double_buffer);
-      xp = mouse_x / 16 + window_x;
-      yp = mouse_y / 16 + window_y;
+      xp = mouse_x / TILE_H + window_x;
+      yp = mouse_y / TILE_W + window_y;
       for (p = 0; p < num_bound_boxes; p++) {
          if ((xp >= bound_box[p].left && xp <= bound_box[p].right)
              && (yp >= bound_box[p].top && yp <= bound_box[p].bottom)) {
@@ -1399,8 +1399,10 @@ void draw_menubars (void)
 
    /* Add a border around the iconset on the right */
    for (p = 0; p < 8; p++) {
-      rect (double_buffer, htiles * 16 + p + 2, p, (htiles + 5) * 16 - (p + 1),
-            173 - p, 24 - p);
+      rect (double_buffer, htiles * TILE_W + p + 2, p,
+            (htiles + 5) * TILE_W - (p + 1),
+            173 - p, // OC TODO: What does "173" represent, and can it be made more dynamic?
+            24 - p);
    }
 
    /* Display the iconset in the right menu */
@@ -1408,26 +1410,28 @@ void draw_menubars (void)
       for (p = 0; p < ICONSET_SIZE2; p++) {
          /* Left 20 icons */
          blit (icons[icon_set * ICONSET_SIZE + p], double_buffer, 0, 0,
-               htiles * 16 + 8 + 1, p * 16 + 8 - 1, 16, 16);
+               htiles * TILE_W + TILE_W / 2 + 1, p * TILE_H + TILE_H / 2 - 1,
+               TILE_W, TILE_H);
          blit (icons[icon_set * ICONSET_SIZE + p + ICONSET_SIZE2],
-               double_buffer, 0, 0, (htiles + 1) * 16 + 8 + 1, p * 16 + 8 - 1,
-               16, 16);
+               double_buffer, 0, 0, (htiles + 1) * TILE_W + TILE_W / 2 + 1,
+               p * TILE_H + TILE_H / 2 - 1, TILE_W, TILE_H);
          /* Right 20 icons */
          if ((icon_set + 1) * ICONSET_SIZE + p < max_sets * ICONSET_SIZE) {
             blit (icons[(icon_set + 1) * ICONSET_SIZE + p],
-                  double_buffer, 0, 0, (htiles + 2) * 16 + 8 + 1,
-                  p * 16 + 8 - 1, 16, 16);
+                  double_buffer, 0, 0, (htiles + 2) * TILE_W + TILE_W / 2 + 1,
+                  p * TILE_H + TILE_H / 2 - 1, TILE_W, TILE_H);
             blit (icons[(icon_set + 1) * ICONSET_SIZE + p + ICONSET_SIZE2],
-                  double_buffer, 0, 0, (htiles + 3) * 16 + 8 + 1,
-                  p * 16 + 8 - 1, 16, 16);
+                  double_buffer, 0, 0, (htiles + 3) * TILE_W + TILE_W / 2 + 1,
+                  p * TILE_H + TILE_H / 2 - 1, TILE_W, TILE_H);
          } else {
             /* This loops the first 20 icons around when you're at the end of
              * the icon_set
              */
-            blit (icons[p], double_buffer, 0, 0, (htiles + 2) * 16 + 8 + 1,
-                  p * 16 + 8 - 1, 16, 16);
+            blit (icons[p], double_buffer, 0, 0, (htiles + 2) * TILE_W + TILE_W / 2 + 1,
+                  p * TILE_H + TILE_H / 2 - 1, TILE_W, TILE_W);
             blit (icons[ICONSET_SIZE2 + p], double_buffer, 0, 0,
-                  (htiles + 3) * 16 + 8 + 1, p * 16 + 8 - 1, 16, 16);
+                  (htiles + 3) * TILE_W + TILE_W / 2 + 1, p * TILE_H + TILE_H / 2 - 1,
+                  TILE_W, TILE_H);
          }                      // if..else ()
       }                         // for (p)
    }                            // if (icon_set)
@@ -1452,38 +1456,38 @@ void draw_menubars (void)
 
    /* Draw the rectangle around the selected icon */
    if (draw_the_rect) {
-      rect (double_buffer, (xp + htiles) * 16 + 8 + 1, yp * 16 + 8 - 1,
-            (xp + htiles + 1) * 16 + 8 + 1, (yp + 1) * 16 + 8 - 1, 255);
+      rect (double_buffer, (xp + htiles) * TILE_W + TILE_W / 2 + 1, yp * TILE_H + TILE_H / 2 - 1,
+            (xp + htiles + 1) * TILE_W + TILE_W / 2 + 1, (yp + 1) * TILE_H + TILE_H / 2 - 1, 255);
    }
 
    /* Determine which tile is going to be displayed */
    if (draw_mode == MAP_ENTITIES) {
       sprintf (strbuf, "Entity");
-      stretch_blit (eframes[current_ent][0], double_buffer, 0, 0, 16, 16,
-                    (htiles + 1) * 16 + 8, 250, 32, 32);
+      stretch_blit (eframes[current_ent][0], double_buffer, 0, 0, TILE_W, TILE_H,
+                    (htiles + 1) * TILE_W + TILE_W / 2, 250, TILE_W * 2, TILE_H * 2);
    } else if (draw_mode == MAP_OBSTACLES) {
       sprintf (strbuf, "Obstacle");
       if (curobs > 0) {
-         stretch_blit (mesh1[curobs - 1], double_buffer, 0, 0, 16, 16,
-                       (htiles + 1) * 16 + 8, 250, 32, 32);
+         stretch_blit (mesh1[curobs - 1], double_buffer, 0, 0, TILE_W, TILE_H,
+                       (htiles + 1) * TILE_W + TILE_W / 2, 250, TILE_W * 2, TILE_H * 2);
       }
    } else if (draw_mode == MAP_SHADOWS) {
       sprintf (strbuf, "Shadow");
-      stretch_blit (shadow[curshadow], double_buffer, 0, 0, 16, 16,
-                    (htiles + 1) * 16 + 8, 250, 32, 32);
+      stretch_blit (shadow[curshadow], double_buffer, 0, 0, TILE_W, TILE_H,
+                    (htiles + 1) * TILE_W + TILE_W / 2, 250, TILE_W * 2, TILE_H * 2);
    } else if (draw_mode == MAP_MARKERS) {
       sprintf (strbuf, "Markers");
-      stretch_blit (marker_image, double_buffer, 0, 0, 16, 16,
-                    (htiles + 1) * 16 + 8, 250, 32, 32);
+      stretch_blit (marker_image, double_buffer, 0, 0, TILE_W, TILE_H,
+                    (htiles + 1) * TILE_W + TILE_W / 2, 250, TILE_W * 2, TILE_H * 2);
 
       /* Align the numbers inside the Preview window */
-      p = (htiles + 3) * 16;
+      p = (htiles + 3) * TILE_W;
       if (curmarker < 10)
          p += 1;
       else if (curmarker < 100)
-         p -= 7;
+         p -= (TILE_W / 2 - 1);
       else if (curmarker < 1000)
-         p -= 15;
+         p -= (TILE_W - 1);
 
       if (num_markers > 0) {
          textprintf_ex (double_buffer, font, p, 274,
@@ -1493,67 +1497,64 @@ void draw_menubars (void)
       sprintf (strbuf, "Bound");
    } else {
       sprintf (strbuf, "Tile");
-      stretch_blit (icons[curtile], double_buffer, 0, 0, 16, 16,
-                    (htiles + 1) * 16 + 8, 250, 32, 32);
+      stretch_blit (icons[curtile], double_buffer, 0, 0, TILE_W, TILE_H,
+                    (htiles + 1) * TILE_W + TILE_W / 2, 250, TILE_W * 2, TILE_H * 2);
    }
-   print_sfont (htiles * 16 + 42 - (strlen (strbuf) * 6 / 2), 234, strbuf,
+   print_sfont (htiles * TILE_W + 42 - (strlen (strbuf) * 6 / 2), 234, strbuf,
                 double_buffer);
-   print_sfont ((htiles + 1) * 16 + 2, 240, "Preview:", double_buffer);
-   rect (double_buffer, (htiles + 1) * 16 + 6, 248, (htiles + 3) * 16 + 8 + 1,
+   print_sfont ((htiles + 1) * TILE_W + 2, 240, "Preview:", double_buffer);
+   rect (double_buffer, (htiles + 1) * TILE_W + 6, 248, (htiles + 3) * TILE_W + TILE_W / 2 + 1,
          283, 255);
 
    /* Display the draw_mode */
-   print_sfont (htiles * 16 + 8, 176, "Mode:", double_buffer);
-   print_sfont (htiles * 16 + 14, 182, dt[draw_mode_display], double_buffer);
+   print_sfont (htiles * TILE_W + TILE_W / 2, 176, "Mode:", double_buffer);
+   print_sfont (htiles * TILE_W + TILE_W - 2, 182, dt[draw_mode_display], double_buffer);
 
    /* Display the iconset and selected icon */
    sprintf (strbuf, "#%d(%d)", icon_set, curtile);
-   print_sfont (htiles * 16 + 8, 188, strbuf, double_buffer);
+   print_sfont (htiles * TILE_W + TILE_W / 2, 188, strbuf, double_buffer);
 
    /* Mouse x/y coordinates on map (if mouse is over map) */
-   if ((mouse_x / 16 < htiles) && (mouse_y / 16 < vtiles)) {
+   if ((mouse_x / TILE_W < htiles) && (mouse_y / TILE_H < vtiles)) {
       sprintf (strbuf, "x=%d", window_x + x);
-      print_sfont (htiles * 16 + 8, 194, strbuf, double_buffer);
+      print_sfont (htiles * TILE_W + TILE_W / 2, 194, strbuf, double_buffer);
       sprintf (strbuf, "y=%d", window_y + y);
-      print_sfont (htiles * 16 + 8, 200, strbuf, double_buffer);
+      print_sfont (htiles * TILE_W + TILE_W / 2, 200, strbuf, double_buffer);
    }                            // if (mouse_x, mouse_y)
 
    /* Show when a user is drawing to the map */
    if (dmode == 1)
-      print_sfont ((htiles + 1) * 16, 206, "drawing", double_buffer);
+      print_sfont ((htiles + 1) * TILE_W, 206, "drawing", double_buffer);
 
    /* Displays the Entity icon and total and current Entities */
    if (draw_mode == MAP_ENTITIES) {
       sprintf (strbuf, "%d", current_ent);
-      print_sfont ((htiles + 4) * 16 + 2, SH - 38, strbuf, double_buffer);
-      blit (eframes[current_ent][0], double_buffer, 0, 0, (htiles + 4) * 16,
-            (SH - 32), 16, 16);
+      print_sfont ((htiles + 4) * TILE_W + 2, SH - 38, strbuf, double_buffer);
+      blit (eframes[current_ent][0], double_buffer, 0, 0, (htiles + 4) * TILE_W,
+            (SH - 32), TILE_W, TILE_H);
       sprintf (strbuf, "%d", number_of_ents);
-      print_sfont ((htiles + 4) * 16 + 2, SH - 12, strbuf, double_buffer);
+      print_sfont ((htiles + 4) * TILE_W + 2, SH - 12, strbuf, double_buffer);
    }                            // if (draw_mode == MAP_ENTITIES)
 
    /* Draw a rectangle around the mouse when it's inside the view-window */
-   if (mouse_y / 16 < vtiles && mouse_x / 16 < htiles)
-      rect (double_buffer, x * 16, y * 16, x * 16 + 15, y * 16 + 15, 255);
+   if (mouse_x / TILE_W < htiles && mouse_y / TILE_H)
+      rect (double_buffer, x * TILE_W, y * TILE_H, (x + 1) * TILE_W - 1,
+            (y + 1) * TILE_H - 1, 255);
 
    /* Show the current CPU usage */
-   print_sfont (htiles * 16 + 8, 294, "CPU Usage:", double_buffer);
-   if (cpu_usage == 0) {
-      print_sfont (htiles * 16 + 14, 300, "timeslice", double_buffer);
-   } else {
-      sprintf (strbuf, "rest(%d)", cpu_usage - 1);
-      print_sfont (htiles * 16 + 14, 300, strbuf, double_buffer);
-   }
+   print_sfont (htiles * TILE_W + TILE_W / 2, 294, "CPU Usage:", double_buffer);
+   sprintf (strbuf, "rest(%d)", cpu_usage - 1);
+   print_sfont ((htiles + 1) * TILE_W - 2, 300, strbuf, double_buffer);
 
    /* Draw the arrows on the right side of the screen */
    if (draw_mode == MAP_OBSTACLES || draw_mode == MAP_SHADOWS
        || draw_mode == MAP_ZONES || draw_mode == MAP_MARKERS
        || draw_mode == MAP_BOUNDS) {
-      blit (arrow_pics[0], double_buffer, 0, 0, (htiles + 2) * 16, 316, 16, 16);
-      blit (arrow_pics[1], double_buffer, 0, 0, (htiles + 1) * 16, 332, 16, 16);
-      blit (arrow_pics[2], double_buffer, 0, 0, (htiles + 2) * 16, 332, 16, 16);
-      blit (arrow_pics[3], double_buffer, 0, 0, (htiles + 3) * 16, 332, 16, 16);
-      blit (arrow_pics[4], double_buffer, 0, 0, (htiles + 2) * 16, 348, 16, 16);
+      blit (arrow_pics[0], double_buffer, 0, 0, (htiles + 2) * TILE_W, 316, TILE_W, TILE_H);
+      blit (arrow_pics[1], double_buffer, 0, 0, (htiles + 1) * TILE_W, 332, TILE_W, TILE_H);
+      blit (arrow_pics[2], double_buffer, 0, 0, (htiles + 2) * TILE_W, 332, TILE_W, TILE_H);
+      blit (arrow_pics[3], double_buffer, 0, 0, (htiles + 3) * TILE_W, 332, TILE_W, TILE_H);
+      blit (arrow_pics[4], double_buffer, 0, 0, (htiles + 2) * TILE_W, 348, TILE_W, TILE_H);
    }
 
 }                               /* draw_menubars () */
@@ -1595,16 +1596,16 @@ static void draw_shadow (const int parallax)
       layer_y2 = gmap.ysize;
 
    /* Calculate the pixel-based coordinate of the top left */
-   x0 = window_x * 16;
-   y0 = window_y * 16;
+   x0 = window_x * TILE_W;
+   y0 = window_y * TILE_H;
 
    /* ...And draw the tilemap */
    for (j = layer_y1; j < layer_y2; ++j) {
       for (layer_x = layer_x1; layer_x < layer_x2; ++layer_x) {
          ss = sh_map[j * gmap.xsize + layer_x];
          if (ss > 0) {
-            draw_trans_sprite (double_buffer, shadow[ss], layer_x * 16 - x0,
-                               j * 16 - y0);
+            draw_trans_sprite (double_buffer, shadow[ss], layer_x * TILE_W - x0,
+                               j * TILE_H - y0);
          }
       }
    }
@@ -2230,7 +2231,7 @@ int main (int argc, char *argv[])
    bindtextdomain (PACKAGE, KQ_LOCALE);
    textdomain (PACKAGE);
 
-   row[0] = vtiles * 16 + 6;
+   row[0] = vtiles * TILE_H + 6;
    for (i = 1; i < 8; i++) {
       row[i] = row[i - 1] + 6;
    }
@@ -3454,10 +3455,10 @@ void process_menu_right (const int cx, const int cy)
    int xp, yp;
 
    /* Check whether the mouse is over one if the selectable tiles */
-   if (cy > 8 && cy < 168 && cx >= htiles * 16 + 8
-       && cx < (htiles + 4) * 16 + 8) {
-      xp = ((cx - 8) - htiles * 16) / 16;
-      yp = (cy - 8) / 16;
+   if (cy > 8 && cy < 168 && cx >= htiles * TILE_W + TILE_W / 2
+       && cx < (htiles + 4) * TILE_W + TILE_W / 2) {
+      xp = ((cx - 8) - htiles * TILE_W) / TILE_W;
+      yp = (cy - 8) / TILE_H;
 
       /* Set the tileset to the correct "page" */
       if (icon_set + (xp / 2) > max_sets - 1)
@@ -3467,8 +3468,8 @@ void process_menu_right (const int cx, const int cy)
    }
 
    /* Show the correct tileset "page" when Tile Preview is clicked on */
-   if (cx > (htiles + 1) * 16 + 6 && cx <= (htiles + 3) * 16 + 9 && cy > 248
-       && cy < 284) {
+   if (cx > (htiles + 1) * TILE_W + 6 && cx <= (htiles + 3) * TILE_W + 9
+       && cy > 248 && cy < 284) {
       if ((draw_mode >= MAP_ENTITIES && draw_mode <= MAP_ZONES)
           || draw_mode == MAP_MARKERS || draw_mode == MAP_BOUNDS) {
          find_cursor (0);
@@ -3478,7 +3479,7 @@ void process_menu_right (const int cx, const int cy)
    }
 
    /* The mouse is "somewhere" over 'Attribs' arrows */
-   if ((cx >= (htiles + 1) * 16 && cx < (htiles + 4) * 16) &&
+   if ((cx >= (htiles + 1) * TILE_W && cx < (htiles + 4) * TILE_W) &&
        (cy >= 316 && cy < 364)) {
       switch (draw_mode) {
       case MAP_BOUNDS:
@@ -3494,8 +3495,8 @@ void process_menu_right (const int cx, const int cy)
           * We only use "-3", "-1..1" and "3" (up, left, center, right, down)
           * here, and can throw out the rest.
           */
-         find_cursor ((((cy - 316) / 16) * 3 +
-                       (cx - ((htiles + 1) * 16)) / 16) - 4);
+         find_cursor ((((cy - 316) / TILE_H) * 3 +
+                       (cx - ((htiles + 1) * TILE_W)) / TILE_W) - 4);
          break;
       }
    }
@@ -3576,8 +3577,8 @@ void process_mouse (const int mouse_button)
 
          case (MAP_ENTITIES):
             /* Draw to Entity layer */
-            place_entity ((mouse_x / 16) + window_x,
-                          (mouse_y / 16) + window_y);
+            place_entity ((mouse_x / TILE_W) + window_x,
+                          (mouse_y / TILE_H) + window_y);
             break;
 
          case (MAP_OBSTACLES):
@@ -3699,8 +3700,8 @@ void process_mouse (const int mouse_button)
       }                         /* if (dmode) */
    }                            // if (mouse_button == 2)
 
-   x = mouse_x / 16;
-   y = mouse_y / 16;
+   x = mouse_x / TILE_W;
+   y = mouse_y / TILE_H;
    if (y > (vtiles - 1))
       y = vtiles - 1;
    if (x > (htiles - 1))
@@ -3948,8 +3949,8 @@ void read_controls (void)
    /* Update the mouse position */
    oldx = x;
    oldy = y;
-   x = mouse_x / 16;
-   y = mouse_y / 16;
+   x = mouse_x / TILE_W;
+   y = mouse_y / TILE_H;
    if ((oldx != x) || (oldy != y))
       needupdate = 1;
 
@@ -4351,8 +4352,8 @@ int show_help (void)
 // This turns the other/indent.pro settings back on:
 // *INDENT-ON*
 
-   i = (htiles * 16 - strlen (*help_keys) * FW) / 2;
-   j = (vtiles * 16 - NUMBER_OF_ITEMS * 8) / 2;
+   i = (htiles * TILE_W - strlen (*help_keys) * FW) / 2;
+   j = (vtiles * TILE_H - NUMBER_OF_ITEMS * 8) / 2;
 
    rectfill (double_buffer, i - 5, j - 5, i + (strlen (*help_keys) * FW) + 4,
              j + (NUMBER_OF_ITEMS * (FH + 1)) + 4, 0);
@@ -4631,18 +4632,18 @@ int startup (void)
    font6 = create_bitmap (6, 546);
    getfont ();
 
-   mesh2 = create_bitmap (16, 16);
+   mesh2 = create_bitmap (TILE_W, TILE_H);
    clear (mesh2);
-   for (ky = 0; ky < 16; ky++) {
-      for (kx = 0; kx < 16; kx++)
-         mesh2->line[ky][kx] = hilite[ky * 16 + kx];
+   for (ky = 0; ky < TILE_H; ky++) {
+      for (kx = 0; kx < TILE_W; kx++)
+         mesh2->line[ky][kx] = hilite[ky * TILE_W + kx];
    }
 
-   mesh3 = create_bitmap (16, 16);
+   mesh3 = create_bitmap (TILE_W, TILE_H);
    clear (mesh3);
-   for (ky = 0; ky < 16; ky++) {
-      for (kx = 0; kx < 16; kx++)
-         mesh3->line[ky][kx] = diag_bars[ky * 16 + kx];
+   for (ky = 0; ky < TILE_H; ky++) {
+      for (kx = 0; kx < TILE_W; kx++)
+         mesh3->line[ky][kx] = diag_bars[ky * TILE_W + kx];
    }
 
    /* Entity images */
@@ -4669,24 +4670,24 @@ int startup (void)
     * arrow_pics[4] = down arrow
     */
    for (a = 0; a < 5; a++) {
-      arrow_pics[a] = create_bitmap (16, 16);
+      arrow_pics[a] = create_bitmap (TILE_W, TILE_H);
    }
 
-   for (ky = 0; ky < 16; ky++) {
-      for (kx = 0; kx < 16; kx++) {
-         arrow_pics[0]->line[ky][kx] = arrow_up[ky * 16 + kx];
-         arrow_pics[1]->line[ky][kx] = arrow_left[ky * 16 + kx];
-         arrow_pics[2]->line[ky][kx] = arrow_center[ky * 16 + kx];
-         arrow_pics[3]->line[ky][kx] = arrow_right[ky * 16 + kx];
-         arrow_pics[4]->line[ky][kx] = arrow_down[ky * 16 + kx];
+   for (ky = 0; ky < TILE_H; ky++) {
+      for (kx = 0; kx < TILE_W; kx++) {
+         arrow_pics[0]->line[ky][kx] = arrow_up[ky * TILE_W + kx];
+         arrow_pics[1]->line[ky][kx] = arrow_left[ky * TILE_W + kx];
+         arrow_pics[2]->line[ky][kx] = arrow_center[ky * TILE_W + kx];
+         arrow_pics[3]->line[ky][kx] = arrow_right[ky * TILE_W + kx];
+         arrow_pics[4]->line[ky][kx] = arrow_down[ky * TILE_W + kx];
       }
    }
 
-   mesh_h = create_bitmap (16, 16);
+   mesh_h = create_bitmap (TILE_W, TILE_H);
    clear (mesh_h);
-   for (ky = 0; ky < 16; ky++) {
-      for (kx = 0; kx < 16; kx++)
-         mesh_h->line[ky][kx] = hilite_attrib[ky * 16 + kx];
+   for (ky = 0; ky < TILE_H; ky++) {
+      for (kx = 0; kx < TILE_W; kx++)
+         mesh_h->line[ky][kx] = hilite_attrib[ky * TILE_W + kx];
    }
 
    /* Check for availability of joystick */
@@ -4741,12 +4742,12 @@ void update_tileset (void)
     * then the program will exit with an error.
     */
    set_pcx (&pcx_buffer, icon_files[gmap.tileset], pal, 1);
-   max_sets = (pcx_buffer->h / 16);
+   max_sets = (pcx_buffer->h / TILE_H);
 
    for (row = 0; row < max_sets; row++) {
       for (col = 0; col < ICONSET_SIZE; col++) {
-         blit (pcx_buffer, icons[row * ICONSET_SIZE + col], col * 16,
-               row * 16, 0, 0, 16, 16);
+         blit (pcx_buffer, icons[row * ICONSET_SIZE + col], col * TILE_W,
+               row * TILE_H, 0, 0, TILE_W, TILE_H);
       }
    }
    icon_set = 0;

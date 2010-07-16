@@ -11,6 +11,7 @@
 
 #include "mapdraw.h"
 #include "../include/disk.h"
+#include "../include/enums.h"
 
 /* Selectable tiles on the right-hand menu */
 BITMAP *icons[MAX_TILES];
@@ -122,7 +123,7 @@ unsigned int number_of_ents = 0;
 unsigned int num_bound_boxes = 0;
 
 s_map gmap;
-s_entity gent[50];
+s_entity gent[MAX_ENT];
 s_show showing;
 
 unsigned short *map, *b_map, *f_map, *c_map, *cf_map, *cb_map;
@@ -148,12 +149,12 @@ void load_iconsets (PALETTE pal)
    unsigned int x, y;
 
    set_pcx (&pcx_buffer, icon_files[gmap.tileset], pal, 1);
-   max_sets = (pcx_buffer->h / 16);
+   max_sets = (pcx_buffer->h / TILE_H);
 
    for (y = 0; y < max_sets; y++)
       for (x = 0; x < ICONSET_SIZE; x++)
-         blit (pcx_buffer, icons[y * ICONSET_SIZE + x], x * 16, y * 16, 0, 0,
-               16, 16);
+         blit (pcx_buffer, icons[y * ICONSET_SIZE + x], x * TILE_W, y * TILE_H,
+               0, 0, TILE_W, TILE_H);
    icon_set = 0;
    destroy_bitmap (pcx_buffer);
 }
@@ -193,9 +194,9 @@ void load_map (const char *path)
 
    /* Recount the number of entities on the map */
    number_of_ents = 0;
-   for (i = 0; i < 50; i++) {
+   for (i = 0; i < MAX_ENT; i++) {
       load_s_entity (gent + i, pf);
-      if (gent[i].active == 1)
+      if (gent[i].active != 0)
          number_of_ents = i + 1;
    }
 
@@ -223,7 +224,7 @@ void load_map (const char *path)
    pack_fclose (pf);
 
    set_pcx (&pcx_buffer, icon_files[gmap.tileset], pal, 1);
-   max_sets = (pcx_buffer->h / 16);
+   max_sets = (pcx_buffer->h / TILE_H);
 
    load_iconsets (pal);
 
@@ -337,51 +338,51 @@ void shared_startup (void)
 
    /* Used for icons */
    for (i = 0; i < MAX_TILES; i++) {
-      icons[i] = create_bitmap (16, 16);
+      icons[i] = create_bitmap (TILE_W, TILE_H);
       clear (icons[i]);
    }
 
    /* Used for Obstacles */
    /* Block all directions */
-   mesh1[0] = create_bitmap (16, 16);
+   mesh1[0] = create_bitmap (TILE_W, TILE_H);
    clear (mesh1[0]);
-   for (y = 0; y < 16; y += 2) {
-      for (x = 0; x < 16; x += 2)
+   for (y = 0; y < TILE_H; y += 2) {
+      for (x = 0; x < TILE_W; x += 2)
          putpixel (mesh1[0], x, y, 255);
-      for (x = 1; x < 16; x += 2)
+      for (x = 1; x < TILE_W; x += 2)
          putpixel (mesh1[0], x, y + 1, 255);
    }
 
    /* Block up */
-   mesh1[1] = create_bitmap (16, 16);
+   mesh1[1] = create_bitmap (TILE_W, TILE_H);
    clear (mesh1[1]);
-   hline (mesh1[1], 0, 0, 15, 255);
-   vline (mesh1[1], 8, 0, 15, 255);
+   hline (mesh1[1], 0, 0, TILE_W - 1, 255);
+   vline (mesh1[1], TILE_W / 2, 0, TILE_H - 1, 255);
 
    /* Block right */
-   mesh1[2] = create_bitmap (16, 16);
+   mesh1[2] = create_bitmap (TILE_W, TILE_H);
    clear (mesh1[2]);
-   hline (mesh1[2], 0, 8, 15, 255);
-   vline (mesh1[2], 15, 0, 15, 255);
+   hline (mesh1[2], 0, TILE_H / 2, TILE_W - 1, 255);
+   vline (mesh1[2], TILE_W - 1, 0, TILE_W - 1, 255);
 
    /* Block down */
-   mesh1[3] = create_bitmap (16, 16);
+   mesh1[3] = create_bitmap (TILE_W, TILE_H);
    clear (mesh1[3]);
-   hline (mesh1[3], 0, 15, 15, 255);
-   vline (mesh1[3], 8, 0, 15, 255);
+   hline (mesh1[3], 0, TILE_H - 1, TILE_W - 1, 255);
+   vline (mesh1[3], TILE_W / 2, 0, TILE_H - 1, 255);
 
    /* Block left */
-   mesh1[4] = create_bitmap (16, 16);
+   mesh1[4] = create_bitmap (TILE_W, TILE_H);
    clear (mesh1[4]);
-   hline (mesh1[4], 0, 8, 15, 255);
-   vline (mesh1[4], 0, 0, 15, 255);
+   hline (mesh1[4], 0, TILE_W / 2, TILE_W - 1, 255);
+   vline (mesh1[4], 0, 0, TILE_H - 1, 255);
 
    /* Used for Shadows */
    /* Shadows */
    set_pcx (&pcx_buffer, "Misc.pcx", pal, 1);
    for (i = 0; i < MAX_SHADOWS; i++) {
-      shadow[i] = create_bitmap (16, 16);
-      blit (pcx_buffer, shadow[i], i * 16, 160, 0, 0, 16, 16);
+      shadow[i] = create_bitmap (TILE_W, TILE_H);
+      blit (pcx_buffer, shadow[i], i * TILE_W, 160, 0, 0, TILE_W, TILE_H);
    }
    destroy_bitmap (pcx_buffer);
 
@@ -389,25 +390,28 @@ void shared_startup (void)
    set_pcx (&pcx_buffer, "entities.pcx", pal, 1);
    for (x = 0; x < MAX_EPICS; x++) {
       for (i = 0; i < 12; i++) {
-         eframes[x][i] = create_bitmap (16, 16);
-         blit (pcx_buffer, eframes[x][i], i * 16, x * 16, 0, 0, 16, 16);
+         eframes[x][i] = create_bitmap (ENT_W, ENT_H);
+         blit (pcx_buffer, eframes[x][i], i * ENT_W, x * ENT_H, 0, 0, ENT_W,
+               ENT_H);
       }
    }
    destroy_bitmap (pcx_buffer);
 
    /* Create the marker image */
-   marker_image = create_bitmap (16, 16);
+   marker_image = create_bitmap (TILE_W, TILE_H);
    clear_bitmap (marker_image);
-   vline (marker_image, 0, 0, 16, makecol (255, 255, 255));
-   vline (marker_image, 1, 0, 16, makecol (192, 192, 192));
-   rectfill (marker_image, 2, 0, 10, 8, makecol (255, 0, 0));
+   vline (marker_image, 0, 0, TILE_H, makecol (255, 255, 255));
+   vline (marker_image, 1, 0, TILE_H, makecol (192, 192, 192));
+   rectfill (marker_image, 2, 0, TILE_W / 2 + 2, TILE_H / 2,
+             makecol (255, 0, 0));
 
    /* Create the active marker image */
-   marker_image_active = create_bitmap (16, 16);
+   marker_image_active = create_bitmap (TILE_W, TILE_H);
    clear_bitmap (marker_image_active);
-   vline (marker_image_active, 0, 0, 16, makecol (255, 255, 255));
-   vline (marker_image_active, 1, 0, 16, makecol (192, 192, 192));
-   rectfill (marker_image_active, 2, 0, 10, 8, makecol (0, 0, 255));
+   vline (marker_image_active, 0, 0, TILE_H, makecol (255, 255, 255));
+   vline (marker_image_active, 1, 0, TILE_H, makecol (192, 192, 192));
+   rectfill (marker_image_active, 2, 0, TILE_W / 2 + 2, TILE_H / 2,
+             makecol (0, 0, 255));
 }
 
 
@@ -494,21 +498,21 @@ void visual_map (s_show showing, const char *save_fname)
 
                if (z_map[w] < 10) {
                   /* The zone's number is single-digit, center vert+horiz */
-                  textprintf_ex (bmp, font, i * 16 + 4, j * 16 + 4,
+                  textprintf_ex (bmp, font, i * TILE_W + 4, j * TILE_H + 4,
                                  makecol (255, 255, 255), 0, "%d", z_map[w]);
                } else if (z_map[w] < 100) {
                   /* The zone's number is double-digit, center only vert */
-                  textprintf_ex (bmp, font, i * 16, j * 16 + 4,
+                  textprintf_ex (bmp, font, i * TILE_W, j * TILE_H + 4,
                                  makecol (255, 255, 255), 0, "%d", z_map[w]);
                } else {
                   /* The zone's number is triple-digit.  Print the 100's digit
                    * in the top-center of the square; the 10's and 1's digits
                    * on bottom of the square
                    */
-                  textprintf_ex (bmp, font, i * 16 + 4, j * 16,
+                  textprintf_ex (bmp, font, i * TILE_W + 4, j * TILE_H,
                                  makecol (255, 255, 255), 0, "%d",
                                  (int) (z_map[w] / 100));
-                  textprintf_ex (bmp, font, i * 16, j * 16 + 8,
+                  textprintf_ex (bmp, font, i * TILE_W, j * TILE_H + TILE_H / 2,
                                  makecol (255, 255, 255), 0, "%02d",
                                  (int) (z_map[w] % 100));
                }
@@ -519,7 +523,7 @@ void visual_map (s_show showing, const char *save_fname)
 
    /* Show entities */
    if (showing.entities) {
-      for (i = 0; i < 50; i++) {
+      for (i = 0; i < MAX_ENT; i++) {
          if (gent[i].active) {
             if (gent[i].transl == 0) {
                draw_sprite (bmp, eframes[gent[i].chrx][gent[i].facing * 3],
