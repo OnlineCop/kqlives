@@ -280,9 +280,8 @@ void do_draw_map (cairo_t * cr, GdkRectangle * area, unsigned int layerflags)
                /* FIXME: Draw a translucent sprite */
             }
             cairo_set_source_surface (cr,
-                                      gdk_eframes[gent[i].chrx][gent[i].
-                                                                facing * 3],
-                                      gent[i].tilex * 16, gent[i].tiley * 16);
+               gdk_eframes[gent[i].chrx][gent[i].facing * ENT_FRAMES_PER_DIR],
+               gent[i].tilex * 16, gent[i].tiley * 16);
             cairo_paint (cr);
          }
       }

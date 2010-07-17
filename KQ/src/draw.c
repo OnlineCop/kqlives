@@ -351,9 +351,9 @@ static void draw_char (int xw, int yw)
       dx = g_ent[i].x - vx + xw;
       dy = g_ent[i].y - vy + yw;
       if (!g_ent[i].moving)
-         fr = g_ent[i].facing * 3 + 2;
+         fr = g_ent[i].facing * ENT_FRAMES_PER_DIR + 2;
       else {
-         fr = g_ent[i].facing * 3 + (g_ent[i].framectr > 10 ? 1 : 0);
+         fr = g_ent[i].facing * ENT_FRAMES_PER_DIR + (g_ent[i].framectr > 10 ? 1 : 0);
       }
       if (i < PSIZE && i < numchrs) {
          /* It's a hero */
@@ -361,7 +361,7 @@ static void draw_char (int xw, int yw)
          sprite_base = g_ent[i].chrx ? eframes[g_ent[i].chrx] : frames[fid];
 
          if (party[fid].sts[S_DEAD] != 0)
-            fr = g_ent[i].facing * 3 + 2;
+            fr = g_ent[i].facing * ENT_FRAMES_PER_DIR + 2;
          if (party[fid].sts[S_POISON] != 0) {
             /* PH: we are calling this every frame? */
             color_scale (sprite_base[fr], tc2, 32, 47);

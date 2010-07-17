@@ -58,6 +58,7 @@ enum eSizes
 #define WINDOW_TILES_H     16
 #define MAX_ENT            50
 #define ID_ENEMY          254
+#define ENT_FRAMES_PER_DIR  3
 
 
 /* PH: MAXCFRAMES never seems to be used properly -

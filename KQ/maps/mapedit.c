@@ -956,12 +956,12 @@ void draw_map (void)
             /* Draw either a normal sprite or a translucent one */
             if (gent[i].transl == 0) {
                draw_sprite (double_buffer,
-                            eframes[gent[i].chrx][gent[i].facing * 3],
+                            eframes[gent[i].chrx][gent[i].facing * ENT_FRAMES_PER_DIR],
                             (gent[i].tilex - window_x) * TILE_W,
                             (gent[i].tiley - window_y) * TILE_H);
             } else {
                draw_trans_sprite (double_buffer,
-                                  eframes[gent[i].chrx][gent[i].facing * 3],
+                                  eframes[gent[i].chrx][gent[i].facing * ENT_FRAMES_PER_DIR],
                                   (gent[i].tilex - window_x) * TILE_W,
                                   (gent[i].tiley - window_y) * TILE_H);
             }                   // if..else ()

@@ -526,11 +526,11 @@ void visual_map (s_show showing, const char *save_fname)
       for (i = 0; i < MAX_ENT; i++) {
          if (gent[i].active) {
             if (gent[i].transl == 0) {
-               draw_sprite (bmp, eframes[gent[i].chrx][gent[i].facing * 3],
+               draw_sprite (bmp, eframes[gent[i].chrx][gent[i].facing * ENT_FRAMES_PER_DIR],
                             gent[i].tilex * TILE_W, gent[i].tiley * TILE_H);
             } else {
                draw_trans_sprite (bmp,
-                                  eframes[gent[i].chrx][gent[i].facing * 3],
+                                  eframes[gent[i].chrx][gent[i].facing * ENT_FRAMES_PER_DIR],
                                   gent[i].tilex * TILE_W,
                                   gent[i].tiley * TILE_H);
             }                   // if..else ()
