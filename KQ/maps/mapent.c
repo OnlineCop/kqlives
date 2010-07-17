@@ -68,7 +68,7 @@ void displace_entities (void)
       else
          gent[a].tilex += displace_x;
 
-      gent[a].x = gent[a].tilex * 16;
+      gent[a].x = gent[a].tilex * TILE_W;
 
       /* Confirm that the input y-coords are within the map */
       if (gent[a].tiley + displace_y >= gmap.ysize)
@@ -78,7 +78,7 @@ void displace_entities (void)
       else
          gent[a].tiley += displace_y;
 
-      gent[a].y = gent[a].tiley * 16;
+      gent[a].y = gent[a].tiley * TILE_H;
    }
 }                               /* displace_entities () */
 
@@ -110,20 +110,20 @@ void draw_entdata (const int ent_index)
    draw_map ();
 
    /* The white horizontal line that seperates the bottom menu */
-   hline (double_buffer, 0, vtiles * 16 + 1, htiles * 16 + 1, 255);
+   hline (double_buffer, 0, vtiles * TILE_H + 1, htiles * TILE_W + 1, 255);
 
    /* The white verticle bar that seperates the right tileset */
-   vline (double_buffer, htiles * 16 + 1, 0, vtiles * 16 + 1, 255);
+   vline (double_buffer, htiles * TILE_W + 1, 0, vtiles * TILE_H + 1, 255);
 
-   ent_x = (gent[ent_index].tilex - window_x) * 16;
-   ent_y = (gent[ent_index].tiley - window_y) * 16;
-   rect (double_buffer, ent_x - 1, ent_y - 1, ent_x + 16, ent_y + 16, 255);
+   ent_x = (gent[ent_index].tilex - window_x) * TILE_W;
+   ent_y = (gent[ent_index].tiley - window_y) * TILE_H;
+   rect (double_buffer, ent_x - 1, ent_y - 1, ent_x + ENT_W, ent_y + ENT_H, 255);
 
    /* Print the number of entities and currently-selected one in right menu */
    sprintf (strbuf, "Total: %d", number_of_ents);
-   print_sfont (htiles * 16 + 6, 0, strbuf, double_buffer);
+   print_sfont (htiles * TILE_W + 6, 0, strbuf, double_buffer);
    sprintf (strbuf, "Current: %d", ent_index);
-   print_sfont (htiles * 16 + 6, 6, strbuf, double_buffer);
+   print_sfont (htiles * TILE_W + 6, 6, strbuf, double_buffer);
 
    /* Options in the first column */
    sprintf (strbuf, "1 - x = %d", gent[ent_index].tilex);
@@ -173,8 +173,8 @@ void draw_ents (void)
    int d, x0, y0;
    BITMAP *ent;
 
-   x0 = window_x * 16;
-   y0 = window_y * 16;
+   x0 = window_x * TILE_W;
+   y0 = window_y * TILE_H;
 
    for (d = 0; d < number_of_ents; d++) {
       /* Draw only the entities within the view-screen */
@@ -184,11 +184,11 @@ void draw_ents (void)
          ent = eframes[gent[d].chrx][gent[d].facing * 3];
          /* Draw either a normal sprite or a translucent one */
          if (gent[d].transl == 0)
-            draw_sprite (double_buffer, ent, gent[d].tilex * 16 - x0,
-                         gent[d].tiley * 16 - y0);
+            draw_sprite (double_buffer, ent, gent[d].tilex * TILE_W - x0,
+                         gent[d].tiley * TILE_W - y0);
          else
-            draw_trans_sprite (double_buffer, ent, gent[d].tilex * 16 - x0,
-                               gent[d].tiley * 16 - y0);
+            draw_trans_sprite (double_buffer, ent, gent[d].tilex * TILE_W - x0,
+                               gent[d].tiley * TILE_H - y0);
       }
    }
 }                               /* draw_ents () */
@@ -329,7 +329,7 @@ void place_entity (int ent_x, int ent_y)
    int a, someone_there = 0;
 
    /* Don't allow too many NPCs on the map */
-   if (number_of_ents >= 50)
+   if (number_of_ents >= MAX_ENT)
       return;
 
    /* This will prevent user from placing more than 1 entity on a coord */
@@ -345,8 +345,8 @@ void place_entity (int ent_x, int ent_y)
    gent[number_of_ents].chrx = current_ent;     /* What it looks like */
    gent[number_of_ents].tilex = ent_x;  /* which tile it's standing on */
    gent[number_of_ents].tiley = ent_y;  /* ..same.. */
-   gent[number_of_ents].x = ent_x * 16; /* Will be the same as tilex unless moving */
-   gent[number_of_ents].y = ent_y * 16; /* ..same.. */
+   gent[number_of_ents].x = ent_x * TILE_W; /* Will be the same as tilex unless moving */
+   gent[number_of_ents].y = ent_y * TILE_H; /* ..same.. */
    gent[number_of_ents].active = 1;     /* Showing on map or not */
    gent[number_of_ents].eid = 255;      /* */
    gent[number_of_ents].movemode = 0;   /* 0=stand, 1=wander, 2=script, 3=chase */
@@ -369,7 +369,7 @@ void update_entities (void)
    int response, done;
 
    /* Entity's index */
-   int et = 0;
+   unsigned int et = 0;
 
    /* Key press */
    int c;
@@ -395,15 +395,17 @@ void update_entities (void)
 
       /* Select the previous entity in the queue */
       if (c == KEY_DOWN) {
-         et--;
-         if (et < 0)
+         if (et > 0)
+            et--;
+         else
             et = number_of_ents - 1;
       }
 
       /* Select the following entity in the queue */
       if (c == KEY_UP) {
-         et++;
-         if (et >= number_of_ents)
+         if (et < number_of_ents - 1)
+            et++;
+         else
             et = 0;
       }
 
@@ -418,7 +420,7 @@ void update_entities (void)
             return;
 
          gent[et].tilex = atoi (strbuf);
-         gent[et].x = gent[et].tilex * 16;
+         gent[et].x = gent[et].tilex * TILE_W;
       }
 
       /* Change the y-coord */
@@ -432,13 +434,14 @@ void update_entities (void)
             return;
 
          gent[et].tiley = atoi (strbuf);
-         gent[et].y = gent[et].tiley * 16;
+         gent[et].y = gent[et].tiley * TILE_H;
       }
 
       /* Change the method of movement (Stand, Wander, Script, Chase) */
       if (c == KEY_3) {
-         gent[et].movemode++;
-         if (gent[et].movemode > 3)
+         if (gent[et].movemode < 3)
+            gent[et].movemode++;
+         else
             gent[et].movemode = 0;
       }
 
@@ -457,35 +460,37 @@ void update_entities (void)
 
       /* Change the entity's speed */
       if (c == KEY_5) {
-         gent[et].speed++;
-         if (gent[et].speed > 7)
+         if (gent[et].speed < 7)
+            gent[et].speed++;
+         else
             gent[et].speed = 1;
       }
 
       /* Change the atype (unused) */
       if (c == KEY_6) {
-         gent[et].atype++;
-         if (gent[et].atype > 1)
-            gent[et].atype = 0;
+         gent[et].atype = (gent[et].atype == 0) ? 1 : 0;
       }
 
       /* Change the entity's sprite (what it looks like) */
       if (c == KEY_7) {
-         gent[et].chrx++;
-         if (gent[et].chrx == MAX_EPICS)
+         if (gent[et].chrx < MAX_EPICS - 1)
+            gent[et].chrx++;
+         else
             gent[et].chrx = 0;
       }
 
       /* Change the direction entity is facing */
       if (c == KEY_8) {
-         gent[et].facing++;
-         if (gent[et].facing > 3)
+         if (gent[et].facing < 3)
+            gent[et].facing++;
+         else
             gent[et].facing = 0;
       }
 
       /* Entity is walk-through-able or solid */
-      if (c == KEY_9)
-         gent[et].obsmode = 1 - gent[et].obsmode;
+      if (c == KEY_9) {
+         gent[et].obsmode = (gent[et].obsmode == 0) ? 1 : 0;
+      }
 
       /* Change the entity's scripted movement */
       if (c == KEY_0) {
@@ -503,23 +508,17 @@ void update_entities (void)
       /* After you talk to this entity, it will return to the direction it
          was facing before you ever talked to him/her */
       if (c == KEY_S) {
-         gent[et].snapback++;
-         if (gent[et].snapback > 1)
-            gent[et].snapback = 0;
+         gent[et].snapback = (gent[et].snapback == 0) ? 1 : 0;
       }
 
       /* Face the hero when s/he is talking to this entity */
       if (c == KEY_F) {
-         gent[et].facehero++;
-         if (gent[et].facehero > 1)
-            gent[et].facehero = 0;
+         gent[et].facehero = (gent[et].facehero == 0) ? 1 : 0;
       }
 
       /* Make this entity transparent */
       if (c == KEY_T) {
-         gent[et].transl++;
-         if (gent[et].transl > 1)
-            gent[et].transl = 0;
+         gent[et].transl = (gent[et].transl == 0) ? 1 : 0;
       }
    }                            /* while (!done) */
    window_x = t_window_x;
