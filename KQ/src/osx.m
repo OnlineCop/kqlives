@@ -99,8 +99,10 @@ NSString* get_lua_file_path(NSString* base, NSString* file) {
     return fullpath;
   }
   fullpath = [path stringByAppendingPathExtension: @"lob"];
-  /* return this, even if it doesn't exist */
-  return fullpath;
+  if ([fm fileExistsAtPath:fullpath]) {
+	return fullpath;
+  }
+  return nil;
 }
 
 
