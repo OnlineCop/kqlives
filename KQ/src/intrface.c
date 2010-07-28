@@ -4211,33 +4211,27 @@ static int KQ_warp (lua_State *L)
  * if they use any ITEM constants.
  *
  * \param L the Lua state
- * \param fname the full path of the file to read sans extension
+ * \param filename the full path of the file to read
  * \return 0 on success, 1 on error
  */
-int lua_dofile (lua_State *L, const char *fname)
+int lua_dofile (lua_State *L, const char *filename)
 {
-   PACKFILE *f;
-   char filename[PATH_MAX];
-
-   sprintf (filename, "%s", fname);
-
-   if ((f = pack_fopen (filename, F_READ)) == NULL) {
-      sprintf (filename, "%s.lua", fname);
-      if ((f = pack_fopen (filename, F_READ)) == NULL) {
-         allegro_message (_("Could not open script %s.lob!"), fname);
+   PACKFILE *f = filename ? pack_fopen (filename, F_READ) : NULL;
+   int ret;
+   
+   if (f == NULL) {
+         allegro_message (_("Could not open script %s!"), get_filename(filename));
          return 1;
-      }
    }
-
-   if ((lua_load (L, (lua_Chunkreader) filereader, f, filename)) != 0) {
-      allegro_message (_("Could not parse script %s!"), filename);
-      pack_fclose (f);
+   ret = lua_load (L, (lua_Chunkreader) filereader, f, filename);
+   pack_fclose (f);
+   if (ret != 0) {
+      allegro_message (_("Could not parse script %s!"), get_filename(filename));
       return 1;
    }
 
    if (lua_pcall (L, 0, LUA_MULTRET, 0) != 0) {
-      allegro_message (_("lua_pcall failed while calling script %s!"), filename);
-      pack_fclose (f);
+      allegro_message (_("lua_pcall failed while calling script %s!"), get_filename(filename));
       return 1;
    }
 
