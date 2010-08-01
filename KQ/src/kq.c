@@ -1153,7 +1153,6 @@ static void load_map (const char *map_name)
       if (hold_fade == 0)
          do_transition (TRANS_FADE_IN, 16);
 
-      g_map.xsize = -1;
       sprintf (strbuf, _("Could not load map %s!"), map_name);
       program_death (strbuf);
    }

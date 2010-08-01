@@ -206,10 +206,10 @@ static void ilist_add (ILIST *l, const char *key, const char *text)
          l->capacity = 10;
       else
          l->capacity *= 2;
-      l->root = realloc (l->root, l->capacity * sizeof (IITEM));
+      l->root = (IITEM *) realloc (l->root, l->capacity * sizeof (IITEM));
    }
-   l->root[l->count].key = strcpy (malloc (strlen (key) + 1), key);
-   l->root[l->count].text = strcpy (malloc (strlen (text) + 1), text);
+   l->root[l->count].key = strcpy ((char *) malloc (strlen (key) + 1), key);
+   l->root[l->count].text = strcpy ((char *) malloc (strlen (text) + 1), text);
    ++l->count;
 }
 

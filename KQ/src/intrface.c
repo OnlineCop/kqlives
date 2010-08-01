@@ -945,7 +945,7 @@ static int get_field (const char *n)
    struct s_field st;
 
    st.name = n;
-   ans =
+   ans = (s_field *)
       bsearch (&st, fields, sizeof (fields) / sizeof (*fields),
                sizeof (struct s_field), fieldcmp);
    return ans ? ans->id : -1;
@@ -4361,7 +4361,7 @@ static int KQ_party_setter (lua_State *L)
 
          lua_pushstring (L, LUA_PLR_KEY);
          lua_rawget (L, -2);
-         tt = lua_touserdata (L, -1);
+         tt = (s_player *) lua_touserdata (L, -1);
          if (tt) {
             /* OK so far */
             if (which > numchrs)

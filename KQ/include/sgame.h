@@ -24,10 +24,11 @@
 #define __SGAME_H 1
 
 
+#include "kq.h"
+
+
 /* Number of save game slots */
 #define NUMSG 20
-
-#include "kq.h"
 
 void load_sgstats (void);       /*  kq.c  */
 int start_menu (int);           /*  kq.c  */

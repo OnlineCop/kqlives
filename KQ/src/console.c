@@ -116,7 +116,7 @@ void scroll_console (const char *l)
    free (g_console.lines[0]);
    for (i = 0; i < 24; ++i)
       g_console.lines[i] = g_console.lines[i + 1];
-   g_console.lines[24] = strcpy (malloc (strlen (l) + 1), l);
+   g_console.lines[24] = strcpy ((char *) malloc (strlen (l) + 1), l);
 }
 
 
