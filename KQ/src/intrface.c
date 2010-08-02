@@ -4201,13 +4201,11 @@ static int KQ_warp (lua_State *L)
 
 /*! \brief Read in a complete file
  *
- * Read in a lob file and execute it. Executing means
+ * Read in a lua/lob file and execute it. Executing means
  * defining all the functions etc listed within
  * it.
  *
- * If the lob file cannot be found, lua_dofile() tries to
- * read and execute the equivalent lua file in the same
- * directory. Note that lua files still have to be "prepared"
+ * Note that lua files still have to be "prepared"
  * if they use any ITEM constants.
  *
  * \param L the Lua state
