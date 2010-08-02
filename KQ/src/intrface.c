@@ -945,7 +945,7 @@ static int get_field (const char *n)
    struct s_field st;
 
    st.name = n;
-   ans = (s_field *)
+   ans = (struct s_field *)
       bsearch (&st, fields, sizeof (fields) / sizeof (*fields),
                sizeof (struct s_field), fieldcmp);
    return ans ? ans->id : -1;
