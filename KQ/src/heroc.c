@@ -711,7 +711,7 @@ void hero_choose_action (int who)
          else        // This "else" isn't aligned with the following line,
                      // but the following line needs to be accessed regardless
                      // of whether DEBUGMODE is declared or not.
-                     // It also needs to run incase "debugging" is NOT >= 3.
+                     // It also needs to run in case "debugging" is NOT >= 3.
 #endif
          if (sptr > 1 + can_run)
             sptr = 1 + can_run;
