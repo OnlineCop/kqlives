@@ -127,36 +127,36 @@ void poll_music (void)
  */
 void play_music (const char *music_name, long position)
 {
-	if (is_sound != 0) {
-		char filename[PATH_MAX];
-		
-		stop_music ();
-		strcpy (filename, kqres (MUSIC_DIR, music_name));
-		if (exists(filename)) {
-			if (strstr (filename, ".mod"))
-				mod_song[current_music_player] = dumb_load_mod (filename);
-			
-			else if (strstr (filename, ".xm"))
-				mod_song[current_music_player] = dumb_load_xm (filename);
-			
-			else if (strstr (filename, ".s3m"))
-				mod_song[current_music_player] = dumb_load_s3m (filename);
-			
-			else
-				mod_song[current_music_player] = NULL;
-			if (mod_song[current_music_player]) {
-				/* ML: we should (?) adjust the buffer size after everything is running smooth */
-				mod_player[current_music_player] =
-				al_start_duh (mod_song[current_music_player], 2, position, 1.0,
-							  4096 * 4, 44100);
-			} else {
-				TRACE (_("Could not load %s!\n"), filename);
-			}
-		}
-		else {
-			mod_song[current_music_player] = NULL;
-		}
-	}
+   if (is_sound != 0) {
+      char filename[PATH_MAX];
+
+      stop_music ();
+      strcpy (filename, kqres (MUSIC_DIR, music_name));
+      if (exists(filename)) {
+         if (strstr (filename, ".mod"))
+            mod_song[current_music_player] = dumb_load_mod (filename);
+         
+         else if (strstr (filename, ".xm"))
+            mod_song[current_music_player] = dumb_load_xm (filename);
+         
+         else if (strstr (filename, ".s3m"))
+            mod_song[current_music_player] = dumb_load_s3m (filename);
+         
+         else
+            mod_song[current_music_player] = NULL;
+         if (mod_song[current_music_player]) {
+            /* ML: we should (?) adjust the buffer size after everything is running smooth */
+            mod_player[current_music_player] =
+            al_start_duh (mod_song[current_music_player], 2, position, 1.0,
+                       4096 * 4, 44100);
+         } else {
+            TRACE (_("Could not load %s!\n"), filename);
+         }
+      }
+      else {
+         mod_song[current_music_player] = NULL;
+      }
+   }
 }
 
 
