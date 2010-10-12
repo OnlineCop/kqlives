@@ -26,8 +26,12 @@
  * \date 20060720
  */
 
+#include <assert.h>
 #include <ctype.h>
+#include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "../include/bounds.h"
 
