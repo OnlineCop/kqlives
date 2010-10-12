@@ -130,20 +130,22 @@ static int compose_path (AL_CONST int *map, int target_x, int target_y,
 static void copy_map (int *map)
 {
    register int x, y;
-   int index;
+   unsigned int index;
 
-   for (y = 0; y < g_map.ysize; y++)
+   for (y = 0; y < g_map.ysize; y++) {
       for (x = 0; x < g_map.xsize; x++) {
          index = y * g_map.xsize + x;
 
          if (o_seg[index])
             map[index] = -1;
       }
+   }
 
    /*  RB: faster to do this than to check if there is an entity at every square  */
-   for (index = 0; index < MAX_ENT; index++)
+   for (index = 0; index < MAX_ENT; index++) {
       if (g_ent[index].active)
          map[g_ent[index].tilex * g_map.ysize + g_ent[index].tiley] = -1;
+   }
 }
 
 
