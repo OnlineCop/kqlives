@@ -107,6 +107,8 @@ int save_screenshot (BITMAP * src_bmp, const char *prefix)
 
             /* a format variable has to be set up to handle the custom formatting */
             char format[50];
+
+            // This gives "%s/%s%0#d.pcx", where '#' is the number of 0's
             sprintf (format, "%%s/%%s%%0%dd.pcx", SAVE_NAME_SIZE - prefix_len);
 
             /* after the next sprintf, we will have something like "shots/kq000001.pcx" */
