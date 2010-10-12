@@ -144,12 +144,15 @@ static int entity_near (int eno, int tgt, int rad)
    b = 0 - rad;
    ex = g_ent[eno].tilex;
    ey = g_ent[eno].tiley;
-   for (ay = b; ay <= rad; ay++)
-      for (ax = b; ax <= rad; ax++)
+   for (ay = b; ay <= rad; ay++) {
+      for (ax = b; ax <= rad; ax++) {
          if (ex + ax >= view_x1 && ax + ax <= view_x2 && ey + ay >= view_y1
-             && ey + ay <= view_y2)
+             && ey + ay <= view_y2) {
             if (ex + ax == g_ent[tgt].tilex && ey + ay == g_ent[tgt].tiley)
                return 1;
+         }
+      }
+   }
    return 0;
 }
 
@@ -464,9 +467,10 @@ static int move (int target_entity, int dx, int dy)
    }
 
    // Make sure player can't walk diagonally between active entities.
-   if (dx && dy)
+   if (dx && dy) {
       if (obstruction(tx, ty, dx, 0, TRUE) && obstruction(tx, ty, 0, dy, TRUE))
          return 0;
+   }
 
    ent->tilex = tx + dx;
    ent->tiley = ty + dy;
