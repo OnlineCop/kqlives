@@ -244,7 +244,7 @@ static int load_game (void)
 
 int load_game_91 (PACKFILE *sdat)
 {
-   int a, b;
+   unsigned int a, b;
 
    numchrs = pack_igetl (sdat);
    gp = pack_igetl (sdat);
@@ -547,7 +547,7 @@ int load_game_91 (PACKFILE *sdat)
  */
 static int load_game_92 (PACKFILE *sdat)
 {
-   int a, b, c, d;
+   unsigned int a, b, c, d;
 
    /* Already got kq_version */
    gp = pack_igetl (sdat);
@@ -791,7 +791,7 @@ static int save_game_92 (void);
 static int save_game (void)
 {
    PACKFILE *sdat;
-   int a, b;
+   unsigned int a, b;
 
    return save_game_92 ();
 
@@ -894,7 +894,7 @@ static int save_game (void)
  */
 static int save_game_92 (void)
 {
-   int a, b, c, d;
+   unsigned int a, b, c, d;
    PACKFILE *sdat;
 
    for (b = 0; b < PSIZE; b++) {
@@ -948,22 +948,20 @@ static int save_game_92 (void)
 
 
    /* Save quest info */
-   for (a = sizeof (progress) - 1; a >= 0; a--)
-      if (progress[a] > 0)
+   for (a = sizeof (progress); a > 0; a--) {
+      if (progress[a - 1] > 0)
          break;
-   /* We increment "a" because after the prev loop, it equals the number
-    * of the last quest with a value, not the number of quests with a value */
-   a++;
+   }
 
    pack_iputw (a, sdat);
    for (b = 0; b < a; b++)
       pack_putc (progress[b], sdat);
 
    /* Save treasure info */
-   for (a = sizeof (treasure) - 1; a >= 0; a--)
-      if (treasure[a] > 0)
+   for (a = sizeof (treasure); a > 0; a--) {
+      if (treasure[a - 1] > 0)
          break;
-   a++;
+   }
 
    pack_iputw (a, sdat);
    for (b = 0; b < a; b++)
@@ -983,10 +981,10 @@ static int save_game_92 (void)
    }
 
    /* Save special items */
-   for (a = MAX_SPECIAL_ITEMS; a >= 0; a--)
-      if (player_special_items[a])
+   for (a = MAX_SPECIAL_ITEMS + 1; a > 0; a--) {
+      if (player_special_items[a - 1])
          break;
-   a++;
+   }
 
    pack_iputw (a, sdat);
    for (b = 0; b < a; b++) {
@@ -995,20 +993,19 @@ static int save_game_92 (void)
 
    /* Save shop info (last visit time and number of items) */
    /* Find last index of shop that the player has visited. */
-   for (a = num_shops - 1; a >= 0; a--)
-      if (shop_time[a] > 0)
+   for (a = num_shops; a > 0; a--) {
+      if (shop_time[a - 1] > 0)
          break;
-   a++;
+   }
 
    pack_iputw (a, sdat);
    for (b = 0; b < a; b++) {
       pack_iputw (shop_time[b], sdat);
 
       /* Find last valid (non-zero) shop item for this shop */
-      for (c = SHOPITEMS - 1; c >= 0; c--)
-         if (shops[b].items[c] > 0)
+      for (c = SHOPITEMS; c > 0; c--)
+         if (shops[b].items[c - 1] > 0)
             break;
-      c++;
 
       pack_iputw (c, sdat);
       for (d = 0; d < c; d++)
@@ -1317,16 +1314,18 @@ int start_menu (int skip_splash)
       }
       if (up) {
          unpress ();
-         ptr--;
-         if (ptr < 0)
+         if (ptr > 0)
+            ptr--;
+         else
             ptr = 3;
          play_effect (SND_CLICK, 128);
          redraw = 1;
       }
       if (down) {
          unpress ();
-         ptr++;
-         if (ptr > 3)
+         if (ptr < 3)
+            ptr++;
+         else
             ptr = 0;
          play_effect (SND_CLICK, 128);
          redraw = 1;
@@ -1364,9 +1363,10 @@ int start_menu (int skip_splash)
       memset (progress, 0, SIZE_PROGRESS);
       memset (treasure, 0, SIZE_TREASURE);
       numchrs = 0;
-      for (a = 0; a < NUMSHOPS; a++)
+      for (a = 0; a < NUMSHOPS; a++) {
          for (b = 0; b < SHOPITEMS; b++)
             shops[a].items_current[b] = shops[a].items_max[b];
+      }
       for (b = 0; b < 2; b++) {
          for (a = 0; a < MAX_INV; a++)
             g_inv[a][b] = 0;
