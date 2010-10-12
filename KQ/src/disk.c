@@ -199,6 +199,9 @@ int save_s_map (s_map *sm, PACKFILE *f)
 {
    int i;
 
+   assert(sm && "sm == NULL");
+   assert(f && "f == NULL");
+
    /* pack_putc (sm->map_no, f); */
    pack_putc (0, f);            /* To maintain compatibility. */
 
