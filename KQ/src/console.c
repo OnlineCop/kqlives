@@ -94,8 +94,7 @@ void display_console (int xofs, int yofs)
                yofs + 240 - text_height (font), makecol (255, 255, 255),
                makecol (0, 0, 0));
    rectfill (double_buffer, xofs + text_length (font, g_console.inputline),
-             yofs + 238, xofs + text_length (font,
-                                             g_console.inputline) +
+             yofs + 238, xofs + text_length (font, g_console.inputline) +
              text_length (font, "_"), yofs + 240, makecol (192, 192, 192));
 }
 
