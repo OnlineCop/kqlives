@@ -214,8 +214,9 @@ void config_menu (void)
          // "jump" over unusable options
          if (ptr == 15 && is_sound == 0)
             ptr -= 2;
-         ptr--;
-         if (ptr < 0)
+         if (ptr > 0)
+	         ptr--;
+         else
             ptr = MENU_SIZE - 1;
          play_effect (SND_CLICK, 128);
       }
@@ -224,8 +225,9 @@ void config_menu (void)
          // "jump" over unusable options
          if (ptr == 12 && is_sound == 0)
             ptr += 2;
-         ptr++;
-         if (ptr > MENU_SIZE - 1)
+         if (ptr < MENU_SIZE - 1)
+         	ptr++;
+         else
             ptr = 0;
          play_effect (SND_CLICK, 128);
       }
@@ -245,10 +247,7 @@ void config_menu (void)
                sprintf (strbuf, _("Switch to full screen?"));
             p = prompt (255, 2, B_TEXT, strbuf, _("  no"), _("  yes"), "");
             if (p == 1) {
-               if (windowed == 0)
-                  windowed = 1;
-               else
-                  windowed = 0;
+               windowed = !windowed;
                set_config_int (NULL, "windowed", windowed);
                set_graphics_mode ();
             }
@@ -267,75 +266,74 @@ void config_menu (void)
                sprintf (strbuf, _("Switch to unstretched display?"));
             p = prompt (255, 2, B_TEXT, strbuf, _("  no"), _("  yes"), "");
             if (p == 1) {
-               if (stretch_view == 0)
-                  stretch_view = 1;
-               else
-                  stretch_view = 0;
+               stretch_view = !stretch_view;
                set_config_int (NULL, "stretch_view", stretch_view);
                set_graphics_mode ();
             }
 #endif
             break;
          case 2:
-            if (show_frate == 0)
-               show_frate = 1;
-            else
-               show_frate = 0;
+            show_frate = !show_frate;
             set_config_int (NULL, "show_frate", show_frate);
             break;
          case 3:
-            if (wait_retrace == 0)
-               wait_retrace = 1;
-            else
-               wait_retrace = 0;
+            wait_retrace = !wait_retrace;
             set_config_int (NULL, "wait_retrace", wait_retrace);
             break;
          case 4:
-            while ((temp_key = getakey ()) == 0);
+            while ((temp_key = getakey ()) == 0) {}
             kup = temp_key;
             unpress ();
+            temp_key = 0;
             set_config_int (NULL, "kup", kup);
             break;
          case 5:
-            while ((temp_key = getakey ()) == 0);
+            while ((temp_key = getakey ()) == 0) {}
             kdown = temp_key;
             unpress ();
+            temp_key = 0;
             set_config_int (NULL, "kdown", kdown);
             break;
          case 6:
-            while ((temp_key = getakey ()) == 0);
+            while ((temp_key = getakey ()) == 0) {}
             kleft = temp_key;
             unpress ();
+            temp_key = 0;
             set_config_int (NULL, "kleft", kleft);
             break;
          case 7:
-            while ((temp_key = getakey ()) == 0);
+            while ((temp_key = getakey ()) == 0) {}
             kright = temp_key;
             unpress ();
+            temp_key = 0;
             set_config_int (NULL, "kright", kright);
             break;
          case 8:
-            while ((temp_key = getakey ()) == 0);
+            while ((temp_key = getakey ()) == 0) {}
             kalt = temp_key;
             unpress ();
+            temp_key = 0;
             set_config_int (NULL, "kalt", kalt);
             break;
          case 9:
-            while ((temp_key = getakey ()) == 0);
+            while ((temp_key = getakey ()) == 0) {}
             kctrl = temp_key;
             unpress ();
+            temp_key = 0;
             set_config_int (NULL, "kctrl", kctrl);
             break;
          case 10:
-            while ((temp_key = getakey ()) == 0);
+            while ((temp_key = getakey ()) == 0) {}
             kenter = temp_key;
             unpress ();
+            temp_key = 0;
             set_config_int (NULL, "kenter", kenter);
             break;
          case 11:
-            while ((temp_key = getakey ()) == 0);
+            while ((temp_key = getakey ()) == 0) {}
             kesc = temp_key;
             unpress ();
+            temp_key = 0;
             set_config_int (NULL, "kesc", kesc);
             break;
          case 12:
@@ -447,9 +445,10 @@ static int getakey (void)
 
    while (1) {
       poll_music ();
-      for (a = 0; a < KEY_MAX; a++)
+      for (a = 0; a < KEY_MAX; a++) {
          if (key[a] != 0)
             return a;
+      }
    }
    return 0;
 }
@@ -473,6 +472,7 @@ static int getavalue (const char *capt, int minu, int maxu, int cv, int sp)
 
    if (maxu == 0)
       return -1;
+
    while (!stop) {
       check_animation ();
       menubox (double_buffer, 148 - (maxu * 4) + xofs, 100 + yofs, maxu + 1, 3, DARKBLUE);
