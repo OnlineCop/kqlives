@@ -31,9 +31,9 @@
 
 #include <assert.h>
 
-#include "bounds.h"
-#include "disk.h"
-#include "markers.h"
+#include "../include/bounds.h"
+#include "../include/disk.h"
+#include "../include/markers.h"
 
 
 static int load_s_marker (s_marker *, PACKFILE *);
