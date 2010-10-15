@@ -250,7 +250,7 @@ void battle_render (int plyr, int hl, int sall)
    int b = 0;
    int sz;
    int t;
-   int z;
+   size_t z;
 
    if (plyr > 0) {
       curw = fighter[plyr - 1].cw;
@@ -284,10 +284,9 @@ void battle_render (int plyr, int hl, int sall)
       if (plyr - 1 >= PSIZE) {
          t = curx + (curw / 2);
          t -= (strlen (fighter[plyr - 1].name) * 4);
-         z = fighter[plyr - 1].cy - 32;
-
-         if (z < 0)
-            z = fighter[plyr - 1].cy + fighter[plyr - 1].cl;
+         z = (fighter[plyr - 1].cy < 32 ?
+            fighter[plyr - 1].cy + fighter[plyr - 1].cl :
+            fighter[plyr - 1].cy - 32);
 
          menubox (double_buffer, t - 8, z, strlen (fighter[plyr - 1].name), 1,
                   BLUE);
@@ -324,7 +323,7 @@ void battle_render (int plyr, int hl, int sall)
                   fighter[plyr - 1].imb_a, fighter[plyr - 1].imb[0],
                   fighter[plyr - 1].imb[1]);
          print_font (double_buffer, 0, 136, strbuf, FNORMAL);
-         for (t = 0; t < 13; t++) {
+         for (t = 0; t < NUM_STATS; t++) {
             sprintf (strbuf, "%d", fighter[plyr - 1].stats[t]);
             print_font (double_buffer, 40, t * 8 + 24, strbuf, FNORMAL);
          }
@@ -423,7 +422,7 @@ void battle_render (int plyr, int hl, int sall)
  */
 static int check_end (void)
 {
-   int index;
+   size_t index;
    int alive = 0;
 
    /*  RB: count the number of heroes alive. If there is none, the   */

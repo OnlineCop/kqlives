@@ -73,13 +73,13 @@ static int get_glyph_index (unsigned int);
  *
  * \sa relay()
  */
-enum m_mode
+typedef enum m_mode
 {
    M_UNDEF,
    M_SPACE,
    M_NONSPACE,
    M_END
-};
+} m_mode;
 
 
 
@@ -1616,7 +1616,7 @@ static const char *relay (const char *buf)
 {
    int lasts, lastc, i, cr, cc;
    char tc;
-   enum m_mode state;
+   m_mode state;
 
    for (i = 0; i < 4; ++i)
       memset (msgbuf[i], 0, MSG_COLS);

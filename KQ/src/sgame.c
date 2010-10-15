@@ -547,7 +547,7 @@ int load_game_91 (PACKFILE *sdat)
  */
 static int load_game_92 (PACKFILE *sdat)
 {
-   unsigned int a, b, c, d;
+   size_t a, b, c, d;
 
    /* Already got kq_version */
    gp = pack_igetl (sdat);
@@ -791,7 +791,7 @@ static int save_game_92 (void);
 static int save_game (void)
 {
    PACKFILE *sdat;
-   unsigned int a, b;
+   size_t a, b;
 
    return save_game_92 ();
 
@@ -894,7 +894,7 @@ static int save_game (void)
  */
 static int save_game_92 (void)
 {
-   unsigned int a, b, c, d;
+   size_t a, b, c, d;
    PACKFILE *sdat;
 
    for (b = 0; b < PSIZE; b++) {

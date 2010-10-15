@@ -743,7 +743,7 @@ static s_fighter *make_enemy (int who, s_fighter * en)
  */
 int select_encounter (int en, int etid)
 {
-   int i, p, j;
+   size_t i, p, j;
    int stop = 0, where = 0, entry = -1;
 
    while (!stop) {

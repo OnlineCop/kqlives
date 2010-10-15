@@ -1322,41 +1322,44 @@ static void my_counter (void)
 static void prepare_map (int msx, int msy, int mvx, int mvy)
 {
    BITMAP *pcxb;
-   unsigned int i;
-   int o;
+   size_t i;
+   size_t mapsize;
+   size_t o;
    DATAFILE *pb;
+
+   mapsize = (size_t) g_map.xsize * (size_t) g_map.ysize;
 
    draw_background = draw_middle = draw_foreground = draw_shadow = 0;
 
-   for (i = 0; i < g_map.xsize * g_map.ysize; i++) {
+   for (i = 0; i < mapsize; i++) {
       if (map_seg[i] > 0) {
          draw_background = 1;
          break;
       }
    }
 
-   for (i = 0; i < g_map.xsize * g_map.ysize; i++) {
+   for (i = 0; i < mapsize; i++) {
       if (b_seg[i] > 0) {
          draw_middle = 1;
          break;
       }
    }
 
-   for (i = 0; i < g_map.xsize * g_map.ysize; i++) {
+   for (i = 0; i < mapsize; i++) {
       if (f_seg[i] > 0) {
          draw_foreground = 1;
          break;
       }
    }
 
-   for (i = 0; i < g_map.xsize * g_map.ysize; i++) {
+   for (i = 0; i < mapsize; i++) {
       if (s_seg[i] > 0) {
          draw_shadow = 1;
          break;
       }
    }
 
-   for (i = 0; i < numchrs; i++) {
+   for (i = 0; i < (size_t) numchrs; i++) {
       /* This allows us to either go to the map's default starting coords
        * or specify exactly where on the map to go to (like when there
        * are stairs or a doorway that they should start at).
@@ -1389,8 +1392,8 @@ static void prepare_map (int msx, int msy, int mvx, int mvy)
    pb = load_datafile_object (PCX_DATAFILE, tilesets[g_map.tileset].icon_set);
    pcxb = (BITMAP *) pb->dat;
 
-   for (o = 0; o < pcxb->h / 16; o++) {
-      for (i = 0; i < pcxb->w / 16; i++)
+   for (o = 0; o < (size_t) pcxb->h / 16; o++) {
+      for (i = 0; i < (size_t) pcxb->w / 16; i++)
          blit ((BITMAP *) pb->dat, map_icons[o * (pcxb->w / 16) + i], i * 16,
                o * 16, 0, 0, 16, 16);
    }
@@ -1421,7 +1424,7 @@ static void prepare_map (int msx, int msy, int mvx, int mvy)
       adata[i] = tilesets[g_map.tileset].tanim[i];
 
    noe = 0;
-   for (i = 0; i < numchrs; i++)
+   for (i = 0; i < (size_t) numchrs; i++)
       g_ent[i].active = 1;
 
    count_entities ();

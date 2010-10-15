@@ -43,7 +43,8 @@
 
 /* Globals  */
 int tstats[13], tres[16];
-unsigned short t_inv[MAX_INV], tot, sm;
+unsigned short t_inv[MAX_INV], sm;
+size_t tot;
 char eqp_act;
 
 
@@ -476,7 +477,7 @@ void equip_menu (unsigned int c)
          else
             draw_equippreview (c, -1, 0);
       } else {
-         draw_equippable (c, -1, 0);
+         draw_equippable (c, (unsigned int) -1, 0);
          draw_equippreview (c, -1, 0);
       }
       if (sl == 0)

@@ -38,20 +38,20 @@
 // easier for a lot of IDEs to interpret.
 
 
-enum eSizes
+typedef enum eSizes
 {
-	TILE_H = 16,
-	TILE_W = 16,
-	ENT_W  = 16,
-	ENT_H  = 16,
-	NUM_SPELLS_PER_PAGE = 12,
-	NUM_ITEMS_PER_PAGE = 16,
-};
+	TILE_H = 16U,
+	TILE_W = 16U,
+	ENT_W  = 16U,
+	ENT_H  = 16U,
+	NUM_SPELLS_PER_PAGE = 12U,
+	NUM_ITEMS_PER_PAGE = 16U,
+} eSizes;
 
 #define MAX_TILES        1024
 #define MAXE               41
 #define MAXCHRS             8
-#define PSIZE               2
+#define PSIZE               2U
 #define MAXFRAMES          12
 #define MAXEFRAMES         12
 #define WINDOW_TILES_W     21
@@ -229,7 +229,7 @@ enum eSizes
  * coded format. The layers are listed as 1, 2, 3, E (entity) S (shadow)
  * and a ) or ( marks which layers use the parallax mult/div.
  */
-enum eMapMode
+typedef enum eMapMode
 {
    MAPMODE_12E3S    = 0,   // "12E3S "
    MAPMODE_1E23S    = 1,   // "1E23S "
@@ -239,7 +239,7 @@ enum eMapMode
    MAPMODE_12EP3S   = 5,   // "12E(3S"
 
    NUM_MAPMODES            // always last
-};
+} eMapMode;
 
 
 
@@ -251,7 +251,7 @@ enum eMapMode
 #define MM_TARGET 4
 
 
-enum eObstacles
+typedef enum eObstacles
 {
 	BLOCK_NONE = 0,
 	BLOCK_ALL  = 1,
@@ -261,10 +261,10 @@ enum eObstacles
 	BLOCK_L    = 5,
 
 	NUM_OBSTACLES        // always last
-};
+} eObstacles;
 
 
-enum eEquipment
+typedef enum eEquipment
 {
 	EQP_WEAPON  = 0,
 	EQP_SHIELD  = 1,
@@ -274,7 +274,7 @@ enum eEquipment
 	EQP_SPECIAL = 5,
 
 	NUM_EQUIPMENT        // always last
-};
+} eEquipment;
 
 
 #endif  /* __ENUMS_H */

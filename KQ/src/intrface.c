@@ -467,7 +467,7 @@ static const struct luaL_reg lrs[] = {
    {"wait_for_entity",  KQ_wait_for_entity},
    {"warp",             KQ_warp},
    /*   {"get_tile_all", KQ_get_tile_all}, */
-   {NULL, NULL}
+   {NULL, NULL}         /* Must always be the LAST entry */
 };
 
 
@@ -948,7 +948,7 @@ static int get_field (const char *n)
    ans = (struct s_field *)
       bsearch (&st, fields, sizeof (fields) / sizeof (*fields),
                sizeof (struct s_field), fieldcmp);
-   return ans ? ans->id : -1;
+   return (ans ? ans->id : -1);
 }
 
 
@@ -1973,7 +1973,7 @@ static int KQ_face_each_other (lua_State *L)
 
 static int KQ_gameover_ex (lua_State *L)
 {
-   alldead = ((int) lua_tonumber (L, 1) == 0) ? 0 : 1;
+   alldead = ((int) lua_tonumber (L, 1) == 0 ? 0 : 1);
    return 1;
 }
 
@@ -2794,11 +2794,11 @@ static int KQ_move_entity (lua_State *L)
 /*! \brief Show message on the screen
  *
  * Show a brief message for a set period of time, or
- * until ALT is pressed.
+ * until ALT/action is pressed.
  *
  * \param   L::1 String message to show
- * \param   L::2 Icon number or 255 for none (icons
- *             are displayed, for instance, when items are procured)
+ * \param   L::2 Icon number or 255 for none (icons are displayed, for
+ *               instance, when items are procured)
  * \param   L::3 Delay time (see kq_wait()) , or 0 for indefinite
  * \returns 0 (no value returned)
  *
@@ -2806,7 +2806,7 @@ static int KQ_move_entity (lua_State *L)
  */
 static int KQ_msg (lua_State *L)
 {
-   int icn = lua_isnumber (L, 2) ? (int) lua_tonumber (L, 2) : 255;
+   int icn = (lua_isnumber (L, 2) ? (int) lua_tonumber (L, 2) : 255);
 
    message (lua_tostring (L, 1), icn, (int) lua_tonumber (L, 3), xofs, yofs);
    return 0;
@@ -3154,7 +3154,7 @@ static int KQ_set_autoparty (lua_State *L)
 
 static int KQ_set_background (lua_State *L)
 {
-   draw_background = ((int) lua_tonumber (L, 1) == 0) ? 0 : 1;
+   draw_background = ((int) lua_tonumber (L, 1) == 0 ? 0 : 1);
 
    return 0;
 }
@@ -3386,7 +3386,7 @@ static int KQ_set_ent_transl (lua_State *L)
 
 static int KQ_set_foreground (lua_State *L)
 {
-   draw_foreground = ((int) lua_tonumber (L, 1) == 0) ? 0 : 1;
+   draw_foreground = ((int) lua_tonumber (L, 1) == 0 ? 0 : 1);
 
    return 0;
 }
@@ -3483,7 +3483,7 @@ static int KQ_set_marker (lua_State *L)
 
 static int KQ_set_midground (lua_State *L)
 {
-   draw_middle = ((int) lua_tonumber (L, 1) == 0) ? 0 : 1;
+   draw_middle = ((int) lua_tonumber (L, 1) == 0 ? 0 : 1);
 
    return 0;
 }
@@ -3997,6 +3997,13 @@ static int KQ_shop (lua_State *L)
 
 
 
+/*! \brief Create a shop from within a LUA script
+ *
+ * Create a named shop (no items are added in this function)
+ * \param L ::1 Shop name
+ *          ::2 Shop index
+ * \returns 0 (nothing returned)
+ */
 static int KQ_shop_create (lua_State *L)
 {
    int index;
@@ -4005,7 +4012,7 @@ static int KQ_shop_create (lua_State *L)
    index = (int) lua_tonumber (L, 2);
 
    strncpy (shops[index].name, name, 40);
-   num_shops = (index + 1) > num_shops ? index + 1 : num_shops;
+   num_shops = ((index + 1) > num_shops ? index + 1 : num_shops);
    return 0;
 }
 
@@ -4214,9 +4221,9 @@ static int KQ_warp (lua_State *L)
  */
 int lua_dofile (lua_State *L, const char *filename)
 {
-   PACKFILE *f = filename ? pack_fopen (filename, F_READ) : NULL;
+   PACKFILE *f = (filename ? pack_fopen (filename, F_READ) : NULL);
    int ret;
-   
+
    if (f == NULL) {
          allegro_message (_("Could not open script %s!"), get_filename(filename));
          return 1;
