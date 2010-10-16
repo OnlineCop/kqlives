@@ -36,7 +36,8 @@
 /* Internal variables */
 static struct console_state
 {
-   char *lines[25];
+#define CONSOLE_LINES 25
+   char *lines[CONSOLE_LINES];
    char inputline[80];
    int cursor;
    int on;
@@ -55,7 +56,7 @@ void init_console (void)
 
    g_console.cursor = 0;
    g_console.on = 0;
-   for (c = 0; c < 25; ++c)
+   for (c = 0; c < CONSOLE_LINES; ++c)
       g_console.lines[c] = NULL;
 }
 
@@ -81,7 +82,7 @@ void display_console (int xofs, int yofs)
    hline (double_buffer, xofs, yofs + 120, xofs + 320,
           makecol (255, 255, 255));
    y = yofs + 240 - 2 * text_height (font);
-   i = 24;
+   i = CONSOLE_LINES - 1;
    while (y > yofs + 120) {
       if (g_console.lines[i]) {
          textout_ex (double_buffer, font, g_console.lines[i], xofs, y,
@@ -113,9 +114,9 @@ void scroll_console (const char *l)
    if (l == NULL)
       return;
    free (g_console.lines[0]);
-   for (i = 0; i < 24; ++i)
+   for (i = 0; i < CONSOLE_LINES - 1; ++i)
       g_console.lines[i] = g_console.lines[i + 1];
-   g_console.lines[24] = strcpy ((char *) malloc (strlen (l) + 1), l);
+   g_console.lines[CONSOLE_LINES - 1] = strcpy ((char *) malloc (strlen (l) + 1), l);
 }
 
 
@@ -128,7 +129,7 @@ void scroll_console (const char *l)
 void run_console (void)
 {
    int c;
-   int sl;
+   size_t sl;
    int running;
    unsigned int string_len;
    unsigned int i;
@@ -214,6 +215,7 @@ void run_console (void)
          break;
       }
    }
+
    /* Wait for enter key up */
    do {
       readcontrols ();

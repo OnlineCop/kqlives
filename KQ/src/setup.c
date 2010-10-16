@@ -100,7 +100,8 @@ static void citem (int y, const char *caption, const char *value,
  */
 void config_menu (void)
 {
-   int stop = 0, ptr = 0, p;
+   size_t stop = 0, ptr = 0;
+   int p;
    int temp_key = 0;
 
 #ifdef DEBUGMODE
@@ -215,7 +216,7 @@ void config_menu (void)
          if (ptr == 15 && is_sound == 0)
             ptr -= 2;
          if (ptr > 0)
-	         ptr--;
+            ptr--;
          else
             ptr = MENU_SIZE - 1;
          play_effect (SND_CLICK, 128);
@@ -226,7 +227,7 @@ void config_menu (void)
          if (ptr == 12 && is_sound == 0)
             ptr += 2;
          if (ptr < MENU_SIZE - 1)
-         	ptr++;
+            ptr++;
          else
             ptr = 0;
          play_effect (SND_CLICK, 128);
@@ -416,7 +417,7 @@ void config_menu (void)
  */
 void free_samples (void)
 {
-   int index;
+   size_t index;
 
    if (is_sound == 0)
       return;
@@ -566,7 +567,7 @@ static int load_samples (void)
       "INN_WAV", "CONFUSE_WAV", "DISPEL_WAV", "DOOM_WAV",
       "DRAIN_WAV", "GAS_WAV", "EXPLODE_WAV"
    };
-   int index;
+   size_t index;
 
    if (is_sound == 0)
       return 1;

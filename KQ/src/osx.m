@@ -54,15 +54,19 @@ static NSString* get_lua_file_path(NSString* base, NSString* file);
  * \param file The filename
  * \returns the combined path
  */
-static NSString* get_resource_file_path(NSString* base, NSString* subdir, NSString* file) {
-  NSFileManager* fm = [NSFileManager defaultManager];
-  NSString* fullpath = [NSString pathWithComponents: [NSArray arrayWithObjects: user_dir, subdir, file, nil]];
-  if ([fm fileExistsAtPath: fullpath]) {
-    return fullpath;
-  }
-  fullpath = [NSString pathWithComponents: [NSArray arrayWithObjects: base, subdir, file, nil]];
-  /* return this, even if it doesn't exist */
-  return fullpath;
+static NSString* get_resource_file_path(NSString* base, NSString* subdir, NSString* file)
+{
+   NSFileManager* fm = [NSFileManager defaultManager];
+   NSString* fullpath = [NSString pathWithComponents: [NSArray arrayWithObjects: user_dir, subdir, file, nil]];
+
+   if ([fm fileExistsAtPath: fullpath]) {
+      return fullpath;
+   }
+
+   fullpath = [NSString pathWithComponents: [NSArray arrayWithObjects: base, subdir, file, nil]];
+
+   /* return this, even if it doesn't exist */
+   return fullpath;
 }
 
 
@@ -83,26 +87,30 @@ static NSString* get_resource_file_path(NSString* base, NSString* subdir, NSStri
  * \returns the combined path
  */
 NSString* get_lua_file_path(NSString* base, NSString* file) {
-  NSFileManager* fm = [NSFileManager defaultManager];
-  NSString* path = [NSString pathWithComponents: [NSArray arrayWithObjects: user_dir, @"scripts", file, nil]];
-  NSString* fullpath = [path stringByAppendingPathExtension: @"lua"];
-  if ([fm fileExistsAtPath: fullpath]) {
-    return fullpath;
-  }
-  fullpath = [path stringByAppendingPathExtension: @"lob"];
-  if ([fm fileExistsAtPath: fullpath]) {
-    return fullpath;
-  }
-  path = [NSString pathWithComponents: [NSArray arrayWithObjects: base, @"scripts", file, nil]];
-  fullpath = [path stringByAppendingPathExtension: @"lua"];
-  if ([fm fileExistsAtPath: fullpath]) {
-    return fullpath;
-  }
-  fullpath = [path stringByAppendingPathExtension: @"lob"];
-  if ([fm fileExistsAtPath:fullpath]) {
-	return fullpath;
-  }
-  return nil;
+   NSFileManager* fm = [NSFileManager defaultManager];
+   NSString* path = [NSString pathWithComponents: [NSArray arrayWithObjects: user_dir, @"scripts", file, nil]];
+   NSString* fullpath = [path stringByAppendingPathExtension: @"lua"];
+
+   if ([fm fileExistsAtPath: fullpath]) {
+      return fullpath;
+   }
+
+   fullpath = [path stringByAppendingPathExtension: @"lob"];
+   if ([fm fileExistsAtPath: fullpath]) {
+      return fullpath;
+   }
+
+   path = [NSString pathWithComponents: [NSArray arrayWithObjects: base, @"scripts", file, nil]];
+   fullpath = [path stringByAppendingPathExtension: @"lua"];
+   if ([fm fileExistsAtPath: fullpath]) {
+      return fullpath;
+   }
+
+   fullpath = [path stringByAppendingPathExtension: @"lob"];
+   if ([fm fileExistsAtPath:fullpath]) {
+      return fullpath;
+   }
+   return nil;
 }
 
 
@@ -122,10 +130,10 @@ const char *kqres (enum eDirectories dir, const char *file)
       /* Get home directory */
 
       NSArray* arr = NSSearchPathForDirectoriesInDomains (NSLibraryDirectory,
-                                                 NSUserDomainMask, YES);
-      user_dir =[[arr objectAtIndex: 0] stringByAppendingPathComponent:@"KQ"];
-        [user_dir retain];
-      [[NSFileManager defaultManager] createDirectoryAtPath: user_dir attributes:nil];
+                     NSUserDomainMask, YES);
+      user_dir = [[arr objectAtIndex: 0] stringByAppendingPathComponent: @"KQ"];
+      [user_dir retain];
+      [[NSFileManager defaultManager] createDirectoryAtPath: user_dir attributes: nil];
 
       /* Now the data directory */
       game_dir =[[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent: @"Contents/Resources"];
@@ -135,26 +143,26 @@ const char *kqres (enum eDirectories dir, const char *file)
    }
 
    switch (dir) {
-   case DATA_DIR:
-     found = get_resource_file_path(game_dir, @"data", nsfile);
-      break;
-   case MUSIC_DIR:
-     found = get_resource_file_path(game_dir, @"music", nsfile);
-      break;
-   case MAP_DIR:
-     found = get_resource_file_path(game_dir, @"maps", nsfile);
-      break;
-   case SAVE_DIR:
-   case SETTINGS_DIR:
-     found = get_resource_file_path(user_dir, @".", nsfile);
-     break;
-   case SCRIPT_DIR:
-     found = get_lua_file_path(game_dir, nsfile);
-     break;
-   default:
-     found = nil;
-     break;
+      case DATA_DIR:
+         found = get_resource_file_path(game_dir, @"data", nsfile);
+         break;
+      case MUSIC_DIR:
+         found = get_resource_file_path(game_dir, @"music", nsfile);
+         break;
+      case MAP_DIR:
+         found = get_resource_file_path(game_dir, @"maps", nsfile);
+         break;
+      case SAVE_DIR:
+      case SETTINGS_DIR:
+         found = get_resource_file_path(user_dir, @".", nsfile);
+         break;
+      case SCRIPT_DIR:
+         found = get_lua_file_path(game_dir, nsfile);
+         break;
+      default:
+         found = nil;
+         break;
    }
    /* Return UTF8 string for Allegro */
-   return found == nil ? NULL : strncpy (ans,[found UTF8String], sizeof(ans));
+   return (found == nil ? NULL : strncpy (ans, [found UTF8String], sizeof(ans)));
 }
