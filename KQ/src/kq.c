@@ -723,7 +723,8 @@ void change_mapm (const char *map_name, const char *marker_name, int offset_x,
    /* Search for the marker with the name passed into the function. Both
     * player's starting position and camera position will be the same
     */
-   for (m = g_map.markers; m < g_map.markers + g_map.num_markers; ++m) {
+   for (m = g_map.markers.array;
+        m < g_map.markers.array + g_map.markers.size; ++m) {
       if (!strcmp (marker_name, m->name)) {
          msx = mvx = m->x + offset_x;
          msy = mvy = m->y + offset_y;

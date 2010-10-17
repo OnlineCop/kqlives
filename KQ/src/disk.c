@@ -166,12 +166,12 @@ int load_s_map (s_map *sm, PACKFILE *f)
 
    if (sm->revision >= 1) {
       /* Markers stuff */
-      sm->num_markers = pack_igetw (f);
+      sm->markers.size = pack_igetw (f);
 
-      sm->markers = (s_marker *) realloc
-         (sm->markers, sm->num_markers * sizeof (s_marker));
-      for (i = 0; i < sm->num_markers; ++i) {
-         load_s_marker (&sm->markers[i], f);
+      sm->markers.array = (s_marker *) realloc
+         (sm->markers.array, sm->markers.size * sizeof (s_marker));
+      for (i = 0; i < sm->markers.size; ++i) {
+         load_s_marker (&sm->markers.array[i], f);
       }
 
       if (sm->revision >= 2) {
@@ -187,7 +187,7 @@ int load_s_map (s_map *sm, PACKFILE *f)
          sm->num_bound_boxes = 0;
       }
    } else {
-      sm->num_markers = 0;
+      sm->markers.size = 0;
       sm->num_bound_boxes = 0;
    }
    return 0;
@@ -229,10 +229,10 @@ int save_s_map (s_map *sm, PACKFILE *f)
    pack_fwrite (sm->map_desc, sizeof (sm->map_desc), f);
 
    /* Markers */
-   pack_iputw (sm->num_markers, f);
+   pack_iputw (sm->markers.size, f);
 
-   for (i = 0; i < sm->num_markers; ++i) {
-      save_s_marker (&sm->markers[i], f);
+   for (i = 0; i < sm->markers.size; ++i) {
+      save_s_marker (&sm->markers.array[i], f);
    }
 
    /* Bounding boxes */

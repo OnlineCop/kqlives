@@ -490,8 +490,8 @@ void check_map (void)
       }
    }
 
-   _num_markers1 = gmap1.num_markers;
-   _num_markers2 = gmap2.num_markers;
+   _num_markers1 = gmap1.markers.size;
+   _num_markers2 = gmap2.markers.size;
    _num_markers = _num_markers1 != _num_markers2 ? 1 : 0;
 
    _num_bound_boxes1 = gmap1.num_bound_boxes;
@@ -560,8 +560,8 @@ void check_map (void)
       fprintf (stdout, "  map_desc:   \t%s\t\t%s\n", gmap1.map_desc,
                gmap2.map_desc);
 
-   _m1 = gmap1.markers;
-   _m2 = gmap2.markers;
+   _m1 = gmap1.markers.array;
+   _m2 = gmap2.markers.array;
 
    marker_num = 0;
    if (_num_markers1 != _num_markers2)
@@ -571,7 +571,7 @@ void check_map (void)
    // Loop through every marker on whichever map which has more (if inequal).
    while (marker_num <
           (_num_markers1 > _num_markers2 ? _num_markers1 : _num_markers2)) {
-      if (marker_num < gmap1.num_markers && marker_num < gmap2.num_markers) {
+      if (marker_num < gmap1.markers.size && marker_num < gmap2.markers.size) {
          // The other map has the same number of markers; compare the values.
          if ((_m1[marker_num].x != _m2[marker_num].x) ||
              (_m1[marker_num].y != _m2[marker_num].y) ||
@@ -583,11 +583,11 @@ void check_map (void)
          }
       } else {
          // The other map does not have that marker, print "only in map #"
-         if (gmap1.num_markers <= marker_num) {
+         if (gmap1.markers.size <= marker_num) {
             fprintf (stdout, "  Marker #%d only in Map #2\n", marker_num + 1);
             fprintf (stdout, "  - Map2: (%d, %d), \"%s\"\n", _m2[marker_num].x,
                      _m2[marker_num].y, _m2[marker_num].name);
-         } else if (gmap2.num_markers <= marker_num) {
+         } else if (gmap2.markers.size <= marker_num) {
             fprintf (stdout, "  Marker #%d only in Map #1\n", marker_num + 1);
             fprintf (stdout, "  - Map1: (%d, %d), \"%s\"\n", _m1[marker_num].x,
                      _m1[marker_num].y, _m1[marker_num].name);

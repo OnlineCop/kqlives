@@ -138,7 +138,7 @@ void add_change_marker (int x, int y, int mouse_b, int *current)
    s_marker *found = NULL;
 
    /* Does a marker exist here? */
-   for (m = gmap.markers; m < gmap.markers + num_markers; ++m) {
+   for (m = gmap.markers.array; m < gmap.markers.array + num_markers; ++m) {
       if (m->x == x && m->y == y) {
          found = m;
          break;
@@ -159,8 +159,8 @@ void add_change_marker (int x, int y, int mouse_b, int *current)
          num_markers--;
          if (*current == num_markers)
             *current = num_markers - 1;
-         memcpy (found, found + 1,
-                 (&gmap.markers[num_markers] - found) * sizeof (s_marker));
+         memcpy (found, found + 1, (&gmap.markers.array[num_markers] - found) *
+                 sizeof (s_marker));
 
          /* Wait for mouse button to be released */
       }
@@ -170,8 +170,10 @@ void add_change_marker (int x, int y, int mouse_b, int *current)
          /* Add a marker with default name */
          if (num_markers < MAX_MARKERS) {
             *current = num_markers;
-            gmap.markers = realloc (gmap.markers, (num_markers + 1) * sizeof (s_marker));
-            m = &gmap.markers[num_markers];
+            gmap.markers.array =
+               (s_marker *) realloc (gmap.markers.array,
+                                     (num_markers + 1) * sizeof (s_marker));
+            m = &gmap.markers.array[num_markers];
             m->x = x;
             m->y = y;
             sprintf (m->name, "Marker_%d", num_markers);
@@ -290,7 +292,8 @@ int find_marker (int direction, int *current)
       }
    } else if (direction == 0) {
       /* Center map on current Marker */
-      center_window (gmap.markers[*current].x, gmap.markers[*current].y);
+      center_window (gmap.markers.array[*current].x,
+                     gmap.markers.array[*current].y);
    } else if (direction == 1) {
       /* Next Marker */
       if (++*current >= num_markers) {
@@ -373,15 +376,15 @@ void orient_bounds (int current)
 void orient_markers (int current)
 {
    /* Move view-window enough to show marker */
-   if (gmap.markers[current].x < window_x)
-      window_x = gmap.markers[current].x;
-   else if (gmap.markers[current].x > window_x + htiles - 1)
-      window_x = gmap.markers[current].x - htiles + 1;
+   if (gmap.markers.array[current].x < window_x)
+      window_x = gmap.markers.array[current].x;
+   else if (gmap.markers.array[current].x > window_x + htiles - 1)
+      window_x = gmap.markers.array[current].x - htiles + 1;
 
-   if (gmap.markers[current].y < window_y)
-      window_y = gmap.markers[current].y;
-   else if (gmap.markers[current].y > window_y + vtiles - 1)
-      window_y = gmap.markers[current].y - vtiles + 1;
+   if (gmap.markers.array[current].y < window_y)
+      window_y = gmap.markers.array[current].y;
+   else if (gmap.markers.array[current].y > window_y + vtiles - 1)
+      window_y = gmap.markers.array[current].y - vtiles + 1;
 }
 
 
@@ -460,7 +463,7 @@ void rename_marker (s_marker *found)
       }
 
       /* Make sure no other markers have the same name */
-      for (m = gmap.markers; m < gmap.markers + num_markers; ++m) {
+      for (m = gmap.markers.array; m < gmap.markers.array + num_markers; ++m) {
          if (!strcmp (strbuf, m->name) && m != found) {
             cmessage ("Another marker has that name. Use another name.");
             yninput ();

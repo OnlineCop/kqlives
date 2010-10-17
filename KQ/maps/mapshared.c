@@ -259,7 +259,7 @@ void load_map (const char *path)
    /* Note: try to use gmap.num_markers, rather than num_markers. It is bad
       programming practice to store the same variable in multiple places.
       mapdraw2 uses gmap.num_markers exclusively. */
-   num_markers = gmap.num_markers;
+   num_markers = gmap.markers.size;
 
    num_bound_boxes = gmap.num_bound_boxes;
    memcpy (bound_box, gmap.bound_box, gmap.num_bound_boxes * sizeof (s_bound));
@@ -332,8 +332,8 @@ void shared_startup (void)
    map = b_map = f_map = c_map = cf_map = cb_map = 0;
    z_map = sh_map = o_map = cz_map = csh_map = co_map = 0;
    search_map = 0;
-   gmap.markers = NULL;
-   gmap.num_markers = num_markers = 0;
+   gmap.markers.array = NULL;
+   gmap.markers.size = num_markers = 0;
 
 
    /* Used for icons */
@@ -539,12 +539,12 @@ void visual_map (s_show showing, const char *save_fname)
    }
 
    /* Show marker flags */
-   if (showing.markers && gmap.num_markers > 0) {
-      num_markers = gmap.num_markers;
+   if (showing.markers && gmap.markers.size > 0) {
+      num_markers = gmap.markers.size;
       for (i = 0; i < num_markers; ++i) {
          draw_sprite (bmp, marker_image,
-                      gmap.markers[i].x * TILE_W + (TILE_W / 2),
-                      gmap.markers[i].y * TILE_H - (TILE_H / 2));
+                      gmap.markers.array[i].x * TILE_W + (TILE_W / 2),
+                      gmap.markers.array[i].y * TILE_H - (TILE_H / 2));
       }
    }
 

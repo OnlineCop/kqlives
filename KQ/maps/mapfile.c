@@ -311,7 +311,7 @@ int new_map (void)
    blit2screen ();
 
    // Remove the markers from the map
-   for (m = gmap.markers + num_markers; m > gmap.markers; --m) {
+   for (m = gmap.markers.array + num_markers; m > gmap.markers.array; --m) {
       int curmarker = num_markers;
 
       // This removes the marker
@@ -339,13 +339,13 @@ int new_map (void)
    gmap.extra_sdword2 = 0;
    gmap.song_file[0] = 0;
    gmap.map_desc[0] = 0;
-   gmap.num_markers = 0;
-   gmap.markers = NULL;
+   gmap.markers.size = 0;
+   gmap.markers.array = NULL;
    gmap.num_bound_boxes = 0;
    gmap.bound_box = NULL;
 
    num_bound_boxes = gmap.num_bound_boxes;
-   num_markers = gmap.num_markers;
+   num_markers = gmap.markers.size;
    active_bound = 0;
 
    bufferize ();

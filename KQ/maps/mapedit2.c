@@ -134,8 +134,8 @@ void do_new_map (int x, int y, int tileset)
    gmap.extra_sdword2 = 0;
    gmap.song_file[0] = 0;
    gmap.map_desc[0] = 0;
-   gmap.num_markers = 0;
-   gmap.markers = NULL;
+   gmap.markers.size = 0;
+   gmap.markers.array = NULL;
    gmap.num_bound_boxes = 0;
    gmap.bound_box = NULL;
 
@@ -287,11 +287,11 @@ void do_draw_map (cairo_t * cr, GdkRectangle * area, unsigned int layerflags)
       }
    }
    if (layerflags & MARKERS_FLAG) {
-      for (i = 0; i < gmap.num_markers; ++i) {
+      for (i = 0; i < gmap.markers.size; ++i) {
          // do not do manual clipping, I'm too lazy to get that right here
          cairo_set_source_surface (cr, gdk_marker_image,
-                                   gmap.markers[i].x * 16 + 8,
-                                   gmap.markers[i].y * 16 - 8);
+                                   gmap.markers.array[i].x * 16 + 8,
+                                   gmap.markers.array[i].y * 16 - 8);
          cairo_paint (cr);
       }
    }
@@ -452,22 +452,25 @@ unsigned int which_marker (unsigned int x, unsigned int y)
 {
    int i;
 
-   for (i = 0; i < gmap.num_markers; i++)
-      if (gmap.markers[i].x == x && gmap.markers[i].y == y)
+   for (i = 0; i < gmap.markers.size; i++) {
+      if (gmap.markers.array[i].x == x && gmap.markers.array[i].y == y)
          return i;
+   }
 
    return MAX_MARKERS;
 }
 
 void new_marker (char *value, unsigned int x, unsigned int y)
 {
-   if (gmap.num_markers >= MAX_MARKERS)
+   if (gmap.markers.size >= MAX_MARKERS)
       return;
-   gmap.markers = (s_marker *) realloc (gmap.markers, (gmap.num_markers + 1) * sizeof (s_marker));
-   strcpy(gmap.markers[gmap.num_markers].name, value);
-   gmap.markers[gmap.num_markers].x = x;
-   gmap.markers[gmap.num_markers].y = y;
-   gmap.num_markers++;
+   gmap.markers.array =
+      (s_marker *) realloc (gmap.markers.array,
+                            (gmap.markers.size + 1) * sizeof (s_marker));
+   strcpy(gmap.markers.array[gmap.markers.size].name, value);
+   gmap.markers.array[gmap.markers.size].x = x;
+   gmap.markers.array[gmap.markers.size].y = y;
+   gmap.markers.size++;
 }
 
 void remove_marker (unsigned int x, unsigned int y)
@@ -475,12 +478,12 @@ void remove_marker (unsigned int x, unsigned int y)
    int i;
 
    if ((i = which_marker (x, y)) < MAX_MARKERS) {
-      for (; i < gmap.num_markers; i++) {
-         gmap.markers[i].x = gmap.markers[i + 1].x;
-         gmap.markers[i].y = gmap.markers[i + 1].y;
-         strcpy (gmap.markers[i].name, gmap.markers[i + 1].name);
+      for (; i < gmap.markers.size; i++) {
+         gmap.markers.array[i].x = gmap.markers.array[i + 1].x;
+         gmap.markers.array[i].y = gmap.markers.array[i + 1].y;
+         strcpy (gmap.markers.array[i].name, gmap.markers.array[i + 1].name);
       }
-      gmap.num_markers--;
+      gmap.markers.size--;
    }
    map_change (x, y);
    map_change (x + 1, y);
@@ -493,7 +496,7 @@ void set_marker_at_loc (char *value, unsigned int x, unsigned int y)
    unsigned int i;
 
    if ((i = which_marker (x, y)) < MAX_MARKERS) {
-      strcpy (gmap.markers[i].name, value);
+      strcpy (gmap.markers.array[i].name, value);
    } else {
       new_marker (value, x, y);
       map_change (x, y);
@@ -508,7 +511,7 @@ char *get_marker_value (unsigned int x, unsigned int y)
    int i;
 
    if ((i = which_marker (x, y)) < MAX_MARKERS)
-      return gmap.markers[i].name;
+      return gmap.markers.array[i].name;
    else
       return NULL;
 }

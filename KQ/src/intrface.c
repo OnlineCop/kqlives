@@ -914,7 +914,8 @@ static s_marker *find_marker (const char *name, int required)
    if (name == NULL) {
       name = "(null)";
    } else {
-      for (m = g_map.markers; m < g_map.markers + g_map.num_markers; ++m) {
+      for (m = g_map.markers.array; m < g_map.markers.array +
+           g_map.markers.size; ++m) {
          if (strcmp (name, m->name) == 0) {
             return m;
          }
@@ -965,8 +966,8 @@ static void init_markers (lua_State *L)
    s_marker *m;
 
    lua_newtable (L);
-   for (i = 0; i < g_map.num_markers; ++i) {
-      m = &g_map.markers[i];
+   for (i = 0; i < g_map.markers.size; ++i) {
+      m = &g_map.markers.array[i];
       lua_pushstring (L, m->name);
       lua_newtable (L);
       lua_pushstring (L, "x");
@@ -3468,9 +3469,10 @@ static int KQ_set_marker (lua_State *L)
 
    if ((m = find_marker (marker_name, 0)) == NULL) {
       /* Need to add a new marker */
-      g_map.markers =
-         (s_marker *) realloc (g_map.markers, sizeof (s_marker) * (g_map.num_markers + 1));
-      m = &g_map.markers[g_map.num_markers++];
+      g_map.markers.array =
+         (s_marker *) realloc (g_map.markers.array, sizeof (s_marker) *
+                               (g_map.markers.size + 1));
+      m = &g_map.markers.array[g_map.markers.size++];
       strcpy (m->name, marker_name);
    }
    m->x = x_coord;

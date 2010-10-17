@@ -24,6 +24,9 @@
 #define __MARKERS_H 1
 
 
+#include <allegro.h>
+
+
 /*! \file
  * \brief Structures common to mapedit and the game (s_map and s_entity)
  * \author PH
@@ -46,6 +49,22 @@ typedef struct
    short x;                     /*!< The X position it refers to */
    short y;                     /*!< The Y position it refers to */
 } s_marker;
+
+
+
+/*! \brief Container holding array of markers
+ *
+ * This contains an array of markers, and the number of markers, to simplify
+ * passing around the size and elements separately.
+ *
+ * \author OC
+ * \date 20101015
+ */
+typedef struct _marker_array
+{
+	s_marker *array;
+	size_t size;
+} s_marker_array;
 
 
 #endif  /* __MARKERS_H */
