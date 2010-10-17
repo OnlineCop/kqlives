@@ -36,8 +36,6 @@
 #include "../include/markers.h"
 
 
-static int load_s_marker (s_marker *, PACKFILE *);
-static int save_s_marker (const s_marker *, PACKFILE *);
 static int load_s_bound (s_bound *, PACKFILE *);
 static int save_s_bound (const s_bound *, PACKFILE *);
 
@@ -223,11 +221,7 @@ int save_s_map (s_map *sm, PACKFILE *f)
    pack_fwrite (sm->map_desc, sizeof (sm->map_desc), f);
 
    /* Markers */
-   pack_iputw (sm->markers.size, f);
-
-   for (i = 0; i < sm->markers.size; ++i) {
-      save_s_marker (&sm->markers.array[i], f);
-   }
+   save_markers (&sm->markers, f);
 
    /* Bounding boxes */
    pack_iputw (sm->num_bound_boxes, f);
@@ -236,26 +230,6 @@ int save_s_map (s_map *sm, PACKFILE *f)
       save_s_bound (&sm->bound_box[i], f);
    }
 
-   return 0;
-}
-
-
-
-int load_s_marker (s_marker *m, PACKFILE *f)
-{
-   pack_fread (m->name, sizeof (m->name), f);
-   m->x = pack_igetw (f);
-   m->y = pack_igetw (f);
-   return 0;
-}
-
-
-
-int save_s_marker (const s_marker *m, PACKFILE *f)
-{
-   pack_fwrite (m->name, sizeof (m->name), f);
-   pack_iputw (m->x, f);
-   pack_iputw (m->y, f);
    return 0;
 }
 

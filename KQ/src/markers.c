@@ -73,7 +73,6 @@ size_t load_markers (s_marker_array *marray, PACKFILE *pf)
 	marray->array = (s_marker *) realloc
 		(marray->array, marray->size * sizeof (s_marker));
 	for (i = 0; i < marray->size; ++i) {
-//		load_s_marker (&marray->array[i], pf);
 		mmarker = &marray->array[i];
 
 		pack_fread (mmarker->name, sizeof (mmarker->name), pf);
@@ -102,9 +101,37 @@ size_t load_markers (s_marker_array *marray, PACKFILE *pf)
  */
 size_t save_markers (s_marker_array *marray, PACKFILE *pf)
 {
-	// STUB: Needs to be implemented
+	size_t i;
 
 	assert (marray && "marray == NULL");
 	assert (pf && "pf == NULL");
+
+	if (!marray || !pf)
+	{
+		allegro_message ("NULL passed into save_markers()\n");
+		return 1;
+	}
+
+	pack_iputw (marray->size, pf);
+	if (pack_feof (pf))
+	{
+		allegro_message ("Encountered EOF when writing marker array size.\n");
+		return 2;
+	}
+
+	for (i = 0; i < marray->size; ++i) {
+		pack_fwrite (marray->array[i].name, sizeof (marray->array[i].name), pf);
+		pack_iputw (marray->array[i].x, pf);
+		pack_iputw (marray->array[i].y, pf);
+
+		if (pack_feof (pf))
+		{
+			allegro_message ("Encountered EOF when writing marker %dsize.\n", i);
+			return 3;
+		}
+	}
+
 	return 0;
 }
+
+
