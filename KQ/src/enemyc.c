@@ -677,7 +677,7 @@ static void load_enemies (void)
       f = enemies[i];
       fscanf (edat, "%s", strbuf);
       fscanf (edat, "%d", &tmp);
-      for (p = 0; p < 16; p++) {
+      for (p = 0; p < R_TOTAL_RES; p++) {
          fscanf (edat, "%d", &tmp);
          f->res[p] = tmp;
       }

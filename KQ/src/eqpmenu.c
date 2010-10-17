@@ -42,7 +42,7 @@
 
 
 /* Globals  */
-int tstats[13], tres[16];
+int tstats[13], tres[R_TOTAL_RES];
 unsigned short t_inv[MAX_INV], sm;
 size_t tot;
 char eqp_act;
@@ -78,7 +78,7 @@ static void calc_equippreview (unsigned int aa, unsigned int p2, int ii)
    update_equipstats ();
    for (z = 0; z < 13; z++)
       tstats[z] = fighter[aa].stats[z];
-   for (z = 0; z < 16; z++)
+   for (z = 0; z < R_TOTAL_RES; z++)
       tres[z] = fighter[aa].res[z];
    party[pidx[aa]].eqp[p2] = c;
    update_equipstats ();
@@ -370,7 +370,7 @@ static void draw_equippreview (int ch, int ptr, int pp)
    if (ptr >= 0) {
       c1 = 0;
       c2 = 0;
-      for (z = 0; z < 16; z++) {
+      for (z = 0; z < R_TOTAL_RES; z++) {
          c1 += fighter[ch].res[z];
          c2 += tres[z];
       }
@@ -620,7 +620,7 @@ static void optimize_equip (int c)
       b = g_inv[t_inv[a]][0];
       for (z = 0; z < 13; z++)
          v += items[b].stats[z];
-      for (z = 0; z < 16; z++)
+      for (z = 0; z < R_TOTAL_RES; z++)
          v += items[b].res[z];
       if (v > maxx) {
          maxx = v;

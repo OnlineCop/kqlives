@@ -168,7 +168,7 @@ typedef enum eSizes
 #define R_SILENCE   13
 #define R_SLEEP     14
 #define R_TIME      15
-#define R_NONE      16
+#define R_TOTAL_RES 16
 /*\}*/
 
 

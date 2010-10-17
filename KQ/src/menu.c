@@ -382,7 +382,7 @@ s_fighter *player2fighter (int who, s_fighter * pf)
       tf.stats[j] =
          ((party[who].lvl - 1) * lup[who][j + 4] + party[who].stats[j]) / 100;
    }
-   for (j = 0; j < 16; j++)
+   for (j = 0; j < R_TOTAL_RES; j++)
       tf.res[j] = party[who].res[j];
    /* set weapon elemental power and imbuements for easy use in combat */
    tf.welem = items[party[who].eqp[0]].elem;
@@ -439,7 +439,7 @@ s_fighter *player2fighter (int who, s_fighter * pf)
          } else
             tf.stats[b] += items[a].stats[b];
       }
-      for (b = 0; b < 16; b++)
+      for (b = 0; b < R_TOTAL_RES; b++)
          tf.res[b] += items[a].res[b];
    }
    if (who == CORIN) {
@@ -450,10 +450,10 @@ s_fighter *player2fighter (int who, s_fighter * pf)
    }
    if (party[who].eqp[5] == I_AGRAN) {
       a = 0;
-      for (j = 0; j < 16; j++)
+      for (j = 0; j < R_TOTAL_RES; j++)
          a += tf.res[j];
       b = ((a * 10) / 16 + 5) / 10;
-      for (j = 0; j < 16; j++)
+      for (j = 0; j < R_TOTAL_RES; j++)
          tf.res[j] = b;
    }
    for (j = 0; j < 8; j++) {
@@ -462,7 +462,7 @@ s_fighter *player2fighter (int who, s_fighter * pf)
       if (tf.res[j] > 20)
          tf.res[j] = 20;
    }
-   for (j = 8; j < 16; j++) {
+   for (j = 8; j < R_TOTAL_RES; j++) {
       if (tf.res[j] < 0)
          tf.res[j] = 0;
       if (tf.res[j] > 10)
@@ -746,7 +746,7 @@ static void status_screen (int ch)
       print_font (double_buffer, 168 + xofs, 136 + yofs, _("Sleep"), FNORMAL);
       print_font (double_buffer, 168 + xofs, 144 + yofs, _("Time"), FNORMAL);
 
-      for (i = 0; i < 16; i++) {
+      for (i = 0; i < R_TOTAL_RES; i++) {
          rectfill (double_buffer, 240 + xofs, i * 8 + 25 + yofs, 310 + xofs,
                    i * 8 + 31 + yofs, 3);
          if (fighter[ch].res[i] < 0) {

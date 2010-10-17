@@ -269,7 +269,7 @@ static void infusion (int c, int sn)
    case M_FLOOD:
       fighter[c].res[R_WATER] += 5;
       fighter[c].res[R_THUNDER] -= 5;
-      for (j = 9; j < 16; j++) {
+      for (j = 9; j < R_TOTAL_RES; j++) {
          fighter[c].res[j] += 3;
          if (fighter[c].res[j] > 10)
             fighter[c].res[j] = 10;
@@ -279,7 +279,7 @@ static void infusion (int c, int sn)
    case M_TSUNAMI:
       fighter[c].res[R_WATER] += 10;
       fighter[c].res[R_THUNDER] -= 10;
-      for (j = 9; j < 16; j++) {
+      for (j = 9; j < R_TOTAL_RES; j++) {
          fighter[c].res[j] += 6;
          if (fighter[c].res[j] > 10)
             fighter[c].res[j] = 10;

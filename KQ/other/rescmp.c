@@ -161,7 +161,7 @@ int process_plr (FILE *in, PACKFILE *out)
                plr.stats[nk] = atoi (val);
             } else {
                nk = key - ID_R;
-               if (nk >= 0 && nk < R_NONE) {
+               if (nk >= 0 && nk < R_TOTAL_RES) {
                   plr.res[nk] = atoi (val);
                }
             }
@@ -187,7 +187,7 @@ int process_plr (FILE *in, PACKFILE *out)
 
 int save_s_player_txt (s_player * plr, FILE * out)
 {
-   int i;
+   size_t i;
    fprintf (out, "name: %s\n", plr->name);
    fprintf (out, "level: %d\n", plr->lvl);
    fprintf (out, "next: %d\n", plr->next);
@@ -198,7 +198,7 @@ int save_s_player_txt (s_player * plr, FILE * out)
    for (i = 0; i < NUM_STATS; ++i)
       if (plr->stats[i])
          fprintf (out, "%s: %d\n", get_kname (i + ID_A), plr->stats[i]);
-   for (i = 0; i < R_NONE; ++i)
+   for (i = 0; i < R_TOTAL_RES; ++i)
       if (plr->res[i])
          fprintf (out, "%s: %d\n", get_kname (i + ID_R), plr->res[i]);
    fprintf (out, "\n");

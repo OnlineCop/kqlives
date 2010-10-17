@@ -141,7 +141,7 @@ int save_s_entity (s_entity *s, PACKFILE *f)
 
 int load_s_map (s_map *sm, PACKFILE *f)
 {
-   int i;
+   size_t i;
 
    sm->map_no = pack_getc (f);
    sm->zero_zone = pack_getc (f);
@@ -197,7 +197,7 @@ int load_s_map (s_map *sm, PACKFILE *f)
 
 int save_s_map (s_map *sm, PACKFILE *f)
 {
-   int i;
+   size_t i;
 
    assert(sm && "sm == NULL");
    assert(f && "f == NULL");
@@ -269,7 +269,7 @@ int save_s_marker (const s_marker *m, PACKFILE *f)
 
 int load_s_player (s_player *s, PACKFILE *f)
 {
-   int i;
+   size_t i;
 
    pack_fread (s->name, sizeof (s->name), f);
    pack_getc (f);               /* alignment */
@@ -286,7 +286,7 @@ int load_s_player (s_player *s, PACKFILE *f)
    for (i = 0; i < NUM_STATS; ++i) {
       s->stats[i] = pack_igetl (f);
    }
-   for (i = 0; i < 16; ++i) {
+   for (i = 0; i < R_TOTAL_RES; ++i) {
       s->res[i] = pack_getc (f);
    }
    for (i = 0; i < 24; ++i) {
@@ -324,7 +324,7 @@ int save_s_player (s_player *s, PACKFILE *f)
    for (i = 0; i < NUM_STATS; ++i) {
       pack_iputl (s->stats[i], f);
    }
-   for (i = 0; i < 16; ++i) {
+   for (i = 0; i < R_TOTAL_RES; ++i) {
       pack_putc (s->res[i], f);
    }
    for (i = 0; i < 24; ++i) {
