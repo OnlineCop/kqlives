@@ -15,31 +15,34 @@ kq_SOURCES = include/bounds.h include/combat.h include/console.h \
 	include/timing.h src/bounds.c src/combat.c src/console.c src/credits.c \
 	src/disk.c src/draw.c src/effects.c src/enemyc.c src/entity.c \
 	src/eqpmenu.c src/eskill.c src/fade.c src/heroc.c src/hskill.c \
-	src/intrface.c src/itemmenu.c src/kq.c src/magic.c src/masmenu.c \
-	src/menu.c src/movement.c src/music.c src/res.c src/scrnshot.c \
-	src/selector.c src/setup.c src/sgame.c src/shopmenu.c src/timing.c
+	src/intrface.c src/itemmenu.c src/kq.c src/magic.c src/markers.c \
+	src/masmenu.c src/menu.c src/movement.c src/music.c src/res.c \
+	src/scrnshot.c src/selector.c src/setup.c src/sgame.c src/shopmenu.c \
+	src/timing.c
 
-EXTRA_kq_SOURCES = src/beos.c src/dos.c src/osx.m src/unix.c src/win.c src/winres.rc
+EXTRA_kq_SOURCES = src/beos.c src/dos.c src/osx.m src/unix.c src/win.c \
+	src/winres.rc
 kq_LDADD = $(kq_extra_files) $(ALLEGRO_LIBS) $(LIBINTL)
 kq_DEPENDENCIES = $(kq_extra_files)
 
 mapdraw_SOURCES = include/disk.h include/structs.h maps/mapdata.c \
 	maps/mapdraw.h maps/mapedit.c maps/mapent.c maps/mapfile.c \
-	maps/mapshared.c maps/mapstructs.c src/bounds.c src/disk.c
+	maps/mapshared.c maps/mapstructs.c src/bounds.c src/disk.c src/markers.c
 mapdraw_LDADD = $(ALLEGRO_LIBS) $(LIBINTL)
 
 mapdraw2_SOURCES = include/disk.h include/structs.h maps/mainwindow.c \
 	maps/mapdraw.h maps/mapdraw2.c maps/mapdraw2.h maps/mapedit2.c \
-	maps/mapedit2.h maps/mapshared.c src/bounds.c src/disk.c
+	maps/mapedit2.h maps/mapshared.c src/bounds.c src/disk.c src/markers.c
 mapdraw2_LDADD = $(GTK_LIBS) $(ALLEGRO_LIBS) $(LIBINTL)
 mapdraw2_CPPFLAGS = $(AM_CPPFLAGS) $(GTK_CFLAGS)
 
 mapdiff_SOURCES = include/bounds.h include/disk.h include/structs.h \
-	maps/mapdiff.c maps/mapdraw.h src/disk.c
+	maps/mapdiff.c maps/mapdraw.h src/disk.c src/markers.c
 mapdiff_LDADD = $(ALLEGRO_LIBS) $(LIBINTL)
 
 mapdump_SOURCES = include/bounds.h include/disk.h include/structs.h \
-	maps/mapdata.c maps/mapdump.c maps/mapshared.c src/bounds.c src/disk.c
+	maps/mapdata.c maps/mapdump.c maps/mapshared.c src/bounds.c src/disk.c \
+	src/markers.c
 mapdump_LDADD = $(ALLEGRO_LIBS) $(LIBINTL)
 
 APPR=KQ.app/Contents/Resources
