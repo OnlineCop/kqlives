@@ -36,4 +36,75 @@
 #include "../include/markers.h"
 
 
+/*! \brief Load all markers in from packfile
+ *
+ * Loads individual \sa s_marker objects from the specified PACKFILE.
+ *
+ * \param[in,out] marray - Current array of markers to be reallocated
+ * \param[in]     pf - PACKFILE from whence data are pulled
+ * \return        Non-0 on error, 0 on success
+ */
+size_t load_markers (s_marker_array *marray, PACKFILE *pf)
+{
+	s_marker *mmarker = NULL;
+	size_t i;
 
+	assert (marray && "marray == NULL");
+	assert (pf && "pf == NULL");
+
+	if (!marray || !pf)
+	{
+		allegro_message ("NULL passed into load_markers()\n");
+		return 1;
+	}
+
+	marray->size = pack_igetw (pf);
+	if (pack_feof (pf) )
+	{
+		allegro_message ("Expected value for number of markers. Instead, received EOF.\n");
+		return 2;
+	}
+	else if (marray->size == 0)
+	{
+		allegro_message ("Number of markers from file returned: 0\n");
+		return 3;
+	}
+
+	marray->array = (s_marker *) realloc
+		(marray->array, marray->size * sizeof (s_marker));
+	for (i = 0; i < marray->size; ++i) {
+//		load_s_marker (&marray->array[i], pf);
+		mmarker = &marray->array[i];
+
+		pack_fread (mmarker->name, sizeof (mmarker->name), pf);
+		mmarker->x = pack_igetw (pf);
+		mmarker->y = pack_igetw (pf);
+
+		if (pack_feof (pf))
+		{
+			allegro_message ("Encountered EOF during marker read.\n");
+			return 4;
+		}
+	}
+
+	return 0;
+}
+
+
+
+/*! \brief Save all markers out to packfile
+ *
+ * Saves individual \sa s_marker objects to the specified PACKFILE.
+ *
+ * \param[out] marray - Current array of markers from whence data are pulled
+ * \param[out] pf - PACKFILE to where data is written
+ * \return     Non-0 on error, 0 on success
+ */
+size_t save_markers (s_marker_array *marray, PACKFILE *pf)
+{
+	// STUB: Needs to be implemented
+
+	assert (marray && "marray == NULL");
+	assert (pf && "pf == NULL");
+	return 0;
+}

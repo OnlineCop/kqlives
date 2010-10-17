@@ -166,13 +166,7 @@ int load_s_map (s_map *sm, PACKFILE *f)
 
    if (sm->revision >= 1) {
       /* Markers stuff */
-      sm->markers.size = pack_igetw (f);
-
-      sm->markers.array = (s_marker *) realloc
-         (sm->markers.array, sm->markers.size * sizeof (s_marker));
-      for (i = 0; i < sm->markers.size; ++i) {
-         load_s_marker (&sm->markers.array[i], f);
-      }
+      load_markers (&sm->markers, f);
 
       if (sm->revision >= 2) {
          /* Bounding boxes stuff */

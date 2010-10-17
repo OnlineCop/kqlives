@@ -43,7 +43,7 @@
  * \author PH
  * \date 20050126
  */
-typedef struct
+typedef struct _marker
 {
    char name[32];               /*!< The name of this marker */
    short x;                     /*!< The X position it refers to */
@@ -65,6 +65,10 @@ typedef struct _marker_array
 	s_marker *array;
 	size_t size;
 } s_marker_array;
+
+
+size_t load_markers (s_marker_array *, PACKFILE *);
+size_t save_markers (s_marker_array *, PACKFILE *);
 
 
 #endif  /* __MARKERS_H */
