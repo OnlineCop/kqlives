@@ -962,7 +962,7 @@ static int get_field (const char *n)
  */
 static void init_markers (lua_State *L)
 {
-   int i;
+   size_t i;
    s_marker *m;
 
    lua_newtable (L);
@@ -995,7 +995,7 @@ static void init_markers (lua_State *L)
  */
 static void init_obj (lua_State *L)
 {
-   int i = 0;
+   size_t i = 0;
 
    /* do all the players */
    lua_newtable (L);
@@ -1218,7 +1218,7 @@ void add_special_item (int index, int quantity)
 
 void remove_special_item (int index)
 {
-   int i, found = 0;
+   size_t i, found = 0;
 
    for (i = 0; i < MAX_SPECIAL_ITEMS; i++) {
 
@@ -1712,7 +1712,7 @@ static int KQ_copy_tile_all (lua_State *L)
    int dy = (int) lua_tonumber (L, 4);
    int wid = (int) lua_tonumber (L, 5);
    int hgt = (int) lua_tonumber (L, 6);
-   int os, od, i, j;
+   size_t os, od, i, j;
 
    /*      sprintf (strbuf, "Copy (%d,%d)x(%d,%d) to (%d,%d)", sx, sy, wid, hgt, dx, dy);
       klog(strbuf);
@@ -3087,7 +3087,7 @@ static int KQ_screen_dump (lua_State *L)
 static int KQ_select_team (lua_State *L)
 {
    static int team[MAXCHRS];
-   int i, t;
+   size_t i, t;
 
    for (i = 0; i < MAXCHRS; ++i) {
       lua_rawgeti (L, 1, i + 1);
@@ -4022,9 +4022,14 @@ static int KQ_shop_create (lua_State *L)
 
 static int KQ_shop_add_item (lua_State *L)
 {
-   int index, i;
+   size_t index, i;
 
-   index = (int) lua_tonumber (L, 1);
+   index = (size_t) lua_tonumber (L, 1);
+   if (index >= NUMSHOPS) {
+      printf (_("Value passed to shop_add_item() L::1 (%u) >= NUMSHOPS\n"),
+              (unsigned int) index);
+      return 0;
+   }
 
    for (i = 0; i < SHOPITEMS; i++)
       if (shops[index].items[i] == 0)
@@ -4257,7 +4262,8 @@ int lua_dofile (lua_State *L, const char *filename)
  */
 static int kq_dostring (lua_State *L, const char *cmd)
 {
-   int retval, nrets, i;
+   int retval, nrets;
+   size_t i;
 
    nrets = lua_gettop (L);
    retval = lua_load (L, (lua_Chunkreader) stringreader, &cmd, "<console>");
@@ -4345,12 +4351,12 @@ static int KQ_party_getter (lua_State *L)
  */
 static int KQ_party_setter (lua_State *L)
 {
-   int which = lua_tonumber (L, 2);
+   size_t which = (size_t) lua_tonumber (L, 2);
 
-   if (which >= 0 && which < PSIZE) {
+   if (which < PSIZE) {
       /* check if it is a valid hero object */
       if (lua_isnil (L, 3)) {
-         int i;
+         size_t i;
 
          /* is there a character there anyway? */
          if (which >= numchrs)

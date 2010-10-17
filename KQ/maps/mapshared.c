@@ -256,7 +256,7 @@ void load_map (const char *path)
    for (i = 0; i < MAX_ANIM; i++)
       adata[i] = tanim[gmap.tileset][i];
 
-   /* Note: try to use gmap.num_markers, rather than num_markers. It is bad
+   /* Note: try to use gmap.markers.size, rather than num_markers. It is bad
       programming practice to store the same variable in multiple places.
       mapdraw2 uses gmap.num_markers exclusively. */
    num_markers = gmap.markers.size;
