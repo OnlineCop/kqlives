@@ -37,7 +37,7 @@ mapdraw2_LDADD = $(GTK_LIBS) $(ALLEGRO_LIBS) $(LIBINTL)
 mapdraw2_CPPFLAGS = $(AM_CPPFLAGS) $(GTK_CFLAGS)
 
 mapdiff_SOURCES = include/bounds.h include/disk.h include/structs.h \
-	maps/mapdiff.c maps/mapdraw.h src/disk.c src/markers.c
+	maps/mapdiff.c maps/mapdraw.h src/bounds.c src/disk.c src/markers.c
 mapdiff_LDADD = $(ALLEGRO_LIBS) $(LIBINTL)
 
 mapdump_SOURCES = include/bounds.h include/disk.h include/structs.h \
