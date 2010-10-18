@@ -218,10 +218,15 @@ typedef enum eSizes
 
 /*! \name Facing directions */
 /*\{*/
-#define FACE_DOWN    0
-#define FACE_UP      1
-#define FACE_LEFT    2
-#define FACE_RIGHT   3
+typedef enum eDirections
+{
+   FACE_DOWN   = 0,
+   FACE_UP     = 1,
+   FACE_LEFT   = 2,
+   FACE_RIGHT  = 3,
+
+   NUM_FACING_DIRECTIONS // always last
+} eDirections;
 /*\}*/
 
 
