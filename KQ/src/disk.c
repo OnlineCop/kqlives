@@ -36,35 +36,6 @@
 #include "../include/markers.h"
 
 
-static int load_s_bound (s_bound *, PACKFILE *);
-static int save_s_bound (const s_bound *, PACKFILE *);
-
-
-
-int load_s_bound (s_bound *b, PACKFILE *f)
-{
-   b->left = pack_igetw (f);
-   b->top = pack_igetw (f);
-   b->right = pack_igetw (f);
-   b->bottom = pack_igetw (f);
-   b->btile = pack_igetw (f);
-   return 0;
-}
-
-
-
-int save_s_bound (const s_bound *b, PACKFILE *f)
-{
-   pack_iputw (b->left, f);
-   pack_iputw (b->top, f);
-   pack_iputw (b->right, f);
-   pack_iputw (b->bottom, f);
-   pack_iputw (b->btile, f);
-   return 0;
-}
-
-
-
 int load_s_entity (s_entity *s, PACKFILE *f)
 {
    s->chrx = pack_getc (f);
@@ -139,8 +110,6 @@ int save_s_entity (s_entity *s, PACKFILE *f)
 
 int load_s_map (s_map *sm, PACKFILE *f)
 {
-   size_t i;
-
    sm->map_no = pack_getc (f);
    sm->zero_zone = pack_getc (f);
    sm->map_mode = pack_getc (f);
@@ -168,19 +137,13 @@ int load_s_map (s_map *sm, PACKFILE *f)
 
       if (sm->revision >= 2) {
          /* Bounding boxes stuff */
-         sm->num_bound_boxes = pack_igetw (f);
-         sm->bound_box = (s_bound *) realloc
-            (sm->bound_box, sm->num_bound_boxes * sizeof (s_bound));
-
-         for (i = 0; i < sm->num_bound_boxes; ++i) {
-            load_s_bound (&sm->bound_box[i], f);
-         }
+         load_bounds (&sm->bounds, f);
       } else {
-         sm->num_bound_boxes = 0;
+         sm->bounds.size = 0;
       }
    } else {
       sm->markers.size = 0;
-      sm->num_bound_boxes = 0;
+      sm->bounds.size = 0;
    }
    return 0;
 }
@@ -224,11 +187,7 @@ int save_s_map (s_map *sm, PACKFILE *f)
    save_markers (&sm->markers, f);
 
    /* Bounding boxes */
-   pack_iputw (sm->num_bound_boxes, f);
-
-   for (i = 0; i < sm->num_bound_boxes; ++i) {
-      save_s_bound (&sm->bound_box[i], f);
-   }
+   save_bounds (&sm->bounds, f);
 
    return 0;
 }

@@ -341,10 +341,10 @@ int new_map (void)
    gmap.map_desc[0] = 0;
    gmap.markers.size = 0;
    gmap.markers.array = NULL;
-   gmap.num_bound_boxes = 0;
-   gmap.bound_box = NULL;
+   gmap.bounds.size = 0;
+   gmap.bounds.array = NULL;
 
-   num_bound_boxes = gmap.num_bound_boxes;
+   num_bound_boxes = gmap.bounds.size;
    num_markers = gmap.markers.size;
    active_bound = 0;
 

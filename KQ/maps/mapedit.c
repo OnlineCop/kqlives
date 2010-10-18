@@ -2907,10 +2907,10 @@ int process_keyboard (const int k)
       gmap.markers.size = num_markers;
 
       /* Copy the bounding boxes back in */
-      gmap.bound_box = (s_bound *) realloc
-         (gmap.bound_box, num_bound_boxes * sizeof (s_bound));
-      memcpy (gmap.bound_box, bound_box, num_bound_boxes * sizeof (s_bound));
-      gmap.num_bound_boxes = num_bound_boxes;
+      gmap.bounds.array = (s_bound *) realloc
+         (gmap.bounds.array, num_bound_boxes * sizeof (s_bound));
+      memcpy (gmap.bounds.array, bound_box, num_bound_boxes * sizeof (s_bound));
+      gmap.bounds.size = num_bound_boxes;
 
       prompt_save_map ();
       break;

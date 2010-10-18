@@ -261,8 +261,8 @@ void load_map (const char *path)
       mapdraw2 uses gmap.num_markers exclusively. */
    num_markers = gmap.markers.size;
 
-   num_bound_boxes = gmap.num_bound_boxes;
-   memcpy (bound_box, gmap.bound_box, gmap.num_bound_boxes * sizeof (s_bound));
+   num_bound_boxes = gmap.bounds.size;
+   memcpy (bound_box, gmap.bounds.array, gmap.bounds.size * sizeof (s_bound));
 }                               /* load_map () */
 
 
@@ -550,7 +550,7 @@ void visual_map (s_show showing, const char *save_fname)
 
    /* Show boundary boxes */
    if (showing.boundaries) {
-      for (i = 0; i < gmap.num_bound_boxes; i++) {
+      for (i = 0; i < gmap.bounds.size; i++) {
          rect (bmp, bound_box[i].left * TILE_W, bound_box[i].top * TILE_H,
                (bound_box[i].right + 1) * TILE_W - 1,
                (bound_box[i].bottom + 1) * TILE_H - 1, 24);

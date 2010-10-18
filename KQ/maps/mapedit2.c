@@ -72,6 +72,8 @@ static cairo_surface_t *convert_icon (BITMAP *icon, gboolean transparency)
    return s;
 }
 
+
+
 void convert_icons (void)
 {
    int i, j;
@@ -108,6 +110,8 @@ void convert_icons (void)
    gdk_marker_image_active = convert_icon (marker_image_active, FALSE);
 }
 
+
+
 void do_new_map (int x, int y, int tileset)
 {
 
@@ -136,8 +140,8 @@ void do_new_map (int x, int y, int tileset)
    gmap.map_desc[0] = 0;
    gmap.markers.size = 0;
    gmap.markers.array = NULL;
-   gmap.num_bound_boxes = 0;
-   gmap.bound_box = NULL;
+   gmap.bounds.size = 0;
+   gmap.bounds.array = NULL;
 
    active_bound = 0;
 
@@ -153,6 +157,7 @@ void do_new_map (int x, int y, int tileset)
 }
 
 
+
 void do_load_map (const char *filename)
 {
    load_map (filename);
@@ -164,6 +169,8 @@ void do_load_map (const char *filename)
       ++number_of_ents;
    }
 }
+
+
 
 void do_draw_map (cairo_t * cr, GdkRectangle * area, unsigned int layerflags)
 {
@@ -297,8 +304,8 @@ void do_draw_map (cairo_t * cr, GdkRectangle * area, unsigned int layerflags)
    }
 
    if (layerflags & BOUNDING_FLAG) {
-      for (i = 0; i < gmap.num_bound_boxes; ++i) {
-         s_bound bound = gmap.bound_box[i];
+      for (i = 0; i < gmap.bounds.size; ++i) {
+         s_bound bound = gmap.bounds.array[i];
 
          cairo_set_line_width (cr, 1);
          cairo_set_source_rgb (cr, 1, 1, 0);
@@ -309,6 +316,8 @@ void do_draw_map (cairo_t * cr, GdkRectangle * area, unsigned int layerflags)
       }
    }
 }
+
+
 
 void do_draw_tile (cairo_t * cr, unsigned int layer, unsigned int tile)
 {
@@ -323,6 +332,8 @@ void do_draw_tile (cairo_t * cr, unsigned int layer, unsigned int tile)
    }
    cairo_paint (cr);
 }
+
+
 
 void do_draw_palette (cairo_t * cr, GdkRectangle * area, unsigned int w,
                       unsigned int layer, unsigned int tile)
@@ -355,6 +366,8 @@ void do_draw_palette (cairo_t * cr, GdkRectangle * area, unsigned int w,
    }
 }
 
+
+
 unsigned int get_tile_at (unsigned int x, unsigned int y, unsigned int layer)
 {
    if (x >= (unsigned int) gmap.xsize)
@@ -381,6 +394,8 @@ unsigned int get_tile_at (unsigned int x, unsigned int y, unsigned int layer)
       return 0;
    }
 }
+
+
 
 void set_tile_at (unsigned int tile, unsigned int x, unsigned int y,
                   unsigned int layer)
@@ -411,6 +426,8 @@ void set_tile_at (unsigned int tile, unsigned int x, unsigned int y,
    map_change (x, y);
 }
 
+
+
 void set_obstacle_at (unsigned int obstacle, unsigned int x, unsigned int y)
 {
    int i;
@@ -424,10 +441,14 @@ void set_obstacle_at (unsigned int obstacle, unsigned int x, unsigned int y)
    map_change (x, y);
 }
 
+
+
 unsigned int get_zone_at (unsigned int x, unsigned int y)
 {
    return z_map[y * gmap.xsize + x];
 }
+
+
 
 /* Set the zone. ZONES_UP means increase by one.
  * ZONES_DOWN means decrease by one.*/
@@ -446,6 +467,8 @@ void set_zone_at (unsigned int zone, unsigned int x, unsigned int y)
    map_change (x, y);
 }
 
+
+
 /* returns which marker if there is a marker at the specified location.
  * or returns MAX_MARKERS if this square does not have a marker */
 unsigned int which_marker (unsigned int x, unsigned int y)
@@ -460,6 +483,8 @@ unsigned int which_marker (unsigned int x, unsigned int y)
    return MAX_MARKERS;
 }
 
+
+
 void new_marker (char *value, unsigned int x, unsigned int y)
 {
    if (gmap.markers.size >= MAX_MARKERS)
@@ -472,6 +497,8 @@ void new_marker (char *value, unsigned int x, unsigned int y)
    gmap.markers.array[gmap.markers.size].y = y;
    gmap.markers.size++;
 }
+
+
 
 void remove_marker (unsigned int x, unsigned int y)
 {
@@ -491,6 +518,8 @@ void remove_marker (unsigned int x, unsigned int y)
    map_change (x + 1, y - 1);
 }
 
+
+
 void set_marker_at_loc (char *value, unsigned int x, unsigned int y)
 {
    unsigned int i;
@@ -506,6 +535,8 @@ void set_marker_at_loc (char *value, unsigned int x, unsigned int y)
    }
 }
 
+
+
 char *get_marker_value (unsigned int x, unsigned int y)
 {
    int i;
@@ -515,6 +546,7 @@ char *get_marker_value (unsigned int x, unsigned int y)
    else
       return NULL;
 }
+
 
 
 // FIXME: this offsetof usage is a bit too hackish
@@ -563,6 +595,8 @@ GtkListStore *create_entity_model (void)
    return store;
 }
 
+
+
 void fill_entity_model (GtkListStore * store, int entity)
 {
    GtkTreeIter iter;
@@ -595,6 +629,8 @@ void fill_entity_model (GtkListStore * store, int entity)
    }
    while (gtk_tree_model_iter_next (GTK_TREE_MODEL (store), &iter));
 }
+
+
 
 void change_entity_model (GtkListStore * store, int entity, char *valuepath,
                           char *value)

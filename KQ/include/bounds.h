@@ -24,6 +24,9 @@
 #define __BOUNDS_H 1
 
 
+#include <allegro.h>
+
+
 /*! \file
  * \brief Contains functions specific to bounded areas
  * \author TT
@@ -53,6 +56,26 @@ typedef struct
    short bottom;                /*!< Bottom edge of the bounding box */
    short btile;                 /*!< Index of the tile to draw everywhere BUT here */
 } s_bound;
+
+
+
+/*! \brief Container holding array of bounds
+ *
+ * This contains an array of bounds, and the number of bounds, to simplify
+ * passing around the size and elements separately.
+ *
+ * \author OC
+ * \date 20101017
+ */
+typedef struct _bound_array
+{
+   s_bound *array;
+   size_t size;
+} s_bound_array;
+
+
+size_t load_bounds (s_bound_array *, PACKFILE *);
+size_t save_bounds (s_bound_array *, PACKFILE *);
 
 
 int bound_in_bound (s_bound *, int);

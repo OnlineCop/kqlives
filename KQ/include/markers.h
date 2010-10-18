@@ -62,8 +62,8 @@ typedef struct _marker
  */
 typedef struct _marker_array
 {
-	s_marker *array;
-	size_t size;
+   s_marker *array;
+   size_t size;
 } s_marker_array;
 
 

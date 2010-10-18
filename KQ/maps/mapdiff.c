@@ -494,8 +494,8 @@ void check_map (void)
    _num_markers2 = gmap2.markers.size;
    _num_markers = _num_markers1 != _num_markers2 ? 1 : 0;
 
-   _num_bound_boxes1 = gmap1.num_bound_boxes;
-   _num_bound_boxes2 = gmap2.num_bound_boxes;
+   _num_bound_boxes1 = gmap1.bounds.size;
+   _num_bound_boxes2 = gmap2.bounds.size;
    _num_bound_boxes = _num_bound_boxes1 != _num_bound_boxes2 ? 1 : 0;
 
    if ((_map_no) || (_zero_zone) || (_map_mode) || (_can_save) || (_tileset)
@@ -596,8 +596,8 @@ void check_map (void)
       marker_num++;
    }
 
-   _b1 = gmap1.bound_box;
-   _b2 = gmap2.bound_box;
+   _b1 = gmap1.bounds.array;
+   _b2 = gmap2.bounds.array;
 
    bound_box_num = 0;
    if (_num_bound_boxes1 != _num_bound_boxes2)
@@ -607,8 +607,8 @@ void check_map (void)
    if (gmap1.revision >= 2 && gmap2.revision >= 2) {
       // Loop through every bound box on whichever map which has more (if inequal).
       while (bound_box_num < (_num_bound_boxes1 > _num_bound_boxes2 ? _num_bound_boxes1 : _num_bound_boxes2)) {
-         if (bound_box_num < gmap1.num_bound_boxes
-             && bound_box_num < gmap2.num_bound_boxes) {
+         if (bound_box_num < gmap1.bounds.size
+             && bound_box_num < gmap2.bounds.size) {
             // The other map has the same number of bounding boxes; compare the values.
             if ((_b1[bound_box_num].left != _b2[bound_box_num].left)
                 || (_b1[bound_box_num].top != _b2[bound_box_num].top)
@@ -629,7 +629,7 @@ void check_map (void)
             }
          } else {
             // The other map does not have that bounding box, print "only in map #"
-            if (gmap1.num_bound_boxes <= bound_box_num) {
+            if (gmap1.bounds.size <= bound_box_num) {
                fprintf (stdout, "  Bound Box #%d only in Map #2\n",
                         bound_box_num + 1);
                fprintf (stdout, "  - Map2: (%d, %d), (%d, %d)\n",
@@ -637,7 +637,7 @@ void check_map (void)
                         _b2[bound_box_num].top,
                         _b2[bound_box_num].right,
                         _b2[bound_box_num].bottom);
-            } else if (gmap2.num_bound_boxes <= bound_box_num) {
+            } else if (gmap2.bounds.size <= bound_box_num) {
                fprintf (stdout, "  Bound Box #%d only in Map #1\n",
                         bound_box_num + 1);
                fprintf (stdout, "  - Map1: (%d, %d), (%d, %d)\n",

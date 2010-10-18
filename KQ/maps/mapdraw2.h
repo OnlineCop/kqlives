@@ -27,6 +27,8 @@ void remove_entity (int entity);
 int get_entity_at (unsigned int x, unsigned int y);
 
 #ifndef __MAPDRAW_H
+#include "../include/bounds.h"
+#include "../include/markers.h"
 #include "../include/structs.h"
 #include "mapdraw.h"
 

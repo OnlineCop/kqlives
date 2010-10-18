@@ -715,7 +715,7 @@ static void draw_playerbound (void)
    s_bound *found = NULL;
 
    /* Is the player standing inside a bounding area? */
-   found = is_contained_bound (g_map.bound_box, g_map.num_bound_boxes,
+   found = is_contained_bound (g_map.bounds.array, g_map.bounds.size,
                                g_ent[0].tilex, g_ent[0].tiley, g_ent[0].tilex,
                                g_ent[0].tiley);
 

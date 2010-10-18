@@ -350,11 +350,11 @@ static gboolean on_map_button_press_event (GtkWidget *widget, GdkEventButton *ev
          }
          break;
       case BOUNDING_FLAG:
-         bound = is_contained_bound(gmap.bound_box, gmap.num_bound_boxes, x, y, x, y);
+         bound = is_contained_bound(gmap.bounds.array, gmap.bounds.size, x, y, x, y);
          if (bound == NULL)
             return FALSE;
 
-         i = gmap.num_bound_boxes;
+         i = gmap.bounds.size;
 
          temp_bound.left = bound->left;
          temp_bound.top = bound->top;
@@ -423,23 +423,23 @@ static gboolean on_map_button_release_event(GtkWidget *widget, GdkEventButton *e
    switch (current_layer) {
    case BOUNDING_FLAG:
       if (bound_dragging) {
-         i = gmap.num_bound_boxes;
+         i = gmap.bounds.size;
          x1 = temp_bound.left;
          y1 = temp_bound.top;
 
          set_bounds (&temp_bound, x1, y1, x, y);
 
-         if (!bound_in_bound2(&temp_bound, gmap.bound_box, gmap.num_bound_boxes)) {
-            gmap.bound_box = realloc (gmap.bound_box, sizeof(s_bound) * (i + 1));
-            if (gmap.bound_box == NULL) {
+         if (!bound_in_bound2(&temp_bound, gmap.bounds.array, gmap.bounds.size)) {
+            gmap.bounds.array = realloc (gmap.bounds.array, sizeof(s_bound) * (i + 1));
+            if (gmap.bounds.array == NULL) {
                printf("realloc failed. Unable to allocate memory for another bound box. Exiting.\n");
                gtk_main_quit();
             }
 
-            set_bounds (&gmap.bound_box[i], x1, y1, x, y);
-            gmap.bound_box[i].btile = 0;        // User should be able to choose this.
+            set_bounds (&gmap.bounds.array[i], x1, y1, x, y);
+            gmap.bounds.array[i].btile = 0;        // User should be able to choose this.
             update_window ();   // Poor clipping. TODO.
-            gmap.num_bound_boxes++;
+            gmap.bounds.size++;
          }
 
          bound_dragging = FALSE;

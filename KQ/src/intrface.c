@@ -2002,19 +2002,19 @@ static int KQ_get_autoparty (lua_State *L)
  * index of the one that the player is standing in:
  *
  * \param   L::1 - index of Entity (on the map)
- * \returns -1 if nothing found, else index of box: [0..num_bound_boxes)
+ * \returns -1 if nothing found, else index of box: [0..bounds.size)
  */
 static int KQ_get_bounds (lua_State *L)
 {
    int a = real_entity_num (L, 1);
    s_bound *found;
 
-   found = is_contained_bound (g_map.bound_box, g_map.num_bound_boxes,
+   found = is_contained_bound (g_map.bounds.array, g_map.bounds.size,
                                g_ent[a].tilex, g_ent[a].tiley, g_ent[a].tilex,
                                g_ent[a].tiley);
 
    if (found != NULL)
-      lua_pushnumber (L, found - g_map.bound_box);
+      lua_pushnumber (L, found - g_map.bounds.array);
    else
       lua_pushnumber (L, -1);
 

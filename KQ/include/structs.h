@@ -66,8 +66,7 @@ typedef struct
    char song_file[16];          /*!< Base file name for map song */
    char map_desc[40];           /*!< Map name (shown when map first appears) */
    s_marker_array markers;      /*!< Marker array and marker size */
-   short num_bound_boxes;       /*!< Number of bounding boxes in this map */
-   s_bound *bound_box;          /*!< Pointer to the array bound_box */
+   s_bound_array bounds;        /*!< Bound array and bound size */
 } s_map;
 
 
