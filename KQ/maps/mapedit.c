@@ -333,10 +333,10 @@ unsigned int check_last_zone (void)
  */
 void cleanup (void)
 {
-   int k, j;
+   size_t k, j;
 
    for (k = 0; k < MAX_EPICS; k++) {
-      for (j = 0; j < 12; j++)
+      for (j = 0; j < NUM_FACING_DIRECTIONS * ENT_FRAMES_PER_DIR; j++)
          destroy_bitmap (eframes[k][j]);
    }
    destroy_bitmap (double_buffer);

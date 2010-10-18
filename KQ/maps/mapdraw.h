@@ -164,7 +164,7 @@ void error_load (const char *);
 
 
 extern BITMAP *double_buffer, *pcx_buffer, *icons[MAX_TILES],
-   *eframes[MAX_EPICS][12];
+   *eframes[MAX_EPICS][NUM_FACING_DIRECTIONS * ENT_FRAMES_PER_DIR];
 extern BITMAP *font6, *mesh1[MAX_OBSTACLES], *mesh2, *mesh3,
    *shadow[MAX_SHADOWS], *marker_image, *marker_image_active;
 extern PALETTE pal;
