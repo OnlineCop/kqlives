@@ -55,7 +55,7 @@ const char *ss_exit_msg[5] = {
  * \param   prefix The first 4 to 7 characters of the name
  * \returns 0 if success, non-zero if failure
  */
-int save_screenshot (BITMAP * src_bmp, const char *prefix)
+int save_screenshot (BITMAP *src_bmp, const char *prefix)
 {
    char filename[4096];
 
@@ -105,14 +105,8 @@ int save_screenshot (BITMAP * src_bmp, const char *prefix)
             PALETTE pal;
             BITMAP *temp;
 
-            /* a format variable has to be set up to handle the custom formatting */
-            char format[50];
-
-            // This gives "%s/%s%0#d.pcx", where '#' is the number of 0's
-            sprintf (format, "%%s/%%s%%0%dd.pcx", SAVE_NAME_SIZE - prefix_len);
-
-            /* after the next sprintf, we will have something like "shots/kq000001.pcx" */
-            sprintf (filename, format, savedir, prefix, last);
+            /* Formats the full path as "shots/kq000001.pcx" */
+            sprintf (filename, "%s/%s%*0d.pcx", savedir, prefix, SAVE_NAME_SIZE - prefix_len, last);
 
             /* if the src_bmp is the screen, then we need to create a sub bitmap just in case */
             temp =
