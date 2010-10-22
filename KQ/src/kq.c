@@ -536,7 +536,7 @@ BITMAP *alloc_bmp (int bx, int by, const char *bname)
  */
 static void allocate_stuff (void)
 {
-   int i, p;
+   size_t i, p;
 
    kfonts = alloc_bmp (1024, 60, "kfonts");
 
@@ -581,9 +581,9 @@ static void allocate_stuff (void)
       }
    }
 
-   double_buffer = alloc_bmp (352, 280, "double_buffer");
-   back = alloc_bmp (352, 280, "back");
-   fx_buffer = alloc_bmp (352, 280, "fx_buffer");
+   double_buffer = alloc_bmp (SCREEN_W2, SCREEN_H2, "double_buffer");
+   back = alloc_bmp (SCREEN_W2, SCREEN_H2, "back");
+   fx_buffer = alloc_bmp (SCREEN_W2, SCREEN_H2, "fx_buffer");
 
    for (p = 0; p < MAX_SHADOWS; p++)
       shadow[p] = alloc_bmp (16, 16, "shadow[x]");

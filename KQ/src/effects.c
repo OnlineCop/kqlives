@@ -79,7 +79,7 @@ void death_animation (int tgt, int aflag)
    cury = -1;
    play_effect (24, 128);
    battle_render (0, 0, 0);
-   blit (double_buffer, back, 0, 0, 0, 0, 352, 280);
+   fullblit(double_buffer, back);
 
    // TT: slow_computer addition for speed-ups
    count = (slow_computer ? 4 : 1);
@@ -100,7 +100,7 @@ void death_animation (int tgt, int aflag)
          }
          blit2screen (0, 0);
          kq_wait (30);
-         blit (back, double_buffer, 0, 0, 0, 0, 350, 280);
+         fullblit(back, double_buffer);
       }
    }
    for (g = f; g < f + n; g++)
@@ -145,7 +145,7 @@ void display_amount (int tgt, int cl, int aflag)
    curx = -1;
    cury = -1;
    battle_render (0, 0, 0);
-   blit (double_buffer, back, 0, 0, 0, 0, 352, 280);
+   fullblit(double_buffer, back);
 
    // TT: slow_computer addition for speed-ups
    pcount = (slow_computer ? 1 : 2);
@@ -154,7 +154,7 @@ void display_amount (int tgt, int cl, int aflag)
    // TT: slow_computer addition for speed-ups
    for (p = 0; p < pcount; p++) {
       for (c = 0; c < ccount; c++) {
-         blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
+         fullblit(back, double_buffer);
          for (g = f; g < f + n; g++) {
             if (is_active (g) == 1) {
                dx = fighter[g].cx + (fighter[g].cw / 2);
@@ -228,7 +228,7 @@ void draw_attacksprite (int tgt, int aflag, int ef, int shows)
    curx = -1;
    cury = -1;
    battle_render (0, 0, 0);
-   blit (double_buffer, back, 0, 0, 0, 0, 352, 280);
+   fullblit(double_buffer, back);
    if (aflag == 0) {
       if (ta[f] == MISS)
          play_effect (SND_MENU, 128);
@@ -253,7 +253,7 @@ void draw_attacksprite (int tgt, int aflag, int ef, int shows)
       }
       blit2screen (0, 0);
       kq_wait (eff[ef].delay);
-      blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
+      fullblit(back, double_buffer);
    }
    if (tgt < PSIZE) {
       for (a = f; a < f + n; a++)
@@ -295,7 +295,7 @@ void draw_castersprite (int cstr, int cc)
    dct = 1;
    battle_render (0, 0, 0);
    dct = 0;
-   blit (double_buffer, back, 0, 0, 0, 0, 352, 280);
+   fullblit(double_buffer, back);
    play_effect (22, 128);
    for (a = 0; a < 10; a++) {
       if (is_active (cstr) == 1) {
@@ -306,7 +306,7 @@ void draw_castersprite (int cstr, int cc)
       }
       blit2screen (0, 0);
       kq_wait (120);
-      blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
+      fullblit(back, double_buffer);
    }
    unload_datafile_object (cd);
    fighter[cstr].aframe = 0;
@@ -347,7 +347,7 @@ void draw_hugesprite (int tgt, int hx, int hy, int ef, int shows)
    dct = 1;
    battle_render (0, 0, 0);
    dct = 0;
-   blit (double_buffer, back, 0, 0, 0, 0, 352, 280);
+   fullblit(double_buffer, back);
    play_effect (eff[ef].snd, 128);
    for (a = 0; a < eff[ef].numf; a++) {
       if (eff[ef].orient == 0)
@@ -367,7 +367,7 @@ void draw_hugesprite (int tgt, int hx, int hy, int ef, int shows)
                       hx, hy, eff[ef].xsize, eff[ef].ysize);
       blit2screen (0, 0);
       kq_wait (eff[ef].delay);
-      blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
+      fullblit(back, double_buffer);
    }
    revert_cframes (tgt, 1);
    unload_datafile_object (pb);
@@ -416,7 +416,7 @@ void draw_spellsprite (int tgt, int aflag, int ef, int shows)
    dct = 1;
    battle_render (0, 0, 0);
    dct = 0;
-   blit (double_buffer, back, 0, 0, 0, 0, 352, 280);
+   fullblit(double_buffer, back);
    play_effect (eff[ef].snd, 128);
    for (a = 0; a < eff[ef].numf; a++) {
       for (g = f; g < f + n; g++) {
@@ -445,7 +445,7 @@ void draw_spellsprite (int tgt, int aflag, int ef, int shows)
       }
       blit2screen (0, 0);
       kq_wait (eff[ef].delay);
-      blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
+      fullblit(back, double_buffer);
    }
    revert_cframes (tgt, aflag);
    unload_datafile_object (pb);

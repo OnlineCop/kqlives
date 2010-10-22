@@ -178,4 +178,16 @@ extern BITMAP *obj_mesh;
 #endif
 
 
+/* The same blit() function was called all over the place, so this simplifies
+ * the call.
+ * 352 == (320 + 16 + 16) or screen dimensions plus 1 tile on left and 1 tile
+ * on right.
+ * 272 == (240 + 16 + 16) or screen dimensions plus 1 tile on top and 1 tile
+ * on bottom.
+ */
+#define SCREEN_W2 ((320*2) + 16 + 16)
+#define SCREEN_H2 (240 + 16 + 16)
+#define fullblit(a,b) blit((a), (b), 0, 0, 0, 0, SCREEN_W2, SCREEN_H2)
+
+
 #endif  /* __KQ_H */

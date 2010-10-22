@@ -853,7 +853,7 @@ static void do_round (void)
  * stone, and if the fighter is selected. Also displays 'Vision'
  * spell information.
  */
-void draw_fighter (int dude, int dcur)
+void draw_fighter (size_t dude, size_t dcur)
 {
    int xx;
    int yy;
@@ -1153,7 +1153,7 @@ static void heroes_win (void)
    print_font (double_buffer, 160 - (strlen (strbuf) * 4), 16, strbuf,
                FNORMAL);
    blit2screen (0, 0);
-   blit (double_buffer, back, 0, 0, 0, 0, 352, 280);
+   fullblit(double_buffer, back);
    for (index = 0; index < numens; index++) {
       /* PH bug: (?) should found_item be reset to zero at the start of this loop?
        * If you defeat 2 enemies, you should (possibly) get 2 items, right?
@@ -1185,7 +1185,7 @@ static void heroes_win (void)
    if (nr > 0) {
       blit2screen (0, 0);
       wait_enter ();
-      blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
+      fullblit(back, double_buffer);
    }
 
    nr = 0;

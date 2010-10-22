@@ -100,11 +100,11 @@ static int confirm_action (void)
 
    if (snc[save_ptr] == 0)
       return 1;
-   blit (double_buffer, back, 0, 0, 0, 0, 352, 280);
+   fullblit(double_buffer, back);
    menubox (double_buffer, 128, pointer_offset + 12, 14, 1, DARKBLUE);
    print_font (double_buffer, 136, pointer_offset + 20, _("Confirm/Cancel"), FNORMAL);
    blit2screen (0, 0);
-   blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
+   fullblit(back, double_buffer);
    while (!stop) {
       readcontrols ();
       if (balt) {
@@ -176,7 +176,7 @@ static void delete_game (void)
                   _("File Not Deleted"), FNORMAL);
    }
    blit2screen (0, 0);
-   blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
+   fullblit(back, double_buffer);
 
    while (!stop) {
       readcontrols ();

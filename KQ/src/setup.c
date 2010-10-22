@@ -87,7 +87,7 @@ static void citem (int y, const char *caption, const char *value,
                    const int color)
 {
    print_font (double_buffer, 48 + xofs, y + yofs, caption, color);
-   print_font (double_buffer, 280 - 8 * strlen (value) + xofs, y + yofs, value, color);
+   print_font (double_buffer, SCREEN_H2 - 8 * strlen (value) + xofs, y + yofs, value, color);
 }
 
 
@@ -835,7 +835,7 @@ void play_effect (int efc, int panning)
          play_sample (samp, gsvol, panning, 1000, 0);
       break;
    case SND_BAD:
-      blit (double_buffer, fx_buffer, 0, 0, 0, 0, 352, 280);
+      fullblit(double_buffer, fx_buffer);
 
       if (samp)
          play_sample (samp, gsvol, panning, 1000, 0);
@@ -853,10 +853,10 @@ void play_effect (int efc, int panning)
          blit2screen (xo + bx[a], yo + by[a]);
          kq_wait (10);
       }
-      blit (fx_buffer, double_buffer, 0, 0, 0, 0, 352, 280);
+      fullblit(fx_buffer, double_buffer);
       break;
    case SND_EXPLODE:
-      blit (double_buffer, fx_buffer, 0, 0, 0, 0, 352, 280);
+      fullblit(double_buffer, fx_buffer);
       clear_bitmap (double_buffer);
       get_palette (old);
       for (a = 0; a < 256; ++a) {
@@ -878,7 +878,7 @@ void play_effect (int efc, int panning)
             kq_wait (10);
          }
       }
-      blit (fx_buffer, double_buffer, 0, 0, 0, 0, 352, 280);
+      fullblit(fx_buffer, double_buffer);
       break;
    }
 }

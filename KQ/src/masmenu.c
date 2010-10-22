@@ -288,7 +288,7 @@ int learn_new_spells (int who)
 {
    int a, p, i, nog, g = 0;
 
-   blit (double_buffer, back, 0, 0, 0, 0, 352, 280);
+   fullblit(double_buffer, back);
    for (a = 1; a < NUM_SPELLS; a++) {
       nog = 1;
       for (i = 0; i < 60; i++)
@@ -305,7 +305,7 @@ int learn_new_spells (int who)
          if (p < 60) {
             if (in_combat == 1) {
                sprintf (strbuf, _("%s learned %s"), party[who].name, magic[a].name);
-               blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
+               fullblit(back, double_buffer);
                menubox (double_buffer, 148 - (strlen (strbuf) * 4), 152,
                         strlen (strbuf) + 1, 1, BLUE);
                draw_icon (double_buffer, magic[a].icon,
@@ -320,7 +320,7 @@ int learn_new_spells (int who)
          }
       }
    }
-   blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
+   fullblit(back, double_buffer);
    return g;
 }
 

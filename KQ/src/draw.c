@@ -1101,7 +1101,7 @@ void message (const char *m, int icn, int delay, int x_m, int y_m)
    s = msg;
 
    /* Save a copy of the screen */
-   blit (double_buffer, back, x_m, y_m, 0, 0, 352, 280);
+   blit (double_buffer, back, x_m, y_m, 0, 0, SCREEN_W2, SCREEN_H2);
 
    /* Loop for each box full of text... */
    while (s != NULL) {
@@ -1140,7 +1140,7 @@ void message (const char *m, int icn, int delay, int x_m, int y_m)
          wait_enter ();
       else
          kq_wait (delay);
-      blit (back, double_buffer, 0, 0, x_m, y_m, 352, 280);
+      blit (back, double_buffer, 0, 0, x_m, y_m, SCREEN_W2, SCREEN_H2);
    }
 }
 

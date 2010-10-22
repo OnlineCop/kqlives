@@ -474,7 +474,7 @@ int skill_use (int who)
          convert_cframes (who, eff[magic[fighter[who].csmem].eff].kolor - 3,
                           eff[magic[fighter[who].csmem].eff].kolor + 3, 0);
          battle_render (0, 0, 0);
-         blit (double_buffer, back, 0, 0, 0, 0, 352, 280);
+         fullblit(double_buffer, back);
          for (p = 0; p < 2; p++) {
             for (a = 0; a < 16; a++) {
                tx = fighter[who].cx + (fighter[who].cw / 2);
@@ -489,7 +489,7 @@ int skill_use (int who)
                }
                blit2screen (0, 0);
                kq_wait (50);
-               blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
+               fullblit(back, double_buffer);
             }
          }
          revert_cframes (who, 0);
@@ -514,7 +514,7 @@ int skill_use (int who)
       if (fighter[who].unl > 0) {
          strcpy (ctext, _("Dispel Undead"));
          dct = 1;
-         blit (double_buffer, back, 0, 0, 0, 0, 352, 280);
+         fullblit(double_buffer, back);
          for (a = 0; a < 14; a++) {
             convert_cframes (PSIZE, 1 + a, 15, 1);
             for (g = PSIZE; g < PSIZE + numens; g++)
@@ -522,7 +522,7 @@ int skill_use (int who)
                   draw_fighter (g, 0);
             blit2screen (0, 0);
             kq_wait (50);
-            blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
+            fullblit(back, double_buffer);
          }
          revert_cframes (PSIZE, 1);
          dct = 0;

@@ -339,10 +339,10 @@ static int combat_item_menu (int whom)
 {
    int z, stop = 0, ptr = 0, pptr = 0;
 
-   blit (double_buffer, back, 0, 0, 0, 0, 352, 280);
+   fullblit(double_buffer, back);
    while (!stop) {
       check_animation ();
-      blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
+      fullblit(back, double_buffer);
       combat_draw_items (pptr);
       draw_sprite (double_buffer, menuptr, 72, ptr * 8 + 16);
       /* put description of selected item */
@@ -441,11 +441,11 @@ int combat_spell_menu (int c)
 {
    int ptr = 0, pgno = 0, stop = 0;
 
-   blit (double_buffer, back, 0, 0, 0, 0, 352, 280);
+   fullblit(double_buffer, back);
    play_effect (SND_MENU, 128);
    while (!stop) {
       check_animation ();
-      blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
+      fullblit(back, double_buffer);
       combat_draw_spell_menu (c, ptr, pgno);
       blit2screen (0, 0);
 
@@ -851,11 +851,11 @@ static int hero_invoke (int whom)
    int stop = 0, ptr = 0;
    int dud;
 
-   blit (double_buffer, back, 0, 0, 0, 0, 352, 280);
+   fullblit(double_buffer, back);
    dud = pidx[whom];
    while (!stop) {
       check_animation ();
-      blit (back, double_buffer, 0, 0, 0, 0, 352, 280);
+      fullblit(back, double_buffer);
       draw_invokable (dud);
       draw_sprite (double_buffer, menuptr, 72, ptr * 8 + 88);
       blit2screen (0, 0);
