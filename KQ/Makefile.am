@@ -56,6 +56,7 @@ KQ.app: kq
 	install -C $(addprefix $(top_srcdir)/,$(dist_music_DATA)) $(APPR)/music
 	install -C $(top_srcdir)/Mac/KQ-icon.icns $(APPR)/KQ.icns
 	$(MAKE) -C scripts $@
+	touch KQ.app
 
 winres.o: winres.rc
 	windres $< -o $@
