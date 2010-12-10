@@ -31,7 +31,7 @@ EXEC           := $(BIN_DIR)/$(ID_SHORT)
 #                                                                             #
 ###############################################################################
 
-# Unix uses allegro-config rather than -lalleg (or whatever) 
+# Unix uses allegro-config rather than -lalleg (or whatever)
 ifdef DEBUG
 ALLEGRO = `allegro-config --shared debug`
 else

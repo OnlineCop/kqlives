@@ -103,7 +103,7 @@ function showch(which_marker, which_chest)
   if (get_treasure(which_chest) == 1) then
     set_zone(which_marker, 0)
   end
-  
+
   -- Only treasure4 needs to change its obstacle setting
   if (which_marker == "treasure4") then
     set_obs(which_marker, 0)

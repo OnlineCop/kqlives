@@ -12,7 +12,7 @@ Peter, 23yrold3yrold, ReyBrujo, Dudaskank, Konforce and Mr Troy, later to
 be joined by Team Terradactyl, Steven Fullmer and MasterGoodbytes.
 Thanks also are due to:
 Sam Hocevar for several fixes and for being the Debian package maintainer
-Edge for porting KQ to BeOS, and (with Caz Jones) fixing the joystick code 
+Edge for porting KQ to BeOS, and (with Caz Jones) fixing the joystick code
 on that platform.
 
 
@@ -51,7 +51,7 @@ On Linux:
 ./configure
 make
 
-If you have the CVS version, you'll need to do some preparatory work 
+If you have the CVS version, you'll need to do some preparatory work
 on Linux and OSX. Type
 autoreconf -i
 Then ./configure, make as above.
@@ -254,7 +254,7 @@ is like FF7.
 - removed the 'Cast' menu option.  This option simply gave you a list
 of only the spells that the character could cast according to current
 hp level and location.  Now, you just double-select a spell in the
-'Magic' menu to cast it and the spells that you are able to cast are 
+'Magic' menu to cast it and the spells that you are able to cast are
 highlighted.
 - minor graphical changes
 - code changes for efficiency or convienence reasons
@@ -339,7 +339,7 @@ section (bottom left), and the preview section (bottom right).
 
 The equipped items section shows what your character already has on.
 The possible slots are Hand1 (weapon), Hand2 (shield or nothing if
-weapon is two-handed), Head (helmets and caps), Body (armors, robes, 
+weapon is two-handed), Head (helmets and caps), Body (armors, robes,
 or suits), Arms (guantlets, bracers, or gloves), and Other (special
 items like rings, cloaks, etc).
 

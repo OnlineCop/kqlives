@@ -28,14 +28,14 @@ PLATFORM_CODE  :=$(SRC_DIR)/platform/osx.m
 NO_PERL        :=1
 COMPILER_FLAGS+=-DHAVE_GETPWUID
 APPR           :=KQ.app/Contents/Resources
- 
+
 ###############################################################################
 #                                                                             #
 #                        END OF CONFIGURATION SECTION                         #
 #                                                                             #
 ###############################################################################
 
-# Unix uses allegro-config rather than -lalleg (or whatever) 
+# Unix uses allegro-config rather than -lalleg (or whatever)
 ifdef DEBUG
 ALLEGRO = `allegro-config --libs debug`
 else
@@ -63,7 +63,7 @@ OBJECTS := $(addprefix $(OBJDIR)/, $(addsuffix .$(OBJ_SUFFIX), $(FILES) platform
 #  By default,  build the project and scripts.                                #
 #                                                                             #
 bundle: $(EXEC)
-	install -d $(APPR)/data $(APPR)/music $(APPR)/scripts $(APPR)/maps 
+	install -d $(APPR)/data $(APPR)/music $(APPR)/scripts $(APPR)/maps
 	install -d KQ.app/Contents/MacOS
 	install -C Mac/Info.plist KQ.app/Contents
 	install -C bin/kq KQ.app/Contents/MacOS

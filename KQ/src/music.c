@@ -135,13 +135,13 @@ void play_music (const char *music_name, long position)
       if (exists(filename)) {
          if (strstr (filename, ".mod"))
             mod_song[current_music_player] = dumb_load_mod (filename);
-         
+
          else if (strstr (filename, ".xm"))
             mod_song[current_music_player] = dumb_load_xm (filename);
-         
+
          else if (strstr (filename, ".s3m"))
             mod_song[current_music_player] = dumb_load_s3m (filename);
-         
+
          else
             mod_song[current_music_player] = NULL;
          if (mod_song[current_music_player]) {

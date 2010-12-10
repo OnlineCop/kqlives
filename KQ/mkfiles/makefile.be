@@ -21,7 +21,7 @@
 COMPILER       := $(GCC)
 PREPROCESSOR   := $(GPP) -P -undef
 LINKER         := $(GCC)
-COMPILER_FLAGS := $(CFLAGS) 
+COMPILER_FLAGS := $(CFLAGS)
 OBJDIR         := $(OBJ_DIR)/beos
 EXE_SUFFIX     :=
 EXEC           := $(BIN_DIR)/$(ID_SHORT)
@@ -32,7 +32,7 @@ EXEC           := $(BIN_DIR)/$(ID_SHORT)
 #                                                                             #
 ###############################################################################
 
-# Unix uses allegro-config rather than -lalleg (or whatever) 
+# Unix uses allegro-config rather than -lalleg (or whatever)
 ifdef DEBUG
 ALLEGRO = `allegro-config --static debug`
 else

@@ -1,8 +1,8 @@
-/* 
+/*
  *    Silly little bodge for getting GNU make to pass long commands
  *    to broken programs like the Microsoft and Watcom linkers. This
  *    tool is built with gcc, and invoked using GNU make. It echoes
- *    the arguments into a temporary file, and then passes that as a 
+ *    the arguments into a temporary file, and then passes that as a
  *    script to the utility in question. Ugly, but it does the job.
  *    An @ symbol marks that all commands from here on should go in
  *    the argument file, and a \ character indicates to convert slashes

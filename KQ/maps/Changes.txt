@@ -1,6 +1,6 @@
 20070812: TT
-As discussed by Z (author of KQ: The Lost Lanerion), the "door_in()" and 
-"door_out()" functions act differently, in that they do not require coordinates 
+As discussed by Z (author of KQ: The Lost Lanerion), the "door_in()" and
+"door_out()" functions act differently, in that they do not require coordinates
 for "view_range()" any more.  This is because the maps are now utilizing Bounding Boxes.  These allow the map to display ONLY the areas within the box, whenever the Player is standing inside the area, or else ALL the map when the player moves outside of that area.
 
 Here are instructions on how this is to be accomplished:
@@ -20,11 +20,11 @@ If a sign is found, we will offset the original number instead of replacing it:
    22 (current value)
    +1 (user input)
    23 (resulting value, if map is large enough)
-   
+
    19 (current value)
    -3 (user input)
    16 (resulting value)
-   
+
     3 (current value)
    -4 (user input)
     3 (error: nothing changed, since map was not large enough)

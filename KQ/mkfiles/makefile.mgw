@@ -60,7 +60,7 @@ endif
 #  console when running the game.                                             #
 #                                                                             #
 COMPILER_FLAGS += -mwindows
-LDFLAGS += -mwindows 
+LDFLAGS += -mwindows
 LDLIBS += $(addprefix -l,$(LIBRARY))
 EXTRAFILES = win.c winres.rc
 
@@ -72,7 +72,7 @@ OBJECTS  := $(addprefix $(OBJDIR)/, $(addsuffix .$(OBJ_SUFFIX), $(FILES)))
 $(OBJDIR)/%.o: $(SRC_DIR)/%.rc
 	windres $< -o $@
 
-	
+
 
 
 

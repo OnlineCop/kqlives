@@ -14,12 +14,12 @@
 
 ; MUI 1.67 compatible ------
 !include "MUI.nsh"
- 
+
 ; MUI Settings
 !define MUI_ABORTWARNING
 !define MUI_ICON "${NSISDIR}\Contrib\Graphics\Icons\modern-install.ico"
 !define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall.ico"
- 
+
 ; Welcome page
 !insertmacro MUI_PAGE_WELCOME
 ; License page (not needed)
@@ -31,22 +31,22 @@
 ; Finish page
 !define MUI_FINISHPAGE_RUN "$INSTDIR\$0.exe"
 !insertmacro MUI_PAGE_FINISH
- 
+
 ; Uninstaller pages
 !insertmacro MUI_UNPAGE_INSTFILES
- 
+
 ; Language files
 !insertmacro MUI_LANGUAGE "English"
- 
+
 ; MUI end ------
- 
+
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
 ; OutFile "kq-win32bin-installer.exe" ; (commented out. will be set by make-release.sh)
 InstallDir "$PROGRAMFILES\KQ"
 InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" ""
 ShowInstDetails show
 ShowUnInstDetails show
- 
+
 Section "MainSection" SEC01
   StrCpy $0 "KQ"
   SetOverwrite ifnewer
@@ -73,11 +73,11 @@ Section "MainSection" SEC01
   CreateShortCut "$SMPROGRAMS\KQ Lives\$0.lnk" "$INSTDIR\$0.exe"
 ; CreateShortCut "$DESKTOP\$0.lnk" "$INSTDIR\$0.exe"
 SectionEnd
- 
+
 Section -AdditionalIcons
   CreateShortCut "$SMPROGRAMS\KQ Lives\Uninstall.lnk" "$INSTDIR\uninst.exe"
 SectionEnd
- 
+
 Section -Post
   WriteUninstaller "$INSTDIR\uninst.exe"
   WriteRegStr HKLM "${PRODUCT_DIR_REGKEY}" "" "$INSTDIR\${PRODUCT_NAME}.exe"
@@ -88,18 +88,18 @@ Section -Post
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "URLInfoAbout" "${PRODUCT_WEB_SITE}"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "Publisher" "${PRODUCT_PUBLISHER}"
 SectionEnd
- 
- 
+
+
 Function un.onUninstSuccess
   HideWindow
   MessageBox MB_ICONINFORMATION|MB_OK "$(^Name) was successfully removed from your computer."
 FunctionEnd
- 
+
 Function un.onInit
   MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "Are you sure you want to completely remove $(^Name) and all of its components?" IDYES +2
   Abort
 FunctionEnd
- 
+
 Section Uninstall
   StrCpy $0 "KQ"
   Delete "$INSTDIR\*"
@@ -107,18 +107,18 @@ Section Uninstall
   Delete "$INSTDIR\maps\*"
   Delete "$INSTDIR\music\*"
   Delete "$INSTDIR\scripts\*"
- 
+
   Delete "$SMPROGRAMS\KQ Lives\Uninstall.lnk"
 ; Delete "$DESKTOP\$0.lnk"
   Delete "$SMPROGRAMS\KQ Lives\$0.lnk"
- 
+
   RMDir "$SMPROGRAMS\KQ Lives"
   RMDir "$INSTDIR\data"
   RMDir "$INSTDIR\maps"
   RMDir "$INSTDIR\music"
   RMDir "$INSTDIR\scripts"
   RMDir "$INSTDIR"
- 
+
   DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
   DeleteRegKey HKLM "${PRODUCT_DIR_REGKEY}"
   SetAutoClose true
