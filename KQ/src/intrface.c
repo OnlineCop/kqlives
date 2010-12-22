@@ -42,10 +42,10 @@
 #  include <lua50/lua.h>
 #  include <lua50/lauxlib.h>
 # elif defined HAVE_LUA5_1_LUA_H
-#  include <lua5.1/lua.h>
+#  include <lua5.1/lualib.h>
 #  include <lua5.1/lauxlib.h>
 # else
-#  include <lua.h>
+#  include <lualib.h>
 #  include <lauxlib.h>
 # endif /* HAVE_LUA50_LUA_H */
 #endif /* KQ_SCAN_DEPEND */
@@ -77,7 +77,7 @@
 /* Defines */
 #define LUA_ENT_KEY "_ent"
 #define LUA_PLR_KEY "_obj"
-#define NUM_IFUNCS   142
+
 
 /*struct luaL_reg
 {
@@ -669,6 +669,9 @@ void do_luainit (const char *fname, int global)
    theL = lua_open ();
    if (theL == NULL)
       program_death (_("Could not initialise scripting engine"));
+   /* This line breaks compatibility with Lua 5.0. Hopefully, we can do a full
+    * upgrade later. */
+   luaL_openlibs(theL);
    fieldsort ();
    while (rg->name) {
       lua_register (theL, rg->name, rg->func);
@@ -1359,7 +1362,7 @@ static int KQ_change_map (lua_State *L)
  */
 static int KQ_char_getter (lua_State *L)
 {
-   int prop;
+   signed int prop;
    int top;
    s_player *pl;
    s_entity *ent;
@@ -2475,11 +2478,22 @@ static int KQ_get_pidx (lua_State *L)
  */
 static int KQ_get_progress (lua_State *L)
 {
-   int a = (int) lua_tonumber (L, 1);
+   // For error messages
+   const char* function_name = "get_progress: ";
 
-   if (a >= 0 && a <= 1999)
-      lua_pushnumber (L, progress[a]);
-   return 1;
+   if (lua_isnumber(L, 1)) {
+      int a = (int) lua_tonumber (L, 1);
+
+      if (a >= 0 && a < SIZE_PROGRESS) {
+         lua_pushnumber (L, progress[a]);
+         return 1;
+      } else
+         return luaL_error(L, "%sExpected integer from 0 to %d. Got %d.",
+            function_name, SIZE_PROGRESS - 1, a);
+
+   }
+
+   return luaL_error(L, "%sArgument must be an integer.", function_name);
 }
 
 
@@ -3791,11 +3805,22 @@ static int KQ_set_party_xp (lua_State *L)
  */
 static int KQ_set_progress (lua_State *L)
 {
-   int a = (int) lua_tonumber (L, 1);
+   // Both error messages require this prefix.
+   const char* error_prefix = "set_progress: Argument 1";
 
-   if (a >= 0 && a <= 1999)
-      progress[a] = (int) lua_tonumber (L, 2);
-   return 0;
+   if (lua_isnumber(L, 1)) {
+      int a = (int) lua_tonumber (L, 1);
+
+      if (a >= 0 && a < SIZE_PROGRESS) {
+         progress[a] = (int) lua_tonumber (L, 2);
+         return 0;
+      } else
+         return luaL_error(L, "%s: Expected integer from 0 to %d. Got %d.",
+            error_prefix, SIZE_PROGRESS - 1, a);
+
+   }
+
+   return luaL_error(L, "%s must be an integer.", error_prefix);
 }
 
 
@@ -4079,14 +4104,16 @@ static int KQ_portthought_ex (lua_State *L)
 
 
 
-#ifdef DEBUGMODE
-
 /*! Show stack trace
  *
  * This is called internally, after an error; its purpose is to show
  * the stack of functions leading up to the faulting one
  *
- * Each line shows Stack level, source-code line, function type and function name
+ * Each line shows Stack level, source-code line, function type and function
+ * name.
+ *
+ * Without DEBUGMODE, this function cannot output a stack trace. It only shows
+ * an error message on the game screen.
  *
  * \param L Lua state
  * \returns 0 (No value)
@@ -4107,11 +4134,11 @@ static int KQ_traceback (lua_State *theL)
              ar.namewhat, ar.name);
       ++level;
    }
-   message (_("Script error. See allegro.log"), 255, 0, xofs, yofs);
+   message
+     (_("Script error. If KQ was compiled with DEBUGMODE, see allegro.log"),
+      255, 0, xofs, yofs);
    return 1;
 }
-
-#endif
 
 
 
@@ -4244,6 +4271,7 @@ int lua_dofile (lua_State *L, const char *filename)
 
    if (lua_pcall (L, 0, LUA_MULTRET, 0) != 0) {
       allegro_message (_("lua_pcall failed while calling script %s!"), get_filename(filename));
+      KQ_traceback(L);
       return 1;
    }
 

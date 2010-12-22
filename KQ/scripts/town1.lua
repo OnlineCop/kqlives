@@ -2,28 +2,29 @@
 
 -- /*
 -- {
--- P_CANCELROD: Possession of Rod of Cancellation
+-- progress:
+-- cancelrod: Possession of Rod of Cancellation
 --   (0) Do not have it
 --   (1) Got it
 --   (2) Returned it to Derig
 --
--- P_DARKIMPBOSS: Dark Imp is in the tunnel from Ekla to Randen
+-- darkimpboss: Dark Imp is in the tunnel from Ekla to Randen
 --   (0) It is blocking the stairway to Randen
 --   (1) You defeated it and the pathway is now clear
 --
--- P_EKLAWELCOME: Corny welcome message when you talk to the man in Ekla
+-- eklawelcome: Corny welcome message when you talk to the man in Ekla
 --   (0) He hasn't yet given you his corny "Yes! This makes 8!" speech
 --   (1) Now he likes cheese
 --
--- P_PORTALGONE: Whether the portal in the tunnel is still working
+-- portalgone: Whether the portal in the tunnel is still working
 --   (0) Still letting monsters through
 --   (1) The Portal is sealed shut
 --
--- P_START: Monsters will not attack you until you enter Ekla
+-- start: Monsters will not attack you until you enter Ekla
 --   (0) (not used)
 --   (1) Entered Ekla; monsters will now attack randomly on world map
 --
--- P_TALKDERIG: If you've spoken to Derig
+-- talkderig: If you've spoken to Derig
 --   (0) Never entered grotto
 --   (1) Entered grotto; didn't fall down pit
 --   (2) Fell down pit in grotto, didn't speak with Derig
@@ -32,7 +33,7 @@
 --   (5) Returned Unadium coin and Rod of Cancellation to Derig
 --   (6) Derig has left Ekla and is back in the Grotto
 --
--- P_TALK_TSORIN: If you've spoken to Tsorin in Andra (and got his seal)
+-- talk_tsorin: If you've spoken to Tsorin in Andra (and got his seal)
 --   (0) You haven't spoken to him yet
 --   (1) Tsorin gave you a note to give to Derig
 --   (2) Derig gave you a note to return to Tsorin
@@ -40,13 +41,13 @@
 --   (4) You've shown the seal to the guards at the fort
 --   (5) You are free pass through the fort anytime (no contention in goblin lands) (not done)
 --
--- P_UCOIN: Unadium Coin from Jen
+-- ucoin: Unadium Coin from Jen
 --   (0) Have not yet spoken with the granddaughter, Jen
 --   (1) Spoke to Jen
 --   (2) Received coin
 --   (3) Returned coin
 --
--- P_WARPSTONE: The teleporter from Ajantara <-> Randen
+-- warpstone: The teleporter from Ajantara <-> Randen
 --   (0) Haven't used it yet
 --   (1) Stepped on the warp stone and created its counterpart in Randen
 -- }
@@ -55,7 +56,7 @@
 
 function autoexec()
   -- Remove Derig from the screen
-  if (get_progress(P_TALKDERIG) < 4) or (get_progress(P_TALKDERIG) > 5) then
+  if progress.talkderig < 4 or progress.talkderig > 5 then
     set_ent_active(4, 0)
   else
     -- Move granddaughter to the chair next to the table
@@ -64,7 +65,7 @@ function autoexec()
 
     set_ent_facing(2, FACE_DOWN)
     set_ent_facing(4, FACE_DOWN)
-    if (get_progress(P_TALKDERIG) == 4) then
+    if progress.talkderig == 4 then
       set_desc(0)
       set_ent_facing(HERO1, FACE_UP)
       set_ent_facing(HERO2, FACE_UP)
@@ -74,7 +75,7 @@ function autoexec()
   end
 
   -- Two people are wandering around until you use the transporter from Ajantara to Randen.
-  if (get_progress(P_WARPSTONE) == 1) then
+  if progress.warpstone == 1 then
     set_ent_active(1, 0)
     set_ent_active(3, 0)
   end
@@ -88,26 +89,26 @@ function entity_handler(en)
     LOC_ekla_welcome(en)
 
   elseif (en == 1) then
-    if (get_progress(P_DARKIMPBOSS) == 0) then
+    if progress.darkimpboss == 0 then
       bubble(en, _"There is a monster blocking the pass to Randen.")
     else
       bubble(en, _"Now the monster is gone.")
-    end -- P_DARKIMPBOSS
+    end -- darkimpboss
 
   elseif (en == 2) then
     LOC_talk_jen(en)
 
   elseif (en == 3) then
-    if (get_progress(P_DARKIMPBOSS) == 0) then
+    if progress.darkimpboss == 0 then
       bubble(en, _"Stock up on weapons, magic, and experience.")
       bubble(en, _"You'll need them against the monster blocking the entrance to Randen.")
-    elseif (get_progress(P_DARKIMPBOSS) == 1) then
-      if (get_progress(P_PORTALGONE) == 0) then
+    elseif progress.darkimpboss == 1 then
+      if progress.portalgone == 0 then
         bubble(en, _"The monster blocking Randen is gone, but there are still monsters underground.")
-      elseif (get_progress(P_PORTALGONE) == 1) then
+      elseif progress.portalgone == 1 then
         bubble(en, _"All the monsters are gone from the tunnel!")
-      end -- P_PORTALGONE
-    end -- P_DARKIMPBOSS
+      end -- portalgone
+    end -- darkimpboss
 
   elseif (en == 4) then
     LOC_talk_derig(en)
@@ -126,20 +127,20 @@ end
 
 
 function postexec()
-  -- Monsters will not attack on the world map until P_START == 1
-  if (get_progress(P_START) == 0) then
+  -- Monsters will not attack on the world map until progress.start == 1
+  if progress.start == 0 then
     msg(_"The strong-scented oils wore off.", 255, 0)
-    set_progress(P_START, 1)
+    progress.start = 1
   end
 
-  if (get_progress(P_TALKDERIG) == 4) then
+  if progress.talkderig == 4 then
     local en = 4
     bubble(en, _"I'm Derig. If I'm here, then you found me in the Grotto.")
     bubble(en, _"To stop the monsters in our underground tunnel, you must seal the portal.")
     bubble(en, _"In order to do that, you can use a Rod of Cancellation to melt it shut.")
     bubble(en, _"I brought you to town to get the Unadium Coin from my granddaughter, which will open the rune back at the Grotto.")
     bubble(en, _"That will transport you to the place where the Rod of Cancellation is.")
-    set_progress(P_TALKDERIG, 5)
+    progress.talkderig = 5
   end
 end
 
@@ -297,24 +298,24 @@ end
 
 
 function LOC_ekla_welcome(en)
-  if (get_progress(P_WARPSTONE) == 0) then
-    if (get_progress(P_EKLAWELCOME) == 0) then
+  if progress.warpstone == 0 then
+    if progress.eklawelcome == 0 then
       bubble(en, _"Welcome to the town of Ekla.")
       bubble(en, _"Yes! That makes eight. If I welcome enough newcomers to this town, I will get promoted.")
       bubble(en, _"I might get a job sitting in a house all day saying the same thing over and over to anyone who talks to me.")
       bubble(en, _"I should start practicing.")
-      set_progress(P_EKLAWELCOME, 1)
+      progress.eklawelcome = 1
     else
       bubble(en, _"I like cheese.")
     end
-  else -- P_WARPSTONE
-    if (get_progress(P_EKLAWELCOME) == 0) then
+  else -- warpstone
+    if progress.eklawelcome == 0 then
       bubble(en, _"I welcome people to Ekla.")
       bubble(en, _"Welcome back.")
     else
       bubble(en, _"I welcomed you already. You're in Ekla.")
     end
-  end -- P_WARPSTONE
+  end -- warpstone
 end
 
 
@@ -324,11 +325,11 @@ end
 --//    3: Trade (Trade route stopped working between Randen and the rest of the world)
 --//    4: No extra assistance needed
 function LOC_help_jen_portal(en)
-  if (get_progress(P_CANCELROD) == 0) then
+  if progress.cancelrod == 0 then
     LOC_help_town_rod(en)
-  elseif (get_progress(P_DARKIMPBOSS) == 0) then
+  elseif progress.darkimpboss == 0 then
     LOC_help_town_boss(en)
-  elseif (get_progress(P_WARPSTONE) == 0) then
+  elseif progress.warpstone == 0 then
     LOC_help_town_warpstone(en)
   else
     LOC_help_town_none(en)
@@ -340,7 +341,7 @@ end
 --//    1: Derig (She will help you find him to give him Tsorin's note)
 --//    2: Tsorin (She will tell you to give Derig's note to Tsorin)
 function LOC_help_jen_tsorin(en)
-  if (get_progress(P_TALKDERIG) == 0) then
+  if progress.talkderig == 0 then
     LOC_help_tsorin_derig(en)
   else
     LOC_help_tsorin_tsorin(en)
@@ -353,9 +354,9 @@ end
 --//    2: Rod (Derig tells you how to find it)
 
 function LOC_help_town_derig(en)
-  if (get_progress(P_TALKDERIG) < 3) then
+  if progress.talkderig < 3 then
     LOC_help_derig_coin(en)
-  elseif (get_progress(P_CANCELROD) == 0) then
+  elseif progress.cancelrod == 0 then
     LOC_help_derig_rod(en)
   else
     LOC_help_derig_portal(en)
@@ -366,41 +367,40 @@ end
 --// Town's needs in this order:
 --//    1: Coin (Need coin to get rid of the monsters)
 function LOC_help_town_rod(en)
-  if (get_progress(P_UCOIN) < 2) then
+  if progress.ucoin < 2 then
     LOC_help_town_derig(en)
   end
 end
 
 
 function LOC_talk_derig(en)
-  if (get_progress(P_TALK_TSORIN) == 0 or
-      get_progress(P_TALK_TSORIN) > 2) then
-    if (get_progress(P_TALKDERIG) == 5) then
-      if (get_progress(P_UCOIN) == 1) then
+  if progress.talk_tsorin == 0 or progress.talk_tsorin > 2 then
+    if progress.talkderig == 5 then
+      if progress.ucoin == 1 then
         bubble(en, _"Talk to Jen to get the Unadium coin.")
-      elseif (get_progress(P_UCOIN) == 2) then
-        if (get_progress(P_CANCELROD) == 0) then
+      elseif progress.ucoin == 2 then
+        if progress.cancelrod == 0 then
           bubble(en, _"Go get the Rod of Cancellation out of the grotto. Use the rune.")
-        elseif (get_progress(P_CANCELROD) == 1) then
-          if (get_progress(P_PORTALGONE) == 0) then
+        elseif progress.cancelrod == 1 then
+          if progress.portalgone == 0 then
             bubble(en, _"Now that you have the rod, go down and seal the portal.")
-          elseif (get_progress(P_PORTALGONE) == 1) then
+          elseif progress.portalgone == 1 then
             bubble(en, _"You've done it! The portal is gone, and you have returned the Unadium coin and Rod of Cancellation.")
-            set_progress(P_UCOIN, 3)
+            progress.ucoin = 3
             remove_special_item(SI_UCOIN)
-            set_progress(P_CANCELROD, 2)
+            progress.cancelrod = 2
             remove_special_item(SI_CANCELROD)
-            set_progress(P_TALKDERIG, 6)
+            progress.talkderig = 6
             msg(_"Derig takes the Rod of Cancellation and Unadium Coin.", 255, 0)
             bubble(en, _"I'll take these back to the grotto for safe keeping. Thank you.")
-          end -- P_PORTALGONE
-        end -- P_CANCELROD
-      end -- P_UCOIN
-    elseif (get_progress(P_TALKDERIG) == 6) then
-      -- Although TALKDERIG==6, Derig will still be on the screen until you leave Ekla and return
+          end -- portalgone
+        end -- cancelrod
+      end -- ucoin
+    elseif progress.talkderig == 6 then
+      -- Although talkderig==6, Derig will still be on the screen until you leave Ekla and return
       bubble(en, _"I will take these back to the grotto. Thanks again.")
-    end -- P_TALKDERIG
-  elseif (get_progress(P_TALK_TSORIN) == 1) then
+    end -- talkderig
+  elseif progress.talk_tsorin == 1 then
     bubble(en, _"Ah yes, $0, I... wait a minute! What is that note you are carrying?")
     msg(_"You show Derig the note.", 18, 0)
     bubble(en, _"Oh, this is very important. Yes, of utmost importance.")
@@ -410,14 +410,15 @@ function LOC_talk_derig(en)
     msg(_"Derig continues to mumble worredly.", 255, 0)
     thought(HERO1, _"Boy, this is just too weird all of a sudden.")
     msg(_"Derig hands you a sealed envelope.", 18, 0)
-    set_progress(P_TALK_TSORIN, 2)
+    progress.talk_tsorin = 2
     remove_special_item(SI_NOTE_TSORIN)
     add_special_item(SI_NOTE_DERIG)
-  elseif (get_progress(P_TALK_TSORIN) == 2) then
+  elseif progress.talk_tsorin == 2 then
     bubble(en, _"Please hurry. Take this note to Tsorin immediately!")
   else
-    -- // Nothing here, since Derig will only focus on Tsorin's quest if P_TALK_TSORIN < 3
-  end -- P_TALK_TSORIN
+    -- // Nothing here, since Derig will only focus on Tsorin's quest if
+    -- progress.talk_tsorin < 3
+  end -- talk_tsorin
 end
 
 
@@ -428,17 +429,16 @@ end
 --    4: No extra assistance needed
 function LOC_talk_jen (en)
   -- Jen will only help you if you are not on Official Business for Tsorin
-  if (get_progress(P_TALK_TSORIN) == 0 or
-      get_progress(P_TALK_TSORIN) > 2) then
+  if progress.talk_tsorin == 0 or progress.talk_tsorin > 2 then
     -- You have never spoken to Jen before
-    if (get_progress(P_UCOIN) == 0) then
-      if (get_progress(P_TALKDERIG) == 0) then
+    if progress.ucoin == 0 then
+      if progress.talkderig == 0 then
         -- You have never gone to the grotto.
         bubble(en, _"Jen:", _"I'm Derig's granddaughter. Go find Derig in the grotto north of here.")
-      elseif (get_progress(P_TALKDERIG) == 1) then
+      elseif progress.talkderig == 1 then
         -- You entered the grotto, but did not fall in the pit.
         bubble(en, _"Jen:", _"I'm Derig's granddaughter. Go find Derig in the grotto north of here. You've been there once before.")
-      elseif (get_progress(P_TALKDERIG) == 2) then
+      elseif progress.talkderig == 2 then
         -- You entered the grotto and fell in pit (you had NOT spoken to Jen first, though).  Someone helped you get out.
         bubble(en, _"You've already been to the grotto.")
         if (get_numchrs() > 1) then
@@ -449,57 +449,60 @@ function LOC_talk_jen (en)
         bubble(en, _"That is Derig, my grandfather. Go back and look for him.")
       else
         -- This should never occur
-        bubble(en, _"Scripting Error:", "P_UCOIN == 0, but P_TALKDERIG != 0..2")
+        bubble(en, _"Scripting Error:",
+	       "progress.ucoin == 0, but progress.talkderig != 0..2")
       end
       -- Now you have spoken to Jen
-      set_progress(P_UCOIN, 1)
+      progress.ucoin = 1
     -- You have spoken to Jen at least once
-    elseif (get_progress(P_UCOIN) == 1) then
-      if (get_progress(P_TALKDERIG) == 0) then
+    elseif progress.ucoin == 1 then
+      if progress.talkderig == 0 then
         bubble(en, _"I said to go talk to Derig.")
-      elseif (get_progress(P_TALKDERIG) == 1) then
+      elseif progress.talkderig == 1 then
         -- You entered the grotto, but did not fall in the pit.
         bubble(en, _"You must find Derig in the grotto. He's there somewhere.")
-      elseif (get_progress(P_TALKDERIG) == 2) then
+      elseif progress.talkderig == 2 then
         bubble(en, _"Well? Go find Derig in the grotto!")
-      elseif (get_progress(P_TALKDERIG) == 3) then
+      elseif progress.talkderig == 3 then
         bubble(en, _"Okay, that was stupid. You saw him by the fire and you didn't talk to him.")
         if (get_numchrs() == 1) then
           bubble(en, _"GO BACK AND TALK TO HIM! He's sitting by the fire you moron!")
         else
           bubble(en, _"GO BACK AND TALK TO HIM! He's sitting by the fire you morons!")
         end
-      elseif (get_progress(P_TALKDERIG) == 4) then
+      elseif progress.talkderig == 4 then
         -- This should never occur
-        bubble(en, _"Scripting Error:", "P_UCOIN == 1, but P_TALKDERIG == 4")
-      elseif (get_progress(P_TALKDERIG) == 5) then
+        bubble(en, _"Scripting Error:",
+	       "progress.ucoin == 1, but progress.talkderig == 4")
+      elseif progress.talkderig == 5 then
         -- Met Derig
         bubble(en, _"Good. Now that you found Derig, here is the Unadium Coin.")
-        set_progress(P_UCOIN, 2)
+        progress.ucoin = 2
         add_special_item(SI_UCOIN)
         msg(_"Unadium coin procured", 255, 0)
-      end -- P_TALKDERIG
-    elseif (get_progress(P_UCOIN) == 2) then
+      end -- talkderig
+    elseif progress.ucoin == 2 then
       -- You now have the Unadium coin
-      if (get_progress(P_TALKDERIG) == 5) then
-        if (get_progress(P_CANCELROD) == 0) then
+      if progress.talkderig == 5 then
+        if progress.cancelrod == 0 then
           -- You do not have the rod
           bubble(en, _"Go get the Rod of Cancellation.")
-        elseif (get_progress(P_CANCELROD) == 1) then
+        elseif progress.cancelrod == 1 then
           -- You have the rod
-          if (get_progress(P_PORTALGONE) == 0) then
+          if progress.portalgone == 0 then
             -- The portal is still there
             bubble(en, _"Get rid of the portal now.")
-          elseif (get_progress(P_PORTALGONE) == 1) then
+          elseif progress.portalgone == 1 then
             -- The portal is gone
             bubble(en, _"You got rid of the portal! Give my father the coin and rod back and I'll give you a SunStone.")
-          end -- P_PORTALGONE
-        end -- P_CANCELROD
+          end -- portalgone
+        end -- cancelrod
       else
         -- This should never occur
-        bubble(en, _"Scripting Error:", "P_UCOIN == 2, but P_TALKDERIG != 5")
-      end -- P_TALKDERIG == 5
-    elseif (get_progress(P_UCOIN) == 3) then
+        bubble(en, _"Scripting Error:",
+	       "progress.ucoin == 2, but progress.talkderig != 5")
+      end -- talkderig == 5
+    elseif progress.ucoin == 3 then
       -- Returned Rod of Cancellation to Derig
       if (get_treasure(45) == 0) then
         bubble(en, _"Thanks for returning the Rod to my grandfather. Here is a SunStone for you.")
@@ -507,12 +510,12 @@ function LOC_talk_jen (en)
       else
         bubble(en, _"Thanks again.")
       end
-    end -- P_UCOIN
-  elseif (get_progress(P_TALK_TSORIN) == 1) then
+    end -- ucoin
+  elseif progress.talk_tsorin == 1 then
     bubble(en, _"Jen:", _"You must be looking for Derig, my grandfather. Find him in the grotto north of here.")
-  elseif (get_progress(P_TALK_TSORIN) == 2) then
+  elseif progress.talk_tsorin == 2 then
     bubble(en, _"You should finish Derig's assignment before I give you another.")
-  end -- P_TALK_TSORIN
+  end -- talk_tsorin
 
 -- /*
 --  if (get_progress(P_TALK_TSORIN) == 1 or get_progress(P_TALK_TSORIN) == 2) then

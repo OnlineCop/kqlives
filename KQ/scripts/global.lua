@@ -1,135 +1,163 @@
 -- Global functions available to all scripts
 
---! \name Progress indicators
--- PLEASE ADD TO THIS LIST IN ORDER!!!
+--A name for every quest must be inserted here so it can be assigned a unique
+--numerical indicator that the engine can recognize. These names will be
+--available as indices on the global table 'progress'.
+local quest_list = {
+  'start',
+  'oddwall',
+  'darkimpboss',
+  'dyingdude',
+  'buycure',
+  'getpartner',
+  'partner1',
+  'partner2',
+  'showbridge',
+  'talkderig',
+  'fightonbridge',
+  'fellinpit',
+  'eklawelcome',
+  'loseronbridge',
+  'asleeponbridge',
+  'altarswitch',
+  'killblord',
+  'goblinitem',
+  'oracle',
+  'ftotal',
+  'floor1',
+  'floor2',
+  'floor3',
+  'floor4',
+  'wall1',
+  'wall2',
+  'wall3',
+  'wall4',
+  'dooropen',
+  'dooropen2',
+  'toweropen',
+  'dragondown',
+  'treasureroom',
+  'undeadjewel',
+  'ucoin',
+  'cancelrod',
+  'portalgone',
+  'warpedtot4',
+  'oldpartner',
+  'boughthouse',
+  'talkgelik',
+  'opalhelmet',
+  'foundmayor',
+  'talk_temmin',
+  'emberskey',
+  'foughtguild',
+  'guildsecret',
+  'seecoliseum',
+  'opalshield',
+  'stone1',
+  'stone2',
+  'stone3',
+  'stone4',
+  'denorian',
+  'c4doorsopen',
+  'demnasdead',
+  'firsttime',
+  'roundnum',
+  'battlestatus',
+  'useitemincombat',
+  'finalpartner',
+  'talkgrampa',
+  'savebreanne',
+  'passguards',
+  'ironkey',
+  'avatardead',
+  'giantdead',
+  'opalband',
+  'bronzekey',
+  'cavekey',
+  'town6inn',
+  'warpstone',
+  'dointro',
+  'gotofort',
+  'gotoestate',
+  'talkbutler',
+  'passdoor1',
+  'passdoor2',
+  'passdoor3',
+  'bomb1',
+  'bomb2',
+  'bomb3',
+  'bomb4',
+  'bomb5',
+  'dynamite',
+  'talkrufus',
+  'earlyprogress',
+  'opaldragonout',
+  'opalarmour',
 
-P_START           = 0
-P_ODDWALL         = 1
-P_DARKIMPBOSS     = 2
-P_DYINGDUDE       = 3
-P_BUYCURE         = 4
-P_GETPARTNER      = 5
-P_PARTNER1        = 6
-P_PARTNER2        = 7
-P_SHOWBRIDGE      = 8
-P_TALKDERIG       = 9
-P_FIGHTONBRIDGE   = 10
-P_FELLINPIT       = 11
-P_EKLAWELCOME     = 12
-P_LOSERONBRIDGE   = 13
-P_ASLEEPONBRIDGE  = 14
-P_ALTARSWITCH     = 15
-P_KILLBLORD       = 16
-P_GOBLINITEM      = 17
-P_ORACLE          = 18
-P_FTOTAL          = 19
-P_FLOOR1          = 20
-P_FLOOR2          = 21
-P_FLOOR3          = 22
-P_FLOOR4          = 23
---P_WSTONES         = 24
---P_BSTONES         = 25
-P_WALL1           = 26
-P_WALL2           = 27
-P_WALL3           = 28
-P_WALL4           = 29
-P_DOOROPEN        = 30
-P_DOOROPEN2       = 31
-P_TOWEROPEN       = 32
-P_DRAGONDOWN      = 33
-P_TREASUREROOM    = 34
-P_UNDEADJEWEL     = 35
-P_UCOIN           = 36
-P_CANCELROD       = 37
-P_PORTALGONE      = 38
-P_WARPEDTOT4      = 39
-P_OLDPARTNER      = 40
-P_BOUGHTHOUSE     = 41
-P_TALKGELIK       = 42
-P_OPALHELMET      = 43
-P_FOUNDMAYOR      = 44
-P_TALK_TEMMIN     = 45
-P_EMBERSKEY       = 46
-P_FOUGHTGUILD     = 47
-P_GUILDSECRET     = 48
-P_SEECOLISEUM     = 49
-P_OPALSHIELD      = 50
-P_STONE1          = 51
-P_STONE2          = 52
-P_STONE3          = 53
-P_STONE4          = 54
-P_DENORIAN        = 55
-P_C4DOORSOPEN     = 56
-P_DEMNASDEAD      = 57
-P_FIRSTTIME       = 58
-P_ROUNDNUM        = 59
-P_BATTLESTATUS    = 60
-P_USEITEMINCOMBAT = 61
-P_FINALPARTNER    = 62
-P_TALKGRAMPA      = 63
-P_SAVEBREANNE     = 64
-P_PASSGUARDS      = 65
-P_IRONKEY         = 66
-P_AVATARDEAD      = 67
-P_GIANTDEAD       = 68
-P_OPALBAND        = 69
-P_BRONZEKEY       = 70
-P_CAVEKEY         = 71
-P_TOWN6INN        = 72
-P_WARPSTONE       = 73
-P_DOINTRO         = 74
-P_GOTOFORT        = 75
-P_GOTOESTATE      = 76
-P_TALKBUTLER      = 77
-P_PASSDOOR1       = 78
-P_PASSDOOR2       = 79
-P_PASSDOOR3       = 80
-P_BOMB1           = 81
-P_BOMB2           = 82
-P_BOMB3           = 83
-P_BOMB4           = 84
-P_BOMB5           = 85
-P_DYNAMITE        = 86
-P_TALKRUFUS       = 87
-P_EARLYPROGRESS   = 88
-P_OPALDRAGONOUT   = 89
-P_OPALARMOUR      = 90
+  --'manorparty' names are slots that indicate who is at the manor. The slots
+  --are accessed by concatenating 'manorparty' with a number. The values can be
+  --0 for nobody or 1..8 for characters 0..7.
+  'manorparty0',
+  'manorparty1',
+  'manorparty2',
+  'manorparty3',
+  'manorparty4',
+  'manorparty5',
+  'manorparty6',
+  'manorparty7',
+
+  'manor',
+  'players',
+  'talk_ajathar',
+  'blade',
+  'ayla_quest',
+  'bangthumb',
+  'walking',
+  'mayorguard1',
+  'mayorguard2',
+  'talk_tsorin',
+  'talk_corin',
+  'talkoldman',
+  'oraclemonsters',
+  'travelpoint',
+
+  -- /* side quests */
+  'sidequest1',
+  'sidequest2',
+  'sidequest3',
+  'sidequest4',
+  'sidequest5',
+  'sidequest6',
+  'sidequest7'
+}
 
 
--- /* These are to store who's waiting in the manor */
-P_MANORPARTY      = 91
-P_MANORPARTY1     = 92
-P_MANORPARTY2     = 93
-P_MANORPARTY3     = 94
-P_MANORPARTY4     = 95
-P_MANORPARTY5     = 96
-P_MANORPARTY6     = 97
-P_MANORPARTY7     = 98
-P_MANOR           = 99
-P_PLAYERS         = 100
-P_TALK_AJATHAR    = 101
-P_BLADE           = 102
-P_AYLA_QUEST      = 103
+--Holds an integer, starting at 0, for every quest.
+local quest_numbers = {}
+for i, quest in ipairs(quest_list) do
+  quest_numbers[quest] = i - 1
+end
 
-P_BANGTHUMB       = 104
-P_WALKING         = 105
-P_MAYORGUARD1     = 106
-P_MAYORGUARD2     = 107
 
-P_TALK_TSORIN     = 108
-P_TALK_CORIN      = 109
-P_TALKOLDMAN      = 110
-P_ORACLEMONSTERS  = 111
-P_TRAVELPOINT     = 112
+--An interface to the engine's progress storage so we can store progress values
+--in savegames. Indices are quest names given in quest_list. Values are
+--integers.
+progress = {}
 
--- /* side quests */
-P_SIDEQUEST1      = 113
-P_SIDEQUEST2      = 114
-P_SIDEQUEST3      = 115
-P_SIDEQUEST4      = 116
-P_SIDEQUEST5      = 117
-P_SIDEQUEST6      = 118
-P_SIDEQUEST7      = 119
+--Returns the progress amount for the given quest.
+function progress:__index(quest)
+  return get_progress(quest_numbers[quest])
+end
+
+--Assigns a progress level for a quest.
+--quest: A quest name.
+--n: The new progress amount.
+function progress:__newindex(quest, n)
+  set_progress(quest_numbers[quest], n)
+end
+
+setmetatable(progress, progress)
+
 
 -- Item identifiers (empty for now. Defined in itemdefs.h)
 
@@ -207,13 +235,13 @@ function add_to_manor(hero)
       return 0
     end
     for i = 0, 7 do
-      if (get_progress(i + P_MANORPARTY) == (hero + 1)) then
+      if progress['manorparty' .. i] == hero + 1 then
         return 0
       end
     end
     for i = 0, 7 do
-      if (get_progress(i + P_MANORPARTY) == 0) then
-        set_progress(i + P_MANORPARTY, hero + 1)
+      if progress['manorparty' .. i] == 0 then
+        progress['manorparty' .. i] = hero + 1
         return 1
       end
     end
@@ -304,8 +332,8 @@ end
 change_mapm = change_map
 
 
--- Checks if this ent is in the party, or in the manor,
--- or has never been recruited.
+-- Checks if this ent is in the party, or in the manor, or has never been
+-- recruited.
 -- who: hero id
 -- returns "manor" if in manor, "party" if in party, nil otherwise
 function LOC_manor_or_party(who)
@@ -316,8 +344,10 @@ function LOC_manor_or_party(who)
     return "party"
   end
 
-  for a = P_MANORPARTY, P_MANORPARTY7 do
-    if (get_progress(a) - 1 == who) then
+  --Ideally, this should iterate over a list of character names, but that might
+  --require altering the C engine.
+  for a = 0, 7 do
+    if progress['manorparty' .. a] - 1 == who then
       return "manor"
     end
   end
@@ -362,13 +392,11 @@ end
 
 
 -- Select from heroes in the manor
--- The available list is stored in eight consecutive P_ constants
--- as 0 for nobody and 1..8 for characters 0..7
 function select_manor()
   -- Get the current list
   heroes = {}
   for i = 1, 8 do
-    v = get_progress(i + P_MANORPARTY - 1)
+    v = progress['manorparty' .. i - 1]
     if (v ~= 0) then
       heroes[i] = v - 1
     end
@@ -382,7 +410,7 @@ function select_manor()
     else
       v = 0
     end
-    set_progress(i + P_MANORPARTY - 1, v)
+    progress['manorparty' .. i - 1] = v
   end
 end
 

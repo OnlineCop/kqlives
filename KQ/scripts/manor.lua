@@ -2,18 +2,19 @@
 
 -- /*
 -- {
--- P_MANOR: Status of conversations when you are in the manor
+-- progress:
+-- manor: Status of conversations when you are in the manor
 --   (0) New game; you haven't spoken to the butler yet
 --   (1) Nostik further explained your mission; you haven't spoken to butler
 --   (2) Butler has spoken to you, or you have no new recruits yet
 --   (3) You've recruited others and they're waiting around the table
 --
--- P_PLAYERS: Number of recruits in your party
+-- players: Number of recruits in your party
 --   (0) You haven't recruited anyone yet
 --   (1)..(7) You have others in your party
 --
--- P_MANORPARTY[0-7]: Which recruits have joined your party
---   (0)..(7) Whether this character has been recruited into your party
+-- manorparty[0-7]: Which recruits have joined your party
+--   (0)..(8) Whether this character has been recruited into your party
 --
 --
 -- Details:
@@ -48,21 +49,21 @@
 
 
 function autoexec()
-  if (get_progress(P_PLAYERS) > 0) then
-    set_progress(P_MANOR, 3)
+  if progress.players > 0 then
+    progress.manor = 3
   end
 
-  if (get_progress(P_MANOR) == 0) then
+  if progress.manor == 0 then
     -- New game; Nostik has not explained the quest yet
     LOC_setup_newgame()
-  elseif (get_progress(P_MANOR) == 1) then
+  elseif progress.manor == 1 then
     -- You spoke to Nostik about the purpose of your mission
-  elseif (get_progress(P_MANOR) == 2) then
+  elseif progress.manor == 2 then
     -- You already talked to Hunert, but you have no recruits
     for a = 0, 7, 1 do
       set_ent_active(a, 0)
     end
-  elseif (get_progress(P_MANOR) == 3) then
+  elseif progress.manor == 3 then
     -- You have recruited at least 1 other party member
     LOC_at_table()
 
@@ -98,12 +99,12 @@ function entity_handler(en)
 
   -- Butler Hunert
   elseif (en == 9) then
-    if (get_progress(P_MANOR) == 0 or get_progress(P_MANOR) == 1) then
+    if progress.manor == 0 or progress.manor == 1 then
       bubble(en, _"Ah yes, Master Nostik asked me to give you this.")
       LOC_talk_butler(en)
-    elseif (get_progress(P_MANOR) == 2) then
+    elseif progress.manor == 2 then
       bubble(en, _"Books are an amazing source of knowledge. Nostik has spent many years writing his own.")
-    elseif (get_progress(P_MANOR) >= 3) then
+    elseif progress.manor >= 3 then
       bubble(en, _"Welcome back, $0. The others are here waiting for you.")
       bubble(en, _"You can exchange your party members here.")
 
@@ -119,7 +120,7 @@ end
 function postexec()
   local en = 8
   local x, y = marker("entrance")
-  if (get_progress(P_MANOR) == 0) then
+  if progress.manor == 0 then
     rest(200)
 
     bubble(en, _"Alright everyone, I welcome you. Let me get right to the major points of why you're here.")
@@ -173,7 +174,7 @@ function zone_handler(zn)
   elseif (zn == 6) then
     local en = 9
 
-    if (get_progress(P_MANOR) == 0 or get_progress(P_MANOR) == 1) then
+    if progress.manor == 0 or progress.manor == 1 then
       local x, y = get_ent_tile(HERO1)
       bubble(en, _"Hey! Hold on!")
 
@@ -218,7 +219,7 @@ function LOC_at_table()
   local id, a
   for a = 0, 7 do
     -- You have not recruited this person into your team
-    id = get_progress(a + P_MANORPARTY) - 1
+    id = progress['manorparty' .. a] - 1
     if (id == get_pidx(0)) then
       id = -1
     end
@@ -281,7 +282,7 @@ end
 
 
 function LOC_explain_mission3(en)
-  if (get_progress(P_MANOR) == 0) then
+  if progress.manor == 0 then
     if (prompt(en, 2, 1, _"Do you need me to explain it again?",
                          _"  yes",
                          _"  no") == 0) then
@@ -295,15 +296,15 @@ function LOC_explain_mission3(en)
       bubble(HERO1, _"Yea, yea. So why didn't you just get everybody into one big group and just let all of us go out and find this staff?")
       bubble(en, _"Groups attract attention. If you see a group of three or more people wandering around, you begin to suspect something's up. That's exactly what you'd want to avoid, if you ever want to stay ahead of Malkaron and his minions.")
       bubble(HERO1, _"Oh yea, I hadn't thought of that.")
-      set_progress(P_MANOR, 1)
+      progress.manor = 1
     end
     wait(50)
     LOC_explain_mission3(en)
-  elseif (get_progress(P_MANOR) == 1) then
+  elseif progress.manor == 1 then
     bubble(en, _"You should be going. Talk to Hunert before you go. He can help start you on your way.")
-  elseif (get_progress(P_MANOR) == 2) then
+  elseif progress.manor == 2 then
     bubble(en, _"Good luck, $0.")
-  elseif (get_progress(P_MANOR) == 3) then
+  elseif progress.manor == 3 then
     bubble(en, _"Zzz... zzz... zzz...")
   else
     bubble(en, _"Mine aren't the only books on the Staff of Xenarum and other treasures.")
@@ -357,5 +358,5 @@ function LOC_talk_butler(en)
   msg(_"Hunert shrugs", 255, 0)
   bubble(en, _"Hopefully, it will give you a chance to buy some better weapons and armour.")
   bubble(HERO1, _"Well, thank you for the information.")
-  set_progress(P_MANOR, 2)
+  progress.manor = 2
 end

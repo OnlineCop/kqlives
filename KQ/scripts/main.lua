@@ -2,9 +2,9 @@
 
 function autoexec()
   local x, y
-  if (get_progress(P_SHOWBRIDGE) < 2) then
+  if progress.showbridge < 2 then
     x, y = marker("bridge")
-    if (get_progress(P_SHOWBRIDGE) == 0) then
+    if progress.showbridge == 0 then
       set_mtile(x, y, 82)
     end
     set_btile(x - 1, y, 80)
@@ -14,23 +14,19 @@ function autoexec()
     set_zone(x + 1, y, 71)
   end
 
-  if (get_progress(P_TOWEROPEN) == 1 or
-      get_progress(P_TOWEROPEN) == 3) then
+  if progress.toweropen == 1 or progress.toweropen == 3 then
     x, y = marker("tower")
     set_obs(x, y - 1, 0)
   end
 
-  if (get_progress(P_FOUNDMAYOR) > 0 and
-      get_progress(P_MAYORGUARD1) > 0 and
-      get_progress(P_MAYORGUARD2) > 0) then
+  if progress.foundmayor > 0 and progress.mayorguard1 > 0 and
+    progress.mayorguard2 > 0 then
     x, y = marker("camp")
     set_zone(x, y, 0)
   end
 
-  if ((get_progress(P_OPALHELMET) == 1) and
-      (get_progress(P_OPALSHIELD) == 1) and
-      (get_progress(P_OPALBAND) == 1) and
-      (get_progress(P_OPALARMOUR) == 1)) then
+  if progress.opalhelmet == 1 and progress.opalshield == 1 and
+    progress.opalband == 1 and progress.opalarmour == 1 then
     x, y = marker("cave6a")
     set_zone(x, y - 1, 73)
   end
@@ -54,7 +50,7 @@ function zone_handler(zn)
     change_map("manor", "entrance")
 
   elseif (zn == 2) then
-    if (get_progress(P_START) == 1) then
+    if progress.start == 1 then
       if (in_forest(HERO1)) then
         combat(27)
       else
@@ -83,7 +79,7 @@ function zone_handler(zn)
     end
 
   elseif (zn == 7) then
-    if (get_progress(P_FIGHTONBRIDGE) == 5) then
+    if progress.fightonbridge == 5 then
       set_ent_facing(HERO1, FACE_LEFT)
       change_map("bridge2", "entrance")
     else
@@ -110,24 +106,24 @@ function zone_handler(zn)
     change_map("cave3a", "exit")
 
   elseif (zn == 14) then
-    if (get_progress(P_TOWEROPEN) == 0) then
-      if (get_progress(P_GOBLINITEM) == 1) then
-        set_progress(P_TOWEROPEN, 1)
-        set_progress(P_GOBLINITEM, 2)
+    if progress.toweropen == 0 then
+      if progress.goblinitem == 1 then
+        progress.toweropen = 1
+        progress.goblinitem = 2
         remove_special_item(SI_JADEPENDANT)
         bubble(HERO1, _"Hey! The pendant is glowing!")
         bubble(255, _"The doors fly open and the pendant disappears in a puff of smoke.")
-      elseif (get_progress(P_DENORIAN) == 2) then
-        set_progress(P_TOWEROPEN, 1)
+      elseif progress.denorian == 2 then
+        progress.toweropen = 1
         bubble(HERO1, _"The doors open with a shower of rust.")
       else
         bubble(HERO1, _"The tower appears to be sealed. Maybe we need something to get in here?")
       end
     end
 
-    if (get_progress(P_TOWEROPEN) == 2) then
+    if progress.toweropen == 2 then
       bubble(HERO1, _"I can't get in here anymore!")
-    elseif (get_progress(P_TOWEROPEN) > 0) then
+    elseif progress.toweropen > 0 then
       change_map("tower", "entrance")
     end
 
@@ -158,8 +154,8 @@ function zone_handler(zn)
     change_map("estate", "entrance")
 
   elseif (zn == 21) then
-    if (get_progress(P_AYLA_QUEST) == 7) then
-      set_progress(P_AYLA_QUEST, 6)
+    if progress.ayla_quest == 7 then
+      progress.ayla_quest = 6
       change_map("town5", "exit")
     else
       change_map("town5", "entrance")
@@ -208,17 +204,17 @@ function zone_handler(zn)
     end
 
   elseif (zn == 28) then
-    if (get_progress(P_SEECOLISEUM) < 2) then
+    if progress.seecoliseum < 2 then
       bubble(HERO1, _"The Coliseum is closed.")
-      if (get_progress(P_SEECOLISEUM) == 0) then
-        set_progress(P_SEECOLISEUM, 1)
+      if progress.seecoliseum == 0 then
+        progress.seecoliseum = 1
       end
     else
       change_map("coliseum", "entrance")
     end
 
   elseif (zn == 29) then
-    if (get_progress(P_DENORIAN) == 1) then
+    if progress.denorian == 1 then
       bubble(255, _"You are not allowed in the village.")
       msg(_"You sneak in anyway.", 255, 0)
     end
@@ -407,9 +403,9 @@ end
 
 function LOC_cave4()
   local x, y = marker("cave4")
-  if (get_progress(P_DENORIAN) == 0) then
+  if progress.denorian == 0 then
     bubble(HERO1, _"Hmm... there's a huge iron door blocking the entrance to this cave.")
-  elseif (get_progress(P_DENORIAN) == 1) then
+  elseif progress.denorian == 1 then
     bubble(HERO1, _"This seems strange. I wonder if this has something to do with the Denorian's request.")
   else
     bubble(HERO1, _"Stones 1, 4 then 3...")
@@ -424,10 +420,8 @@ end
 
 function LOC_cave6()
   local x, y = marker("cave6a")
-  if ((get_progress(P_OPALARMOUR) == 1) and
-      (get_progress(P_OPALHELMET) == 1) and
-      (get_progress(P_OPALSHIELD) == 1) and
-      (get_progress(P_OPALBAND) == 1)) then
+  if progress.opalarmour == 1 and progress.opalhelmet == 1 and
+    progress.opalshield == 1 and progress.opalband == 1 then
     set_btile(x, y - 1, 54)
     set_zone(x, y - 1, 73)
     set_obs(x, y - 1, 0)
@@ -440,12 +434,12 @@ end
 
 
 function LOC_giant()
-  if (get_progress(P_GIANTDEAD) == 0) then
+  if progress.giantdead == 0 then
     combat(49)
     if (get_alldead() == 1) then
       return
     else
-      set_progress(P_GIANTDEAD, 1)
+      progress.giantdead = 1
     end
   else
     warp("giant_w", 16)
