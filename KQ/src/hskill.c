@@ -70,19 +70,22 @@ int hero_skillcheck (int dude)
       else
          return 1;
       break;
+
    case SARINA:
       b = items[party[pidx[dude]].eqp[0]].icon;
       if (b != W_SWORD && b != W_AXE && b != W_KNIFE && b != W_CHENDIGAL)
          return 0;
       b = 0;
-      for (a = PSIZE; a < PSIZE + numens; a++)
+      for (a = PSIZE; a < PSIZE + numens; a++) {
          if (fighter[a].sts[S_DEAD] == 0 && fighter[a].sts[S_STONE] == 0)
             b++;
+      }
       if (b > 1)
          return 1;
       else
          return 0;
       break;
+
    case CORIN:
       if (fighter[dude].sts[S_MUTE] > 0)
          return 0;
@@ -99,15 +102,17 @@ int hero_skillcheck (int dude)
    case AJATHAR:
       if (fighter[dude].sts[S_MUTE] > 0)
          return 0;
-      for (a = PSIZE; a < PSIZE + numens; a++)
+      for (a = PSIZE; a < PSIZE + numens; a++) {
          if (fighter[a].sts[S_DEAD] == 0 && fighter[a].sts[S_STONE] == 0)
             b += fighter[a].unl;
+      }
       if (b > 0)
          fighter[dude].unl = 1;
       else
          fighter[dude].unl = 0;
       return 1;
       break;
+
    case CASANDRA:
       if (fighter[dude].sts[S_MUTE] > 0)
          return 0;
@@ -123,17 +128,20 @@ int hero_skillcheck (int dude)
       } else
          return 0;
       break;
+
    case TEMMIN:
       if (numchrs == 1)
          return 0;
-      for (a = 0; a < numchrs; a++)
+      for (a = 0; a < numchrs; a++) {
          if (fighter[a].sts[S_DEAD] == 0)
             b++;
+      }
       if (b > 1)
          return 1;
       else
          return 0;
       break;
+
    case AYLA:
    case NOSLOM:
       return 1;
@@ -154,7 +162,7 @@ int hero_skillcheck (int dude)
  */
 static void infusion (int c, int sn)
 {
-   int j;
+   size_t j;
 
    switch (sn) {
 
@@ -169,6 +177,7 @@ static void infusion (int c, int sn)
       fighter[c].stats[A_MAG] += 10;
       fighter[c].welem = 0;
       break;
+
    case M_EARTHQUAKE:
       fighter[c].res[R_EARTH] += 10;
       fighter[c].stats[A_DEF] += 30;
@@ -184,6 +193,7 @@ static void infusion (int c, int sn)
       fighter[c].stats[A_AUR] += 20;
       fighter[c].welem = 1;
       break;
+
    case M_NEGATIS:
       fighter[c].res[R_BLACK] += 16;
       fighter[c].res[R_WHITE] -= 8;
@@ -201,6 +211,7 @@ static void infusion (int c, int sn)
       fighter[c].stats[A_HIT] += 10;
       fighter[c].welem = 2;
       break;
+
    case M_FIREBLAST:
       fighter[c].res[R_FIRE] += 8;
       fighter[c].res[R_WATER] -= 2;
@@ -209,6 +220,7 @@ static void infusion (int c, int sn)
       fighter[c].stats[A_HIT] += 20;
       fighter[c].welem = 2;
       break;
+
    case M_FLAMEWALL:
       fighter[c].res[R_FIRE] += 12;
       fighter[c].res[R_WATER] -= 4;
@@ -224,11 +236,13 @@ static void infusion (int c, int sn)
       fighter[c].stats[A_EVD] += 10;
       fighter[c].welem = 3;
       break;
+
    case M_LIGHTNING:
       fighter[c].res[R_THUNDER] += 6;
       fighter[c].stats[A_EVD] += 25;
       fighter[c].welem = 3;
       break;
+
    case M_THUNDERSTORM:
       fighter[c].res[R_THUNDER] += 12;
       fighter[c].stats[A_EVD] += 50;
@@ -242,6 +256,7 @@ static void infusion (int c, int sn)
       fighter[c].stats[A_SPD] += 10;
       fighter[c].welem = 4;
       break;
+
    case M_TORNADO:
       fighter[c].res[R_AIR] += 10;
       fighter[c].stats[A_EVD] += 30;
@@ -257,6 +272,7 @@ static void infusion (int c, int sn)
       fighter[c].stats[A_SPI] += 10;
       fighter[c].welem = 5;
       break;
+
    case M_LUMINE:
       fighter[c].res[R_WHITE] += 10;
       fighter[c].res[R_BLACK] -= 5;
@@ -276,6 +292,7 @@ static void infusion (int c, int sn)
       }
       fighter[c].welem = 6;
       break;
+
    case M_TSUNAMI:
       fighter[c].res[R_WATER] += 10;
       fighter[c].res[R_THUNDER] -= 10;
@@ -296,6 +313,7 @@ static void infusion (int c, int sn)
       fighter[c].stats[A_DEF] += 10;
       fighter[c].welem = 7;
       break;
+
    case M_BLIZZARD:
       fighter[c].res[R_ICE] += 14;
       fighter[c].res[R_WATER] += 8;
@@ -314,6 +332,7 @@ static void infusion (int c, int sn)
       fighter[c].mhp += j;
       fighter[c].welem = 8;
       break;
+
    case M_VIRUS:
       fighter[c].res[R_POISON] += 8;
       j = fighter[c].mhp * 25 / 100;
@@ -323,6 +342,7 @@ static void infusion (int c, int sn)
       fighter[c].mhp += j;
       fighter[c].welem = 8;
       break;
+
    case M_PLAGUE:
       fighter[c].res[R_POISON] += 12;
       j = fighter[c].mhp * 4 / 10;
@@ -346,7 +366,8 @@ static void infusion (int c, int sn)
 
 void reveal (int tgt)
 {
-   int c, d = 0, g = 0, b;
+   unsigned int c, g = 0, b;
+   int d = 0;
 
    do_transition (TRANS_FADE_OUT, 4);
    menubox (double_buffer, 84, 56, 17, 13, BLUE);
@@ -448,6 +469,7 @@ int skill_use (int who)
       }
       destroy_bitmap (temp);
       break;
+
    case SARINA:
       fighter[who].ctmem = 1000;
       strcpy (ctext, _("Sweep"));
@@ -462,6 +484,7 @@ int skill_use (int who)
       multi_fight (who);
       dct = 0;
       break;
+
    case CORIN:
       strcpy (ctext, _("Elemental Infusion"));
       dct = 1;
@@ -510,6 +533,7 @@ int skill_use (int who)
       dct = 0;
       fighter[who].sts[S_INFUSE] = magic[fighter[who].csmem].elem;
       break;
+
    case AJATHAR:
       if (fighter[who].unl > 0) {
          strcpy (ctext, _("Dispel Undead"));
@@ -517,9 +541,10 @@ int skill_use (int who)
          fullblit(double_buffer, back);
          for (a = 0; a < 14; a++) {
             convert_cframes (PSIZE, 1 + a, 15, 1);
-            for (g = PSIZE; g < PSIZE + numens; g++)
+            for (g = PSIZE; g < PSIZE + numens; g++) {
                if (is_active (g))
                   draw_fighter (g, 0);
+            }
             blit2screen (0, 0);
             kq_wait (50);
             fullblit(back, double_buffer);
@@ -573,11 +598,13 @@ int skill_use (int who)
             }
          }
          display_amount (0, FYELLOW, 1);
-         for (a = 0; a < numchrs; a++)
+         for (a = 0; a < numchrs; a++) {
             if (fighter[a].sts[S_STONE] == 0 && fighter[a].sts[S_DEAD] == 0)
                adjust_hp (a, ta[a]);
+         }
       }
       break;
+
    case CASANDRA:
       fighter[who].atrack[0] = fighter[who].stats[A_AUR];
       fighter[who].atrack[1] = fighter[who].stats[A_SPI];
@@ -598,10 +625,12 @@ int skill_use (int who)
          return 0;
       }
       break;
+
    case TEMMIN:
       fighter[who].aux = 1;
       fighter[who].defend = 1;
       break;
+
    case AYLA:
       tgt = select_enemy (who, 0);
       if (tgt == -1)
@@ -681,6 +710,7 @@ int skill_use (int who)
       battle_render (who, who, 0);
       blit2screen (0, 0);
       break;
+
    case NOSLOM:
       tgt = select_enemy (who, 0);
       if (tgt == -1)

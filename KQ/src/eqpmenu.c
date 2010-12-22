@@ -137,11 +137,11 @@ static void choose_equipment (int c, int slot)
       draw_equippreview (c, slot, g_inv[t_inv[pptr + yptr]][0]);
       draw_sprite (double_buffer, menuptr, 12 + xofs, yptr * 8 + 100 + yofs);
       blit2screen (xofs, yofs);
-      if (tot < 16) {
+      if (tot < NUM_ITEMS_PER_PAGE) {
          sm = 0;
          ym = tot - 1;
       } else
-         sm = tot - 16;
+         sm = tot - NUM_ITEMS_PER_PAGE;
 
       readcontrols ();
 
@@ -618,7 +618,7 @@ static void optimize_equip (int c)
    calc_possible_equip (c, 5);
    for (a = 0; a < tot; a++) {
       b = g_inv[t_inv[a]][0];
-      for (z = 0; z < 13; z++)
+      for (z = 0; z < NUM_STATS; z++)
          v += items[b].stats[z];
       for (z = 0; z < R_TOTAL_RES; z++)
          v += items[b].res[z];

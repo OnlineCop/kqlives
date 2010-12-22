@@ -3293,7 +3293,7 @@ void process_menu_bottom (const int cx, const int cy)
       /* Make sure the value is valid */
       if (strbuf[0] == '-' || strbuf[0] == '+') {
          response = gmap.stx + atoi (strbuf);
-         if (response >= 0 && response < gmap.xsize) {
+         if (response < gmap.xsize) {
             gmap.stx += atoi (strbuf);
             return;
          } else {
@@ -3328,7 +3328,7 @@ void process_menu_bottom (const int cx, const int cy)
       /* Make sure the value is valid */
       if (strbuf[0] == '-' || strbuf[0] == '+') {
          response = gmap.sty + atoi (strbuf);
-         if (response >= 0 && response < gmap.ysize) {
+         if (response < gmap.ysize) {
             gmap.sty += atoi (strbuf);
             return;
          } else {
@@ -3388,7 +3388,7 @@ void process_menu_bottom (const int cx, const int cy)
        */
       if (strbuf[0] == '-' || strbuf[0] == '+') {
          response = gmap.pmult + atoi (strbuf);
-         if (response >= 0 && response < 10) {
+         if (response < 10) {
             gmap.pmult += atoi (strbuf);
             return;
          } else {
