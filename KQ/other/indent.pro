@@ -1,6 +1,7 @@
--nut
--npsl
--i3
--l79
--br
--ce
+--verbose
+--no-tabs
+--dont-break-procedure-type
+--indent-level3
+--line-length79
+--braces-on-if-line
+--cuddle-else
