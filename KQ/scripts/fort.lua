@@ -2,16 +2,17 @@
 
 -- /*
 -- {
--- P_GOBLINITEM: Possession of Goblin Item (which helps seal Monster Portal)
+-- progress:
+-- goblinitem: Possession of Goblin Item (which helps seal Monster Portal)
 --   (0) Do not have it
 --   (1) Got it
 --   (2) Returned it to Oracle
 --
--- P_PORTAL2GONE: Whether the portal in the temple is still working
+-- portal2gone: Whether the portal in the temple is still working
 --   (0) Still letting monsters through
 --   (1) The Portal is sealed shut
 --
--- P_TALK_TSORIN: If you've spoken to Tsorin in Andra (and got his seal)
+-- talk_tsorin: If you've spoken to Tsorin in Andra (and got his seal)
 --   (0) You haven't spoken to him yet
 --   (1) Tsorin gave you a note to give to Derig
 --   (2) Derig gave you a note to return to Tsorin
@@ -39,27 +40,27 @@ function entity_handler(en)
     bubble(en, _"Make sure to stock up on supplies.")
 
   elseif (en == 2) then
-    if (get_progress(P_TALK_TSORIN) < 3) then
+    if progress.talk_tsorin < 3 then
       bubble(en, _"We cannot let you pass.")
-    elseif (get_progress(P_TALK_TSORIN) == 3) then
+    elseif progress.talk_tsorin == 3 then
       bubble(en, _"The Lieutenant requires Tsorin's authorization before anyone can pass through here.")
     else
       bubble(en, _"You are free to come and go as you please.")
     end
 
   elseif (en == 3) then
-    if (get_progress(P_TALK_TSORIN) < 3) then
+    if progress.talk_tsorin < 3 then
       bubble(en, _"No one is allowed through right now.")
-    elseif (get_progress(P_TALK_TSORIN) == 3) then
+    elseif progress.talk_tsorin == 3 then
       bubble(en, _"Show Tsorin's seal to this man next to me. He will inform the Lieutenant that you have it.")
     else
       bubble(en, _"Be careful in the goblin lands.")
     end
 
   elseif (en == 4) then
-    if (get_progress(P_TALK_TSORIN) < 3) then
+    if progress.talk_tsorin < 3 then
       bubble(en, _"Only Captain Tsorin can authorize you to come through here.")
-    elseif (get_progress(P_TALK_TSORIN) == 3) then
+    elseif progress.talk_tsorin == 3 then
       if (get_numchrs() == 1) then
         bubble(HERO1, _"Tsorin sends his greetings to you. You are to let me pass through to the Oracle's Tower.")
       else
@@ -70,16 +71,16 @@ function entity_handler(en)
       set_ent_speed(en, 4)
       set_ent_script(en, "D10")
       wait_for_entity(en, en)
-      set_progress(P_TALK_TSORIN, 4)
+      progress.talk_tsorin = 4
       refresh()
-    elseif (get_progress(P_TALK_TSORIN) == 4) then
+    elseif progress.talk_tsorin == 4 then
       bubble(en, _"The Lieutenant says you are free to go into goblin lands. Be cautious.")
     else
       bubble(en, _"We have received word that the goblin lands are peaceful now. Thank you for your help.")
     end
 
   elseif (en == 5) then
-    if (get_progress(P_TALK_TSORIN) == 4) then
+    if progress.talk_tsorin == 4 then
       bubble(en, _"Lieutenant:", _"South of here is a river you'll need to cross. Head for the tower in the small group of mountains due west from there. You just have to go through some caves to reach it. Then make your way up to the Oracle. Is that understood?")
       bubble(HERO1, _"Yeah, I guess so... it all seems clear enough.")
       bubble(en, _"Good. Head out whenever you're ready.")
@@ -97,7 +98,7 @@ end
 
 
 function refresh()
-  if (get_progress(P_TALK_TSORIN) > 3) then
+  if progress.talk_tsorin > 3 then
     place_ent(4, 39, 14)
     set_ent_facing(4, FACE_DOWN)
   end

@@ -4,16 +4,17 @@
 -- {
 -- Which globals should we have for the (incomplete) bridge?
 --
--- P_FIGHTONBRIDGE
+-- progress:
+-- fightonbridge
 --   (0)..(4) [Not calculated]: when this is <=4, we will not use bridge2
 --   (5) Slept at the inn, bridge is pretty close to being done
 --   (6) [Not calculated]: when this is >= 6, we will not even enter the map
 --
--- P_LOSERONBRIDGE
+-- loseronbridge
 --   (0) Have not spoken to man who forgot his sword
 --   (1) Spoke to him after defeating the monsters
 --
--- P_ASLEEPONBRIDGE
+-- asleeponbridge
 --   (0) Have not spoken to man sleeping on bridge
 --   (1) Man is asleep again
 -- }
@@ -30,20 +31,20 @@ function entity_handler(en)
     bubble(en, _"There have been no further threats. Thank you.")
 
   elseif (en == 1) then
-    if (get_progress(P_LOSERONBRIDGE) == 0) then
+    if progress.loseronbridge == 0 then
       bubble(en, _"It's a good thing you helped us out with that monster!")
       bubble(HERO1, _"Oh, it was nothing...")
       bubble(en, _"No, really! I don't have a sword!")
       wait(50)
       bubble(en, _"I probably shouldn't have told you that.")
-      set_progress(P_LOSERONBRIDGE, 1)
-    elseif (get_progress(P_LOSERONBRIDGE) == 1) then
+      progress.loseronbridge = 1
+    elseif progress.loseronbridge == 1 then
       bubble(HERO1, _"So what happened to your sword?")
       bubble(en, _"...")
       wait(50)
       bubble(en, _"My dog ate it.")
-      set_progress(P_LOSERONBRIDGE, 2)
-    elseif (get_progress(P_LOSERONBRIDGE) == 2) then
+      progress.loseronbridge = 2
+    elseif progress.loseronbridge == 2 then
       bubble(en, _"Hey, look! I found a board with a nail in it!")
       thought(HERO1, _"Oh, good grief!")
       bubble(en, _"Fear my wrath! Hi-yah!")
@@ -68,7 +69,7 @@ function entity_handler(en)
     bubble(en, _"I'm an architect. I'm building these pillars to reinforce the bridge.")
 
   elseif (en == 8) then
-    if (get_progress(P_BANGTHUMB) == 0) then
+    if progress.bangthumb == 0 then
       bubble(en, _"Yes, wha...")
       msg(_"WHAM!", 255, 0)
       bubble(en, _"Yow!! My thumb! I banged my thumb!")

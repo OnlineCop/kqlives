@@ -132,10 +132,9 @@ local quest_list = {
 }
 
 
---Holds an integer, starting at 0, for every quest.
-local quest_numbers = {}
+--Determine which C index corresponds to each quest name.
 for i, quest in ipairs(quest_list) do
-  quest_numbers[quest] = i - 1
+  quest_list[quest] = i - 1
 end
 
 
@@ -144,16 +143,26 @@ end
 --integers.
 progress = {}
 
+--Returns the C index of quest.
+local function quest_index(quest)
+  local index = tonumber(quest_list[quest])
+  if index then
+    return index
+  else
+    error('progress: Invalid quest name: ' .. quest, 3)
+  end
+end
+
 --Returns the progress amount for the given quest.
 function progress:__index(quest)
-  return get_progress(quest_numbers[quest])
+  return get_progress(quest_index(quest))
 end
 
 --Assigns a progress level for a quest.
 --quest: A quest name.
---n: The new progress amount.
+--n: The new progress amount. If not a number, it will be interpreted as 0.
 function progress:__newindex(quest, n)
-  set_progress(quest_numbers[quest], n)
+  set_progress(quest_index(quest), n)
 end
 
 setmetatable(progress, progress)

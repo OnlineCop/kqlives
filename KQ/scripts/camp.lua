@@ -2,13 +2,14 @@
 
 -- /*
 -- {
--- P_FOUNDMAYOR:
+-- progress:
+-- foundmayor:
 --   (0) Mayor is still behind bars
 --   (1) Mayor has been freed and is now home
--- P_MAYORGUARD1:
+-- mayorguard1:
 --   (0) The first of the mayor's guards is still being held
 --   (1) The first guard was released (and spoken to)
--- P_MAYORGUARD2:
+-- mayorguard2:
 --   (0) The second of the mayor's guards is still being held
 --   (1) The second guard was released (and spoken to)
 -- }
@@ -19,14 +20,14 @@ function autoexec()
   local en
 
   en = 37
-  if (get_progress(P_SIDEQUEST2) == 0) then
+  if progress.sidequest2 == 0 then
     set_ent_id(en, CASANDRA)
   else
     set_ent_active(en, 0)
     set_ent_tiley(2, get_ent_tiley(en))
   end
 
-  if (get_progress(P_FOUNDMAYOR) > 0) then
+  if progress.foundmayor > 0 then
     for en = 0, 4, 1 do
       set_ent_active(en, 0)
     end
@@ -35,11 +36,11 @@ function autoexec()
     end
   end
 
-  if (get_progress(P_MAYORGUARD1) > 0) then
+  if progress.mayorguard1 > 0 then
     set_ent_active(5, 0)
   end
 
-  if (get_progress(P_MAYORGUARD2) > 0) then
+  if progress.mayorguard2 > 0 then
     set_ent_active(6, 0)
   end
 
@@ -56,17 +57,17 @@ function entity_handler(en)
     LOC_rescue_mayor(en)
 
   elseif (en == 5) then
-    if (get_progress(P_MAYORGUARD1) == 0) then
+    if progress.mayorguard1 == 0 then
       bubble(en, _"Wow, thanks for helping me! When we get back to my place, feel free to stop by sometime!")
-      set_progress(P_MAYORGUARD1, 1)
+      progress.mayorguard1 = 1
     else
       bubble(en, _"My place is right next to the mayor's.")
     end
 
   elseif (en == 6) then
-    if (get_progress(P_MAYORGUARD2) == 0) then
+    if progress.mayorguard2 == 0 then
       bubble(en, _"Thanks for your help! I should be able to find my way out.")
-      set_progress(P_MAYORGUARD2, 1)
+      progress.mayorguard2 = 1
     else
       bubble(en, _"Don't worry about me. I'm still looking for the exit...")
     end
@@ -129,7 +130,7 @@ function refresh()
   showch("treasure6", 60)
   showch("treasure7", 61)
 
-  if (get_progress(P_FOUNDMAYOR) > 0) then
+  if progress.foundmayor > 0 then
     x, y = marker("cage")
     set_ftile(x, y - 3, 0)
     set_obs(x, y - 3, 0)
@@ -398,8 +399,8 @@ function LOC_rescue_mayor(en)
   end
   bubble(HERO1, _"Sure.")
 
-  set_progress(P_FOUNDMAYOR, 1)
-  set_progress(P_SIDEQUEST2, 1)
+  progress.foundmayor = 1
+  progress.sidequest2 = 1
   refresh()
   set_autoparty(1)
 

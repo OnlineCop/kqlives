@@ -4,7 +4,8 @@
 -- {
 -- Which globals should we have for the (incomplete) bridge?
 --
--- P_FIGHTONBRIDGE: Status of monsters infesting the partial bridge
+-- progress:
+-- fightonbridge: Status of monsters infesting the partial bridge
 --   (0) Nothing happened on bridge (haven't spoken to worker)
 --   (1) Spoke with a worker, haven't tried to leave yet
 --   (2) Tried to leave, monster appeared (haven't fought it yet)
@@ -12,11 +13,11 @@
 --   (4) Left bridge and re-entered; bridge not completed yet
 --   (5) [Not calculated]: when this is >= 5, we will use bridge2
 --
--- P_LOSERONBRIDGE: Guard who forgot his sword
+-- loseronbridge: Guard who forgot his sword
 --   (0) Have not spoken to man who forgot his sword
 --   (1) Spoke to him after defeating the monsters
 --
--- P_ASLEEPONBRIDGE: Man in the top of the bridge sleeping
+-- asleeponbridge: Man in the top of the bridge sleeping
 --   (0) Have not spoken to man sleeping on bridge
 --   (1) Man is asleep again
 -- }
@@ -29,7 +30,7 @@ end
 
 
 function entity_handler(en)
-  local a = get_progress(P_FIGHTONBRIDGE)
+  local a = progress.fightonbridge
   -- TT comments:
   -- a ==0 before talking to any worker (and before monster)
   -- a ==1 talked to workers but you have not tried to leave
@@ -40,7 +41,7 @@ function entity_handler(en)
 
   if (en >= 2) then
     if (a == 0) then
-      set_progress(P_FIGHTONBRIDGE, 1)
+      progress.fightonbridge = 1
     elseif (a == 2) then
       bubble(en, _"There are some weird creatures in the water!")
       return
@@ -63,13 +64,13 @@ function entity_handler(en)
 
   elseif (en == 1) then
     if (a < 2) then
-      if (get_progress(P_LOSERONBRIDGE) == 0) then
+      if progress.loseronbridge == 0 then
         bubble(en, _"Those bandits better not show their faces around here again!")
         bubble(HERO1, _"Or you'll thrash 'em right?")
         bubble(en, _"No... they'd better not show up because I forgot my sword!")
         wait(50)
         bubble(en, _"I probably shouldn't have told you that.")
-        set_progress(P_LOSERONBRIDGE, 1)
+        progress.loseronbridge = 1
       else
         bubble(en, _"Let me know if you see any bandits, will ya?")
       end
@@ -91,13 +92,13 @@ function entity_handler(en)
   elseif (en == 3) then
     if (a < 2) then
       bubble(en, _".....")
-      if (get_progress(P_ASLEEPONBRIDGE) == 0) then
+      if progress.asleeponbridge == 0 then
         wait(50)
         bubble(en, _"Wha...?")
         set_ent_facing(3, FACE_LEFT)
         bubble(en, _"I wasn't sleeping!")
         set_ent_facing(3, FACE_UP)
-        set_progress(P_ASLEEPONBRIDGE, 1)
+        progress.asleeponbridge = 1
       end
     elseif (a == 4) then
       bubble(en, _"Zzz...")
@@ -151,14 +152,14 @@ end
 
 function zone_handler(zn)
   if (zn == 1) then
-    if (get_progress(P_FIGHTONBRIDGE) == 0 or get_progress(P_FIGHTONBRIDGE) > 2) then
-      if (get_progress(P_FIGHTONBRIDGE) == 3) then
-        set_progress(P_FIGHTONBRIDGE, 4)
+    if progress.fightonbridge == 0 or progress.fightonbridge > 2 then
+      if progress.fightonbridge == 3 then
+        progress.fightonbridge = 4
       end
       change_map("main", "bridge", -1, 0)
       return
     end
-    if (get_progress(P_FIGHTONBRIDGE) == 1) then
+    if progress.fightonbridge == 1 then
       bubble(255, "Ahhhhh!!!")
       bubble(255, "Help!")
       set_ent_movemode(2, 2)
@@ -172,7 +173,7 @@ function zone_handler(zn)
       set_ent_movemode(4, 0)
       set_ent_movemode(5, 0)
       set_ent_movemode(6, 0)
-      set_progress(P_FIGHTONBRIDGE, 2)
+      progress.fightonbridge = 2
       x, y = marker("monster")
       set_btile(x, y, 176)
       set_zone(x, y, 3)
@@ -184,11 +185,11 @@ function zone_handler(zn)
     refresh()
 
   elseif (zn == 3) then
-    if (get_progress(P_FIGHTONBRIDGE) == 2) then
+    if progress.fightonbridge == 2 then
       can_run = 0
       combat(0)
       can_run = 1
-      set_progress(P_FIGHTONBRIDGE, 3)
+      progress.fightonbridge = 3
       x, y = marker("monster")
       set_btile(x, y, 160)
       set_zone(x, y, 0)

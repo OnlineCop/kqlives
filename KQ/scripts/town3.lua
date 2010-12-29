@@ -2,16 +2,17 @@
 
 -- /*
 -- {
--- P_GOBLINITEM: Possession of Goblin Item (which helps seal Monster Portal)
+-- progress:
+-- goblinitem: Possession of Goblin Item (which helps seal Monster Portal)
 --   (0) Do not have it
 --   (1) Got it
 --   (2) Returned it to Oracle
 --
--- P_PORTAL2GONE: Whether the portal in the temple is still working
+-- portal2gone: Whether the portal in the temple is still working
 --   (0) Still letting monsters through
 --   (1) The Portal is sealed shut
 --
--- P_TALK_TSORIN: If you've spoken to Tsorin in Andra (and got his seal)
+-- talk_tsorin: If you've spoken to Tsorin in Andra (and got his seal)
 --   (0) You haven't spoken to him yet
 --   (1) Tsorin gave you a note to give to Derig
 --   (2) Derig gave you a note to return to Tsorin
@@ -22,7 +23,7 @@
 -- */
 
 function autoexec()
-  if (get_progress(P_TALK_TSORIN) == 4) then
+  if progress.talk_tsorin == 4 then
     -- // Deactivate the Tsorin character
     set_ent_active(1, 0)
   end
@@ -211,14 +212,14 @@ end
 
 
 function LOC_talk_oldguy(en)
-  if (get_progress(P_GOBLINITEM) == 0) then
+  if progress.goblinitem == 0 then
     bubble(en, _"To the north of here is a temple. It is nearly impenetrable from the outside, even to Malkaron's armies.")
     bubble(en, _"However, monsters have somehow appeared INSIDE the temple. They need help in any way possible.")
     bubble(HERO1, _"I can probably help. What can I do?")
     bubble(en, _"I hear that the monsters are coming through a portal in the caves under the temple. Seal it up to stop the monsters.")
     bubble(HERO1, _"How do I seal the portal?")
     bubble(en, _"I don't know. You should ask someone in the temple.")
-  elseif (get_progress(P_GOBLINITEM) == 1) then
+  elseif progress.goblinitem == 1 then
     bubble(en, _"Use that Goblin Item to seal the portal in the temple.")
   else
     bubble(en, _"Good work in the temple! We thank you most graciously!")
@@ -227,7 +228,7 @@ end -- LOC_talk_oldguy
 
 
 function LOC_talk_tsorin(en)
-  if (get_progress(P_TALK_TSORIN) == 0) then
+  if progress.talk_tsorin == 0 then
     bubble(en, _"Tsorin:", "Thank you for visiting our town. What do you need?")
     bubble(HERO1, _"I'm not sure. To get through the pass to the south, I guess.")
     bubble(en, _"I'm afraid I cannot allow that. There is a civil upheaval in the Goblin Lands and so cannot allow anyone to pass.")
@@ -240,11 +241,11 @@ function LOC_talk_tsorin(en)
     bubble(en, _"Well, I have to know if I can trust you first. Here, take this note to Derig.")
     msg(_"Tsorin hands you an envelope with his seal on it.", 18, 0)
     bubble(en, _"He lives back in Ekla, and if he says you can pass, I shall let you pass.")
-    set_progress(P_TALK_TSORIN, 1)
+    progress.talk_tsorin = 1
     add_special_item(SI_NOTE_TSORIN)
-  elseif (get_progress(P_TALK_TSORIN) == 1) then
+  elseif progress.talk_tsorin == 1 then
     bubble(en, _"If you have trouble finding Derig, ask around town. Someone's bound to know where he's wandered off to.")
-  elseif (get_progress(P_TALK_TSORIN) == 2) then
+  elseif progress.talk_tsorin == 2 then
     msg(_"You hand the note to Tsorin.", 18, 0)
     bubble(en, _"Hmm, I see. Since Derig says you are trustworthy, I can let you pass through the fort.")
     if (get_numchrs() == 1) then
@@ -262,11 +263,11 @@ function LOC_talk_tsorin(en)
     bubble(en, _"Present this Seal to the guards, and tell them that you're acting with my authority.")
     msg(_"Tsorin's Seal procured!", 25, 0)
     bubble(en, _"I'm afraid I cannot send anyone to protect you - you must take the utmost care.")
-    set_progress(P_TALK_TSORIN, 3)
+    progress.talk_tsorin = 3
     remove_special_item(SI_NOTE_DERIG)
-  elseif (get_progress(P_TALK_TSORIN) == 3) then
+  elseif progress.talk_tsorin == 3 then
     bubble(en, _"You can find the Oracle to the south. She will help you find this missing statue.")
-  elseif (get_progress(P_TALK_TSORIN) == 4) then
+  elseif progress.talk_tsorin == 4 then
     bubble(en, _"Thank you for all you've done.")
   end
 end -- LOC_talk_tsorin

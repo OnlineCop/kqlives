@@ -2,20 +2,21 @@
 
 -- /*
 -- {
--- P_ODDWALL: Whether the player is told that the wall looks odd
+-- progress:
+-- oddwall: Whether the player is told that the wall looks odd
 --   (0) Have not yet seen the message
 --   (1) Saw the message (only see it 1 time whenever you enter the map)
 --   (2) Stairs to the guild available
 --
--- P_DARKIMPBOSS: Defeated the monster blocking the tunnel
+-- darkimpboss: Defeated the monster blocking the tunnel
 --   (0) Still there
 --   (1) Defeated
 --
--- P_DYINGDUDE: Man in tunnel dying
+-- dyingdude: Man in tunnel dying
 --   (0) You have not spoken to him
 --   (1) Now he is dead
 --
--- P_PORTALGONE: Whether the portal in the tunnel is still working
+-- portalgone: Whether the portal in the tunnel is still working
 --   (0) Still letting monsters through
 --   (1) The Portal is sealed shut
 -- }
@@ -23,8 +24,8 @@
 
 function autoexec()
   if (get_treasure(2) == 0) then
-    if (get_progress(P_ODDWALL) < 2) then
-      set_progress(P_ODDWALL, 0)
+    if progress.oddwall < 2 then
+      progress.oddwall = 0
     end
   end
 
@@ -57,21 +58,21 @@ function refresh()
   end
 
   -- Dark Imp boss in SE corner
-  if (get_progress(P_DARKIMPBOSS) == 1) then
+  if progress.darkimpboss == 1 then
     set_ftile("imp", 0)
     set_zone("imp", 7)
     set_obs("imp", 0)
   end
 
   -- Dying man in NE corner
-  if (get_progress(P_DYINGDUDE) == 1 or get_progress(P_DARKIMPBOSS) == 1) then
+  if progress.dyingdude == 1 or progress.darkimpboss == 1 then
     set_btile("dead", 25)
     set_zone("dead", 0)
     set_obs("dead", 0)
   end
 
   -- Portal in SW corner
-  if (get_progress(P_PORTALGONE) == 1) then
+  if progress.portalgone == 1 then
     set_ftile("portal", 217)
   end
 end
@@ -79,7 +80,7 @@ end
 
 function zone_handler(zn)
   if (zn == 0) then
-    if (get_progress(P_PORTALGONE) == 0) then
+    if progress.portalgone == 0 then
       combat(6)
     end
 
@@ -98,7 +99,7 @@ function zone_handler(zn)
     refresh()
 
   elseif (zn == 6) then
-    if (get_progress(P_ODDWALL) < 2) then
+    if progress.oddwall < 2 then
       bubble(HERO1, _"These stairs are blocked!")
     else
       change_map("guild", "cave1")
@@ -108,9 +109,9 @@ function zone_handler(zn)
     -- This is simply a monster-free zone
 
   elseif (zn == 8) then
-    if (get_progress(P_ODDWALL) == 0) then
+    if progress.oddwall == 0 then
       bubble(HERO1, _"Hmm... this wall looks odd.")
-      set_progress(P_ODDWALL, 1)
+      progress.oddwall = 1
     end
 
   elseif (zn == 9) then
@@ -120,29 +121,29 @@ function zone_handler(zn)
     warp("warp_e", 8)
 
   elseif (zn == 11) then
-    if (get_progress(P_DYINGDUDE) == 0) then
+    if progress.dyingdude == 0 then
       bubble(255, _"... don't go any further. A strange creature has... blocked the path. It just appeared there out of nowhere.")
-      set_progress(P_DYINGDUDE, 1)
+      progress.dyingdude = 1
     else
       bubble(HERO1, _"He's dead.")
     end
 
   elseif (zn == 12) then
-    if (get_progress(P_DARKIMPBOSS) == 0) then
+    if progress.darkimpboss == 0 then
       set_run(0)
       combat(7)
       set_run(1)
-      set_progress(P_DARKIMPBOSS, 1)
+      progress.darkimpboss = 1
       refresh()
     end
 
   elseif (zn == 13) then
-    if (get_progress(P_PORTALGONE) == 0) then
-      if (get_progress(P_CANCELROD) == 1) then
+    if progress.portalgone == 0 then
+      if progress.cancelrod == 1 then
         bubble(HERO1, _"Hmmm... I guess if I just touch it with the rod...")
         do_fadeout(4)
-        set_progress(P_PORTALGONE, 1)
-        set_progress(P_SIDEQUEST1, 1)
+        progress.portalgone = 1
+        progress.sidequest1 = 1
         refresh()
         drawmap()
         screen_dump()
