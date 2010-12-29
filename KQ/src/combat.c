@@ -53,7 +53,7 @@
 
 /*! \name global variables  */
 
-int combatend;
+unsigned int combatend;
 int cact[NUM_FIGHTERS];
 int curx;
 int cury;
@@ -73,7 +73,7 @@ static unsigned char hs;
 
 
 /* Internal prototypes */
-static int attack_result (int, int);
+static unsigned int attack_result (int, int);
 static int check_end (void);
 static void do_action (int);
 static int do_combat (char *, char *, int);
@@ -98,7 +98,7 @@ static void snap_togrid (void);
  * \returns 0 if attack was a miss, 1 if attack was successful,
  *          or 2 if attack was a critical hit.
  */
-static int attack_result (int ar, int dr)
+static unsigned int attack_result (int ar, int dr)
 {
    int c;
    int check_for_critical_hit;
@@ -132,7 +132,7 @@ static int attack_result (int ar, int dr)
 
    /*  JB: check to see if the defender is 'defending'  */
    if (tempd.defend == 1)
-      defender_defense = (defender_defense * 15) / 10;
+      defender_defense = (defender_defense * 3) / 2;
 
    /*  JB: if the attacker is empowered by trueshot  */
    if (tempa.sts[S_TRUESHOT] > 0) {
@@ -174,9 +174,6 @@ static int attack_result (int ar, int dr)
          check_for_critical_hit = (20 - check_for_critical_hit);
          if (rand () % 20 >= check_for_critical_hit) {
             crit_hit = 1;
-            /* TT: Changed following line from:
-             * base = base * 15 / 10;
-             */
             base = ((int) base * 3) / 2;
          }
       }
@@ -264,21 +261,6 @@ void battle_render (int plyr, int hl, int sall)
    clear_bitmap (double_buffer);
    blit ((BITMAP *) backart->dat, double_buffer, 0, 0, 0, 0, 320, 240);
 
-#ifdef DEBUGMODE
-   if (debugging > 1) {
-      rectfill (double_buffer, 0, 0, rcount / 2, 9, 15);
-      sprintf (strbuf, "%d", rcount);
-      print_font (double_buffer, 0, 20, strbuf, FNORMAL);
-      sprintf (strbuf, "0: %d - %d", fighter[0].sts[S_POISON],
-               fighter[0].sts[S_REGEN]);
-
-      print_font (double_buffer, 0, 28, strbuf, FNORMAL);
-      sprintf (strbuf, "1: %d - %d", fighter[1].sts[S_POISON],
-               fighter[1].sts[S_REGEN]);
-      print_font (double_buffer, 0, 36, strbuf, FNORMAL);
-   }
-#endif // DEBUGMODE
-
    if ((sall == 0) && (curx > -1) && (cury > -1)) {
       draw_sprite (double_buffer, bptr, curx + (curw / 2) - 8, cury - 8);
       if (plyr - 1 >= PSIZE) {
@@ -292,44 +274,6 @@ void battle_render (int plyr, int hl, int sall)
                   BLUE);
          print_font (double_buffer, t, z + 8, fighter[plyr - 1].name, FNORMAL);
       }
-#ifdef DEBUGMODE
-      if (debugging > 1) {
-         /*  RB TODO: Check this out.  */
-
-         sprintf (strbuf, _("HP:%d (%d)"), fighter[plyr - 1].hp,
-                  fighter[plyr - 1].mhp);
-         print_font (double_buffer, 0, 8, strbuf, FNORMAL);
-         sprintf (strbuf, _("MP:%d (%d)"), fighter[plyr - 1].mp,
-                  fighter[plyr - 1].mmp);
-         print_font (double_buffer, 0, 16, strbuf, FNORMAL);
-         print_font (double_buffer, 0, 24, _("Str"), FNORMAL);
-         print_font (double_buffer, 0, 32, _("Agi"), FNORMAL);
-         print_font (double_buffer, 0, 40, _("Vit"), FNORMAL);
-         print_font (double_buffer, 0, 48, _("Int"), FNORMAL);
-         print_font (double_buffer, 0, 56, _("Sag"), FNORMAL);
-         print_font (double_buffer, 0, 64, _("Spd"), FNORMAL);
-         print_font (double_buffer, 0, 72, _("Aura"), FNORMAL);
-         print_font (double_buffer, 0, 80, _("Spir"), FNORMAL);
-         print_font (double_buffer, 0, 88, _("Att"), FNORMAL);
-         print_font (double_buffer, 0, 96, _("Hit%"), FNORMAL);
-         print_font (double_buffer, 0, 104, _("Def"), FNORMAL);
-         print_font (double_buffer, 0, 112, _("Evd%"), FNORMAL);
-         print_font (double_buffer, 0, 120, _("Mdef"), FNORMAL);
-         sprintf (strbuf, "%d, %d, %d, %d", fighter[plyr - 1].cwt,
-                  fighter[plyr - 1].welem, fighter[plyr - 1].unl,
-                  fighter[plyr - 1].crit);
-         print_font (double_buffer, 0, 128, strbuf, FNORMAL);
-         sprintf (strbuf, "i -> %d,%d,%d,%d", fighter[plyr - 1].imb_s,
-                  fighter[plyr - 1].imb_a, fighter[plyr - 1].imb[0],
-                  fighter[plyr - 1].imb[1]);
-         print_font (double_buffer, 0, 136, strbuf, FNORMAL);
-         for (t = 0; t < NUM_STATS; t++) {
-            sprintf (strbuf, "%d", fighter[plyr - 1].stats[t]);
-            print_font (double_buffer, 40, t * 8 + 24, strbuf, FNORMAL);
-         }
-      }
-#endif // DEBUGMODE
-
    }
 
    for (z = 0; z < numchrs; z++) {
@@ -656,7 +600,7 @@ static int do_combat (char *bg, char *mus, int is_rnd)
       do_transition (TRANS_FADE_OUT, 2);
       clear_bitmap (double_buffer);
       do_transition (TRANS_FADE_IN, 64);
-   } else
+   } else {
       /* TT TODO:
        * Change this so when we zoom into the battle, it won't just zoom into the middle
        * of the screen.  Instead, it's going to zoom into the location where the player
@@ -682,6 +626,7 @@ static int do_combat (char *bg, char *mus, int is_rnd)
          /*  RB FIXME: should we vsync here rather than rest?  */
          kq_wait (100);
       }
+   }
    snap_togrid ();
    roll_initiative ();
    curx = 0;
@@ -715,8 +660,8 @@ static int do_combat (char *bg, char *mus, int is_rnd)
  */
 static void do_round (void)
 {
-   int a;
-   int index;
+   unsigned int a;
+   unsigned int index;
 
    timer_count = 0;
    while (!combatend) {
@@ -855,6 +800,10 @@ static void do_round (void)
  */
 void draw_fighter (size_t dude, size_t dcur)
 {
+   static const int AUGMENT_STRONGEST = 20;
+   static const int AUGMENT_STRONG    = 10;
+   static const int AUGMENT_NORMAL    =  0;
+
    int xx;
    int yy;
    int ff;
@@ -909,15 +858,15 @@ void draw_fighter (size_t dude, size_t dcur)
       xx += fr->cw / 2;
       rect (double_buffer, xx - 16, yy + fr->cl + 2, xx + 15, yy + fr->cl + 5,
             0);
-      if (ff > 20)
+      if (ff > AUGMENT_STRONGEST)
          rectfill (double_buffer, xx - 15, yy + fr->cl + 3, xx - 15 + ff - 1,
                    yy + fr->cl + 4, 40);
 
-      if ((ff <= 20) && (ff > 10))
+      else if ((ff <= AUGMENT_STRONGEST) && (ff > AUGMENT_STRONG))
          rectfill (double_buffer, xx - 15, yy + fr->cl + 3, xx - 15 + ff - 1,
                    yy + fr->cl + 4, 104);
 
-      if ((ff <= 10) && (ff > 0))
+      else if ((ff <= AUGMENT_STRONG) && (ff > AUGMENT_NORMAL))
          rectfill (double_buffer, xx - 15, yy + fr->cl + 3, xx - 15 + ff - 1,
                    yy + fr->cl + 4, 24);
    }
@@ -971,8 +920,8 @@ int fight (int ar, int dr, int sk)
    int a;
    int tx = -1;
    int ty = -1;
-   int f;
-   int ares;
+   unsigned int f;
+   unsigned int ares;
 
    for (a = 0; a < NUM_FIGHTERS; a++) {
       deffect[a] = 0;
@@ -1299,7 +1248,7 @@ void multi_fight (int ar)
    int nd;
    int deadcount;
    int kw[NUM_FIGHTERS];
-   int ares[NUM_FIGHTERS];
+   unsigned int ares[NUM_FIGHTERS];
 
    deadcount = 0;
    for (index = 0; index < NUM_FIGHTERS; index++) {

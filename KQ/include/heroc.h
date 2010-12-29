@@ -29,14 +29,18 @@
  */
 
 /*! \name Hero identifiers */
-#define SENSAR            0
-#define SARINA            1
-#define CORIN             2
-#define AJATHAR           3
-#define CASANDRA          4
-#define TEMMIN            5
-#define AYLA              6
-#define NOSLOM            7
+typedef enum ePIDX
+{
+	PIDX_UNDEFINED   = -1,
+	SENSAR            = 0,
+	SARINA            = 1,
+	CORIN             = 2,
+	AJATHAR           = 3,
+	CASANDRA          = 4,
+	TEMMIN            = 5,
+	AYLA              = 6,
+	NOSLOM            = 7,
+} ePIDX;
 
 extern int can_use_item;        /* intrface.c */
 

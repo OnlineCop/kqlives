@@ -55,7 +55,7 @@ void fkill (int);               /*  heroc.c, hskill.c, magic.c  */
 
 
 /*!  global combat related variables  */
-extern int combatend;           /*  heroc.c, magic.c  */
+extern unsigned int combatend;           /*  heroc.c, magic.c  */
 extern int cact[NUM_FIGHTERS];  /*  enemyc.c, heroc.c, hskill.c  */
 extern int curx;                /*  effects.c, heroc.c, hskill.c  */
 extern int cury;                /*  effects.c, heroc.c, hskill.c  */
