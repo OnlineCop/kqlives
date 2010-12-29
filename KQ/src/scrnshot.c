@@ -122,7 +122,7 @@ int save_screenshot (BITMAP *src_bmp, const char *prefix)
                return SS_BAD_BITMAP;
             }
          } else {
-            allegro_message (_("no more room for screenshot\n"));
+            printf (_("no more room for screenshot\n"));
             TRACE (_("no more room for screenshot\n"));
             return SS_OUT_OF_NUMBERS;
          }

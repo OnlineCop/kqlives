@@ -4259,18 +4259,18 @@ int lua_dofile (lua_State *L, const char *filename)
    int ret;
 
    if (f == NULL) {
-         allegro_message (_("Could not open script %s!"), get_filename(filename));
+         printf (_("Could not open script %s!"), get_filename(filename));
          return 1;
    }
    ret = lua_load (L, (lua_Chunkreader) filereader, f, filename);
    pack_fclose (f);
    if (ret != 0) {
-      allegro_message (_("Could not parse script %s!"), get_filename(filename));
+      printf (_("Could not parse script %s!"), get_filename(filename));
       return 1;
    }
 
    if (lua_pcall (L, 0, LUA_MULTRET, 0) != 0) {
-      allegro_message (_("lua_pcall failed while calling script %s!"), get_filename(filename));
+      printf (_("lua_pcall failed while calling script %s!"), get_filename(filename));
       KQ_traceback(L);
       return 1;
    }

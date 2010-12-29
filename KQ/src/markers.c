@@ -53,16 +53,16 @@ size_t load_markers (s_marker_array *marray, PACKFILE *pf)
    assert (pf && "pf == NULL");
 
    if (!marray || !pf) {
-      allegro_message ("NULL passed into load_markers()\n");
+      printf ("NULL passed into load_markers()\n");
       return 1;
    }
 
    marray->size = pack_igetw (pf);
    if (pack_feof (pf)) {
-      allegro_message ("Expected value for number of markers. Instead, received EOF.\n");
+      printf ("Expected value for number of markers. Instead, received EOF.\n");
       return 2;
    } else if (marray->size == 0) {
-      allegro_message ("Number of markers from file returned: 0\n");
+      printf ("Number of markers from file returned: 0\n");
       return 3;
    }
 
@@ -76,7 +76,7 @@ size_t load_markers (s_marker_array *marray, PACKFILE *pf)
       mmarker->y = pack_igetw (pf);
 
       if (pack_feof (pf)) {
-         allegro_message ("Encountered EOF during marker read.\n");
+         printf ("Encountered EOF during marker read.\n");
          return 4;
       }
    }
@@ -102,13 +102,13 @@ size_t save_markers (s_marker_array *marray, PACKFILE *pf)
    assert (pf && "pf == NULL");
 
    if (!marray || !pf) {
-      allegro_message ("NULL passed into save_markers()\n");
+      printf ("NULL passed into save_markers()\n");
       return 1;
    }
 
    pack_iputw (marray->size, pf);
    if (pack_feof (pf)) {
-      allegro_message ("Encountered EOF when writing marker array size.\n");
+      printf ("Encountered EOF when writing marker array size.\n");
       return 2;
    }
 
@@ -118,7 +118,7 @@ size_t save_markers (s_marker_array *marray, PACKFILE *pf)
       pack_iputw (marray->array[i].y, pf);
 
       if (pack_feof (pf)) {
-         allegro_message ("Encountered EOF when writing marker %dsize.\n", i);
+         printf ("Encountered EOF when writing marker %dsize.\n", i);
          return 3;
       }
    }
