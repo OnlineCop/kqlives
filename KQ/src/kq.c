@@ -1469,8 +1469,8 @@ void program_death (const char *message)
 {
    TRACE ("%s\n", message);
    deallocate_stuff ();
-   allegro_message ("%s\n", message);
    set_gfx_mode (GFX_TEXT, 0, 0, 0, 0);
+   allegro_message ("%s\n", message);
    exit (EXIT_FAILURE);
 }
 
