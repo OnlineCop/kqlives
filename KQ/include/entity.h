@@ -33,10 +33,13 @@
  */
 
 
+typedef unsigned int t_entity;
+
+
 void process_entities (void);   /*  kq.c  */
-int entityat (int, int, int);   /*  kq.c  */
-void set_script (int, const char *);  /*  intrface.c  */
-void place_ent (int, int, int); /*  intrface.c, kq.c  */
+int entityat (int, int, t_entity);   /*  kq.c  */
+void set_script (t_entity, const char *);  /*  intrface.c  */
+void place_ent (t_entity, int, int); /*  intrface.c, kq.c  */
 void count_entities (void);     /*  kq.c  */
 
 
@@ -46,6 +49,25 @@ void count_entities (void);     /*  kq.c  */
 #define MM_SCRIPT 2
 #define MM_CHASE  3
 #define MM_TARGET 4
+
+typedef enum eCommands
+{
+	COMMAND_NONE            = 0,
+	COMMAND_MOVE_UP         = 1,
+	COMMAND_MOVE_DOWN       = 2,
+	COMMAND_MOVE_LEFT       = 3,
+	COMMAND_MOVE_RIGHT      = 4,
+	COMMAND_WAIT            = 5,
+	COMMAND_FINISH_COMMANDS = 6,
+	COMMAND_REPEAT          = 7,
+	COMMAND_MOVETO_X        = 8,
+	COMMAND_MOVETO_Y        = 9,
+	COMMAND_FACE            = 10,
+	COMMAND_KILL            = 11,
+} eCommands;
+
+
+#define ENTITY_NONE -1
 
 
 #endif  /* __ENTITY_H */
