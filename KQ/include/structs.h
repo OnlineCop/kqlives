@@ -93,8 +93,8 @@ typedef struct
    unsigned char delayctr;      //!< Counter for movement delay
    unsigned char speed;         //!< How hyperactive the entity is
    unsigned char scount;
-   unsigned char cmd;           //!< Move/Wait/Facing command
-   unsigned char sidx;          //!< Script ID number
+   unsigned char cmd;           //!< Scripted commands (eCommands in entity.h)
+   unsigned char sidx;          //!< Index within script parser
    unsigned char extra;
    unsigned char chasing;       //!< Entity is following another
    signed int cmdnum;           //!< Number of times we need to repeat 'cmd'
