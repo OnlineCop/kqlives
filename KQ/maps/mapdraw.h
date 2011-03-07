@@ -170,10 +170,7 @@ extern BITMAP *font6, *mesh1[MAX_OBSTACLES], *mesh2, *mesh3,
 extern PALETTE pal;
 
 extern char map_fname[40], map_path[MAX_PATH], *strbuf;
-extern unsigned int num_markers;
 extern unsigned int icon_set;
-
-/* extern s_marker markers[MAX_MARKERS]; */
 
 extern const char *icon_files[NUM_TILESETS];
 

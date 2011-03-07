@@ -118,9 +118,7 @@ char map_path[MAX_PATH] = "./";
 short active_bound = 0;
 unsigned int icon_set = 0;
 unsigned int max_sets = 51;
-unsigned int num_markers = 0;
 unsigned int number_of_ents = 0;
-unsigned int num_bound_boxes = 0;
 
 s_map gmap;
 s_entity gent[MAX_ENT];
@@ -130,7 +128,6 @@ unsigned short *map, *b_map, *f_map, *c_map, *cf_map, *cb_map;
 unsigned char *z_map, *sh_map, *o_map, *cz_map, *csh_map, *co_map;
 unsigned char *search_map;
 
-s_bound bound_box[MAX_BOUNDS];  // WK - not redundant. Used on line 266
 
 /*! \brief Blit to screen
  *
@@ -144,6 +141,7 @@ void blit2screen (void)
 }
 
 
+
 void load_iconsets (PALETTE pal)
 {
    unsigned int x, y;
@@ -151,13 +149,15 @@ void load_iconsets (PALETTE pal)
    set_pcx (&pcx_buffer, icon_files[gmap.tileset], pal, 1);
    max_sets = (pcx_buffer->h / TILE_H);
 
-   for (y = 0; y < max_sets; y++)
+   for (y = 0; y < max_sets; y++) {
       for (x = 0; x < ICONSET_SIZE; x++)
          blit (pcx_buffer, icons[y * ICONSET_SIZE + x], x * TILE_W, y * TILE_H,
                0, 0, TILE_W, TILE_H);
+   }
    icon_set = 0;
    destroy_bitmap (pcx_buffer);
 }
+
 
 
 /*! \brief Load a map
@@ -255,15 +255,8 @@ void load_map (const char *path)
       tilex[i] = i;
    for (i = 0; i < MAX_ANIM; i++)
       adata[i] = tanim[gmap.tileset][i];
-
-   /* Note: try to use gmap.markers.size, rather than num_markers. It is bad
-      programming practice to store the same variable in multiple places.
-      mapdraw2 uses gmap.num_markers exclusively. */
-   num_markers = gmap.markers.size;
-
-   num_bound_boxes = gmap.bounds.size;
-   memcpy (bound_box, gmap.bounds.array, gmap.bounds.size * sizeof (s_bound));
 }                               /* load_map () */
+
 
 
 /*! \brief Check to see if a requested PCX file is available
@@ -303,6 +296,7 @@ void set_pcx (BITMAP ** pcx_buf, const char *pcx_file, PALETTE pcx_pal,
 }                               /* set_pcx () */
 
 
+
 /*! \brief Cleanup scripts used in mapedit.c and mapdump.c */
 void shared_cleanup (void)
 {
@@ -320,6 +314,7 @@ void shared_cleanup (void)
 }
 
 
+
 /*! \brief Startup scripts used in mapedit.c and mapdump.c */
 void shared_startup (void)
 {
@@ -333,7 +328,7 @@ void shared_startup (void)
    z_map = sh_map = o_map = cz_map = csh_map = co_map = 0;
    search_map = 0;
    gmap.markers.array = NULL;
-   gmap.markers.size = num_markers = 0;
+   gmap.markers.size = 0;
 
 
    /* Used for icons */
@@ -413,6 +408,7 @@ void shared_startup (void)
    rectfill (marker_image_active, 2, 0, TILE_W / 2 + 2, TILE_H / 2,
              makecol (0, 0, 255));
 }
+
 
 
 /*! \brief Save the whole map as a pcx
@@ -540,8 +536,7 @@ void visual_map (s_show showing, const char *save_fname)
 
    /* Show marker flags */
    if (showing.markers && gmap.markers.size > 0) {
-      num_markers = gmap.markers.size;
-      for (i = 0; i < num_markers; ++i) {
+      for (i = 0; i < gmap.markers.size; ++i) {
          draw_sprite (bmp, marker_image,
                       gmap.markers.array[i].x * TILE_W + (TILE_W / 2),
                       gmap.markers.array[i].y * TILE_H - (TILE_H / 2));
@@ -551,9 +546,9 @@ void visual_map (s_show showing, const char *save_fname)
    /* Show boundary boxes */
    if (showing.boundaries) {
       for (i = 0; i < gmap.bounds.size; i++) {
-         rect (bmp, bound_box[i].left * TILE_W, bound_box[i].top * TILE_H,
-               (bound_box[i].right + 1) * TILE_W - 1,
-               (bound_box[i].bottom + 1) * TILE_H - 1, 24);
+         rect (bmp, gmap.bounds.array[i].left * TILE_W, gmap.bounds.array[i].top * TILE_H,
+               (gmap.bounds.array[i].right + 1) * TILE_W - 1,
+               (gmap.bounds.array[i].bottom + 1) * TILE_H - 1, 24);
       }
    }
 

@@ -28,7 +28,7 @@ void add_change_bounding (int x, int y, int mouse_b, int *current)
    s_bound temp;
 
    /* Does a bounding box exist at this coordinate? */
-   found = is_contained_bound(bound_box, num_bound_boxes, x, y, x, y);
+   found = is_contained_bound(gmap.bounds.array, gmap.bounds.size, x, y, x, y);
 
    if (mouse_b == 2) {
       /* We will unset the active_bound variable if a right-click is ever
@@ -55,22 +55,22 @@ void add_change_bounding (int x, int y, int mouse_b, int *current)
          /* Move the selector to the previous bounding box if this was the
           * last one on the map
           */
-         num_bound_boxes--;
-         if (*current >= num_bound_boxes)
-            *current = num_bound_boxes - 1;
+         gmap.bounds.size--;
+         if (*current >= gmap.bounds.size)
+            *current = gmap.bounds.size - 1;
 
          memcpy (found, found + 1,
-                 (&bound_box[num_bound_boxes] - found) * sizeof (s_bound));
-         bound_box[num_bound_boxes].btile = 0;
+                 (&gmap.bounds.array[gmap.bounds.size] - found) * sizeof (s_bound));
+         gmap.bounds.array[gmap.bounds.size].btile = 0;
          return;
       }
    } else {
       /* There is no bounding box here */
-      if (mouse_b == 1 && num_bound_boxes < MAX_BOUNDS) {
+      if (mouse_b == 1) {
          /* Add a bounding box */
-         *current = num_bound_boxes;
+         *current = gmap.bounds.size;
 
-         b = &bound_box[num_bound_boxes];
+         b = &gmap.bounds.array[gmap.bounds.size];
 
          if (!active_bound) {
             /* We are not already tracking a boundary, so create new */
@@ -109,9 +109,9 @@ void add_change_bounding (int x, int y, int mouse_b, int *current)
              * area if it has any points contained in another bounding area's
              * region.
              */
-            if (!bound_in_bound (&temp, num_bound_boxes)) {
+            if (!bound_in_bound2 (&temp, gmap.bounds.array, gmap.bounds.size)) {
                set_bounds (b, temp.left, temp.top, temp.right, temp.bottom);
-               num_bound_boxes++;
+               gmap.bounds.size++;
                active_bound = 0;
             }
          }
@@ -138,7 +138,7 @@ void add_change_marker (int x, int y, int mouse_b, int *current)
    s_marker *found = NULL;
 
    /* Does a marker exist here? */
-   for (m = gmap.markers.array; m < gmap.markers.array + num_markers; ++m) {
+   for (m = gmap.markers.array; m < gmap.markers.array + gmap.markers.size; ++m) {
       if (m->x == x && m->y == y) {
          found = m;
          break;
@@ -156,10 +156,10 @@ void add_change_marker (int x, int y, int mouse_b, int *current)
          /* Move the selector to the previous marker if this was the last
           * marker on the map
           */
-         num_markers--;
-         if (*current == num_markers)
-            *current = num_markers - 1;
-         memcpy (found, found + 1, (&gmap.markers.array[num_markers] - found) *
+         gmap.markers.size--;
+         if (*current == gmap.markers.size)
+            *current = gmap.markers.size - 1;
+         memcpy (found, found + 1, (&gmap.markers.array[gmap.markers.size] - found) *
                  sizeof (s_marker));
 
          /* Wait for mouse button to be released */
@@ -168,16 +168,16 @@ void add_change_marker (int x, int y, int mouse_b, int *current)
       /* There is no marker here */
       if (mouse_b == 1) {
          /* Add a marker with default name */
-         if (num_markers < MAX_MARKERS) {
-            *current = num_markers;
+         if (gmap.markers.size < MAX_MARKERS) {
+            *current = gmap.markers.size;
             gmap.markers.array =
                (s_marker *) realloc (gmap.markers.array,
-                                     (num_markers + 1) * sizeof (s_marker));
-            m = &gmap.markers.array[num_markers];
+                                     (gmap.markers.size + 1) * sizeof (s_marker));
+            m = &gmap.markers.array[gmap.markers.size];
             m->x = x;
             m->y = y;
-            sprintf (m->name, "Marker_%d", num_markers);
-            num_markers++;
+            sprintf (m->name, "Marker_%d", (int)gmap.markers.size);
+            gmap.markers.size++;
          }
       }
    }
@@ -227,7 +227,7 @@ void bound_rect (BITMAP *where, s_bound b, int color)
 int find_bound (int direction, int *current)
 {
    // No bounding areas; nothing to do, so return 'not found'
-   if (num_bound_boxes < 1) {
+   if (gmap.bounds.size < 1) {
       return 0;
    }
 
@@ -238,27 +238,27 @@ int find_bound (int direction, int *current)
    } else if (direction == -1) {
       /* Previous box */
       if (--*current < 0) {
-         *current = num_bound_boxes - 1;
+         *current = gmap.bounds.size - 1;
       }
    } else if (direction == 0) {
       /* Center map on current Box, if it's not too big */
 
       int x, y;
 
-      x = (bound_box[*current].right - bound_box[*current].left) / 2 +
-         bound_box[*current].left;
-      y = (bound_box[*current].bottom - bound_box[*current].top) / 2 +
-         bound_box[*current].top + 1;
+      x = (gmap.bounds.array[*current].right - gmap.bounds.array[*current].left) / 2 +
+         gmap.bounds.array[*current].left;
+      y = (gmap.bounds.array[*current].bottom - gmap.bounds.array[*current].top) / 2 +
+         gmap.bounds.array[*current].top + 1;
 
       center_window (x, y);
    } else if (direction == 1) {
       /* Next Box */
-      if (++*current >= num_bound_boxes) {
+      if (++*current >= gmap.bounds.size) {
          *current = 0;
       }
    } else if (direction == 3) {
       /* Last Box */
-      *current = num_bound_boxes - 1;
+      *current = gmap.bounds.size - 1;
    }
    return 1;
 }
@@ -277,7 +277,7 @@ int find_bound (int direction, int *current)
 int find_marker (int direction, int *current)
 {
    // No markers; nothing to do, so return 'not found'
-   if (num_markers < 1) {
+   if (gmap.markers.size < 1) {
       return 0;
    }
 
@@ -288,7 +288,7 @@ int find_marker (int direction, int *current)
    } else if (direction == -1) {
       /* Previous Marker */
       if (--*current < 0) {
-         *current = num_markers - 1;
+         *current = gmap.markers.size - 1;
       }
    } else if (direction == 0) {
       /* Center map on current Marker */
@@ -296,12 +296,12 @@ int find_marker (int direction, int *current)
                      gmap.markers.array[*current].y);
    } else if (direction == 1) {
       /* Next Marker */
-      if (++*current >= num_markers) {
+      if (++*current >= gmap.markers.size) {
          *current = 0;
       }
    } else if (direction == 3) {
       /* Last Marker */
-      *current = num_markers - 1;
+      *current = gmap.markers.size - 1;
    }
    return 1;
 }
@@ -332,37 +332,37 @@ void orient_bounds (int current)
 {
    int width, height;
 
-   width = bound_box[current].right - bound_box[current].left;
-   height = bound_box[current].bottom - bound_box[current].top;
+   width = gmap.bounds.array[current].right - gmap.bounds.array[current].left;
+   height = gmap.bounds.array[current].bottom - gmap.bounds.array[current].top;
 
    if (width > htiles - 1) {
       /* Boundary is larger than window's width */
 
       /* Move window's left edge to the box's left edge */
-      window_x = bound_box[current].left;
+      window_x = gmap.bounds.array[current].left;
    } else {
       /* Boundary fits inside viewable window */
 
       /* Move window just enough to see the entire box */
-      if (bound_box[current].left < window_x)
-         window_x = bound_box[current].left;
-      else if (bound_box[current].right > window_x + htiles - 1)
-         window_x = bound_box[current].right - htiles + 1;
+      if (gmap.bounds.array[current].left < window_x)
+         window_x = gmap.bounds.array[current].left;
+      else if (gmap.bounds.array[current].right > window_x + htiles - 1)
+         window_x = gmap.bounds.array[current].right - htiles + 1;
    }
 
    if (height > vtiles - 1) {
       /* Boundary is larger than window's height */
 
       /* Move window's top edge to the box's top edge */
-      window_y = bound_box[current].top;
+      window_y = gmap.bounds.array[current].top;
    } else {
       /* Boundary fits inside viewable window */
 
       /* Move window just enough to see the entire box */
-      if (bound_box[current].top < window_y)
-         window_y = bound_box[current].top;
-      else if (bound_box[current].bottom > window_y + vtiles - 1)
-         window_y = bound_box[current].bottom - vtiles + 1;
+      if (gmap.bounds.array[current].top < window_y)
+         window_y = gmap.bounds.array[current].top;
+      else if (gmap.bounds.array[current].bottom > window_y + vtiles - 1)
+         window_y = gmap.bounds.array[current].bottom - vtiles + 1;
    }
 }
 
@@ -463,7 +463,7 @@ void rename_marker (s_marker *found)
       }
 
       /* Make sure no other markers have the same name */
-      for (m = gmap.markers.array; m < gmap.markers.array + num_markers; ++m) {
+      for (m = gmap.markers.array; m < gmap.markers.array + gmap.markers.size; ++m) {
          if (!strcmp (strbuf, m->name) && m != found) {
             cmessage ("Another marker has that name. Use another name.");
             yninput ();

@@ -36,109 +36,7 @@
 #include "../include/bounds.h"
 
 
-/*! \brief Load all bounds in from packfile
- *
- * Loads individual \sa s_bound objects from the specified PACKFILE.
- *
- * \param[in,out] barray - Current array of bounds to be reallocated
- * \param[in]     pf - PACKFILE from whence data are pulled
- * \return        Non-0 on error, 0 on success
- */
-size_t load_bounds (s_bound_array *barray, PACKFILE *pf)
-{
-   s_bound *mbound = NULL;
-   size_t i;
-
-   assert (barray && "barray == NULL");
-   assert (pf && "pf == NULL");
-
-   if (!barray || !pf) {
-      allegro_message ("NULL passed into load_bounds()\n");
-      return 1;
-   }
-
-   barray->size = pack_igetw (pf);
-   if (pack_feof (pf)) {
-      allegro_message ("Expected value for number of bounds. Instead, received EOF.\n");
-      return 2;
-   } else if (barray->size == 0) {
-      allegro_message ("Number of bounds from file returned: 0\n");
-      return 3;
-   }
-
-   barray->array = (s_bound *) realloc
-      (barray->array, barray->size * sizeof (s_bound));
-   for (i = 0; i < barray->size; ++i) {
-      mbound = &barray->array[i];
-
-      mbound->left = pack_igetw (pf);
-      mbound->top = pack_igetw (pf);
-      mbound->right = pack_igetw (pf);
-      mbound->bottom = pack_igetw (pf);
-      mbound->btile = pack_igetw (pf);
-
-      if (pack_feof (pf)) {
-         allegro_message ("Encountered EOF during bound #%d read.\n",
-                          (unsigned int) i);
-         return 4;
-      }
-   }
-
-   return 0;
-}
-
-
-
-/*! \brief Save all bounds out to packfile
- *
- * Saves individual \sa s_bound objects to the specified PACKFILE.
- *
- * \param[out] barray - Current array of bounds from whence data are pulled
- * \param[out] pf - PACKFILE to where data is written
- * \return     Non-0 on error, 0 on success
- */
-size_t save_bounds (s_bound_array *barray, PACKFILE *pf)
-{
-   size_t i;
-   s_bound *mbound = NULL;
-
-   assert (barray && "barray == NULL");
-   assert (pf && "pf == NULL");
-
-   if (!barray || !pf) {
-      allegro_message ("NULL passed into save_bounds()\n");
-      return 1;
-   }
-
-   pack_iputw (barray->size, pf);
-   if (pack_feof (pf)) {
-      allegro_message ("Encountered EOF when writing bound array size.\n");
-      return 2;
-   }
-
-   for (i = 0; i < barray->size; ++i) {
-      mbound = &barray->array[i];
-
-      pack_iputw (mbound->left, pf);
-      pack_iputw (mbound->top, pf);
-      pack_iputw (mbound->right, pf);
-      pack_iputw (mbound->bottom, pf);
-      pack_iputw (mbound->btile, pf);
-
-      if (pack_feof (pf)) {
-         allegro_message ("Encountered EOF when writing bound %dsize.\n", i);
-         return 3;
-      }
-   }
-
-   return 0;
-}
-
-
-
-s_bound bound_box[MAX_BOUNDS];
-
-
+#if 0
 /*! \brief See if this bounding area overlaps (or is contained inside of) any
  * other bounding area, or vice versa.
  *
@@ -201,6 +99,7 @@ int bound_in_bound (s_bound *which, int num_bound_boxes)
 
    return was_found;
 }
+#endif // if 0
 
 
 
@@ -296,6 +195,104 @@ s_bound *is_contained_bound (s_bound *boxes_array, unsigned int num_boxes,
    }
 
    return NULL;
+}
+
+
+
+/*! \brief Load all bounds in from packfile
+ *
+ * Loads individual \sa s_bound objects from the specified PACKFILE.
+ *
+ * \param[in,out] barray - Current array of bounds to be reallocated
+ * \param[in]     pf - PACKFILE from whence data are pulled
+ * \return        Non-0 on error, 0 on success
+ */
+size_t load_bounds (s_bound_array *barray, PACKFILE *pf)
+{
+   s_bound *mbound = NULL;
+   unsigned int i;
+
+   assert (barray && "barray == NULL");
+   assert (pf && "pf == NULL");
+
+   if (!barray || !pf) {
+      allegro_message ("NULL passed into load_bounds()\n");
+      return 1;
+   }
+
+   barray->size = pack_igetw (pf);
+   if (pack_feof (pf)) {
+      allegro_message ("Expected value for number of bounds. Instead, received EOF.\n");
+      return 2;
+   }
+
+   if (barray->size > 0) {
+      barray->array = (s_bound *) realloc
+         (barray->array, barray->size * sizeof (s_bound));
+      for (i = 0; i < barray->size; ++i) {
+         mbound = &barray->array[i];
+
+         mbound->left = pack_igetw (pf);
+         mbound->top = pack_igetw (pf);
+         mbound->right = pack_igetw (pf);
+         mbound->bottom = pack_igetw (pf);
+         mbound->btile = pack_igetw (pf);
+
+         if (pack_feof (pf)) {
+            printf ("Encountered EOF during bound #%d read.\n", i);
+            return 3;
+         }
+      }
+   }
+
+   return 0;
+}
+
+
+
+/*! \brief Save all bounds out to packfile
+ *
+ * Saves individual \sa s_bound objects to the specified PACKFILE.
+ *
+ * \param[out] barray - Current array of bounds from whence data are pulled
+ * \param[out] pf - PACKFILE to where data is written
+ * \return     Non-0 on error, 0 on success
+ */
+size_t save_bounds (s_bound_array *barray, PACKFILE *pf)
+{
+   size_t i;
+   s_bound *mbound = NULL;
+
+   assert (barray && "barray == NULL");
+   assert (pf && "pf == NULL");
+
+   if (!barray || !pf) {
+      printf ("NULL passed into save_bounds()\n");
+      return 1;
+   }
+
+   pack_iputw (barray->size, pf);
+   if (pack_feof (pf)) {
+      printf ("Encountered EOF when writing bound array size.\n");
+      return 2;
+   }
+
+   for (i = 0; i < barray->size; ++i) {
+      mbound = &barray->array[i];
+
+      pack_iputw (mbound->left, pf);
+      pack_iputw (mbound->top, pf);
+      pack_iputw (mbound->right, pf);
+      pack_iputw (mbound->bottom, pf);
+      pack_iputw (mbound->btile, pf);
+
+      if (pack_feof (pf)) {
+         allegro_message ("Encountered EOF when writing bound %d.\n", (int)i);
+         return 3;
+      }
+   }
+
+   return 0;
 }
 
 

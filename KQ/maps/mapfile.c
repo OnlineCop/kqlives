@@ -42,6 +42,7 @@ void error_load (const char *problem_file)
 }                               /* error_load () */
 
 
+
 /*! \brief Convert a PCX image to a map
  *
  * Take a PCX image and convert its values to make a map
@@ -145,6 +146,7 @@ void make_mapfrompcx (void)
 }                               /* make_mapfrompcx () */
 
 
+
 /*! \brief Convert map to PCX images
  *
  * Convert the current map into several mini PCX images
@@ -195,6 +197,7 @@ void maptopcx (int format)
    destroy_bitmap (pcx_middleground);
    destroy_bitmap (pcx_foreground);
 }                               /* maptopcx () */
+
 
 
 /*! \brief Create a new map
@@ -311,8 +314,8 @@ int new_map (void)
    blit2screen ();
 
    // Remove the markers from the map
-   for (m = gmap.markers.array + num_markers; m > gmap.markers.array; --m) {
-      int curmarker = num_markers;
+   for (m = gmap.markers.array + gmap.markers.size; m > gmap.markers.array; --m) {
+      int curmarker = gmap.markers.size;
 
       // This removes the marker
       add_change_marker (m->x, m->y, 2, &curmarker);
@@ -344,8 +347,6 @@ int new_map (void)
    gmap.bounds.size = 0;
    gmap.bounds.array = NULL;
 
-   num_bound_boxes = gmap.bounds.size;
-   num_markers = gmap.markers.size;
    active_bound = 0;
 
    bufferize ();
@@ -354,6 +355,7 @@ int new_map (void)
 
    return D_CLOSE;
 }                               /* new_map () */
+
 
 
 /*! \brief Confirm before loading a map
@@ -395,6 +397,7 @@ void prompt_load_map (void)
    }
    return;
 }                               /* prompt_load_map () */
+
 
 
 /*! \brief Confirm before saving a map
@@ -451,6 +454,7 @@ void prompt_save_map (void)
 
    save_map (fname);
 }
+
 
 
 /*! \brief Save the current map

@@ -925,8 +925,8 @@ void draw_map (void)
    }
 
    /* Draw the Markers */
-   if (showing.markers == 1 && num_markers > 0) {
-      for (i = 0; i < num_markers; ++i) {
+   if (showing.markers == 1 && gmap.markers.size > 0) {
+      for (i = 0; i < gmap.markers.size; ++i) {
          if ((gmap.markers.array[i].x >= window_x)
              && (gmap.markers.array[i].x < window_x + htiles)
              && (gmap.markers.array[i].y >= window_y)
@@ -974,50 +974,62 @@ void draw_map (void)
    /* Displays the rectangle around the Block Copy coords */
    if (draw_mode == BLOCK_COPY && copyx1 != -1 && copyy1 != -1) {
       // Using this simply because it will hold our 4 coords easier
-      s_bound crect;
+      short x1, y1, x2, y2;
 
-      crect.left = (copyx1 - window_x) * TILE_W;
-      crect.top = (copyy1 - window_y) * TILE_H;
-      crect.right = copyx2 < window_x + htiles ?
-         (copyx2 + 1 - window_x) * TILE_W - 1 : htiles * TILE_W;
-      crect.bottom = copyy2 < window_y + vtiles ?
-         (copyy2 + 1 - window_y) * TILE_H - 1 : vtiles * TILE_H;
+      x1 = (copyx1 - window_x) * TILE_W;
+      y1 = (copyy1 - window_y) * TILE_H;
+      x2 = (copyx2 < window_x + htiles ? (copyx2 + 1 - window_x) * TILE_W - 1 : htiles * TILE_W);
+      y2 = (copyy2 < window_y + vtiles ? (copyy2 + 1 - window_y) * TILE_H - 1 : vtiles * TILE_H);
 
       if (copying == 0) {
          /* Highlight the selected tile (takes into account window's coords) */
-         rect (double_buffer, crect.left - 1, crect.top - 1, crect.right + 1,
-               crect.bottom + 1, 25);
+         rect (double_buffer,
+               x1 - 1,
+               y1 - 1,
+               x2 + 1,
+               y2 + 1,
+               25);
       } else {
          /* Only the initial tile is selected */
-         rect (double_buffer, crect.left - 1, crect.top - 1, crect.left + TILE_W,
-               crect.top + TILE_H, 25);
+         rect (double_buffer,
+               x1 - 1,
+               y1 - 1,
+               x1 + TILE_W,
+               y1 + TILE_H,
+               25);
       }
    }
 
    /* Displays the rectangle around the bounding areas
-    * Note: This does not check if num_bound_boxes > 0, because we have a
+    * Note: This does not check if gmap.bounds.size > 0, because we have a
     * clause in here to check whether "active_bound" is set. If so, they
     * have started to draw a bounding box, so we draw the rectangle around
     * that initial square.
     */
    if (showing.boundaries) {
-      s_bound rectb;
-
       /* Draw a rectangle around all the boxes */
-      for (i = 0; i < num_bound_boxes; i++) {
+      for (i = 0; i < gmap.bounds.size; i++) {
          if (i == curbound_box && draw_mode == MAP_BOUNDS)
-            bound_rect (double_buffer, bound_box[i], 41);
+            bound_rect (double_buffer, gmap.bounds.array[i], 41);
          else
-            bound_rect (double_buffer, bound_box[i], 106);
+            bound_rect (double_buffer, gmap.bounds.array[i], 106);
       }
 
       /* Draw a rectangle around the current selection, if it exists */
       if (active_bound) {
-         rectb.left = (bound_box[num_bound_boxes].left - window_x) * TILE_W;
-         rectb.top = (bound_box[num_bound_boxes].top - window_y) * TILE_W;
-         rectb.right = (bound_box[num_bound_boxes].left + 1 - window_x) * TILE_W - 1;
-         rectb.bottom = (bound_box[num_bound_boxes].top + 1 - window_y) * TILE_H - 1;
-         rect (double_buffer, rectb.left, rectb.top, rectb.right, rectb.bottom, 41);
+         short x1, y1, x2, y2;
+
+         s_bound bound = gmap.bounds.array[gmap.bounds.size];
+         x1 = (bound.left - window_x) * TILE_W;
+         y1 = (bound.top - window_y) * TILE_H;
+         x2 = (bound.left + 1 - window_x) * TILE_W - 1;
+         y2 = (bound.top + 1 - window_y) * TILE_H - 1;
+         rect (double_buffer,
+               x1,
+               y1,
+               x2,
+               y2,
+               41);
       }
    }
 }                               /* draw_map () */
@@ -1332,7 +1344,7 @@ void draw_menubars (void)
    /* Displays both the currently selected Marker as well as the
     * Marker under the mouse
     */
-   else if (draw_mode == MAP_MARKERS && num_markers > 0) {
+   else if (draw_mode == MAP_MARKERS && gmap.markers.size > 0) {
       sprintf (strbuf, "Marker #%d: %s (%d, %d)", curmarker,
                gmap.markers.array[curmarker].name,
                gmap.markers.array[curmarker].x,
@@ -1340,7 +1352,7 @@ void draw_menubars (void)
       print_sfont (column[4], row[0], strbuf, double_buffer);
       xp = mouse_x / TILE_H;
       yp = mouse_y / TILE_W;
-      for (p = 0; p < num_markers; p++) {
+      for (p = 0; p < gmap.markers.size; p++) {
          if (gmap.markers.array[p].x == xp + window_x &&
              gmap.markers.array[p].y == yp + window_y) {
             sprintf (strbuf, "Current Marker:");
@@ -1353,20 +1365,20 @@ void draw_menubars (void)
    }                            // if (draw_mode == MAP_MARKERS)
 
    /* Displays whether or not we are over a bounded area */
-   else if (draw_mode == MAP_BOUNDS && num_bound_boxes > 0) {
+   else if (draw_mode == MAP_BOUNDS && gmap.bounds.size > 0) {
       sprintf (strbuf, "Bounding Area #%d: (%d, %d) (%d, %d), tile=%d",
-               curbound_box, bound_box[curbound_box].left,
-               bound_box[curbound_box].top, bound_box[curbound_box].right,
-               bound_box[curbound_box].bottom, bound_box[curbound_box].btile);
+               curbound_box, gmap.bounds.array[curbound_box].left,
+               gmap.bounds.array[curbound_box].top, gmap.bounds.array[curbound_box].right,
+               gmap.bounds.array[curbound_box].bottom, gmap.bounds.array[curbound_box].btile);
       print_sfont (column[4], row[0], strbuf, double_buffer);
       xp = mouse_x / TILE_H + window_x;
       yp = mouse_y / TILE_W + window_y;
-      for (p = 0; p < num_bound_boxes; p++) {
-         if ((xp >= bound_box[p].left && xp <= bound_box[p].right)
-             && (yp >= bound_box[p].top && yp <= bound_box[p].bottom)) {
+      for (p = 0; p < gmap.bounds.size; p++) {
+         if ((xp >= gmap.bounds.array[p].left && xp <= gmap.bounds.array[p].right)
+             && (yp >= gmap.bounds.array[p].top && yp <= gmap.bounds.array[p].bottom)) {
             sprintf (strbuf, "Area #%d: (%d, %d) (%d, %d), tile=%d", p,
-                     bound_box[p].left, bound_box[p].top, bound_box[p].right,
-                     bound_box[p].bottom, bound_box[p].btile);
+                     gmap.bounds.array[p].left, gmap.bounds.array[p].top, gmap.bounds.array[p].right,
+                     gmap.bounds.array[p].bottom, gmap.bounds.array[p].btile);
             print_sfont (column[4], row[1], strbuf, double_buffer);
          }
       }
@@ -1494,7 +1506,7 @@ void draw_menubars (void)
       else if (curmarker < 1000)
          p -= (TILE_W - 1);
 
-      if (num_markers > 0) {
+      if (gmap.markers.size > 0) {
          textprintf_ex (double_buffer, font, p, 274,
                         makecol (255, 255, 255), 0, "%d", curmarker);
       }
@@ -1542,7 +1554,7 @@ void draw_menubars (void)
    }                            // if (draw_mode == MAP_ENTITIES)
 
    /* Draw a rectangle around the mouse when it's inside the view-window */
-   if (mouse_x / TILE_W < htiles && mouse_y / TILE_H)
+   if (mouse_x / TILE_W < htiles && mouse_y / TILE_H < vtiles)
       rect (double_buffer, x * TILE_W, y * TILE_H, (x + 1) * TILE_W - 1,
             (y + 1) * TILE_H - 1, 255);
 
@@ -1953,7 +1965,7 @@ void get_tile (void)
       break;
 
    case MAP_MARKERS:
-      for (i = 0; i < num_markers; i++) {
+      for (i = 0; i < gmap.markers.size; i++) {
          if (is_contained_marker (gmap.markers.array[i], xx, yy)) {
             curmarker = i;
          }
@@ -1962,10 +1974,10 @@ void get_tile (void)
 
    case MAP_BOUNDS:
       /* Put here to be thorough, but it won't really do us any good */
-      found_box = is_contained_bound (bound_box, num_bound_boxes, xx, yy,
+      found_box = is_contained_bound (gmap.bounds.array, gmap.bounds.size, xx, yy,
                                       xx, yy);
       if (found_box != NULL)
-         curbound_box = found_box - bound_box;
+         curbound_box = found_box - gmap.bounds.array;
       break;
 
    default:
@@ -2046,7 +2058,7 @@ void global_change (void)
             done = 1;
          }
       }
-   }                            // while ();
+   }                            // while (!done)
 
    /* This is incase we need to redraw the map, the information will still be
     * visible to the user.
@@ -2356,7 +2368,7 @@ void paste_region (const int tx, const int ty)
    moved_x = tx - copyx1;       // copyx1 - tx < 0 ? tx - copyx1 : copyx1 - tx;
    moved_y = ty - copyy1;       // copyy1 - ty < 0 ? ty - copyy1 : copyy1 - ty;
 
-   for (m = gmap.markers.array; m < gmap.markers.array + num_markers; ++m) {
+   for (m = gmap.markers.array; m < gmap.markers.array + gmap.markers.size; ++m) {
       if (!(m->x < copyx1 || m->x > copyx2 || m->y < copyy1 || m->y > copyy2)) {
          /* Move the markers found within the Copy From block */
          m->x += moved_x;
@@ -2715,7 +2727,7 @@ int process_keyboard (const int k)
       if (draw_mode == MAP_ZONES)
          curzone = check_last_zone ();
       else if (draw_mode == MAP_MARKERS) {
-         curmarker = num_markers - 1;
+         curmarker = gmap.markers.size - 1;
          orient_markers (curmarker);
       }
       break;
@@ -2904,13 +2916,9 @@ int process_keyboard (const int k)
    case (KEY_F3):
       /* Save the map you are working on */
 
-      gmap.markers.size = num_markers;
-
       /* Copy the bounding boxes back in */
       gmap.bounds.array = (s_bound *) realloc
-         (gmap.bounds.array, num_bound_boxes * sizeof (s_bound));
-      memcpy (gmap.bounds.array, bound_box, num_bound_boxes * sizeof (s_bound));
-      gmap.bounds.size = num_bound_boxes;
+         (gmap.bounds.array, gmap.bounds.size * sizeof (s_bound));
 
       prompt_save_map ();
       break;
@@ -3108,7 +3116,7 @@ void process_menu_bottom (const int cx, const int cy)
       /* See instant results! */
       update_tileset ();
 
-      while (mouse_b & 1);
+      while (mouse_b & 1) {}
       return;
    }
 
@@ -3132,7 +3140,7 @@ void process_menu_bottom (const int cx, const int cy)
    /* The mouse is over 'ZeroZone' menu */
    if (cx >= column[0] && cx < column[1] && cy >= row[3] && cy < row[4]) {
       gmap.zero_zone = 1 - gmap.zero_zone;
-      while (mouse_b & 1);
+      while (mouse_b & 1) {}
       return;
    }
 
@@ -3165,21 +3173,21 @@ void process_menu_bottom (const int cx, const int cy)
       gmap.map_mode++;
       if (gmap.map_mode > 5)
          gmap.map_mode = 0;
-      while (mouse_b & 1);
+      while (mouse_b & 1) {}
       return;
    }
 
    /* The mouse is over 'Save' menu */
    if (cx >= column[0] && cx < column[1] && cy >= row[6] && cy < row[7]) {
       gmap.can_save = 1 - gmap.can_save;
-      while (mouse_b & 1);
+      while (mouse_b & 1) {}
       return;
    }
 
    /* The mouse is over 'Warp' menu */
    if (cx >= column[1] && cx < column[2] && cy >= row[4] && cy < row[5]) {
       gmap.can_warp = 1 - gmap.can_warp;
-      while (mouse_b & 1);
+      while (mouse_b & 1) {}
       return;
    }
 
@@ -3364,7 +3372,7 @@ void process_menu_bottom (const int cx, const int cy)
    /* The mouse is over 'SunStone' menu */
    if (cx >= column[2] && cx < column[3] && cy >= row[5] && cy < row[6]) {
       gmap.use_sstone = 1 - gmap.use_sstone;
-      while (mouse_b & 1);
+      while (mouse_b & 1) {}
       return;
    }
 
@@ -4138,7 +4146,7 @@ void resize_map (const int selection)
 
    // Check if there are "stray" markers; prompt user what to do with them.
    done = 0;
-   for (m = gmap.markers.array; m < gmap.markers.array + num_markers; ++m) {
+   for (m = gmap.markers.array; m < gmap.markers.array + gmap.markers.size; ++m) {
       if (m->x >= new_width || m->y >= new_height) {
          done++;
       }
@@ -4156,7 +4164,7 @@ void resize_map (const int selection)
          return;
       } else {
          // They chose to remove the markers
-         for (m = gmap.markers.array + num_markers;
+         for (m = gmap.markers.array + gmap.markers.size;
               m > gmap.markers.array; --m) {
             if (m->x >= new_width || m->y >= new_height) {
                // This removes the marker

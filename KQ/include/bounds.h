@@ -35,9 +35,6 @@
 
 
 
-#define MAX_BOUNDS    256
-
-
 /*! \brief Bounding area box
  *
  * A boundary is a viewable area on the map.
@@ -78,13 +75,10 @@ size_t load_bounds (s_bound_array *, PACKFILE *);
 size_t save_bounds (s_bound_array *, PACKFILE *);
 
 
-int bound_in_bound (s_bound *, int);
+//int bound_in_bound (s_bound *, int);
 int bound_in_bound2 (s_bound *, s_bound *, int);
 s_bound *is_contained_bound (s_bound *, unsigned int, int, int, int, int);
 void set_bounds (s_bound *, int, int, int, int);
-
-extern unsigned int num_bound_boxes;
-extern s_bound bound_box[MAX_BOUNDS];
 
 
 #endif  /* __BOUNDS_H */
