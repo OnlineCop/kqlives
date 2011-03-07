@@ -64,13 +64,12 @@ AC_HEADER_TIME
 AC_STRUCT_TM
 AC_C_VOLATILE
 
-WARNING_CFLAGS="-Wall -Wextra -Wfloat-equal -Wredundant-decls \
--Wmissing-noreturn -Wendif-labels -Wunused-parameter \
--Wpointer-arith -Wwrite-strings -Wcast-align -Wcast-qual \
--Winline -Wformat=2 -Winit-self \
--Wswitch-enum -Wunused-parameter -Wundef -Wno-error \
--Wmissing-declarations -Werror-implicit-function-declaration -Wmissing-prototypes -Wstrict-prototypes \
--Wold-style-definition -Wdeclaration-after-statement"
+WARNING_CFLAGS="-Wall -Wcast-align -Wcast-qual -Wdeclaration-after-statement \
+	-Wendif-labels -Werror-implicit-function-declaration -Wextra -Wfloat-equal \
+	-Wformat=2 -Winit-self -Winline -Wmissing-declarations -Wmissing-noreturn \
+	-Wmissing-prototypes -Wno-error -Wold-style-definition -Wpointer-arith \
+	-Wredundant-decls -Wstrict-prototypes -Wswitch-enum -Wundef \
+	-Wunused-parameter -Wwrite-strings"
 # -Wswitch-default -Wlarger-than-65500 -Wshadow
 kq_save_CFLAGS="$CFLAGS"
 CFLAGS="$CFLAGS $WARNING_CFLAGS"

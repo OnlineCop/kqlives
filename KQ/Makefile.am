@@ -6,19 +6,18 @@ kq_SOURCES = include/bounds.h include/combat.h include/console.h \
 	include/credits.h include/disk.h include/draw.h include/effects.h \
 	include/enemyc.h include/entity.h include/enums.h include/eqpmenu.h \
 	include/eskill.h include/fade.h include/gettext.h include/heroc.h \
-	include/hskill.h include/intrface.h include/itemdefs.h \
-	include/itemmenu.h include/kq.h include/kqsnd.h include/magic.h \
-	include/markers.h include/masmenu.h include/menu.h include/movement.h \
-	include/mpcx.h include/music.h include/platform.h include/res.h \
-	include/scrnshot.h include/selector.h include/setup.h include/sgame.h \
-	include/shopmenu.h include/skills.h include/ssprites.h include/structs.h \
-	include/timing.h src/bounds.c src/combat.c src/console.c src/credits.c \
-	src/disk.c src/draw.c src/effects.c src/enemyc.c src/entity.c \
-	src/eqpmenu.c src/eskill.c src/fade.c src/heroc.c src/hskill.c \
-	src/intrface.c src/itemmenu.c src/kq.c src/magic.c src/markers.c \
-	src/masmenu.c src/menu.c src/movement.c src/music.c src/res.c \
-	src/scrnshot.c src/selector.c src/setup.c src/sgame.c src/shopmenu.c \
-	src/timing.c
+	include/hskill.h include/intrface.h include/itemdefs.h include/itemmenu.h \
+	include/kq.h include/kqsnd.h include/magic.h include/markers.h \
+	include/masmenu.h include/menu.h include/movement.h include/mpcx.h \
+	include/music.h include/platform.h include/res.h include/scrnshot.h \
+	include/selector.h include/setup.h include/sgame.h include/shopmenu.h \
+	include/skills.h include/ssprites.h include/structs.h include/timing.h \
+	src/bounds.c src/combat.c src/console.c src/credits.c src/disk.c \
+	src/draw.c src/effects.c src/enemyc.c src/entity.c src/eqpmenu.c \
+	src/eskill.c src/fade.c src/heroc.c src/hskill.c src/intrface.c \
+	src/itemmenu.c src/kq.c src/magic.c src/markers.c src/masmenu.c src/menu.c \
+	src/movement.c src/music.c src/res.c src/scrnshot.c src/selector.c \
+	src/setup.c src/sgame.c src/shopmenu.c src/timing.c
 
 EXTRA_kq_SOURCES = src/beos.c src/dos.c src/osx.m src/unix.c src/win.c \
 	src/winres.rc
@@ -61,16 +60,15 @@ KQ.app: kq
 winres.o: winres.rc
 	windres $< -o $@
 
-dist_map_DATA = maps/bridge.map maps/bridge2.map maps/camp.map \
-	maps/cave1.map maps/cave2.map maps/cave3a.map maps/cave3b.map \
-	maps/cave4.map maps/cave5.map maps/cave6a.map maps/cave6b.map \
-	maps/coliseum.map maps/cult.map maps/dville.map maps/estate.map \
-	maps/fort.map maps/goblin.map maps/grotto.map maps/grotto2.map \
-	maps/guild.map maps/main.map maps/manor.map maps/pass.map \
-	maps/starting.map maps/sunarin.map maps/temple1.map maps/temple2.map \
-	maps/tower.map maps/town1.map maps/town2.map maps/town3.map \
-	maps/town4.map maps/town5.map maps/town6.map maps/town7.map \
-	maps/town8.map
+dist_map_DATA = maps/bridge.map maps/bridge2.map maps/camp.map maps/cave1.map \
+	maps/cave2.map maps/cave3a.map maps/cave3b.map maps/cave4.map \
+	maps/cave5.map maps/cave6a.map maps/cave6b.map maps/coliseum.map \
+	maps/cult.map maps/dville.map maps/estate.map maps/fort.map \
+	maps/goblin.map maps/grotto.map maps/grotto2.map maps/guild.map \
+	maps/main.map maps/manor.map maps/pass.map maps/starting.map \
+	maps/sunarin.map maps/temple1.map maps/temple2.map maps/tower.map \
+	maps/town1.map maps/town2.map maps/town3.map maps/town4.map maps/town5.map \
+	maps/town6.map maps/town7.map maps/town8.map
 
 mapdir = $(pkgdatadir)/maps
 
