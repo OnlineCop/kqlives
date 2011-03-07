@@ -39,6 +39,7 @@
  * Thanks due to Edge <hardedged@excite.com> and Caz Jones for BeOS joystick fixes
  */
 
+#include <assert.h>
 #include <locale.h>
 #include <stdio.h>
 #include <string.h>
