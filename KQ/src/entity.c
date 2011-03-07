@@ -562,7 +562,7 @@ static int obstruction (int origin_x, int origin_y, int move_x, int move_y, int 
  */
 static void parsems (t_entity target_entity)
 {
-   int p = 0;
+   unsigned int p = 0;
    char tok[10];
    char s;
 
@@ -571,9 +571,10 @@ static void parsems (t_entity target_entity)
    // 48..57 are '0'..'9' ASCII
    while (s >= 48 && s <= 57) {
       tok[p] = s;
+      p++;
+
       g_ent[target_entity].sidx++;
       s = g_ent[target_entity].script[g_ent[target_entity].sidx];
-      p++;
    }
    tok[p] = 0;
    g_ent[target_entity].cmdnum = atoi (tok);
