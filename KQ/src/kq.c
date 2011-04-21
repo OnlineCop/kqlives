@@ -144,7 +144,7 @@ int noe = 0;
 int pidx[MAXCHRS];
 
 /*! Number of characters in the party */
-int numchrs = 0;
+unsigned int numchrs = 0;
 
 /*! Current gold */
 int gp = 0;
@@ -950,7 +950,7 @@ char *get_timer_event (void)
  * \param   pn Character to ask about
  * \returns where it is in the party list (1 or 2), or 0 if not
  */
-int in_party (int pn)
+unsigned int in_party (int pn)
 {
    int a;
 

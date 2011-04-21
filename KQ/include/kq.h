@@ -76,10 +76,10 @@ void klog (const char *);       /*  draw.c, intrface.c, magic.c, setup.c  */
 void init_players (void);       /*  sgame.c  */
 void kwait (int);               /*  intrface.c  */
 NORETURN void program_death (const char *);    /*  everywhere ;)  */
-int in_party (int);             /*  combat.c, intrface.c  */
-void wait_for_entity (int, int);        /*  intrface.c  */
+unsigned int in_party (int);    /*  combat.c, intrface.c  */
+void wait_for_entity (int, int); /*  intrface.c  */
 char *get_timer_event (void);   /*  entity.c, kq.c  */
-int add_timer_event (const char *, int);        /*  intrface.c  */
+int add_timer_event (const char *, int);  /*  intrface.c  */
 void reset_timer_events (void); /*  intrface.c  */
 void reset_world (void);        /*  sgame.c  */
 
@@ -140,7 +140,8 @@ extern s_map g_map;
 extern s_entity g_ent[MAX_ENT + PSIZE];
 extern s_anim tanim[MAX_TILESETS][MAX_ANIM];
 extern s_anim adata[MAX_ANIM];
-extern int noe, pidx[MAXCHRS], numchrs, gp, xofs, yofs, gsvol, gmvol;
+extern unsigned int numchrs;
+extern int noe, pidx[MAXCHRS], gp, xofs, yofs, gsvol, gmvol;
 extern unsigned char autoparty, alldead, is_sound, deadeffect, vfollow, use_sstone, sound_avail;
 extern const unsigned char kq_version;
 extern unsigned char hold_fade, cansave, skip_intro, wait_retrace, windowed, stretch_view, cpu_usage;
