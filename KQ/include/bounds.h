@@ -78,7 +78,7 @@ size_t save_bounds (s_bound_array *, PACKFILE *);
 //int bound_in_bound (s_bound *, int);
 int bound_in_bound2 (s_bound *, s_bound *, int);
 s_bound *is_contained_bound (s_bound *, unsigned int, int, int, int, int);
-void set_bounds (s_bound *, int, int, int, int);
+void set_bounds (s_bound *, int, int, int, int, int);
 
 
 #endif  /* __BOUNDS_H */
