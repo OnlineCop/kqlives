@@ -335,7 +335,7 @@ void enemy_init (void)
 
    if (enemies == NULL)
       load_enemies ();
-   for (i = 0; i < numens; ++i) {
+   for (i = 0; i < num_enemies; ++i) {
       f = make_enemy (cf[i], &fighter[i + PSIZE]);
       for (p = 0; p < MAXCFRAMES; ++p) {
          /* If, in a previous combat, we made a bitmap, destroy it now */
@@ -406,7 +406,7 @@ static void enemy_spellcheck (int w, int ws)
             break;
          case M_HOLYMIGHT:
             aux = 0;
-            for (z = PSIZE; z < PSIZE + numens; z++)
+            for (z = PSIZE; z < PSIZE + num_enemies; z++)
                if (fighter[z].sts[S_DEAD] == 0
                    && fighter[z].sts[S_STRENGTH] < 2)
                   aux++;
@@ -415,7 +415,7 @@ static void enemy_spellcheck (int w, int ws)
             break;
          case M_BLESS:
             aux = 0;
-            for (z = PSIZE; z < PSIZE + numens; z++)
+            for (z = PSIZE; z < PSIZE + num_enemies; z++)
                if (fighter[z].sts[S_DEAD] == 0 && fighter[z].sts[S_BLESS] < 3)
                   aux++;
             if (aux > 0)
@@ -433,7 +433,7 @@ static void enemy_spellcheck (int w, int ws)
          case M_HASTEN:
          case M_QUICKEN:
             aux = 0;
-            for (z = PSIZE; z < PSIZE + numens; z++)
+            for (z = PSIZE; z < PSIZE + num_enemies; z++)
                if (fighter[z].sts[S_DEAD] == 0 && fighter[z].sts[S_TIME] != 2)
                   aux++;
             if (aux > 0)
@@ -478,7 +478,7 @@ static void enemy_spellcheck (int w, int ws)
             break;
          case M_DIVINEGUARD:
             aux = 0;
-            for (z = PSIZE; z < PSIZE + numens; z++)
+            for (z = PSIZE; z < PSIZE + num_enemies; z++)
                if (fighter[z].sts[S_DEAD] == 0 && fighter[z].sts[S_SHIELD] == 0
                    && fighter[z].sts[S_RESIST] == 0)
                   aux++;
@@ -527,7 +527,7 @@ static int enemy_stscheck (int ws, int s)
    int z, a = 0;
 
    if (s == PSIZE) {
-      for (z = PSIZE; z < PSIZE + numens; z++)
+      for (z = PSIZE; z < PSIZE + num_enemies; z++)
          if (fighter[z].sts[S_DEAD] == 0 && fighter[z].sts[ws] == 0)
             a++;
       if (a > 0)
@@ -775,12 +775,12 @@ int select_encounter (int en, int etid)
          p++;
       }
    }
-   numens = p;
+   num_enemies = p;
    /* adjust 'too hard' combat where player is alone and faced by >2 enemies */
-   if (numens > 2 && numchrs == 1 && erows[entry].lvl + 2 > party[pidx[0]].lvl
+   if (num_enemies > 2 && numchrs == 1 && erows[entry].lvl + 2 > party[pidx[0]].lvl
        && etid == 99)
-      numens = 2;
-   if (numens == 0)
+      num_enemies = 2;
+   if (num_enemies == 0)
       program_death (_("Empty encounter table row!"));
    return entry;
 }
@@ -864,7 +864,7 @@ static int spell_setup (int whom, int z)
    case TGT_ALLY_ONEALL:
       if (z == M_CURE1 || z == M_CURE2 || z == M_CURE3 || z == M_CURE4) {
          aux = 0;
-         for (a = PSIZE; a < PSIZE + numens; a++)
+         for (a = PSIZE; a < PSIZE + num_enemies; a++)
             if (fighter[a].sts[S_DEAD] == 0
                 && fighter[a].hp < fighter[a].mhp * 75 / 100)
                aux++;

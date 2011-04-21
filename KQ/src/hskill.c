@@ -76,7 +76,7 @@ int hero_skillcheck (int dude)
       if (b != W_SWORD && b != W_AXE && b != W_KNIFE && b != W_CHENDIGAL)
          return 0;
       b = 0;
-      for (a = PSIZE; a < PSIZE + numens; a++) {
+      for (a = PSIZE; a < PSIZE + num_enemies; a++) {
          if (fighter[a].sts[S_DEAD] == 0 && fighter[a].sts[S_STONE] == 0)
             b++;
       }
@@ -102,7 +102,7 @@ int hero_skillcheck (int dude)
    case AJATHAR:
       if (fighter[dude].sts[S_MUTE] > 0)
          return 0;
-      for (a = PSIZE; a < PSIZE + numens; a++) {
+      for (a = PSIZE; a < PSIZE + num_enemies; a++) {
          if (fighter[a].sts[S_DEAD] == 0 && fighter[a].sts[S_STONE] == 0)
             b += fighter[a].unl;
       }
@@ -446,7 +446,7 @@ int skill_use (int who)
       }
       fight (who, tgt, 1);
       if (fighter[tgt].sts[S_DEAD] == 1) {
-         for (a = PSIZE; a < PSIZE + numens; a++) {
+         for (a = PSIZE; a < PSIZE + num_enemies; a++) {
             if (fighter[a].sts[S_DEAD] == 0) {
                nn[next_target] = a;
                next_target++;
@@ -541,7 +541,7 @@ int skill_use (int who)
          fullblit(double_buffer, back);
          for (a = 0; a < 14; a++) {
             convert_cframes (PSIZE, 1 + a, 15, 1);
-            for (g = PSIZE; g < PSIZE + numens; g++) {
+            for (g = PSIZE; g < PSIZE + num_enemies; g++) {
                if (is_active (g))
                   draw_fighter (g, 0);
             }
@@ -552,7 +552,7 @@ int skill_use (int who)
          revert_cframes (PSIZE, 1);
          dct = 0;
          b = fighter[who].lvl * 15;
-         for (g = PSIZE; g < PSIZE + numens; g++) {
+         for (g = PSIZE; g < PSIZE + num_enemies; g++) {
             if (fighter[g].sts[S_DEAD] == 0 && fighter[g].mhp > 0) {
                if (fighter[g].unl == 99 || fighter[g].unl == 0)
                   cts = 0;

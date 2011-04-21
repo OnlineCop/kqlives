@@ -59,7 +59,7 @@ extern unsigned int combatend;           /*  heroc.c, magic.c  */
 extern int cact[NUM_FIGHTERS];  /*  enemyc.c, heroc.c, hskill.c  */
 extern int curx;                /*  effects.c, heroc.c, hskill.c  */
 extern int cury;                /*  effects.c, heroc.c, hskill.c  */
-extern int numens;              /*  draw.c, effects.c, enemyc.c  */
+extern unsigned int num_enemies; /*  draw.c, effects.c, enemyc.c  */
 extern int ta[NUM_FIGHTERS];    /*  effects.c, [he]skill.c, hero.c, (item|mas)menu.c, kq.c, magic.c  */
 extern int deffect[NUM_FIGHTERS];       /*  effects.c, hskill.c  */
 extern int rcount;              /*  magic.c  */

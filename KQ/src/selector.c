@@ -71,13 +71,13 @@ static signed int tmpd[NUM_FIGHTERS]; // defined in heroc.h
  *               or select only where HP<75% of MHP if csts==CURE_CHECK
  *               or select any if csts==NO_STS_CHECK
  *               (Never selects a dead enemy)
- * \returns enemy index (PSIZE..PSIZE+numens-1) or PIDX_UNDEFINED if no enemy found
+ * \returns enemy index (PSIZE..PSIZE+num_enemies-1) or PIDX_UNDEFINED if no enemy found
  */
 int auto_select_enemy (int whom, int csts)
 {
    unsigned int i, number_enemies = 0;
 
-   for (i = PSIZE; i < PSIZE + numens; i++) {
+   for (i = PSIZE; i < PSIZE + num_enemies; i++) {
       if (fighter[i].sts[S_DEAD] == 0) {
          if (csts == NO_STS_CHECK) {
             tmpd[number_enemies] = i;
@@ -461,14 +461,14 @@ int select_any_player (int csa, int icn, const char *msg)
  *
  * \param   whom Attacker (person doing the action)
  * \param   multi Target(s)
- * \returns enemy index (PSIZE..PSIZE+numens-1) or PIDX_UNDEFINED if cancelled
+ * \returns enemy index (PSIZE..PSIZE+num_enemies-1) or PIDX_UNDEFINED if cancelled
  *          or SEL_ALL_ENEMIES if 'all' was selected (by pressing U or D)
  */
 int select_enemy (int whom, int multi)
 {
    unsigned int a, cntr = 0, ptr, stop, select_all;
 
-   for (a = PSIZE; a < PSIZE + numens; a++) {
+   for (a = PSIZE; a < PSIZE + num_enemies; a++) {
       if (can_attack (a) == 1)
          tmpd[cntr++] = a;
    }

@@ -305,7 +305,7 @@ static int combat_item (int ss, int t1, int tg)
          tt = numchrs;
       } else {
          st = PSIZE;
-         tt = numens;
+         tt = num_enemies;
       }
    }
    display_amount (st, FDECIDE, tl);
@@ -978,7 +978,7 @@ static void hero_run (void)
       program_death (_("Fatal error: How can a dead party run?"));
    else
       bt = bt / b;
-   for (p = PSIZE; p < PSIZE + numens; p++) {
+   for (p = PSIZE; p < PSIZE + num_enemies; p++) {
       if (fighter[p].sts[S_DEAD] == 0) {
          c++;
          ct += fighter[p].stats[A_SPD];

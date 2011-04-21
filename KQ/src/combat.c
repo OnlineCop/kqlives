@@ -57,7 +57,7 @@ unsigned int combatend;
 int cact[NUM_FIGHTERS];
 int curx;
 int cury;
-int numens;
+unsigned int num_enemies;
 int ta[NUM_FIGHTERS];
 int deffect[NUM_FIGHTERS];
 int rcount;
@@ -338,7 +338,7 @@ void battle_render (int plyr, int hl, int sall)
       draw_stsicon (double_buffer, 1, z, 17, b + 8, 200);
    }
 
-   for (t = PSIZE; t < PSIZE + numens; t++) {
+   for (t = PSIZE; t < PSIZE + num_enemies; t++) {
       if (fighter[t].sts[S_DEAD] == 0) {
          draw_fighter (t, (sall == 2));
       }
@@ -383,7 +383,7 @@ static int check_end (void)
    /*  RB: count the number of enemies alive. If there is none, the  */
    /*      heroes won the battle.                                    */
    alive = 0;
-   for (index = 0; index < numens; index++)
+   for (index = 0; index < num_enemies; index++)
       if (fighter[index + PSIZE].sts[S_DEAD] == 0)
          alive++;
 
@@ -671,7 +671,7 @@ static void do_round (void)
          if (rcount >= ROUND_MAX)
             rcount = 0;
 
-         for (index = 0; index < PSIZE + numens; index++) {
+         for (index = 0; index < PSIZE + num_enemies; index++) {
             if ((index < numchrs) || (index >= PSIZE)) {
                if (((fighter[index].sts[S_POISON] - 1) == rcount)
                    && (fighter[index].hp > 1)) {
@@ -767,7 +767,7 @@ static void do_round (void)
          battle_render (0, 0, 0);
          blit2screen (0, 0);
 
-         for (index = 0; index < (PSIZE + numens); index++) {
+         for (index = 0; index < (PSIZE + num_enemies); index++) {
             if ((bspeed[index] >= ROUND_MAX) && (cact[index] > 0)) {
                do_action (index);
                fighter[index].ctmem = 0;
@@ -1082,7 +1082,7 @@ static void heroes_win (void)
       ta[index] = 0;
    }
 
-   for (index = PSIZE; index < PSIZE + numens; index++) {
+   for (index = PSIZE; index < PSIZE + num_enemies; index++) {
       txp += fighter[index].xp;
       tgp += fighter[index].gp;
    }
@@ -1103,7 +1103,7 @@ static void heroes_win (void)
                FNORMAL);
    blit2screen (0, 0);
    fullblit(double_buffer, back);
-   for (index = 0; index < numens; index++) {
+   for (index = 0; index < num_enemies; index++) {
       /* PH bug: (?) should found_item be reset to zero at the start of this loop?
        * If you defeat 2 enemies, you should (possibly) get 2 items, right?
        */
@@ -1222,7 +1222,7 @@ static void init_fighters (void)
     */
    hero_init ();
    enemy_init ();
-   for (index = 0; index < (PSIZE + numens); index++)
+   for (index = 0; index < (PSIZE + num_enemies); index++)
       nspeed[index] = (fighter[index].stats[A_SPD] + 50) / 5;
 }
 
@@ -1260,7 +1260,7 @@ void multi_fight (int ar)
    // if the attacker is you, target enemies
    if (ar < PSIZE) {
       st = PSIZE;
-      nd = numens;
+      nd = num_enemies;
    }
    // if the attacker is enemy, target your party
    else {
@@ -1360,7 +1360,7 @@ static void roll_initiative (void)
          bspeed[i] = 0;
    }
 
-   for (i = PSIZE; i < PSIZE + numens; i++) {
+   for (i = PSIZE; i < PSIZE + num_enemies; i++) {
       if (hs == 1)
          bspeed[i] = ROUND_MAX;
       else if (ms == 1)
@@ -1383,7 +1383,7 @@ static void roll_initiative (void)
 #endif
    /* PH: This should be ok */
    for (i = 0; i < NUM_FIGHTERS; i++) {
-      if (i < numchrs || (i >= PSIZE && i < (PSIZE + numens))) {
+      if (i < numchrs || (i >= PSIZE && i < (PSIZE + num_enemies))) {
          for (j = 0; j < 2; j++)
             if (fighter[i].imb[j] > 0)
                cast_imbued_spell (i, fighter[i].imb[j], 1, TGT_CASTER);
@@ -1423,7 +1423,7 @@ static void snap_togrid (void)
    for (index = 0; index < numchrs; index++)
       fighter[index].facing = hf;
 
-   for (index = PSIZE; index < (PSIZE + numens); index++)
+   for (index = PSIZE; index < (PSIZE + num_enemies); index++)
       fighter[index].facing = mf;
 
    hf = 170 - (numchrs * 24);
@@ -1433,8 +1433,8 @@ static void snap_togrid (void)
    }
 
    a = fighter[PSIZE].cw + 16;
-   mf = 170 - (numens * a / 2);
-   for (index = PSIZE; index < PSIZE + numens; index++) {
+   mf = 170 - (num_enemies * a / 2);
+   for (index = PSIZE; index < PSIZE + num_enemies; index++) {
       fighter[index].cx = (index - PSIZE) * a + mf;
 
       if (fighter[index].cl < 104)

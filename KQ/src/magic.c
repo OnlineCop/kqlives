@@ -109,7 +109,7 @@ static void beffect_all_enemies (int caster, int spell_number)
    int nt, st, a, sp_hit;
 
    if (caster < PSIZE) {
-      nt = numens;
+      nt = num_enemies;
       st = PSIZE;
    } else {
       nt = numchrs;
@@ -391,7 +391,7 @@ int cast_spell (int whom, int is_item)
                   nt = numchrs;
                   st = 0;
                } else {
-                  nt = numens;
+                  nt = num_enemies;
                   st = PSIZE;
                }
                for (i = st; i < nt; i++) {
@@ -470,7 +470,7 @@ int combat_spell (int whom, int is_item)
             nt = numchrs;
             st = 0;
          } else {
-            nt = numens;
+            nt = num_enemies;
             st = PSIZE;
          }
       }
@@ -478,7 +478,7 @@ int combat_spell (int whom, int is_item)
       if (tgt == SEL_ALL_ENEMIES) {
          tall = 1;
          if (whom < PSIZE) {
-            nt = numens;
+            nt = num_enemies;
             st = PSIZE;
          } else {
             nt = numchrs;
@@ -590,7 +590,7 @@ static void cure_oneall_allies (int caster, int tgt, int spell_number)
          nt = numchrs;
          st = 0;
       } else {
-         nt = numens;
+         nt = num_enemies;
          st = PSIZE;
       }
    } else {
@@ -646,7 +646,7 @@ static void damage_all_enemies (int caster, int spell_number)
    int nt, st;
 
    if (caster < PSIZE) {
-      nt = numens;
+      nt = num_enemies;
       st = PSIZE;
    } else {
       nt = numchrs;
@@ -671,7 +671,7 @@ static void damage_oneall_enemies (int caster, int tgt, int spell_number)
 
    if (tgt == SEL_ALL_ENEMIES) {
       if (caster < PSIZE) {
-         nt = numens;
+         nt = num_enemies;
          st = PSIZE;
       } else {
          nt = numchrs;
@@ -747,7 +747,7 @@ static void geffect_all_allies (int caster, int spell_number)
       nt = numchrs;
       st = 0;
    } else {
-      nt = numens;
+      nt = num_enemies;
       st = PSIZE;
    }
    if (rand () % 100 + 1 >
@@ -1100,8 +1100,8 @@ void special_damage_oneall_enemies (int caster_index, int spell_dmg,
       if (caster_index < PSIZE) {
          /* Enemies are the monsters; you are attacking */
          first_target = PSIZE;
-         last_target = numens;
-         for (a = PSIZE; a < PSIZE + numens; a++)
+         last_target = num_enemies;
+         for (a = PSIZE; a < PSIZE + num_enemies; a++)
             if (fighter[a].sts[S_DEAD] == 0)
                number_of_enemies++;
       } else {
@@ -1239,7 +1239,7 @@ static void spell_damage (int caster, int spell_number, int st, int nt)
 
    if (nt > 1) {
       if (caster < PSIZE) {
-         for (a = PSIZE; a < PSIZE + numens; a++)
+         for (a = PSIZE; a < PSIZE + num_enemies; a++)
             if (fighter[a].sts[S_DEAD] == 0)
                ne++;
       } else {

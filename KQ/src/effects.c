@@ -69,7 +69,7 @@ void death_animation (int tgt, int aflag)
          n = numchrs;
       } else {
          f = PSIZE;
-         n = numens;
+         n = num_enemies;
       }
    } else {
       f = tgt;
@@ -136,7 +136,7 @@ void display_amount (int tgt, int cl, int aflag)
          n = numchrs;
       } else {
          f = PSIZE;
-         n = numens;
+         n = num_enemies;
       }
    } else {
       f = tgt;
@@ -215,7 +215,7 @@ void draw_attacksprite (int tgt, int aflag, int ef, int shows)
          n = numchrs;
       } else {
          f = PSIZE;
-         n = numens;
+         n = num_enemies;
       }
    } else {
       f = tgt;
@@ -340,7 +340,7 @@ void draw_hugesprite (int tgt, int hx, int hy, int ef, int shows)
       n = numchrs;
    } else {
       f = PSIZE;
-      n = numens;
+      n = num_enemies;
    }
    curx = -1;
    cury = -1;
@@ -405,7 +405,7 @@ void draw_spellsprite (int tgt, int aflag, int ef, int shows)
          n = numchrs;
       } else {
          f = PSIZE;
-         n = numens;
+         n = num_enemies;
       }
    } else {
       f = tgt;

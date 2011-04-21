@@ -222,7 +222,7 @@ void convert_cframes (int who, int st, int fn, int convert_heroes)
          a1 = numchrs;
       } else {
          a = PSIZE;
-         a1 = PSIZE + numens;
+         a1 = PSIZE + num_enemies;
       }
    } else {
       a = who;
@@ -1729,7 +1729,7 @@ void revert_cframes (int who, int revert_heroes)
          a1 = numchrs;
       } else {
          a = PSIZE;
-         a1 = PSIZE + numens;
+         a1 = PSIZE + num_enemies;
       }
    } else {
       a = who;

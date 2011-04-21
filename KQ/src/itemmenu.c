@@ -344,9 +344,9 @@ int item_effects (int sa, int t, int ti)
    if (sa == 0) {
       san = numchrs;
       se = PSIZE;
-      sen = numens;
+      sen = num_enemies;
    } else {
-      san = numens;
+      san = num_enemies;
       se = 0;
       sen = numchrs;
    }
