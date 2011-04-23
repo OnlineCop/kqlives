@@ -713,13 +713,14 @@ static void draw_playerbound (void)
 {
    int dx, dy, xtc, ytc;
    s_bound *found = NULL;
+   unsigned short ent_x = g_ent[0].tilex;
+   unsigned short ent_y = g_ent[0].tiley;
 
    /* Is the player standing inside a bounding area? */
-   found = is_contained_bound (g_map.bounds.array, g_map.bounds.size,
-                               g_ent[0].tilex, g_ent[0].tiley, g_ent[0].tilex,
-                               g_ent[0].tiley);
-
-   if (!found)
+   unsigned int found_index = is_bound(&g_map.bounds, ent_x, ent_y, ent_x, ent_y);
+   if (found_index)
+      found = &g_map.bounds.array[found_index - 1];
+   else
       return;
 
    xtc = vx >> 4;
