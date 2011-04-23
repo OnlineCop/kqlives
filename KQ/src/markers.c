@@ -59,11 +59,12 @@ size_t load_markers (s_marker_array *marray, PACKFILE *pf)
 
    marray->size = pack_igetw (pf);
    if (pack_feof (pf)) {
+      assert (0 && "pack_igetw() for marray->size received EOF signal.");
       printf ("Expected value for number of markers. Instead, received EOF.\n");
       return 2;
    } else if (marray->size == 0) {
-      printf ("Number of markers from file returned: 0\n");
-      return 3;
+      marray->array = NULL;
+      return 0; // Success: okay to have 0 markers in a map
    }
 
    marray->array = (s_marker *) realloc
@@ -76,12 +77,13 @@ size_t load_markers (s_marker_array *marray, PACKFILE *pf)
       mmarker->y = pack_igetw (pf);
 
       if (pack_feof (pf)) {
+         assert (0 && "pack_igetw() for marker->[xy] received EOF signal.");
          printf ("Encountered EOF during marker read.\n");
-         return 4;
+         return 3;
       }
    }
 
-   return 0;
+   return 0; // Success
 }
 
 
@@ -108,6 +110,7 @@ size_t save_markers (s_marker_array *marray, PACKFILE *pf)
 
    pack_iputw (marray->size, pf);
    if (pack_feof (pf)) {
+      assert (0 && "pack_iputw() for marray->size received EOF signal.");
       printf ("Encountered EOF when writing marker array size.\n");
       return 2;
    }
@@ -118,6 +121,7 @@ size_t save_markers (s_marker_array *marray, PACKFILE *pf)
       pack_iputw (marray->array[i].y, pf);
 
       if (pack_feof (pf)) {
+         assert (0 && "pack_iputw() for marker->[xy] received EOF signal.");
          printf ("Encountered EOF when writing marker %dsize.\n", i);
          return 3;
       }
