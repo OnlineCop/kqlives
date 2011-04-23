@@ -74,10 +74,13 @@ typedef struct _bound_array
 size_t load_bounds (s_bound_array *, PACKFILE *);
 size_t save_bounds (s_bound_array *, PACKFILE *);
 
+typedef const unsigned short cu_int16;
 
-//int bound_in_bound (s_bound *, int);
+void add_bound(s_bound_array *, cu_int16, cu_int16, cu_int16, cu_int16, cu_int16);
+unsigned int is_bound (s_bound_array *, cu_int16, cu_int16, cu_int16, cu_int16);
 int bound_in_bound2 (s_bound *, s_bound *, int);
 s_bound *is_contained_bound (s_bound *, unsigned int, int, int, int, int);
+void remove_bound(s_bound_array *, const unsigned int);
 void set_bounds (s_bound *, int, int, int, int, int);
 
 

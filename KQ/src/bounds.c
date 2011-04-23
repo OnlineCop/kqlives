@@ -36,6 +36,46 @@
 #include "bounds.h"
 
 
+
+/*! \brief Add a bounding area to a map
+ *
+ * \param   barray s_bound array containing map's bound areas
+ * \param   x1     Left edge of current bounding area
+ * \param   y1     Top edge of current bounding area
+ * \param   x2     Right edge of current bounding area
+ * \param   y2     Bottom edge of current bounding area
+ */
+void add_bound(
+   s_bound_array *barray,
+   const unsigned short x1,
+   const unsigned short y1,
+   const unsigned short x2,
+   const unsigned short y2,
+   const unsigned short btile)
+{
+   s_bound *last_element = NULL;
+
+   assert(barray && "s_bound_array is NULL");
+
+   if (barray->size++ > 0) // post-increment
+   {
+      barray->array = (s_bound *) realloc(barray->array, barray->size * sizeof (s_bound));
+   }
+   else
+   {
+      barray->array = (s_bound *) malloc(barray->size * sizeof (s_bound));
+   }
+
+   last_element = &barray->array[barray->size - 1];
+   last_element->left = x1;
+   last_element->top = y1;
+   last_element->right = x2;
+   last_element->bottom = y2;
+   last_element->btile = btile;
+}
+
+
+
 /*! \brief See if this bounding area overlaps (or is contained inside of) any
  * bounding area in the given array, or vice versa. Note that this function is
  * identical to the one above, except that we pass a pointer to the bound_box
@@ -46,7 +86,10 @@
  * \param   num_bound_boxes Number of elements in the \sa bound_box array
  * \return  1 if 'which' coords found anywhere withing any other boxes
  */
-int bound_in_bound2 (s_bound *which, s_bound *bound_box, int num_bound_boxes)
+int bound_in_bound2 (
+   s_bound *which,
+   s_bound *bound_box,
+   int num_bound_boxes)
 {
    /* Check if any part of box1 is inside box2 (or box2 in box1) */
 
@@ -104,6 +147,66 @@ int bound_in_bound2 (s_bound *which, s_bound *bound_box, int num_bound_boxes)
 
 
 
+/*! \brief Determine whether given coordinates are within any bounding boxes
+ *
+ * \param   sbound - Pointer to struct, which includes a size and array
+ * \param   left - Left edge of current bounding area
+ * \param   top - Top edge of current bounding area
+ * \param   right - Right edge of current bounding area
+ * \param   bottom - Bottom edge of current bounding area
+ *
+ * \returns NULL if not found, else address within boxes_array array
+ */
+unsigned int is_bound (
+   s_bound_array *sbound,
+   const unsigned short left,
+   const unsigned short top,
+   const unsigned short right,
+   const unsigned short bottom)
+{
+   size_t i;
+   unsigned short x1, y1, x2, y2;
+
+   assert(sbound && "s_bound_array is NULL");
+
+   if (left < right)
+   {
+      x1 = left;
+      x2 = right;
+   }
+   else
+   {
+      x1 = right;
+      x2 = left;
+   }
+
+   if (top < bottom)
+   {
+      y1 = top;
+      y2 = bottom;
+   }
+   else
+   {
+      y1 = bottom;
+      y2 = top;
+   }
+
+   for (i = 0; i < sbound->size; ++i) {
+      if ((x1 > sbound->array[i].right) ||
+          (x2 < sbound->array[i].left) ||
+          (y1 > sbound->array[i].bottom) ||
+          (y2 < sbound->array[i].top)) {
+         continue;
+      } else {
+         return i + 1;
+      }
+   }
+
+   return 0; // not found
+}
+
+
+
 /*! \brief Determine whether the coordinates are within any bounding boxes
  *
  * \param   boxes_array - Address of array
@@ -115,8 +218,13 @@ int bound_in_bound2 (s_bound *which, s_bound *bound_box, int num_bound_boxes)
  *
  * \returns NULL if not found, else address within boxes_array array
  */
-s_bound *is_contained_bound (s_bound *boxes_array, unsigned int num_boxes,
-                             int left, int top, int right, int bottom)
+s_bound *is_contained_bound (
+   s_bound *boxes_array,
+   unsigned int num_boxes,
+   int left,
+   int top,
+   int right,
+   int bottom)
 {
    unsigned int i;
 
@@ -143,7 +251,9 @@ s_bound *is_contained_bound (s_bound *boxes_array, unsigned int num_boxes,
  * \param[in]     pf - PACKFILE from whence data are pulled
  * \return        Non-0 on error, 0 on success
  */
-size_t load_bounds (s_bound_array *barray, PACKFILE *pf)
+size_t load_bounds (
+   s_bound_array *barray,
+   PACKFILE *pf)
 {
    s_bound *mbound = NULL;
    unsigned int i;
@@ -188,6 +298,29 @@ size_t load_bounds (s_bound_array *barray, PACKFILE *pf)
 
 
 
+void remove_bound(
+   s_bound_array *barray,
+   const unsigned int index)
+{
+   size_t i;
+   assert(barray && "s_bound_array is NULL");
+
+   if (index < barray->size)
+   {
+      for (i = index + 1; i < barray->size; ++i)
+      {
+         barray->array[i - 1].left   = barray->array[i].left;
+         barray->array[i - 1].top    = barray->array[i].top;
+         barray->array[i - 1].right  = barray->array[i].right;
+         barray->array[i - 1].bottom = barray->array[i].bottom;
+         barray->array[i - 1].btile  = barray->array[i].btile;
+      }
+      --barray->size;
+   }
+}
+
+
+
 /*! \brief Save all bounds out to packfile
  *
  * Saves individual \sa s_bound objects to the specified PACKFILE.
@@ -196,7 +329,9 @@ size_t load_bounds (s_bound_array *barray, PACKFILE *pf)
  * \param[out] pf - PACKFILE to where data is written
  * \return     Non-0 on error, 0 on success
  */
-size_t save_bounds (s_bound_array *barray, PACKFILE *pf)
+size_t save_bounds (
+   s_bound_array *barray,
+   PACKFILE *pf)
 {
    size_t i;
    s_bound *mbound = NULL;
@@ -245,8 +380,13 @@ size_t save_bounds (s_bound_array *barray, PACKFILE *pf)
  * \param   bottom Bottom edge of boundary
  * \param   btile  Tile
  */
-void set_bounds (s_bound *which_bound, int left, int top, int right,
-                 int bottom, int btile)
+void set_bounds (
+   s_bound *which_bound,
+   int left,
+   int top,
+   int right,
+   int bottom,
+   int btile)
 {
    assert(which_bound && "s_bound is NULL");
 
