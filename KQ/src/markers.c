@@ -33,7 +33,28 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../include/markers.h"
+#include "markers.h"
+
+
+unsigned int find_marker(const s_marker_array *marray, const char *name)
+{
+	unsigned int i;
+
+	assert(marray && "s_marker_array is NULL");
+
+	if (name == NULL)
+		return -1;  // An empty name is not an error; it is simply not found
+
+	for (i = 0; i < marray->size; ++i)
+	{
+		if (strcmp(name, marray->array[i].name)) // no match; keep going
+			continue;
+
+		return i; // return index of matching marker
+	}
+
+	return -1; // no match
+}
 
 
 /*! \brief Load all markers in from packfile
