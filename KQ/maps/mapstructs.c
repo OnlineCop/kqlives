@@ -274,7 +274,7 @@ int find_bound (int direction, int *current)
  *                    - 3 means last marker
  * \param   current - Number of markers currently defined
  */
-int find_marker (int direction, int *current)
+int find_next_marker (int direction, int *current)
 {
    // No markers; nothing to do, so return 'not found'
    if (gmap.markers.size < 1) {

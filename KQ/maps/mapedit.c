@@ -1667,7 +1667,7 @@ int find_cursor (int direction)
     * necessary.
     */
    if (draw_mode == MAP_MARKERS) {
-      if (find_marker (direction, &curmarker)) {
+      if (find_next_marker (direction, &curmarker)) {
          orient_markers (curmarker);
 
          normalize_view ();

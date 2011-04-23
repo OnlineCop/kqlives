@@ -151,7 +151,7 @@ void visual_map (s_show, const char *);
 void add_change_bounding (int, int, int, int *);
 void add_change_marker (int, int, int, int *);
 void bound_rect (BITMAP *, s_bound, int);
-int find_marker (int, int *);
+int find_next_marker (int, int *);
 int find_bound (int, int *);
 int is_contained_marker (s_marker, int, int);
 void orient_bounds (int);
