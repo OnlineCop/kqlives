@@ -440,10 +440,10 @@ void activate (void)
    looking_at_x += zx;
    looking_at_y += zy;
 
-   q = z_seg[looking_at_y * g_map.xsize + looking_at_x];
+   q = looking_at_y * g_map.xsize + looking_at_x;
 
-   if (o_seg[looking_at_y * g_map.xsize + looking_at_x] != 0 && q > 0)
-      do_zone (q);
+   if (o_seg[q] != BLOCK_NONE && z_seg[q] > 0)
+      do_zone (z_seg[q]);
 
    p = entityat (looking_at_x, looking_at_y, 0);
 
@@ -752,11 +752,12 @@ void check_animation (void)
       if (adata[i].start != 0) {
          if (adata[i].delay && adata[i].delay < adelay[i]) {
             adelay[i] %= adata[i].delay;
-            for (j = adata[i].start; j <= adata[i].end; j++)
+            for (j = adata[i].start; j <= adata[i].end; j++) {
                if (tilex[j] < adata[i].end)
                   tilex[j]++;
                else
                   tilex[j] = adata[i].start;
+            }
          }
          adelay[i] += diff;
       }
@@ -837,13 +838,15 @@ static void deallocate_stuff (void)
    destroy_bitmap (b_repulse);
    destroy_bitmap (b_mp);
 
-   for (p = 0; p < MAXE; p++)
+   for (p = 0; p < MAXE; p++) {
       for (i = 0; i < MAXEFRAMES; i++)
          destroy_bitmap (eframes[p][i]);
+   }
 
-   for (i = 0; i < MAXFRAMES; i++)
+   for (i = 0; i < MAXFRAMES; i++) {
       for (p = 0; p < MAXCHRS; p++)
          destroy_bitmap (frames[p][i]);
+   }
 
    for (i = 0; i < MAXCFRAMES; i++) {
       for (p = 0; p < NUM_FIGHTERS; p++) {
@@ -952,11 +955,12 @@ char *get_timer_event (void)
  */
 unsigned int in_party (int pn)
 {
-   int a;
+   unsigned int a;
 
-   for (a = 0; a < MAXCHRS; a++)
+   for (a = 0; a < MAXCHRS; a++) {
       if (pidx[a] == pn)
          return a + 1;
+   }
 
    return 0;
 }
@@ -995,9 +999,10 @@ void init_players (void)
 
    set_palette (pal);
 
-   for (i = 0; i < MAXCHRS; i++)
+   for (i = 0; i < MAXCHRS; i++) {
       for (j = 0; j < MAXFRAMES; j++)
          blit ((BITMAP *) pb->dat, frames[i][j], j * 16, i * 16, 0, 0, 16, 16);
+   }
 
    unload_datafile_object (pb);
 }
@@ -1647,7 +1652,7 @@ static void startup (void)
 
    /* KQ uses digi sound but it doesn't use MIDI */
    //   reserve_voices (8, 0);
-   sound_avail = install_sound (DIGI_AUTODETECT, MIDI_NONE, NULL) < 0 ? 0 : 1;
+   sound_avail = (install_sound (DIGI_AUTODETECT, MIDI_NONE, NULL) < 0 ? 0 : 1);
    if (!sound_avail)
       TRACE (_("Error with sound: %s\n"), allegro_error);
    parse_setup ();
@@ -1663,9 +1668,13 @@ static void startup (void)
       use_joy = 0;
 
       if (poll_joystick () == 0) {
-         for (i = num_joysticks - 1; i >= 0; i--)
-            if (joy[i].num_buttons >= 4)
+         // Use first compatible joystick attached to computer
+         for (i = 0; i < num_joysticks; ++i) {
+            if (joy[i].num_buttons >= 4) {
                use_joy = i + 1;
+               break;
+            }
+         }
       }
 
       if (use_joy == 0) {
@@ -1744,9 +1753,10 @@ static void startup (void)
    unload_datafile_object (pb);
 
    pb = load_datafile_object (PCX_DATAFILE, "ENTITIES_PCX");
-   for (q = 0; q < MAXE; q++)
+   for (q = 0; q < MAXE; q++) {
       for (p = 0; p < MAXEFRAMES; p++)
          blit ((BITMAP *)pb->dat, eframes[q][p], p * 16, q * 16, 0, 0, 16, 16);
+   }
    unload_datafile_object (pb);
 
    /* Initialize tilesets */
@@ -1803,10 +1813,11 @@ static void startup (void)
  */
 static void time_counter (void)
 {
-   kmin++;
-   if (kmin >= 60) {
-      kmin = 0;
-      khr++;
+   if (kmin < 60) {
+      ++kmin;
+   } else {
+      kmin -= 60;
+      ++khr;
    }
 
 } END_OF_FUNCTION (time_counter)
@@ -1903,7 +1914,7 @@ void wait_for_entity (int est, int efi)
          m = g_ent[e].movemode;
          if (g_ent[e].active == 1 && (m == MM_SCRIPT || m == MM_TARGET)) {
             n = 1;
-            break;
+            break; // for()
          }
       }
    }
