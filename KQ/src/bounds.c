@@ -155,7 +155,7 @@ int bound_in_bound2 (
  * \param   right - Right edge of current bounding area
  * \param   bottom - Bottom edge of current bounding area
  *
- * \returns NULL if not found, else address within boxes_array array
+ * \returns index+1 in array if found, else 0 if not found
  */
 unsigned int is_bound (
    s_bound_array *sbound,
