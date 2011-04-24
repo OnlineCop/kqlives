@@ -78,7 +78,7 @@ end
 
 
 function entity_handler(en)
-  if (en == 0) then
+  if (en == 0) then -- blonde woman, top-left house
     if progress.warpstone == 1 then
       bubble(en, _"Back again, are you?")
     else
@@ -88,7 +88,7 @@ function entity_handler(en)
       bubble(en, _"Oh, and thank you for finding the mayor.")
     end
 
-  elseif (en == 1) then
+  elseif (en == 1) then -- old lady, house N of Inn
     if progress.foundmayor == 0 then
       bubble(en, _"My husband is late again.")
     elseif progress.foundmayor == 1 then
@@ -100,7 +100,7 @@ function entity_handler(en)
       bubble(en, _"Oh... that bad man, making me worry like this, I'm gonna kill him!")
     end
 
-  elseif (en == 2) then
+  elseif (en == 2) then -- brunette town man, south entrance greeter
     if progress.fightonbridge > 4 then
       if progress.showbridge == 2 then
         bubble(en, _"Thank you so much for restoring the trade route to the citizens of Randen!")
@@ -112,7 +112,7 @@ function entity_handler(en)
       bubble(en, _"Do you think it has something to do with Malkaron? We've heard a lot of rumors about him as of late...")
     end
 
-  elseif (en == 3) then
+  elseif (en == 3) then -- brunette woman, red dress, N of weapon store, next to child
     if progress.foundmayor > 1 and progress.mayorguard1 > 0 and
       progress.mayorguard2 > 0 then
       bubble(en, _"My husband is so excited that everyone returned safely. He tends to get forgetful when he's like this. Sometimes he doesn't even lock up after himself on his way to work.")
@@ -137,7 +137,7 @@ function entity_handler(en)
       end
     end
 
-  elseif (en == 4) then
+  elseif (en == 4) then -- brunette child, blue shirt, N of weapon store, next to woman in red dress
     if progress.fightonbridge > 4 then
       if progress.showbridge == 2 then
         bubble(en, _"Wow! Mom says you're the ones who beat up the bad guys! You're so cool!")
@@ -148,7 +148,7 @@ function entity_handler(en)
       bubble(en, _"I'm hungry, I hope mom is done making lunch soon.")
     end
 
-  elseif (en == 5) then
+  elseif (en == 5) then -- blonde man, green shirt, SE corner of town (trees)
     if progress.fightonbridge > 4 then
       if progress.warpstone == 1 then
         bubble(en, _"Business is good.")
@@ -182,7 +182,7 @@ function entity_handler(en)
       bubble(en, _"A new bridge is supposed to be built soon. This town can't survive for long without our major trade route.")
     end
 
-  elseif (en == 6) then
+  elseif (en == 6) then -- guard, NE corner of town, guarding mayor house
     if progress.warpstone == 1 then
       if progress.foundmayor < 2 then
         bubble(en, _"Our mayor is still missing. We're not sure what to do at this point.")
@@ -203,11 +203,16 @@ function entity_handler(en)
         bubble(en, _"The mayor is back now, thanks to you. However, the mayor is not seeing any visitors for a while.")
         bubble(en, _"He is still recovering from his ordeal.")
       else
-        bubble(en, _"I have a scripting error.")
+        -- The warp stone has NOT been activated, but you saved and talked to the mayor once already
+        bubble(en, _"The mayor welcomes you to visit any time!")
+        move_entity(en, "guard")
+        wait_for_entity(en)
+        set_ent_script(en, "F0")
+        wait_for_entity(en)
       end
     end
 
-  elseif (en == 7) then
+  elseif (en == 7) then -- brunette woman, green dress, W of mayor house, by top portal
     if progress.warpstone == 1 then
       bubble(en, _"Are you enjoying your stay?")
     else
@@ -219,20 +224,20 @@ function entity_handler(en)
       end
     end
 
-  elseif (en == 8) then
+  elseif (en == 8) then -- brunette man, brown shirt, inn guest in SW of town
     bubble(en, _"I wonder why those adventurers were stopped at the bridge? I'm not sure I want to try crossing it just yet.")
 
-  elseif (en == 9) then
+  elseif (en == 9) then -- blonde man, green shirt, magic shop patron
     bubble(en, _"How long does it take to build a bridge?")
 
-  elseif (en == 10) then
+  elseif (en == 10) then -- brunette man, blue shirt, by cave entrance (becomes Ajathar)
     LOC_join_ajathar(en)
     refresh()
 
-  elseif (en == 11) then
+  elseif (en == 11) then -- green soldier, rescued from Ork camp, behind counter, building W of mayor
     bubble(en, _"Hey, you can't be back here! What are you trying to do, steal from me?")
 
-  elseif (en == 12) then
+  elseif (en == 12) then -- brown soldier, rescued from Ork camp, left room, building W of mayor
     if progress.mayorguard1 == 1 then
       bubble(en, _"Thanks for rescuing me back there! Here, have this:")
       set_gp(get_gp() + 1000)
@@ -242,11 +247,11 @@ function entity_handler(en)
       bubble(en, _"Those forces of Malkaron's sure are tough!")
     end
 
-  elseif (en == 13) then
+  elseif (en == 13) then -- blonde woman, white dress, by S entrance (becomes Casandra)
     LOC_join_casandra(en)
     refresh()
 
-  elseif (en == 14) then
+  elseif (en == 14) then -- brunette mayor, gray shirt, Mayor house in NE corner of town
     if progress.foundmayor < 2 then
       bubble(en, _"How did you get in here past my locked door?")
     elseif progress.foundmayor == 2 then
@@ -305,17 +310,21 @@ function refresh()
     set_ent_active(10, 0)
   end
 
-  if progress.foundmayor > 0 and
-      not LOC_manor_or_party(CASANDRA) then
-    -- Casandra should be available to join your party
-    set_ent_id(13, CASANDRA)
-  else
-    set_ent_active(13, 0)
-  end
+  if progress.foundmayor > 0 then
+    if not LOC_manor_or_party(CASANDRA) then
+      -- Casandra should be available to join your party
+      set_ent_id(13, CASANDRA)
+    else
+      set_ent_active(13, 0)
+    end
 
-  if progress.foundmayor > 0 and progress.showbridge > 1 then
-    set_ent_active(8, 0)
-    set_ent_active(9, 0)
+    if progress.showbridge > 1 then
+      set_ent_active(8, 0)
+      set_ent_active(9, 0)
+    end
+
+    x, y = marker("mayor_o");
+    set_obs(x, y - 1, 0)
   end
 
 end
@@ -497,6 +506,7 @@ function zone_handler(zn)
 
   elseif (zn == 42) then
     chest(96, 0, 250)
+    set_obs("treasure3", 0)
     refresh()
 
   elseif (zn == 43) then
@@ -527,7 +537,7 @@ function zone_handler(zn)
     door_out("shop_3o")
 
   elseif (zn == 51) then
-    door_out("mayor_o", 0, -1)
+    door_out("mayor_o")
 
   end
 end
