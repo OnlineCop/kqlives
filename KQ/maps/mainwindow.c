@@ -429,7 +429,9 @@ static gboolean on_map_button_release_event(GtkWidget *widget, GdkEventButton *e
 
          set_bounds (&temp_bound, x1, y1, x, y);
 
-         if (!bound_in_bound2(&temp_bound, gmap.bounds.array, gmap.bounds.size)) {
+         if (is_bound(&gmap.bounds, temp_bound.left, temp_bound.top, temp_bound.right, temp_bound.bottom) == 0) {
+//         if (!bound_in_bound2(&temp_bound, gmap.bounds.array, gmap.bounds.size)) {
+            // TODO: This should all be replaced by add_bound()
             gmap.bounds.array = realloc (gmap.bounds.array, sizeof(s_bound) * (i + 1));
             if (gmap.bounds.array == NULL) {
                printf("realloc failed. Unable to allocate memory for another bound box. Exiting.\n");

@@ -109,7 +109,8 @@ void add_change_bounding (int x, int y, int mouse_b, int *current)
              * area if it has any points contained in another bounding area's
              * region.
              */
-            if (!bound_in_bound2 (&temp, gmap.bounds.array, gmap.bounds.size)) {
+            if (is_bound(&gmap.bounds, temp.left, temp.top, temp.right, temp.bottom) == 0) {
+//            if (!bound_in_bound2 (&temp, gmap.bounds.array, gmap.bounds.size)) {
                set_bounds (b, temp.left, temp.top, temp.right, temp.bottom, b->btile);
                gmap.bounds.size++;
                active_bound = 0;
