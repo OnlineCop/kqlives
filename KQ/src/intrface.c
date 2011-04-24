@@ -912,7 +912,7 @@ static const char *stringreader (lua_State *L, char **f, size_t *size)
  */
 static s_marker *KQ_find_marker (const char *name, int required)
 {
-   unsigned int i = find_marker (&g_map, name);
+   unsigned int i = find_marker (&g_map.markers, name);
    if (i < g_map.markers.size)
       return &g_map.markers.array[i];
 
