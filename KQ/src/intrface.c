@@ -629,12 +629,20 @@ void do_entity (int en_num)
 void do_luacheat (void)
 {
    int oldtop;
+   const char* cheatfile;
 
+   /* kqres might return null if the cheat file doesn't exist.
+    * in that case, just do a no-op.
+    */
+   cheatfile = kqres (SCRIPT_DIR, "cheat");
+   if (cheatfile == NULL) {
+     return;
+   }
    oldtop = lua_gettop (theL);
 #ifdef DEBUGMODE
    lua_pushcfunction (theL, KQ_traceback);
 #endif
-   lua_dofile (theL, kqres (SCRIPT_DIR, "cheat"));
+   lua_dofile (theL, cheatfile);
    lua_getglobal (theL, "cheat");
 #ifdef DEBUGMODE
    lua_pcall (theL, 0, 0, oldtop + 1);
