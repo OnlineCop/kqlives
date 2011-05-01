@@ -832,6 +832,10 @@ static void geffect_one_ally (int caster, int tgt, int spell_number)
       return;
    }
 #endif
+   /* Validate the tgt parameter */
+   if (tgt < 0 || tgt >= NUM_FIGHTERS) {
+     program_death(_("Invalid target parameter in geffect_one_ally"));
+   }
 
 /*  DS: Now the 'caster' argument isn't used, so I'm doing this: */
    caster = caster;
