@@ -909,14 +909,14 @@ static int hero_invokeitem (int whom, int eno)
 {
    int tg = 0, a, b;
 
-   if (items[eno].tgt <= TGT_ALLY_ALL && items[eno].tgt != 0) {
-      tg = select_hero (whom, items[eno].tgt - 1, 0);
-      if (tg == -1)
+   if (items[eno].tgt <= TGT_ALLY_ALL && items[eno].tgt >= TGT_ALLY_ONE) {
+      tg = select_hero (whom, items[eno].tgt - TGT_ALLY_ONE, 0);
+      if (tg == PIDX_UNDEFINED)
          return 0;
    }
    if (items[eno].tgt >= TGT_ENEMY_ONE) {
-      tg = select_enemy (whom, items[eno].tgt - 4);
-      if (tg == -1)
+      tg = select_enemy (whom, items[eno].tgt - TGT_ENEMY_ONE);
+      if (tg == PIDX_UNDEFINED)
          return 0;
    }
    if (items[eno].imb > 0) {

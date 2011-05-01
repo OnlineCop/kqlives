@@ -549,7 +549,7 @@ int select_enemy (int whom, int multi)
  * \todo PH tmpd should be a local var?
  *
  * \param   whom ==person that is doing the action ??
- * \param   multi ==mode (target one, one/all or all)
+ * \param   multi ==mode (target one=0, one/all=1 or all=2)
  * \param   csd ==non-zero allows you to select a dead character
  * \returns index of player (0..numchrs-1) or PIDX_UNDEFINED if cancelled
  *          or SEL_ALL_ALLIES if 'all' was selected (by pressing U or D)
@@ -558,7 +558,7 @@ int select_hero (int whom, int multi, int csd)
 {
    unsigned int cntr = 0, ptr = 0, stop = 0, select_all, a;
 
-   if (multi == TGT_ALLY_ONEALL)
+   if (multi == 2)
       select_all = 1;
    else
       select_all = 0;
@@ -576,7 +576,7 @@ int select_hero (int whom, int multi, int csd)
    }
    while (!stop) {
       check_animation ();
-      if (multi > TGT_NONE && select_all == 1)
+      if (multi > 0 && select_all == 1)
          battle_render (tmpd[ptr] + 1, whom + 1, 1);
       else
          battle_render (tmpd[ptr] + 1, whom + 1, 0);
@@ -606,7 +606,7 @@ int select_hero (int whom, int multi, int csd)
          else
             ptr = 0;
       }
-      if (multi == TGT_ALLY_ONE && cntr > 1) {
+      if (multi == 1 && cntr > 1) {
          if (up) {
             unpress ();
             if (select_all == 0)
