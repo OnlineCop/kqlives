@@ -558,7 +558,7 @@ int select_hero (int whom, int multi, int csd)
 {
    unsigned int cntr = 0, ptr = 0, stop = 0, select_all, a;
 
-   if (multi == 2)
+   if (multi == TGT_ALLY_ONEALL)
       select_all = 1;
    else
       select_all = 0;
@@ -576,7 +576,7 @@ int select_hero (int whom, int multi, int csd)
    }
    while (!stop) {
       check_animation ();
-      if (multi > 0 && select_all == 1)
+      if (multi > TGT_NONE && select_all == 1)
          battle_render (tmpd[ptr] + 1, whom + 1, 1);
       else
          battle_render (tmpd[ptr] + 1, whom + 1, 0);
@@ -606,7 +606,7 @@ int select_hero (int whom, int multi, int csd)
          else
             ptr = 0;
       }
-      if (multi == 1 && cntr > 1) {
+      if (multi == TGT_ALLY_ONE && cntr > 1) {
          if (up) {
             unpress ();
             if (select_all == 0)
