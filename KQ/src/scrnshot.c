@@ -106,7 +106,7 @@ int save_screenshot (BITMAP *src_bmp, const char *prefix)
             BITMAP *temp;
 
             /* Formats the full path as "shots/kq000001.pcx" */
-            sprintf (filename, "%s/%s%*0d.pcx", savedir, prefix, SAVE_NAME_SIZE - prefix_len, last);
+            sprintf (filename, "%s/%s%0*d.pcx", savedir, prefix, SAVE_NAME_SIZE - prefix_len, last);
 
             /* if the src_bmp is the screen, then we need to create a sub bitmap just in case */
             temp =

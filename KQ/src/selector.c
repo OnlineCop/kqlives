@@ -225,7 +225,7 @@ static unsigned int mini_menu (int omask)
       readcontrols ();
       if (up) {
          unpress ();
-         if (cp > MM_OPTIONS_JOIN) {
+         if (cp == MM_OPTIONS_LEAVE || cp == MM_OPTIONS_LEAD) {
             --cp;
             play_effect (SND_CLICK, 128);
          } else {
@@ -235,7 +235,7 @@ static unsigned int mini_menu (int omask)
 
       if (down) {
          unpress ();
-         if (cp < MM_OPTIONS_LEAD) {
+         if (cp == MM_OPTIONS_JOIN || cp == MM_OPTIONS_LEAVE) {
             play_effect (SND_CLICK, 128);
             ++cp;
          } else {

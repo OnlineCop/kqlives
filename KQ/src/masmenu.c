@@ -48,7 +48,7 @@
 int close_menu;
 
 /*  Internal functions  */
-static int need_spell (int, int, int);
+static int need_spell (int, int);
 static void camp_draw_spell_menu (int, int, int);
 static void camp_spell_targeting (int, int);
 static int camp_castable (int, int);
@@ -246,7 +246,7 @@ static void camp_spell_targeting (int mc, int sn)
             select_any_player (magic[sn].tgt - 1, magic[sn].icon, magic[sn].name);
          if (tg < 0)
             return;
-         if (need_spell (mc, tg, sn) == 0) {
+         if (need_spell (tg, sn) == 0) {
             play_effect (SND_BAD, 128);
             return;
          }
@@ -330,15 +330,13 @@ int learn_new_spells (int who)
  *
  * Does the target even need the spell that's been selected?
  *
- * \param   ca Caster
  * \param   ta Target
  * \param   sn Index of spell
  * \returns 0 if spell failed, 1 if success
  */
-static int need_spell (int ca, int ta, int sn)
+static int need_spell (int ta, int sn)
 {
    int a, b, vc = 0;
-   (void *) ca;
 
    if (ta < numchrs)
       vc = pidx[ta];

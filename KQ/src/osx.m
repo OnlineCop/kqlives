@@ -57,13 +57,13 @@ static NSString* get_lua_file_path(NSString* base, NSString* file);
 static NSString* get_resource_file_path(NSString* base, NSString* subdir, NSString* file)
 {
    NSFileManager* fm = [NSFileManager defaultManager];
-   NSString* fullpath = [NSString pathWithComponents: [NSArray arrayWithObjects: user_dir, subdir, file, nil]];
+   NSString* fullpath = [NSString pathWithComponents: [NSArray arrayWithObjects:user_dir, subdir, file, nil]];
 
-   if ([fm fileExistsAtPath: fullpath]) {
+   if ([fm fileExistsAtPath:fullpath]) {
       return fullpath;
    }
 
-   fullpath = [NSString pathWithComponents: [NSArray arrayWithObjects: base, subdir, file, nil]];
+   fullpath = [NSString pathWithComponents: [NSArray arrayWithObjects:base, subdir, file, nil]];
 
    /* return this, even if it doesn't exist */
    return fullpath;
@@ -88,21 +88,21 @@ static NSString* get_resource_file_path(NSString* base, NSString* subdir, NSStri
  */
 NSString* get_lua_file_path(NSString* base, NSString* file) {
    NSFileManager* fm = [NSFileManager defaultManager];
-   NSString* path = [NSString pathWithComponents: [NSArray arrayWithObjects: user_dir, @"scripts", file, nil]];
+   NSString* path = [NSString pathWithComponents: [NSArray arrayWithObjects:user_dir, @"scripts", file, nil]];
    NSString* fullpath = [path stringByAppendingPathExtension: @"lua"];
 
-   if ([fm fileExistsAtPath: fullpath]) {
+   if ([fm fileExistsAtPath:fullpath]) {
       return fullpath;
    }
 
    fullpath = [path stringByAppendingPathExtension: @"lob"];
-   if ([fm fileExistsAtPath: fullpath]) {
+   if ([fm fileExistsAtPath:fullpath]) {
       return fullpath;
    }
 
-   path = [NSString pathWithComponents: [NSArray arrayWithObjects: base, @"scripts", file, nil]];
+   path = [NSString pathWithComponents: [NSArray arrayWithObjects:base, @"scripts", file, nil]];
    fullpath = [path stringByAppendingPathExtension: @"lua"];
-   if ([fm fileExistsAtPath: fullpath]) {
+   if ([fm fileExistsAtPath:fullpath]) {
       return fullpath;
    }
 
@@ -125,15 +125,16 @@ const char *kqres (enum eDirectories dir, const char *file)
 {
    static char ans[PATH_MAX];
    NSString* found;
-   NSString* nsfile = [NSString stringWithUTF8String: file];
+   NSString* nsfile = [NSString stringWithUTF8String:file];
    if (init_path == NO) {
       /* Get home directory */
 
       NSArray* arr = NSSearchPathForDirectoriesInDomains (NSLibraryDirectory,
                      NSUserDomainMask, YES);
-      user_dir = [[arr objectAtIndex: 0] stringByAppendingPathComponent: @"KQ"];
+      user_dir = [[arr objectAtIndex:0] stringByAppendingPathComponent: @"KQ"];
       [user_dir retain];
-      [[NSFileManager defaultManager] createDirectoryAtPath: user_dir attributes: nil];
+      [[NSFileManager defaultManager] createDirectoryAtPath:user_dir
+         withIntermediateDirectories:YES attributes:nil error:nil];
 
       /* Now the data directory */
       game_dir =[[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent: @"Contents/Resources"];

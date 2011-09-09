@@ -628,18 +628,18 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				A02F887713B41F3E0090CA49 /* liblua.a */,
 				A02F887313B41F240090CA49 /* libaldmb.a */,
-				A02F887413B41F240090CA49 /* libdumb.a */,
 				A02F887113B41EDF0090CA49 /* liballeg-main.a */,
+				A02F887413B41F240090CA49 /* libdumb.a */,
+				A02F887713B41F3E0090CA49 /* liblua.a */,
 				8808A7EB0A62F25200EBA666 /* AudioToolbox.framework */,
 				8808A7EC0A62F25200EBA666 /* AudioUnit.framework */,
 				8808A7ED0A62F25200EBA666 /* Carbon.framework */,
+				1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */,
 				8808A7EE0A62F25200EBA666 /* CoreAudio.framework */,
 				8808A7EF0A62F25200EBA666 /* CoreMIDI.framework */,
 				8808A7F00A62F25200EBA666 /* IOKit.framework */,
 				8808A7F10A62F25200EBA666 /* QuickTime.framework */,
-				1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -648,15 +648,15 @@
 			isa = PBXGroup;
 			children = (
 				88E2F8900F091D0B0066E111 /* bounds.h */,
-				88E2F88A0F091CBE0066E111 /* console.h */,
-				A02F886E13B416880090CA49 /* enums.h */,
 				8816BD2B04D0542800000002 /* combat.h */,
+				88E2F88A0F091CBE0066E111 /* console.h */,
 				8816BD2C04D0542800000002 /* credits.h */,
 				8816BD2D04D0542800000002 /* disk.h */,
 				8816BD2E04D0542800000002 /* draw.h */,
 				8816BD2F04D0542800000002 /* effects.h */,
 				8816BD3004D0542800000002 /* enemyc.h */,
 				8816BD3104D0542800000002 /* entity.h */,
+				A02F886E13B416880090CA49 /* enums.h */,
 				8816BD3204D0542800000002 /* eqpmenu.h */,
 				8816BD3304D0542800000002 /* eskill.h */,
 				8816BD3404D0542800000002 /* fade.h */,
@@ -947,7 +947,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				88FCDD870D4D26EA002849F7 /* bounds.c in Sources */,
 				8808A7A20A62F1AC00EBA666 /* combat.c in Sources */,
+				88E2F88F0F091CF90066E111 /* console.c in Sources */,
 				8808A7A30A62F1AC00EBA666 /* credits.c in Sources */,
 				8808A7A40A62F1AC00EBA666 /* disk.c in Sources */,
 				8808A7A50A62F1AC00EBA666 /* draw.c in Sources */,
@@ -963,9 +965,12 @@
 				8808A7AF0A62F1AC00EBA666 /* itemmenu.c in Sources */,
 				8808A7B00A62F1AC00EBA666 /* kq.c in Sources */,
 				8808A7B10A62F1AC00EBA666 /* magic.c in Sources */,
+				A02F887A13B4217D0090CA49 /* markers.c in Sources */,
 				8808A7B20A62F1AC00EBA666 /* masmenu.c in Sources */,
 				8808A7B30A62F1AC00EBA666 /* menu.c in Sources */,
+				8808AA110A62F6E700EBA666 /* movement.c in Sources */,
 				8808A7B40A62F1AC00EBA666 /* music.c in Sources */,
+				8808A7DC0A62F1AC00EBA666 /* osx.m in Sources */,
 				8808A7B50A62F1AC00EBA666 /* res.c in Sources */,
 				8808A7B60A62F1AC00EBA666 /* scrnshot.c in Sources */,
 				8808A7B70A62F1AC00EBA666 /* selector.c in Sources */,
@@ -973,11 +978,6 @@
 				8808A7B90A62F1AC00EBA666 /* sgame.c in Sources */,
 				8808A7BA0A62F1AC00EBA666 /* shopmenu.c in Sources */,
 				8808A7BB0A62F1AC00EBA666 /* timing.c in Sources */,
-				8808A7DC0A62F1AC00EBA666 /* osx.m in Sources */,
-				8808AA110A62F6E700EBA666 /* movement.c in Sources */,
-				88FCDD870D4D26EA002849F7 /* bounds.c in Sources */,
-				88E2F88F0F091CF90066E111 /* console.c in Sources */,
-				A02F887A13B4217D0090CA49 /* markers.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
